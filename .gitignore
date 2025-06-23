@@ -1,6 +1,6 @@
 
-# Python (recursively):
-#__pycache__/
+# PyCharm
+/.idea/
 
 # Typical Python `venv` location:
 /venv/
@@ -8,3 +8,6 @@
 # Target environment config
 # (no trailing slash `/` because it can be a symlink):
 /conf_env
+
+# Python (recursively):
+__pycache__/

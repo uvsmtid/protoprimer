@@ -12,7 +12,7 @@ class ThisTestClass(BaseTestClass):
           basic unit tests
     """
 
-    @patch("sys.version_info", (3, 9, 0))
+    @patch("sys.version_info", (3, 8, 0))
     def test_version_succeeds(self):
         # FS_84_11_73_28: supported python versions:
         ensure_min_python_version()

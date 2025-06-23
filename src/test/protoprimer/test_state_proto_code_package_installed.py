@@ -62,5 +62,8 @@ class ThisTestClass(PyfakefsTestCase):
             os.path.join(
                 mock_client_dir,
                 "src",
-            )
+            ),
+            [
+                "test",
+            ],
         )
