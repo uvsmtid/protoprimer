@@ -268,7 +268,20 @@ def install_package(
 
 def install_editable_package(
     package_path: str,
+    extras_list: [str],
 ):
+    """
+    Install `package_path` (assuming it is `dirname` for `setup.py`) with `extras_list`.
+
+    When `extras_list` is `["test", "dev"]`, the actual command run is:
+
+    ```sh
+    path/to/python -m pip --editable path/to/package[test,dev]
+    ```
+    """
+
+    extras_spec = ",".join(extras_list)
+    package_spec = f"{package_path}[{extras_spec}]"
     subprocess.check_call(
         [
             get_path_to_curr_python(),
@@ -276,7 +289,7 @@ def install_editable_package(
             "pip",
             "install",
             "--editable",
-            package_path,
+            package_spec,
         ]
     )
 
@@ -1279,6 +1292,9 @@ class Bootstrapper_state_proto_code_package_installed(
         # TODO: This has to be changed for released version of `proto_code`:
         install_editable_package(
             setup_py_dir,
+            [
+                "test",
+            ],
         )
 
         return True
