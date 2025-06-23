@@ -18,22 +18,6 @@ Typical usage:
 To initialize the env with specific Python version:
     /path/to/pythonX ./exe/bootstrap_env.py
 
-
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
 """
 from __future__ import annotations
 
@@ -54,22 +38,6 @@ import venv
 __version__ = "0.0.0.dev0"
 
 from typing import (
-
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
     Any,
     Generic,
     TypeVar,
@@ -90,22 +58,6 @@ def main(configure_env_context=None):
         env_ctx = configure_env_context()
 
     try:
-
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
         env_ctx.run_stages()
         atexit.register(lambda: env_ctx.report_success_status(True))
     except:
@@ -127,22 +79,6 @@ def ensure_min_python_version():
         )
 
 
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-
 def init_arg_parser():
 
     def str2bool(v):
@@ -162,22 +98,6 @@ def init_arg_parser():
         "-s",
         # TODO: put in ArgConst:
         "--silent",
-
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
         action="store_true",
         dest="log_level_silent",
         # In the case of exceptions, stack traces are still printed:
@@ -198,22 +118,6 @@ def init_arg_parser():
         action="count",
         dest="log_level_verbose",
         default=0,
-
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
         help="Log debug messages.",
     )
     # TODO: this should be replace-able by `PythonExecutable`:
@@ -234,22 +138,6 @@ def init_arg_parser():
         nargs="?",
         const=False,
         default=False,
-
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
         help=f"Run only until `venv` is activated and exit (default: {False}).",
     )
     arg_parser.add_argument(
@@ -270,22 +158,6 @@ def init_arg_parser():
     )
     # TODO: use it with special `--init_repo` flag (otherwise, do not allow):
     arg_parser.add_argument(
-
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
         ArgConst.arg_client_dir_path,
         nargs="?",
         default=None,
@@ -306,22 +178,6 @@ def init_arg_parser():
         nargs="?",
         default=None,
         help="Path to one of the dirs (normally under `@/dst/`) to be used as target for `@/conf/` symlink.",
-
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
     )
     return arg_parser
 
@@ -342,22 +198,6 @@ def get_path_to_curr_python():
 
 
 def get_script_command_line():
-
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
     return " ".join(sys.argv)
 
 
@@ -378,22 +218,6 @@ def write_json_file(
 
 def read_text_file(
     file_path: str,
-
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
 ) -> str:
     with open(file_path, "r", encoding="utf-8") as file_obj:
         return file_obj.read()
@@ -415,22 +239,6 @@ def insert_every_n_lines(
     """
     Insert `insert_text` into `input_text` after `every_n` lines.
 
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-
     Original use case: add boilerplate text indicating generated content throughout entire file.
     """
     input_lines: list[str] = input_text.splitlines()
@@ -450,22 +258,6 @@ def install_package(
     subprocess.check_call(
         [
             get_path_to_curr_python(),
-
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
             "-m",
             "pip",
             "install",
@@ -486,22 +278,6 @@ def install_editable_package(
     ```sh
     path/to/python -m pip --editable path/to/package[test,dev]
     ```
-
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
     """
 
     extras_spec = ",".join(extras_list)
@@ -523,22 +299,6 @@ class RunMode(enum.Enum):
     Various modes the script can be run in.
     """
 
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-
     print_dag = enum.auto()
 
     bootstrap_env = enum.auto()
@@ -557,22 +317,6 @@ class AbstractBootstrapperVisitor:
 
 
 class SinkPrinterVisitor(AbstractBootstrapperVisitor):
-
-
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
 
     def __init__(
         self,
@@ -594,22 +338,6 @@ class SinkPrinterVisitor(AbstractBootstrapperVisitor):
             level=0,
         )
 
-
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
     def count_usage(
         self,
         state_bootstrapper,
@@ -630,22 +358,6 @@ class SinkPrinterVisitor(AbstractBootstrapperVisitor):
         level: int,
     ) -> None:
         print(
-
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
             f"{' ' * level}{state_bootstrapper.get_env_state().name} x {self.bootstrapper_usage_count[state_bootstrapper.get_env_state().name]}"
         )
         for state_parent in state_bootstrapper.get_state_parents():
@@ -665,22 +377,6 @@ class PythonExecutable(enum.IntEnum):
     py_exec_required = 2
 
     py_exec_venv = 3
-
-
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
 
     py_exec_updated_protoprimer_package = 4
 
@@ -702,22 +398,6 @@ class AbstractStateBootstrapper(Generic[StateValueType]):
         #       (beyond what is bootstrapped by code):
         # The states which will be bootstrapped:
         # `state_parents` >= `state_parents`
-
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
         self.state_parents: list[EnvState] = state_parents
 
         # Embed `EnvState` name into the class name:
@@ -738,22 +418,6 @@ class AbstractStateBootstrapper(Generic[StateValueType]):
     def get_env_state(
         self,
     ) -> EnvState:
-
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
         return self.env_state
 
     def set_state_parents(
@@ -774,22 +438,6 @@ class AbstractStateBootstrapper(Generic[StateValueType]):
         return self._bootstrap_state()
 
     def _ensure_pre_condition(
-
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
         self,
     ) -> None:
         pass
@@ -810,22 +458,6 @@ class AbstractCachingStateBootstrapper(AbstractStateBootstrapper[StateValueType]
     ):
         super().__init__(
             env_ctx=env_ctx,
-
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
             state_parents=state_parents,
             env_state=env_state,
         )
@@ -847,22 +479,6 @@ class AbstractCachingStateBootstrapper(AbstractStateBootstrapper[StateValueType]
         raise NotImplementedError()
 
 
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-
 # noinspection PyPep8Naming
 class Bootstrapper_state_default_log_level(AbstractCachingStateBootstrapper[int]):
 
@@ -881,22 +497,6 @@ class Bootstrapper_state_default_log_level(AbstractCachingStateBootstrapper[int]
     ) -> StateValueType:
         return logging.INFO
 
-
-
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
 
 # noinspection PyPep8Naming
 class Bootstrapper_state_parsed_args(
@@ -919,22 +519,6 @@ class Bootstrapper_state_parsed_args(
         parsed_args: argparse.Namespace = init_arg_parser().parse_args()
         return parsed_args
 
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-
 
 # noinspection PyPep8Naming
 class Bootstrapper_state_py_exec_specified(
@@ -954,22 +538,6 @@ class Bootstrapper_state_py_exec_specified(
         )
 
     def _bootstrap_once(
-
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
         self,
     ) -> StateValueType:
         return PythonExecutable[
@@ -989,22 +557,6 @@ class Bootstrapper_state_script_dir_path(AbstractCachingStateBootstrapper[str]):
             state_parents=[],
             env_state=EnvState.state_script_dir_path,
         )
-
-
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
 
     def _bootstrap_once(
         self,
@@ -1027,22 +579,6 @@ class Bootstrapper_state_script_config_file_path(AbstractCachingStateBootstrappe
             env_state=EnvState.state_script_config_file_path,
         )
 
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-
     def _bootstrap_once(
         self,
     ) -> StateValueType:
@@ -1062,22 +598,6 @@ class Bootstrapper_state_client_dir_path_specified(
 
     def __init__(
         self,
-
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
         env_ctx: EnvContext,
     ):
         super().__init__(
@@ -1097,22 +617,6 @@ class Bootstrapper_state_client_dir_path_specified(
         state_client_dir_path_specified = self.env_ctx.bootstrap_state(
             EnvState.state_parsed_args
         ).client_dir_path
-
-
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
 
         state_script_config_file_path = self.env_ctx.bootstrap_state(
             EnvState.state_script_config_file_path
@@ -1134,22 +638,6 @@ class Bootstrapper_state_script_config_file_data(
     def __init__(
         self,
         env_ctx: EnvContext,
-
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
     ):
         super().__init__(
             env_ctx=env_ctx,
@@ -1170,22 +658,6 @@ class Bootstrapper_state_script_config_file_data(
 
         file_data: dict
         if os.path.exists(state_script_config_file_path):
-
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
             file_data = read_json_file(state_script_config_file_path)
         else:
             state_script_dir_path = self.env_ctx.bootstrap_state(
@@ -1206,22 +678,6 @@ class Bootstrapper_state_script_config_file_data(
                 ConfConstPrimer.field_file_rel_path_conf_client: ConfConstPrimer.default_file_rel_path_conf_client,
             }
             write_json_file(state_script_config_file_path, file_data)
-
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
         return file_data
 
 
@@ -1243,22 +699,6 @@ class Bootstrapper_state_client_dir_path_configured(
             env_state=EnvState.state_client_dir_path_configured,
         )
 
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-
     def _bootstrap_once(
         self,
     ) -> StateValueType:
@@ -1279,22 +719,6 @@ class Bootstrapper_state_client_dir_path_configured(
             field_client_dir_rel_path,
         )
 
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-
         return os.path.normpath(state_client_dir_path_configured)
 
 
@@ -1314,22 +738,6 @@ class Bootstrapper_state_target_dst_dir_path(AbstractCachingStateBootstrapper[st
         )
 
     def _bootstrap_once(
-
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
         self,
     ) -> StateValueType:
         # TODO: access via declared string constant for arg field:
@@ -1350,22 +758,6 @@ class Bootstrapper_state_client_conf_file_path(AbstractCachingStateBootstrapper[
             state_parents=[
                 EnvState.state_client_dir_path_configured,
             ],
-
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
             env_state=EnvState.state_client_conf_file_path,
         )
 
@@ -1386,22 +778,6 @@ class Bootstrapper_state_client_conf_file_path(AbstractCachingStateBootstrapper[
 
         return os.path.join(
             state_client_dir_path_configured,
-
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
             field_client_config_rel_path,
         )
 
@@ -1422,22 +798,6 @@ class Bootstrapper_state_client_conf_file_data(AbstractCachingStateBootstrapper[
         )
 
     def _bootstrap_once(
-
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
         self,
     ) -> StateValueType:
 
@@ -1458,22 +818,6 @@ class Bootstrapper_state_client_conf_file_data(AbstractCachingStateBootstrapper[
                 os.path.dirname(state_client_conf_file_path),
                 exist_ok=True,
             )
-
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
             write_json_file(state_client_conf_file_path, file_data)
             return file_data
 
@@ -1493,22 +837,6 @@ class Bootstrapper_state_env_conf_dir_path(AbstractCachingStateBootstrapper[str]
             ],
             env_state=EnvState.state_env_conf_dir_path,
         )
-
-
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
 
     def _bootstrap_once(
         self,
@@ -1531,22 +859,6 @@ class Bootstrapper_state_env_conf_dir_path(AbstractCachingStateBootstrapper[str]
             env_conf_dir_rel_path,
         )
 
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-
         return state_env_conf_dir_path
 
 
@@ -1567,22 +879,6 @@ class Bootstrapper_state_target_dst_dir_path_verified(
             env_state=EnvState.state_target_dst_dir_path_verified,
         )
 
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-
     def _bootstrap_once(
         self,
     ) -> StateValueType:
@@ -1602,22 +898,6 @@ class Bootstrapper_state_target_dst_dir_path_verified(
                 f"Target for `@/conf/` symlink [{state_target_dst_dir_path}] must not be absolute path."
             )
         elif ".." in pathlib.Path(state_target_dst_dir_path).parts:
-
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
             raise AssertionError(
                 f"Target for `@/conf/` symlink [{state_target_dst_dir_path}] must not contain `..` path segments."
             )
@@ -1638,22 +918,6 @@ class Bootstrapper_state_env_conf_dir_path_verified(
         self,
         env_ctx: EnvContext,
     ):
-
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
         super().__init__(
             env_ctx=env_ctx,
             state_parents=[
@@ -1674,22 +938,6 @@ class Bootstrapper_state_env_conf_dir_path_verified(
             EnvState.state_target_dst_dir_path
         )
         if os.path.exists(state_env_conf_dir_path):
-
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
             if os.path.islink(state_env_conf_dir_path):
                 if os.path.isdir(state_env_conf_dir_path):
                     if state_target_dst_dir_path is None:
@@ -1710,22 +958,6 @@ class Bootstrapper_state_env_conf_dir_path_verified(
                     )
             else:
                 raise AssertionError(
-
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
                     f"The `@/conf/` [{state_env_conf_dir_path}] is not a symlink.",
                 )
         else:
@@ -1747,22 +979,6 @@ class Bootstrapper_state_env_conf_dir_path_verified(
         return True
 
 
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-
 # noinspection PyPep8Naming
 class Bootstrapper_state_env_conf_file_path(AbstractCachingStateBootstrapper[str]):
 
@@ -1782,22 +998,6 @@ class Bootstrapper_state_env_conf_file_path(AbstractCachingStateBootstrapper[str
 
     def _bootstrap_once(
         self,
-
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
     ) -> StateValueType:
         state_env_conf_dir_path_verified = self.env_ctx.bootstrap_state(
             EnvState.state_env_conf_dir_path_verified
@@ -1818,22 +1018,6 @@ class Bootstrapper_state_env_conf_file_path(AbstractCachingStateBootstrapper[str
         )
         # TODO: Ensure the path is under with proper error message:
         assert is_sub_path(
-
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
             state_env_conf_file_path,
             state_env_conf_dir_path,
         )
@@ -1855,22 +1039,6 @@ class Bootstrapper_state_env_conf_file_data(AbstractCachingStateBootstrapper[dic
             env_state=EnvState.state_env_conf_file_data,
         )
 
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-
     def _bootstrap_once(
         self,
     ) -> StateValueType:
@@ -1890,22 +1058,6 @@ class Bootstrapper_state_env_conf_file_data(AbstractCachingStateBootstrapper[dic
             # TODO: This creates a directory with `ConfConstClient.default_dir_rel_path_conf_env_link_name` instead of symlink.
             #       But this happens only if dependency
             #       `state_env_conf_file_path` -> `state_env_conf_dir_path_verified`
-
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
             #       was not executed (which is not possible outside of tests).
             write_json_file(state_env_conf_file_path, file_data)
         return file_data
@@ -1925,22 +1077,6 @@ class Bootstrapper_state_env_path_to_python(AbstractCachingStateBootstrapper[str
             ],
             env_state=EnvState.state_env_path_to_python,
         )
-
-
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
 
     def _bootstrap_once(
         self,
@@ -1962,22 +1098,6 @@ class Bootstrapper_state_env_path_to_python(AbstractCachingStateBootstrapper[str
         return state_env_path_to_python
 
 
-
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
 # noinspection PyPep8Naming
 class Bootstrapper_state_env_path_to_venv(AbstractCachingStateBootstrapper[str]):
 
@@ -1998,22 +1118,6 @@ class Bootstrapper_state_env_path_to_venv(AbstractCachingStateBootstrapper[str])
     ) -> StateValueType:
         file_data = self.env_ctx.bootstrap_state(EnvState.state_env_conf_file_data)
 
-
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
         state_env_path_to_venv = file_data.get(
             ConfConstEnv.field_dir_rel_path_venv,
             # TODO: Do not use default values directly - resolve it differently at the prev|next step based on the need:
@@ -2033,22 +1137,6 @@ class Bootstrapper_state_env_path_to_venv(AbstractCachingStateBootstrapper[str])
 class Bootstrapper_state_py_exec_selected(
     AbstractCachingStateBootstrapper[PythonExecutable]
 ):
-
-
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
 
     def __init__(
         self,
@@ -2071,22 +1159,6 @@ class Bootstrapper_state_py_exec_selected(
         """
         Recursively runs this script inside the `python` interpreter required by the user.
 
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-
         The `python` interpreter required by the user is saved into `field_file_abs_path_python`.
         Otherwise, it matches the interpreter the bootstrap script is executed with at the moment.
         """
@@ -2106,22 +1178,6 @@ class Bootstrapper_state_py_exec_selected(
         #       (not a dependency of this because, technically, we do not know where `EnvState.state_env_path_to_python` and `EnvState.state_env_path_to_venv` came from):
         if is_sub_path(state_env_path_to_python, state_env_path_to_venv):
             state_env_conf_file_path = self.env_ctx.bootstrap_state(
-
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
                 EnvState.state_env_conf_file_path
             )
             raise AssertionError(
@@ -2142,22 +1198,6 @@ class Bootstrapper_state_py_exec_selected(
             # If already under `venv`, nothing to do - just ensure `python` is from the correct `venv` path.
             if path_to_curr_python != venv_path_to_python:
                 raise AssertionError(
-
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
                     f"Current `python` interpreter [{path_to_curr_python}] points under `venv` [{state_env_path_to_venv}], "
                     f"but it does not match expected interpreter there [{venv_path_to_python}]."
                 )
@@ -2178,22 +1218,6 @@ class Bootstrapper_state_py_exec_selected(
                         ArgConst.arg_py_exec,
                         PythonExecutable.py_exec_required.name,
                     ],
-
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
                 )
             else:
                 assert state_py_exec_specified == PythonExecutable.py_exec_required
@@ -2214,22 +1238,6 @@ class Bootstrapper_state_py_exec_selected(
                         venv_path_to_python,
                         *sys.argv,
                         ArgConst.arg_py_exec,
-
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
                         PythonExecutable.py_exec_venv.name,
                     ],
                 )
@@ -2250,22 +1258,6 @@ class Bootstrapper_state_proto_code_package_installed(
             env_ctx=env_ctx,
             state_parents=[
                 EnvState.state_py_exec_selected,
-
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
             ],
             env_state=EnvState.state_proto_code_package_installed,
         )
@@ -2286,31 +1278,16 @@ class Bootstrapper_state_proto_code_package_installed(
             state_client_dir_path_configured,
             "src",
         )
-
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
         assert os.path.isfile(os.path.join(setup_py_dir, "setup.py"))
 
-        # TODO: This has to be changed for released version of `proto_code`:
-        install_editable_package(
-            setup_py_dir,
-            [
-                "test",
-            ],
-        )
+        if state_py_exec_selected == PythonExecutable.py_exec_updated_protoprimer_package:
+            # TODO: This has to be changed for released version of `proto_code`:
+            install_editable_package(
+                setup_py_dir,
+                [
+                    "test",
+                ],
+            )
 
         return True
 
@@ -2322,22 +1299,6 @@ class Bootstrapper_state_py_exec_updated_protoprimer_package_reached(
 
     def __init__(
         self,
-
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
         env_ctx: EnvContext,
     ):
         super().__init__(
@@ -2358,22 +1319,6 @@ class Bootstrapper_state_py_exec_updated_protoprimer_package_reached(
         )
 
         state_proto_code_package_installed: bool = self.env_ctx.bootstrap_state(
-
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
             EnvState.state_proto_code_package_installed
         )
         assert state_proto_code_package_installed
@@ -2394,22 +1339,6 @@ class Bootstrapper_state_py_exec_updated_protoprimer_package_reached(
                 ],
             )
             # noinspection PyUnreachableCode
-
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
             self.env_ctx.py_exec = PythonExecutable.py_exec_updated_protoprimer_package
         else:
             # Successfully reached end goal:
@@ -2430,22 +1359,6 @@ class Bootstrapper_state_proto_code_copy_updated(
             env_ctx=env_ctx,
             state_parents=[
                 EnvState.state_py_exec_updated_protoprimer_package_reached,
-
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
                 EnvState.state_script_dir_path,
             ],
             env_state=EnvState.state_proto_code_copy_updated,
@@ -2466,22 +1379,6 @@ class Bootstrapper_state_proto_code_copy_updated(
 
         proto_code_copy_abs_path = os.path.join(
             state_script_dir_path,
-
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
             # TODO: be able to configure it:
             ConfConstGeneral.default_proto_copy_basename,
         )
@@ -2502,22 +1399,6 @@ class Bootstrapper_state_proto_code_copy_updated(
 
         write_text_file(
             file_path=proto_code_copy_abs_path,
-
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
             file_data=proto_code_copy,
         )
 
@@ -2539,22 +1420,6 @@ class EnvState(enum.Enum):
 
     state_script_dir_path = Bootstrapper_state_script_dir_path
 
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-
     state_script_config_file_path = Bootstrapper_state_script_config_file_path
 
     state_client_dir_path_specified = Bootstrapper_state_client_dir_path_specified
@@ -2574,22 +1439,6 @@ class EnvState(enum.Enum):
     # state_client_log_level = enum.auto()
 
     # TODO:
-
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
     # state_client_path_to_python = enum.auto()
 
     # TODO:
@@ -2609,22 +1458,6 @@ class EnvState(enum.Enum):
 
     # TODO:
     # state_env_log_level = enum.auto()
-
-
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
 
     state_env_path_to_python = Bootstrapper_state_env_path_to_python
 
@@ -2646,22 +1479,6 @@ class EnvState(enum.Enum):
 
 
 class TargetState:
-
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
     """
     Some of the key `EnvState`-s which are often used as bootstrap targets.
     """
@@ -2683,22 +1500,6 @@ class ArgConst:
 
 class ConfConstGeneral:
 
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-
     default_proto_code_module = "proto_code"
     default_proto_copy_module = "proto_copy"
     default_proto_copy_basename = f"{default_proto_copy_module}.py"
@@ -2718,22 +1519,6 @@ class ConfConstGeneral:
         f"""
 ################################################################################
 # Generated content:
-
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
 # This is a copy of `{module_obj.__name__}` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -2753,22 +1538,6 @@ class ConfConstInput:
     default_file_basename_conf_primer = (
         f"conf_primer.{ConfConstGeneral.default_proto_code_module}.json"
     )
-
-
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
 
 
 class ConfConstPrimer:
@@ -2791,22 +1560,6 @@ class ConfConstClient:
     Constants client config phase.
     """
 
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-
     field_dir_rel_path_conf_env_link_name = "dir_rel_path_conf_env_link_name"
 
     default_dir_rel_path_conf_env_link_name = os.path.join(
@@ -2825,22 +1578,6 @@ class ConfConstEnv:
 
     field_file_abs_path_python = "file_abs_path_python"
     field_dir_rel_path_venv = "dir_rel_path_venv"
-
-
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
 
     default_file_abs_path_python = "/usr/bin/python"
     default_dir_rel_path_venv = "venv"
@@ -2862,22 +1599,6 @@ class EnvContext:
         self.custom_logger: logging.Logger = logging.getLogger()
 
         self.register_bootstrapper(Bootstrapper_state_default_log_level(self))
-
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
         self.register_bootstrapper(Bootstrapper_state_parsed_args(self))
         self.register_bootstrapper(Bootstrapper_state_py_exec_specified(self))
         self.register_bootstrapper(Bootstrapper_state_script_dir_path(self))
@@ -2898,22 +1619,6 @@ class EnvContext:
         self.register_bootstrapper(Bootstrapper_state_env_path_to_python(self))
         self.register_bootstrapper(Bootstrapper_state_env_path_to_venv(self))
         self.register_bootstrapper(Bootstrapper_state_py_exec_selected(self))
-
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
         self.register_bootstrapper(
             Bootstrapper_state_proto_code_package_installed(self)
         )
@@ -2934,22 +1639,6 @@ class EnvContext:
         env_state: EnvState = state_bootstrapper.get_env_state()
         if env_state in self.state_bootstrappers:
             raise AssertionError(
-
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
                 f"[{AbstractStateBootstrapper.__name__}] for [{env_state}] is already registered."
             )
         else:
@@ -2970,22 +1659,6 @@ class EnvContext:
         for dependency_edge in self.dependency_edges:
             parent_dependency = dependency_edge[0]
             child_dependency = dependency_edge[1]
-
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
             child_parents.setdefault(child_dependency, []).append(parent_dependency)
 
         # Set children per parent:
@@ -3007,22 +1680,6 @@ class EnvContext:
             raise
         return state_bootstrapper.bootstrap_state()
 
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-
     def configure_logger(
         self,
     ) -> None:
@@ -3042,22 +1699,6 @@ class EnvContext:
     def set_log_level(
         self,
         log_level: int,
-
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
     ):
         self.log_level = log_level
         self.custom_logger.setLevel(self.log_level)
@@ -3078,22 +1719,6 @@ class EnvContext:
         if is_successful:
             color_status = color_success
             status_name = "SUCCESS"
-
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
             is_reportable = self.log_level <= logging.INFO
         else:
             color_status = color_failure
@@ -3113,22 +1738,6 @@ class EnvContext:
         parsed_args: argparse.Namespace = self.bootstrap_state(
             EnvState.state_parsed_args
         )
-
-
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
 
         self.select_log_level_from_cli_args(parsed_args)
 
@@ -3150,22 +1759,6 @@ class EnvContext:
         elif parsed_args.log_level_verbose == 1:
             self.set_log_level(logging.DEBUG)
         else:
-
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
             self.set_log_level(self.bootstrap_state(EnvState.state_default_log_level))
 
     def run_stages(
@@ -3185,22 +1778,6 @@ class EnvContext:
             env_state = self.universal_sink
         else:
             env_state: EnvState = EnvState[state_name]
-
-
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
 
         if run_mode is None:
             pass
@@ -3222,22 +1799,6 @@ class EnvContext:
 
     def do_bootstrap_env(
         self,
-
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
         # TODO: use this:
         env_state: EnvState,
     ):
@@ -3259,22 +1820,6 @@ class CustomFormatter(logging.Formatter):
     Custom formatter with color and proper timestamp.
     """
 
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-
     def __init__(
         self,
     ):
@@ -3293,22 +1838,6 @@ class CustomFormatter(logging.Formatter):
         formatted_timestamp = datetime.datetime.fromtimestamp(
             log_record.created
         ).strftime("%Y-%m-%d %H:%M:%S")
-
-
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
 
         # Append millis with dot `.` as a separator:
         return f"{formatted_timestamp}.{int(log_record.msecs):03d}"
@@ -3330,22 +1859,6 @@ class CustomFormatter(logging.Formatter):
 
     def format(self, log_record):
         log_color = self.color_set.get(log_record.levelname, self.color_reset)
-
-################################################################################
-# Generated content:
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
-# This is a copy of `protoprimer.proto_code` updated automatically.
-# It is supposed to be versioned (to be available in the repo on clone),
-# but it should not be linted (as its content/style is owned by another repo).
-################################################################################
-
         log_msg = super().format(log_record)
         return f"{log_color}{log_msg}{self.color_reset}"
 
