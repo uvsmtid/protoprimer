@@ -77,7 +77,7 @@ setuptools.setup(
     },
     include_package_data=False,
     # FS_84_11_73_28: supported python versions:
-    python_requires=">=3.9",
+    python_requires=">=3.8",
     install_requires=[],
     extras_require=extras_require,
 )
