@@ -1,3 +1,4 @@
+import argparse
 import os
 import sys
 from unittest.mock import patch
@@ -9,6 +10,7 @@ from protoprimer import proto_code
 from protoprimer.proto_code import (
     ArgConst,
     Bootstrapper_state_client_dir_path_configured,
+    Bootstrapper_state_parsed_args,
     Bootstrapper_state_py_exec_selected,
     Bootstrapper_state_py_exec_updated_protoprimer_package_reached,
     Bootstrapper_state_script_dir_path,
@@ -46,6 +48,9 @@ class ThisTestClass(PyfakefsTestCase):
         f"{proto_code.__name__}.{Bootstrapper_state_py_exec_selected.__name__}._bootstrap_once"
     )
     @patch(
+        f"{proto_code.__name__}.{Bootstrapper_state_parsed_args.__name__}._bootstrap_once"
+    )
+    @patch(
         f"{proto_code.__name__}.install_editable_package",
     )
     @patch(f"{proto_code.__name__}.os.execv")
@@ -53,6 +58,7 @@ class ThisTestClass(PyfakefsTestCase):
         self,
         mock_execv,
         mock_install_editable_package,
+        mock_state_parsed_args,
         mock_state_py_exec_selected,
         mock_state_client_dir_path_configured,
         mock_state_script_dir_path,
@@ -83,6 +89,10 @@ class ThisTestClass(PyfakefsTestCase):
             contents="\n" * 1000,
         )
         mock_state_script_dir_path.return_value = script_dir
+
+        mock_state_parsed_args.return_value = argparse.Namespace(
+            py_exec=PythonExecutable.py_exec_venv.name,
+        )
 
         mock_state_py_exec_selected.return_value = PythonExecutable.py_exec_venv
 
