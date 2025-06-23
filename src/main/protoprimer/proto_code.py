@@ -1280,7 +1280,7 @@ class Bootstrapper_state_proto_code_package_installed(
         )
         assert os.path.isfile(os.path.join(setup_py_dir, "setup.py"))
 
-        if state_py_exec_selected == PythonExecutable.py_exec_updated_protoprimer_package:
+        if state_py_exec_selected == PythonExecutable.py_exec_venv:
             # TODO: This has to be changed for released version of `proto_code`:
             install_editable_package(
                 setup_py_dir,
