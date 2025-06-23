@@ -1305,8 +1305,6 @@ class Bootstrapper_state_py_exec_updated_protoprimer_package_reached(
             state_parents=[
                 EnvState.state_proto_code_package_installed,
                 EnvState.state_py_exec_specified,
-                EnvState.state_env_path_to_python,
-                EnvState.state_env_path_to_venv,
             ],
             env_state=EnvState.state_py_exec_updated_protoprimer_package_reached,
         )
@@ -1318,21 +1316,12 @@ class Bootstrapper_state_py_exec_updated_protoprimer_package_reached(
         state_py_exec_specified: PythonExecutable = self.env_ctx.bootstrap_state(
             EnvState.state_py_exec_specified
         )
-        state_env_path_to_python = self.env_ctx.bootstrap_state(
-            EnvState.state_env_path_to_python
-        )
-        state_env_path_to_venv = self.env_ctx.bootstrap_state(
-            EnvState.state_env_path_to_venv
-        )
 
-        venv_path_to_python = os.path.join(
-            state_env_path_to_venv,
-            ConfConstGeneral.file_rel_path_venv_python,
-        )
+        venv_path_to_python = get_path_to_curr_python()
 
         if state_py_exec_specified.value < PythonExecutable.py_exec_updated_protoprimer_package.value:
             logger.info(
-                f"restarting current `python` interpreter [{state_env_path_to_python}] as [{venv_path_to_python}] to invalidate cached paths"
+                f"restarting current `python` interpreter [{venv_path_to_python}] to invalidate cached paths"
             )
             os.execv(
                 venv_path_to_python,
@@ -1343,6 +1332,8 @@ class Bootstrapper_state_py_exec_updated_protoprimer_package_reached(
                     PythonExecutable.py_exec_updated_protoprimer_package.name,
                 ],
             )
+            # noinspection PyUnreachableCode
+            self.env_ctx.py_exec = PythonExecutable.py_exec_updated_protoprimer_package
         else:
             # Successfully reached end goal:
             self.env_ctx.py_exec = state_py_exec_specified
@@ -1362,6 +1353,7 @@ class Bootstrapper_state_proto_code_copy_updated(
             env_ctx=env_ctx,
             state_parents=[
                 EnvState.state_py_exec_updated_protoprimer_package_reached,
+                EnvState.state_script_dir_path,
             ],
             env_state=EnvState.state_proto_code_copy_updated,
         )

@@ -1,4 +1,5 @@
 import os
+import sys
 from unittest.mock import patch
 
 from pyfakefs.fake_filesystem_unittest import TestCase as PyfakefsTestCase
@@ -6,12 +7,16 @@ from pyfakefs.fake_filesystem_unittest import TestCase as PyfakefsTestCase
 import protoprimer
 from protoprimer import proto_code
 from protoprimer.proto_code import (
+    ArgConst,
     Bootstrapper_state_client_dir_path_configured,
     Bootstrapper_state_py_exec_selected,
+    Bootstrapper_state_py_exec_updated_protoprimer_package_reached,
     Bootstrapper_state_script_dir_path,
+    ConfConstEnv,
     ConfConstGeneral,
     EnvContext,
     EnvState,
+    get_path_to_curr_python,
     PythonExecutable,
     read_text_file,
 )
@@ -35,19 +40,13 @@ class ThisTestClass(PyfakefsTestCase):
         f"{proto_code.__name__}.{Bootstrapper_state_script_dir_path.__name__}._bootstrap_once"
     )
     @patch(
-        f"{proto_code.__name__}.{Bootstrapper_state_client_dir_path_configured.__name__}._bootstrap_once"
-    )
-    @patch(
         f"{proto_code.__name__}.{Bootstrapper_state_py_exec_selected.__name__}._bootstrap_once"
     )
-    @patch(
-        f"{proto_code.__name__}.install_editable_package",
-    )
-    def test_state_client_conf_file_path_exists(
+    @patch(f"{proto_code.__name__}.os.execv")
+    def test_state_proto_code_copy_updated(
         self,
-        mock_install_editable_package,
+        mock_execv,
         mock_state_py_exec_selected,
-        mock_state_client_dir_path_configured,
         mock_state_script_dir_path,
     ):
 
@@ -79,27 +78,25 @@ class ThisTestClass(PyfakefsTestCase):
 
         mock_state_py_exec_selected.return_value = PythonExecutable.py_exec_venv
 
-        mock_state_client_dir_path_configured.return_value = mock_client_dir
-
         self.fs.create_file(os.path.join(mock_client_dir, "src", "setup.py"))
 
         # when:
         self.env_ctx.bootstrap_state(EnvState.state_proto_code_copy_updated)
 
         # then:
-        mock_install_editable_package.assert_called_once_with(
-            os.path.join(
-                mock_client_dir,
-                "src",
-            ),
-            [
-                "test",
-            ],
-        )
         script_obj = self.fs.get_object(script_path)
         self.assertIn(
             ConfConstGeneral.func_get_script_copy_generated_boilerplate(
                 protoprimer.proto_code
             ),
             script_obj.contents,
+        )
+        mock_execv.assert_called_once_with(
+            get_path_to_curr_python(),
+            [
+                get_path_to_curr_python(),
+                *sys.argv,
+                ArgConst.arg_py_exec,
+                PythonExecutable.py_exec_updated_protoprimer_package.name,
+            ],
         )
