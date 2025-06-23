@@ -21,6 +21,14 @@ To initialize the env with specific Python version:
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -49,6 +57,14 @@ from typing import (
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -77,6 +93,14 @@ def main(configure_env_context=None):
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -105,6 +129,14 @@ def ensure_min_python_version():
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -133,6 +165,14 @@ def init_arg_parser():
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -161,6 +201,14 @@ def init_arg_parser():
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -189,6 +237,14 @@ def init_arg_parser():
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -217,6 +273,14 @@ def init_arg_parser():
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -245,6 +309,14 @@ def init_arg_parser():
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -273,6 +345,14 @@ def get_script_command_line():
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -301,6 +381,14 @@ def read_text_file(
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -329,6 +417,14 @@ def insert_every_n_lines(
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -357,6 +453,14 @@ def install_package(
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -385,6 +489,14 @@ def install_editable_package(
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -413,6 +525,14 @@ class RunMode(enum.Enum):
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -441,6 +561,14 @@ class SinkPrinterVisitor(AbstractBootstrapperVisitor):
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -469,6 +597,14 @@ class SinkPrinterVisitor(AbstractBootstrapperVisitor):
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -497,6 +633,14 @@ class SinkPrinterVisitor(AbstractBootstrapperVisitor):
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -525,6 +669,14 @@ class PythonExecutable(enum.IntEnum):
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -553,6 +705,14 @@ class AbstractStateBootstrapper(Generic[StateValueType]):
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -581,6 +741,14 @@ class AbstractStateBootstrapper(Generic[StateValueType]):
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -609,6 +777,14 @@ class AbstractStateBootstrapper(Generic[StateValueType]):
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -637,6 +813,14 @@ class AbstractCachingStateBootstrapper(AbstractStateBootstrapper[StateValueType]
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -665,6 +849,14 @@ class AbstractCachingStateBootstrapper(AbstractStateBootstrapper[StateValueType]
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -693,6 +885,14 @@ class Bootstrapper_state_default_log_level(AbstractCachingStateBootstrapper[int]
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -721,6 +921,14 @@ class Bootstrapper_state_parsed_args(
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -749,6 +957,14 @@ class Bootstrapper_state_py_exec_specified(
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -777,6 +993,14 @@ class Bootstrapper_state_script_dir_path(AbstractCachingStateBootstrapper[str]):
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -805,6 +1029,14 @@ class Bootstrapper_state_script_config_file_path(AbstractCachingStateBootstrappe
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -833,6 +1065,14 @@ class Bootstrapper_state_client_dir_path_specified(
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -861,6 +1101,14 @@ class Bootstrapper_state_client_dir_path_specified(
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -889,6 +1137,14 @@ class Bootstrapper_state_script_config_file_data(
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -917,6 +1173,14 @@ class Bootstrapper_state_script_config_file_data(
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -945,6 +1209,14 @@ class Bootstrapper_state_script_config_file_data(
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -973,6 +1245,14 @@ class Bootstrapper_state_client_dir_path_configured(
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -1001,6 +1281,14 @@ class Bootstrapper_state_client_dir_path_configured(
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -1029,6 +1317,14 @@ class Bootstrapper_state_target_dst_dir_path(AbstractCachingStateBootstrapper[st
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -1057,6 +1353,14 @@ class Bootstrapper_state_client_conf_file_path(AbstractCachingStateBootstrapper[
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -1085,6 +1389,14 @@ class Bootstrapper_state_client_conf_file_path(AbstractCachingStateBootstrapper[
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -1113,6 +1425,14 @@ class Bootstrapper_state_client_conf_file_data(AbstractCachingStateBootstrapper[
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -1141,6 +1461,14 @@ class Bootstrapper_state_client_conf_file_data(AbstractCachingStateBootstrapper[
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -1169,6 +1497,14 @@ class Bootstrapper_state_env_conf_dir_path(AbstractCachingStateBootstrapper[str]
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -1197,6 +1533,14 @@ class Bootstrapper_state_env_conf_dir_path(AbstractCachingStateBootstrapper[str]
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -1225,6 +1569,14 @@ class Bootstrapper_state_target_dst_dir_path_verified(
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -1253,6 +1605,14 @@ class Bootstrapper_state_target_dst_dir_path_verified(
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -1281,6 +1641,14 @@ class Bootstrapper_state_env_conf_dir_path_verified(
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -1309,6 +1677,14 @@ class Bootstrapper_state_env_conf_dir_path_verified(
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -1337,6 +1713,14 @@ class Bootstrapper_state_env_conf_dir_path_verified(
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -1365,6 +1749,14 @@ class Bootstrapper_state_env_conf_dir_path_verified(
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -1393,6 +1785,14 @@ class Bootstrapper_state_env_conf_file_path(AbstractCachingStateBootstrapper[str
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -1421,6 +1821,14 @@ class Bootstrapper_state_env_conf_file_path(AbstractCachingStateBootstrapper[str
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -1449,6 +1857,14 @@ class Bootstrapper_state_env_conf_file_data(AbstractCachingStateBootstrapper[dic
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -1477,6 +1893,14 @@ class Bootstrapper_state_env_conf_file_data(AbstractCachingStateBootstrapper[dic
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -1505,6 +1929,14 @@ class Bootstrapper_state_env_path_to_python(AbstractCachingStateBootstrapper[str
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -1533,6 +1965,14 @@ class Bootstrapper_state_env_path_to_python(AbstractCachingStateBootstrapper[str
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -1561,6 +2001,14 @@ class Bootstrapper_state_env_path_to_venv(AbstractCachingStateBootstrapper[str])
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -1589,6 +2037,14 @@ class Bootstrapper_state_py_exec_selected(
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -1617,6 +2073,14 @@ class Bootstrapper_state_py_exec_selected(
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -1645,6 +2109,14 @@ class Bootstrapper_state_py_exec_selected(
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -1673,6 +2145,14 @@ class Bootstrapper_state_py_exec_selected(
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -1701,6 +2181,14 @@ class Bootstrapper_state_py_exec_selected(
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -1729,6 +2217,14 @@ class Bootstrapper_state_py_exec_selected(
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -1757,6 +2253,14 @@ class Bootstrapper_state_proto_code_package_installed(
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -1785,6 +2289,14 @@ class Bootstrapper_state_proto_code_package_installed(
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -1813,6 +2325,14 @@ class Bootstrapper_state_py_exec_updated_protoprimer_package_reached(
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -1841,6 +2361,14 @@ class Bootstrapper_state_py_exec_updated_protoprimer_package_reached(
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -1869,6 +2397,14 @@ class Bootstrapper_state_py_exec_updated_protoprimer_package_reached(
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -1897,6 +2433,14 @@ class Bootstrapper_state_proto_code_copy_updated(
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -1925,6 +2469,14 @@ class Bootstrapper_state_proto_code_copy_updated(
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -1953,6 +2505,14 @@ class Bootstrapper_state_proto_code_copy_updated(
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -1981,6 +2541,14 @@ class EnvState(enum.Enum):
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -2009,6 +2577,14 @@ class EnvState(enum.Enum):
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -2037,6 +2613,14 @@ class EnvState(enum.Enum):
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -2065,6 +2649,14 @@ class TargetState:
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -2093,6 +2685,14 @@ class ConfConstGeneral:
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -2121,6 +2721,14 @@ class ConfConstGeneral:
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -2149,6 +2757,14 @@ class ConfConstInput:
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -2177,6 +2793,14 @@ class ConfConstClient:
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -2205,6 +2829,14 @@ class ConfConstEnv:
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -2233,6 +2865,14 @@ class EnvContext:
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -2261,6 +2901,14 @@ class EnvContext:
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -2289,6 +2937,14 @@ class EnvContext:
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -2317,6 +2973,14 @@ class EnvContext:
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -2345,6 +3009,14 @@ class EnvContext:
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -2373,6 +3045,14 @@ class EnvContext:
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -2401,6 +3081,14 @@ class EnvContext:
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -2429,6 +3117,14 @@ class EnvContext:
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -2457,6 +3153,14 @@ class EnvContext:
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -2485,6 +3189,14 @@ class EnvContext:
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -2513,6 +3225,14 @@ class EnvContext:
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -2541,6 +3261,14 @@ class CustomFormatter(logging.Formatter):
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -2569,6 +3297,14 @@ class CustomFormatter(logging.Formatter):
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
@@ -2597,6 +3333,14 @@ class CustomFormatter(logging.Formatter):
 
 ################################################################################
 # Generated content:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.proto_code` updated automatically.
+# It is supposed to be versioned (to be available in the repo on clone),
+# but it should not be linted (as its content/style is owned by another repo).
+################################################################################
+
 # This is a copy of `protoprimer.proto_code` updated automatically.
 # It is supposed to be versioned (to be available in the repo on clone),
 # but it should not be linted (as its content/style is owned by another repo).
