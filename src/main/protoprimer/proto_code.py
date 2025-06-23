@@ -120,7 +120,7 @@ def init_arg_parser():
         default=0,
         help="Log debug messages.",
     )
-    # TODO: this should be replace-able by `BootstrapStage` (see `PythonExecutable` for now):
+    # TODO: this should be replace-able by `PythonExecutable`:
     arg_parser.add_argument(
         ArgConst.arg_recursion_flag,
         type=str2bool,
@@ -367,29 +367,20 @@ class SinkPrinterVisitor(AbstractBootstrapperVisitor):
             )
 
 
-class BootstrapStage(enum.IntEnum):
+class PythonExecutable(enum.IntEnum):
     """
-    States of the bootstrap process - each (potentially) requires starting a new executable.
-    """
-
-    stage_py_exec_initial = 1
-    stage_py_exec_required = 2
-    stage_py_exec_venv = 3
-    stage_py_exec_updated_package = 4
-    stage_py_exec_user_package = 5
-
-
-# TODO: replace it by `BootstrapStage`:
-class PythonExecutable(enum.Enum):
-    """
-    Python executables which are dealt with during the bootstrap process.
+    Python executables started during the bootstrap process - each replaces the executable program (via `os.execv`).
     """
 
-    py_exec_initial = enum.auto()
+    py_exec_initial = 1
 
-    py_exec_required = enum.auto()
+    py_exec_required = 2
 
-    py_exec_venv = enum.auto()
+    py_exec_venv = 3
+
+    py_exec_updated_protoprimer_package = 4
+
+    py_exec_updated_client_package = 5
 
 
 class AbstractStateBootstrapper(Generic[StateValueType]):
