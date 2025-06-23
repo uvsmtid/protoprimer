@@ -40,13 +40,21 @@ class ThisTestClass(PyfakefsTestCase):
         f"{proto_code.__name__}.{Bootstrapper_state_script_dir_path.__name__}._bootstrap_once"
     )
     @patch(
+        f"{proto_code.__name__}.{Bootstrapper_state_client_dir_path_configured.__name__}._bootstrap_once"
+    )
+    @patch(
         f"{proto_code.__name__}.{Bootstrapper_state_py_exec_selected.__name__}._bootstrap_once"
+    )
+    @patch(
+        f"{proto_code.__name__}.install_editable_package",
     )
     @patch(f"{proto_code.__name__}.os.execv")
     def test_state_proto_code_copy_updated(
         self,
         mock_execv,
+        mock_install_editable_package,
         mock_state_py_exec_selected,
+        mock_state_client_dir_path_configured,
         mock_state_script_dir_path,
     ):
 
@@ -78,12 +86,23 @@ class ThisTestClass(PyfakefsTestCase):
 
         mock_state_py_exec_selected.return_value = PythonExecutable.py_exec_venv
 
+        mock_state_client_dir_path_configured.return_value = mock_client_dir
+
         self.fs.create_file(os.path.join(mock_client_dir, "src", "setup.py"))
 
         # when:
         self.env_ctx.bootstrap_state(EnvState.state_proto_code_copy_updated)
 
         # then:
+        mock_install_editable_package.assert_called_once_with(
+            os.path.join(
+                mock_client_dir,
+                "src",
+            ),
+            [
+                "test",
+            ],
+        )
         script_obj = self.fs.get_object(script_path)
         self.assertIn(
             ConfConstGeneral.func_get_script_copy_generated_boilerplate(
