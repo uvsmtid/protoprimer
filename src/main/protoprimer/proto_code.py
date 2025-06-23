@@ -1194,7 +1194,7 @@ class Bootstrapper_state_py_exec_selected(
         )
         path_to_curr_python = get_path_to_curr_python()
         if is_sub_path(path_to_curr_python, state_env_path_to_venv):
-            assert state_py_exec_specified == PythonExecutable.py_exec_venv
+            assert state_py_exec_specified >= PythonExecutable.py_exec_venv
             # If already under `venv`, nothing to do - just ensure `python` is from the correct `venv` path.
             if path_to_curr_python != venv_path_to_python:
                 raise AssertionError(
@@ -1268,7 +1268,7 @@ class Bootstrapper_state_proto_code_package_installed(
         state_py_exec_selected: PythonExecutable = self.env_ctx.bootstrap_state(
             EnvState.state_py_exec_selected
         )
-        assert state_py_exec_selected == PythonExecutable.py_exec_venv
+        assert state_py_exec_selected >= PythonExecutable.py_exec_venv
 
         state_client_dir_path_configured = self.env_ctx.bootstrap_state(
             EnvState.state_client_dir_path_configured
@@ -1292,6 +1292,64 @@ class Bootstrapper_state_proto_code_package_installed(
 
 
 # noinspection PyPep8Naming
+class Bootstrapper_state_py_exec_updated_protoprimer_package_reached(
+    AbstractCachingStateBootstrapper[PythonExecutable]
+):
+
+    def __init__(
+        self,
+        env_ctx: EnvContext,
+    ):
+        super().__init__(
+            env_ctx=env_ctx,
+            state_parents=[
+                EnvState.state_proto_code_package_installed,
+                EnvState.state_py_exec_specified,
+                EnvState.state_env_path_to_python,
+                EnvState.state_env_path_to_venv,
+            ],
+            env_state=EnvState.state_py_exec_updated_protoprimer_package_reached,
+        )
+
+    def _bootstrap_once(
+        self,
+    ) -> StateValueType:
+
+        state_py_exec_specified: PythonExecutable = self.env_ctx.bootstrap_state(
+            EnvState.state_py_exec_specified
+        )
+        state_env_path_to_python = self.env_ctx.bootstrap_state(
+            EnvState.state_env_path_to_python
+        )
+        state_env_path_to_venv = self.env_ctx.bootstrap_state(
+            EnvState.state_env_path_to_venv
+        )
+
+        venv_path_to_python = os.path.join(
+            state_env_path_to_venv,
+            ConfConstGeneral.file_rel_path_venv_python,
+        )
+
+        if state_py_exec_specified.value < PythonExecutable.py_exec_updated_protoprimer_package.value:
+            logger.info(
+                f"restarting current `python` interpreter [{state_env_path_to_python}] as [{venv_path_to_python}] to invalidate cached paths"
+            )
+            os.execv(
+                venv_path_to_python,
+                [
+                    venv_path_to_python,
+                    *sys.argv,
+                    ArgConst.arg_py_exec,
+                    PythonExecutable.py_exec_updated_protoprimer_package.name,
+                ],
+            )
+        else:
+            # Successfully reached end goal:
+            self.env_ctx.py_exec = state_py_exec_specified
+
+        return self.env_ctx.py_exec
+
+# noinspection PyPep8Naming
 class Bootstrapper_state_proto_code_copy_updated(
     AbstractCachingStateBootstrapper[bool]
 ):
@@ -1303,7 +1361,7 @@ class Bootstrapper_state_proto_code_copy_updated(
         super().__init__(
             env_ctx=env_ctx,
             state_parents=[
-                EnvState.state_proto_code_package_installed,
+                EnvState.state_py_exec_updated_protoprimer_package_reached,
             ],
             env_state=EnvState.state_proto_code_copy_updated,
         )
@@ -1311,10 +1369,10 @@ class Bootstrapper_state_proto_code_copy_updated(
     def _bootstrap_once(
         self,
     ) -> StateValueType:
-        state_proto_code_package_installed: bool = self.env_ctx.bootstrap_state(
-            EnvState.state_proto_code_package_installed
+        state_py_exec_updated_protoprimer_package_reached: PythonExecutable = self.env_ctx.bootstrap_state(
+            EnvState.state_py_exec_updated_protoprimer_package_reached
         )
-        assert state_proto_code_package_installed
+        assert state_py_exec_updated_protoprimer_package_reached >= PythonExecutable.py_exec_updated_protoprimer_package
 
         state_script_dir_path = self.env_ctx.bootstrap_state(
             EnvState.state_script_dir_path
@@ -1407,10 +1465,13 @@ class EnvState(enum.Enum):
 
     state_env_path_to_venv = Bootstrapper_state_env_path_to_venv
 
+    # TODO: rename to `py_exec_venv_reached`:
     state_py_exec_selected = Bootstrapper_state_py_exec_selected
 
     # TODO: rename according to the final name:
     state_proto_code_package_installed = Bootstrapper_state_proto_code_package_installed
+
+    state_py_exec_updated_protoprimer_package_reached = Bootstrapper_state_py_exec_updated_protoprimer_package_reached
 
     # TODO: rename according to the final name:
     state_proto_code_copy_updated = Bootstrapper_state_proto_code_copy_updated
@@ -1562,6 +1623,9 @@ class EnvContext:
         self.register_bootstrapper(Bootstrapper_state_py_exec_selected(self))
         self.register_bootstrapper(
             Bootstrapper_state_proto_code_package_installed(self)
+        )
+        self.register_bootstrapper(
+            Bootstrapper_state_py_exec_updated_protoprimer_package_reached(self)
         )
         self.register_bootstrapper(Bootstrapper_state_proto_code_copy_updated(self))
 
