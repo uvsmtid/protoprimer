@@ -1303,8 +1303,8 @@ class Bootstrapper_state_py_exec_updated_protoprimer_package_reached(
         super().__init__(
             env_ctx=env_ctx,
             state_parents=[
-                EnvState.state_proto_code_package_installed,
                 EnvState.state_py_exec_specified,
+                EnvState.state_proto_code_package_installed,
             ],
             env_state=EnvState.state_py_exec_updated_protoprimer_package_reached,
         )
@@ -1316,6 +1316,11 @@ class Bootstrapper_state_py_exec_updated_protoprimer_package_reached(
         state_py_exec_specified: PythonExecutable = self.env_ctx.bootstrap_state(
             EnvState.state_py_exec_specified
         )
+
+        state_proto_code_package_installed: bool = self.env_ctx.bootstrap_state(
+            EnvState.state_proto_code_package_installed
+        )
+        assert state_proto_code_package_installed
 
         venv_path_to_python = get_path_to_curr_python()
 
