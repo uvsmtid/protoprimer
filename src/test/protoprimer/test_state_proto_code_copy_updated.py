@@ -91,7 +91,10 @@ class ThisTestClass(PyfakefsTestCase):
             os.path.join(
                 mock_client_dir,
                 "src",
-            )
+            ),
+            [
+                "test",
+            ],
         )
         script_obj = self.fs.get_object(script_path)
         self.assertIn(
