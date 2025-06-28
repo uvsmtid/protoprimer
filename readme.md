@@ -6,7 +6,7 @@
 The copy of self-contained `protoprimer` module hosted within the client code bootstraps the client environment:
 
 ```sh
-./proto_copy.py
+./proto_kernel.py
 ```
 
 ## Why not ad-hoc bootstrap scripts?
@@ -38,8 +38,8 @@ Its job is done when:
 
 ```mermaid
 flowchart TD
-    client_conf[load client-wide config for `proto_code.py`]
-    env_conf[load env-specific config for `proto_code.py`]
+    client_conf[load client-wide config for `primer_kernel.py`]
+    env_conf[load env-specific config for `primer_kernel.py`]
 
 ```
 
@@ -48,8 +48,8 @@ flowchart TD
 ```
 ^/                                      # repo root = script dir = client root
 │
-├─ boot_env.py                          # renamed copy of `envincept.proto_code`
-└─ boot_env.json                        # config found via default search list
+├─ proto_kernel.py                      # renamed copy of `protoprimer.primer_kernel`
+└─ proto_kernel.json                    # config found via default search list
 ```
 
 ## Max dir layout
@@ -58,26 +58,26 @@ flowchart TD
 ^/                                      # repo root
 │
 ├─ script_dir/
-│  ├─ local_proto_code.py               # local copy of `envincept.proto_code`
-│  ├─ boot_env.py                       # custom wrapper for ./local_proto_code.py
+│  ├─ local_proto_code.py               # local copy of `protoprimer.primer_kernel`
+│  ├─ boot_env.py                       # custom wrapper for ./proto_kernel.py
 │  ├─ conf_primer/
-│  │  ├─ conf_primer.proto_code.json    #
+│  │  ├─ conf_primer.primer_kernel.json #
 │  │  └─ ...
 │  └─ ...
 │
 ├─ client_dir/                          # client root
 │  ├─ conf_client/
-│  │  ├─ conf_client.proto_code.json
+│  │  ├─ conf_client.primer_kernel.json
 │  │  └─ ...
 │  ├─ conf_env/                         # symlink to (e.g.) ./env_dir/conf_default/
-│  │  ├─ conf_env.proto_code.json       # same as (e.g.) ./env_dir/conf_default/conf_env.proto_code.json
+│  │  ├─ conf_env.primer_kernel.json    # same as (e.g.) ./env_dir/conf_default/conf_env.primer_kernel.json
 │  │  └─ ...
 │  ├─ env_dir/
 │  │  ├─ conf_default/
-│  │  │  ├─ conf_env.proto_code.json
+│  │  │  ├─ conf_env.primer_kernel.json
 │  │  │  └─ ...
 │  │  ├─ conf_special/
-│  │  │  ├─ conf_env.proto_code.json
+│  │  │  ├─ conf_env.primer_kernel.json
 │  │  │  └─ ...
 │  │  └─ ...
 │  └─ ...
@@ -135,10 +135,10 @@ ${func_name}.${file_source}.${file_scope}.${file_format}
 For example, it is possible to see all these co-existing:
 
 ```
-path/to/client-wide/config/proto_code.man.client.json
-path/to/client-wide/config/proto_code.gen.client.json
-path/to/environment-specific/config/proto_code.man.env.json
-path/to/environment-specific/config/proto_code.gen.env.json
+path/to/client-wide/config/primer_kernel.man.client.json
+path/to/client-wide/config/primer_kernel.gen.client.json
+path/to/environment-specific/config/primer_kernel.man.env.json
+path/to/environment-specific/config/primer_kernel.gen.env.json
 ```
 TODO: Do we need those `client` and `env` suffixes if the path to their containing dir differentiates them clearly?
 
@@ -194,13 +194,13 @@ TODO: explain
 
 Loads:
 
-*   `=/proto_code.man.client.json`
+*   `=/primer_kernel.man.client.json`
 
 ### stage `env_conf`
 
 Loads:
 
-*   `=/proto_code.gen.conf.json` if exists
+*   `=/primer_kernel.gen.conf.json` if exists
 
 Generates:
 

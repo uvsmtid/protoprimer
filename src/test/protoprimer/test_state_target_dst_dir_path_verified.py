@@ -3,8 +3,8 @@ from unittest.mock import patch
 
 from pyfakefs.fake_filesystem_unittest import TestCase as PyfakefsTestCase
 
-from protoprimer import proto_code
-from protoprimer.proto_code import (
+from protoprimer import primer_kernel
+from protoprimer.primer_kernel import (
     Bootstrapper_state_parsed_args,
     EnvContext,
     EnvState,
@@ -26,7 +26,7 @@ class ThisTestClass(PyfakefsTestCase):
         )
 
     @patch(
-        f"{proto_code.__name__}.{Bootstrapper_state_parsed_args.__name__}._bootstrap_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_parsed_args.__name__}._bootstrap_once"
     )
     def test_success_on_valid_relative_dir(
         self,
@@ -45,7 +45,7 @@ class ThisTestClass(PyfakefsTestCase):
         # no exception happens
 
     @patch(
-        f"{proto_code.__name__}.{Bootstrapper_state_parsed_args.__name__}._bootstrap_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_parsed_args.__name__}._bootstrap_once"
     )
     def test_failure_on_absolute_path(
         self,
@@ -64,7 +64,7 @@ class ThisTestClass(PyfakefsTestCase):
         self.assertIn("must not be absolute", str(ctx.exception))
 
     @patch(
-        f"{proto_code.__name__}.{Bootstrapper_state_parsed_args.__name__}._bootstrap_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_parsed_args.__name__}._bootstrap_once"
     )
     def test_failure_on_path_with_dot_dot(
         self,
@@ -83,7 +83,7 @@ class ThisTestClass(PyfakefsTestCase):
         self.assertIn("must not contain `..`", str(ctx.exception))
 
     @patch(
-        f"{proto_code.__name__}.{Bootstrapper_state_parsed_args.__name__}._bootstrap_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_parsed_args.__name__}._bootstrap_once"
     )
     def test_failure_on_non_directory_path(
         self,
@@ -103,7 +103,7 @@ class ThisTestClass(PyfakefsTestCase):
         self.assertIn("must lead to a directory", str(ctx.exception))
 
     @patch(
-        f"{proto_code.__name__}.{Bootstrapper_state_parsed_args.__name__}._bootstrap_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_parsed_args.__name__}._bootstrap_once"
     )
     def test_failure_on_non_existent_path(
         self,
@@ -122,7 +122,7 @@ class ThisTestClass(PyfakefsTestCase):
         self.assertIn("must lead to a directory", str(ctx.exception))
 
     @patch(
-        f"{proto_code.__name__}.{Bootstrapper_state_parsed_args.__name__}._bootstrap_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_parsed_args.__name__}._bootstrap_once"
     )
     def test_success_on_symlink_leading_to_a_dir(
         self,

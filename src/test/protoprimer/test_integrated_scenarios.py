@@ -4,9 +4,9 @@ from unittest.mock import patch
 
 from pyfakefs.fake_filesystem_unittest import TestCase as PyfakefsTestCase
 
-from protoprimer import proto_code
-from protoprimer.proto_code import (
-    Bootstrapper_state_script_dir_path,
+from protoprimer import primer_kernel
+from protoprimer.primer_kernel import (
+    Bootstrapper_state_proto_kernel_dir_path,
     ArgConst,
     ConfConstPrimer,
     main,
@@ -23,7 +23,7 @@ class ThisTestClass(PyfakefsTestCase):
         self.setUpPyfakefs()
 
     @patch(
-        f"{proto_code.__name__}.{Bootstrapper_state_script_dir_path.__name__}._bootstrap_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_proto_kernel_dir_path.__name__}._bootstrap_once"
     )
     def test_bootstrap_proceeds_on_missing_conf_client_file_fails_on_missing_target_dst_dir_path(
         self,
@@ -36,7 +36,7 @@ class ThisTestClass(PyfakefsTestCase):
         mock_state_script_dir_path.return_value = script_dir
         self.fs.create_dir(script_dir)
         test_args = [
-            os.path.basename(proto_code.__file__),
+            os.path.basename(primer_kernel.__file__),
             ArgConst.arg_client_dir_path,
             mock_client_dir,
         ]
@@ -48,7 +48,7 @@ class ThisTestClass(PyfakefsTestCase):
             self.assertIn("`target_dst_dir_path` is not provided", str(cm.exception))
 
     @patch(
-        f"{proto_code.__name__}.{Bootstrapper_state_script_dir_path.__name__}._bootstrap_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_proto_kernel_dir_path.__name__}._bootstrap_once"
     )
     def test_bootstrap_proceeds_on_existing_conf_client_file_fails_on_missing_target_dst_dir_path(
         self,
@@ -62,7 +62,7 @@ class ThisTestClass(PyfakefsTestCase):
         mock_state_script_dir_path.return_value = script_dir
         self.fs.create_dir(script_dir)
         test_args = [
-            os.path.basename(proto_code.__file__),
+            os.path.basename(primer_kernel.__file__),
             ArgConst.arg_client_dir_path,
             mock_client_dir,
         ]

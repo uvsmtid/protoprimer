@@ -1,3 +1,3 @@
 """ """
 
-from protoprimer.proto_code import __version__
+from protoprimer.primer_kernel import __version__

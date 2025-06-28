@@ -6,14 +6,14 @@ from unittest.mock import patch
 from pyfakefs.fake_filesystem_unittest import TestCase as PyfakefsTestCase
 
 import protoprimer
-from protoprimer import proto_code
-from protoprimer.proto_code import (
+from protoprimer import primer_kernel
+from protoprimer.primer_kernel import (
     ArgConst,
     Bootstrapper_state_client_dir_path_configured,
     Bootstrapper_state_parsed_args,
     Bootstrapper_state_py_exec_selected,
     Bootstrapper_state_py_exec_updated_protoprimer_package_reached,
-    Bootstrapper_state_script_dir_path,
+    Bootstrapper_state_proto_kernel_dir_path,
     ConfConstEnv,
     ConfConstGeneral,
     EnvContext,
@@ -35,26 +35,26 @@ class ThisTestClass(PyfakefsTestCase):
     # noinspection PyMethodMayBeStatic
     def test_relationship(self):
         assert_test_module_name_embeds_enum_item_name(
-            EnvState.state_proto_code_copy_updated
+            EnvState.state_proto_kernel_updated
         )
 
     @patch(
-        f"{proto_code.__name__}.{Bootstrapper_state_script_dir_path.__name__}._bootstrap_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_proto_kernel_dir_path.__name__}._bootstrap_once"
     )
     @patch(
-        f"{proto_code.__name__}.{Bootstrapper_state_client_dir_path_configured.__name__}._bootstrap_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_dir_path_configured.__name__}._bootstrap_once"
     )
     @patch(
-        f"{proto_code.__name__}.{Bootstrapper_state_py_exec_selected.__name__}._bootstrap_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_py_exec_selected.__name__}._bootstrap_once"
     )
     @patch(
-        f"{proto_code.__name__}.{Bootstrapper_state_parsed_args.__name__}._bootstrap_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_parsed_args.__name__}._bootstrap_once"
     )
     @patch(
-        f"{proto_code.__name__}.install_editable_package",
+        f"{primer_kernel.__name__}.install_editable_package",
     )
-    @patch(f"{proto_code.__name__}.os.execv")
-    def test_state_proto_code_copy_updated(
+    @patch(f"{primer_kernel.__name__}.os.execv")
+    def test_state_proto_kernel_updated(
         self,
         mock_execv,
         mock_install_editable_package,
@@ -76,7 +76,7 @@ class ThisTestClass(PyfakefsTestCase):
         script_path = os.path.join(
             script_dir,
             # TODO: be able to configure it:
-            ConfConstGeneral.default_proto_copy_basename,
+            ConfConstGeneral.default_proto_kernel_basename,
         )
         # script copy:
         self.fs.create_file(
@@ -84,7 +84,7 @@ class ThisTestClass(PyfakefsTestCase):
         )
         # script orig (in fake filesystem):
         self.fs.create_file(
-            protoprimer.proto_code.__file__,
+            protoprimer.primer_kernel.__file__,
             # Not real code, just 1000 empty lines:
             contents="\n" * 1000,
         )
@@ -101,7 +101,7 @@ class ThisTestClass(PyfakefsTestCase):
         self.fs.create_file(os.path.join(mock_client_dir, "src", "setup.py"))
 
         # when:
-        self.env_ctx.bootstrap_state(EnvState.state_proto_code_copy_updated)
+        self.env_ctx.bootstrap_state(EnvState.state_proto_kernel_updated)
 
         # then:
         mock_install_editable_package.assert_called_once_with(
@@ -115,8 +115,8 @@ class ThisTestClass(PyfakefsTestCase):
         )
         script_obj = self.fs.get_object(script_path)
         self.assertIn(
-            ConfConstGeneral.func_get_script_copy_generated_boilerplate(
-                protoprimer.proto_code
+            ConfConstGeneral.func_get_proto_kernel_generated_boilerplate(
+                protoprimer.primer_kernel
             ),
             script_obj.contents,
         )

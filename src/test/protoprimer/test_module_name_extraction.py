@@ -1,4 +1,4 @@
-from protoprimer import proto_code
+from protoprimer import primer_kernel
 from test_support import BaseTestClass
 
 
@@ -7,6 +7,6 @@ class ThisTestClass(BaseTestClass):
 
     def test_module_name_extraction(self):
         self.assertEqual(
-            proto_code.__name__,
-            "protoprimer.proto_code",
+            primer_kernel.__name__,
+            "protoprimer.primer_kernel",
         )
