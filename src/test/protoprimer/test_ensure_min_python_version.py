@@ -1,16 +1,12 @@
 from unittest.mock import patch
 
-from protoprimer.proto_code import (
+from protoprimer.primer_kernel import (
     ensure_min_python_version,
 )
 from test_support import BaseTestClass
 
 
 class ThisTestClass(BaseTestClass):
-    """
-    TODO: TODO_11_66_62_70: python_bootstrap:
-          basic unit tests
-    """
 
     @patch("sys.version_info", (3, 8, 0))
     def test_version_succeeds(self):

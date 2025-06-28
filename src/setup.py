@@ -9,7 +9,7 @@ distrib_root = os.path.dirname(os.path.abspath(__file__))
 
 # Implements this (using the single script directly without a separate `_version.py` file):
 # https://stackoverflow.com/a/7071358/441652
-version_file = f"{distrib_root}/main/protoprimer/proto_code.py"
+version_file = f"{distrib_root}/main/protoprimer/primer_kernel.py"
 version_content = open(version_file, "rt").read()
 version_regex = r"^__version__ = ['\"]([^'\"]*)['\"]"
 regex_match = re.search(version_regex, version_content, re.M)

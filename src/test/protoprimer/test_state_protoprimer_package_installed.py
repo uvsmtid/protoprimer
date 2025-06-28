@@ -3,8 +3,8 @@ from unittest.mock import patch
 
 from pyfakefs.fake_filesystem_unittest import TestCase as PyfakefsTestCase
 
-from protoprimer import proto_code
-from protoprimer.proto_code import (
+from protoprimer import primer_kernel
+from protoprimer.primer_kernel import (
     Bootstrapper_state_client_dir_path_configured,
     Bootstrapper_state_py_exec_selected,
     EnvContext,
@@ -24,17 +24,17 @@ class ThisTestClass(PyfakefsTestCase):
     # noinspection PyMethodMayBeStatic
     def test_relationship(self):
         assert_test_module_name_embeds_enum_item_name(
-            EnvState.state_proto_code_package_installed
+            EnvState.state_protoprimer_package_installed
         )
 
     @patch(
-        f"{proto_code.__name__}.{Bootstrapper_state_client_dir_path_configured.__name__}._bootstrap_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_dir_path_configured.__name__}._bootstrap_once"
     )
     @patch(
-        f"{proto_code.__name__}.{Bootstrapper_state_py_exec_selected.__name__}._bootstrap_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_py_exec_selected.__name__}._bootstrap_once"
     )
     @patch(
-        f"{proto_code.__name__}.install_editable_package",
+        f"{primer_kernel.__name__}.install_editable_package",
     )
     def test_state_client_conf_file_path_exists(
         self,
@@ -55,7 +55,7 @@ class ThisTestClass(PyfakefsTestCase):
         self.fs.create_file(os.path.join(mock_client_dir, "src", "setup.py"))
 
         # when:
-        self.env_ctx.bootstrap_state(EnvState.state_proto_code_package_installed)
+        self.env_ctx.bootstrap_state(EnvState.state_protoprimer_package_installed)
 
         # then:
         mock_install_editable_package.assert_called_once_with(

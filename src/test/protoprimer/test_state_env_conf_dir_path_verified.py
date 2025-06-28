@@ -4,8 +4,8 @@ from unittest.mock import patch
 
 from pyfakefs.fake_filesystem_unittest import TestCase as PyfakefsTestCase
 
-from protoprimer import proto_code
-from protoprimer.proto_code import (
+from protoprimer import primer_kernel
+from protoprimer.primer_kernel import (
     Bootstrapper_state_env_conf_dir_path,
     Bootstrapper_state_parsed_args,
     ConfConstClient,
@@ -29,10 +29,10 @@ class ThisTestClass(PyfakefsTestCase):
         )
 
     @patch(
-        f"{proto_code.__name__}.{Bootstrapper_state_env_conf_dir_path.__name__}.bootstrap_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_env_conf_dir_path.__name__}.bootstrap_state"
     )
     @patch(
-        f"{proto_code.__name__}.{Bootstrapper_state_parsed_args.__name__}._bootstrap_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_parsed_args.__name__}._bootstrap_once"
     )
     def test_success_when_conf_symlink_exists_and_target_dst_dir_unspecified(
         self,
@@ -67,10 +67,10 @@ class ThisTestClass(PyfakefsTestCase):
         # no exception happens
 
     @patch(
-        f"{proto_code.__name__}.{Bootstrapper_state_env_conf_dir_path.__name__}.bootstrap_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_env_conf_dir_path.__name__}.bootstrap_state"
     )
     @patch(
-        f"{proto_code.__name__}.{Bootstrapper_state_parsed_args.__name__}._bootstrap_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_parsed_args.__name__}._bootstrap_once"
     )
     def test_success_when_conf_symlink_exists_and_target_dst_dir_matches(
         self,
@@ -105,10 +105,10 @@ class ThisTestClass(PyfakefsTestCase):
         # no exception happens
 
     @patch(
-        f"{proto_code  .__name__}.{Bootstrapper_state_env_conf_dir_path.__name__}.bootstrap_state"
+        f"{primer_kernel  .__name__}.{Bootstrapper_state_env_conf_dir_path.__name__}.bootstrap_state"
     )
     @patch(
-        f"{proto_code.__name__}.{Bootstrapper_state_parsed_args.__name__}._bootstrap_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_parsed_args.__name__}._bootstrap_once"
     )
     def test_failure_when_conf_symlink_exists_but_target_dst_dir_mismatches(
         self,
@@ -147,10 +147,10 @@ class ThisTestClass(PyfakefsTestCase):
         self.assertIn("not the same as the provided target", str(ctx.exception))
 
     @patch(
-        f"{proto_code.__name__}.{Bootstrapper_state_env_conf_dir_path.__name__}.bootstrap_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_env_conf_dir_path.__name__}.bootstrap_state"
     )
     @patch(
-        f"{proto_code.__name__}.{Bootstrapper_state_parsed_args.__name__}._bootstrap_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_parsed_args.__name__}._bootstrap_once"
     )
     def test_failure_when_conf_symlink_is_not_directory(
         self,
@@ -186,10 +186,10 @@ class ThisTestClass(PyfakefsTestCase):
         self.assertIn("target is not a directory", str(ctx.exception))
 
     @patch(
-        f"{proto_code.__name__}.{Bootstrapper_state_env_conf_dir_path.__name__}.bootstrap_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_env_conf_dir_path.__name__}.bootstrap_state"
     )
     @patch(
-        f"{proto_code.__name__}.{Bootstrapper_state_parsed_args.__name__}._bootstrap_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_parsed_args.__name__}._bootstrap_once"
     )
     def test_failure_when_conf_is_not_symlink(
         self,
@@ -218,10 +218,10 @@ class ThisTestClass(PyfakefsTestCase):
         self.assertIn("is not a symlink", str(ctx.exception))
 
     @patch(
-        f"{proto_code.__name__}.{Bootstrapper_state_env_conf_dir_path.__name__}.bootstrap_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_env_conf_dir_path.__name__}.bootstrap_state"
     )
     @patch(
-        f"{proto_code.__name__}.{Bootstrapper_state_parsed_args.__name__}._bootstrap_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_parsed_args.__name__}._bootstrap_once"
     )
     def test_success_when_conf_symlink_is_created_if_it_is_missing_and_target_dir_is_given(
         self,
@@ -256,10 +256,10 @@ class ThisTestClass(PyfakefsTestCase):
         )
 
     @patch(
-        f"{proto_code.__name__}.{Bootstrapper_state_env_conf_dir_path.__name__}.bootstrap_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_env_conf_dir_path.__name__}.bootstrap_state"
     )
     @patch(
-        f"{proto_code.__name__}.{Bootstrapper_state_parsed_args.__name__}._bootstrap_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_parsed_args.__name__}._bootstrap_once"
     )
     def test_success_when_conf_symlink_is_created_with_normalized_target(
         self,
@@ -293,10 +293,10 @@ class ThisTestClass(PyfakefsTestCase):
         )
 
     @patch(
-        f"{proto_code.__name__}.{Bootstrapper_state_env_conf_dir_path.__name__}.bootstrap_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_env_conf_dir_path.__name__}.bootstrap_state"
     )
     @patch(
-        f"{proto_code.__name__}.{Bootstrapper_state_parsed_args.__name__}._bootstrap_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_parsed_args.__name__}._bootstrap_once"
     )
     def test_failure_when_conf_symlink_is_missing_and_no_target_dir_is_given(
         self,

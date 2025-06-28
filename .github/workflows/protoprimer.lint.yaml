@@ -3,31 +3,19 @@ on:
     push:
         branches:
         -   "*"
-    schedule:
-        # Keep running periodically to detect issues with newly released dependencies:
-        # Every day at 18:00 SGT:
-        -   cron: "0 10 * * *"
 jobs:
     bootstrap_scenarios:
         runs-on: ubuntu-latest
 
-        strategy:
-            # When one of the jobs fails, this prevents canceling another job (for another Python version):
-            fail-fast: false
-            matrix:
-                # FS_84_11_73_28: supported python versions:
-                python-version:
-                    -   3.8
-                    -   3.13
         steps:
             -   run: "echo runner.os: ${{ runner.os }}"
             -   run: "echo github.repository: ${{ github.repository }}"
             -   run: "echo github.ref: ${{ github.ref }}"
 
-            -   name: "matrix.python-version: ${{ matrix.python-version }}"
-                uses: actions/setup-python@v5
+            -   uses: actions/setup-python@v5
                 with:
-                    python-version: ${{ matrix.python-version }}
+                    # FS_84_11_73_28: supported python versions:
+                    python-version: 3.13
 
             -   run: "python -c \"import sys; print(sys.version);\""
 
@@ -36,5 +24,8 @@ jobs:
             -   run: "${{ github.workspace }}/cmd/wrapper.py dst_conf_env/default_env/"
 
             -   run: "${{ github.workspace }}/venv/bin/python -m unittest discover --start-directory ${{ github.workspace }}/src/test/"
+
+            -   name: ensure git has no local changes and untracked files
+                run: "test -z \"$(git status --porcelain)\""
 
             -   run: "echo job.status: ${{ job.status }}"

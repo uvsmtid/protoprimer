@@ -4,8 +4,8 @@ from unittest.mock import patch
 
 from pyfakefs.fake_filesystem_unittest import TestCase as PyfakefsTestCase
 
-from protoprimer import proto_code
-from protoprimer.proto_code import (
+from protoprimer import primer_kernel
+from protoprimer.primer_kernel import (
     Bootstrapper_state_client_conf_file_path,
     Bootstrapper_state_client_dir_path_configured,
     ConfConstPrimer,
@@ -29,10 +29,10 @@ class ThisTestClass(PyfakefsTestCase):
         )
 
     @patch(
-        f"{proto_code.__name__}.{Bootstrapper_state_client_dir_path_configured.__name__}._bootstrap_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_dir_path_configured.__name__}._bootstrap_once"
     )
     @patch(
-        f"{proto_code.__name__}.{Bootstrapper_state_client_conf_file_path.__name__}._bootstrap_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_path.__name__}._bootstrap_once"
     )
     def test_state_client_conf_file_path_exists(
         self,
@@ -63,10 +63,10 @@ class ThisTestClass(PyfakefsTestCase):
         # no exception happens
 
     @patch(
-        f"{proto_code.__name__}.{Bootstrapper_state_client_dir_path_configured.__name__}._bootstrap_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_dir_path_configured.__name__}._bootstrap_once"
     )
     @patch(
-        f"{proto_code.__name__}.{Bootstrapper_state_client_conf_file_path.__name__}._bootstrap_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_path.__name__}._bootstrap_once"
     )
     def test_state_client_conf_file_path_missing(
         self,

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import logging
 
-from proto_copy import (
+from proto_kernel import (
     AbstractCachingStateBootstrapper,
     EnvContext,
     EnvState,
