@@ -12,7 +12,7 @@ from protoprimer.primer_kernel import (
     EnvContext,
     EnvState,
 )
-from test_support import assert_test_module_name_embeds_enum_item_name
+from test_support import assert_test_module_name_embeds_str
 
 
 # noinspection PyPep8Naming
@@ -24,9 +24,7 @@ class ThisTestClass(PyfakefsTestCase):
 
     # noinspection PyMethodMayBeStatic
     def test_relationship(self):
-        assert_test_module_name_embeds_enum_item_name(
-            EnvState.state_client_conf_file_data
-        )
+        assert_test_module_name_embeds_str(EnvState.state_client_conf_file_data.name)
 
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_client_dir_path_configured.__name__}._bootstrap_once"
@@ -57,7 +55,7 @@ class ThisTestClass(PyfakefsTestCase):
 
         # when:
         self.assertTrue(os.path.isfile(state_client_conf_file_path))
-        self.env_ctx.bootstrap_state(EnvState.state_client_conf_file_data)
+        self.env_ctx.bootstrap_state(EnvState.state_client_conf_file_data.name)
 
         # then:
         # no exception happens
@@ -87,7 +85,7 @@ class ThisTestClass(PyfakefsTestCase):
 
         # when:
         self.assertFalse(os.path.isfile(state_client_conf_file_path))
-        self.env_ctx.bootstrap_state(EnvState.state_client_conf_file_data)
+        self.env_ctx.bootstrap_state(EnvState.state_client_conf_file_data.name)
 
         # then:
         # file created:

@@ -22,7 +22,7 @@ from protoprimer.primer_kernel import (
     PythonExecutable,
     read_text_file,
 )
-from test_support import assert_test_module_name_embeds_enum_item_name
+from test_support import assert_test_module_name_embeds_str
 
 
 # noinspection PyPep8Naming
@@ -34,9 +34,7 @@ class ThisTestClass(PyfakefsTestCase):
 
     # noinspection PyMethodMayBeStatic
     def test_relationship(self):
-        assert_test_module_name_embeds_enum_item_name(
-            EnvState.state_proto_kernel_updated
-        )
+        assert_test_module_name_embeds_str(EnvState.state_proto_kernel_updated.name)
 
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_proto_kernel_dir_path.__name__}._bootstrap_once"
@@ -101,7 +99,7 @@ class ThisTestClass(PyfakefsTestCase):
         self.fs.create_file(os.path.join(mock_client_dir, "src", "setup.py"))
 
         # when:
-        self.env_ctx.bootstrap_state(EnvState.state_proto_kernel_updated)
+        self.env_ctx.bootstrap_state(EnvState.state_proto_kernel_updated.name)
 
         # then:
         mock_install_editable_package.assert_called_once_with(

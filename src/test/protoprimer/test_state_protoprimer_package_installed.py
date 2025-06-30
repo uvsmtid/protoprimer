@@ -11,7 +11,7 @@ from protoprimer.primer_kernel import (
     EnvState,
     PythonExecutable,
 )
-from test_support import assert_test_module_name_embeds_enum_item_name
+from test_support import assert_test_module_name_embeds_str
 
 
 # noinspection PyPep8Naming
@@ -23,8 +23,8 @@ class ThisTestClass(PyfakefsTestCase):
 
     # noinspection PyMethodMayBeStatic
     def test_relationship(self):
-        assert_test_module_name_embeds_enum_item_name(
-            EnvState.state_protoprimer_package_installed
+        assert_test_module_name_embeds_str(
+            EnvState.state_protoprimer_package_installed.name
         )
 
     @patch(
@@ -55,7 +55,7 @@ class ThisTestClass(PyfakefsTestCase):
         self.fs.create_file(os.path.join(mock_client_dir, "src", "setup.py"))
 
         # when:
-        self.env_ctx.bootstrap_state(EnvState.state_protoprimer_package_installed)
+        self.env_ctx.bootstrap_state(EnvState.state_protoprimer_package_installed.name)
 
         # then:
         mock_install_editable_package.assert_called_once_with(

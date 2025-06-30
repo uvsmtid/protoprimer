@@ -9,7 +9,7 @@ from protoprimer.primer_kernel import (
     EnvContext,
     EnvState,
 )
-from test_support import assert_test_module_name_embeds_enum_item_name
+from test_support import assert_test_module_name_embeds_str
 
 
 # noinspection PyPep8Naming
@@ -21,8 +21,8 @@ class ThisTestClass(PyfakefsTestCase):
 
     # noinspection PyMethodMayBeStatic
     def test_relationship(self):
-        assert_test_module_name_embeds_enum_item_name(
-            EnvState.state_target_dst_dir_path_verified
+        assert_test_module_name_embeds_str(
+            EnvState.state_target_dst_dir_path_verified.name
         )
 
     @patch(
@@ -39,7 +39,7 @@ class ThisTestClass(PyfakefsTestCase):
         )
 
         # when:
-        self.env_ctx.bootstrap_state(EnvState.state_target_dst_dir_path_verified)
+        self.env_ctx.bootstrap_state(EnvState.state_target_dst_dir_path_verified.name)
 
         # then:
         # no exception happens
@@ -58,7 +58,9 @@ class ThisTestClass(PyfakefsTestCase):
 
         # when:
         with self.assertRaises(AssertionError) as ctx:
-            self.env_ctx.bootstrap_state(EnvState.state_target_dst_dir_path_verified)
+            self.env_ctx.bootstrap_state(
+                EnvState.state_target_dst_dir_path_verified.name
+            )
 
         # then:
         self.assertIn("must not be absolute", str(ctx.exception))
@@ -77,7 +79,9 @@ class ThisTestClass(PyfakefsTestCase):
 
         # when:
         with self.assertRaises(AssertionError) as ctx:
-            self.env_ctx.bootstrap_state(EnvState.state_target_dst_dir_path_verified)
+            self.env_ctx.bootstrap_state(
+                EnvState.state_target_dst_dir_path_verified.name
+            )
 
         # then:
         self.assertIn("must not contain `..`", str(ctx.exception))
@@ -97,7 +101,9 @@ class ThisTestClass(PyfakefsTestCase):
 
         # when:
         with self.assertRaises(AssertionError) as ctx:
-            self.env_ctx.bootstrap_state(EnvState.state_target_dst_dir_path_verified)
+            self.env_ctx.bootstrap_state(
+                EnvState.state_target_dst_dir_path_verified.name
+            )
 
         # then:
         self.assertIn("must lead to a directory", str(ctx.exception))
@@ -116,7 +122,9 @@ class ThisTestClass(PyfakefsTestCase):
 
         # when:
         with self.assertRaises(AssertionError) as ctx:
-            self.env_ctx.bootstrap_state(EnvState.state_target_dst_dir_path_verified)
+            self.env_ctx.bootstrap_state(
+                EnvState.state_target_dst_dir_path_verified.name
+            )
 
         # then:
         self.assertIn("must lead to a directory", str(ctx.exception))
@@ -136,7 +144,7 @@ class ThisTestClass(PyfakefsTestCase):
         )
 
         # when:
-        self.env_ctx.bootstrap_state(EnvState.state_target_dst_dir_path_verified)
+        self.env_ctx.bootstrap_state(EnvState.state_target_dst_dir_path_verified.name)
 
         # then:
         # no exception happens

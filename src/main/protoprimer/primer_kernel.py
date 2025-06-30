@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: MIT
-# Copyright (c) 2025 uvsmtid@gmail.com
+# Copyright (c) 2025 Alexey Pakseykin
+# See: https://github.com/uvsmtid/protoprimer
 """
 
 NOTE: The script must be run with Python 3.
       Ensure that `python3` is in `PATH` for shebang to work.
       Alternatively, run under specific `python` interpreter.
-
-TODO: TODO_11_66_62_70: python_bootstrap: this is an experimental alternative to `bootstrap_env.bash`.
 
 See more:
 *   FS_28_84_41_40: flexible bootstrap
@@ -36,7 +35,7 @@ import venv
 
 # Implements this (using the single script directly without a separate `_version.py` file):
 # https://stackoverflow.com/a/7071358/441652
-__version__ = "0.0.0"
+__version__ = "0.0.1"
 
 from typing import (
     Any,
@@ -59,8 +58,16 @@ def main(configure_env_context=None):
         env_ctx = configure_env_context()
 
     try:
+        # TODO: make it one of the bootstrap steps?
+        env_ctx.configure_logger()
+
         env_ctx.run_stages()
         atexit.register(lambda: env_ctx.report_success_status(True))
+    except SystemExit as sys_exit:
+        if sys_exit.code == 0:
+            atexit.register(lambda: env_ctx.report_success_status(True))
+        else:
+            atexit.register(lambda: env_ctx.report_success_status(False))
     except:
         atexit.register(lambda: env_ctx.report_success_status(False))
         raise
@@ -82,18 +89,18 @@ def ensure_min_python_version():
 
 def init_arg_parser():
 
-    def str2bool(v):
-        if isinstance(v, bool):
-            return v
-        if v.lower() in ("yes", "true", "t", "y", "1"):
-            return True
-        elif v.lower() in ("no", "false", "f", "n", "0"):
-            return False
-        else:
-            raise argparse.ArgumentTypeError("Boolean value expected.")
-
     arg_parser = argparse.ArgumentParser(
-        description="Bootstraps the environment in current directory as `client_dir` `@/`."
+        description="Bootstraps the environment in current directory as `client_dir` `@/`.",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+    )
+
+    arg_parser.add_argument(
+        # TODO: put in ArgConst:
+        "--context_phase",
+        type=str,
+        choices=[context_phase.name for context_phase in ContextPhase],
+        default=ContextPhase.proto_primer.name,
+        help=f"Select `{ContextPhase.__name__}`.",
     )
     arg_parser.add_argument(
         "-s",
@@ -120,26 +127,6 @@ def init_arg_parser():
         dest="log_level_verbose",
         default=0,
         help="Log debug messages.",
-    )
-    # TODO: this should be replace-able by `PythonExecutable`:
-    arg_parser.add_argument(
-        ArgConst.arg_recursion_flag,
-        type=str2bool,
-        nargs="?",
-        const=False,
-        default=False,
-        help=f"Indicate recursion to prevent infinite recursion (default: {False}).",
-    )
-    # TODO: instead of separate arg, a special target `state_name` can be used:
-    arg_parser.add_argument(
-        # TODO: put in ArgConst:
-        # TODO: This should be changed for Python (vs Bash) to only ensure `venv` is activate-able.
-        "--activate_venv_only_flag",
-        type=str2bool,
-        nargs="?",
-        const=False,
-        default=False,
-        help=f"Run only until `venv` is activated and exit (default: {False}).",
     )
     arg_parser.add_argument(
         # TODO: put in ArgConst:
@@ -295,6 +282,20 @@ def install_editable_package(
     )
 
 
+class ContextPhase(enum.Enum):
+    # TODO: select final name: *Phase *Type?
+
+    # TODO: select final names:
+    #       proto vs neo
+    #       pre_venv vs post_venv
+    #       immature vs mature
+    #       primitive vs evolved
+
+    proto_primer = enum.auto()
+
+    client_primer = enum.auto()
+
+
 class RunMode(enum.Enum):
     """
     Various modes the script can be run in.
@@ -376,36 +377,46 @@ class PythonExecutable(enum.IntEnum):
     # `python` executable has not been categorized yet:
     py_exec_unknown = -1
 
+    # To start `proto_kernel` by any `python`:
     py_exec_arbitrary = 1
 
+    # To run `python` of specific version (to create `venv`):
     py_exec_required = 2
 
+    # To use `venv` (to install packages):
     py_exec_venv = 3
 
+    # To make the latest packages effective:
     py_exec_updated_protoprimer_package = 4
 
-    py_exec_updated_client_package = 5
+    # To make updated `proto_kernel` effective:
+    py_exec_updated_proto_kernel_code = 5
+
+    # TODO: make "proto" clone of client extension effective:
+    py_exec_updated_client_package = 6
+
 
 class AbstractStateBootstrapper(Generic[StateValueType]):
 
     def __init__(
         self,
         env_ctx: EnvContext,
-        state_parents: list[EnvState],
-        env_state: EnvState,
+        state_parents: list[str],
+        env_state: str,
     ):
-        self.env_ctx = env_ctx
-        self.env_state = env_state
+        self.env_ctx: EnvContext = env_ctx
+        self.env_state: str = env_state
 
         # TODO: Actually bootstrap the additional states
         #       (beyond what is bootstrapped by code):
         # The states which will be bootstrapped:
         # `state_parents` >= `state_parents`
-        self.state_parents: list[EnvState] = state_parents
+        self.state_parents: list[str] = state_parents
 
         # Embed `EnvState` name into the class name:
-        assert self.env_state.name in self.__class__.__name__
+        assert self.env_state in self.__class__.__name__
 
+        state_parent: str
         for state_parent in self.state_parents:
             self.env_ctx.add_dependency_edge(
                 state_parent,
@@ -420,18 +431,18 @@ class AbstractStateBootstrapper(Generic[StateValueType]):
 
     def get_env_state(
         self,
-    ) -> EnvState:
+    ) -> str:
         return self.env_state
 
     def set_state_parents(
         self,
-        state_parents: list[EnvState],
+        state_parents: list[str],
     ):
         self.state_parents = state_parents
 
     def get_state_parents(
         self,
-    ) -> list[EnvState]:
+    ) -> list[str]:
         return self.state_parents
 
     def bootstrap_state(
@@ -456,8 +467,8 @@ class AbstractCachingStateBootstrapper(AbstractStateBootstrapper[StateValueType]
     def __init__(
         self,
         env_ctx: EnvContext,
-        state_parents: list[EnvState],
-        env_state: EnvState,
+        state_parents: list[str],
+        env_state: str,
     ):
         super().__init__(
             env_ctx=env_ctx,
@@ -492,7 +503,7 @@ class Bootstrapper_state_default_log_level(AbstractCachingStateBootstrapper[int]
         super().__init__(
             env_ctx=env_ctx,
             state_parents=[],
-            env_state=EnvState.state_default_log_level,
+            env_state=EnvState.state_default_log_level.name,
         )
 
     def _bootstrap_once(
@@ -513,7 +524,7 @@ class Bootstrapper_state_parsed_args(
         super().__init__(
             env_ctx=env_ctx,
             state_parents=[],
-            env_state=EnvState.state_parsed_args,
+            env_state=EnvState.state_parsed_args.name,
         )
 
     def _bootstrap_once(
@@ -535,16 +546,16 @@ class Bootstrapper_state_py_exec_specified(
         super().__init__(
             env_ctx=env_ctx,
             state_parents=[
-                EnvState.state_parsed_args,
+                EnvState.state_parsed_args.name,
             ],
-            env_state=EnvState.state_py_exec_specified,
+            env_state=EnvState.state_py_exec_specified.name,
         )
 
     def _bootstrap_once(
         self,
     ) -> StateValueType:
         return PythonExecutable[
-            self.env_ctx.bootstrap_state(EnvState.state_parsed_args).py_exec
+            self.env_ctx.bootstrap_state(EnvState.state_parsed_args.name).py_exec
         ]
 
 
@@ -557,21 +568,31 @@ class Bootstrapper_state_proto_kernel_dir_path(AbstractCachingStateBootstrapper[
     ):
         super().__init__(
             env_ctx=env_ctx,
-            state_parents=[],
-            env_state=EnvState.state_proto_kernel_dir_path,
+            state_parents=[
+                EnvState.state_py_exec_specified.name,
+            ],
+            env_state=EnvState.state_proto_kernel_dir_path.name,
         )
 
     def _bootstrap_once(
         self,
     ) -> StateValueType:
-        proto_kernel_script_path = os.path.abspath(__file__)
-        assert ConfConstGeneral.default_proto_kernel_module in proto_kernel_script_path
-        proto_kernel_dir_path = os.path.dirname(proto_kernel_script_path)
+
+        state_py_exec_specified: PythonExecutable = self.env_ctx.bootstrap_state(
+            EnvState.state_py_exec_specified.name
+        )
+        main_script_file_abs_path = os.path.abspath(sys.argv[0])
+        # Assuming main script and `proto_kernel` are in the same directory:
+        proto_kernel_dir_path = os.path.dirname(main_script_file_abs_path)
+        if state_py_exec_specified == PythonExecutable.py_exec_unknown:
+            logger.info(f"main_script_file_abs_path: {main_script_file_abs_path}")
         return proto_kernel_dir_path
 
 
 # noinspection PyPep8Naming
-class Bootstrapper_state_script_config_file_path(AbstractCachingStateBootstrapper[str]):
+class Bootstrapper_state_proto_kernel_config_file_path(
+    AbstractCachingStateBootstrapper[str]
+):
 
     def __init__(
         self,
@@ -580,19 +601,19 @@ class Bootstrapper_state_script_config_file_path(AbstractCachingStateBootstrappe
         super().__init__(
             env_ctx=env_ctx,
             state_parents=[
-                EnvState.state_proto_kernel_dir_path,
+                EnvState.state_proto_kernel_dir_path.name,
             ],
-            env_state=EnvState.state_script_config_file_path,
+            env_state=EnvState.state_proto_kernel_config_file_path.name,
         )
 
     def _bootstrap_once(
         self,
     ) -> StateValueType:
-        state_script_dir_path = self.env_ctx.bootstrap_state(
-            EnvState.state_proto_kernel_dir_path
+        state_proto_kernel_dir_path = self.env_ctx.bootstrap_state(
+            EnvState.state_proto_kernel_dir_path.name
         )
         return os.path.join(
-            state_script_dir_path,
+            state_proto_kernel_dir_path,
             ConfConstInput.default_file_basename_conf_primer,
         )
 
@@ -609,10 +630,10 @@ class Bootstrapper_state_client_dir_path_specified(
         super().__init__(
             env_ctx=env_ctx,
             state_parents=[
-                EnvState.state_parsed_args,
-                EnvState.state_script_config_file_path,
+                EnvState.state_parsed_args.name,
+                EnvState.state_proto_kernel_config_file_path.name,
             ],
-            env_state=EnvState.state_client_dir_path_specified,
+            env_state=EnvState.state_client_dir_path_specified.name,
         )
 
     def _bootstrap_once(
@@ -621,17 +642,17 @@ class Bootstrapper_state_client_dir_path_specified(
 
         # TODO: access by declared name (string constant):
         state_client_dir_path_specified = self.env_ctx.bootstrap_state(
-            EnvState.state_parsed_args
+            EnvState.state_parsed_args.name
         ).client_dir_path
 
-        state_script_config_file_path = self.env_ctx.bootstrap_state(
-            EnvState.state_script_config_file_path
+        state_proto_kernel_config_file_path = self.env_ctx.bootstrap_state(
+            EnvState.state_proto_kernel_config_file_path.name
         )
 
-        if not os.path.exists(state_script_config_file_path):
+        if not os.path.exists(state_proto_kernel_config_file_path):
             if state_client_dir_path_specified is None:
                 raise AssertionError(
-                    f"Unable to bootstrap [{EnvState.state_client_dir_path_specified.name}]: file [{state_script_config_file_path}] does not exists and [{ArgConst.arg_client_dir_path}] is not specified."
+                    f"Unable to bootstrap [{EnvState.state_client_dir_path_specified.name}]: file [{state_proto_kernel_config_file_path}] does not exists and [{ArgConst.arg_client_dir_path}] is not specified."
                 )
         return state_client_dir_path_specified
 
@@ -648,42 +669,42 @@ class Bootstrapper_state_script_config_file_data(
         super().__init__(
             env_ctx=env_ctx,
             state_parents=[
-                EnvState.state_script_config_file_path,
-                EnvState.state_proto_kernel_dir_path,
-                EnvState.state_client_dir_path_specified,
+                EnvState.state_proto_kernel_config_file_path.name,
+                EnvState.state_proto_kernel_dir_path.name,
+                EnvState.state_client_dir_path_specified.name,
             ],
-            env_state=EnvState.state_script_config_file_data,
+            env_state=EnvState.state_script_config_file_data.name,
         )
 
     def _bootstrap_once(
         self,
     ) -> StateValueType:
-        state_script_config_file_path = self.env_ctx.bootstrap_state(
-            EnvState.state_script_config_file_path
+        state_proto_kernel_config_file_path = self.env_ctx.bootstrap_state(
+            EnvState.state_proto_kernel_config_file_path.name
         )
 
         file_data: dict
-        if os.path.exists(state_script_config_file_path):
-            file_data = read_json_file(state_script_config_file_path)
+        if os.path.exists(state_proto_kernel_config_file_path):
+            file_data = read_json_file(state_proto_kernel_config_file_path)
         else:
-            state_script_dir_path = self.env_ctx.bootstrap_state(
-                EnvState.state_proto_kernel_dir_path
+            state_proto_kernel_dir_path = self.env_ctx.bootstrap_state(
+                EnvState.state_proto_kernel_dir_path.name
             )
             state_client_dir_path_specified = self.env_ctx.bootstrap_state(
-                EnvState.state_client_dir_path_specified
+                EnvState.state_client_dir_path_specified.name
             )
             assert state_client_dir_path_specified is not None
 
             # Generate file data when missing (first time):
             file_data = {
-                # Compute value of relative path:
+                # Compute value of the relative path:
                 ConfConstPrimer.field_dir_rel_path_root_client: os.path.relpath(
                     state_client_dir_path_specified,
-                    state_script_dir_path,
+                    state_proto_kernel_dir_path,
                 ),
                 ConfConstPrimer.field_file_rel_path_conf_client: ConfConstPrimer.default_file_rel_path_conf_client,
             }
-            write_json_file(state_script_config_file_path, file_data)
+            write_json_file(state_proto_kernel_config_file_path, file_data)
         return file_data
 
 
@@ -699,29 +720,29 @@ class Bootstrapper_state_client_dir_path_configured(
         super().__init__(
             env_ctx=env_ctx,
             state_parents=[
-                EnvState.state_script_config_file_data,
-                EnvState.state_proto_kernel_dir_path,
+                EnvState.state_script_config_file_data.name,
+                EnvState.state_proto_kernel_dir_path.name,
             ],
-            env_state=EnvState.state_client_dir_path_configured,
+            env_state=EnvState.state_client_dir_path_configured.name,
         )
 
     def _bootstrap_once(
         self,
     ) -> StateValueType:
         state_script_config_file_data = self.env_ctx.bootstrap_state(
-            EnvState.state_script_config_file_data
+            EnvState.state_script_config_file_data.name
         )
 
         field_client_dir_rel_path = state_script_config_file_data[
             ConfConstPrimer.field_dir_rel_path_root_client
         ]
 
-        state_script_dir_path = self.env_ctx.bootstrap_state(
-            EnvState.state_proto_kernel_dir_path
+        state_proto_kernel_dir_path = self.env_ctx.bootstrap_state(
+            EnvState.state_proto_kernel_dir_path.name
         )
 
         state_client_dir_path_configured = os.path.join(
-            state_script_dir_path,
+            state_proto_kernel_dir_path,
             field_client_dir_rel_path,
         )
 
@@ -738,9 +759,9 @@ class Bootstrapper_state_target_dst_dir_path(AbstractCachingStateBootstrapper[st
         super().__init__(
             env_ctx=env_ctx,
             state_parents=[
-                EnvState.state_parsed_args,
+                EnvState.state_parsed_args.name,
             ],
-            env_state=EnvState.state_target_dst_dir_path,
+            env_state=EnvState.state_target_dst_dir_path.name,
         )
 
     def _bootstrap_once(
@@ -748,7 +769,7 @@ class Bootstrapper_state_target_dst_dir_path(AbstractCachingStateBootstrapper[st
     ) -> StateValueType:
         # TODO: access via declared string constant for arg field:
         return self.env_ctx.bootstrap_state(
-            EnvState.state_parsed_args
+            EnvState.state_parsed_args.name
         ).target_dst_dir_path
 
 
@@ -762,20 +783,20 @@ class Bootstrapper_state_client_conf_file_path(AbstractCachingStateBootstrapper[
         super().__init__(
             env_ctx=env_ctx,
             state_parents=[
-                EnvState.state_client_dir_path_configured,
+                EnvState.state_client_dir_path_configured.name,
             ],
-            env_state=EnvState.state_client_conf_file_path,
+            env_state=EnvState.state_client_conf_file_path.name,
         )
 
     def _bootstrap_once(
         self,
     ) -> StateValueType:
         state_client_dir_path_configured = self.env_ctx.bootstrap_state(
-            EnvState.state_client_dir_path_configured
+            EnvState.state_client_dir_path_configured.name
         )
 
         state_script_config_file_data = self.env_ctx.bootstrap_state(
-            EnvState.state_script_config_file_data
+            EnvState.state_script_config_file_data.name
         )
 
         field_client_config_rel_path = state_script_config_file_data[
@@ -798,9 +819,9 @@ class Bootstrapper_state_client_conf_file_data(AbstractCachingStateBootstrapper[
         super().__init__(
             env_ctx=env_ctx,
             state_parents=[
-                EnvState.state_client_conf_file_path,
+                EnvState.state_client_conf_file_path.name,
             ],
-            env_state=EnvState.state_client_conf_file_data,
+            env_state=EnvState.state_client_conf_file_data.name,
         )
 
     def _bootstrap_once(
@@ -808,7 +829,7 @@ class Bootstrapper_state_client_conf_file_data(AbstractCachingStateBootstrapper[
     ) -> StateValueType:
 
         state_client_conf_file_path = self.env_ctx.bootstrap_state(
-            EnvState.state_client_conf_file_path
+            EnvState.state_client_conf_file_path.name
         )
         if os.path.exists(state_client_conf_file_path):
             return read_json_file(state_client_conf_file_path)
@@ -838,16 +859,18 @@ class Bootstrapper_state_env_conf_dir_path(AbstractCachingStateBootstrapper[str]
         super().__init__(
             env_ctx=env_ctx,
             state_parents=[
-                EnvState.state_client_dir_path_configured,
-                EnvState.state_client_conf_file_data,
+                EnvState.state_client_dir_path_configured.name,
+                EnvState.state_client_conf_file_data.name,
             ],
-            env_state=EnvState.state_env_conf_dir_path,
+            env_state=EnvState.state_env_conf_dir_path.name,
         )
 
     def _bootstrap_once(
         self,
     ) -> StateValueType:
-        file_data = self.env_ctx.bootstrap_state(EnvState.state_client_conf_file_data)
+        file_data = self.env_ctx.bootstrap_state(
+            EnvState.state_client_conf_file_data.name
+        )
 
         env_conf_dir_rel_path = file_data.get(
             ConfConstClient.field_dir_rel_path_conf_env_link_name,
@@ -861,7 +884,9 @@ class Bootstrapper_state_env_conf_dir_path(AbstractCachingStateBootstrapper[str]
 
         # Convert to absolute:
         state_env_conf_dir_path = os.path.join(
-            self.env_ctx.bootstrap_state(EnvState.state_client_dir_path_configured),
+            self.env_ctx.bootstrap_state(
+                EnvState.state_client_dir_path_configured.name
+            ),
             env_conf_dir_rel_path,
         )
 
@@ -880,9 +905,9 @@ class Bootstrapper_state_target_dst_dir_path_verified(
         super().__init__(
             env_ctx=env_ctx,
             state_parents=[
-                EnvState.state_target_dst_dir_path,
+                EnvState.state_target_dst_dir_path.name,
             ],
-            env_state=EnvState.state_target_dst_dir_path_verified,
+            env_state=EnvState.state_target_dst_dir_path_verified.name,
         )
 
     def _bootstrap_once(
@@ -897,7 +922,7 @@ class Bootstrapper_state_target_dst_dir_path_verified(
         """
 
         state_target_dst_dir_path = self.env_ctx.bootstrap_state(
-            EnvState.state_target_dst_dir_path
+            EnvState.state_target_dst_dir_path.name
         )
         if os.path.isabs(state_target_dst_dir_path):
             raise AssertionError(
@@ -927,21 +952,21 @@ class Bootstrapper_state_env_conf_dir_path_verified(
         super().__init__(
             env_ctx=env_ctx,
             state_parents=[
-                EnvState.state_target_dst_dir_path,
-                EnvState.state_target_dst_dir_path_verified,
-                EnvState.state_env_conf_dir_path,
+                EnvState.state_target_dst_dir_path.name,
+                EnvState.state_target_dst_dir_path_verified.name,
+                EnvState.state_env_conf_dir_path.name,
             ],
-            env_state=EnvState.state_env_conf_dir_path_verified,
+            env_state=EnvState.state_env_conf_dir_path_verified.name,
         )
 
     def _bootstrap_once(
         self,
     ) -> StateValueType:
         state_env_conf_dir_path = self.env_ctx.bootstrap_state(
-            EnvState.state_env_conf_dir_path
+            EnvState.state_env_conf_dir_path.name
         )
         state_target_dst_dir_path = self.env_ctx.bootstrap_state(
-            EnvState.state_target_dst_dir_path
+            EnvState.state_target_dst_dir_path.name
         )
         if os.path.exists(state_env_conf_dir_path):
             if os.path.islink(state_env_conf_dir_path):
@@ -973,7 +998,7 @@ class Bootstrapper_state_env_conf_dir_path_verified(
                 )
             else:
                 state_target_dst_dir_path_verified = self.env_ctx.bootstrap_state(
-                    EnvState.state_target_dst_dir_path_verified
+                    EnvState.state_target_dst_dir_path_verified.name
                 )
                 assert state_target_dst_dir_path_verified
 
@@ -995,23 +1020,23 @@ class Bootstrapper_state_env_conf_file_path(AbstractCachingStateBootstrapper[str
         super().__init__(
             env_ctx=env_ctx,
             state_parents=[
-                EnvState.state_client_dir_path_configured,
-                EnvState.state_env_conf_dir_path,
-                EnvState.state_env_conf_dir_path_verified,
+                EnvState.state_client_dir_path_configured.name,
+                EnvState.state_env_conf_dir_path.name,
+                EnvState.state_env_conf_dir_path_verified.name,
             ],
-            env_state=EnvState.state_env_conf_file_path,
+            env_state=EnvState.state_env_conf_file_path.name,
         )
 
     def _bootstrap_once(
         self,
     ) -> StateValueType:
         state_env_conf_dir_path_verified = self.env_ctx.bootstrap_state(
-            EnvState.state_env_conf_dir_path_verified
+            EnvState.state_env_conf_dir_path_verified.name
         )
         assert state_env_conf_dir_path_verified
 
         state_client_dir_path_configured = self.env_ctx.bootstrap_state(
-            EnvState.state_client_dir_path_configured
+            EnvState.state_client_dir_path_configured.name
         )
         state_env_conf_file_path = os.path.join(
             state_client_dir_path_configured,
@@ -1020,7 +1045,7 @@ class Bootstrapper_state_env_conf_file_path(AbstractCachingStateBootstrapper[str
             ConfConstClient.default_file_basename_conf_env,
         )
         state_env_conf_dir_path = self.env_ctx.bootstrap_state(
-            EnvState.state_env_conf_dir_path
+            EnvState.state_env_conf_dir_path.name
         )
         # TODO: Ensure the path is under with proper error message:
         assert is_sub_path(
@@ -1040,16 +1065,16 @@ class Bootstrapper_state_env_conf_file_data(AbstractCachingStateBootstrapper[dic
         super().__init__(
             env_ctx=env_ctx,
             state_parents=[
-                EnvState.state_env_conf_file_path,
+                EnvState.state_env_conf_file_path.name,
             ],
-            env_state=EnvState.state_env_conf_file_data,
+            env_state=EnvState.state_env_conf_file_data.name,
         )
 
     def _bootstrap_once(
         self,
     ) -> StateValueType:
         state_env_conf_file_path = self.env_ctx.bootstrap_state(
-            EnvState.state_env_conf_file_path
+            EnvState.state_env_conf_file_path.name
         )
         file_data: dict
         if os.path.exists(state_env_conf_file_path):
@@ -1079,15 +1104,15 @@ class Bootstrapper_state_env_path_to_python(AbstractCachingStateBootstrapper[str
         super().__init__(
             env_ctx=env_ctx,
             state_parents=[
-                EnvState.state_env_conf_file_data,
+                EnvState.state_env_conf_file_data.name,
             ],
-            env_state=EnvState.state_env_path_to_python,
+            env_state=EnvState.state_env_path_to_python.name,
         )
 
     def _bootstrap_once(
         self,
     ) -> StateValueType:
-        file_data = self.env_ctx.bootstrap_state(EnvState.state_env_conf_file_data)
+        file_data = self.env_ctx.bootstrap_state(EnvState.state_env_conf_file_data.name)
 
         state_env_path_to_python = file_data.get(
             ConfConstEnv.field_file_abs_path_python,
@@ -1097,7 +1122,9 @@ class Bootstrapper_state_env_path_to_python(AbstractCachingStateBootstrapper[str
 
         if not os.path.isabs(state_env_path_to_python):
             state_env_path_to_python = os.path.join(
-                self.env_ctx.bootstrap_state(EnvState.state_client_dir_path_configured),
+                self.env_ctx.bootstrap_state(
+                    EnvState.state_client_dir_path_configured.name
+                ),
                 state_env_path_to_python,
             )
 
@@ -1114,15 +1141,15 @@ class Bootstrapper_state_env_path_to_venv(AbstractCachingStateBootstrapper[str])
         super().__init__(
             env_ctx=env_ctx,
             state_parents=[
-                EnvState.state_env_conf_file_data,
+                EnvState.state_env_conf_file_data.name,
             ],
-            env_state=EnvState.state_env_path_to_venv,
+            env_state=EnvState.state_env_path_to_venv.name,
         )
 
     def _bootstrap_once(
         self,
     ) -> StateValueType:
-        file_data = self.env_ctx.bootstrap_state(EnvState.state_env_conf_file_data)
+        file_data = self.env_ctx.bootstrap_state(EnvState.state_env_conf_file_data.name)
 
         state_env_path_to_venv = file_data.get(
             ConfConstEnv.field_dir_rel_path_venv,
@@ -1132,7 +1159,9 @@ class Bootstrapper_state_env_path_to_venv(AbstractCachingStateBootstrapper[str])
 
         if not os.path.isabs(state_env_path_to_venv):
             state_env_path_to_venv = os.path.join(
-                self.env_ctx.bootstrap_state(EnvState.state_client_dir_path_configured),
+                self.env_ctx.bootstrap_state(
+                    EnvState.state_client_dir_path_configured.name
+                ),
                 state_env_path_to_venv,
             )
 
@@ -1151,12 +1180,12 @@ class Bootstrapper_state_py_exec_selected(
         super().__init__(
             env_ctx=env_ctx,
             state_parents=[
-                EnvState.state_py_exec_specified,
-                EnvState.state_env_path_to_python,
-                EnvState.state_env_path_to_venv,
-                EnvState.state_env_conf_file_path,
+                EnvState.state_py_exec_specified.name,
+                EnvState.state_env_path_to_python.name,
+                EnvState.state_env_path_to_venv.name,
+                EnvState.state_env_conf_file_path.name,
             ],
-            env_state=EnvState.state_py_exec_selected,
+            env_state=EnvState.state_py_exec_selected.name,
         )
 
     def _bootstrap_once(
@@ -1170,21 +1199,21 @@ class Bootstrapper_state_py_exec_selected(
         """
 
         state_py_exec_specified: PythonExecutable = self.env_ctx.bootstrap_state(
-            EnvState.state_py_exec_specified
+            EnvState.state_py_exec_specified.name
         )
 
         state_env_path_to_python = self.env_ctx.bootstrap_state(
-            EnvState.state_env_path_to_python
+            EnvState.state_env_path_to_python.name
         )
         state_env_path_to_venv = self.env_ctx.bootstrap_state(
-            EnvState.state_env_path_to_venv
+            EnvState.state_env_path_to_venv.name
         )
 
         # TODO: Make it separate validation state
         #       (not a dependency of this because, technically, we do not know where `EnvState.state_env_path_to_python` and `EnvState.state_env_path_to_venv` came from):
         if is_sub_path(state_env_path_to_python, state_env_path_to_venv):
             state_env_conf_file_path = self.env_ctx.bootstrap_state(
-                EnvState.state_env_conf_file_path
+                EnvState.state_env_conf_file_path.name
             )
             raise AssertionError(
                 f"The [{state_env_path_to_python}] is a sub-path of the [{state_env_path_to_venv}]. "
@@ -1222,7 +1251,10 @@ class Bootstrapper_state_py_exec_selected(
                 switch_to_required_python()
             else:
                 # If already under `venv` with the expected path, nothing to do.
-                assert state_py_exec_specified == PythonExecutable.py_exec_unknown or state_py_exec_specified >= PythonExecutable.py_exec_venv
+                assert (
+                    state_py_exec_specified == PythonExecutable.py_exec_unknown
+                    or state_py_exec_specified >= PythonExecutable.py_exec_venv
+                )
                 # Successfully reached end goal:
                 if state_py_exec_specified == PythonExecutable.py_exec_unknown:
                     self.env_ctx.py_exec = PythonExecutable.py_exec_venv
@@ -1232,7 +1264,10 @@ class Bootstrapper_state_py_exec_selected(
             if path_to_curr_python != state_env_path_to_python:
                 switch_to_required_python()
             else:
-                assert state_py_exec_specified == PythonExecutable.py_exec_unknown or state_py_exec_specified == PythonExecutable.py_exec_required
+                assert (
+                    state_py_exec_specified == PythonExecutable.py_exec_unknown
+                    or state_py_exec_specified == PythonExecutable.py_exec_required
+                )
                 self.env_ctx.py_exec = PythonExecutable.py_exec_required
                 if not os.path.exists(state_env_path_to_venv):
                     logger.info(f"creating `venv` [{state_env_path_to_venv}]")
@@ -1270,21 +1305,21 @@ class Bootstrapper_state_protoprimer_package_installed(
         super().__init__(
             env_ctx=env_ctx,
             state_parents=[
-                EnvState.state_py_exec_selected,
+                EnvState.state_py_exec_selected.name,
             ],
-            env_state=EnvState.state_protoprimer_package_installed,
+            env_state=EnvState.state_protoprimer_package_installed.name,
         )
 
     def _bootstrap_once(
         self,
     ) -> StateValueType:
         state_py_exec_selected: PythonExecutable = self.env_ctx.bootstrap_state(
-            EnvState.state_py_exec_selected
+            EnvState.state_py_exec_selected.name
         )
         assert state_py_exec_selected >= PythonExecutable.py_exec_venv
 
         state_client_dir_path_configured = self.env_ctx.bootstrap_state(
-            EnvState.state_client_dir_path_configured
+            EnvState.state_client_dir_path_configured.name
         )
 
         setup_py_dir = os.path.join(
@@ -1317,10 +1352,10 @@ class Bootstrapper_state_py_exec_updated_protoprimer_package_reached(
         super().__init__(
             env_ctx=env_ctx,
             state_parents=[
-                EnvState.state_py_exec_specified,
-                EnvState.state_protoprimer_package_installed,
+                EnvState.state_py_exec_specified.name,
+                EnvState.state_protoprimer_package_installed.name,
             ],
-            env_state=EnvState.state_py_exec_updated_protoprimer_package_reached,
+            env_state=EnvState.state_py_exec_updated_protoprimer_package_reached.name,
         )
 
     def _bootstrap_once(
@@ -1328,19 +1363,23 @@ class Bootstrapper_state_py_exec_updated_protoprimer_package_reached(
     ) -> StateValueType:
 
         state_py_exec_specified: PythonExecutable = self.env_ctx.bootstrap_state(
-            EnvState.state_py_exec_specified
+            EnvState.state_py_exec_specified.name
         )
 
         state_protoprimer_package_installed: bool = self.env_ctx.bootstrap_state(
-            EnvState.state_protoprimer_package_installed
+            EnvState.state_protoprimer_package_installed.name
         )
         assert state_protoprimer_package_installed
 
         venv_path_to_python = get_path_to_curr_python()
 
-        if state_py_exec_specified.value < PythonExecutable.py_exec_updated_protoprimer_package.value:
+        if (
+            state_py_exec_specified.value
+            < PythonExecutable.py_exec_updated_protoprimer_package.value
+        ):
+            self.env_ctx.py_exec = PythonExecutable.py_exec_updated_protoprimer_package
             logger.info(
-                f"restarting current `python` interpreter [{venv_path_to_python}] to invalidate cached paths"
+                f"restarting current `python` interpreter [{venv_path_to_python}] to make [{EnvState.state_protoprimer_package_installed.name}] effective"
             )
             os.execv(
                 venv_path_to_python,
@@ -1351,18 +1390,15 @@ class Bootstrapper_state_py_exec_updated_protoprimer_package_reached(
                     PythonExecutable.py_exec_updated_protoprimer_package.name,
                 ],
             )
-            # noinspection PyUnreachableCode
-            self.env_ctx.py_exec = PythonExecutable.py_exec_updated_protoprimer_package
         else:
             # Successfully reached end goal:
             self.env_ctx.py_exec = state_py_exec_specified
 
         return self.env_ctx.py_exec
 
+
 # noinspection PyPep8Naming
-class Bootstrapper_state_proto_kernel_updated(
-    AbstractCachingStateBootstrapper[bool]
-):
+class Bootstrapper_state_proto_kernel_updated(AbstractCachingStateBootstrapper[bool]):
 
     def __init__(
         self,
@@ -1371,27 +1407,34 @@ class Bootstrapper_state_proto_kernel_updated(
         super().__init__(
             env_ctx=env_ctx,
             state_parents=[
-                EnvState.state_py_exec_updated_protoprimer_package_reached,
-                EnvState.state_proto_kernel_dir_path,
+                EnvState.state_py_exec_updated_protoprimer_package_reached.name,
+                EnvState.state_proto_kernel_dir_path.name,
             ],
-            env_state=EnvState.state_proto_kernel_updated,
+            env_state=EnvState.state_proto_kernel_updated.name,
         )
 
     def _bootstrap_once(
         self,
     ) -> StateValueType:
-        state_py_exec_updated_protoprimer_package_reached: PythonExecutable = self.env_ctx.bootstrap_state(
-            EnvState.state_py_exec_updated_protoprimer_package_reached
+        state_py_exec_updated_protoprimer_package_reached: PythonExecutable = (
+            self.env_ctx.bootstrap_state(
+                EnvState.state_py_exec_updated_protoprimer_package_reached.name
+            )
         )
-        assert state_py_exec_updated_protoprimer_package_reached >= PythonExecutable.py_exec_updated_protoprimer_package
+        assert (
+            state_py_exec_updated_protoprimer_package_reached
+            >= PythonExecutable.py_exec_updated_protoprimer_package
+        )
 
-        state_script_dir_path = self.env_ctx.bootstrap_state(
-            EnvState.state_proto_kernel_dir_path
+        # TODO: optimize: run this logic only when `PythonExecutable.py_exec_updated_protoprimer_package`
+
+        state_proto_kernel_dir_path = self.env_ctx.bootstrap_state(
+            EnvState.state_proto_kernel_dir_path.name
         )
-        assert os.path.isabs(state_script_dir_path)
+        assert os.path.isabs(state_proto_kernel_dir_path)
 
         proto_kernel_abs_path = os.path.join(
-            state_script_dir_path,
+            state_proto_kernel_dir_path,
             # TODO: be able to configure it:
             ConfConstGeneral.default_proto_kernel_basename,
         )
@@ -1401,7 +1444,10 @@ class Bootstrapper_state_proto_kernel_updated(
         # TODO: This has to be changed for released names of the package:
         import protoprimer
 
-        generated_content = ConfConstGeneral.func_get_proto_kernel_generated_boilerplate(
+        # Use generator from immutable (source) `primer_kernel` to avoid
+        # generated code inside generated code inside generated code ...
+        # in local (target) `proto_kernel`:
+        generated_content = protoprimer.primer_kernel.ConfConstGeneral.func_get_proto_kernel_generated_boilerplate(
             protoprimer.primer_kernel
         )
 
@@ -1415,13 +1461,74 @@ class Bootstrapper_state_proto_kernel_updated(
             every_n=20,
         )
 
-        logger.debug(f"writing `primer_kernel_abs_path` [{primer_kernel_abs_path}] over `proto_kernel_abs_path` [{proto_kernel_abs_path}]")
+        logger.debug(
+            f"writing `primer_kernel_abs_path` [{primer_kernel_abs_path}] over `proto_kernel_abs_path` [{proto_kernel_abs_path}]"
+        )
         write_text_file(
             file_path=proto_kernel_abs_path,
             file_data=proto_kernel_text,
         )
 
+        # TODO: optimize: return true if content changed:
+
         return True
+
+
+# noinspection PyPep8Naming
+class Bootstrapper_state_py_exec_updated_proto_kernel_code(
+    AbstractCachingStateBootstrapper[PythonExecutable]
+):
+
+    def __init__(
+        self,
+        env_ctx: EnvContext,
+    ):
+        super().__init__(
+            env_ctx=env_ctx,
+            state_parents=[
+                EnvState.state_py_exec_specified.name,
+                EnvState.state_proto_kernel_updated.name,
+            ],
+            env_state=EnvState.state_py_exec_updated_proto_kernel_code.name,
+        )
+
+    def _bootstrap_once(
+        self,
+    ) -> StateValueType:
+
+        state_py_exec_specified: PythonExecutable = self.env_ctx.bootstrap_state(
+            EnvState.state_py_exec_specified.name
+        )
+
+        state_proto_kernel_updated: bool = self.env_ctx.bootstrap_state(
+            EnvState.state_proto_kernel_updated.name
+        )
+        assert state_proto_kernel_updated
+
+        venv_path_to_python = get_path_to_curr_python()
+
+        if (
+            state_py_exec_specified.value
+            < PythonExecutable.py_exec_updated_proto_kernel_code.value
+        ):
+            self.env_ctx.py_exec = PythonExecutable.py_exec_updated_proto_kernel_code
+            logger.info(
+                f"restarting current `python` interpreter [{venv_path_to_python}] to make [{EnvState.state_proto_kernel_updated.name}] effective"
+            )
+            os.execv(
+                venv_path_to_python,
+                [
+                    venv_path_to_python,
+                    *sys.argv,
+                    ArgConst.arg_py_exec,
+                    PythonExecutable.py_exec_updated_proto_kernel_code.name,
+                ],
+            )
+        else:
+            # Successfully reached end goal:
+            self.env_ctx.py_exec = state_py_exec_specified
+
+        return self.env_ctx.py_exec
 
 
 # noinspection PyPep8Naming
@@ -1436,26 +1543,29 @@ class Bootstrapper_state_activated_venv_shell_started(
         super().__init__(
             env_ctx=env_ctx,
             state_parents=[
-                EnvState.state_proto_kernel_updated,
+                EnvState.state_py_exec_updated_proto_kernel_code.name,
+                EnvState.state_env_path_to_venv.name,
             ],
-            env_state=EnvState.state_activated_venv_shell_started,
+            env_state=EnvState.state_activated_venv_shell_started.name,
         )
 
     def _bootstrap_once(
         self,
     ) -> StateValueType:
 
-        state_proto_kernel_updated = self.env_ctx.bootstrap_state(
-            EnvState.state_proto_kernel_updated
+        state_py_exec_updated_proto_kernel_code = self.env_ctx.bootstrap_state(
+            EnvState.state_py_exec_updated_proto_kernel_code.name
         )
 
-        assert state_proto_kernel_updated
+        assert state_py_exec_updated_proto_kernel_code
 
         # TODO: this should be the last executable here:
-        assert self.env_ctx.py_exec >= PythonExecutable.py_exec_updated_protoprimer_package
+        assert (
+            self.env_ctx.py_exec >= PythonExecutable.py_exec_updated_protoprimer_package
+        )
 
         state_env_path_to_venv = self.env_ctx.bootstrap_state(
-            EnvState.state_env_path_to_venv
+            EnvState.state_env_path_to_venv.name
         )
 
         venv_path_to_activate = os.path.join(
@@ -1482,79 +1592,98 @@ class Bootstrapper_state_activated_venv_shell_started(
         # noinspection PyUnreachableCode
         return True
 
+
 class EnvState(enum.Enum):
     """
     Configuration states to be bootstrapped during the bootstrap process.
 
-    NOTE: Only names of the enum items are supposed to be used (any value is ignored).
+    NOTE: Only `str` names of the enum items are supposed to be used (any value is ignored).
     """
 
-    state_default_log_level = Bootstrapper_state_default_log_level
+    def __init__(
+        self,
+        # Default implementation (for reference):
+        default_impl,
+    ):
+        self.default_impl = default_impl
 
-    state_parsed_args = Bootstrapper_state_parsed_args
+    state_default_log_level = (Bootstrapper_state_default_log_level,)
 
-    state_py_exec_specified = Bootstrapper_state_py_exec_specified
+    state_parsed_args = (Bootstrapper_state_parsed_args,)
 
-    state_proto_kernel_dir_path = Bootstrapper_state_proto_kernel_dir_path
+    state_py_exec_specified = (Bootstrapper_state_py_exec_specified,)
 
-    state_script_config_file_path = Bootstrapper_state_script_config_file_path
+    state_proto_kernel_dir_path = (Bootstrapper_state_proto_kernel_dir_path,)
 
-    state_client_dir_path_specified = Bootstrapper_state_client_dir_path_specified
+    state_proto_kernel_config_file_path = (
+        Bootstrapper_state_proto_kernel_config_file_path,
+    )
 
-    state_script_config_file_data = Bootstrapper_state_script_config_file_data
+    state_client_dir_path_specified = (Bootstrapper_state_client_dir_path_specified,)
 
-    state_client_dir_path_configured = Bootstrapper_state_client_dir_path_configured
+    state_script_config_file_data = (Bootstrapper_state_script_config_file_data,)
 
-    # TODO:
-    # state_cli_log_level = enum.auto()
-
-    state_client_conf_file_path = Bootstrapper_state_client_conf_file_path
-
-    state_client_conf_file_data = Bootstrapper_state_client_conf_file_data
-
-    # TODO:
-    # state_client_log_level = enum.auto()
-
-    # TODO:
-    # state_client_path_to_python = enum.auto()
+    state_client_dir_path_configured = (Bootstrapper_state_client_dir_path_configured,)
 
     # TODO:
-    # state_client_path_to_venv = enum.auto()
+    # state_cli_log_level
 
-    state_env_conf_dir_path = Bootstrapper_state_env_conf_dir_path
+    state_client_conf_file_path = (Bootstrapper_state_client_conf_file_path,)
 
-    state_target_dst_dir_path = Bootstrapper_state_target_dst_dir_path
-
-    state_target_dst_dir_path_verified = Bootstrapper_state_target_dst_dir_path_verified
-
-    state_env_conf_dir_path_verified = Bootstrapper_state_env_conf_dir_path_verified
-
-    state_env_conf_file_path = Bootstrapper_state_env_conf_file_path
-
-    state_env_conf_file_data = Bootstrapper_state_env_conf_file_data
+    state_client_conf_file_data = (Bootstrapper_state_client_conf_file_data,)
 
     # TODO:
-    # state_env_log_level = enum.auto()
+    # state_client_log_level
 
-    state_env_path_to_python = Bootstrapper_state_env_path_to_python
+    # TODO:
+    # state_client_path_to_python
 
-    state_env_path_to_venv = Bootstrapper_state_env_path_to_venv
+    # TODO:
+    # state_client_path_to_venv
+
+    state_env_conf_dir_path = (Bootstrapper_state_env_conf_dir_path,)
+
+    state_target_dst_dir_path = (Bootstrapper_state_target_dst_dir_path,)
+
+    state_target_dst_dir_path_verified = (
+        Bootstrapper_state_target_dst_dir_path_verified,
+    )
+
+    state_env_conf_dir_path_verified = (Bootstrapper_state_env_conf_dir_path_verified,)
+
+    state_env_conf_file_path = (Bootstrapper_state_env_conf_file_path,)
+
+    state_env_conf_file_data = (Bootstrapper_state_env_conf_file_data,)
+
+    # TODO:
+    # state_env_log_level
+
+    state_env_path_to_python = (Bootstrapper_state_env_path_to_python,)
+
+    state_env_path_to_venv = (Bootstrapper_state_env_path_to_venv,)
 
     # TODO: rename to `py_exec_venv_reached`:
-    state_py_exec_selected = Bootstrapper_state_py_exec_selected
+    state_py_exec_selected = (Bootstrapper_state_py_exec_selected,)
 
     # TODO: rename according to the final name:
-    state_protoprimer_package_installed = Bootstrapper_state_protoprimer_package_installed
+    state_protoprimer_package_installed = (
+        Bootstrapper_state_protoprimer_package_installed,
+    )
 
-    state_py_exec_updated_protoprimer_package_reached = Bootstrapper_state_py_exec_updated_protoprimer_package_reached
+    state_py_exec_updated_protoprimer_package_reached = (
+        Bootstrapper_state_py_exec_updated_protoprimer_package_reached,
+    )
 
     # TODO: rename according to the final name:
-    state_proto_kernel_updated = Bootstrapper_state_proto_kernel_updated
+    state_proto_kernel_updated = (Bootstrapper_state_proto_kernel_updated,)
 
-    state_activated_venv_shell_started = Bootstrapper_state_activated_venv_shell_started
+    state_py_exec_updated_proto_kernel_code = (
+        Bootstrapper_state_py_exec_updated_proto_kernel_code,
+    )
 
-    # TODO: Use string for id, and do not define it here:
-    state_custom = None
+    state_activated_venv_shell_started = (
+        Bootstrapper_state_activated_venv_shell_started,
+    )
 
 
 class TargetState:
@@ -1562,7 +1691,11 @@ class TargetState:
     Some of the key `EnvState`-s which are often used as bootstrap targets.
     """
 
-    target_full_proto_bootstrap = EnvState.state_proto_kernel_updated
+    target_full_proto_bootstrap: str = (
+        EnvState.state_py_exec_updated_proto_kernel_code.name
+    )
+
+    target_activated_venv_shell: str = EnvState.state_activated_venv_shell_started.name
 
 
 class ArgConst:
@@ -1672,8 +1805,8 @@ class EnvContext:
     def __init__(
         self,
     ):
-        self.state_bootstrappers: dict[EnvState, AbstractStateBootstrapper] = {}
-        self.dependency_edges: list[tuple[EnvState, EnvState]] = []
+        self.state_bootstrappers: dict[str, AbstractStateBootstrapper] = {}
+        self.dependency_edges: list[tuple[str, str]] = []
 
         self.py_exec: PythonExecutable = PythonExecutable.py_exec_unknown
 
@@ -1686,7 +1819,9 @@ class EnvContext:
         self.register_bootstrapper(Bootstrapper_state_parsed_args(self))
         self.register_bootstrapper(Bootstrapper_state_py_exec_specified(self))
         self.register_bootstrapper(Bootstrapper_state_proto_kernel_dir_path(self))
-        self.register_bootstrapper(Bootstrapper_state_script_config_file_path(self))
+        self.register_bootstrapper(
+            Bootstrapper_state_proto_kernel_config_file_path(self)
+        )
         self.register_bootstrapper(Bootstrapper_state_client_dir_path_specified(self))
         self.register_bootstrapper(Bootstrapper_state_script_config_file_data(self))
         self.register_bootstrapper(Bootstrapper_state_client_dir_path_configured(self))
@@ -1711,19 +1846,22 @@ class EnvContext:
         )
         self.register_bootstrapper(Bootstrapper_state_proto_kernel_updated(self))
         self.register_bootstrapper(
+            Bootstrapper_state_py_exec_updated_proto_kernel_code(self)
+        )
+        self.register_bootstrapper(
             Bootstrapper_state_activated_venv_shell_started(self)
         )
 
         self.populate_dependencies()
 
         # TODO: Find "Universal Sink":
-        self.universal_sink: EnvState = TargetState.target_full_proto_bootstrap
+        self.universal_sink: str = TargetState.target_full_proto_bootstrap
 
     def register_bootstrapper(
         self,
         state_bootstrapper: AbstractStateBootstrapper,
     ):
-        env_state: EnvState = state_bootstrapper.get_env_state()
+        env_state: str = state_bootstrapper.get_env_state()
         if env_state in self.state_bootstrappers:
             raise AssertionError(
                 f"[{AbstractStateBootstrapper.__name__}] for [{env_state}] is already registered."
@@ -1733,8 +1871,8 @@ class EnvContext:
 
     def add_dependency_edge(
         self,
-        parent_state: EnvState,
-        child_state: EnvState,
+        parent_state: str,
+        child_state: str,
     ):
         self.dependency_edges.append((parent_state, child_state))
 
@@ -1742,10 +1880,11 @@ class EnvContext:
         self,
     ):
         # Populate a temporary collection of all children per parent:
-        child_parents: dict[EnvState, list[EnvState]] = {}
+        child_parents: dict[str, list[str]] = {}
+        dependency_edge: tuple[str, str]
         for dependency_edge in self.dependency_edges:
-            parent_dependency = dependency_edge[0]
-            child_dependency = dependency_edge[1]
+            parent_dependency: str = dependency_edge[0]
+            child_dependency: str = dependency_edge[1]
             child_parents.setdefault(child_dependency, []).append(parent_dependency)
 
         # Set children per parent:
@@ -1753,12 +1892,12 @@ class EnvContext:
             state_bootstrapper: AbstractStateBootstrapper = self.state_bootstrappers[
                 child_id
             ]
-            state_parents = child_parents[child_id]
+            state_parents: list[str] = child_parents[child_id]
             state_bootstrapper.set_state_parents(state_parents)
 
     def bootstrap_state(
         self,
-        env_state: EnvState,
+        env_state: str,
     ) -> Any:
         try:
             state_bootstrapper = self.state_bootstrappers[env_state]
@@ -1781,7 +1920,9 @@ class EnvContext:
 
         self.custom_logger.addHandler(stderr_handler)
 
-        self.set_log_level(self.bootstrap_state(EnvState.state_default_log_level))
+        # TODO: Is it the way we want to do it (given that this function is called outside the bootstrap process)?
+        #       Review all other similar cases.
+        self.set_log_level(self.bootstrap_state(EnvState.state_default_log_level.name))
 
     def set_log_level(
         self,
@@ -1819,19 +1960,6 @@ class EnvContext:
                 flush=True,
             )
 
-    def load_cli_args(
-        self,
-    ):
-        parsed_args: argparse.Namespace = self.bootstrap_state(
-            EnvState.state_parsed_args
-        )
-
-        self.select_log_level_from_cli_args(parsed_args)
-
-        # TODO: Define states for these values instead:
-        self.recursion_flag = parsed_args.recursion_flag
-        self.activate_venv_only_flag = parsed_args.activate_venv_only_flag
-
     def select_log_level_from_cli_args(
         self,
         parsed_args,
@@ -1846,25 +1974,24 @@ class EnvContext:
         elif parsed_args.log_level_verbose == 1:
             self.set_log_level(logging.DEBUG)
         else:
-            self.set_log_level(self.bootstrap_state(EnvState.state_default_log_level))
+            self.set_log_level(
+                self.bootstrap_state(EnvState.state_default_log_level.name)
+            )
 
     def run_stages(
         self,
     ):
-        # TODO: hide this procedure inside `EnvContext`:
-        self.configure_logger()
-
-        self.load_cli_args()
-
         run_mode: RunMode = RunMode[
-            self.bootstrap_state(EnvState.state_parsed_args).run_mode
+            self.bootstrap_state(EnvState.state_parsed_args.name).run_mode
         ]
-        state_name: str = self.bootstrap_state(EnvState.state_parsed_args).state_name
+        state_name: str = self.bootstrap_state(
+            EnvState.state_parsed_args.name
+        ).state_name
 
         if state_name is None:
             env_state = self.universal_sink
         else:
-            env_state: EnvState = EnvState[state_name]
+            env_state: str = EnvState[state_name].name
 
         if run_mode is None:
             pass
@@ -1877,7 +2004,7 @@ class EnvContext:
 
     def do_print_dag(
         self,
-        env_state: EnvState,
+        env_state: str,
     ):
         state_bootstrapper: AbstractBootstrapperVisitor = self.state_bootstrappers[
             env_state
@@ -1887,7 +2014,7 @@ class EnvContext:
     def do_bootstrap_env(
         self,
         # TODO: use this:
-        env_state: EnvState,
+        env_state: str,
     ):
         # FS_28_84_41_40: flexible bootstrap
         # `init_venv`

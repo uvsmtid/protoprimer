@@ -1,0 +1,11 @@
+#!/usr/bin/env python3
+
+if __name__ == "__main__":
+
+    try:
+        from repo_support.cmd_install_pre_commit import custom_main as selected_main
+
+    except ImportError:
+        from proto_kernel import main as selected_main
+
+    selected_main()

@@ -1,219 +1,69 @@
 
+[![PyPI package](https://badge.fury.io/py/protoprimer.svg)](https://pypi.org/project/protoprimer)
+[![GitHub build](https://github.com/uvsmtid/protoprimer/actions/workflows/protoprimer.test.yaml/badge.svg?branch=main)](https://github.com/uvsmtid/protoprimer/actions/workflows/protoprimer.test.yaml)
+
+
 # `protoprimer`
 
 ## TL;DR
 
-The copy of self-contained `protoprimer` module hosted within the client code bootstraps the client environment:
+`protoprimer`:
+
+*   bootstraps target dev environment
+*   is a self-contained script (has no dependencies)
+*   is copied and tracked within a client repo (with self-auto-updates)
+*   provides a [SOLID][SOLID_wiki]-extensible framework to pull a specific state with all its [DAG][DAG_wiki] of dependencies
+
+## How to try it?
+
+`protoprimer` uses itself to bootstrap itself.
+
+To try, (re-)run this (any time):
 
 ```sh
-./proto_kernel.py
+./cmd/bootstrap_env
 ```
 
-## Why not ad-hoc bootstrap scripts?
+## How does it work?
 
-The combination of the following features makes such scripts rather complex:
+The bootstrap process relies on the copy of `protoprimer.primer_kernel` module saved as a self-contained script:
 
-*   automatic bootstrap of `venv` with desired `python` version
-*   support for multiple target environments
-*   support for generated config & code (to avoid boilerplate)
-*   support for value overrides: client-wide -> environment-specific -> command line arg
-*   testability
-
-Because it is a bootstrap process, all that should work from scratch or in a partially initialized environment.
-
-## What is `protoprimer`?
-
-The `protoprimer` provides a human-oriented single-file single-run configurable script to
-bootstrap the client in multiple stages with environment-specific generate-able configuration which
-eventually passes control to client-specific implementation.
-
-Its job is done when:
-(1) required `python` version can start
-(2) inside activated `vevn`
-(3) with the necessary dependencies
-(4) configured based on environment-specific conditions
-(5) and other client-specific code can take over.
-
-## Basic scenario
-
-```mermaid
-flowchart TD
-    client_conf[load client-wide config for `primer_kernel.py`]
-    env_conf[load env-specific config for `primer_kernel.py`]
-
+```sh
+./cmd/proto_kernel.py
 ```
 
-## Min dir layout
+In this case `./cmd/bootstrap_env` (a dummy proxy) relies on `./cmd/proto_kernel.py` which, in turn:
+*   gradually executes bootstrap, first, via itself (standalone), then, via `protoprimer.primer_kernel` (in `venv`)
+*   eventually passes control back to `./cmd/bootstrap_env` which triggers additional steps
 
-```
-^/                                      # repo root = script dir = client root
-│
-├─ proto_kernel.py                      # renamed copy of `protoprimer.primer_kernel`
-└─ proto_kernel.json                    # config found via default search list
-```
+`protoprimer` is done when:
+1.  required `python` version is running
+2.  `vevn` is activated
+3.  all `python` packages are installed
+4.  environment-specific configuration is effective
+5.  client-specific code can take over
 
-## Max dir layout
+## Why **not** ad-hoc bootstrap scripts instead?
 
-```
-^/                                      # repo root
-│
-├─ script_dir/
-│  ├─ local_proto_code.py               # local copy of `protoprimer.primer_kernel`
-│  ├─ boot_env.py                       # custom wrapper for ./proto_kernel.py
-│  ├─ conf_primer/
-│  │  ├─ conf_primer.primer_kernel.json #
-│  │  └─ ...
-│  └─ ...
-│
-├─ client_dir/                          # client root
-│  ├─ conf_client/
-│  │  ├─ conf_client.primer_kernel.json
-│  │  └─ ...
-│  ├─ conf_env/                         # symlink to (e.g.) ./env_dir/conf_default/
-│  │  ├─ conf_env.primer_kernel.json    # same as (e.g.) ./env_dir/conf_default/conf_env.primer_kernel.json
-│  │  └─ ...
-│  ├─ env_dir/
-│  │  ├─ conf_default/
-│  │  │  ├─ conf_env.primer_kernel.json
-│  │  │  └─ ...
-│  │  ├─ conf_special/
-│  │  │  ├─ conf_env.primer_kernel.json
-│  │  │  └─ ...
-│  │  └─ ...
-│  └─ ...
-└─ ...
-```
+This has been re-invented multiple times by everyone, but...
 
-## Script modes
+The combination of the following features makes such scripts rather complex to re-invent:
 
-*   init_env mode
+*   keep implementation sane under growing requirements
+*   support for empty or partially initialized environment
+*   support starting with any python version then switching to desired `python` version
+*   support for multiple target environments (with its environment-specific config)
+*   support for generated config and code (to avoid boilerplate)
+*   support for param overrides: client-wide → environment-specific → command line arg
+*   testability (isolated test executions with standard frameworks in IDE)
+*   ~~one-liner~~ one-"worder" (simple to use without pre-conditions): `./bootstrap`
 
-    Generate initial config files for a new client.
-
-*   boot_env mode
-
-    Bootstrap local environment for an existing client.
-
-*   check_env mode
-
-    Check the local environment.
-
-*   print_dag mode
-
-    Show DAG leading to the selected state node.
-
-## Configuration path chain
-
-*   proto dir + proto config
-
-    Their location is specified by `python` runtime.
-
-*   client dir + client config
-
-    proto config specifies their location.
-
-*   env dir + env config
-
-    client config specifies their location.
-
-## Dir categories
-
-*   `^/` repo root
-
-*   `@/` client root
-
-*   `=/` script dir
-
-## File categories
-
-Files are named in the following pattern:
-
-```
-${func_name}.${file_source}.${file_scope}.${file_format}
-```
-
-For example, it is possible to see all these co-existing:
-
-```
-path/to/client-wide/config/primer_kernel.man.client.json
-path/to/client-wide/config/primer_kernel.gen.client.json
-path/to/environment-specific/config/primer_kernel.man.env.json
-path/to/environment-specific/config/primer_kernel.gen.env.json
-```
-TODO: Do we need those `client` and `env` suffixes if the path to their containing dir differentiates them clearly?
-
-### source: manual vs generated
-
-`protoprimer` **never overwrites** files which are supposed to be changed manually.
-
-TODO: update docs: files no longer marked by `man` or `gen`:
-
-To do that, files are marked by suffix (or their containing dirs are marked by suffix) to differentiate them:
-
-*   `man` = manual
-
-*   `gen` = generated
-
-Note that "never overwrites" means that `protoprimer` may still generate initial `man` files if they do not exist.
-
-### scope: client-wide vs environment-specific
-
-*   `client`
-
-    Client-wide files apply to the entire client regardless of the environment.
-
-    These files either/or
-
-    *   have `client` suffix
-    *   stay under `client` directory
-    *   have different names according to config
-
-*   `env`
-
-    Environment-specific files apply to the selected environment only.
-
-    The environment is selected by `@/env.conf` file.
-
-### tracked vs ignored
-
-This category refers to tracking or ignoring files by a version-control system (e.g. `git`).
-
-There is no special suffix for such files
-because some files might be tracked in one env and ignored in another.
-There is only a recommendation to track or ignore for each one.
-
-## Config files
-
-Because it is a multi-stage bootstrap, some config input may be required at each stage.
-
-### stage `primer_conf`
-
-TODO: explain
-
-### stage `client_conf`
-
-Loads:
-
-*   `=/primer_kernel.man.client.json`
-
-### stage `env_conf`
-
-Loads:
-
-*   `=/primer_kernel.gen.conf.json` if exists
-
-Generates:
-
-*   TODO
-
-Generates:
-
-*   `@/env.conf`
-
-*   `path/to/env.conf.d`
-
-### stage `init_env`
+<!--
+Add the point (when ready): it is possible to start with simple and move to complex setup gradually.
+-->
 
 ---
 
 [readme.md]: readme.md
+[SOLID_wiki]: https://en.wikipedia.org/wiki/SOLID
+[DAG_wiki]: https://en.wikipedia.org/wiki/Directed_acyclic_graph

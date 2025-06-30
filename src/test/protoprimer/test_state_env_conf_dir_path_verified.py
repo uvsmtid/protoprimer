@@ -12,7 +12,7 @@ from protoprimer.primer_kernel import (
     EnvContext,
     EnvState,
 )
-from test_support import assert_test_module_name_embeds_enum_item_name
+from test_support import assert_test_module_name_embeds_str
 
 
 # noinspection PyPep8Naming
@@ -24,8 +24,8 @@ class ThisTestClass(PyfakefsTestCase):
 
     # noinspection PyMethodMayBeStatic
     def test_relationship(self):
-        assert_test_module_name_embeds_enum_item_name(
-            EnvState.state_env_conf_dir_path_verified
+        assert_test_module_name_embeds_str(
+            EnvState.state_env_conf_dir_path_verified.name
         )
 
     @patch(
@@ -61,7 +61,7 @@ class ThisTestClass(PyfakefsTestCase):
         )
 
         # when:
-        self.env_ctx.bootstrap_state(EnvState.state_env_conf_dir_path_verified)
+        self.env_ctx.bootstrap_state(EnvState.state_env_conf_dir_path_verified.name)
 
         # then:
         # no exception happens
@@ -99,7 +99,7 @@ class ThisTestClass(PyfakefsTestCase):
         )
 
         # when:
-        self.env_ctx.bootstrap_state(EnvState.state_env_conf_dir_path_verified)
+        self.env_ctx.bootstrap_state(EnvState.state_env_conf_dir_path_verified.name)
 
         # then:
         # no exception happens
@@ -141,7 +141,7 @@ class ThisTestClass(PyfakefsTestCase):
 
         # when:
         with self.assertRaises(AssertionError) as ctx:
-            self.env_ctx.bootstrap_state(EnvState.state_env_conf_dir_path_verified)
+            self.env_ctx.bootstrap_state(EnvState.state_env_conf_dir_path_verified.name)
 
         # then:
         self.assertIn("not the same as the provided target", str(ctx.exception))
@@ -180,7 +180,7 @@ class ThisTestClass(PyfakefsTestCase):
 
         # when:
         with self.assertRaises(AssertionError) as ctx:
-            self.env_ctx.bootstrap_state(EnvState.state_env_conf_dir_path_verified)
+            self.env_ctx.bootstrap_state(EnvState.state_env_conf_dir_path_verified.name)
 
         # then:
         self.assertIn("target is not a directory", str(ctx.exception))
@@ -212,7 +212,7 @@ class ThisTestClass(PyfakefsTestCase):
 
         # when:
         with self.assertRaises(AssertionError) as ctx:
-            self.env_ctx.bootstrap_state(EnvState.state_env_conf_dir_path_verified)
+            self.env_ctx.bootstrap_state(EnvState.state_env_conf_dir_path_verified.name)
 
         # then:
         self.assertIn("is not a symlink", str(ctx.exception))
@@ -246,7 +246,7 @@ class ThisTestClass(PyfakefsTestCase):
         self.fs.create_dir(target_dst_dir_path)
 
         # when:
-        self.env_ctx.bootstrap_state(EnvState.state_env_conf_dir_path_verified)
+        self.env_ctx.bootstrap_state(EnvState.state_env_conf_dir_path_verified.name)
 
         # then:
         self.assertTrue(os.path.islink(state_env_conf_dir_path))
@@ -283,7 +283,7 @@ class ThisTestClass(PyfakefsTestCase):
         self.fs.create_dir(target_dst_dir_path_normalized)
 
         # when:
-        self.env_ctx.bootstrap_state(EnvState.state_env_conf_dir_path_verified)
+        self.env_ctx.bootstrap_state(EnvState.state_env_conf_dir_path_verified.name)
 
         # then:
         self.assertTrue(os.path.islink(state_env_conf_dir_path))
@@ -318,7 +318,7 @@ class ThisTestClass(PyfakefsTestCase):
 
         # when:
         with self.assertRaises(AssertionError) as ctx:
-            self.env_ctx.bootstrap_state(EnvState.state_env_conf_dir_path_verified)
+            self.env_ctx.bootstrap_state(EnvState.state_env_conf_dir_path_verified.name)
 
         # then:
         self.assertIn("not provided", str(ctx.exception))
