@@ -20,14 +20,21 @@ else:
 
 import setuptools
 
-tests_require = [
+repo_dependencies = [
+    # "pre-commit",
+]
+
+test_dependencies = [
     "pyfakefs",
 ]
 
-# To install these extra dev dependencies:
+# To install these extra dev dependencies use these commands, for example:
+# pip install --editable "${client_dir}/"[repo]
 # pip install --editable "${client_dir}/"[test]
+# pip install --editable "${client_dir}/"[repo,test]
 extras_require = {
-    "test": tests_require,
+    "repo": repo_dependencies,
+    "test": test_dependencies,
 }
 
 
@@ -36,7 +43,10 @@ setuptools.setup(
     version=version_string,
     author="uvsmtid",
     author_email="uvsmtid@gmail.com",
-    description="bootstrap environment",
+    description="universal multi-stage `python` environment initializer & bootstrapper (primer) via a stand-alone automatic (proto) script",
+    long_description="""
+See: https://github.com/uvsmtid/protoprimer
+    """,
     keywords="boot env bootstrap environment dev",
     license="MIT",
     classifiers=[
@@ -63,6 +73,8 @@ setuptools.setup(
     package_dir={
         "protoprimer": "./main/protoprimer/",
         # TODO: Move under "protoprimer"?
+        "repo_support": "./main/repo_support/",
+        # TODO: Move under "protoprimer"?
         "test_support": "./main/test_support/",
     },
     # See:
@@ -72,6 +84,8 @@ setuptools.setup(
     #     that is, the files are expected to be part of the package in the source directories.
     package_data={
         "protoprimer": [],
+        # TODO: Move under "protoprimer"?
+        "repo_support": [],
         # TODO: Move under "protoprimer"?
         "test_support": [],
     },

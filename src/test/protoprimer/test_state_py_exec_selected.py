@@ -19,7 +19,7 @@ from protoprimer.primer_kernel import (
     EnvState,
     PythonExecutable,
 )
-from test_support import assert_test_module_name_embeds_enum_item_name
+from test_support import assert_test_module_name_embeds_str
 
 mock_client_dir = "/mock_client_dir"
 script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -45,7 +45,7 @@ class ThisTestClass(PyfakefsTestCase):
 
     # noinspection PyMethodMayBeStatic
     def test_relationship(self):
-        assert_test_module_name_embeds_enum_item_name(EnvState.state_py_exec_selected)
+        assert_test_module_name_embeds_str(EnvState.state_py_exec_selected.name)
 
     def test_assumptions_used_in_other_tests(self):
         self.assertNotEqual(
@@ -102,7 +102,7 @@ class ThisTestClass(PyfakefsTestCase):
 
         # when:
 
-        self.env_ctx.bootstrap_state(EnvState.state_py_exec_selected)
+        self.env_ctx.bootstrap_state(EnvState.state_py_exec_selected.name)
 
         # then:
 
@@ -193,7 +193,7 @@ class ThisTestClass(PyfakefsTestCase):
         # when:
 
         with self.assertRaises(AssertionError) as cm:
-            self.env_ctx.bootstrap_state(EnvState.state_py_exec_selected)
+            self.env_ctx.bootstrap_state(EnvState.state_py_exec_selected.name)
 
         # then:
 
@@ -256,7 +256,7 @@ class ThisTestClass(PyfakefsTestCase):
 
         # when:
 
-        self.env_ctx.bootstrap_state(EnvState.state_py_exec_selected)
+        self.env_ctx.bootstrap_state(EnvState.state_py_exec_selected.name)
 
         # then:
 
@@ -325,14 +325,13 @@ class ThisTestClass(PyfakefsTestCase):
 
         # when:
 
-        self.env_ctx.bootstrap_state(EnvState.state_py_exec_selected)
+        self.env_ctx.bootstrap_state(EnvState.state_py_exec_selected.name)
 
         # then:
 
         mock_venv_create.assert_not_called()
         mock_execv.assert_not_called()
         mock_get_path_to_curr_python.assert_called_once()
-
 
     ####################################################################################################################
     @patch(
@@ -384,7 +383,7 @@ class ThisTestClass(PyfakefsTestCase):
 
         # when:
 
-        self.env_ctx.bootstrap_state(EnvState.state_py_exec_selected)
+        self.env_ctx.bootstrap_state(EnvState.state_py_exec_selected.name)
 
         # then:
 
@@ -461,7 +460,7 @@ class ThisTestClass(PyfakefsTestCase):
 
         # when:
 
-        self.env_ctx.bootstrap_state(EnvState.state_py_exec_selected)
+        self.env_ctx.bootstrap_state(EnvState.state_py_exec_selected.name)
 
         # then:
 
@@ -527,7 +526,7 @@ class ThisTestClass(PyfakefsTestCase):
 
         # when:
 
-        self.env_ctx.bootstrap_state(EnvState.state_py_exec_selected)
+        self.env_ctx.bootstrap_state(EnvState.state_py_exec_selected.name)
 
         # then:
 
@@ -604,7 +603,7 @@ class ThisTestClass(PyfakefsTestCase):
 
         # when:
 
-        self.env_ctx.bootstrap_state(EnvState.state_py_exec_selected)
+        self.env_ctx.bootstrap_state(EnvState.state_py_exec_selected.name)
 
         # then:
 

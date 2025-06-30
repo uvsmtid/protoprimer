@@ -9,18 +9,15 @@ class BaseTestClass(TestCase):
         self.maxDiff = None
 
 
-def assert_test_module_name_embeds_enum_item_name(
-    enum_item: Enum,
+def assert_test_module_name_embeds_str(
+    prod_name: str,
 ):
     """
     Ensure caller test module name contains given prod class name.
     """
     caller_frame = currentframe().f_back
     simple_test_module_name = caller_frame.f_globals["__name__"].split(".")[-1]
-    simple_prod_enum_item_name = enum_item.name
-    _assert_test_name_embeds_prod_name(
-        simple_prod_enum_item_name, simple_test_module_name
-    )
+    _assert_test_name_embeds_prod_name(prod_name, simple_test_module_name)
 
 
 def _assert_test_name_embeds_prod_name(

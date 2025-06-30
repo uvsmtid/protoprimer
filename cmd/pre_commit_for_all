@@ -1,0 +1,11 @@
+#!/usr/bin/env python3
+# This script is supposed to run with activated `venv`.
+
+import sys
+
+from repo_support.cmd_pre_commit_for_all import main
+
+if __name__ == "__main__":
+    is_venv = sys.prefix != sys.base_prefix
+    assert is_venv
+    main()

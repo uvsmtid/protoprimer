@@ -33,7 +33,7 @@ jobs:
 
             -   uses: actions/checkout@v4
 
-            -   run: "${{ github.workspace }}/cmd/wrapper.py dst_conf_env/default_env/"
+            -   run: "${{ github.workspace }}/cmd/bootstrap_env dst_conf_env/default_env/"
 
             -   run: "${{ github.workspace }}/venv/bin/python -m unittest discover --start-directory ${{ github.workspace }}/src/test/"
 
