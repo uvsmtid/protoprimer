@@ -3,7 +3,7 @@
 if __name__ == "__main__":
 
     try:
-        from repo_support.cmd_bootstrap_env import custom_main as selected_main
+        from local_repo.cmd_bootstrap_env import custom_main as selected_main
 
     except ImportError:
         from proto_kernel import main as selected_main

@@ -8,7 +8,7 @@ from protoprimer.primer_kernel import (
     init_arg_parser,
     PythonExecutable,
 )
-from test_support import BaseTestClass
+from local_test import BaseTestClass
 
 
 # noinspection PyMethodMayBeStatic

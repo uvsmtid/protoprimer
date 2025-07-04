@@ -1,5 +1,5 @@
 from protoprimer import primer_kernel
-from test_support import BaseTestClass
+from local_test import BaseTestClass
 
 
 # noinspection PyMethodMayBeStatic

@@ -20,21 +20,12 @@ else:
 
 import setuptools
 
-repo_dependencies = [
-    # "pre-commit",
-]
+extra_dependencies = []
 
-test_dependencies = [
-    "pyfakefs",
-]
-
-# To install these extra dev dependencies use these commands, for example:
-# pip install --editable "${client_dir}/"[repo]
-# pip install --editable "${client_dir}/"[test]
-# pip install --editable "${client_dir}/"[repo,test]
+# To install these extra dependencies use these commands, for example:
+# pip install --editable "${client_dir}/"[extra]
 extras_require = {
-    "repo": repo_dependencies,
-    "test": test_dependencies,
+    "extra": extra_dependencies,
 }
 
 
@@ -72,10 +63,6 @@ See: https://github.com/uvsmtid/protoprimer
     #     See "distribution root" above - during installation, `setup.py` will run from the extracted archive.
     package_dir={
         "protoprimer": "./main/protoprimer/",
-        # TODO: Move under "protoprimer"?
-        "repo_support": "./main/repo_support/",
-        # TODO: Move under "protoprimer"?
-        "test_support": "./main/test_support/",
     },
     # See:
     # https://docs.python.org/3.8/distutils/setupscript.html#installing-package-data
@@ -84,10 +71,6 @@ See: https://github.com/uvsmtid/protoprimer
     #     that is, the files are expected to be part of the package in the source directories.
     package_data={
         "protoprimer": [],
-        # TODO: Move under "protoprimer"?
-        "repo_support": [],
-        # TODO: Move under "protoprimer"?
-        "test_support": [],
     },
     include_package_data=False,
     # FS_84_11_73_28: supported python versions:

@@ -43,7 +43,7 @@ import venv
 
 # Implements this (using the single script directly without a separate `_version.py` file):
 # https://stackoverflow.com/a/7071358/441652
-__version__ = "0.0.1"
+__version__ = "0.0.2"
 
 from typing import (
 
@@ -223,12 +223,11 @@ def init_arg_parser():
 ################################################################################
 
     # TODO: use it with special `--init_repo` flag (otherwise, do not allow):
-    # TODO: use positional arg for that:
     arg_parser.add_argument(
-        # TODO: put in ArgConst:
-        "target_dst_dir_path",
+        ArgConst.arg_conf_env_path,
         nargs="?",
         default=None,
+        # TODO: Rephrase (it should be more generic):
         help="Path to one of the dirs (normally under `@/dst/`) to be used as target for `@/conf/` symlink.",
     )
     return arg_parser
@@ -242,6 +241,7 @@ def is_sub_path(
         pathlib.PurePath(abs_sub_path).relative_to(pathlib.PurePath(abs_base_base))
         return True
     except ValueError:
+        return False
 
 ################################################################################
 # Generated content:
@@ -250,7 +250,6 @@ def is_sub_path(
 # but it should not be linted (as its content/style is owned by the src repo).
 ################################################################################
 
-        return False
 
 
 def get_path_to_curr_python():
@@ -270,6 +269,7 @@ def read_json_file(
 
 def write_json_file(
     file_path: str,
+    file_data: dict,
 
 ################################################################################
 # Generated content:
@@ -278,7 +278,6 @@ def write_json_file(
 # but it should not be linted (as its content/style is owned by the src repo).
 ################################################################################
 
-    file_data: dict,
 ) -> None:
     with open(file_path, "w", encoding="utf-8") as file_obj:
         json.dump(file_data, file_obj, indent=4)
@@ -299,13 +298,13 @@ def write_text_file(
         file_obj.write(file_data)
 
 
+
 ################################################################################
 # Generated content:
 # This is a copy of `protoprimer.primer_kernel` (proto) updated automatically.
 # It is supposed to be versioned (to be available in the dst repo on clone),
 # but it should not be linted (as its content/style is owned by the src repo).
 ################################################################################
-
 
 def insert_every_n_lines(
     input_text: str,
@@ -327,13 +326,13 @@ def insert_every_n_lines(
 
     return "\n".join(output_text) + "\n"
 
+
 ################################################################################
 # Generated content:
 # This is a copy of `protoprimer.primer_kernel` (proto) updated automatically.
 # It is supposed to be versioned (to be available in the dst repo on clone),
 # but it should not be linted (as its content/style is owned by the src repo).
 ################################################################################
-
 
 
 def install_package(
@@ -354,6 +353,7 @@ def install_editable_package(
     package_path: str,
     extras_list: [str],
 ):
+    """
 
 ################################################################################
 # Generated content:
@@ -362,7 +362,6 @@ def install_editable_package(
 # but it should not be linted (as its content/style is owned by the src repo).
 ################################################################################
 
-    """
     Install `package_path` (assuming it is `dirname` for `setup.py`) with `extras_list`.
 
     When `extras_list` is `["test", "dev"]`, the actual command run is:
@@ -372,16 +371,17 @@ def install_editable_package(
     ```
     """
 
-    extras_spec = ",".join(extras_list)
-    package_spec = f"{package_path}[{extras_spec}]"
+    if extras_list:
+        extras_spec = ",".join(extras_list)
+        package_spec = f"{package_path}[{extras_spec}]"
+    else:
+        package_spec = package_path
+
     subprocess.check_call(
         [
             get_path_to_curr_python(),
             "-m",
             "pip",
-            "install",
-            "--editable",
-            package_spec,
 
 ################################################################################
 # Generated content:
@@ -390,26 +390,26 @@ def install_editable_package(
 # but it should not be linted (as its content/style is owned by the src repo).
 ################################################################################
 
+            "install",
+            "--editable",
+            package_spec,
         ]
     )
 
 
 class ContextPhase(enum.Enum):
-    # TODO: select final name: *Phase *Type?
-
-    # TODO: select final names:
-    #       proto vs neo
-    #       pre_venv vs post_venv
-    #       immature vs mature
-    #       primitive vs evolved
 
     proto_primer = enum.auto()
 
-    client_primer = enum.auto()
+    venv_primer = enum.auto()
 
 
 class RunMode(enum.Enum):
     """
+    Various modes the script can be run in.
+    """
+
+    print_dag = enum.auto()
 
 ################################################################################
 # Generated content:
@@ -418,10 +418,6 @@ class RunMode(enum.Enum):
 # but it should not be linted (as its content/style is owned by the src repo).
 ################################################################################
 
-    Various modes the script can be run in.
-    """
-
-    print_dag = enum.auto()
 
     bootstrap_env = enum.auto()
 
@@ -438,6 +434,10 @@ class AbstractBootstrapperVisitor:
         raise NotImplementedError()
 
 
+class SinkPrinterVisitor(AbstractBootstrapperVisitor):
+
+    def __init__(
+        self,
 
 ################################################################################
 # Generated content:
@@ -446,10 +446,6 @@ class AbstractBootstrapperVisitor:
 # but it should not be linted (as its content/style is owned by the src repo).
 ################################################################################
 
-class SinkPrinterVisitor(AbstractBootstrapperVisitor):
-
-    def __init__(
-        self,
         env_ctx: EnvContext,
     ):
         super().__init__()
@@ -466,6 +462,10 @@ class SinkPrinterVisitor(AbstractBootstrapperVisitor):
         self.print_bootstrapper_parents(
             state_bootstrapper,
             level=0,
+        )
+
+    def count_usage(
+        self,
 
 ################################################################################
 # Generated content:
@@ -474,10 +474,6 @@ class SinkPrinterVisitor(AbstractBootstrapperVisitor):
 # but it should not be linted (as its content/style is owned by the src repo).
 ################################################################################
 
-        )
-
-    def count_usage(
-        self,
         state_bootstrapper,
     ) -> None:
         self.bootstrapper_usage_count.setdefault(
@@ -494,6 +490,10 @@ class SinkPrinterVisitor(AbstractBootstrapperVisitor):
         self,
         state_bootstrapper,
         level: int,
+    ) -> None:
+        print(
+            f"{' ' * level}{state_bootstrapper.get_env_state().name} x {self.bootstrapper_usage_count[state_bootstrapper.get_env_state().name]}"
+        )
 
 ################################################################################
 # Generated content:
@@ -502,10 +502,6 @@ class SinkPrinterVisitor(AbstractBootstrapperVisitor):
 # but it should not be linted (as its content/style is owned by the src repo).
 ################################################################################
 
-    ) -> None:
-        print(
-            f"{' ' * level}{state_bootstrapper.get_env_state().name} x {self.bootstrapper_usage_count[state_bootstrapper.get_env_state().name]}"
-        )
         for state_parent in state_bootstrapper.get_state_parents():
             self.print_bootstrapper_parents(
                 self.env_ctx.state_bootstrappers[state_parent],
@@ -522,6 +518,10 @@ class PythonExecutable(enum.IntEnum):
     py_exec_unknown = -1
 
     # To start `proto_kernel` by any `python`:
+    py_exec_arbitrary = 1
+
+    # To run `python` of specific version (to create `venv`):
+    py_exec_required = 2
 
 ################################################################################
 # Generated content:
@@ -530,10 +530,6 @@ class PythonExecutable(enum.IntEnum):
 # but it should not be linted (as its content/style is owned by the src repo).
 ################################################################################
 
-    py_exec_arbitrary = 1
-
-    # To run `python` of specific version (to create `venv`):
-    py_exec_required = 2
 
     # To use `venv` (to install packages):
     py_exec_venv = 3
@@ -550,6 +546,10 @@ class PythonExecutable(enum.IntEnum):
 
 class AbstractStateBootstrapper(Generic[StateValueType]):
 
+    def __init__(
+        self,
+        env_ctx: EnvContext,
+        state_parents: list[str],
 
 ################################################################################
 # Generated content:
@@ -558,10 +558,6 @@ class AbstractStateBootstrapper(Generic[StateValueType]):
 # but it should not be linted (as its content/style is owned by the src repo).
 ################################################################################
 
-    def __init__(
-        self,
-        env_ctx: EnvContext,
-        state_parents: list[str],
         env_state: str,
     ):
         self.env_ctx: EnvContext = env_ctx
@@ -578,6 +574,10 @@ class AbstractStateBootstrapper(Generic[StateValueType]):
 
         state_parent: str
         for state_parent in self.state_parents:
+            self.env_ctx.add_dependency_edge(
+                state_parent,
+                env_state,
+            )
 
 ################################################################################
 # Generated content:
@@ -586,10 +586,6 @@ class AbstractStateBootstrapper(Generic[StateValueType]):
 # but it should not be linted (as its content/style is owned by the src repo).
 ################################################################################
 
-            self.env_ctx.add_dependency_edge(
-                state_parent,
-                env_state,
-            )
 
     def accept_visitor(
         self,
@@ -606,6 +602,10 @@ class AbstractStateBootstrapper(Generic[StateValueType]):
         self,
         state_parents: list[str],
     ):
+        self.state_parents = state_parents
+
+    def get_state_parents(
+        self,
 
 ################################################################################
 # Generated content:
@@ -614,10 +614,6 @@ class AbstractStateBootstrapper(Generic[StateValueType]):
 # but it should not be linted (as its content/style is owned by the src repo).
 ################################################################################
 
-        self.state_parents = state_parents
-
-    def get_state_parents(
-        self,
     ) -> list[str]:
         return self.state_parents
 
@@ -634,6 +630,10 @@ class AbstractStateBootstrapper(Generic[StateValueType]):
 
     def _bootstrap_state(
         self,
+    ) -> StateValueType:
+        raise NotImplementedError()
+
+
 
 ################################################################################
 # Generated content:
@@ -641,10 +641,6 @@ class AbstractStateBootstrapper(Generic[StateValueType]):
 # It is supposed to be versioned (to be available in the dst repo on clone),
 # but it should not be linted (as its content/style is owned by the src repo).
 ################################################################################
-
-    ) -> StateValueType:
-        raise NotImplementedError()
-
 
 class AbstractCachingStateBootstrapper(AbstractStateBootstrapper[StateValueType]):
 
@@ -662,6 +658,10 @@ class AbstractCachingStateBootstrapper(AbstractStateBootstrapper[StateValueType]
         self.is_bootstrapped: bool = False
         self.cached_value: StateValueType | None = None
 
+    def _bootstrap_state(
+        self,
+    ) -> StateValueType:
+        if not self.is_bootstrapped:
 
 ################################################################################
 # Generated content:
@@ -670,10 +670,6 @@ class AbstractCachingStateBootstrapper(AbstractStateBootstrapper[StateValueType]
 # but it should not be linted (as its content/style is owned by the src repo).
 ################################################################################
 
-    def _bootstrap_state(
-        self,
-    ) -> StateValueType:
-        if not self.is_bootstrapped:
             self.cached_value = self._bootstrap_once()
             self.is_bootstrapped = True
 
@@ -690,6 +686,10 @@ class Bootstrapper_state_default_log_level(AbstractCachingStateBootstrapper[int]
 
     def __init__(
         self,
+        env_ctx: EnvContext,
+    ):
+        super().__init__(
+            env_ctx=env_ctx,
 
 ################################################################################
 # Generated content:
@@ -698,10 +698,6 @@ class Bootstrapper_state_default_log_level(AbstractCachingStateBootstrapper[int]
 # but it should not be linted (as its content/style is owned by the src repo).
 ################################################################################
 
-        env_ctx: EnvContext,
-    ):
-        super().__init__(
-            env_ctx=env_ctx,
             state_parents=[],
             env_state=EnvState.state_default_log_level.name,
         )
@@ -718,6 +714,10 @@ class Bootstrapper_state_parsed_args(
 ):
 
     def __init__(
+        self,
+        env_ctx: EnvContext,
+    ):
+        super().__init__(
 
 ################################################################################
 # Generated content:
@@ -726,10 +726,6 @@ class Bootstrapper_state_parsed_args(
 # but it should not be linted (as its content/style is owned by the src repo).
 ################################################################################
 
-        self,
-        env_ctx: EnvContext,
-    ):
-        super().__init__(
             env_ctx=env_ctx,
             state_parents=[],
             env_state=EnvState.state_parsed_args.name,
@@ -747,6 +743,10 @@ class Bootstrapper_state_py_exec_specified(
     AbstractCachingStateBootstrapper[PythonExecutable]
 ):
 
+    def __init__(
+        self,
+        env_ctx: EnvContext,
+
 ################################################################################
 # Generated content:
 # This is a copy of `protoprimer.primer_kernel` (proto) updated automatically.
@@ -754,10 +754,6 @@ class Bootstrapper_state_py_exec_specified(
 # but it should not be linted (as its content/style is owned by the src repo).
 ################################################################################
 
-
-    def __init__(
-        self,
-        env_ctx: EnvContext,
     ):
         super().__init__(
             env_ctx=env_ctx,
@@ -771,8 +767,12 @@ class Bootstrapper_state_py_exec_specified(
         self,
     ) -> StateValueType:
         return PythonExecutable[
-            self.env_ctx.bootstrap_state(EnvState.state_parsed_args.name).py_exec
+            getattr(
+                self.env_ctx.bootstrap_state(EnvState.state_parsed_args.name),
+                ArgConst.name_py_exec,
+            )
         ]
+
 
 
 ################################################################################
@@ -781,7 +781,6 @@ class Bootstrapper_state_py_exec_specified(
 # It is supposed to be versioned (to be available in the dst repo on clone),
 # but it should not be linted (as its content/style is owned by the src repo).
 ################################################################################
-
 
 # noinspection PyPep8Naming
 class Bootstrapper_state_proto_kernel_dir_path(AbstractCachingStateBootstrapper[str]):
@@ -802,6 +801,7 @@ class Bootstrapper_state_proto_kernel_dir_path(AbstractCachingStateBootstrapper[
         self,
     ) -> StateValueType:
 
+        state_py_exec_specified: PythonExecutable = self.env_ctx.bootstrap_state(
 
 ################################################################################
 # Generated content:
@@ -810,7 +810,6 @@ class Bootstrapper_state_proto_kernel_dir_path(AbstractCachingStateBootstrapper[
 # but it should not be linted (as its content/style is owned by the src repo).
 ################################################################################
 
-        state_py_exec_specified: PythonExecutable = self.env_ctx.bootstrap_state(
             EnvState.state_py_exec_specified.name
         )
         main_script_file_abs_path = os.path.abspath(sys.argv[0])
@@ -830,6 +829,7 @@ class Bootstrapper_state_proto_kernel_config_file_path(
         self,
         env_ctx: EnvContext,
     ):
+        super().__init__(
 
 ################################################################################
 # Generated content:
@@ -838,7 +838,6 @@ class Bootstrapper_state_proto_kernel_config_file_path(
 # but it should not be linted (as its content/style is owned by the src repo).
 ################################################################################
 
-        super().__init__(
             env_ctx=env_ctx,
             state_parents=[
                 EnvState.state_proto_kernel_dir_path.name,
@@ -858,6 +857,7 @@ class Bootstrapper_state_proto_kernel_config_file_path(
         )
 
 
+# noinspection PyPep8Naming
 
 ################################################################################
 # Generated content:
@@ -866,7 +866,6 @@ class Bootstrapper_state_proto_kernel_config_file_path(
 # but it should not be linted (as its content/style is owned by the src repo).
 ################################################################################
 
-# noinspection PyPep8Naming
 class Bootstrapper_state_client_dir_path_specified(
     AbstractCachingStateBootstrapper[str]
 ):
@@ -886,6 +885,7 @@ class Bootstrapper_state_client_dir_path_specified(
 
     def _bootstrap_once(
         self,
+    ) -> StateValueType:
 
 ################################################################################
 # Generated content:
@@ -894,12 +894,11 @@ class Bootstrapper_state_client_dir_path_specified(
 # but it should not be linted (as its content/style is owned by the src repo).
 ################################################################################
 
-    ) -> StateValueType:
 
-        # TODO: access by declared name (string constant):
-        state_client_dir_path_specified = self.env_ctx.bootstrap_state(
-            EnvState.state_parsed_args.name
-        ).client_dir_path
+        state_client_dir_path_specified = getattr(
+            self.env_ctx.bootstrap_state(EnvState.state_parsed_args.name),
+            ArgConst.name_client_dir_path,
+        )
 
         state_proto_kernel_config_file_path = self.env_ctx.bootstrap_state(
             EnvState.state_proto_kernel_config_file_path.name
@@ -914,6 +913,7 @@ class Bootstrapper_state_client_dir_path_specified(
 
 
 # noinspection PyPep8Naming
+class Bootstrapper_state_script_config_file_data(
 
 ################################################################################
 # Generated content:
@@ -922,7 +922,6 @@ class Bootstrapper_state_client_dir_path_specified(
 # but it should not be linted (as its content/style is owned by the src repo).
 ################################################################################
 
-class Bootstrapper_state_script_config_file_data(
     AbstractCachingStateBootstrapper[dict]
 ):
 
@@ -942,6 +941,7 @@ class Bootstrapper_state_script_config_file_data(
 
     def _bootstrap_once(
         self,
+    ) -> StateValueType:
 
 ################################################################################
 # Generated content:
@@ -950,7 +950,6 @@ class Bootstrapper_state_script_config_file_data(
 # but it should not be linted (as its content/style is owned by the src repo).
 ################################################################################
 
-    ) -> StateValueType:
         state_proto_kernel_config_file_path = self.env_ctx.bootstrap_state(
             EnvState.state_proto_kernel_config_file_path.name
         )
@@ -970,6 +969,7 @@ class Bootstrapper_state_script_config_file_data(
             # Generate file data when missing (first time):
             file_data = {
                 # Compute value of the relative path:
+                ConfConstPrimer.field_dir_rel_path_root_client: os.path.relpath(
 
 ################################################################################
 # Generated content:
@@ -978,7 +978,6 @@ class Bootstrapper_state_script_config_file_data(
 # but it should not be linted (as its content/style is owned by the src repo).
 ################################################################################
 
-                ConfConstPrimer.field_dir_rel_path_root_client: os.path.relpath(
                     state_client_dir_path_specified,
                     state_proto_kernel_dir_path,
                 ),
@@ -998,6 +997,7 @@ class Bootstrapper_state_client_dir_path_configured(
         env_ctx: EnvContext,
     ):
         super().__init__(
+            env_ctx=env_ctx,
 
 ################################################################################
 # Generated content:
@@ -1006,7 +1006,6 @@ class Bootstrapper_state_client_dir_path_configured(
 # but it should not be linted (as its content/style is owned by the src repo).
 ################################################################################
 
-            env_ctx=env_ctx,
             state_parents=[
                 EnvState.state_script_config_file_data.name,
                 EnvState.state_proto_kernel_dir_path.name,
@@ -1026,6 +1025,7 @@ class Bootstrapper_state_client_dir_path_configured(
         ]
 
         state_proto_kernel_dir_path = self.env_ctx.bootstrap_state(
+            EnvState.state_proto_kernel_dir_path.name
 
 ################################################################################
 # Generated content:
@@ -1034,7 +1034,6 @@ class Bootstrapper_state_client_dir_path_configured(
 # but it should not be linted (as its content/style is owned by the src repo).
 ################################################################################
 
-            EnvState.state_proto_kernel_dir_path.name
         )
 
         state_client_dir_path_configured = os.path.join(
@@ -1054,6 +1053,7 @@ class Bootstrapper_state_target_dst_dir_path(AbstractCachingStateBootstrapper[st
     ):
         super().__init__(
             env_ctx=env_ctx,
+            state_parents=[
 
 ################################################################################
 # Generated content:
@@ -1062,8 +1062,8 @@ class Bootstrapper_state_target_dst_dir_path(AbstractCachingStateBootstrapper[st
 # but it should not be linted (as its content/style is owned by the src repo).
 ################################################################################
 
-            state_parents=[
                 EnvState.state_parsed_args.name,
+                EnvState.state_client_conf_file_data.name,
             ],
             env_state=EnvState.state_target_dst_dir_path.name,
         )
@@ -1071,17 +1071,17 @@ class Bootstrapper_state_target_dst_dir_path(AbstractCachingStateBootstrapper[st
     def _bootstrap_once(
         self,
     ) -> StateValueType:
-        # TODO: access via declared string constant for arg field:
-        return self.env_ctx.bootstrap_state(
-            EnvState.state_parsed_args.name
-        ).target_dst_dir_path
-
-
-# noinspection PyPep8Naming
-class Bootstrapper_state_client_conf_file_path(AbstractCachingStateBootstrapper[str]):
-
-    def __init__(
-        self,
+        dir_rel_path_conf_env_target = getattr(
+            self.env_ctx.bootstrap_state(EnvState.state_parsed_args.name),
+            ArgConst.name_conf_env_path,
+        )
+        if dir_rel_path_conf_env_target is None:
+            state_client_conf_file_data = self.env_ctx.bootstrap_state(
+                EnvState.state_client_conf_file_data.name
+            )
+            dir_rel_path_conf_env_target = state_client_conf_file_data.get(
+                ConfConstClient.field_dir_rel_path_conf_env_default_target,
+            )
 
 ################################################################################
 # Generated content:
@@ -1090,6 +1090,14 @@ class Bootstrapper_state_client_conf_file_path(AbstractCachingStateBootstrapper[
 # but it should not be linted (as its content/style is owned by the src repo).
 ################################################################################
 
+        return dir_rel_path_conf_env_target
+
+
+# noinspection PyPep8Naming
+class Bootstrapper_state_client_conf_file_path(AbstractCachingStateBootstrapper[str]):
+
+    def __init__(
+        self,
         env_ctx: EnvContext,
     ):
         super().__init__(
@@ -1102,14 +1110,6 @@ class Bootstrapper_state_client_conf_file_path(AbstractCachingStateBootstrapper[
 
     def _bootstrap_once(
         self,
-    ) -> StateValueType:
-        state_client_dir_path_configured = self.env_ctx.bootstrap_state(
-            EnvState.state_client_dir_path_configured.name
-        )
-
-        state_script_config_file_data = self.env_ctx.bootstrap_state(
-            EnvState.state_script_config_file_data.name
-        )
 
 ################################################################################
 # Generated content:
@@ -1118,6 +1118,14 @@ class Bootstrapper_state_client_conf_file_path(AbstractCachingStateBootstrapper[
 # but it should not be linted (as its content/style is owned by the src repo).
 ################################################################################
 
+    ) -> StateValueType:
+        state_client_dir_path_configured = self.env_ctx.bootstrap_state(
+            EnvState.state_client_dir_path_configured.name
+        )
+
+        state_script_config_file_data = self.env_ctx.bootstrap_state(
+            EnvState.state_script_config_file_data.name
+        )
 
         field_client_config_rel_path = state_script_config_file_data[
             ConfConstPrimer.field_file_rel_path_conf_client
@@ -1130,14 +1138,6 @@ class Bootstrapper_state_client_conf_file_path(AbstractCachingStateBootstrapper[
 
 
 # noinspection PyPep8Naming
-class Bootstrapper_state_client_conf_file_data(AbstractCachingStateBootstrapper[dict]):
-
-    def __init__(
-        self,
-        env_ctx: EnvContext,
-    ):
-        super().__init__(
-            env_ctx=env_ctx,
 
 ################################################################################
 # Generated content:
@@ -1146,6 +1146,14 @@ class Bootstrapper_state_client_conf_file_data(AbstractCachingStateBootstrapper[
 # but it should not be linted (as its content/style is owned by the src repo).
 ################################################################################
 
+class Bootstrapper_state_client_conf_file_data(AbstractCachingStateBootstrapper[dict]):
+
+    def __init__(
+        self,
+        env_ctx: EnvContext,
+    ):
+        super().__init__(
+            env_ctx=env_ctx,
             state_parents=[
                 EnvState.state_client_conf_file_path.name,
             ],
@@ -1158,14 +1166,6 @@ class Bootstrapper_state_client_conf_file_data(AbstractCachingStateBootstrapper[
 
         state_client_conf_file_path = self.env_ctx.bootstrap_state(
             EnvState.state_client_conf_file_path.name
-        )
-        if os.path.exists(state_client_conf_file_path):
-            return read_json_file(state_client_conf_file_path)
-        else:
-            # Generate file data when missing (first time):
-            file_data = {
-                # TODO: Decide how to support (or avoid) evaluation of value if it does not exist.
-                #       Maybe support few actions: check_if_exists and bootstrap_if_does_not_exists?
 
 ################################################################################
 # Generated content:
@@ -1174,8 +1174,18 @@ class Bootstrapper_state_client_conf_file_data(AbstractCachingStateBootstrapper[
 # but it should not be linted (as its content/style is owned by the src repo).
 ################################################################################
 
+        )
+        if os.path.exists(state_client_conf_file_path):
+            return read_json_file(state_client_conf_file_path)
+        else:
+            # Generate file data when missing (first time):
+            file_data = {
+                # TODO: Decide how to support (or avoid) evaluation of value if it does not exist.
+                #       Maybe support few actions: check_if_exists and bootstrap_if_does_not_exists?
                 #       Using default when value is missing in data does not work here.
                 ConfConstClient.field_dir_rel_path_conf_env_link_name: ConfConstClient.default_dir_rel_path_conf_env_link_name,
+                # TODO: This should not be part of the file - defaults should be configured, not generated (or generated by extensible code):
+                # ConfConstClient.field_dir_rel_path_conf_env_default_target: ConfConstClient.default_dir_rel_path_conf_env_target,
             }
             os.makedirs(
                 os.path.dirname(state_client_conf_file_path),
@@ -1183,6 +1193,14 @@ class Bootstrapper_state_client_conf_file_data(AbstractCachingStateBootstrapper[
             )
             write_json_file(state_client_conf_file_path, file_data)
             return file_data
+
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.primer_kernel` (proto) updated automatically.
+# It is supposed to be versioned (to be available in the dst repo on clone),
+# but it should not be linted (as its content/style is owned by the src repo).
+################################################################################
 
 
 # noinspection PyPep8Naming
@@ -1194,14 +1212,6 @@ class Bootstrapper_state_env_conf_dir_path(AbstractCachingStateBootstrapper[str]
     ):
         super().__init__(
             env_ctx=env_ctx,
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.primer_kernel` (proto) updated automatically.
-# It is supposed to be versioned (to be available in the dst repo on clone),
-# but it should not be linted (as its content/style is owned by the src repo).
-################################################################################
-
             state_parents=[
                 EnvState.state_client_dir_path_configured.name,
                 EnvState.state_client_conf_file_data.name,
@@ -1212,6 +1222,14 @@ class Bootstrapper_state_env_conf_dir_path(AbstractCachingStateBootstrapper[str]
     def _bootstrap_once(
         self,
     ) -> StateValueType:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.primer_kernel` (proto) updated automatically.
+# It is supposed to be versioned (to be available in the dst repo on clone),
+# but it should not be linted (as its content/style is owned by the src repo).
+################################################################################
+
         file_data = self.env_ctx.bootstrap_state(
             EnvState.state_client_conf_file_data.name
         )
@@ -1222,14 +1240,6 @@ class Bootstrapper_state_env_conf_dir_path(AbstractCachingStateBootstrapper[str]
             #       Maybe support few actions: check_if_exists and bootstrap_if_does_not_exists?
             #       Using default when value is missing in data does not work here.
             ConfConstClient.default_dir_rel_path_conf_env_link_name,
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.primer_kernel` (proto) updated automatically.
-# It is supposed to be versioned (to be available in the dst repo on clone),
-# but it should not be linted (as its content/style is owned by the src repo).
-################################################################################
-
         )
 
         assert not os.path.isabs(env_conf_dir_rel_path)
@@ -1240,6 +1250,14 @@ class Bootstrapper_state_env_conf_dir_path(AbstractCachingStateBootstrapper[str]
                 EnvState.state_client_dir_path_configured.name
             ),
             env_conf_dir_rel_path,
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.primer_kernel` (proto) updated automatically.
+# It is supposed to be versioned (to be available in the dst repo on clone),
+# but it should not be linted (as its content/style is owned by the src repo).
+################################################################################
+
         )
 
         return state_env_conf_dir_path
@@ -1249,14 +1267,6 @@ class Bootstrapper_state_env_conf_dir_path(AbstractCachingStateBootstrapper[str]
 class Bootstrapper_state_target_dst_dir_path_verified(
     AbstractCachingStateBootstrapper[bool]
 ):
-
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.primer_kernel` (proto) updated automatically.
-# It is supposed to be versioned (to be available in the dst repo on clone),
-# but it should not be linted (as its content/style is owned by the src repo).
-################################################################################
 
     def __init__(
         self,
@@ -1268,6 +1278,14 @@ class Bootstrapper_state_target_dst_dir_path_verified(
                 EnvState.state_target_dst_dir_path.name,
             ],
             env_state=EnvState.state_target_dst_dir_path_verified.name,
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.primer_kernel` (proto) updated automatically.
+# It is supposed to be versioned (to be available in the dst repo on clone),
+# but it should not be linted (as its content/style is owned by the src repo).
+################################################################################
+
         )
 
     def _bootstrap_once(
@@ -1278,14 +1296,6 @@ class Bootstrapper_state_target_dst_dir_path_verified(
 
         NOTE:
         At the moment, only target paths under `client_dir` (under `@/`) are allowed.
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.primer_kernel` (proto) updated automatically.
-# It is supposed to be versioned (to be available in the dst repo on clone),
-# but it should not be linted (as its content/style is owned by the src repo).
-################################################################################
-
         This is not a strict requirement and can be relaxed in the future.
         """
 
@@ -1296,6 +1306,14 @@ class Bootstrapper_state_target_dst_dir_path_verified(
             raise AssertionError(
                 f"Target for `@/conf/` symlink [{state_target_dst_dir_path}] must not be absolute path."
             )
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.primer_kernel` (proto) updated automatically.
+# It is supposed to be versioned (to be available in the dst repo on clone),
+# but it should not be linted (as its content/style is owned by the src repo).
+################################################################################
+
         elif ".." in pathlib.Path(state_target_dst_dir_path).parts:
             raise AssertionError(
                 f"Target for `@/conf/` symlink [{state_target_dst_dir_path}] must not contain `..` path segments."
@@ -1307,14 +1325,6 @@ class Bootstrapper_state_target_dst_dir_path_verified(
 
         return True
 
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.primer_kernel` (proto) updated automatically.
-# It is supposed to be versioned (to be available in the dst repo on clone),
-# but it should not be linted (as its content/style is owned by the src repo).
-################################################################################
-
-
 
 # noinspection PyPep8Naming
 class Bootstrapper_state_env_conf_dir_path_verified(
@@ -1324,6 +1334,14 @@ class Bootstrapper_state_env_conf_dir_path_verified(
     def __init__(
         self,
         env_ctx: EnvContext,
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.primer_kernel` (proto) updated automatically.
+# It is supposed to be versioned (to be available in the dst repo on clone),
+# but it should not be linted (as its content/style is owned by the src repo).
+################################################################################
+
     ):
         super().__init__(
             env_ctx=env_ctx,
@@ -1335,14 +1353,6 @@ class Bootstrapper_state_env_conf_dir_path_verified(
             env_state=EnvState.state_env_conf_dir_path_verified.name,
         )
 
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.primer_kernel` (proto) updated automatically.
-# It is supposed to be versioned (to be available in the dst repo on clone),
-# but it should not be linted (as its content/style is owned by the src repo).
-################################################################################
-
-
     def _bootstrap_once(
         self,
     ) -> StateValueType:
@@ -1352,6 +1362,14 @@ class Bootstrapper_state_env_conf_dir_path_verified(
         state_target_dst_dir_path = self.env_ctx.bootstrap_state(
             EnvState.state_target_dst_dir_path.name
         )
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.primer_kernel` (proto) updated automatically.
+# It is supposed to be versioned (to be available in the dst repo on clone),
+# but it should not be linted (as its content/style is owned by the src repo).
+################################################################################
+
         if os.path.exists(state_env_conf_dir_path):
             if os.path.islink(state_env_conf_dir_path):
                 if os.path.isdir(state_env_conf_dir_path):
@@ -1362,14 +1380,6 @@ class Bootstrapper_state_env_conf_dir_path_verified(
                         if os.path.normpath(
                             state_target_dst_dir_path
                         ) == os.path.normpath(conf_dir_path):
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.primer_kernel` (proto) updated automatically.
-# It is supposed to be versioned (to be available in the dst repo on clone),
-# but it should not be linted (as its content/style is owned by the src repo).
-################################################################################
-
                             pass
                         else:
                             raise AssertionError(
@@ -1380,16 +1390,6 @@ class Bootstrapper_state_env_conf_dir_path_verified(
                         f"The `@/conf/` [{state_env_conf_dir_path}] target is not a directory.",
                     )
             else:
-                raise AssertionError(
-                    f"The `@/conf/` [{state_env_conf_dir_path}] is not a symlink.",
-                )
-        else:
-            if state_target_dst_dir_path is None:
-                raise AssertionError(
-                    f"The `@/conf/` dir does not exists and `target_dst_dir_path` is not provided - see `--help`.",
-                )
-            else:
-                state_target_dst_dir_path_verified = self.env_ctx.bootstrap_state(
 
 ################################################################################
 # Generated content:
@@ -1398,6 +1398,16 @@ class Bootstrapper_state_env_conf_dir_path_verified(
 # but it should not be linted (as its content/style is owned by the src repo).
 ################################################################################
 
+                raise AssertionError(
+                    f"The `@/conf/` [{state_env_conf_dir_path}] is not a symlink.",
+                )
+        else:
+            if state_target_dst_dir_path is None:
+                raise AssertionError(
+                    f"The `@/conf/` dir does not exists and `{ArgConst.name_conf_env_path}` is not provided - see `--help`.",
+                )
+            else:
+                state_target_dst_dir_path_verified = self.env_ctx.bootstrap_state(
                     EnvState.state_target_dst_dir_path_verified.name
                 )
                 assert state_target_dst_dir_path_verified
@@ -1409,6 +1419,14 @@ class Bootstrapper_state_env_conf_dir_path_verified(
 
         return True
 
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.primer_kernel` (proto) updated automatically.
+# It is supposed to be versioned (to be available in the dst repo on clone),
+# but it should not be linted (as its content/style is owned by the src repo).
+################################################################################
+
+
 
 # noinspection PyPep8Naming
 class Bootstrapper_state_env_conf_file_path(AbstractCachingStateBootstrapper[str]):
@@ -1418,14 +1436,6 @@ class Bootstrapper_state_env_conf_file_path(AbstractCachingStateBootstrapper[str
         env_ctx: EnvContext,
     ):
         super().__init__(
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.primer_kernel` (proto) updated automatically.
-# It is supposed to be versioned (to be available in the dst repo on clone),
-# but it should not be linted (as its content/style is owned by the src repo).
-################################################################################
-
             env_ctx=env_ctx,
             state_parents=[
                 EnvState.state_client_dir_path_configured.name,
@@ -1436,6 +1446,14 @@ class Bootstrapper_state_env_conf_file_path(AbstractCachingStateBootstrapper[str
         )
 
     def _bootstrap_once(
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.primer_kernel` (proto) updated automatically.
+# It is supposed to be versioned (to be available in the dst repo on clone),
+# but it should not be linted (as its content/style is owned by the src repo).
+################################################################################
+
         self,
     ) -> StateValueType:
         state_env_conf_dir_path_verified = self.env_ctx.bootstrap_state(
@@ -1446,14 +1464,6 @@ class Bootstrapper_state_env_conf_file_path(AbstractCachingStateBootstrapper[str
         state_client_dir_path_configured = self.env_ctx.bootstrap_state(
             EnvState.state_client_dir_path_configured.name
         )
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.primer_kernel` (proto) updated automatically.
-# It is supposed to be versioned (to be available in the dst repo on clone),
-# but it should not be linted (as its content/style is owned by the src repo).
-################################################################################
-
         state_env_conf_file_path = os.path.join(
             state_client_dir_path_configured,
             ConfConstClient.default_dir_rel_path_conf_env_link_name,
@@ -1464,6 +1474,14 @@ class Bootstrapper_state_env_conf_file_path(AbstractCachingStateBootstrapper[str
             EnvState.state_env_conf_dir_path.name
         )
         # TODO: Ensure the path is under with proper error message:
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.primer_kernel` (proto) updated automatically.
+# It is supposed to be versioned (to be available in the dst repo on clone),
+# but it should not be linted (as its content/style is owned by the src repo).
+################################################################################
+
         assert is_sub_path(
             state_env_conf_file_path,
             state_env_conf_dir_path,
@@ -1473,14 +1491,6 @@ class Bootstrapper_state_env_conf_file_path(AbstractCachingStateBootstrapper[str
 
 # noinspection PyPep8Naming
 class Bootstrapper_state_env_conf_file_data(AbstractCachingStateBootstrapper[dict]):
-
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.primer_kernel` (proto) updated automatically.
-# It is supposed to be versioned (to be available in the dst repo on clone),
-# but it should not be linted (as its content/style is owned by the src repo).
-################################################################################
 
     def __init__(
         self,
@@ -1492,6 +1502,14 @@ class Bootstrapper_state_env_conf_file_data(AbstractCachingStateBootstrapper[dic
                 EnvState.state_env_conf_file_path.name,
             ],
             env_state=EnvState.state_env_conf_file_data.name,
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.primer_kernel` (proto) updated automatically.
+# It is supposed to be versioned (to be available in the dst repo on clone),
+# but it should not be linted (as its content/style is owned by the src repo).
+################################################################################
+
         )
 
     def _bootstrap_once(
@@ -1502,14 +1520,6 @@ class Bootstrapper_state_env_conf_file_data(AbstractCachingStateBootstrapper[dic
         )
         file_data: dict
         if os.path.exists(state_env_conf_file_path):
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.primer_kernel` (proto) updated automatically.
-# It is supposed to be versioned (to be available in the dst repo on clone),
-# but it should not be linted (as its content/style is owned by the src repo).
-################################################################################
-
             file_data = read_json_file(state_env_conf_file_path)
         else:
             file_data = {
@@ -1520,6 +1530,14 @@ class Bootstrapper_state_env_conf_file_data(AbstractCachingStateBootstrapper[dic
             }
             # TODO: This creates a directory with `ConfConstClient.default_dir_rel_path_conf_env_link_name` instead of symlink.
             #       But this happens only if dependency
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.primer_kernel` (proto) updated automatically.
+# It is supposed to be versioned (to be available in the dst repo on clone),
+# but it should not be linted (as its content/style is owned by the src repo).
+################################################################################
+
             #       `state_env_conf_file_path` -> `state_env_conf_dir_path_verified`
             #       was not executed (which is not possible outside of tests).
             write_json_file(state_env_conf_file_path, file_data)
@@ -1530,14 +1548,6 @@ class Bootstrapper_state_env_conf_file_data(AbstractCachingStateBootstrapper[dic
 class Bootstrapper_state_env_path_to_python(AbstractCachingStateBootstrapper[str]):
 
     def __init__(
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.primer_kernel` (proto) updated automatically.
-# It is supposed to be versioned (to be available in the dst repo on clone),
-# but it should not be linted (as its content/style is owned by the src repo).
-################################################################################
-
         self,
         env_ctx: EnvContext,
     ):
@@ -1549,6 +1559,14 @@ class Bootstrapper_state_env_path_to_python(AbstractCachingStateBootstrapper[str
             env_state=EnvState.state_env_path_to_python.name,
         )
 
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.primer_kernel` (proto) updated automatically.
+# It is supposed to be versioned (to be available in the dst repo on clone),
+# but it should not be linted (as its content/style is owned by the src repo).
+################################################################################
+
+
     def _bootstrap_once(
         self,
     ) -> StateValueType:
@@ -1558,14 +1576,6 @@ class Bootstrapper_state_env_path_to_python(AbstractCachingStateBootstrapper[str
             ConfConstEnv.field_file_abs_path_python,
             # TODO: Do not use default values directly - resolve it differently at the prev|next step based on the need:
             ConfConstEnv.default_file_abs_path_python,
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.primer_kernel` (proto) updated automatically.
-# It is supposed to be versioned (to be available in the dst repo on clone),
-# but it should not be linted (as its content/style is owned by the src repo).
-################################################################################
-
         )
 
         if not os.path.isabs(state_env_path_to_python):
@@ -1575,6 +1585,14 @@ class Bootstrapper_state_env_path_to_python(AbstractCachingStateBootstrapper[str
                 ),
                 state_env_path_to_python,
             )
+
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.primer_kernel` (proto) updated automatically.
+# It is supposed to be versioned (to be available in the dst repo on clone),
+# but it should not be linted (as its content/style is owned by the src repo).
+################################################################################
 
         return state_env_path_to_python
 
@@ -1586,14 +1604,6 @@ class Bootstrapper_state_env_path_to_venv(AbstractCachingStateBootstrapper[str])
         self,
         env_ctx: EnvContext,
     ):
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.primer_kernel` (proto) updated automatically.
-# It is supposed to be versioned (to be available in the dst repo on clone),
-# but it should not be linted (as its content/style is owned by the src repo).
-################################################################################
-
         super().__init__(
             env_ctx=env_ctx,
             state_parents=[
@@ -1604,6 +1614,14 @@ class Bootstrapper_state_env_path_to_venv(AbstractCachingStateBootstrapper[str])
 
     def _bootstrap_once(
         self,
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.primer_kernel` (proto) updated automatically.
+# It is supposed to be versioned (to be available in the dst repo on clone),
+# but it should not be linted (as its content/style is owned by the src repo).
+################################################################################
+
     ) -> StateValueType:
         file_data = self.env_ctx.bootstrap_state(EnvState.state_env_conf_file_data.name)
 
@@ -1614,14 +1632,6 @@ class Bootstrapper_state_env_path_to_venv(AbstractCachingStateBootstrapper[str])
         )
 
         if not os.path.isabs(state_env_path_to_venv):
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.primer_kernel` (proto) updated automatically.
-# It is supposed to be versioned (to be available in the dst repo on clone),
-# but it should not be linted (as its content/style is owned by the src repo).
-################################################################################
-
             state_env_path_to_venv = os.path.join(
                 self.env_ctx.bootstrap_state(
                     EnvState.state_client_dir_path_configured.name
@@ -1631,6 +1641,14 @@ class Bootstrapper_state_env_path_to_venv(AbstractCachingStateBootstrapper[str])
 
         return state_env_path_to_venv
 
+
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.primer_kernel` (proto) updated automatically.
+# It is supposed to be versioned (to be available in the dst repo on clone),
+# but it should not be linted (as its content/style is owned by the src repo).
+################################################################################
 
 # noinspection PyPep8Naming
 class Bootstrapper_state_py_exec_selected(
@@ -1642,14 +1660,6 @@ class Bootstrapper_state_py_exec_selected(
         env_ctx: EnvContext,
     ):
         super().__init__(
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.primer_kernel` (proto) updated automatically.
-# It is supposed to be versioned (to be available in the dst repo on clone),
-# but it should not be linted (as its content/style is owned by the src repo).
-################################################################################
-
             env_ctx=env_ctx,
             state_parents=[
                 EnvState.state_py_exec_specified.name,
@@ -1660,6 +1670,14 @@ class Bootstrapper_state_py_exec_selected(
             env_state=EnvState.state_py_exec_selected.name,
         )
 
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.primer_kernel` (proto) updated automatically.
+# It is supposed to be versioned (to be available in the dst repo on clone),
+# but it should not be linted (as its content/style is owned by the src repo).
+################################################################################
+
     def _bootstrap_once(
         self,
     ) -> StateValueType:
@@ -1669,14 +1687,6 @@ class Bootstrapper_state_py_exec_selected(
         The `python` interpreter required by the user is saved into `field_file_abs_path_python`.
         Otherwise, it matches the interpreter the bootstrap script is executed with at the moment.
         """
-
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.primer_kernel` (proto) updated automatically.
-# It is supposed to be versioned (to be available in the dst repo on clone),
-# but it should not be linted (as its content/style is owned by the src repo).
-################################################################################
 
         state_py_exec_specified: PythonExecutable = self.env_ctx.bootstrap_state(
             EnvState.state_py_exec_specified.name
@@ -1689,6 +1699,14 @@ class Bootstrapper_state_py_exec_selected(
             EnvState.state_env_path_to_venv.name
         )
 
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.primer_kernel` (proto) updated automatically.
+# It is supposed to be versioned (to be available in the dst repo on clone),
+# but it should not be linted (as its content/style is owned by the src repo).
+################################################################################
+
+
         # TODO: Make it separate validation state
         #       (not a dependency of this because, technically, we do not know where `EnvState.state_env_path_to_python` and `EnvState.state_env_path_to_venv` came from):
         if is_sub_path(state_env_path_to_python, state_env_path_to_venv):
@@ -1698,14 +1716,6 @@ class Bootstrapper_state_py_exec_selected(
             raise AssertionError(
                 f"The [{state_env_path_to_python}] is a sub-path of the [{state_env_path_to_venv}]. "
                 f"This is not allowed because `path_to_python` is used to init `venv` and cannot rely on `venv` existance. "
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.primer_kernel` (proto) updated automatically.
-# It is supposed to be versioned (to be available in the dst repo on clone),
-# but it should not be linted (as its content/style is owned by the src repo).
-################################################################################
-
                 f"Specify different `{EnvState.state_env_path_to_python.name}` (e.g. `/usr/bin/python3`). "
                 # TODO: compute path for `proto_kernel.py`
                 f"Alternatively, remove [{state_env_conf_file_path}] and re-run `@/cmd/proto_kernel.py` "
@@ -1716,6 +1726,14 @@ class Bootstrapper_state_py_exec_selected(
             assert state_py_exec_specified == PythonExecutable.py_exec_unknown
             self.env_ctx.py_exec = PythonExecutable.py_exec_arbitrary
             logger.info(
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.primer_kernel` (proto) updated automatically.
+# It is supposed to be versioned (to be available in the dst repo on clone),
+# but it should not be linted (as its content/style is owned by the src repo).
+################################################################################
+
                 f"switching from current `python` interpreter [{path_to_curr_python}] to required one [{state_env_path_to_python}]"
             )
             os.execv(
@@ -1726,14 +1744,6 @@ class Bootstrapper_state_py_exec_selected(
                     ArgConst.arg_py_exec,
                     PythonExecutable.py_exec_required.name,
                 ],
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.primer_kernel` (proto) updated automatically.
-# It is supposed to be versioned (to be available in the dst repo on clone),
-# but it should not be linted (as its content/style is owned by the src repo).
-################################################################################
-
             )
 
         venv_path_to_python = os.path.join(
@@ -1744,6 +1754,14 @@ class Bootstrapper_state_py_exec_selected(
         if is_sub_path(path_to_curr_python, state_env_path_to_venv):
             if path_to_curr_python != venv_path_to_python:
                 # Ensure `python` is from the correct `venv` path
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.primer_kernel` (proto) updated automatically.
+# It is supposed to be versioned (to be available in the dst repo on clone),
+# but it should not be linted (as its content/style is owned by the src repo).
+################################################################################
+
                 switch_to_required_python()
             else:
                 # If already under `venv` with the expected path, nothing to do.
@@ -1754,14 +1772,6 @@ class Bootstrapper_state_py_exec_selected(
                 # Successfully reached end goal:
                 if state_py_exec_specified == PythonExecutable.py_exec_unknown:
                     self.env_ctx.py_exec = PythonExecutable.py_exec_venv
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.primer_kernel` (proto) updated automatically.
-# It is supposed to be versioned (to be available in the dst repo on clone),
-# but it should not be linted (as its content/style is owned by the src repo).
-################################################################################
-
                 else:
                     self.env_ctx.py_exec = state_py_exec_specified
         else:
@@ -1772,6 +1782,14 @@ class Bootstrapper_state_py_exec_selected(
                     state_py_exec_specified == PythonExecutable.py_exec_unknown
                     or state_py_exec_specified == PythonExecutable.py_exec_required
                 )
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.primer_kernel` (proto) updated automatically.
+# It is supposed to be versioned (to be available in the dst repo on clone),
+# but it should not be linted (as its content/style is owned by the src repo).
+################################################################################
+
                 self.env_ctx.py_exec = PythonExecutable.py_exec_required
                 if not os.path.exists(state_env_path_to_venv):
                     logger.info(f"creating `venv` [{state_env_path_to_venv}]")
@@ -1782,14 +1800,6 @@ class Bootstrapper_state_py_exec_selected(
                 else:
                     logger.info(f"reusing existing `venv` [{state_env_path_to_venv}]")
                 logger.info(
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.primer_kernel` (proto) updated automatically.
-# It is supposed to be versioned (to be available in the dst repo on clone),
-# but it should not be linted (as its content/style is owned by the src repo).
-################################################################################
-
                     f"switching from current `python` interpreter [{state_env_path_to_python}] to `venv` interpreter [{venv_path_to_python}]"
                 )
                 os.execv(
@@ -1800,6 +1810,14 @@ class Bootstrapper_state_py_exec_selected(
                         ArgConst.arg_py_exec,
                         PythonExecutable.py_exec_venv.name,
                     ],
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.primer_kernel` (proto) updated automatically.
+# It is supposed to be versioned (to be available in the dst repo on clone),
+# but it should not be linted (as its content/style is owned by the src repo).
+################################################################################
+
                 )
 
         return self.env_ctx.py_exec
@@ -1809,14 +1827,6 @@ class Bootstrapper_state_py_exec_selected(
 class Bootstrapper_state_protoprimer_package_installed(
     AbstractCachingStateBootstrapper[bool]
 ):
-
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.primer_kernel` (proto) updated automatically.
-# It is supposed to be versioned (to be available in the dst repo on clone),
-# but it should not be linted (as its content/style is owned by the src repo).
-################################################################################
 
     def __init__(
         self,
@@ -1828,6 +1838,14 @@ class Bootstrapper_state_protoprimer_package_installed(
                 EnvState.state_py_exec_selected.name,
             ],
             env_state=EnvState.state_protoprimer_package_installed.name,
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.primer_kernel` (proto) updated automatically.
+# It is supposed to be versioned (to be available in the dst repo on clone),
+# but it should not be linted (as its content/style is owned by the src repo).
+################################################################################
+
         )
 
     def _bootstrap_once(
@@ -1838,34 +1856,16 @@ class Bootstrapper_state_protoprimer_package_installed(
         )
         assert state_py_exec_selected >= PythonExecutable.py_exec_venv
 
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.primer_kernel` (proto) updated automatically.
-# It is supposed to be versioned (to be available in the dst repo on clone),
-# but it should not be linted (as its content/style is owned by the src repo).
-################################################################################
-
         state_client_dir_path_configured = self.env_ctx.bootstrap_state(
             EnvState.state_client_dir_path_configured.name
         )
 
-        setup_py_dir = os.path.join(
-            state_client_dir_path_configured,
-            "src",
-        )
-        assert os.path.isfile(os.path.join(setup_py_dir, "setup.py"))
-
         if state_py_exec_selected == PythonExecutable.py_exec_venv:
-            # TODO: This has to be changed for released version of `primer_kernel`:
-            install_editable_package(
-                setup_py_dir,
-                [
-                    "test",
-                ],
-            )
-
-        return True
+            # protoprimer:
+            # TODO: this should be configurable:
+            setup_py_dir = os.path.join(
+                state_client_dir_path_configured,
+                "src",
 
 ################################################################################
 # Generated content:
@@ -1874,12 +1874,61 @@ class Bootstrapper_state_protoprimer_package_installed(
 # but it should not be linted (as its content/style is owned by the src repo).
 ################################################################################
 
+                "protoprimer",
+            )
+            assert os.path.isfile(os.path.join(setup_py_dir, "setup.py"))
+            # TODO: This has to be changed for released version of `primer_kernel`:
+            install_editable_package(
+                setup_py_dir,
+                # TODO: this should be configurable:
+                [],
+            )
+            # local_repo:
+            setup_py_dir = os.path.join(
+                state_client_dir_path_configured,
+                "src",
+                "local_repo",
+            )
+            install_editable_package(
+                setup_py_dir,
+                # TODO: this should be configurable:
+                [],
+            )
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.primer_kernel` (proto) updated automatically.
+# It is supposed to be versioned (to be available in the dst repo on clone),
+# but it should not be linted (as its content/style is owned by the src repo).
+################################################################################
+
+            # local_test:
+            setup_py_dir = os.path.join(
+                state_client_dir_path_configured,
+                "src",
+                "local_test",
+            )
+            install_editable_package(
+                setup_py_dir,
+                # TODO: this should be configurable:
+                [],
+            )
+
+        return True
 
 
 # noinspection PyPep8Naming
 class Bootstrapper_state_py_exec_updated_protoprimer_package_reached(
     AbstractCachingStateBootstrapper[PythonExecutable]
 ):
+
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.primer_kernel` (proto) updated automatically.
+# It is supposed to be versioned (to be available in the dst repo on clone),
+# but it should not be linted (as its content/style is owned by the src repo).
+################################################################################
 
     def __init__(
         self,
@@ -1894,6 +1943,13 @@ class Bootstrapper_state_py_exec_updated_protoprimer_package_reached(
             env_state=EnvState.state_py_exec_updated_protoprimer_package_reached.name,
         )
 
+    def _bootstrap_once(
+        self,
+    ) -> StateValueType:
+
+        state_py_exec_specified: PythonExecutable = self.env_ctx.bootstrap_state(
+            EnvState.state_py_exec_specified.name
+        )
 
 ################################################################################
 # Generated content:
@@ -1902,13 +1958,6 @@ class Bootstrapper_state_py_exec_updated_protoprimer_package_reached(
 # but it should not be linted (as its content/style is owned by the src repo).
 ################################################################################
 
-    def _bootstrap_once(
-        self,
-    ) -> StateValueType:
-
-        state_py_exec_specified: PythonExecutable = self.env_ctx.bootstrap_state(
-            EnvState.state_py_exec_specified.name
-        )
 
         state_protoprimer_package_installed: bool = self.env_ctx.bootstrap_state(
             EnvState.state_protoprimer_package_installed.name
@@ -1922,6 +1971,13 @@ class Bootstrapper_state_py_exec_updated_protoprimer_package_reached(
             < PythonExecutable.py_exec_updated_protoprimer_package.value
         ):
             self.env_ctx.py_exec = PythonExecutable.py_exec_updated_protoprimer_package
+            logger.info(
+                f"restarting current `python` interpreter [{venv_path_to_python}] to make [{EnvState.state_protoprimer_package_installed.name}] effective"
+            )
+            os.execv(
+                venv_path_to_python,
+                [
+                    venv_path_to_python,
 
 ################################################################################
 # Generated content:
@@ -1930,13 +1986,6 @@ class Bootstrapper_state_py_exec_updated_protoprimer_package_reached(
 # but it should not be linted (as its content/style is owned by the src repo).
 ################################################################################
 
-            logger.info(
-                f"restarting current `python` interpreter [{venv_path_to_python}] to make [{EnvState.state_protoprimer_package_installed.name}] effective"
-            )
-            os.execv(
-                venv_path_to_python,
-                [
-                    venv_path_to_python,
                     *sys.argv,
                     ArgConst.arg_py_exec,
                     PythonExecutable.py_exec_updated_protoprimer_package.name,
@@ -1950,6 +1999,13 @@ class Bootstrapper_state_py_exec_updated_protoprimer_package_reached(
 
 
 # noinspection PyPep8Naming
+class Bootstrapper_state_proto_kernel_updated(AbstractCachingStateBootstrapper[bool]):
+
+    def __init__(
+        self,
+        env_ctx: EnvContext,
+    ):
+        super().__init__(
 
 ################################################################################
 # Generated content:
@@ -1958,13 +2014,6 @@ class Bootstrapper_state_py_exec_updated_protoprimer_package_reached(
 # but it should not be linted (as its content/style is owned by the src repo).
 ################################################################################
 
-class Bootstrapper_state_proto_kernel_updated(AbstractCachingStateBootstrapper[bool]):
-
-    def __init__(
-        self,
-        env_ctx: EnvContext,
-    ):
-        super().__init__(
             env_ctx=env_ctx,
             state_parents=[
                 EnvState.state_py_exec_updated_protoprimer_package_reached.name,
@@ -1978,6 +2027,13 @@ class Bootstrapper_state_proto_kernel_updated(AbstractCachingStateBootstrapper[b
     ) -> StateValueType:
         state_py_exec_updated_protoprimer_package_reached: PythonExecutable = (
             self.env_ctx.bootstrap_state(
+                EnvState.state_py_exec_updated_protoprimer_package_reached.name
+            )
+        )
+        assert (
+            state_py_exec_updated_protoprimer_package_reached
+            >= PythonExecutable.py_exec_updated_protoprimer_package
+        )
 
 ################################################################################
 # Generated content:
@@ -1986,13 +2042,6 @@ class Bootstrapper_state_proto_kernel_updated(AbstractCachingStateBootstrapper[b
 # but it should not be linted (as its content/style is owned by the src repo).
 ################################################################################
 
-                EnvState.state_py_exec_updated_protoprimer_package_reached.name
-            )
-        )
-        assert (
-            state_py_exec_updated_protoprimer_package_reached
-            >= PythonExecutable.py_exec_updated_protoprimer_package
-        )
 
         # TODO: optimize: run this logic only when `PythonExecutable.py_exec_updated_protoprimer_package`
 
@@ -2006,6 +2055,13 @@ class Bootstrapper_state_proto_kernel_updated(AbstractCachingStateBootstrapper[b
             # TODO: be able to configure it:
             ConfConstGeneral.default_proto_kernel_basename,
         )
+        assert not os.path.islink(proto_kernel_abs_path)
+        assert os.path.isfile(proto_kernel_abs_path)
+
+        # TODO: This has to be changed for released names of the package:
+        import protoprimer
+
+        # Use generator from immutable (source) `primer_kernel` to avoid
 
 ################################################################################
 # Generated content:
@@ -2014,13 +2070,6 @@ class Bootstrapper_state_proto_kernel_updated(AbstractCachingStateBootstrapper[b
 # but it should not be linted (as its content/style is owned by the src repo).
 ################################################################################
 
-        assert not os.path.islink(proto_kernel_abs_path)
-        assert os.path.isfile(proto_kernel_abs_path)
-
-        # TODO: This has to be changed for released names of the package:
-        import protoprimer
-
-        # Use generator from immutable (source) `primer_kernel` to avoid
         # generated code inside generated code inside generated code ...
         # in local (target) `proto_kernel`:
         generated_content = protoprimer.primer_kernel.ConfConstGeneral.func_get_proto_kernel_generated_boilerplate(
@@ -2034,6 +2083,13 @@ class Bootstrapper_state_proto_kernel_updated(AbstractCachingStateBootstrapper[b
         proto_kernel_text = insert_every_n_lines(
             input_text=primer_kernel_text,
             insert_text=generated_content,
+            every_n=20,
+        )
+
+        logger.debug(
+            f"writing `primer_kernel_abs_path` [{primer_kernel_abs_path}] over `proto_kernel_abs_path` [{proto_kernel_abs_path}]"
+        )
+        write_text_file(
 
 ################################################################################
 # Generated content:
@@ -2042,13 +2098,6 @@ class Bootstrapper_state_proto_kernel_updated(AbstractCachingStateBootstrapper[b
 # but it should not be linted (as its content/style is owned by the src repo).
 ################################################################################
 
-            every_n=20,
-        )
-
-        logger.debug(
-            f"writing `primer_kernel_abs_path` [{primer_kernel_abs_path}] over `proto_kernel_abs_path` [{proto_kernel_abs_path}]"
-        )
-        write_text_file(
             file_path=proto_kernel_abs_path,
             file_data=proto_kernel_text,
         )
@@ -2063,6 +2112,13 @@ class Bootstrapper_state_py_exec_updated_proto_kernel_code(
     AbstractCachingStateBootstrapper[PythonExecutable]
 ):
 
+    def __init__(
+        self,
+        env_ctx: EnvContext,
+    ):
+        super().__init__(
+            env_ctx=env_ctx,
+
 ################################################################################
 # Generated content:
 # This is a copy of `protoprimer.primer_kernel` (proto) updated automatically.
@@ -2070,13 +2126,6 @@ class Bootstrapper_state_py_exec_updated_proto_kernel_code(
 # but it should not be linted (as its content/style is owned by the src repo).
 ################################################################################
 
-
-    def __init__(
-        self,
-        env_ctx: EnvContext,
-    ):
-        super().__init__(
-            env_ctx=env_ctx,
             state_parents=[
                 EnvState.state_py_exec_specified.name,
                 EnvState.state_proto_kernel_updated.name,
@@ -2090,6 +2139,13 @@ class Bootstrapper_state_py_exec_updated_proto_kernel_code(
 
         state_py_exec_specified: PythonExecutable = self.env_ctx.bootstrap_state(
             EnvState.state_py_exec_specified.name
+        )
+
+        state_proto_kernel_updated: bool = self.env_ctx.bootstrap_state(
+            EnvState.state_proto_kernel_updated.name
+        )
+        assert state_proto_kernel_updated
+
 
 ################################################################################
 # Generated content:
@@ -2097,13 +2153,6 @@ class Bootstrapper_state_py_exec_updated_proto_kernel_code(
 # It is supposed to be versioned (to be available in the dst repo on clone),
 # but it should not be linted (as its content/style is owned by the src repo).
 ################################################################################
-
-        )
-
-        state_proto_kernel_updated: bool = self.env_ctx.bootstrap_state(
-            EnvState.state_proto_kernel_updated.name
-        )
-        assert state_proto_kernel_updated
 
         venv_path_to_python = get_path_to_curr_python()
 
@@ -2118,14 +2167,6 @@ class Bootstrapper_state_py_exec_updated_proto_kernel_code(
             os.execv(
                 venv_path_to_python,
                 [
-
-################################################################################
-# Generated content:
-# This is a copy of `protoprimer.primer_kernel` (proto) updated automatically.
-# It is supposed to be versioned (to be available in the dst repo on clone),
-# but it should not be linted (as its content/style is owned by the src repo).
-################################################################################
-
                     venv_path_to_python,
                     *sys.argv,
                     ArgConst.arg_py_exec,
@@ -2133,19 +2174,6 @@ class Bootstrapper_state_py_exec_updated_proto_kernel_code(
                 ],
             )
         else:
-            # Successfully reached end goal:
-            self.env_ctx.py_exec = state_py_exec_specified
-
-        return self.env_ctx.py_exec
-
-
-# noinspection PyPep8Naming
-class Bootstrapper_state_activated_venv_shell_started(
-    AbstractCachingStateBootstrapper[bool]
-):
-
-    def __init__(
-        self,
 
 ################################################################################
 # Generated content:
@@ -2154,12 +2182,34 @@ class Bootstrapper_state_activated_venv_shell_started(
 # but it should not be linted (as its content/style is owned by the src repo).
 ################################################################################
 
+            # Successfully reached end goal:
+            self.env_ctx.py_exec = state_py_exec_specified
+
+        return self.env_ctx.py_exec
+
+
+# TODO: Move this `state_activated_venv_shell_started` to some `protoprimer.*` module with extra states ("neo", not "proto") because it beyond `venv`.
+# noinspection PyPep8Naming
+class Bootstrapper_state_activated_venv_shell_started(
+    AbstractCachingStateBootstrapper[bool]
+):
+
+    def __init__(
+        self,
         env_ctx: EnvContext,
     ):
         super().__init__(
             env_ctx=env_ctx,
             state_parents=[
                 EnvState.state_py_exec_updated_proto_kernel_code.name,
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.primer_kernel` (proto) updated automatically.
+# It is supposed to be versioned (to be available in the dst repo on clone),
+# but it should not be linted (as its content/style is owned by the src repo).
+################################################################################
+
                 EnvState.state_env_path_to_venv.name,
             ],
             env_state=EnvState.state_activated_venv_shell_started.name,
@@ -2175,18 +2225,18 @@ class Bootstrapper_state_activated_venv_shell_started(
 
         assert state_py_exec_updated_proto_kernel_code
 
+        # TODO: this should be the last executable here:
+        assert (
+            self.env_ctx.py_exec >= PythonExecutable.py_exec_updated_protoprimer_package
+        )
+
+
 ################################################################################
 # Generated content:
 # This is a copy of `protoprimer.primer_kernel` (proto) updated automatically.
 # It is supposed to be versioned (to be available in the dst repo on clone),
 # but it should not be linted (as its content/style is owned by the src repo).
 ################################################################################
-
-
-        # TODO: this should be the last executable here:
-        assert (
-            self.env_ctx.py_exec >= PythonExecutable.py_exec_updated_protoprimer_package
-        )
 
         state_env_path_to_venv = self.env_ctx.bootstrap_state(
             EnvState.state_env_path_to_venv.name
@@ -2202,6 +2252,12 @@ class Bootstrapper_state_activated_venv_shell_started(
         temp_file.write(f"source ~/.bashrc && source {venv_path_to_activate}")
         temp_file.flush()
         file_path = temp_file.name
+        logger.info(f"file_path: {temp_file.name}")
+        os.execv(
+            # TODO: get path automatically:
+            "/usr/bin/bash",
+            [
+                "bash",
 
 ################################################################################
 # Generated content:
@@ -2210,12 +2266,6 @@ class Bootstrapper_state_activated_venv_shell_started(
 # but it should not be linted (as its content/style is owned by the src repo).
 ################################################################################
 
-        logger.info(f"file_path: {temp_file.name}")
-        os.execv(
-            # TODO: get path automatically:
-            "/usr/bin/bash",
-            [
-                "bash",
                 "--init-file",
                 file_path,
             ],
@@ -2230,6 +2280,12 @@ class EnvState(enum.Enum):
     Configuration states to be bootstrapped during the bootstrap process.
 
     NOTE: Only `str` names of the enum items are supposed to be used (any value is ignored).
+    """
+
+    def __init__(
+        self,
+        # Default implementation (for reference):
+        default_impl,
 
 ################################################################################
 # Generated content:
@@ -2238,12 +2294,6 @@ class EnvState(enum.Enum):
 # but it should not be linted (as its content/style is owned by the src repo).
 ################################################################################
 
-    """
-
-    def __init__(
-        self,
-        # Default implementation (for reference):
-        default_impl,
     ):
         self.default_impl = default_impl
 
@@ -2259,17 +2309,18 @@ class EnvState(enum.Enum):
         Bootstrapper_state_proto_kernel_config_file_path,
     )
 
+    state_client_dir_path_specified = (Bootstrapper_state_client_dir_path_specified,)
+
+    # TODO: Rename to avoid `script`:
+    state_script_config_file_data = (Bootstrapper_state_script_config_file_data,)
+
+
 ################################################################################
 # Generated content:
 # This is a copy of `protoprimer.primer_kernel` (proto) updated automatically.
 # It is supposed to be versioned (to be available in the dst repo on clone),
 # but it should not be linted (as its content/style is owned by the src repo).
 ################################################################################
-
-
-    state_client_dir_path_specified = (Bootstrapper_state_client_dir_path_specified,)
-
-    state_script_config_file_data = (Bootstrapper_state_script_config_file_data,)
 
     state_client_dir_path_configured = (Bootstrapper_state_client_dir_path_configured,)
 
@@ -2286,6 +2337,11 @@ class EnvState(enum.Enum):
     # TODO:
     # state_client_path_to_python
 
+    # TODO:
+    # state_client_path_to_venv
+
+    state_env_conf_dir_path = (Bootstrapper_state_env_conf_dir_path,)
+
 
 ################################################################################
 # Generated content:
@@ -2294,11 +2350,7 @@ class EnvState(enum.Enum):
 # but it should not be linted (as its content/style is owned by the src repo).
 ################################################################################
 
-    # TODO:
-    # state_client_path_to_venv
-
-    state_env_conf_dir_path = (Bootstrapper_state_env_conf_dir_path,)
-
+    # TODO: rename in relation to `ArgConst.arg_conf_env_path`
     state_target_dst_dir_path = (Bootstrapper_state_target_dst_dir_path,)
 
     state_target_dst_dir_path_verified = (
@@ -2314,6 +2366,10 @@ class EnvState(enum.Enum):
     # TODO:
     # state_env_log_level
 
+    state_env_path_to_python = (Bootstrapper_state_env_path_to_python,)
+
+    state_env_path_to_venv = (Bootstrapper_state_env_path_to_venv,)
+
 
 ################################################################################
 # Generated content:
@@ -2321,10 +2377,6 @@ class EnvState(enum.Enum):
 # It is supposed to be versioned (to be available in the dst repo on clone),
 # but it should not be linted (as its content/style is owned by the src repo).
 ################################################################################
-
-    state_env_path_to_python = (Bootstrapper_state_env_path_to_python,)
-
-    state_env_path_to_venv = (Bootstrapper_state_env_path_to_venv,)
 
     # TODO: rename to `py_exec_venv_reached`:
     state_py_exec_selected = (Bootstrapper_state_py_exec_selected,)
@@ -2334,6 +2386,7 @@ class EnvState(enum.Enum):
         Bootstrapper_state_protoprimer_package_installed,
     )
 
+    # TODO: rename - "reached" sounds weird (and makes no sense):
     state_py_exec_updated_protoprimer_package_reached = (
         Bootstrapper_state_py_exec_updated_protoprimer_package_reached,
     )
@@ -2342,6 +2395,9 @@ class EnvState(enum.Enum):
     state_proto_kernel_updated = (Bootstrapper_state_proto_kernel_updated,)
 
     state_py_exec_updated_proto_kernel_code = (
+        Bootstrapper_state_py_exec_updated_proto_kernel_code,
+    )
+
 
 ################################################################################
 # Generated content:
@@ -2349,9 +2405,6 @@ class EnvState(enum.Enum):
 # It is supposed to be versioned (to be available in the dst repo on clone),
 # but it should not be linted (as its content/style is owned by the src repo).
 ################################################################################
-
-        Bootstrapper_state_py_exec_updated_proto_kernel_code,
-    )
 
     state_activated_venv_shell_started = (
         Bootstrapper_state_activated_venv_shell_started,
@@ -2370,6 +2423,9 @@ class TargetState:
     target_activated_venv_shell: str = EnvState.state_activated_venv_shell_started.name
 
 
+class ArgConst:
+
+    # TODO: decide on convention for pure `arg_name` and `--arg_name`:
 
 ################################################################################
 # Generated content:
@@ -2378,13 +2434,12 @@ class TargetState:
 # but it should not be linted (as its content/style is owned by the src repo).
 ################################################################################
 
-class ArgConst:
-
-    # TODO: decide on convention for pure `arg_name` and `--arg_name`:
+    name_conf_env_path = "conf_env_path"
     name_recursion_flag = "recursion_flag"
     name_client_dir_path = "client_dir_path"
     name_py_exec = "py_exec"
 
+    arg_conf_env_path = f"--{name_conf_env_path}"
     arg_recursion_flag = f"--{name_recursion_flag}"
     arg_client_dir_path = f"--{name_client_dir_path}"
     arg_py_exec = f"--{name_py_exec}"
@@ -2398,6 +2453,7 @@ class ConfConstGeneral:
 
     # TODO: use lambdas to generate based on input (instead of None):
     # This is a value declared for completeness,
+    # but unused (evaluated dynamically via the bootstrap process):
 
 ################################################################################
 # Generated content:
@@ -2406,7 +2462,6 @@ class ConfConstGeneral:
 # but it should not be linted (as its content/style is owned by the src repo).
 ################################################################################
 
-    # but unused (evaluated dynamically via the bootstrap process):
     input_based = None
 
     file_rel_path_venv_python = os.path.join(
@@ -2426,6 +2481,7 @@ class ConfConstGeneral:
 # Generated content:
 # This is a copy of `{module_obj.__name__}` (proto) updated automatically.
 # It is supposed to be versioned (to be available in the dst repo on clone),
+# but it should not be linted (as its content/style is owned by the src repo).
 
 ################################################################################
 # Generated content:
@@ -2434,7 +2490,6 @@ class ConfConstGeneral:
 # but it should not be linted (as its content/style is owned by the src repo).
 ################################################################################
 
-# but it should not be linted (as its content/style is owned by the src repo).
 ################################################################################
 """
     )
@@ -2454,6 +2509,7 @@ class ConfConstInput:
 
 
 class ConfConstPrimer:
+    """
 
 ################################################################################
 # Generated content:
@@ -2462,7 +2518,6 @@ class ConfConstPrimer:
 # but it should not be linted (as its content/style is owned by the src repo).
 ################################################################################
 
-    """
     Constants primer config phase.
     """
 
@@ -2483,6 +2538,7 @@ class ConfConstClient:
 
     field_dir_rel_path_conf_env_link_name = "dir_rel_path_conf_env_link_name"
 
+
 ################################################################################
 # Generated content:
 # This is a copy of `protoprimer.primer_kernel` (proto) updated automatically.
@@ -2490,6 +2546,7 @@ class ConfConstClient:
 # but it should not be linted (as its content/style is owned by the src repo).
 ################################################################################
 
+    field_dir_rel_path_conf_env_default_target = "dir_rel_path_conf_env_default_target"
 
     default_dir_rel_path_conf_env_link_name = os.path.join(
         "conf_env",
@@ -2499,17 +2556,16 @@ class ConfConstClient:
         f"conf_env.{ConfConstGeneral.default_primer_kernel_module}.json"
     )
 
+    # TODO: Delete this - the default can only be provided by client (config or code):
+    # default_dir_rel_path_conf_env_target = os.path.join(
+    #     "dst_conf_env",
+    #     "default_env",
+    # )
+
 
 class ConfConstEnv:
     """
     Constants env config phase.
-    """
-
-    field_file_abs_path_python = "file_abs_path_python"
-    field_dir_rel_path_venv = "dir_rel_path_venv"
-
-    default_file_abs_path_python = "/usr/bin/python"
-    default_dir_rel_path_venv = "venv"
 
 ################################################################################
 # Generated content:
@@ -2518,6 +2574,13 @@ class ConfConstEnv:
 # but it should not be linted (as its content/style is owned by the src repo).
 ################################################################################
 
+    """
+
+    field_file_abs_path_python = "file_abs_path_python"
+    field_dir_rel_path_venv = "dir_rel_path_venv"
+
+    default_file_abs_path_python = "/usr/bin/python"
+    default_dir_rel_path_venv = "venv"
 
 
 class EnvContext:
@@ -2531,13 +2594,6 @@ class EnvContext:
         self.py_exec: PythonExecutable = PythonExecutable.py_exec_unknown
 
         self.recursion_flag: bool = False
-        self.activate_venv_only_flag: bool = False
-
-        self.custom_logger: logging.Logger = logging.getLogger()
-
-        self.register_bootstrapper(Bootstrapper_state_default_log_level(self))
-        self.register_bootstrapper(Bootstrapper_state_parsed_args(self))
-        self.register_bootstrapper(Bootstrapper_state_py_exec_specified(self))
 
 ################################################################################
 # Generated content:
@@ -2546,6 +2602,13 @@ class EnvContext:
 # but it should not be linted (as its content/style is owned by the src repo).
 ################################################################################
 
+        self.activate_venv_only_flag: bool = False
+
+        self.custom_logger: logging.Logger = logging.getLogger()
+
+        self.register_bootstrapper(Bootstrapper_state_default_log_level(self))
+        self.register_bootstrapper(Bootstrapper_state_parsed_args(self))
+        self.register_bootstrapper(Bootstrapper_state_py_exec_specified(self))
         self.register_bootstrapper(Bootstrapper_state_proto_kernel_dir_path(self))
         self.register_bootstrapper(
             Bootstrapper_state_proto_kernel_config_file_path(self)
@@ -2559,13 +2622,6 @@ class EnvContext:
         self.register_bootstrapper(Bootstrapper_state_env_conf_dir_path(self))
         self.register_bootstrapper(
             Bootstrapper_state_target_dst_dir_path_verified(self)
-        )
-        self.register_bootstrapper(Bootstrapper_state_env_conf_dir_path_verified(self))
-        self.register_bootstrapper(Bootstrapper_state_env_conf_file_path(self))
-        self.register_bootstrapper(Bootstrapper_state_env_conf_file_data(self))
-        self.register_bootstrapper(Bootstrapper_state_env_path_to_python(self))
-        self.register_bootstrapper(Bootstrapper_state_env_path_to_venv(self))
-        self.register_bootstrapper(Bootstrapper_state_py_exec_selected(self))
 
 ################################################################################
 # Generated content:
@@ -2574,6 +2630,13 @@ class EnvContext:
 # but it should not be linted (as its content/style is owned by the src repo).
 ################################################################################
 
+        )
+        self.register_bootstrapper(Bootstrapper_state_env_conf_dir_path_verified(self))
+        self.register_bootstrapper(Bootstrapper_state_env_conf_file_path(self))
+        self.register_bootstrapper(Bootstrapper_state_env_conf_file_data(self))
+        self.register_bootstrapper(Bootstrapper_state_env_path_to_python(self))
+        self.register_bootstrapper(Bootstrapper_state_env_path_to_venv(self))
+        self.register_bootstrapper(Bootstrapper_state_py_exec_selected(self))
         self.register_bootstrapper(
             Bootstrapper_state_protoprimer_package_installed(self)
         )
@@ -2588,13 +2651,6 @@ class EnvContext:
             Bootstrapper_state_activated_venv_shell_started(self)
         )
 
-        self.populate_dependencies()
-
-        # TODO: Find "Universal Sink":
-        self.universal_sink: str = TargetState.target_full_proto_bootstrap
-
-    def register_bootstrapper(
-
 ################################################################################
 # Generated content:
 # This is a copy of `protoprimer.primer_kernel` (proto) updated automatically.
@@ -2602,6 +2658,13 @@ class EnvContext:
 # but it should not be linted (as its content/style is owned by the src repo).
 ################################################################################
 
+
+        self.populate_dependencies()
+
+        # TODO: Find "Universal Sink":
+        self.universal_sink: str = TargetState.target_full_proto_bootstrap
+
+    def register_bootstrapper(
         self,
         state_bootstrapper: AbstractStateBootstrapper,
     ):
@@ -2615,13 +2678,6 @@ class EnvContext:
 
     def add_dependency_edge(
         self,
-        parent_state: str,
-        child_state: str,
-    ):
-        self.dependency_edges.append((parent_state, child_state))
-
-    def populate_dependencies(
-        self,
 
 ################################################################################
 # Generated content:
@@ -2630,6 +2686,13 @@ class EnvContext:
 # but it should not be linted (as its content/style is owned by the src repo).
 ################################################################################
 
+        parent_state: str,
+        child_state: str,
+    ):
+        self.dependency_edges.append((parent_state, child_state))
+
+    def populate_dependencies(
+        self,
     ):
         # Populate a temporary collection of all children per parent:
         child_parents: dict[str, list[str]] = {}
@@ -2643,13 +2706,6 @@ class EnvContext:
         for child_id in child_parents.keys():
             state_bootstrapper: AbstractStateBootstrapper = self.state_bootstrappers[
                 child_id
-            ]
-            state_parents: list[str] = child_parents[child_id]
-            state_bootstrapper.set_state_parents(state_parents)
-
-    def bootstrap_state(
-        self,
-        env_state: str,
 
 ################################################################################
 # Generated content:
@@ -2658,6 +2714,13 @@ class EnvContext:
 # but it should not be linted (as its content/style is owned by the src repo).
 ################################################################################
 
+            ]
+            state_parents: list[str] = child_parents[child_id]
+            state_bootstrapper.set_state_parents(state_parents)
+
+    def bootstrap_state(
+        self,
+        env_state: str,
     ) -> Any:
         try:
             state_bootstrapper = self.state_bootstrappers[env_state]
@@ -2672,19 +2735,19 @@ class EnvContext:
         # Make all warnings be captured by the logging subsystem:
         logging.captureWarnings(True)
 
-        log_formatter = CustomFormatter()
-
-        stderr_handler = logging.StreamHandler(sys.stderr)
-        stderr_handler.setLevel(logging.NOTSET)
-        stderr_handler.setFormatter(log_formatter)
-
-
 ################################################################################
 # Generated content:
 # This is a copy of `protoprimer.primer_kernel` (proto) updated automatically.
 # It is supposed to be versioned (to be available in the dst repo on clone),
 # but it should not be linted (as its content/style is owned by the src repo).
 ################################################################################
+
+
+        log_formatter = CustomFormatter()
+
+        stderr_handler = logging.StreamHandler(sys.stderr)
+        stderr_handler.setLevel(logging.NOTSET)
+        stderr_handler.setFormatter(log_formatter)
 
         self.custom_logger.addHandler(stderr_handler)
 
@@ -2699,13 +2762,6 @@ class EnvContext:
         self.log_level = log_level
         self.custom_logger.setLevel(self.log_level)
 
-    def report_success_status(
-        self,
-        is_successful: bool,
-    ):
-        """
-        Print a color-coded status message to stderr.
-        """
 
 ################################################################################
 # Generated content:
@@ -2714,6 +2770,13 @@ class EnvContext:
 # but it should not be linted (as its content/style is owned by the src repo).
 ################################################################################
 
+    def report_success_status(
+        self,
+        is_successful: bool,
+    ):
+        """
+        Print a color-coded status message to stderr.
+        """
 
         color_success = "\033[42m\033[30m"
         color_failure = "\033[41m\033[97m"
@@ -2727,13 +2790,6 @@ class EnvContext:
         else:
             color_status = color_failure
             status_name = "FAILURE"
-            is_reportable = self.log_level <= logging.CRITICAL
-
-        if is_reportable:
-            print(
-                f"{color_status}{status_name}{color_reset}: {get_path_to_curr_python()} {get_script_command_line()}",
-                file=sys.stderr,
-                flush=True,
 
 ################################################################################
 # Generated content:
@@ -2742,6 +2798,13 @@ class EnvContext:
 # but it should not be linted (as its content/style is owned by the src repo).
 ################################################################################
 
+            is_reportable = self.log_level <= logging.CRITICAL
+
+        if is_reportable:
+            print(
+                f"{color_status}{status_name}{color_reset}: {get_path_to_curr_python()} {get_script_command_line()}",
+                file=sys.stderr,
+                flush=True,
             )
 
     def select_log_level_from_cli_args(
@@ -2755,13 +2818,6 @@ class EnvContext:
             self.set_log_level(logging.ERROR)
         elif parsed_args.log_level_verbose >= 2:
             self.set_log_level(logging.NOTSET)
-        elif parsed_args.log_level_verbose == 1:
-            self.set_log_level(logging.DEBUG)
-        else:
-            self.set_log_level(
-                self.bootstrap_state(EnvState.state_default_log_level.name)
-            )
-
 
 ################################################################################
 # Generated content:
@@ -2769,6 +2825,13 @@ class EnvContext:
 # It is supposed to be versioned (to be available in the dst repo on clone),
 # but it should not be linted (as its content/style is owned by the src repo).
 ################################################################################
+
+        elif parsed_args.log_level_verbose == 1:
+            self.set_log_level(logging.DEBUG)
+        else:
+            self.set_log_level(
+                self.bootstrap_state(EnvState.state_default_log_level.name)
+            )
 
     def run_stages(
         self,
@@ -2783,13 +2846,6 @@ class EnvContext:
         if state_name is None:
             env_state = self.universal_sink
         else:
-            env_state: str = EnvState[state_name].name
-
-        if run_mode is None:
-            pass
-        elif run_mode == RunMode.print_dag:
-            self.do_print_dag(env_state)
-        elif run_mode == RunMode.bootstrap_env:
 
 ################################################################################
 # Generated content:
@@ -2798,6 +2854,13 @@ class EnvContext:
 # but it should not be linted (as its content/style is owned by the src repo).
 ################################################################################
 
+            env_state: str = EnvState[state_name].name
+
+        if run_mode is None:
+            pass
+        elif run_mode == RunMode.print_dag:
+            self.do_print_dag(env_state)
+        elif run_mode == RunMode.bootstrap_env:
             self.do_bootstrap_env(env_state)
         else:
             raise ValueError(f"cannot handle run mode [{run_mode}]")
@@ -2811,13 +2874,6 @@ class EnvContext:
         ]
         SinkPrinterVisitor(self).visit_bootstrapper(state_bootstrapper)
 
-    def do_bootstrap_env(
-        self,
-        # TODO: use this:
-        env_state: str,
-    ):
-        # FS_28_84_41_40: flexible bootstrap
-        # `init_venv`
 
 ################################################################################
 # Generated content:
@@ -2826,6 +2882,13 @@ class EnvContext:
 # but it should not be linted (as its content/style is owned by the src repo).
 ################################################################################
 
+    def do_bootstrap_env(
+        self,
+        # TODO: use this:
+        env_state: str,
+    ):
+        # FS_28_84_41_40: flexible bootstrap
+        # `init_venv`
         self.bootstrap_state(env_state)
 
         # FS_28_84_41_40: flexible bootstrap
@@ -2839,13 +2902,6 @@ class EnvContext:
 
 class CustomFormatter(logging.Formatter):
     """
-    Custom formatter with color and proper timestamp.
-    """
-
-    def __init__(
-        self,
-    ):
-        # noinspection SpellCheckingInspection
 
 ################################################################################
 # Generated content:
@@ -2854,6 +2910,13 @@ class CustomFormatter(logging.Formatter):
 # but it should not be linted (as its content/style is owned by the src repo).
 ################################################################################
 
+    Custom formatter with color and proper timestamp.
+    """
+
+    def __init__(
+        self,
+    ):
+        # noinspection SpellCheckingInspection
         super().__init__(
             fmt="%(asctime)s %(process)d %(levelname)s %(filename)s:%(lineno)d %(message)s",
         )
@@ -2867,13 +2930,6 @@ class CustomFormatter(logging.Formatter):
         # Format date without millis:
         formatted_timestamp = datetime.datetime.fromtimestamp(
             log_record.created
-        ).strftime("%Y-%m-%d %H:%M:%S")
-
-        # Append millis with dot `.` as a separator:
-        return f"{formatted_timestamp}.{int(log_record.msecs):03d}"
-
-    # ANSI escape codes for colors:
-    color_reset = "\033[0m"
 
 ################################################################################
 # Generated content:
@@ -2882,6 +2938,13 @@ class CustomFormatter(logging.Formatter):
 # but it should not be linted (as its content/style is owned by the src repo).
 ################################################################################
 
+        ).strftime("%Y-%m-%d %H:%M:%S")
+
+        # Append millis with dot `.` as a separator:
+        return f"{formatted_timestamp}.{int(log_record.msecs):03d}"
+
+    # ANSI escape codes for colors:
+    color_reset = "\033[0m"
     color_set = {
         # cyan:
         "DEBUG": "\033[36m",
@@ -2895,13 +2958,6 @@ class CustomFormatter(logging.Formatter):
         "CRITICAL": "\033[1;31m",
     }
 
-    def format(self, log_record):
-        log_color = self.color_set.get(log_record.levelname, self.color_reset)
-        log_msg = super().format(log_record)
-        return f"{log_color}{log_msg}{self.color_reset}"
-
-
-if __name__ == "__main__":
 
 ################################################################################
 # Generated content:
@@ -2910,4 +2966,71 @@ if __name__ == "__main__":
 # but it should not be linted (as its content/style is owned by the src repo).
 ################################################################################
 
+    def format(self, log_record):
+        log_color = self.color_set.get(log_record.levelname, self.color_reset)
+        log_msg = super().format(log_record)
+        return f"{log_color}{log_msg}{self.color_reset}"
+
+
+def delegate_to_venv(
+    client_dir_path: str,
+) -> bool:
+    """
+    This is a helper function to delegate script execution to a `python` from `venv`.
+
+    It is supposed to be used in FS_75_87_82_46 entry scripts.
+    The entry script must know how to compute the path to `client_dir_path`
+    (e.g. it must know its path within client dir structure).
+
+    The function fails if `venv` is not created - user must trigger bootstrap manually.
+
+    :return: `False` if already inside `venv`, otherwise start itself inside `venv`.
+    """
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.primer_kernel` (proto) updated automatically.
+# It is supposed to be versioned (to be available in the dst repo on clone),
+# but it should not be linted (as its content/style is owned by the src repo).
+################################################################################
+
+
+    is_venv = sys.prefix != sys.base_prefix
+    if not is_venv:
+
+        venv_python = os.path.join(
+            client_dir_path,
+            # TODO: This might be passed as arg to the func (that being a default):
+            ConfConstEnv.default_dir_rel_path_venv,
+            # TODO: This might be passed as arg to the func (that being a default):
+            ConfConstGeneral.file_rel_path_venv_python,
+        )
+
+        if not os.path.exists(venv_python):
+            raise AssertionError(
+                f"`{venv_python}` does not exist - has `venv` been bootstrapped?"
+            )
+
+        # Throws or never returns:
+        os.execv(
+            venv_python,
+
+################################################################################
+# Generated content:
+# This is a copy of `protoprimer.primer_kernel` (proto) updated automatically.
+# It is supposed to be versioned (to be available in the dst repo on clone),
+# but it should not be linted (as its content/style is owned by the src repo).
+################################################################################
+
+            [
+                venv_python,
+                *sys.argv,
+            ],
+        )
+    else:
+        # Not delegated:
+        return False
+
+
+if __name__ == "__main__":
     main()

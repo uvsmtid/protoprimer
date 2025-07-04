@@ -5,11 +5,12 @@ from pyfakefs.fake_filesystem_unittest import TestCase as PyfakefsTestCase
 
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
+    ArgConst,
     Bootstrapper_state_parsed_args,
     EnvContext,
     EnvState,
 )
-from test_support import assert_test_module_name_embeds_str
+from local_test import assert_test_module_name_embeds_str
 
 
 # noinspection PyPep8Naming
@@ -35,7 +36,7 @@ class ThisTestClass(PyfakefsTestCase):
         # given:
         self.fs.create_dir("valid_dir")
         mock_state_parsed_args.return_value = argparse.Namespace(
-            target_dst_dir_path="valid_dir"
+            **{ArgConst.name_conf_env_path: "valid_dir"},
         )
 
         # when:
@@ -53,7 +54,7 @@ class ThisTestClass(PyfakefsTestCase):
     ):
         # given:
         mock_state_parsed_args.return_value = argparse.Namespace(
-            target_dst_dir_path="/abs/path"
+            **{ArgConst.name_conf_env_path: "/abs/path"},
         )
 
         # when:
@@ -74,7 +75,7 @@ class ThisTestClass(PyfakefsTestCase):
     ):
         # given:
         mock_state_parsed_args.return_value = argparse.Namespace(
-            target_dst_dir_path="conf/../bad"
+            **{ArgConst.name_conf_env_path: "conf/../bad"},
         )
 
         # when:
@@ -96,7 +97,7 @@ class ThisTestClass(PyfakefsTestCase):
         # given:
         self.fs.create_file("not_a_dir")
         mock_state_parsed_args.return_value = argparse.Namespace(
-            target_dst_dir_path="not_a_dir"
+            **{ArgConst.name_conf_env_path: "not_a_dir"},
         )
 
         # when:
@@ -117,7 +118,7 @@ class ThisTestClass(PyfakefsTestCase):
     ):
         # given:
         mock_state_parsed_args.return_value = argparse.Namespace(
-            target_dst_dir_path="missing_dir"
+            **{ArgConst.name_conf_env_path: "missing_dir"},
         )
 
         # when:
@@ -140,7 +141,7 @@ class ThisTestClass(PyfakefsTestCase):
         self.fs.create_dir("valid_dir")
         self.fs.create_symlink("symlink_to_dir", "valid_dir")
         mock_state_parsed_args.return_value = argparse.Namespace(
-            target_dst_dir_path="symlink_to_dir"
+            **{ArgConst.name_conf_env_path: "symlink_to_dir"},
         )
 
         # when:

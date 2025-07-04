@@ -1,13 +1,16 @@
 import os
 import sys
+from unittest import (
+    skip,
+)
 from unittest.mock import patch
 
 from pyfakefs.fake_filesystem_unittest import TestCase as PyfakefsTestCase
 
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
-    Bootstrapper_state_proto_kernel_dir_path,
     ArgConst,
+    Bootstrapper_state_proto_kernel_dir_path,
     ConfConstPrimer,
     main,
 )
@@ -25,6 +28,9 @@ class ThisTestClass(PyfakefsTestCase):
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_proto_kernel_dir_path.__name__}._bootstrap_once"
     )
+    # TODO: Repurpose, this is not applicable anymore (we allow missing target dst):
+    #       For example, assert behaviour how target dst specified in arg is saved into generated client conf file.
+    @skip
     def test_bootstrap_proceeds_on_missing_conf_client_file_fails_on_missing_target_dst_dir_path(
         self,
         mock_state_script_dir_path,
@@ -45,11 +51,16 @@ class ThisTestClass(PyfakefsTestCase):
         with patch.object(sys, "argv", test_args):
             with self.assertRaises(AssertionError) as cm:
                 main()
-            self.assertIn("`target_dst_dir_path` is not provided", str(cm.exception))
+            self.assertIn(
+                f"`{ArgConst.name_conf_env_path}` is not provided", str(cm.exception)
+            )
 
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_proto_kernel_dir_path.__name__}._bootstrap_once"
     )
+    # TODO: Repurpose, this is not applicable anymore (we allow missing target dst):
+    #       For example, assert behaviour when both config and arg provide value but it is different.
+    @skip
     def test_bootstrap_proceeds_on_existing_conf_client_file_fails_on_missing_target_dst_dir_path(
         self,
         mock_state_script_dir_path,
@@ -78,4 +89,6 @@ class ThisTestClass(PyfakefsTestCase):
         with patch.object(sys, "argv", test_args):
             with self.assertRaises(AssertionError) as cm:
                 main()
-            self.assertIn("`target_dst_dir_path` is not provided", str(cm.exception))
+            self.assertIn(
+                f"`{ArgConst.name_conf_env_path}` is not provided", str(cm.exception)
+            )

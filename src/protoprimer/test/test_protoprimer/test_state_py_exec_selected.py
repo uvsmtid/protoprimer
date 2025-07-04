@@ -19,7 +19,7 @@ from protoprimer.primer_kernel import (
     EnvState,
     PythonExecutable,
 )
-from test_support import assert_test_module_name_embeds_str
+from local_test import assert_test_module_name_embeds_str
 
 mock_client_dir = "/mock_client_dir"
 script_dir = os.path.dirname(os.path.abspath(__file__))

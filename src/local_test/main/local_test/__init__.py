@@ -1,4 +1,3 @@
-from enum import Enum
 from inspect import currentframe
 from unittest import TestCase
 

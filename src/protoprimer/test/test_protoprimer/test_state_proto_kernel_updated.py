@@ -12,17 +12,14 @@ from protoprimer.primer_kernel import (
     Bootstrapper_state_client_dir_path_configured,
     Bootstrapper_state_parsed_args,
     Bootstrapper_state_py_exec_selected,
-    Bootstrapper_state_py_exec_updated_protoprimer_package_reached,
     Bootstrapper_state_proto_kernel_dir_path,
-    ConfConstEnv,
     ConfConstGeneral,
     EnvContext,
     EnvState,
     get_path_to_curr_python,
     PythonExecutable,
-    read_text_file,
 )
-from test_support import assert_test_module_name_embeds_str
+from local_test import assert_test_module_name_embeds_str
 
 
 # noinspection PyPep8Naming
@@ -96,20 +93,40 @@ class ThisTestClass(PyfakefsTestCase):
 
         mock_state_client_dir_path_configured.return_value = mock_client_dir
 
-        self.fs.create_file(os.path.join(mock_client_dir, "src", "setup.py"))
+        for distrib_name in [
+            "local_repo",
+            "local_test",
+            "protoprimer",
+        ]:
+            self.fs.create_file(
+                os.path.join(
+                    mock_client_dir,
+                    "src",
+                    distrib_name,
+                    "setup.py",
+                )
+            )
 
         # when:
         self.env_ctx.bootstrap_state(EnvState.state_proto_kernel_updated.name)
 
         # then:
-        mock_install_editable_package.assert_called_once_with(
-            os.path.join(
-                mock_client_dir,
-                "src",
-            ),
-            [
-                "test",
-            ],
+        for distrib_name in [
+            "local_repo",
+            "local_test",
+            "protoprimer",
+        ]:
+            mock_install_editable_package.assert_any_call(
+                os.path.join(
+                    mock_client_dir,
+                    "src",
+                    distrib_name,
+                ),
+                [],
+            )
+        self.assertEqual(
+            3,
+            mock_install_editable_package.call_count,
         )
         script_obj = self.fs.get_object(script_path)
         self.assertIn(

@@ -4,6 +4,7 @@ import enum
 import logging
 import os.path
 import subprocess
+import sys
 
 from protoprimer.primer_kernel import (
     AbstractCachingStateBootstrapper,
@@ -20,6 +21,9 @@ logger = logging.getLogger()
 
 def custom_main():
     main(customize_env_context)
+
+
+# TODO: Move states into `cmd_bootstrap_env` so it is part of the single `bootstrap_env` for this repo.
 
 
 # noinspection PyPep8Naming
@@ -84,9 +88,14 @@ class Bootstrapper_state_pre_commit_configured(AbstractCachingStateBootstrapper[
         )
         logger.info(f"pre_commit_conf_file_path: {pre_commit_conf_file_path}")
 
+        path_to_pre_commit = os.path.join(
+            os.path.dirname(sys.executable),
+            "pre-commit",
+        )
+
         subprocess.check_call(
             [
-                "pre-commit",
+                path_to_pre_commit,
                 "install",
                 #
                 "--hook-type",

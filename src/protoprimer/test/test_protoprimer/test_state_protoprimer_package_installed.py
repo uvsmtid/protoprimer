@@ -11,7 +11,7 @@ from protoprimer.primer_kernel import (
     EnvState,
     PythonExecutable,
 )
-from test_support import assert_test_module_name_embeds_str
+from local_test import assert_test_module_name_embeds_str
 
 
 # noinspection PyPep8Naming
@@ -52,18 +52,38 @@ class ThisTestClass(PyfakefsTestCase):
 
         mock_state_client_dir_path_configured.return_value = mock_client_dir
 
-        self.fs.create_file(os.path.join(mock_client_dir, "src", "setup.py"))
+        for distrib_name in [
+            "local_repo",
+            "local_test",
+            "protoprimer",
+        ]:
+            self.fs.create_file(
+                os.path.join(
+                    mock_client_dir,
+                    "src",
+                    distrib_name,
+                    "setup.py",
+                )
+            )
 
         # when:
         self.env_ctx.bootstrap_state(EnvState.state_protoprimer_package_installed.name)
 
         # then:
-        mock_install_editable_package.assert_called_once_with(
-            os.path.join(
-                mock_client_dir,
-                "src",
-            ),
-            [
-                "test",
-            ],
+        for distrib_name in [
+            "local_repo",
+            "local_test",
+            "protoprimer",
+        ]:
+            mock_install_editable_package.assert_any_call(
+                os.path.join(
+                    mock_client_dir,
+                    "src",
+                    distrib_name,
+                ),
+                [],
+            )
+        self.assertEqual(
+            3,
+            mock_install_editable_package.call_count,
         )
