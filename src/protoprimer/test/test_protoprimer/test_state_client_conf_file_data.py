@@ -12,7 +12,7 @@ from protoprimer.primer_kernel import (
     EnvContext,
     EnvState,
 )
-from test_support import assert_test_module_name_embeds_str
+from local_test import assert_test_module_name_embeds_str
 
 
 # noinspection PyPep8Naming

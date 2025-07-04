@@ -1,18 +1,21 @@
 import argparse
 import os
+import sys
 from unittest.mock import patch
 
 from pyfakefs.fake_filesystem_unittest import TestCase as PyfakefsTestCase
 
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
+    ArgConst,
     Bootstrapper_state_env_conf_dir_path,
     Bootstrapper_state_parsed_args,
     ConfConstClient,
     EnvContext,
     EnvState,
+    PythonExecutable,
 )
-from test_support import assert_test_module_name_embeds_str
+from local_test import assert_test_module_name_embeds_str
 
 
 # noinspection PyPep8Naming
@@ -56,12 +59,21 @@ class ThisTestClass(PyfakefsTestCase):
             state_env_conf_dir_path,
             mock_target_dir,
         )
+        client_script_basename = "client_script.py"
+        test_args = [
+            client_script_basename,
+        ]
         mock_state_parsed_args.return_value = argparse.Namespace(
-            target_dst_dir_path=None,
+            **{
+                ArgConst.name_conf_env_path: None,
+                ArgConst.name_py_exec: PythonExecutable.py_exec_unknown.name,
+                ArgConst.name_client_dir_path: mock_client_dir,
+            },
         )
 
         # when:
-        self.env_ctx.bootstrap_state(EnvState.state_env_conf_dir_path_verified.name)
+        with patch.object(sys, "argv", test_args):
+            self.env_ctx.bootstrap_state(EnvState.state_env_conf_dir_path_verified.name)
 
         # then:
         # no exception happens
@@ -90,7 +102,7 @@ class ThisTestClass(PyfakefsTestCase):
             "target_dir",
         )
         mock_state_parsed_args.return_value = argparse.Namespace(
-            target_dst_dir_path=target_dst_dir_path,
+            **{ArgConst.name_conf_env_path: target_dst_dir_path},
         )
         self.fs.create_dir(target_dst_dir_path)
         self.fs.create_symlink(
@@ -105,7 +117,7 @@ class ThisTestClass(PyfakefsTestCase):
         # no exception happens
 
     @patch(
-        f"{primer_kernel  .__name__}.{Bootstrapper_state_env_conf_dir_path.__name__}.bootstrap_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_env_conf_dir_path.__name__}.bootstrap_state"
     )
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_parsed_args.__name__}._bootstrap_once"
@@ -136,7 +148,7 @@ class ThisTestClass(PyfakefsTestCase):
             actual_target_dir,
         )
         mock_state_parsed_args.return_value = argparse.Namespace(
-            target_dst_dir_path=expected_target_dir,
+            **{ArgConst.name_conf_env_path: expected_target_dir},
         )
 
         # when:
@@ -175,7 +187,7 @@ class ThisTestClass(PyfakefsTestCase):
             mock_not_a_dir,
         )
         mock_state_parsed_args.return_value = argparse.Namespace(
-            target_dst_dir_path=mock_not_a_dir,
+            **{ArgConst.name_conf_env_path: mock_not_a_dir},
         )
 
         # when:
@@ -206,13 +218,25 @@ class ThisTestClass(PyfakefsTestCase):
         )
         mock_state_env_conf_dir_path.return_value = state_env_conf_dir_path
         self.fs.create_dir(state_env_conf_dir_path)
+        client_script_basename = "client_script.py"
+        test_args = [
+            client_script_basename,
+        ]
         mock_state_parsed_args.return_value = argparse.Namespace(
-            target_dst_dir_path=None,
+            **{
+                ArgConst.name_conf_env_path: None,
+                ArgConst.name_py_exec: PythonExecutable.py_exec_unknown.name,
+                ArgConst.name_client_dir_path: mock_client_dir,
+            },
         )
 
         # when:
-        with self.assertRaises(AssertionError) as ctx:
-            self.env_ctx.bootstrap_state(EnvState.state_env_conf_dir_path_verified.name)
+
+        with patch.object(sys, "argv", test_args):
+            with self.assertRaises(AssertionError) as ctx:
+                self.env_ctx.bootstrap_state(
+                    EnvState.state_env_conf_dir_path_verified.name
+                )
 
         # then:
         self.assertIn("is not a symlink", str(ctx.exception))
@@ -236,7 +260,7 @@ class ThisTestClass(PyfakefsTestCase):
             "target_dir",
         )
         mock_state_parsed_args.return_value = argparse.Namespace(
-            target_dst_dir_path=target_dst_dir_path,
+            **{ArgConst.name_conf_env_path: target_dst_dir_path},
         )
         state_env_conf_dir_path = os.path.join(
             mock_client_dir,
@@ -273,7 +297,7 @@ class ThisTestClass(PyfakefsTestCase):
         target_dst_dir_path_non_normalized = "target_dir/"
         target_dst_dir_path_normalized = "target_dir"
         mock_state_parsed_args.return_value = argparse.Namespace(
-            target_dst_dir_path=target_dst_dir_path_non_normalized,
+            **{ArgConst.name_conf_env_path: target_dst_dir_path_non_normalized},
         )
         state_env_conf_dir_path = os.path.join(
             mock_client_dir,
@@ -308,17 +332,31 @@ class ThisTestClass(PyfakefsTestCase):
         self.fs.create_dir(mock_client_dir)
         os.chdir(mock_client_dir)
         mock_state_parsed_args.return_value = argparse.Namespace(
-            target_dst_dir_path=None,
+            **{ArgConst.name_conf_env_path: None},
         )
         state_env_conf_dir_path = os.path.join(
             mock_client_dir,
             ConfConstClient.default_dir_rel_path_conf_env_link_name,
         )
         mock_state_env_conf_dir_path.return_value = state_env_conf_dir_path
+        client_script_basename = "client_script.py"
+        test_args = [
+            client_script_basename,
+        ]
+        mock_state_parsed_args.return_value = argparse.Namespace(
+            **{
+                ArgConst.name_conf_env_path: None,
+                ArgConst.name_py_exec: PythonExecutable.py_exec_unknown.name,
+                ArgConst.name_client_dir_path: mock_client_dir,
+            },
+        )
 
         # when:
-        with self.assertRaises(AssertionError) as ctx:
-            self.env_ctx.bootstrap_state(EnvState.state_env_conf_dir_path_verified.name)
+        with patch.object(sys, "argv", test_args):
+            with self.assertRaises(AssertionError) as ctx:
+                self.env_ctx.bootstrap_state(
+                    EnvState.state_env_conf_dir_path_verified.name
+                )
 
         # then:
         self.assertIn("not provided", str(ctx.exception))

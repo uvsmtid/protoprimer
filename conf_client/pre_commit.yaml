@@ -1,5 +1,35 @@
 
 repos:
+
+    -   repo: https://github.com/pre-commit/pre-commit-hooks
+        rev: v4.5.0  # Use the latest compatible version
+        hooks:
+
+        -   id: trailing-whitespace
+            stages: [
+                "pre-commit",
+            ]
+
+        -   id: end-of-file-fixer
+            stages: [
+                "pre-commit",
+            ]
+
+        -   id: check-executables-have-shebangs
+            stages: [
+                "pre-commit",
+            ]
+
+        -   id: check-json
+            stages: [
+                "pre-commit",
+            ]
+
+        -   id: check-yaml
+            stages: [
+                "pre-commit",
+            ]
+
     -   repo: https://github.com/psf/black
         rev: 25.1.0
         hooks:
@@ -7,6 +37,19 @@ repos:
             args: [
                 "--force-exclude",
                 "cmd/proto_kernel.py",
+            ]
+            stages: [
+                "pre-commit",
+            ]
+
+    -   repo: https://github.com/igorshubovych/markdownlint-cli
+        rev: v0.45.0
+        hooks:
+
+        -   id: markdownlint
+            args: [
+                "--config",
+                "conf_client/markdownlint.yaml",
             ]
             stages: [
                 "pre-commit",

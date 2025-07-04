@@ -51,7 +51,7 @@ then
 fi
 
 # Get version of `protoprimer` distribution:
-protoprimer_version="$( sed -n "s/^__version__ = ['\"]\([^'\"]*\)['\"]/\1/p" "${client_dir}/src/main/protoprimer/primer_kernel.py" )"
+protoprimer_version="$( sed -n "s/^__version__ = ['\"]\([^'\"]*\)['\"]/\1/p" "${client_dir}/src/protoprimer/main/protoprimer/primer_kernel.py" )"
 echo "INFO: protoprimer_version ${protoprimer_version}" 1>&2
 
 # Determine if it is a dev version (which relaxes many checks):
@@ -132,7 +132,7 @@ else
 fi
 
 # Switch to `build_dir`:
-build_dir="${client_dir}/src"
+build_dir="${client_dir}/src/protoprimer"
 cd "${build_dir}"
 
 # Clean up previously built packages:
@@ -157,4 +157,4 @@ cd "${client_dir}"
 # Change version to non-release-able to force user to change it later:
 sed --in-place \
 "s/${protoprimer_version}/WRONG_TO_BE_FIXED.${protoprimer_version}/g" \
-"${client_dir}/src/main/protoprimer/primer_kernel.py" \
+"${client_dir}/src/protoprimer/main/protoprimer/primer_kernel.py" \

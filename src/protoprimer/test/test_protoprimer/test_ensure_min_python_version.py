@@ -3,7 +3,7 @@ from unittest.mock import patch
 from protoprimer.primer_kernel import (
     ensure_min_python_version,
 )
-from test_support import BaseTestClass
+from local_test import BaseTestClass
 
 
 class ThisTestClass(BaseTestClass):
