@@ -35,7 +35,7 @@ import venv
 
 # Implements this (using the single script directly without a separate `_version.py` file):
 # https://stackoverflow.com/a/7071358/441652
-__version__ = "0.0.2"
+__version__ = "0.0.2.dev2"
 
 from typing import (
     Any,
@@ -98,9 +98,9 @@ def init_arg_parser():
         # TODO: put in ArgConst:
         "--context_phase",
         type=str,
-        choices=[context_phase.name for context_phase in ContextPhase],
-        default=ContextPhase.proto_primer.name,
-        help=f"Select `{ContextPhase.__name__}`.",
+        choices=[context_phase.name for context_phase in PrimerPhase],
+        default=PrimerPhase.proto_primer.name,
+        help=f"Select `{PrimerPhase.__name__}`.",
     )
     arg_parser.add_argument(
         "-s",
@@ -147,7 +147,7 @@ def init_arg_parser():
     # TODO: use it with special `--init_repo` flag (otherwise, do not allow):
     arg_parser.add_argument(
         ArgConst.arg_client_dir_path,
-        nargs="?",
+        type=str,
         default=None,
         help="Path to client root dir (relative to current directory or absolute).",
     )
@@ -161,7 +161,7 @@ def init_arg_parser():
     # TODO: use it with special `--init_repo` flag (otherwise, do not allow):
     arg_parser.add_argument(
         ArgConst.arg_conf_env_path,
-        nargs="?",
+        type=str,
         default=None,
         # TODO: Rephrase (it should be more generic):
         help="Path to one of the dirs (normally under `@/dst/`) to be used as target for `@/conf/` symlink.",
@@ -285,7 +285,23 @@ def install_editable_package(
     )
 
 
-class ContextPhase(enum.Enum):
+# TODO: Rename to ConfBundle:
+class PrimerConf(enum.Enum):
+    """
+    See: FS_89_41_35_82.conf_bundle.md
+    """
+
+    conf_proto = enum.auto()
+
+    conf_client = enum.auto()
+
+    conf_env = enum.auto()
+
+
+class PrimerPhase(enum.Enum):
+    """
+    See: FS_14_52_73_23.primer_phase.md
+    """
 
     proto_primer = enum.auto()
 
@@ -295,11 +311,16 @@ class ContextPhase(enum.Enum):
 class RunMode(enum.Enum):
     """
     Various modes the script can be run in.
+
+    See: FS_11_27_29_83.run_mode.md
     """
 
     print_dag = enum.auto()
 
     bootstrap_env = enum.auto()
+
+    # TODO: implement:
+    check_env = enum.auto()
 
 
 class AbstractBootstrapperVisitor:
@@ -368,8 +389,11 @@ class SinkPrinterVisitor(AbstractBootstrapperVisitor):
 class PythonExecutable(enum.IntEnum):
     """
     Python executables started during the bootstrap process - each replaces the executable program (via `os.execv`).
+
+    See: FS_72_45_12_06.python_executable.md
     """
 
+    # TODO: rename to `unpredictable`
     # `python` executable has not been categorized yet:
     py_exec_unknown = -1
 
@@ -613,7 +637,7 @@ class Bootstrapper_state_proto_kernel_config_file_path(
         )
         return os.path.join(
             state_proto_kernel_dir_path,
-            ConfConstInput.default_file_basename_conf_primer,
+            ConfConstInput.default_file_basename_conf_proto,
         )
 
 
@@ -1632,6 +1656,8 @@ class EnvState(enum.Enum):
     Configuration states to be bootstrapped during the bootstrap process.
 
     NOTE: Only `str` names of the enum items are supposed to be used (any value is ignored).
+
+    See: FS_68_54_41_96.state_dependency.md
     """
 
     def __init__(
@@ -1791,9 +1817,7 @@ class ConfConstInput:
     file_abs_path_script = ConfConstGeneral.input_based
     dir_abs_path_current = ConfConstGeneral.input_based
 
-    default_file_basename_conf_primer = (
-        f"conf_primer.{ConfConstGeneral.default_primer_kernel_module}.json"
-    )
+    default_file_basename_conf_proto = f"{PrimerConf.conf_proto.name}.{ConfConstGeneral.default_primer_kernel_module}.json"
 
 
 class ConfConstPrimer:
