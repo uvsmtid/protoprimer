@@ -5,7 +5,7 @@
 
 # `protoprimer` ~ bootstrapper from nothing
 
-## TL;DR: What does it do?
+## What does it do?
 
 *   bootstraps target environment
 *   stays a self-contained script (has no dependencies)
@@ -48,6 +48,8 @@ In this case `./cmd/bootstrap_env` (a dummy proxy) relies on `./cmd/proto_kernel
 4.  environment-specific configuration is effective
 5.  client-specific code takes over
 
+See details in [bootstrap process][FS_57_87_94_94.bootstrap_process.md].
+
 ## Why **not** ad-hoc bootstrap script instead?
 
 The combination of the following features makes such scripts rather complex to re-invent:
@@ -80,3 +82,4 @@ Because shell scripts:
 [SOLID_wiki]: https://en.wikipedia.org/wiki/SOLID
 [DAG_wiki]: https://en.wikipedia.org/wiki/Directed_acyclic_graph
 [FS_44_72_60_67.python_vs_shell.md]: doc/FS_44_72_60_67.python_vs_shell.md
+[FS_57_87_94_94.bootstrap_process.md]: doc/FS_57_87_94_94.bootstrap_process.md
