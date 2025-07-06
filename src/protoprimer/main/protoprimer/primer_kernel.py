@@ -95,59 +95,55 @@ def init_arg_parser():
     )
 
     arg_parser.add_argument(
-        # TODO: put in ArgConst:
-        "--context_phase",
+        ArgConst.arg_context_phase,
         type=str,
-        choices=[context_phase.name for context_phase in ContextPhase],
-        default=ContextPhase.proto_primer.name,
-        help=f"Select `{ContextPhase.__name__}`.",
+        choices=[context_phase.name for context_phase in PrimerPhase],
+        default=PrimerPhase.phase_proto.name,
+        help=f"Select `{PrimerPhase.__name__}`.",
     )
     arg_parser.add_argument(
-        "-s",
-        # TODO: put in ArgConst:
-        "--silent",
+        ArgConst.arg_s,
+        ArgConst.arg_silent,
         action="store_true",
-        dest="log_level_silent",
+        dest=ArgConst.dest_silent,
         # In the case of exceptions, stack traces are still printed:
-        help="Do not log, use non-zero exit code on error.",
+        help="Do not log (set only non-zero exit code on error).",
     )
     arg_parser.add_argument(
-        "-q",
-        # TODO: put in ArgConst:
-        "--quiet",
+        ArgConst.arg_q,
+        ArgConst.arg_quiet,
         action="store_true",
-        dest="log_level_quiet",
+        dest=ArgConst.dest_quiet,
         help="Log errors messages only.",
     )
     arg_parser.add_argument(
-        "-v",
-        # TODO: put in ArgConst:
-        "--verbose",
+        ArgConst.arg_v,
+        ArgConst.arg_verbose,
         action="count",
-        dest="log_level_verbose",
+        dest=ArgConst.dest_verbose,
         default=0,
-        help="Log debug messages.",
+        help="Increase log verbosity level.",
     )
     arg_parser.add_argument(
-        # TODO: put in ArgConst:
-        "--run_mode",
+        ArgConst.arg_run_mode,
         type=str,
         choices=[run_mode.name for run_mode in RunMode],
         default=RunMode.bootstrap_env.name,
-        help="Select run mode.",
+        help=f"Select {RunMode.__name__}.",
     )
     arg_parser.add_argument(
-        # TODO: put in ArgConst:
-        "--state_name",
+        ArgConst.arg_state_name,
         type=str,
+        # TODO: Provide choices?
+        # TODO: Provide default?
         default=None,
         # TODO: Compute universal sink:
-        help="Select state name to start with (default = universal sink).",
+        help=f"Select target {EnvState.__name__}.",
     )
     # TODO: use it with special `--init_repo` flag (otherwise, do not allow):
     arg_parser.add_argument(
         ArgConst.arg_client_dir_path,
-        nargs="?",
+        type=str,
         default=None,
         help="Path to client root dir (relative to current directory or absolute).",
     )
@@ -156,12 +152,12 @@ def init_arg_parser():
         type=str,
         choices=[py_exec.name for py_exec in PythonExecutable],
         default=PythonExecutable.py_exec_unknown.name,
-        help="Used internally: category of `python` executable detected by recursive invocation.",
+        help=f"Used internally: override {PythonExecutable.__name__}.",
     )
     # TODO: use it with special `--init_repo` flag (otherwise, do not allow):
     arg_parser.add_argument(
         ArgConst.arg_conf_env_path,
-        nargs="?",
+        type=str,
         default=None,
         # TODO: Rephrase (it should be more generic):
         help="Path to one of the dirs (normally under `@/dst/`) to be used as target for `@/conf/` symlink.",
@@ -285,21 +281,42 @@ def install_editable_package(
     )
 
 
-class ContextPhase(enum.Enum):
+# TODO: Rename to ConfBundle:
+class PrimerConf(enum.Enum):
+    """
+    See: FS_89_41_35_82.conf_bundle.md
+    """
 
-    proto_primer = enum.auto()
+    conf_proto = enum.auto()
 
-    venv_primer = enum.auto()
+    conf_client = enum.auto()
+
+    conf_env = enum.auto()
+
+
+class PrimerPhase(enum.Enum):
+    """
+    See: FS_14_52_73_23.primer_phase.md
+    """
+
+    phase_proto = enum.auto()
+
+    phase_venv = enum.auto()
 
 
 class RunMode(enum.Enum):
     """
     Various modes the script can be run in.
+
+    See: FS_11_27_29_83.run_mode.md
     """
 
     print_dag = enum.auto()
 
     bootstrap_env = enum.auto()
+
+    # TODO: implement:
+    check_env = enum.auto()
 
 
 class AbstractBootstrapperVisitor:
@@ -368,8 +385,11 @@ class SinkPrinterVisitor(AbstractBootstrapperVisitor):
 class PythonExecutable(enum.IntEnum):
     """
     Python executables started during the bootstrap process - each replaces the executable program (via `os.execv`).
+
+    See: FS_72_45_12_06.python_executable.md
     """
 
+    # TODO: rename to `unpredictable`
     # `python` executable has not been categorized yet:
     py_exec_unknown = -1
 
@@ -613,7 +633,7 @@ class Bootstrapper_state_proto_kernel_config_file_path(
         )
         return os.path.join(
             state_proto_kernel_dir_path,
-            ConfConstInput.default_file_basename_conf_primer,
+            ConfConstInput.default_file_basename_conf_proto,
         )
 
 
@@ -1234,22 +1254,6 @@ class Bootstrapper_state_py_exec_selected(
                 f"to re-create it automatically. "
             )
 
-        def switch_to_required_python():
-            assert state_py_exec_specified == PythonExecutable.py_exec_unknown
-            self.env_ctx.py_exec = PythonExecutable.py_exec_arbitrary
-            logger.info(
-                f"switching from current `python` interpreter [{path_to_curr_python}] to required one [{state_env_path_to_python}]"
-            )
-            os.execv(
-                state_env_path_to_python,
-                [
-                    state_env_path_to_python,
-                    *sys.argv,
-                    ArgConst.arg_py_exec,
-                    PythonExecutable.py_exec_required.name,
-                ],
-            )
-
         venv_path_to_python = os.path.join(
             state_env_path_to_venv,
             ConfConstGeneral.file_rel_path_venv_python,
@@ -1257,8 +1261,15 @@ class Bootstrapper_state_py_exec_selected(
         path_to_curr_python = get_path_to_curr_python()
         if is_sub_path(path_to_curr_python, state_env_path_to_venv):
             if path_to_curr_python != venv_path_to_python:
+                assert state_py_exec_specified == PythonExecutable.py_exec_unknown
+                self.env_ctx.py_exec = PythonExecutable.py_exec_arbitrary
                 # Ensure `python` is from the correct `venv` path
-                switch_to_required_python()
+                self.env_ctx.switch_python(
+                    curr_py_exec=state_py_exec_specified,
+                    curr_python_path=path_to_curr_python,
+                    next_py_exec=PythonExecutable.py_exec_required,
+                    next_python_path=state_env_path_to_python,
+                )
             else:
                 # If already under `venv` with the expected path, nothing to do.
                 assert (
@@ -1272,7 +1283,14 @@ class Bootstrapper_state_py_exec_selected(
                     self.env_ctx.py_exec = state_py_exec_specified
         else:
             if path_to_curr_python != state_env_path_to_python:
-                switch_to_required_python()
+                assert state_py_exec_specified == PythonExecutable.py_exec_unknown
+                self.env_ctx.py_exec = PythonExecutable.py_exec_arbitrary
+                self.env_ctx.switch_python(
+                    curr_py_exec=state_py_exec_specified,
+                    curr_python_path=path_to_curr_python,
+                    next_py_exec=PythonExecutable.py_exec_required,
+                    next_python_path=state_env_path_to_python,
+                )
             else:
                 assert (
                     state_py_exec_specified == PythonExecutable.py_exec_unknown
@@ -1287,17 +1305,11 @@ class Bootstrapper_state_py_exec_selected(
                     )
                 else:
                     logger.info(f"reusing existing `venv` [{state_env_path_to_venv}]")
-                logger.info(
-                    f"switching from current `python` interpreter [{state_env_path_to_python}] to `venv` interpreter [{venv_path_to_python}]"
-                )
-                os.execv(
-                    venv_path_to_python,
-                    [
-                        venv_path_to_python,
-                        *sys.argv,
-                        ArgConst.arg_py_exec,
-                        PythonExecutable.py_exec_venv.name,
-                    ],
+                self.env_ctx.switch_python(
+                    curr_py_exec=state_py_exec_specified,
+                    curr_python_path=state_env_path_to_python,
+                    next_py_exec=PythonExecutable.py_exec_venv,
+                    next_python_path=venv_path_to_python,
                 )
 
         return self.env_ctx.py_exec
@@ -1411,17 +1423,15 @@ class Bootstrapper_state_py_exec_updated_protoprimer_package_reached(
             < PythonExecutable.py_exec_updated_protoprimer_package.value
         ):
             self.env_ctx.py_exec = PythonExecutable.py_exec_updated_protoprimer_package
-            logger.info(
+            # TODO: maybe add this reason to `switch_python` as an arg?
+            logger.debug(
                 f"restarting current `python` interpreter [{venv_path_to_python}] to make [{EnvState.state_protoprimer_package_installed.name}] effective"
             )
-            os.execv(
-                venv_path_to_python,
-                [
-                    venv_path_to_python,
-                    *sys.argv,
-                    ArgConst.arg_py_exec,
-                    PythonExecutable.py_exec_updated_protoprimer_package.name,
-                ],
+            self.env_ctx.switch_python(
+                curr_py_exec=state_py_exec_specified,
+                curr_python_path=venv_path_to_python,
+                next_py_exec=PythonExecutable.py_exec_updated_protoprimer_package,
+                next_python_path=venv_path_to_python,
             )
         else:
             # Successfully reached end goal:
@@ -1545,17 +1555,15 @@ class Bootstrapper_state_py_exec_updated_proto_kernel_code(
             < PythonExecutable.py_exec_updated_proto_kernel_code.value
         ):
             self.env_ctx.py_exec = PythonExecutable.py_exec_updated_proto_kernel_code
-            logger.info(
+            # TODO: maybe add this reason to `switch_python` as an arg?
+            logger.debug(
                 f"restarting current `python` interpreter [{venv_path_to_python}] to make [{EnvState.state_proto_kernel_updated.name}] effective"
             )
-            os.execv(
-                venv_path_to_python,
-                [
-                    venv_path_to_python,
-                    *sys.argv,
-                    ArgConst.arg_py_exec,
-                    PythonExecutable.py_exec_updated_proto_kernel_code.name,
-                ],
+            self.env_ctx.switch_python(
+                curr_py_exec=state_py_exec_specified,
+                curr_python_path=venv_path_to_python,
+                next_py_exec=PythonExecutable.py_exec_updated_proto_kernel_code,
+                next_python_path=venv_path_to_python,
             )
         else:
             # Successfully reached end goal:
@@ -1632,6 +1640,8 @@ class EnvState(enum.Enum):
     Configuration states to be bootstrapped during the bootstrap process.
 
     NOTE: Only `str` names of the enum items are supposed to be used (any value is ignored).
+
+    See: FS_68_54_41_96.state_dependency.md
     """
 
     def __init__(
@@ -1737,16 +1747,45 @@ class TargetState:
 
 class ArgConst:
 
-    # TODO: decide on convention for pure `arg_name` and `--arg_name`:
     name_conf_env_path = "conf_env_path"
     name_recursion_flag = "recursion_flag"
     name_client_dir_path = "client_dir_path"
     name_py_exec = "py_exec"
+    name_context_phase = "context_phase"
+    name_run_mode = "run_mode"
+    name_state_name = "state_name"
+
+    name_s = "s"
+    name_silent = "silent"
+
+    name_q = "q"
+    name_quiet = "quiet"
+
+    name_v = "v"
+    name_verbose = "verbose"
+
+    prefix_log_level = "log_level"
 
     arg_conf_env_path = f"--{name_conf_env_path}"
     arg_recursion_flag = f"--{name_recursion_flag}"
     arg_client_dir_path = f"--{name_client_dir_path}"
     arg_py_exec = f"--{name_py_exec}"
+    arg_context_phase = f"--{name_context_phase}"
+    arg_run_mode = f"--{name_run_mode}"
+    arg_state_name = f"--{name_state_name}"
+
+    arg_s = f"-{name_s}"
+    arg_silent = f"--{name_silent}"
+    value_silent = f"--{name_silent}"
+    dest_silent = f"log_level_{name_silent}"
+
+    arg_q = f"-{name_q}"
+    arg_quiet = f"--{name_quiet}"
+    dest_quiet = f"log_level_{name_quiet}"
+
+    arg_v = f"-{name_v}"
+    arg_verbose = f"--{name_verbose}"
+    dest_verbose = f"log_level_{name_verbose}"
 
 
 class ConfConstGeneral:
@@ -1791,9 +1830,7 @@ class ConfConstInput:
     file_abs_path_script = ConfConstGeneral.input_based
     dir_abs_path_current = ConfConstGeneral.input_based
 
-    default_file_basename_conf_primer = (
-        f"conf_primer.{ConfConstGeneral.default_primer_kernel_module}.json"
-    )
+    default_file_basename_conf_proto = f"{PrimerConf.conf_proto.name}.{ConfConstGeneral.default_primer_kernel_module}.json"
 
 
 class ConfConstPrimer:
@@ -2074,6 +2111,26 @@ class EnvContext:
         # FS_28_84_41_40: flexible bootstrap
         # `generate_files`
         # TODO: TODO_11_66_62_70: python_bootstrap:
+
+    def switch_python(
+        self,
+        curr_py_exec: PythonExecutable,
+        curr_python_path: str,
+        next_py_exec: PythonExecutable,
+        next_python_path: str,
+    ):
+        logger.info(
+            f"switching from current `python` interpreter [{curr_python_path}][{curr_py_exec.name}] to [{next_python_path}][{next_py_exec.name}]"
+        )
+        os.execv(
+            next_python_path,
+            [
+                next_python_path,
+                *sys.argv,
+                ArgConst.arg_py_exec,
+                next_py_exec.name,
+            ],
+        )
 
 
 class CustomFormatter(logging.Formatter):

@@ -2,16 +2,18 @@ import os
 import sys
 from unittest.mock import patch
 
-from pyfakefs.fake_filesystem_unittest import TestCase as PyfakefsTestCase
-
+from local_test import (
+    assert_test_module_name_embeds_str,
+    BasePyfakefsTestClass,
+)
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     ArgConst,
     Bootstrapper_state_client_dir_path_specified,
     Bootstrapper_state_env_conf_file_data,
     Bootstrapper_state_env_conf_file_path,
-    Bootstrapper_state_py_exec_specified,
     Bootstrapper_state_proto_kernel_dir_path,
+    Bootstrapper_state_py_exec_specified,
     Bootstrapper_state_target_dst_dir_path,
     ConfConstEnv,
     ConfConstGeneral,
@@ -19,7 +21,6 @@ from protoprimer.primer_kernel import (
     EnvState,
     PythonExecutable,
 )
-from local_test import assert_test_module_name_embeds_str
 
 mock_client_dir = "/mock_client_dir"
 script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -30,7 +31,7 @@ non_default_dir_abs_path_venv = "/another/venv"
 
 
 # noinspection PyPep8Naming
-class ThisTestClass(PyfakefsTestCase):
+class ThisTestClass(BasePyfakefsTestClass):
 
     def setUp(self):
         self.setUpPyfakefs()

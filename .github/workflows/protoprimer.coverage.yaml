@@ -3,6 +3,9 @@ on:
     push:
         branches:
         -   "*"
+    pull_request:
+        branches:
+        -   "*"
 jobs:
     bootstrap_scenarios:
         runs-on: ubuntu-latest
@@ -23,9 +26,18 @@ jobs:
 
             -   run: "${{ github.workspace }}/cmd/bootstrap_env"
 
-            -   name: ensure git has no local changes and untracked files
-                run: "test -z \"$(git status --porcelain)\""
+            -   name: generate coverage for `protoprimer` distrib package
+                run: "${{ github.workspace }}/venv/bin/coverage run --branch --source=${{ github.workspace }}/src/protoprimer/main/ --module unittest discover --start-directory ${{ github.workspace }}/src/protoprimer/test/"
 
-            -   run: "${{ github.workspace }}/cmd/pre_commit_for_all"
+            -   name: report coverage
+                run: "${{ github.workspace }}/venv/bin/coverage report --show-missing --no-skip-covered"
+
+            -   name: convert coverage
+                run: "${{ github.workspace }}/venv/bin/coverage xml"
+
+            -   name: coveralls.io
+                env:
+                    COVERALLS_REPO_TOKEN: "${{ secrets.COVERALLS_REPO_TOKEN }}"
+                uses: coverallsapp/github-action@v2
 
             -   run: "echo job.status: ${{ job.status }}"
