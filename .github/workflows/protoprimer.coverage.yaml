@@ -17,13 +17,14 @@ jobs:
 
             -   uses: actions/setup-python@v5
                 with:
-                    # FS_84_11_73_28: supported python versions:
+                    # FT_84_11_73_28: supported python versions:
                     python-version: 3.13
 
             -   run: "python -c \"import sys; print(sys.version);\""
 
             -   uses: actions/checkout@v4
 
+            -   run: "${{ github.workspace }}/prime"
             -   run: "${{ github.workspace }}/cmd/bootstrap_env"
 
             -   name: generate coverage for `protoprimer` distrib package
