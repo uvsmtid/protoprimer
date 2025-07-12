@@ -1,3 +1,3 @@
-""" """
-
-# Intentionally empty: enables test discovery within this dir.
+"""
+Intentionally empty: enables test discovery within this dir.
+"""

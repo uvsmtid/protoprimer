@@ -1,4 +1,4 @@
-from local_test import BaseTestClass
+from local_test.base_test_class import BaseTestClass
 
 
 class ThisTestClass(BaseTestClass):
