@@ -34,11 +34,28 @@ setuptools.setup(
     version=version_string,
     author="uvsmtid",
     author_email="uvsmtid@gmail.com",
-    description="universal multi-stage `python` environment initializer & bootstrapper (primer) via a stand-alone automatic (proto) script",
+    description=(
+        "self-contained, "
+        "stand-alone, "
+        "no-deps, "
+        "no-args-friendly, "
+        "auto-cloning, "
+        "environment-driven, "
+        "pure-python, "
+        "multi-stage extensible DAG bootstrapper "
+        "to escape from shell scripting maintenance hell"
+    ),
+    keywords=(
+        "venv virtual environment"
+        "env environment"
+        "dev development"
+        "boot bootstrap bootstrapper"
+        "init initialize initializer"
+        "check checker"
+    ),
     long_description="""
 See: https://github.com/uvsmtid/protoprimer
     """,
-    keywords="boot env bootstrap environment dev",
     license="MIT",
     classifiers=[
         "Development Status :: 3 - Alpha",
@@ -73,7 +90,7 @@ See: https://github.com/uvsmtid/protoprimer
         "protoprimer": [],
     },
     include_package_data=False,
-    # FS_84_11_73_28: supported python versions:
+    # FT_84_11_73_28: supported python versions:
     python_requires=">=3.8",
     install_requires=[],
     extras_require=extras_require,
