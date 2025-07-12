@@ -18,7 +18,7 @@ setuptools.setup(
         "local_repo": [],
     },
     include_package_data=False,
-    # FS_84_11_73_28: supported python versions:
+    # FT_84_11_73_28: supported python versions:
     python_requires=">=3.8",
     install_requires=[
         "pre-commit",

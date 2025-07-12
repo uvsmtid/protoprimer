@@ -43,7 +43,7 @@ class Bootstrapper_state_pre_commit_installed(AbstractCachingStateBootstrapper[b
     ) -> StateValueType:
         # Bootstrap all dependencies:
         for env_state in self.state_parents:
-            self.env_ctx.bootstrap_state(env_state)
+            self.bootstrap_parent_state(env_state)
 
         install_package(
             "pre-commit",
@@ -70,12 +70,12 @@ class Bootstrapper_state_pre_commit_configured(AbstractCachingStateBootstrapper[
     def _bootstrap_once(
         self,
     ) -> StateValueType:
-        state_pre_commit_installed = self.env_ctx.bootstrap_state(
+        state_pre_commit_installed = self.bootstrap_parent_state(
             CustomEnvState.state_pre_commit_installed.name
         )
         assert state_pre_commit_installed
 
-        state_client_conf_file_path = self.env_ctx.bootstrap_state(
+        state_client_conf_file_path = self.bootstrap_parent_state(
             EnvState.state_client_conf_file_path.name
         )
         client_conf_dir_path = os.path.dirname(state_client_conf_file_path)

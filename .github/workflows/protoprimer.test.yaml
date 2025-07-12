@@ -15,7 +15,7 @@ jobs:
             # When one of the jobs fails, this prevents canceling another job (for another Python version):
             fail-fast: false
             matrix:
-                # FS_84_11_73_28: supported python versions:
+                # FT_84_11_73_28: supported python versions:
                 python-version:
                     -   3.8
                     -   3.13
@@ -33,6 +33,7 @@ jobs:
 
             -   uses: actions/checkout@v4
 
+            -   run: "${{ github.workspace }}/prime"
             -   run: "${{ github.workspace }}/cmd/bootstrap_env"
 
             -   run: "${{ github.workspace }}/venv/bin/python -m unittest discover --start-directory ${{ github.workspace }}/src/protoprimer/test/"
