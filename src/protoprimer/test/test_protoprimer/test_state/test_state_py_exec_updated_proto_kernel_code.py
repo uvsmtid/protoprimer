@@ -4,9 +4,9 @@ from local_test.base_test_class import BasePyfakefsTestClass
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
-    Bootstrapper_state_proto_kernel_abs_path,
+    Bootstrapper_state_proto_kernel_code_file_abs_path_finalized,
     Bootstrapper_state_proto_kernel_updated,
-    Bootstrapper_state_py_exec_specified,
+    Bootstrapper_state_py_exec_arg,
     EnvContext,
     EnvState,
     get_path_to_curr_python,
@@ -28,30 +28,32 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
 
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_py_exec_specified.__name__}._bootstrap_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_py_exec_arg.__name__}._bootstrap_once"
     )
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_proto_kernel_updated.__name__}._bootstrap_once"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_proto_kernel_abs_path.__name__}._bootstrap_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_proto_kernel_code_file_abs_path_finalized.__name__}._bootstrap_once"
     )
     @patch(f"{primer_kernel.__name__}.switch_python")
     def test_not_yet_at_required_python(
         self,
         mock_switch_python,
-        mock_state_proto_kernel_abs_path,
+        mock_state_proto_kernel_code_file_abs_path_finalized,
         mock_state_proto_kernel_updated,
-        mock_state_py_exec_specified,
+        mock_state_py_exec_arg,
     ):
 
         # given:
 
-        mock_state_proto_kernel_abs_path.return_value = "path/to/whatever"
+        mock_state_proto_kernel_code_file_abs_path_finalized.return_value = (
+            "path/to/whatever"
+        )
 
         mock_state_proto_kernel_updated.return_value = True
 
-        mock_state_py_exec_specified.return_value = PythonExecutable.py_exec_unknown
+        mock_state_py_exec_arg.return_value = PythonExecutable.py_exec_unknown
 
         # when:
 
@@ -66,34 +68,39 @@ class ThisTestClass(BasePyfakefsTestClass):
             curr_python_path=get_path_to_curr_python(),
             next_py_exec=PythonExecutable.py_exec_updated_proto_kernel_code,
             next_python_path=get_path_to_curr_python(),
-            proto_kernel_abs_path=mock_state_proto_kernel_abs_path.return_value,
+            proto_kernel_abs_file_path=mock_state_proto_kernel_code_file_abs_path_finalized.return_value,
         )
 
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_py_exec_specified.__name__}._bootstrap_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_py_exec_arg.__name__}._bootstrap_once"
     )
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_proto_kernel_updated.__name__}._bootstrap_once"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_proto_kernel_abs_path.__name__}._bootstrap_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_proto_kernel_code_file_abs_path_finalized.__name__}._bootstrap_once"
     )
     @patch(f"{primer_kernel.__name__}.switch_python")
     def test_already_required_python(
         self,
         mock_switch_python,
-        mock_state_proto_kernel_abs_path,
+        mock_state_proto_kernel_code_file_abs_path_finalized,
         mock_state_proto_kernel_updated,
-        mock_state_py_exec_specified,
+        mock_state_py_exec_arg,
     ):
+        """
+        UC_90_98_17_93.run_under_venv.md
+        """
 
         # given:
 
-        mock_state_proto_kernel_abs_path.return_value = "path/to/whatever"
+        mock_state_proto_kernel_code_file_abs_path_finalized.return_value = (
+            "path/to/whatever"
+        )
 
         mock_state_proto_kernel_updated.return_value = True
 
-        mock_state_py_exec_specified.return_value = (
+        mock_state_py_exec_arg.return_value = (
             PythonExecutable.py_exec_updated_proto_kernel_code
         )
 

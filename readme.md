@@ -1,8 +1,14 @@
 
-[![PyPI package](https://badge.fury.io/py/protoprimer.svg)](https://pypi.org/project/protoprimer)
-[![GitHub test](https://github.com/uvsmtid/protoprimer/actions/workflows/protoprimer.test.yaml/badge.svg?branch=main)](https://github.com/uvsmtid/protoprimer/actions/workflows/protoprimer.test.yaml)
-[![GitHub lint](https://github.com/uvsmtid/protoprimer/actions/workflows/protoprimer.lint.yaml/badge.svg?branch=main)](https://github.com/uvsmtid/protoprimer/actions/workflows/protoprimer.lint.yaml)
-[![Coverage](https://coveralls.io/repos/github/uvsmtid/protoprimer/badge.svg?branch=main)](https://coveralls.io/github/uvsmtid/protoprimer)
+[![lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-purple.svg?color=purple)](https://github.com/uvsmtid/protoprimer)
+[![PyPI version](https://img.shields.io/pypi/v/protoprimer.svg?color=blue&label=package)](https://pypi.org/project/protoprimer)
+[![PyPI downloads](https://img.shields.io/pypi/dm/protoprimer.svg?color=blue)](https://pypi.org/project/protoprimer)
+[![GitHub test job](https://img.shields.io/github/actions/workflow/status/uvsmtid/protoprimer/test.yaml.svg?label=test)](https://github.com/uvsmtid/protoprimer/actions/workflows/test.yaml)
+[![GitHub lint job](https://img.shields.io/github/actions/workflow/status/uvsmtid/protoprimer/lint.yaml.svg?label=lint)](https://github.com/uvsmtid/protoprimer/actions/workflows/lint.yaml)
+[![code coverage](https://img.shields.io/coveralls/github/uvsmtid/protoprimer.svg?color=brightgreen)](https://coveralls.io/github/uvsmtid/protoprimer)
+<!--
+TODO: nothing to show:
+[![contributors](https://img.shields.io/github/contributors/uvsmtid/protoprimer.svg?color=white)](https://github.com/uvsmtid/protoprimer/graphs/contributors)
+-->
 
 # `protoprimer`
 
@@ -10,15 +16,15 @@
 
 *   Let's say you have a `repo.git`.
 *   Let's say everyone has to prepare/init/bootstrap/prime the repo\
-    (after they clone, before they do anything).
+    (after they clone it, before they do anything).
 *   That's exactly what `protoprimer` does -\
-    it provides a script for everyone to run after the repo clone:
+    it provides a script to run after the repo clone:
 
     ```sh
     ./prime
     ```
 
-Additionally, it irradicates (non-testable) shell scripts allowing pure `python` automation.
+As a side effect, it irradicates (non-test-able) shell scripts allowing pure `python` automation.
 
 ## Why `proto*`?
 
@@ -32,6 +38,23 @@ Additionally, it irradicates (non-testable) shell scripts allowing pure `python`
 *   just naked `python` (relatively omnipresent) + a stand-alone copy of [proto_kernel][FT_90_65_67_62.proto_kernel.md].
 
 `proto` = early, when nothing is born yet.
+
+## How does it know what to do?
+
+Early steps are **very common and very boring** (which is the [original_motivation][original_motivation.md] not to do it again):
+
+*   switch from initial `python` binary to the version required by configuration
+*   init `venv` and install the necessary dependency
+*   switch `python` again to the one provided by the fresh `venv`
+*   capture the state to keep it reproducible
+
+Early steps are also well-scoped and customize-able (they grow with the repo complexity but have the limit):
+
+*   override defaults by target environment config
+*   support flexible repo filesystem layout
+*   delegate to client-specific modules to do the rest (**more interesting stuff**)
+
+In short, the `primer`'s tedious job is done in the early **inconvenient conditions** before anything else can run.
 
 ## How to install it?
 
@@ -48,23 +71,6 @@ The script is stand-alone, but it auto-updates itself from `protoprimer` package
 
 This is what [`./prime`][local_prime] delegates execution to, for example.
 
-## How does it know what to do?
-
-Early steps are **very common and very boring** (which is the [original_motivation][original_motivation.md] not to do it again):
-
-*   switch from initial `python` binary to the version required by configuration
-*   init `venv` and install the necessary dependency
-*   switch `python` again to the one provided by the fresh `venv`
-*   capture the state to keep it reproducible
-
-Early steps are also well-scoped and customize-able (they grow with the repo complexity but have the limit):
-
-*   override defaults by those configured for target environment
-*   support flexible repo filesystem layout
-*   delegate to client-specific modules to do the rest (**more interesting stuff**)
-
-In short, the `primer`'s tedious job is done in the early **inconvenient conditions** before anything else can run.
-
 ## How does it work?
 
 For example, [`./prime`][local_prime] (a dummy proxy) relies on `./cmd/proto_kernel.py` (a copy) which, in turn:
@@ -74,6 +80,13 @@ For example, [`./prime`][local_prime] (a dummy proxy) relies on `./cmd/proto_ker
 *   eventually passes control back to [`./prime`][local_prime] which may trigger additional client-specific steps
 
 See details on the [bootstrap process][FT_57_87_94_94.bootstrap_process.md].
+
+<!--
+## How to extend and customize it?
+
+TODO
+
+-->
 
 ## Similarities & Differences
 

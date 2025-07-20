@@ -10,8 +10,8 @@ from local_test.base_test_class import BasePyfakefsTestClass
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     ArgConst,
-    Bootstrapper_state_proto_kernel_abs_path,
-    Bootstrapper_state_proto_kernel_dir_path,
+    Bootstrapper_state_proto_kernel_code_file_abs_path_finalized,
+    Bootstrapper_state_proto_kernel_code_dir_abs_path_finalized,
     ConfConstEnv,
     ConfConstGeneral,
     ConfConstPrimer,
@@ -26,13 +26,13 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.setUpPyfakefs()
 
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_proto_kernel_abs_path.__name__}._bootstrap_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_proto_kernel_code_file_abs_path_finalized.__name__}._bootstrap_once"
     )
     @patch(f"{primer_kernel.__name__}.os.execv")
     def test_bootstrap_succeeds_with_py_exec_unknown(
         self,
         mock_execv,
-        mock_state_proto_kernel_abs_path,
+        mock_state_proto_kernel_code_file_abs_path_finalized,
     ):
         assert_test_func_name_embeds_str(PythonExecutable.py_exec_unknown.name)
 
@@ -42,12 +42,14 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.fs.create_dir(mock_client_dir)
         os.chdir(mock_client_dir)
 
-        state_proto_kernel_abs_path = os.path.join(
+        state_proto_kernel_code_file_abs_path_finalized = os.path.join(
             mock_client_dir,
             ConfConstGeneral.default_proto_kernel_basename,
         )
-        self.fs.create_file(state_proto_kernel_abs_path)
-        mock_state_proto_kernel_abs_path.return_value = state_proto_kernel_abs_path
+        self.fs.create_file(state_proto_kernel_code_file_abs_path_finalized)
+        mock_state_proto_kernel_code_file_abs_path_finalized.return_value = (
+            state_proto_kernel_code_file_abs_path_finalized
+        )
 
         script_basename = os.path.basename(os.path.abspath(__file__))
 
@@ -59,9 +61,9 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         test_args = [
             script_basename,
-            ArgConst.arg_conf_env_path,
+            ArgConst.arg_target_env_dir_rel_path,
             dst_dir_path,
-            ArgConst.arg_client_dir_path,
+            ArgConst.arg_client_ref_dir_path,
             mock_client_dir,
         ]
 
@@ -70,8 +72,8 @@ class ThisTestClass(BasePyfakefsTestClass):
             *test_args,
             ArgConst.arg_py_exec,
             PythonExecutable.py_exec_required.name,
-            ArgConst.arg_proto_kernel_abs_path,
-            state_proto_kernel_abs_path,
+            ArgConst.arg_proto_kernel_abs_file_path,
+            state_proto_kernel_code_file_abs_path_finalized,
         ]
 
         def execv_side_effect_with_exception(exec_path, argv):
@@ -94,7 +96,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
 
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_proto_kernel_dir_path.__name__}._bootstrap_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_proto_kernel_code_dir_abs_path_finalized.__name__}._bootstrap_once"
     )
     # TODO: Repurpose, this is not applicable anymore (we allow missing target dst):
     #       For example, assert behaviour when both config and arg provide value but it is different.
@@ -114,7 +116,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.fs.create_dir(script_dir)
         test_args = [
             os.path.basename(primer_kernel.__file__),
-            ArgConst.arg_client_dir_path,
+            ArgConst.arg_client_ref_dir_path,
             mock_client_dir,
         ]
         self.fs.create_file(
@@ -131,5 +133,6 @@ class ThisTestClass(BasePyfakefsTestClass):
             with self.assertRaises(AssertionError) as cm:
                 main()
             self.assertIn(
-                f"`{ArgConst.name_conf_env_path}` is not provided", str(cm.exception)
+                f"`{ArgConst.name_target_env_dir_rel_path}` is not provided",
+                str(cm.exception),
             )

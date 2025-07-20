@@ -1,9 +1,16 @@
 from unittest.mock import patch
 
+from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer.primer_kernel import (
     ensure_min_python_version,
 )
 from local_test.base_test_class import BaseTestClass
+
+
+def test_relationship():
+    assert_test_module_name_embeds_str(
+        ensure_min_python_version.__name__,
+    )
 
 
 class ThisTestClass(BaseTestClass):

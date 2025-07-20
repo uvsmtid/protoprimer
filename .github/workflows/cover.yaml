@@ -27,14 +27,21 @@ jobs:
             -   run: "${{ github.workspace }}/prime"
             -   run: "${{ github.workspace }}/cmd/bootstrap_env"
 
-            -   name: generate coverage for `protoprimer` distrib package
-                run: "${{ github.workspace }}/venv/bin/coverage run --branch --source=${{ github.workspace }}/src/protoprimer/main/ --module unittest discover --start-directory ${{ github.workspace }}/src/protoprimer/test/"
+            -   name: generate coverage
+
+                run: |
+                    ${{ github.workspace }}/venv/bin/coverage erase         --rcfile=${{ github.workspace }}/conf_client/coveragerc.ini
+                    ${{ github.workspace }}/venv/bin/coverage run           --rcfile=${{ github.workspace }}/conf_client/coveragerc.ini --module pytest ${{ github.workspace }}/src/neoprimer/test/
+                    ${{ github.workspace }}/venv/bin/coverage run           --rcfile=${{ github.workspace }}/conf_client/coveragerc.ini --module pytest ${{ github.workspace }}/src/protoprimer/test/
+                    ${{ github.workspace }}/venv/bin/coverage combine       --rcfile=${{ github.workspace }}/conf_client/coveragerc.ini
 
             -   name: report coverage
-                run: "${{ github.workspace }}/venv/bin/coverage report --show-missing --no-skip-covered"
+                run: |
+                    ${{ github.workspace }}/venv/bin/coverage report        --rcfile=${{ github.workspace }}/conf_client/coveragerc.ini
 
             -   name: convert coverage
-                run: "${{ github.workspace }}/venv/bin/coverage xml"
+                run: |
+                    ${{ github.workspace }}/venv/bin/coverage xml           --rcfile=${{ github.workspace }}/conf_client/coveragerc.ini
 
             -   name: coveralls.io
                 env:

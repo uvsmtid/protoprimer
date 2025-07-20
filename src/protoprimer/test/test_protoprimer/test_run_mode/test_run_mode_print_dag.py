@@ -4,6 +4,7 @@ from io import StringIO
 from unittest.mock import patch
 
 from local_test.base_test_class import BaseTestClass
+from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     ArgConst,
@@ -14,6 +15,15 @@ from protoprimer.primer_kernel import (
 )
 
 
+def test_relationship():
+    assert_test_module_name_embeds_str(
+        ArgConst.name_run_mode,
+    )
+    assert_test_module_name_embeds_str(
+        RunMode.print_dag.name,
+    )
+
+
 # noinspection PyMethodMayBeStatic
 class ThisTestClass(BaseTestClass):
 
@@ -21,7 +31,7 @@ class ThisTestClass(BaseTestClass):
 
         # given:
 
-        given_state_name: str = EnvState.state_default_stderr_log_level_specified.name
+        given_state_name: str = EnvState.state_stderr_log_level_var.name
 
         test_args = [
             os.path.basename(primer_kernel.__file__),

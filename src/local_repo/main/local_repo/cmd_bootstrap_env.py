@@ -62,7 +62,7 @@ class Bootstrapper_state_pre_commit_configured(AbstractCachingStateBootstrapper[
             env_ctx=env_ctx,
             state_parents=[
                 CustomEnvState.state_pre_commit_installed.name,
-                EnvState.state_client_conf_file_path.name,
+                EnvState.state_client_conf_file_abs_path_global.name,
             ],
             env_state=CustomEnvState.state_pre_commit_configured.name,
         )
@@ -75,10 +75,10 @@ class Bootstrapper_state_pre_commit_configured(AbstractCachingStateBootstrapper[
         )
         assert state_pre_commit_installed
 
-        state_client_conf_file_path = self.bootstrap_parent_state(
-            EnvState.state_client_conf_file_path.name
+        state_client_conf_file_abs_path_global = self.bootstrap_parent_state(
+            EnvState.state_client_conf_file_abs_path_global.name
         )
-        client_conf_dir_path = os.path.dirname(state_client_conf_file_path)
+        client_conf_dir_path = os.path.dirname(state_client_conf_file_abs_path_global)
         pre_commit_conf_file_path = os.path.join(
             client_conf_dir_path,
             "pre_commit.yaml",
@@ -128,7 +128,7 @@ def customize_env_context():
 
     env_ctx.populate_dependencies()
 
-    env_ctx.universal_sink = CustomEnvState.state_pre_commit_configured.name
+    env_ctx.default_target = CustomEnvState.state_pre_commit_configured.name
 
     return env_ctx
 

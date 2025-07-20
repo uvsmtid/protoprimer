@@ -1,4 +1,10 @@
 {
     "file_abs_path_python": "/usr/bin/python",
-    "dir_rel_path_venv": "venv"
+    "dir_rel_path_venv": "venv",
+    "project_rel_path_list": [
+        "src/local_repo",
+        "src/local_test",
+        "src/neoprimer",
+        "src/protoprimer"
+    ]
 }

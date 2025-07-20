@@ -36,8 +36,6 @@ jobs:
             -   run: "${{ github.workspace }}/prime"
             -   run: "${{ github.workspace }}/cmd/bootstrap_env"
 
-            -   run: "${{ github.workspace }}/venv/bin/python -m unittest discover --start-directory ${{ github.workspace }}/src/protoprimer/test/"
-            -   run: "${{ github.workspace }}/venv/bin/python -m unittest discover --start-directory ${{ github.workspace }}/src/local_repo/test/"
-            -   run: "${{ github.workspace }}/venv/bin/python -m unittest discover --start-directory ${{ github.workspace }}/src/local_test/test/"
+            -   run: "${{ github.workspace }}/venv/bin/python -m pytest"
 
             -   run: "echo job.status: ${{ job.status }}"

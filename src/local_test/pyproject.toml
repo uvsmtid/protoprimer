@@ -2,3 +2,29 @@
 
 requires = ["setuptools>=42"]
 build-backend = "setuptools.build_meta"
+
+[project]
+name = "local_test"
+version = "0.0.0"
+
+classifiers = [
+    # This package is local and is never published:
+    "Private :: Do Not Upload",
+]
+
+# FT_84_11_73_28: supported python versions:
+requires-python = ">=3.8"
+
+dependencies = [
+    "pytest",
+    "pytest-mock",
+    "pyfakefs",
+    "coverage",
+    "tomli",
+]
+
+[tool.setuptools.packages.find]
+where = ["./main"]
+
+[tool.setuptools.package-dir]
+local_test = "./main/local_test"
