@@ -9,10 +9,12 @@ from local_test.base_test_class import BasePyfakefsTestClass
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     ArgConst,
-    Bootstrapper_state_client_dir_path_configured,
+    Bootstrapper_state_client_ref_dir_abs_path_global,
     Bootstrapper_state_args_parsed,
-    Bootstrapper_state_proto_kernel_dir_path,
+    Bootstrapper_state_proto_kernel_code_file_abs_path_finalized,
+    Bootstrapper_state_proto_kernel_code_dir_abs_path_finalized,
     Bootstrapper_state_py_exec_selected,
+    Bootstrapper_state_py_exec_updated_protoprimer_package_reached,
     ConfConstGeneral,
     EnvContext,
     EnvState,
@@ -33,25 +35,17 @@ class ThisTestClass(BasePyfakefsTestClass):
         assert_test_module_name_embeds_str(EnvState.state_proto_kernel_updated.name)
 
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_dir_path_configured.__name__}._bootstrap_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_proto_kernel_code_file_abs_path_finalized.__name__}._bootstrap_once"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_py_exec_selected.__name__}._bootstrap_once"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}._bootstrap_once"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.install_editable_package",
+        f"{primer_kernel.__name__}.{Bootstrapper_state_py_exec_updated_protoprimer_package_reached.__name__}._bootstrap_once"
     )
     @patch(f"{primer_kernel.__name__}.os.execv")
     def test_state_proto_kernel_updated(
         self,
         mock_execv,
-        mock_install_editable_package,
-        mock_state_args_parsed,
-        mock_state_py_exec_selected,
-        mock_state_client_dir_path_configured,
+        mock_state_py_exec_updated_protoprimer_package_reached,
+        mock_state_proto_kernel_code_file_abs_path_finalized,
     ):
 
         # given:
@@ -61,11 +55,11 @@ class ThisTestClass(BasePyfakefsTestClass):
         os.chdir(mock_client_dir)
 
         # proto_kernel copy:
-        proto_kernel_abs_path = os.path.join(
+        proto_kernel_abs_file_path = os.path.join(
             mock_client_dir,
             ConfConstGeneral.default_proto_kernel_basename,
         )
-        self.fs.create_file(proto_kernel_abs_path)
+        self.fs.create_file(proto_kernel_abs_file_path)
 
         # proto_kernel orig (in fake filesystem):
         self.fs.create_file(
@@ -74,30 +68,13 @@ class ThisTestClass(BasePyfakefsTestClass):
             contents="\n" * 1000,
         )
 
-        mock_state_args_parsed.return_value = argparse.Namespace(
-            **{
-                ArgConst.name_py_exec: PythonExecutable.py_exec_venv.name,
-                ArgConst.name_proto_kernel_abs_path: proto_kernel_abs_path,
-            },
+        mock_state_py_exec_updated_protoprimer_package_reached.return_value = (
+            PythonExecutable.py_exec_updated_protoprimer_package
         )
 
-        mock_state_py_exec_selected.return_value = PythonExecutable.py_exec_venv
-
-        mock_state_client_dir_path_configured.return_value = mock_client_dir
-
-        for distrib_name in [
-            "local_repo",
-            "local_test",
-            "protoprimer",
-        ]:
-            self.fs.create_file(
-                os.path.join(
-                    mock_client_dir,
-                    "src",
-                    distrib_name,
-                    "setup.py",
-                )
-            )
+        mock_state_proto_kernel_code_file_abs_path_finalized.return_value = (
+            proto_kernel_abs_file_path
+        )
 
         # when:
 
@@ -105,38 +82,10 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # then:
 
-        for distrib_name in [
-            "local_repo",
-            "local_test",
-            "protoprimer",
-        ]:
-            mock_install_editable_package.assert_any_call(
-                os.path.join(
-                    mock_client_dir,
-                    "src",
-                    distrib_name,
-                ),
-                [],
-            )
-        self.assertEqual(
-            3,
-            mock_install_editable_package.call_count,
-        )
-        proto_kernel_obj = self.fs.get_object(proto_kernel_abs_path)
+        proto_kernel_obj = self.fs.get_object(proto_kernel_abs_file_path)
         self.assertIn(
             ConfConstGeneral.func_get_proto_kernel_generated_boilerplate(
                 protoprimer.primer_kernel
             ),
             proto_kernel_obj.contents,
-        )
-        mock_execv.assert_called_once_with(
-            get_path_to_curr_python(),
-            [
-                get_path_to_curr_python(),
-                *sys.argv,
-                ArgConst.arg_py_exec,
-                PythonExecutable.py_exec_updated_protoprimer_package.name,
-                ArgConst.arg_proto_kernel_abs_path,
-                proto_kernel_abs_path,
-            ],
         )

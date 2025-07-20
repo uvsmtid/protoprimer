@@ -8,11 +8,30 @@ logger = logging.getLogger()
 
 
 def main():
+    """
+    See also:
+    .github/workflows/cover.yaml
+    """
+
     get_command_code(
-        "coverage run --branch --source=./src/protoprimer/main/ --module unittest discover --start-directory ./src/protoprimer/test/"
+        "coverage erase         --rcfile=./conf_client/coveragerc.ini",
     )
-    get_command_code("coverage report --show-missing --no-skip-covered")
-    get_command_code("coverage xml")
+    get_command_code(
+        "coverage run           --rcfile=./conf_client/coveragerc.ini --module pytest ./src/neoprimer/test/",
+    )
+    get_command_code(
+        "coverage run           --rcfile=./conf_client/coveragerc.ini --module pytest ./src/protoprimer/test/",
+    )
+    get_command_code(
+        "coverage combine       --rcfile=./conf_client/coveragerc.ini",
+    )
+
+    get_command_code(
+        "coverage report        --rcfile=./conf_client/coveragerc.ini",
+    )
+    get_command_code(
+        "coverage xml           --rcfile=./conf_client/coveragerc.ini",
+    )
 
 
 if __name__ == "__main__":

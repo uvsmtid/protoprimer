@@ -1,11 +1,13 @@
 # !/usr/bin/env python3
+import argparse
+import enum
 
 # Publish artifacts to pypi.org.
 
 # It is expected to be run under activated `venv`.
 
 # It must be run from repo root:
-# ./cmd/publish_package
+# ./cmd/publish_package -h
 
 # A single "atomic" step to make a release:
 # - ensure no local modifications
@@ -25,8 +27,46 @@ from local_repo.sub_proc_util import (
 )
 
 
-def publish_package(
+def publish_package(client_dir: str):
+    parsed_args = init_arg_parser().parse_args()
+
+    _publish_package(
+        client_dir=client_dir,
+        package_name=parsed_args.package_name,
+    )
+
+
+class DistribPackage(enum.Enum):
+
+    package_neoprimer = "neoprimer"
+    package_protoprimer = "protoprimer"
+
+
+def init_arg_parser():
+
+    arg_parser = argparse.ArgumentParser(
+        description="Publish given package to pypi.org",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+    )
+    arg_parser.add_argument(
+        "package_name",
+        type=str,
+        choices=[distrib_package.value for distrib_package in DistribPackage],
+        help=f"Select package name.",
+    )
+    return arg_parser
+
+
+def get_tag_name(
+    package_name: str,
+    distrib_version: str,
+) -> str:
+    return f"{package_name}-v{distrib_version}"
+
+
+def _publish_package(
     client_dir: str,
+    package_name: str,
 ):
     # Switch to `@/` to avoid creating temporary dirs somewhere else:
     os.chdir(client_dir)
@@ -37,33 +77,33 @@ def publish_package(
     if get_command_code("git diff-index --quiet HEAD --", fail_on_error=False) != 0:
         raise RuntimeError("uncommitted changes")
 
-    # Get the version of `protoprimer` distribution:
-    protoprimer_version = None
+    # Get the version of distribution:
+    distrib_version = None
     version_file_path = os.path.join(
         client_dir,
-        "src/protoprimer/main/protoprimer/primer_kernel.py",
+        f"src/{package_name}/pyproject.toml",
     )
     with open(version_file_path, "r") as f:
-        match = re.search(r"^__version__\s*=\s*['\"]([^'\"]*)['\"]", f.read(), re.M)
+        match = re.search(r"^version\s*=\s*['\"]([^'\"]*)['\"]", f.read(), re.M)
         if match:
-            protoprimer_version = match.group(1)
+            distrib_version = match.group(1)
 
-    if not protoprimer_version:
+    if not distrib_version:
         raise RuntimeError(f"Could not find version in {version_file_path}")
 
     # TODO: use logging:
-    print(f"INFO: `protoprimer_version` [{protoprimer_version}]", file=sys.stderr)
+    print(f"INFO: `distrib_version` [{distrib_version}]", file=sys.stderr)
 
     # Determine if it is a dev version (which relaxes many checks):
     is_dev_version: bool
-    if re.match(r"^\d+\.\d+\.\d+\.dev\d+$", protoprimer_version):
-        print(f"INFO: dev version pattern: {protoprimer_version}", file=sys.stderr)
+    if re.match(r"^\d+\.\d+\.\d+\.dev\d+$", distrib_version):
+        print(f"INFO: dev version pattern: {distrib_version}", file=sys.stderr)
         is_dev_version = True
-    elif re.match(r"^\d+\.\d+\.\d+$", protoprimer_version):
-        print(f"INFO: release version pattern: {protoprimer_version}", file=sys.stderr)
+    elif re.match(r"^\d+\.\d+\.\d+$", distrib_version):
+        print(f"INFO: release version pattern: {distrib_version}", file=sys.stderr)
         is_dev_version = False
     else:
-        raise RuntimeError(f"unrecognized version pattern: {protoprimer_version}")
+        raise RuntimeError(f"unrecognized version pattern: {distrib_version}")
 
     print(f"INFO: is_dev_version: {is_dev_version}", file=sys.stderr)
 
@@ -99,8 +139,8 @@ def publish_package(
     print(f"INFO: curr git_tag: {git_tag}", file=sys.stderr)
 
     # Versions has to be prefixed with `v` in tag:
-    if f"v{protoprimer_version}" != git_tag:
-        git_tag = f"v{protoprimer_version}"
+    if get_tag_name(package_name, distrib_version) != git_tag:
+        git_tag = get_tag_name(package_name, distrib_version)
         if not is_dev_version:
             # Append `.final` for the non-dev (release) version to make a tag:
             git_tag = f"{git_tag}.final"
@@ -128,7 +168,7 @@ def publish_package(
     # Switch to `build_dir`:
     build_dir = os.path.join(
         client_dir,
-        "src/protoprimer",
+        f"src/{package_name}",
     )
     os.chdir(build_dir)
 
@@ -140,44 +180,41 @@ def publish_package(
     if os.path.exists(dist_dir):
         shutil.rmtree(dist_dir)
 
-    # Create temporary `venv` for twine (do not pollute `venv` used for `protoprimer`):
-    twine_venv_path = os.path.join(
+    # Create temporary `venv` for the build tools (do not pollute `venv` used for the project):
+    build_venv_path = os.path.join(
         build_dir,
         "venv.twine",
     )
-    if os.path.exists(twine_venv_path):
-        shutil.rmtree(twine_venv_path)
+    if os.path.exists(build_venv_path):
+        shutil.rmtree(build_venv_path)
     venv_builder = venv.EnvBuilder(with_pip=True)
-    venv_builder.create(twine_venv_path)
+    venv_builder.create(build_venv_path)
 
-    twine_pip = os.path.join(
-        twine_venv_path,
+    build_pip_path = os.path.join(
+        build_venv_path,
         "bin",
         "pip",
     )
-    get_command_code(f"{twine_pip} install setuptools")
-    get_command_code(f"{twine_pip} install twine")
+    get_command_code(f"{build_pip_path} install setuptools")
+    get_command_code(f"{build_pip_path} install build")
+    get_command_code(f"{build_pip_path} install twine")
 
     # The following are the staps found in the majority of the web resources.
-    twine_python = os.path.join(
-        twine_venv_path,
+    build_python_path = os.path.join(
+        build_venv_path,
         "bin",
         "python",
     )
-    setup_py_path = os.path.join(
-        build_dir,
-        "setup.py",
-    )
-    get_command_code(f"{twine_python} {setup_py_path} sdist --verbose")
+    get_command_code(f"{build_python_path} -m build --sdist --verbose {build_dir}")
 
     twine_command_path = os.path.join(
-        twine_venv_path,
+        build_venv_path,
         "bin",
         "twine",
     )
     dist_file = os.path.join(
         dist_dir,
-        f"protoprimer-{protoprimer_version}.tar.gz",
+        f"{package_name}-{distrib_version}.tar.gz",
     )
     # This will prompt for login credentials:
     get_command_code(f"{twine_command_path} upload --verbose {dist_file}")
@@ -190,7 +227,7 @@ def publish_package(
     with open(version_file_path, "r") as f:
         content = f.read()
     new_content = content.replace(
-        protoprimer_version, f"WRONG_TO_BE_FIXED.{protoprimer_version}"
+        distrib_version, f"TODO_INCREASE_VERSION.{distrib_version}"
     )
     with open(version_file_path, "w") as f:
         f.write(new_content)

@@ -2,3 +2,64 @@
 
 requires = ["setuptools>=42"]
 build-backend = "setuptools.build_meta"
+
+[project]
+name = "protoprimer"
+version = "0.0.3"
+authors = [
+    { name = "uvsmtid", email = "uvsmtid@gmail.com" },
+]
+description = "self-contained, stand-alone, no-deps, no-args-friendly, auto-cloning, environment-driven, pure-python, multi-stage extensible DAG bootstrapper to escape from shell scripting maintenance hell"
+readme = "readme.md"
+# FT_84_11_73_28: supported python versions:
+requires-python = ">=3.8"
+license = { text = "MIT" }
+
+keywords = [
+    "venv",
+    "virtual environment",
+
+    "env",
+    "environment",
+
+    "dev",
+    "development",
+
+    "boot",
+    "bootstrap",
+    "bootstrapper",
+
+    "init",
+    "initialize",
+    "initializer",
+
+    "check",
+    "checker",
+]
+
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Console",
+    "Intended Audience :: Information Technology",
+    "Topic :: Terminals",
+    "Topic :: System :: Shells",
+    "Programming Language :: Python :: 3",
+    "Operating System :: POSIX :: Linux",
+]
+
+dependencies = []
+
+[project.optional-dependencies]
+extra = []
+
+[project.urls]
+Homepage = "https://github.com/uvsmtid/protoprimer"
+Repository = "https://github.com/uvsmtid/protoprimer"
+
+[tool]
+
+[tool.setuptools.packages.find]
+where = ["./main"]
+
+[tool.setuptools.package-dir]
+protoprimer = "./main/protoprimer"

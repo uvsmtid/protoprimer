@@ -7,12 +7,12 @@ from local_test.base_test_class import BasePyfakefsTestClass
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     ArgConst,
-    Bootstrapper_state_client_dir_path_specified,
+    Bootstrapper_state_client_ref_dir_path_arg,
     Bootstrapper_state_env_conf_file_data,
-    Bootstrapper_state_env_conf_file_path,
-    Bootstrapper_state_proto_kernel_abs_path,
-    Bootstrapper_state_py_exec_specified,
-    Bootstrapper_state_target_dst_dir_path,
+    Bootstrapper_state_env_conf_file_path_local,
+    Bootstrapper_state_proto_kernel_code_file_abs_path_finalized,
+    Bootstrapper_state_py_exec_arg,
+    Bootstrapper_state_target_env_dir_rel_path_finalized,
     ConfConstEnv,
     ConfConstGeneral,
     EnvContext,
@@ -21,7 +21,7 @@ from protoprimer.primer_kernel import (
 )
 
 mock_client_dir = "/mock_client_dir"
-state_proto_kernel_abs_path = os.path.join(
+state_proto_kernel_code_file_abs_path_finalized = os.path.join(
     mock_client_dir,
     ConfConstGeneral.default_proto_kernel_basename,
 )
@@ -41,7 +41,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.fs.create_dir(mock_client_dir)
         os.chdir(mock_client_dir)
 
-        self.fs.create_file(state_proto_kernel_abs_path)
+        self.fs.create_file(state_proto_kernel_code_file_abs_path_finalized)
 
         self.fs.create_dir(target_dst_dir_path)
 
@@ -57,16 +57,16 @@ class ThisTestClass(BasePyfakefsTestClass):
 
     ####################################################################################################################
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_target_dst_dir_path.__name__}._bootstrap_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_target_env_dir_rel_path_finalized.__name__}._bootstrap_once"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_proto_kernel_abs_path.__name__}._bootstrap_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_proto_kernel_code_file_abs_path_finalized.__name__}._bootstrap_once"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_py_exec_specified.__name__}._bootstrap_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_py_exec_arg.__name__}._bootstrap_once"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_dir_path_specified.__name__}._bootstrap_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_ref_dir_path_arg.__name__}._bootstrap_once"
     )
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_env_conf_file_data.__name__}._bootstrap_once"
@@ -83,21 +83,23 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_execv,
         mock_get_path_to_curr_python,
         mock_state_env_conf_file_data,
-        mock_state_client_dir_path_specified,
-        mock_state_py_exec_specified,
-        mock_state_proto_kernel_abs_path,
-        mock_state_target_dst_dir_path,
+        mock_state_client_ref_dir_path_arg,
+        mock_state_py_exec_arg,
+        mock_state_proto_kernel_code_file_abs_path_finalized,
+        mock_state_target_env_dir_rel_path_finalized,
     ):
 
         # given:
 
-        mock_state_target_dst_dir_path.return_value = target_dst_dir_path
+        mock_state_target_env_dir_rel_path_finalized.return_value = target_dst_dir_path
 
-        mock_state_proto_kernel_abs_path.return_value = state_proto_kernel_abs_path
+        mock_state_proto_kernel_code_file_abs_path_finalized.return_value = (
+            state_proto_kernel_code_file_abs_path_finalized
+        )
 
-        mock_state_py_exec_specified.return_value = PythonExecutable.py_exec_required
+        mock_state_py_exec_arg.return_value = PythonExecutable.py_exec_required
 
-        mock_state_client_dir_path_specified.return_value = mock_client_dir
+        mock_state_client_ref_dir_path_arg.return_value = mock_client_dir
         mock_state_env_conf_file_data.return_value = {
             ConfConstEnv.field_file_abs_path_python: ConfConstEnv.default_file_abs_path_python,
             ConfConstEnv.field_dir_rel_path_venv: ConfConstEnv.default_dir_rel_path_venv,
@@ -128,27 +130,27 @@ class ThisTestClass(BasePyfakefsTestClass):
                 *sys.argv,
                 ArgConst.arg_py_exec,
                 PythonExecutable.py_exec_venv.name,
-                ArgConst.arg_proto_kernel_abs_path,
-                state_proto_kernel_abs_path,
+                ArgConst.arg_proto_kernel_abs_file_path,
+                state_proto_kernel_code_file_abs_path_finalized,
             ],
         )
         mock_get_path_to_curr_python.assert_called_once()
 
     ####################################################################################################################
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_target_dst_dir_path.__name__}._bootstrap_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_target_env_dir_rel_path_finalized.__name__}._bootstrap_once"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_proto_kernel_abs_path.__name__}._bootstrap_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_proto_kernel_code_file_abs_path_finalized.__name__}._bootstrap_once"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_py_exec_specified.__name__}._bootstrap_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_py_exec_arg.__name__}._bootstrap_once"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_env_conf_file_path.__name__}._bootstrap_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_env_conf_file_path_local.__name__}._bootstrap_once"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_dir_path_specified.__name__}._bootstrap_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_ref_dir_path_arg.__name__}._bootstrap_once"
     )
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_env_conf_file_data.__name__}._bootstrap_once"
@@ -165,25 +167,27 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_execv,
         mock_get_path_to_curr_python,
         mock_state_env_conf_file_data,
-        mock_state_client_dir_path_specified,
-        mock_state_env_conf_file_path,
-        mock_state_py_exec_specified,
-        mock_state_proto_kernel_abs_path,
-        mock_state_target_dst_dir_path,
+        mock_state_client_ref_dir_path_arg,
+        mock_state_env_conf_file_path_local,
+        mock_state_py_exec_arg,
+        mock_state_proto_kernel_code_file_abs_path_finalized,
+        mock_state_target_env_dir_rel_path_finalized,
     ):
 
         # given:
 
-        mock_state_target_dst_dir_path.return_value = target_dst_dir_path
+        mock_state_target_env_dir_rel_path_finalized.return_value = target_dst_dir_path
 
-        mock_state_proto_kernel_abs_path.return_value = state_proto_kernel_abs_path
+        mock_state_proto_kernel_code_file_abs_path_finalized.return_value = (
+            state_proto_kernel_code_file_abs_path_finalized
+        )
 
-        mock_state_py_exec_specified.return_value = PythonExecutable.py_exec_required
+        mock_state_py_exec_arg.return_value = PythonExecutable.py_exec_required
 
-        mock_state_client_dir_path_specified.return_value = mock_client_dir
+        mock_state_client_ref_dir_path_arg.return_value = mock_client_dir
 
-        mock_state_env_conf_file_path.return_value = (
-            "fake: " + EnvState.state_env_conf_file_path.name
+        mock_state_env_conf_file_path_local.return_value = (
+            "fake: " + EnvState.state_env_conf_file_path_local.name
         )
 
         mock_state_env_conf_file_data.return_value = {
@@ -214,16 +218,16 @@ class ThisTestClass(BasePyfakefsTestClass):
 
     ####################################################################################################################
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_target_dst_dir_path.__name__}._bootstrap_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_target_env_dir_rel_path_finalized.__name__}._bootstrap_once"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_proto_kernel_abs_path.__name__}._bootstrap_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_proto_kernel_code_file_abs_path_finalized.__name__}._bootstrap_once"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_py_exec_specified.__name__}._bootstrap_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_py_exec_arg.__name__}._bootstrap_once"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_dir_path_specified.__name__}._bootstrap_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_ref_dir_path_arg.__name__}._bootstrap_once"
     )
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_env_conf_file_data.__name__}._bootstrap_once"
@@ -240,21 +244,23 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_execv,
         mock_get_path_to_curr_python,
         mock_state_env_conf_file_data,
-        mock_state_client_dir_path_specified,
-        mock_state_py_exec_specified,
-        mock_state_proto_kernel_abs_path,
-        mock_state_target_dst_dir_path,
+        mock_state_client_ref_dir_path_arg,
+        mock_state_py_exec_arg,
+        mock_state_proto_kernel_code_file_abs_path_finalized,
+        mock_state_target_env_dir_rel_path_finalized,
     ):
 
         # given:
 
-        mock_state_target_dst_dir_path.return_value = target_dst_dir_path
+        mock_state_target_env_dir_rel_path_finalized.return_value = target_dst_dir_path
 
-        mock_state_proto_kernel_abs_path.return_value = state_proto_kernel_abs_path
+        mock_state_proto_kernel_code_file_abs_path_finalized.return_value = (
+            state_proto_kernel_code_file_abs_path_finalized
+        )
 
-        mock_state_py_exec_specified.return_value = PythonExecutable.py_exec_unknown
+        mock_state_py_exec_arg.return_value = PythonExecutable.py_exec_unknown
 
-        mock_state_client_dir_path_specified.return_value = mock_client_dir
+        mock_state_client_ref_dir_path_arg.return_value = mock_client_dir
 
         mock_state_env_conf_file_data.return_value = {
             ConfConstEnv.field_file_abs_path_python: ConfConstEnv.default_file_abs_path_python,
@@ -275,8 +281,8 @@ class ThisTestClass(BasePyfakefsTestClass):
                 *sys.argv,
                 ArgConst.arg_py_exec,
                 PythonExecutable.py_exec_required.name,
-                ArgConst.arg_proto_kernel_abs_path,
-                state_proto_kernel_abs_path,
+                ArgConst.arg_proto_kernel_abs_file_path,
+                state_proto_kernel_code_file_abs_path_finalized,
             ],
         )
         mock_get_path_to_curr_python.assert_called_once()
@@ -285,16 +291,16 @@ class ThisTestClass(BasePyfakefsTestClass):
 
     ####################################################################################################################
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_target_dst_dir_path.__name__}._bootstrap_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_target_env_dir_rel_path_finalized.__name__}._bootstrap_once"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_proto_kernel_abs_path.__name__}._bootstrap_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_proto_kernel_code_file_abs_path_finalized.__name__}._bootstrap_once"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_py_exec_specified.__name__}._bootstrap_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_py_exec_arg.__name__}._bootstrap_once"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_dir_path_specified.__name__}._bootstrap_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_ref_dir_path_arg.__name__}._bootstrap_once"
     )
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_env_conf_file_data.__name__}._bootstrap_once"
@@ -312,21 +318,23 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_execv,
         mock_get_path_to_curr_python,
         mock_state_env_conf_file_data,
-        mock_state_client_dir_path_specified,
-        mock_state_py_exec_specified,
-        mock_state_proto_kernel_abs_path,
-        mock_state_target_dst_dir_path,
+        mock_state_client_ref_dir_path_arg,
+        mock_state_py_exec_arg,
+        mock_state_proto_kernel_code_file_abs_path_finalized,
+        mock_state_target_env_dir_rel_path_finalized,
     ):
 
         # given:
 
-        mock_state_target_dst_dir_path.return_value = target_dst_dir_path
+        mock_state_target_env_dir_rel_path_finalized.return_value = target_dst_dir_path
 
-        mock_state_proto_kernel_abs_path.return_value = state_proto_kernel_abs_path
+        mock_state_proto_kernel_code_file_abs_path_finalized.return_value = (
+            state_proto_kernel_code_file_abs_path_finalized
+        )
 
-        mock_state_py_exec_specified.return_value = PythonExecutable.py_exec_unknown
+        mock_state_py_exec_arg.return_value = PythonExecutable.py_exec_unknown
 
-        mock_state_client_dir_path_specified.return_value = mock_client_dir
+        mock_state_client_ref_dir_path_arg.return_value = mock_client_dir
 
         mock_state_env_conf_file_data.return_value = {
             ConfConstEnv.field_file_abs_path_python: ConfConstEnv.default_file_abs_path_python,
@@ -345,16 +353,16 @@ class ThisTestClass(BasePyfakefsTestClass):
 
     ####################################################################################################################
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_target_dst_dir_path.__name__}._bootstrap_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_target_env_dir_rel_path_finalized.__name__}._bootstrap_once"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_proto_kernel_abs_path.__name__}._bootstrap_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_proto_kernel_code_file_abs_path_finalized.__name__}._bootstrap_once"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_py_exec_specified.__name__}._bootstrap_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_py_exec_arg.__name__}._bootstrap_once"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_dir_path_specified.__name__}._bootstrap_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_ref_dir_path_arg.__name__}._bootstrap_once"
     )
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_env_conf_file_data.__name__}._bootstrap_once"
@@ -371,21 +379,23 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_execv,
         mock_get_path_to_curr_python,
         mock_state_env_conf_file_data,
-        mock_state_client_dir_path_specified,
-        mock_state_py_exec_specified,
-        mock_state_proto_kernel_abs_path,
-        mock_state_target_dst_dir_path,
+        mock_state_client_ref_dir_path_arg,
+        mock_state_py_exec_arg,
+        mock_state_proto_kernel_code_file_abs_path_finalized,
+        mock_state_target_env_dir_rel_path_finalized,
     ):
 
         # given:
 
-        mock_state_target_dst_dir_path.return_value = target_dst_dir_path
+        mock_state_target_env_dir_rel_path_finalized.return_value = target_dst_dir_path
 
-        mock_state_proto_kernel_abs_path.return_value = state_proto_kernel_abs_path
+        mock_state_proto_kernel_code_file_abs_path_finalized.return_value = (
+            state_proto_kernel_code_file_abs_path_finalized
+        )
 
-        mock_state_py_exec_specified.return_value = PythonExecutable.py_exec_required
+        mock_state_py_exec_arg.return_value = PythonExecutable.py_exec_required
 
-        mock_state_client_dir_path_specified.return_value = mock_client_dir
+        mock_state_client_ref_dir_path_arg.return_value = mock_client_dir
 
         mock_state_env_conf_file_data.return_value = {
             ConfConstEnv.field_file_abs_path_python: ConfConstEnv.default_file_abs_path_python,
@@ -417,24 +427,24 @@ class ThisTestClass(BasePyfakefsTestClass):
                 *sys.argv,
                 ArgConst.arg_py_exec,
                 PythonExecutable.py_exec_venv.name,
-                ArgConst.arg_proto_kernel_abs_path,
-                state_proto_kernel_abs_path,
+                ArgConst.arg_proto_kernel_abs_file_path,
+                state_proto_kernel_code_file_abs_path_finalized,
             ],
         )
         mock_get_path_to_curr_python.assert_called_once()
 
     ####################################################################################################################
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_target_dst_dir_path.__name__}._bootstrap_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_target_env_dir_rel_path_finalized.__name__}._bootstrap_once"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_proto_kernel_abs_path.__name__}._bootstrap_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_proto_kernel_code_file_abs_path_finalized.__name__}._bootstrap_once"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_py_exec_specified.__name__}._bootstrap_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_py_exec_arg.__name__}._bootstrap_once"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_dir_path_specified.__name__}._bootstrap_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_ref_dir_path_arg.__name__}._bootstrap_once"
     )
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_env_conf_file_data.__name__}._bootstrap_once"
@@ -451,21 +461,23 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_execv,
         mock_get_path_to_curr_python,
         mock_state_env_conf_file_data,
-        mock_state_client_dir_path_specified,
-        mock_state_py_exec_specified,
-        mock_state_proto_kernel_abs_path,
-        mock_state_target_dst_dir_path,
+        mock_state_client_ref_dir_path_arg,
+        mock_state_py_exec_arg,
+        mock_state_proto_kernel_code_file_abs_path_finalized,
+        mock_state_target_env_dir_rel_path_finalized,
     ):
 
         # given:
 
-        mock_state_target_dst_dir_path.return_value = target_dst_dir_path
+        mock_state_target_env_dir_rel_path_finalized.return_value = target_dst_dir_path
 
-        mock_state_proto_kernel_abs_path.return_value = state_proto_kernel_abs_path
+        mock_state_proto_kernel_code_file_abs_path_finalized.return_value = (
+            state_proto_kernel_code_file_abs_path_finalized
+        )
 
-        mock_state_py_exec_specified.return_value = PythonExecutable.py_exec_unknown
+        mock_state_py_exec_arg.return_value = PythonExecutable.py_exec_unknown
 
-        mock_state_client_dir_path_specified.return_value = mock_client_dir
+        mock_state_client_ref_dir_path_arg.return_value = mock_client_dir
 
         mock_state_env_conf_file_data.return_value = {
             ConfConstEnv.field_file_abs_path_python: non_default_file_abs_path_python,
@@ -486,24 +498,24 @@ class ThisTestClass(BasePyfakefsTestClass):
                 *sys.argv,
                 ArgConst.arg_py_exec,
                 PythonExecutable.py_exec_required.name,
-                ArgConst.arg_proto_kernel_abs_path,
-                state_proto_kernel_abs_path,
+                ArgConst.arg_proto_kernel_abs_file_path,
+                state_proto_kernel_code_file_abs_path_finalized,
             ],
         )
         mock_get_path_to_curr_python.assert_called_once()
 
     ####################################################################################################################
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_target_dst_dir_path.__name__}._bootstrap_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_target_env_dir_rel_path_finalized.__name__}._bootstrap_once"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_proto_kernel_abs_path.__name__}._bootstrap_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_proto_kernel_code_file_abs_path_finalized.__name__}._bootstrap_once"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_py_exec_specified.__name__}._bootstrap_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_py_exec_arg.__name__}._bootstrap_once"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_dir_path_specified.__name__}._bootstrap_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_ref_dir_path_arg.__name__}._bootstrap_once"
     )
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_env_conf_file_data.__name__}._bootstrap_once"
@@ -520,21 +532,23 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_execv,
         mock_get_path_to_curr_python,
         mock_state_env_conf_file_data,
-        mock_state_client_dir_path_specified,
-        mock_state_py_exec_specified,
-        mock_state_proto_kernel_abs_path,
-        mock_state_target_dst_dir_path,
+        mock_state_client_ref_dir_path_arg,
+        mock_state_py_exec_arg,
+        mock_state_proto_kernel_code_file_abs_path_finalized,
+        mock_state_target_env_dir_rel_path_finalized,
     ):
 
         # given:
 
-        mock_state_target_dst_dir_path.return_value = target_dst_dir_path
+        mock_state_target_env_dir_rel_path_finalized.return_value = target_dst_dir_path
 
-        mock_state_proto_kernel_abs_path.return_value = state_proto_kernel_abs_path
+        mock_state_proto_kernel_code_file_abs_path_finalized.return_value = (
+            state_proto_kernel_code_file_abs_path_finalized
+        )
 
-        mock_state_py_exec_specified.return_value = PythonExecutable.py_exec_unknown
+        mock_state_py_exec_arg.return_value = PythonExecutable.py_exec_unknown
 
-        mock_state_client_dir_path_specified.return_value = mock_client_dir
+        mock_state_client_ref_dir_path_arg.return_value = mock_client_dir
 
         mock_state_env_conf_file_data.return_value = {
             ConfConstEnv.field_file_abs_path_python: ConfConstEnv.default_file_abs_path_python,
@@ -566,24 +580,24 @@ class ThisTestClass(BasePyfakefsTestClass):
                 *sys.argv,
                 ArgConst.arg_py_exec,
                 PythonExecutable.py_exec_venv.name,
-                ArgConst.arg_proto_kernel_abs_path,
-                state_proto_kernel_abs_path,
+                ArgConst.arg_proto_kernel_abs_file_path,
+                state_proto_kernel_code_file_abs_path_finalized,
             ],
         )
         mock_get_path_to_curr_python.assert_called_once()
 
     ####################################################################################################################
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_target_dst_dir_path.__name__}._bootstrap_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_target_env_dir_rel_path_finalized.__name__}._bootstrap_once"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_proto_kernel_abs_path.__name__}._bootstrap_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_proto_kernel_code_file_abs_path_finalized.__name__}._bootstrap_once"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_py_exec_specified.__name__}._bootstrap_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_py_exec_arg.__name__}._bootstrap_once"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_dir_path_specified.__name__}._bootstrap_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_ref_dir_path_arg.__name__}._bootstrap_once"
     )
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_env_conf_file_data.__name__}._bootstrap_once"
@@ -600,21 +614,23 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_execv,
         mock_get_path_to_curr_python,
         mock_state_env_conf_file_data,
-        mock_state_client_dir_path_specified,
-        mock_state_py_exec_specified,
-        mock_state_proto_kernel_abs_path,
-        mock_state_target_dst_dir_path,
+        mock_state_client_ref_dir_path_arg,
+        mock_state_py_exec_arg,
+        mock_state_proto_kernel_code_file_abs_path_finalized,
+        mock_state_target_env_dir_rel_path_finalized,
     ):
 
         # given:
 
-        mock_state_target_dst_dir_path.return_value = target_dst_dir_path
+        mock_state_target_env_dir_rel_path_finalized.return_value = target_dst_dir_path
 
-        mock_state_proto_kernel_abs_path.return_value = state_proto_kernel_abs_path
+        mock_state_proto_kernel_code_file_abs_path_finalized.return_value = (
+            state_proto_kernel_code_file_abs_path_finalized
+        )
 
-        mock_state_py_exec_specified.return_value = PythonExecutable.py_exec_required
+        mock_state_py_exec_arg.return_value = PythonExecutable.py_exec_required
 
-        mock_state_client_dir_path_specified.return_value = mock_client_dir
+        mock_state_client_ref_dir_path_arg.return_value = mock_client_dir
 
         mock_state_env_conf_file_data.return_value = {
             ConfConstEnv.field_file_abs_path_python: non_default_file_abs_path_python,
@@ -643,8 +659,8 @@ class ThisTestClass(BasePyfakefsTestClass):
                 *sys.argv,
                 ArgConst.arg_py_exec,
                 PythonExecutable.py_exec_venv.name,
-                ArgConst.arg_proto_kernel_abs_path,
-                state_proto_kernel_abs_path,
+                ArgConst.arg_proto_kernel_abs_file_path,
+                state_proto_kernel_code_file_abs_path_finalized,
             ],
         )
 

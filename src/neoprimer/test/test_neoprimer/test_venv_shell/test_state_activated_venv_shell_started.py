@@ -1,11 +1,14 @@
 import os
 from unittest.mock import patch
 
+from local_repo.cmd_venv_shell import customize_env_context
 from local_test.base_test_class import BasePyfakefsTestClass
 from local_test.name_assertion import assert_test_module_name_embeds_str
+from neoprimer import venv_shell
+from neoprimer.venv_shell import Bootstrapper_state_activated_venv_shell_started
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
-    Bootstrapper_state_env_path_to_venv,
+    Bootstrapper_state_local_venv_dir_path_finalized,
     Bootstrapper_state_py_exec_updated_proto_kernel_code,
     ConfConstGeneral,
     EnvContext,
@@ -19,28 +22,28 @@ class ThisTestClass(BasePyfakefsTestClass):
 
     def setUp(self):
         self.setUpPyfakefs()
-        self.env_ctx = EnvContext()
+        self.env_ctx = customize_env_context()
 
     # noinspection PyMethodMayBeStatic
     def test_relationship(self):
         assert_test_module_name_embeds_str(
-            EnvState.state_activated_venv_shell_started.name
+            Bootstrapper_state_activated_venv_shell_started.state_activated_venv_shell_started
         )
 
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_env_path_to_venv.__name__}._bootstrap_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_path_finalized.__name__}._bootstrap_once"
     )
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_py_exec_updated_proto_kernel_code.__name__}._bootstrap_once"
     )
-    @patch(f"{primer_kernel.__name__}.create_temp_file")
+    @patch(f"{venv_shell.__name__}.create_temp_file")
     @patch(f"{primer_kernel.__name__}.os.execv")
-    def test_state_client_conf_file_path_exists(
+    def test_state_client_conf_file_abs_path_global_exists(
         self,
         mock_execv,
         mock_create_temp_file,
         mock_state_py_exec_updated_proto_kernel_code,
-        mock_state_env_path_to_venv,
+        mock_state_local_venv_dir_path_finalized,
     ):
 
         # given:
@@ -60,15 +63,17 @@ class ThisTestClass(BasePyfakefsTestClass):
             PythonExecutable.py_exec_updated_protoprimer_package
         )
 
-        mock_state_env_path_to_venv.return_value = mock_client_dir
+        mock_state_local_venv_dir_path_finalized.return_value = mock_client_dir
         expected_venv_activate_path = os.path.join(
-            mock_state_env_path_to_venv.return_value,
+            mock_state_local_venv_dir_path_finalized.return_value,
             ConfConstGeneral.file_rel_path_venv_activate,
         )
 
         # when:
 
-        self.env_ctx.bootstrap_state(EnvState.state_activated_venv_shell_started.name)
+        self.env_ctx.bootstrap_state(
+            Bootstrapper_state_activated_venv_shell_started.state_activated_venv_shell_started
+        )
 
         # then:
 

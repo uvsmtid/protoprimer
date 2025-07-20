@@ -22,7 +22,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     # noinspection PyMethodMayBeStatic
     def test_relationship(self):
         assert_test_module_name_embeds_str(
-            EnvState.state_target_dst_dir_path_verified.name
+            EnvState.state_target_env_dir_rel_path_verified.name
         )
 
     @patch(
@@ -37,12 +37,14 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         self.fs.create_dir("valid_dir")
         mock_state_args_parsed.return_value = argparse.Namespace(
-            **{ArgConst.name_conf_env_path: "valid_dir"},
+            **{ArgConst.name_target_env_dir_rel_path: "valid_dir"},
         )
 
         # when:
 
-        self.env_ctx.bootstrap_state(EnvState.state_target_dst_dir_path_verified.name)
+        self.env_ctx.bootstrap_state(
+            EnvState.state_target_env_dir_rel_path_verified.name
+        )
 
         # then:
 
@@ -59,14 +61,14 @@ class ThisTestClass(BasePyfakefsTestClass):
         # given:
 
         mock_state_args_parsed.return_value = argparse.Namespace(
-            **{ArgConst.name_conf_env_path: "/abs/path"},
+            **{ArgConst.name_target_env_dir_rel_path: "/abs/path"},
         )
 
         # when:
 
         with self.assertRaises(AssertionError) as ctx:
             self.env_ctx.bootstrap_state(
-                EnvState.state_target_dst_dir_path_verified.name
+                EnvState.state_target_env_dir_rel_path_verified.name
             )
 
         # then:
@@ -84,14 +86,14 @@ class ThisTestClass(BasePyfakefsTestClass):
         # given:
 
         mock_state_args_parsed.return_value = argparse.Namespace(
-            **{ArgConst.name_conf_env_path: "conf/../bad"},
+            **{ArgConst.name_target_env_dir_rel_path: "conf/../bad"},
         )
 
         # when:
 
         with self.assertRaises(AssertionError) as ctx:
             self.env_ctx.bootstrap_state(
-                EnvState.state_target_dst_dir_path_verified.name
+                EnvState.state_target_env_dir_rel_path_verified.name
             )
 
         # then:
@@ -110,14 +112,14 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         self.fs.create_file("not_a_dir")
         mock_state_args_parsed.return_value = argparse.Namespace(
-            **{ArgConst.name_conf_env_path: "not_a_dir"},
+            **{ArgConst.name_target_env_dir_rel_path: "not_a_dir"},
         )
 
         # when:
 
         with self.assertRaises(AssertionError) as ctx:
             self.env_ctx.bootstrap_state(
-                EnvState.state_target_dst_dir_path_verified.name
+                EnvState.state_target_env_dir_rel_path_verified.name
             )
 
         # then:
@@ -135,14 +137,14 @@ class ThisTestClass(BasePyfakefsTestClass):
         # given:
 
         mock_state_args_parsed.return_value = argparse.Namespace(
-            **{ArgConst.name_conf_env_path: "missing_dir"},
+            **{ArgConst.name_target_env_dir_rel_path: "missing_dir"},
         )
 
         # when:
 
         with self.assertRaises(AssertionError) as ctx:
             self.env_ctx.bootstrap_state(
-                EnvState.state_target_dst_dir_path_verified.name
+                EnvState.state_target_env_dir_rel_path_verified.name
             )
 
         # then:
@@ -162,12 +164,14 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.fs.create_dir("valid_dir")
         self.fs.create_symlink("symlink_to_dir", "valid_dir")
         mock_state_args_parsed.return_value = argparse.Namespace(
-            **{ArgConst.name_conf_env_path: "symlink_to_dir"},
+            **{ArgConst.name_target_env_dir_rel_path: "symlink_to_dir"},
         )
 
         # when:
 
-        self.env_ctx.bootstrap_state(EnvState.state_target_dst_dir_path_verified.name)
+        self.env_ctx.bootstrap_state(
+            EnvState.state_target_env_dir_rel_path_verified.name
+        )
 
         # then:
 

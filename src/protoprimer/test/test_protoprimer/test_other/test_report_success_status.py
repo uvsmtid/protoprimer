@@ -3,9 +3,16 @@ from unittest.mock import patch
 
 from local_test.base_test_class import BaseTestClass
 from local_test.line_number import line_no
+from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer.primer_kernel import (
     EnvContext,
 )
+
+
+def test_relationship():
+    assert_test_module_name_embeds_str(
+        EnvContext.report_success_status.__name__,
+    )
 
 
 class ThisTestClass(BaseTestClass):

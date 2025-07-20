@@ -1,0 +1,48 @@
+[build-system]
+
+requires = ["setuptools>=42"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "neoprimer"
+version = "0.0.0.dev2"
+authors = [
+    { name = "uvsmtid", email = "uvsmtid@gmail.com" },
+]
+description = "TODO"
+readme = "readme.md"
+# FT_84_11_73_28: supported python versions:
+requires-python = ">=3.8"
+license = { text = "MIT" }
+
+keywords = [
+]
+
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Console",
+    "Intended Audience :: Information Technology",
+    "Topic :: Terminals",
+    "Topic :: System :: Shells",
+    "Programming Language :: Python :: 3",
+    "Operating System :: POSIX :: Linux",
+]
+
+dependencies = [
+    "protoprimer"
+]
+
+[project.optional-dependencies]
+extra = []
+
+[project.urls]
+Homepage = "https://github.com/uvsmtid/neoprimer"
+Repository = "https://github.com/uvsmtid/neoprimer"
+
+[tool]
+
+[tool.setuptools.packages.find]
+where = ["./main"]
+
+[tool.setuptools.package-dir]
+neoprimer = "./main/neoprimer"
