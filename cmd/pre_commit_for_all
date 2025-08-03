@@ -7,7 +7,7 @@ if __name__ == "__main__":
 
     if not delegate_to_venv(
         # ./cmd/file -> ./
-        client_ref_dir_path=os.path.dirname(os.path.dirname(__file__)),
+        ref_root_abs_path=os.path.dirname(os.path.dirname(__file__)),
     ):
         from local_repo.cmd_pre_commit_for_all import main
 

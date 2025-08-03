@@ -49,7 +49,7 @@ repos:
         -   id: markdownlint
             args: [
                 "--config",
-                "conf_client/markdownlint.yaml",
+                "gconf/markdownlint.yaml",
             ]
             stages: [
                 "pre-commit",

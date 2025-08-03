@@ -21,6 +21,7 @@ dependencies = [
     "pyfakefs",
     "coverage",
     "tomli",
+    "tomli_w",
 ]
 
 [tool.setuptools.packages.find]

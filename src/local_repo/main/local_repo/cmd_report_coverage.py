@@ -14,23 +14,23 @@ def main():
     """
 
     get_command_code(
-        "coverage erase         --rcfile=./conf_client/coveragerc.ini",
+        "coverage erase         --rcfile=./gconf/coveragerc.ini",
     )
     get_command_code(
-        "coverage run           --rcfile=./conf_client/coveragerc.ini --module pytest ./src/neoprimer/test/",
+        "coverage run           --rcfile=./gconf/coveragerc.ini --module pytest ./src/neoprimer/test/",
     )
     get_command_code(
-        "coverage run           --rcfile=./conf_client/coveragerc.ini --module pytest ./src/protoprimer/test/",
+        "coverage run           --rcfile=./gconf/coveragerc.ini --module pytest ./src/protoprimer/test/",
     )
     get_command_code(
-        "coverage combine       --rcfile=./conf_client/coveragerc.ini",
+        "coverage combine       --rcfile=./gconf/coveragerc.ini",
     )
 
     get_command_code(
-        "coverage report        --rcfile=./conf_client/coveragerc.ini",
+        "coverage report        --rcfile=./gconf/coveragerc.ini",
     )
     get_command_code(
-        "coverage xml           --rcfile=./conf_client/coveragerc.ini",
+        "coverage xml           --rcfile=./gconf/coveragerc.ini",
     )
 
 

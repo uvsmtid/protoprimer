@@ -1,0 +1,10 @@
+{
+    "env_local_python_file_abs_path": "/usr/bin/python",
+    "evn_local_venv_dir_rel_path": "venv",
+    "env_project_rel_path_to_extras_dict": {
+        "src/local_repo": [],
+        "src/local_test": [],
+        "src/neoprimer": [],
+        "src/protoprimer": ["test"]
+    }
+}

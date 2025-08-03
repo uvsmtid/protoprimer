@@ -2,98 +2,67 @@
 This module defines naming metadata which enforces naming convention.
 """
 
+from __future__ import annotations
+
 import enum
 
-from protoprimer.primer_kernel import EnvState
+from local_test.consistent_naming import verify_name_enum_order_in_name
+from protoprimer.primer_kernel import (
+    ConfLeap,
+    FilesystemObject,
+    PathName,
+    PathType,
+    ValueName,
+)
 
 
 class CompletedAction(enum.Enum):
 
+    # Some value loaded:
+    action_loaded = "loaded"
+
+    # Some value verified:
     action_verified = "verified"
 
+    # Some value finalized (for the given FT_89_41_35_82.conf_leap.md):
+    action_finalized = "finalized"
 
-class FilesystemObjectType(enum.Enum):
-
-    fs_object_file = "file"
-
-    fs_object_dir = "dir"
-
-
-class PathType(enum.Enum):
-
-    # If both paths are possible (absolute or relative):
-    path_any = "path"
-
-    # Relative path:
-    path_rel = "rel_path"
-
-    # Absolute path:
-    path_abs = "abs_path"
+    # Some value applied (become effective for the current runtime):
+    action_applied = "applied"
 
 
-class PathName(enum.Enum):
-
-    value_proto_kernel_code = "proto_kernel_code"
-
-    value_proto_kernel_conf = "proto_kernel_conf"
-
-    value_client_ref = "client_ref"
-
-    value_client_conf = "client_conf"
-
-    value_env_conf = "env_conf"
-
-    value_target_env = "target_env"
-
-    value_local_python = "local_python"
-
-    value_local_venv = "local_venv"
-
-
-class ValueName(enum.Enum):
-
-    value_stderr_log_level = "stderr_log_level"
-
-    value_run_mode = "run_mode"
-
-    value_target_state_name = "target_state_name"
-
-    value_py_exec = "py_exec"
-
-    value_project_path_list = "project_path_list"
-
-
-class ValueStage(enum.Enum):
+class ValueSource(enum.Enum):
     """
-    Each value may be specified in the config, by env var, on the command line, etc.
+    Each value may be specified: in the config, by env var, on the command line, etc.
 
     There is a general rule how the same value is overridden (defaults -> config -> env var -> CLI arg).
 
     However, this process is more complicated during bootstrap - override may happen more than once.
-    For example, log level may be overridden twice (first by global client config, then by local client config).
+    For example, the log level may be overridden twice (first default by global client config, then by local config).
     """
 
-    # A hard-coded value (not specifically "hard", may be "soft" with any logic to set initial value):
-    value_coded = "coded"
+    # Default value = hard-coded value
+    # (not specifically "hard"-coded, it may be "soft"-coded with any logic to set the initial value):
+    value_def = "def"
 
-    # A value set by env var:
+    # A value set by an env var:
     value_var = "var"
 
-    # The value is overridden via command line args.
+    # A value provided by the command line args.
     value_arg = "arg"
 
-    # The value configured in global client config (not specific to the local environment):
-    value_global = "global"
+    # A value loaded from the filesystem.
+    value_fs = "fs"
 
-    # The value configured in local client config (specific to the local environment):
-    value_local = "local"
-
-    # A value computed based on:
-    # *  `value_inited`, `value_arg`
-    value_finalized = "finalized"
+    # A value evaluated based on multiple other values.
+    value_eval = "eval"
 
 
-class StateCategoryMeta:
+class CategoryMeta:
+    """
+    Describes the category of the name (e.g., which enum items should be part of the name).
+    """
+
     def __init__(
         self,
         name_enums: list[enum.Enum],
@@ -101,226 +70,116 @@ class StateCategoryMeta:
         self.name_enums: list[enum.Enum] = name_enums
 
 
-class StateCategoryItem(enum.Enum):
+class NameCategory(enum.Enum):
     """
     Depending on the category, different naming (the component set and the order) should apply.
     """
 
     # Some loaded data (e.g., command line args, config file, etc.)
-    category_loaded_data = StateCategoryMeta(
+    category_loaded_data = CategoryMeta(
         name_enums=[],
     )
 
     # Some value is read or computed:
-    category_named_value = StateCategoryMeta(
+    category_named_value = CategoryMeta(
         name_enums=[
+            ConfLeap,
             ValueName,
-            ValueStage,
-        ],
-    )
-
-    # More specific than `category_named_value`: value representing a filesystem path is read or computed:
-    category_path_value = StateCategoryMeta(
-        name_enums=[
-            # The first sub-list is synced with `category_path_action`:
-            PathName,
-            FilesystemObjectType,
-            PathType,
-            #
-            ValueStage,
-        ],
-    )
-
-    # An action on `category_path_value`:
-    category_path_action = StateCategoryMeta(
-        name_enums=[
-            # The first sub-list is synced with `category_path_value`:
-            PathName,
-            FilesystemObjectType,
-            PathType,
+            ValueSource,
             #
             CompletedAction,
         ],
     )
 
-    # Every time persistent state changes:
+    # More specific than `category_named_value`: value representing a filesystem path is read or computed:
+    category_path_value = CategoryMeta(
+        name_enums=[
+            # The first sub-list is synced with `category_path_action`:
+            ConfLeap,
+            PathName,
+            FilesystemObject,
+            PathType,
+            ValueSource,
+            #
+            CompletedAction,
+        ],
+    )
+
+    # Similar to `category_named_value` but for arg names:
+    category_named_arg_value = CategoryMeta(
+        name_enums=[
+            ValueName,
+        ],
+    )
+
+    # Similar:
+    # to `category_named_arg_value` but for path names
+    # to `category_path_value` but for arg names
+    category_path_arg_value = CategoryMeta(
+        name_enums=[
+            PathName,
+            FilesystemObject,
+        ],
+    )
+
+    category_value_field = CategoryMeta(
+        name_enums=[
+            ConfLeap,
+            ValueName,
+        ],
+    )
+
+    category_path_field = CategoryMeta(
+        name_enums=[
+            ConfLeap,
+            PathName,
+            FilesystemObject,
+            PathType,
+        ],
+    )
+
+    # Every time a persistent state changes:
     # *   directly (e.g., via file modification)
     # *   indirectly (e.g., via external command)
     # Whether it actually causes a mutation is not strictly necessary, only a possibility.
-    category_state_mutation = StateCategoryMeta(
+    category_state_mutation = CategoryMeta(
         name_enums=[],
     )
 
     # Every time `PythonExecutable` is switched:
-    category_python_exec = StateCategoryMeta(
+    category_python_exec = CategoryMeta(
         name_enums=[],
     )
 
 
-class StateMeta:
+class AbstractMeta:
 
-    def __init__(
-        self,
-        env_state: EnvState,
-        category_meta: StateCategoryMeta,
-    ):
-        # Specified at ctor call site (primarily, for quick navigation in the IDE):
-        self.env_state: EnvState = env_state
+    def get_prod_item(self):
+        raise NotImplementedError
 
-        self.category_meta: StateCategoryMeta = category_meta
+    def extract_prod_item_value_name(self) -> str:
+        raise NotImplementedError
+
+    def get_name(self) -> str:
+        raise NotImplementedError
+
+    def get_category(self) -> NameCategory:
+        raise NotImplementedError
 
 
-class StateItem(enum.Enum):
-    """
-    This enum re-list all items from `EnvState` enum with metadata to verify their naming.
-    """
-
-    state_stderr_log_level_var = StateMeta(
-        EnvState.state_stderr_log_level_var,
-        StateCategoryItem.category_named_value.value,
+def verify_naming_convention(
+    abstract_meta: AbstractMeta,
+):
+    naming_order = [
+        f"${{{enum_type.__name__}}}"
+        for enum_type in abstract_meta.get_category().value.name_enums
+    ]
+    given_name = abstract_meta.get_name()
+    ret_val: enum.Enum | None = verify_name_enum_order_in_name(
+        abstract_meta.get_category().value.name_enums,
+        abstract_meta.get_name(),
     )
-
-    state_default_stderr_logger_configured = StateMeta(
-        EnvState.state_default_stderr_logger_configured,
-        StateCategoryItem.category_state_mutation.value,
-    )
-
-    state_args_parsed = StateMeta(
-        EnvState.state_args_parsed,
-        StateCategoryItem.category_loaded_data.value,
-    )
-
-    state_stderr_log_level_finalized = StateMeta(
-        EnvState.state_stderr_log_level_finalized,
-        StateCategoryItem.category_named_value.value,
-    )
-
-    state_run_mode_finalized = StateMeta(
-        EnvState.state_run_mode_finalized,
-        StateCategoryItem.category_named_value.value,
-    )
-
-    state_target_state_name_finalized = StateMeta(
-        EnvState.state_target_state_name_finalized,
-        StateCategoryItem.category_named_value.value,
-    )
-
-    state_run_mode_executed = StateMeta(
-        EnvState.state_run_mode_executed,
-        StateCategoryItem.category_state_mutation.value,
-    )
-
-    state_py_exec_arg = StateMeta(
-        EnvState.state_py_exec_arg,
-        StateCategoryItem.category_named_value.value,
-    )
-
-    state_proto_kernel_code_file_abs_path_finalized = StateMeta(
-        EnvState.state_proto_kernel_code_file_abs_path_finalized,
-        StateCategoryItem.category_path_value.value,
-    )
-
-    state_proto_kernel_code_dir_abs_path_finalized = StateMeta(
-        EnvState.state_proto_kernel_code_dir_abs_path_finalized,
-        StateCategoryItem.category_path_value.value,
-    )
-
-    state_proto_kernel_conf_abs_file_path_finalized = StateMeta(
-        EnvState.state_proto_kernel_conf_abs_file_path_finalized,
-        StateCategoryItem.category_path_value.value,
-    )
-
-    state_client_ref_dir_path_arg = StateMeta(
-        EnvState.state_client_ref_dir_path_arg,
-        StateCategoryItem.category_path_value.value,
-    )
-
-    state_proto_kernel_conf_file_data = StateMeta(
-        EnvState.state_proto_kernel_conf_file_data,
-        StateCategoryItem.category_loaded_data.value,
-    )
-
-    state_client_ref_dir_abs_path_global = StateMeta(
-        EnvState.state_client_ref_dir_abs_path_global,
-        StateCategoryItem.category_path_value.value,
-    )
-
-    state_client_conf_file_abs_path_global = StateMeta(
-        EnvState.state_client_conf_file_abs_path_global,
-        StateCategoryItem.category_path_value.value,
-    )
-
-    state_client_conf_file_data = StateMeta(
-        EnvState.state_client_conf_file_data,
-        StateCategoryItem.category_loaded_data.value,
-    )
-
-    state_env_conf_dir_abs_path_local = StateMeta(
-        EnvState.state_env_conf_dir_abs_path_local,
-        StateCategoryItem.category_path_value.value,
-    )
-
-    state_target_env_dir_rel_path_finalized = StateMeta(
-        EnvState.state_target_env_dir_rel_path_finalized,
-        StateCategoryItem.category_path_value.value,
-    )
-
-    state_target_env_dir_rel_path_verified = StateMeta(
-        EnvState.state_target_env_dir_rel_path_verified,
-        StateCategoryItem.category_path_action.value,
-    )
-
-    state_env_conf_dir_path_verified = StateMeta(
-        EnvState.state_env_conf_dir_path_verified,
-        StateCategoryItem.category_path_action.value,
-    )
-
-    state_env_conf_file_path_local = StateMeta(
-        EnvState.state_env_conf_file_path_local,
-        StateCategoryItem.category_path_value.value,
-    )
-
-    state_env_conf_file_data = StateMeta(
-        EnvState.state_env_conf_file_data,
-        StateCategoryItem.category_loaded_data.value,
-    )
-
-    state_local_python_file_abs_path_finalized = StateMeta(
-        EnvState.state_local_python_file_abs_path_finalized,
-        StateCategoryItem.category_path_value.value,
-    )
-
-    state_local_venv_dir_path_finalized = StateMeta(
-        EnvState.state_local_venv_dir_path_finalized,
-        StateCategoryItem.category_path_value.value,
-    )
-
-    state_project_path_list_finalized = StateMeta(
-        EnvState.state_project_path_list_finalized,
-        StateCategoryItem.category_named_value.value,
-    )
-
-    state_py_exec_selected = StateMeta(
-        EnvState.state_py_exec_selected,
-        StateCategoryItem.category_python_exec.value,
-    )
-
-    state_protoprimer_package_installed = StateMeta(
-        EnvState.state_protoprimer_package_installed,
-        StateCategoryItem.category_state_mutation.value,
-    )
-
-    state_py_exec_updated_protoprimer_package_reached = StateMeta(
-        EnvState.state_py_exec_updated_protoprimer_package_reached,
-        StateCategoryItem.category_python_exec.value,
-    )
-
-    state_proto_kernel_updated = StateMeta(
-        EnvState.state_proto_kernel_updated,
-        StateCategoryItem.category_state_mutation.value,
-    )
-
-    state_py_exec_updated_proto_kernel_code = StateMeta(
-        EnvState.state_py_exec_updated_proto_kernel_code,
-        StateCategoryItem.category_python_exec.value,
-    )
+    if ret_val is not None:
+        raise AssertionError(
+            f"name [{given_name}] of category [{abstract_meta.get_category().name}] does not contain value from enum [{ret_val.__name__}] in the naming order [{'_'.join(naming_order)}]"
+        )

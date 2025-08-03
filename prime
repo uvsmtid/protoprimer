@@ -8,7 +8,7 @@ if __name__ == "__main__":
         from local_repo.cmd_bootstrap_env import custom_main as selected_main
 
     except ImportError:
-        # Run `proto_kernel` from `./cmd` dir:
+        # Run `proto_code` from `./cmd` dir:
         cmd_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "cmd")
         sys.path.append(cmd_dir)
         from proto_kernel import main as selected_main

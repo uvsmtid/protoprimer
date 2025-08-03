@@ -38,7 +38,7 @@ def main():
             f"`squashed_tag` [{squashed_tag}] is already part of the `source_branch_name` [{source_branch_name}]"
         )
 
-    # Fail if previously squashed branch still exists (it has to be removed manually):
+    # Fail if the previously squashed branch still exists (it has to be removed manually):
     existing_branches: str = get_command_output(
         f"git for-each-ref --format='%(refname:short)' refs/heads/"
     )

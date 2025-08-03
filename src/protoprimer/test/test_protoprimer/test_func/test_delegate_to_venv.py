@@ -8,8 +8,8 @@ from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     ConfConstEnv,
     ConfConstGeneral,
+    ConfConstInput,
     delegate_to_venv,
-    EnvVarConst,
 )
 
 
@@ -29,10 +29,10 @@ class TestSuite:
         self.mock_is_venv = mocker.patch(f"{primer_kernel.__name__}.is_venv")
 
     def setup_method(self):
-        self.original_path = os.environ.get(EnvVarConst.name_PATH, "")
+        self.original_path = os.environ.get(ConfConstInput.ext_env_var_PATH, "")
 
     def teardown_method(self):
-        os.environ[EnvVarConst.name_PATH] = self.original_path
+        os.environ[ConfConstInput.ext_env_var_PATH] = self.original_path
 
     def test_in_venv(self):
 
@@ -40,11 +40,11 @@ class TestSuite:
 
         self.mock_is_venv.return_value = True
 
-        client_ref_dir_path = "/mock/client/dir"
+        ref_root_path = "/mock/client/dir"
 
         # when:
 
-        ret_val = delegate_to_venv(client_ref_dir_path)
+        ret_val = delegate_to_venv(ref_root_path)
 
         assert ret_val is False
         self.mock_execv.assert_not_called()
@@ -58,22 +58,22 @@ class TestSuite:
         self.mock_is_venv.return_value = False
         self.mock_path_exists.return_value = True
 
-        client_ref_dir_path = "/mock/client/dir"
+        ref_root_path = "/mock/client/dir"
 
         # when:
 
-        delegate_to_venv(client_ref_dir_path)
+        delegate_to_venv(ref_root_path)
 
         # then:
 
         expected_venv_bin = os.path.join(
-            client_ref_dir_path,
+            ref_root_path,
             # TODO: This might be passed as arg to the func (that being a default):
             ConfConstEnv.default_dir_rel_path_venv,
             ConfConstGeneral.file_rel_path_venv_bin,
         )
         expected_venv_python = os.path.join(
-            client_ref_dir_path,
+            ref_root_path,
             # TODO: This might be passed as arg to the func (that being a default):
             ConfConstEnv.default_dir_rel_path_venv,
             ConfConstGeneral.file_rel_path_venv_python,
@@ -87,9 +87,9 @@ class TestSuite:
             ],
         )
 
-        assert os.environ[EnvVarConst.name_PATH].startswith(
+        assert os.environ[ConfConstInput.ext_env_var_PATH].startswith(
             expected_venv_bin + os.pathsep
         )
-        assert os.environ[EnvVarConst.name_PATH].endswith(self.original_path)
+        assert os.environ[ConfConstInput.ext_env_var_PATH].endswith(self.original_path)
 
         self.mock_path_exists.assert_called_once_with(expected_venv_python)

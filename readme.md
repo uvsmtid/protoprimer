@@ -35,7 +35,7 @@ As a side effect, it irradicates (non-test-able) shell scripts allowing pure `py
 *   no args to document for user consumption
 *   no special shell config
 *   ...
-*   just naked `python` (relatively omnipresent) + a stand-alone copy of [proto_kernel][FT_90_65_67_62.proto_kernel.md].
+*   just naked `python` (relatively omnipresent) + a stand-alone copy of [proto_code][FT_90_65_67_62.proto_code.md].
 
 `proto` = early, when nothing is born yet.
 
@@ -103,7 +103,7 @@ What makes `protoprimer` different:
 [local_proto_kernel.py]: src/protoprimer/main/protoprimer/primer_kernel.py
 [local_prime]: prime
 [original_motivation.md]: doc/dev_note/original_motivation.md
-[FT_90_65_67_62.proto_kernel.md]: doc/feature_topic/FT_90_65_67_62.proto_kernel.md
+[FT_90_65_67_62.proto_code.md]: doc/feature_topic/FT_90_65_67_62.proto_code.md
 [SOLID_wiki]: https://en.wikipedia.org/wiki/SOLID
 [DAG_wiki]: https://en.wikipedia.org/wiki/Directed_acyclic_graph
 [make_wiki]: https://en.wikipedia.org/wiki/Make_(software)

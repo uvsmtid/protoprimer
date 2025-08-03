@@ -27,11 +27,11 @@ def test_install_editable_single_project(
     """
     Test install_editable_project when no extras are provided.
     """
-    project_abs_path_list = [
-        "path/to/project",
-    ]
+    project_abs_path_to_extras_list = {
+        "path/to/project": ["test"],
+    }
 
-    install_editable_project(project_abs_path_list)
+    install_editable_project(project_abs_path_to_extras_list)
 
     expected_command = [
         "/mock/path/to/python",
@@ -39,7 +39,7 @@ def test_install_editable_single_project(
         "pip",
         "install",
         "--editable",
-        "path/to/project",
+        "path/to/project[test]",
     ]
     mock_check_call.assert_called_once_with(expected_command)
     mock_get_path_to_curr_python.assert_called_once()
@@ -57,13 +57,13 @@ def test_install_editable_multiple_projects(
     """
     Test install_editable_project when no extras are provided.
     """
-    project_rel_path_list = [
-        "path/to/project/a",
-        "path/to/project/b",
-        "path/to/project/c",
-    ]
+    project_rel_path_to_extras_dict = {
+        "path/to/project/a": [],
+        "path/to/project/b": [],
+        "path/to/project/c": ["test"],
+    }
 
-    install_editable_project(project_rel_path_list)
+    install_editable_project(project_rel_path_to_extras_dict)
 
     expected_command = [
         "/mock/path/to/python",
@@ -75,7 +75,7 @@ def test_install_editable_multiple_projects(
         "--editable",
         "path/to/project/b",
         "--editable",
-        "path/to/project/c",
+        "path/to/project/c[test]",
     ]
     mock_check_call.assert_called_once_with(expected_command)
     mock_get_path_to_curr_python.assert_called_once()

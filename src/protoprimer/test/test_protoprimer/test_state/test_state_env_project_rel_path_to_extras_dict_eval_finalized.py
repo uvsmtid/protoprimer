@@ -6,7 +6,7 @@ from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     Bootstrapper_state_env_conf_file_data,
-    ConfConstEnv,
+    ConfField,
     EnvContext,
     EnvState,
 )
@@ -17,9 +17,10 @@ def env_ctx():
     return EnvContext()
 
 
-# noinspection PyMethodMayBeStatic
 def test_relationship():
-    assert_test_module_name_embeds_str(EnvState.state_project_path_list_finalized.name)
+    assert_test_module_name_embeds_str(
+        EnvState.state_env_project_rel_path_to_extras_dict_eval_finalized.name
+    )
 
 
 @patch(
@@ -31,21 +32,21 @@ def test_py_exec_venv(
 ):
     # given:
 
-    project_rel_path_list: list[str] = [
-        "path/to/project/a",
-        "path/to/project/b",
-    ]
+    project_rel_path_to_extras_dict: list[str] = {
+        "path/to/project/a": [],
+        "path/to/project/b": ["test"],
+    }
 
     mock_state_env_conf_file_data.return_value = {
-        ConfConstEnv.field_project_rel_path_list: project_rel_path_list,
+        ConfField.field_env_project_rel_path_to_extras_dict.value: project_rel_path_to_extras_dict,
     }
 
     # when:
 
     ret_val: str = env_ctx.bootstrap_state(
-        EnvState.state_project_path_list_finalized.name
+        EnvState.state_env_project_rel_path_to_extras_dict_eval_finalized.name
     )
 
     # then:
 
-    assert project_rel_path_list == ret_val
+    assert project_rel_path_to_extras_dict == ret_val
