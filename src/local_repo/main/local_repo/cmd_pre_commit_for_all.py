@@ -24,7 +24,7 @@ def main():
             "run",
             "--all-files",
             "--config",
-            "conf_client/pre_commit.yaml",
+            "gconf/pre_commit.yaml",
         ],
     )
 

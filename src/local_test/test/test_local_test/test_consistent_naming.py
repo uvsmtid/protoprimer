@@ -35,27 +35,27 @@ class Animal(enum.Enum):
 
 def test_success_simple_order():
     meta_types = [Color, Shape, Size]
-    name_string = "The red circle is small."
+    name_string = "The_red_circle_is_small."
     assert verify_name_enum_order_in_name(meta_types, name_string) is None
 
 
 def test_fail_missing_meta_type():
     meta_types = [Color, Shape, Size]
     # `Shape` is missing:
-    name_string = "The red object is small."
+    name_string = "The_red_object_is_small."
     assert verify_name_enum_order_in_name(meta_types, name_string) is not None
 
 
 def test_fail_incorrect_order():
     meta_types = [Color, Shape, Size]
     # `Shape` appears before `Color`:
-    name_string = "A circle that is red and small."
+    name_string = "A_circle_that_is_red_and_small."
     assert verify_name_enum_order_in_name(meta_types, name_string) is not None
 
 
 def test_empty_meta_types_list():
     meta_types = []
-    name_string = "Any string will do."
+    name_string = "Any_string_will_do."
     assert verify_name_enum_order_in_name(meta_types, name_string) is None
 
 

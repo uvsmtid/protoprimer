@@ -7,7 +7,7 @@
 
 # Target environment config
 # (no trailing slash `/` because it can be a symlink):
-/conf_env
+/lconf
 
 # Python (recursively):
 __pycache__/

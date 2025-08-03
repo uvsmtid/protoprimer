@@ -29,7 +29,7 @@ classifiers = [
 ]
 
 dependencies = [
-    "protoprimer"
+    "protoprimer",
 ]
 
 [project.optional-dependencies]

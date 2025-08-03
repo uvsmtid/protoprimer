@@ -2,7 +2,6 @@ import argparse
 import logging
 import sys
 from unittest.mock import (
-    MagicMock,
     patch,
 )
 
@@ -13,7 +12,7 @@ from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     ArgConst,
     Bootstrapper_state_args_parsed,
-    Bootstrapper_state_default_stderr_logger_configured,
+    Bootstrapper_state_default_stderr_log_handler_configured,
     EnvContext,
     EnvState,
 )
@@ -29,7 +28,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     # noinspection PyMethodMayBeStatic
     def test_relationship(self):
         assert_test_module_name_embeds_str(
-            EnvState.state_stderr_log_level_finalized.name
+            EnvState.state_input_stderr_log_level_eval_finalized_gconf.name
         )
 
     def test_not_yet_at_required_python(
@@ -120,7 +119,7 @@ class ThisTestClass(BasePyfakefsTestClass):
                     stderr_log_level_silent,
                     stderr_log_level_quiet,
                     stderr_log_level_verbose,
-                    expected_state_stderr_log_level_finalized,
+                    expected_state_input_stderr_log_level_eval_finalized_gconf,
                     case_comment,
                 ) = test_case
 
@@ -140,7 +139,7 @@ class ThisTestClass(BasePyfakefsTestClass):
                 # when:
 
                 with patch(
-                    f"{primer_kernel.__name__}.{Bootstrapper_state_default_stderr_logger_configured.__name__}._bootstrap_once"
+                    f"{primer_kernel.__name__}.{Bootstrapper_state_default_stderr_log_handler_configured.__name__}._bootstrap_once"
                 ) as mock_state_default_stderr_logger_configured:
                     mock_state_default_stderr_logger_configured.return_value = (
                         stderr_handler
@@ -149,15 +148,13 @@ class ThisTestClass(BasePyfakefsTestClass):
                         f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}._bootstrap_once"
                     ) as mock_state_args_parsed:
                         mock_state_args_parsed.return_value = parsed_args
-                        actual_state_stderr_log_level_finalized = (
-                            self.env_ctx.bootstrap_state(
-                                EnvState.state_stderr_log_level_finalized.name
-                            )
+                        actual_state_input_stderr_log_level_eval_finalized_gconf = self.env_ctx.bootstrap_state(
+                            EnvState.state_input_stderr_log_level_eval_finalized_gconf.name
                         )
 
                 # then:
 
                 self.assertEqual(
-                    expected_state_stderr_log_level_finalized,
-                    actual_state_stderr_log_level_finalized,
+                    expected_state_input_stderr_log_level_eval_finalized_gconf,
+                    actual_state_input_stderr_log_level_eval_finalized_gconf,
                 )

@@ -8,6 +8,7 @@ from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     ArgConst,
+    CommandArg,
     EnvState,
     main,
     RunMode,
@@ -17,7 +18,7 @@ from protoprimer.primer_kernel import (
 
 def test_relationship():
     assert_test_module_name_embeds_str(
-        ArgConst.name_run_mode,
+        CommandArg.name_run_mode.value,
     )
     assert_test_module_name_embeds_str(
         RunMode.print_dag.name,
@@ -31,13 +32,13 @@ class ThisTestClass(BaseTestClass):
 
         # given:
 
-        given_state_name: str = EnvState.state_stderr_log_level_var.name
+        given_state_name: str = EnvState.state_input_stderr_log_level_var_loaded.name
 
         test_args = [
             os.path.basename(primer_kernel.__file__),
             ArgConst.arg_run_mode,
             RunMode.print_dag.name,
-            ArgConst.arg_state_name,
+            ArgConst.arg_target_state_name,
             given_state_name,
         ]
 

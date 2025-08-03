@@ -62,7 +62,7 @@ class Bootstrapper_state_pre_commit_configured(AbstractCachingStateBootstrapper[
             env_ctx=env_ctx,
             state_parents=[
                 CustomEnvState.state_pre_commit_installed.name,
-                EnvState.state_client_conf_file_abs_path_global.name,
+                EnvState.state_primer_conf_client_file_abs_path_eval_finalized.name,
             ],
             env_state=CustomEnvState.state_pre_commit_configured.name,
         )
@@ -75,10 +75,14 @@ class Bootstrapper_state_pre_commit_configured(AbstractCachingStateBootstrapper[
         )
         assert state_pre_commit_installed
 
-        state_client_conf_file_abs_path_global = self.bootstrap_parent_state(
-            EnvState.state_client_conf_file_abs_path_global.name
+        state_primer_conf_client_file_abs_path_eval_finalized = (
+            self.bootstrap_parent_state(
+                EnvState.state_primer_conf_client_file_abs_path_eval_finalized.name
+            )
         )
-        client_conf_dir_path = os.path.dirname(state_client_conf_file_abs_path_global)
+        client_conf_dir_path = os.path.dirname(
+            state_primer_conf_client_file_abs_path_eval_finalized
+        )
         pre_commit_conf_file_path = os.path.join(
             client_conf_dir_path,
             "pre_commit.yaml",
@@ -107,16 +111,9 @@ class Bootstrapper_state_pre_commit_configured(AbstractCachingStateBootstrapper[
 
 class CustomEnvState(enum.Enum):
 
-    def __init__(
-        self,
-        # Default implementation (for reference):
-        default_impl,
-    ):
-        self.default_impl = default_impl
+    state_pre_commit_installed = Bootstrapper_state_pre_commit_installed
 
-    state_pre_commit_installed = (Bootstrapper_state_pre_commit_installed,)
-
-    state_pre_commit_configured = (Bootstrapper_state_pre_commit_configured,)
+    state_pre_commit_configured = Bootstrapper_state_pre_commit_configured
 
 
 def customize_env_context():

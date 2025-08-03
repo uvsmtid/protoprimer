@@ -5,11 +5,11 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "protoprimer"
-version = "0.0.3"
+version = "0.0.4"
 authors = [
     { name = "uvsmtid", email = "uvsmtid@gmail.com" },
 ]
-description = "self-contained, stand-alone, no-deps, no-args-friendly, auto-cloning, environment-driven, pure-python, multi-stage extensible DAG bootstrapper to escape from shell scripting maintenance hell"
+description = "A self-contained, no-deps, zero-args-friendly, clonnable, multi-stage bootstrapper with extensible DAG to escape from shell scripts in pure Python"
 readme = "readme.md"
 # FT_84_11_73_28: supported python versions:
 requires-python = ">=3.8"
@@ -50,6 +50,10 @@ classifiers = [
 dependencies = []
 
 [project.optional-dependencies]
+test = [
+    "pytest",
+    "pytest-mock",
+]
 extra = []
 
 [project.urls]

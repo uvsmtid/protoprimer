@@ -1,12 +1,12 @@
 import argparse
 from unittest.mock import patch
 
-from local_test.name_assertion import assert_test_module_name_embeds_str
 from local_test.base_test_class import BasePyfakefsTestClass
+from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
-    ArgConst,
     Bootstrapper_state_args_parsed,
+    CommandArg,
     EnvContext,
     EnvState,
 )
@@ -22,7 +22,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     # noinspection PyMethodMayBeStatic
     def test_relationship(self):
         assert_test_module_name_embeds_str(
-            EnvState.state_target_env_dir_rel_path_verified.name
+            EnvState.state_client_local_env_dir_rel_path_eval_verified.name
         )
 
     @patch(
@@ -37,13 +37,13 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         self.fs.create_dir("valid_dir")
         mock_state_args_parsed.return_value = argparse.Namespace(
-            **{ArgConst.name_target_env_dir_rel_path: "valid_dir"},
+            **{CommandArg.name_local_env.value: "valid_dir"},
         )
 
         # when:
 
         self.env_ctx.bootstrap_state(
-            EnvState.state_target_env_dir_rel_path_verified.name
+            EnvState.state_client_local_env_dir_rel_path_eval_verified.name
         )
 
         # then:
@@ -61,14 +61,14 @@ class ThisTestClass(BasePyfakefsTestClass):
         # given:
 
         mock_state_args_parsed.return_value = argparse.Namespace(
-            **{ArgConst.name_target_env_dir_rel_path: "/abs/path"},
+            **{CommandArg.name_local_env.value: "/abs/path"},
         )
 
         # when:
 
         with self.assertRaises(AssertionError) as ctx:
             self.env_ctx.bootstrap_state(
-                EnvState.state_target_env_dir_rel_path_verified.name
+                EnvState.state_client_local_env_dir_rel_path_eval_verified.name
             )
 
         # then:
@@ -86,14 +86,14 @@ class ThisTestClass(BasePyfakefsTestClass):
         # given:
 
         mock_state_args_parsed.return_value = argparse.Namespace(
-            **{ArgConst.name_target_env_dir_rel_path: "conf/../bad"},
+            **{CommandArg.name_local_env.value: "conf/../bad"},
         )
 
         # when:
 
         with self.assertRaises(AssertionError) as ctx:
             self.env_ctx.bootstrap_state(
-                EnvState.state_target_env_dir_rel_path_verified.name
+                EnvState.state_client_local_env_dir_rel_path_eval_verified.name
             )
 
         # then:
@@ -112,14 +112,14 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         self.fs.create_file("not_a_dir")
         mock_state_args_parsed.return_value = argparse.Namespace(
-            **{ArgConst.name_target_env_dir_rel_path: "not_a_dir"},
+            **{CommandArg.name_local_env.value: "not_a_dir"},
         )
 
         # when:
 
         with self.assertRaises(AssertionError) as ctx:
             self.env_ctx.bootstrap_state(
-                EnvState.state_target_env_dir_rel_path_verified.name
+                EnvState.state_client_local_env_dir_rel_path_eval_verified.name
             )
 
         # then:
@@ -137,14 +137,14 @@ class ThisTestClass(BasePyfakefsTestClass):
         # given:
 
         mock_state_args_parsed.return_value = argparse.Namespace(
-            **{ArgConst.name_target_env_dir_rel_path: "missing_dir"},
+            **{CommandArg.name_local_env.value: "missing_dir"},
         )
 
         # when:
 
         with self.assertRaises(AssertionError) as ctx:
             self.env_ctx.bootstrap_state(
-                EnvState.state_target_env_dir_rel_path_verified.name
+                EnvState.state_client_local_env_dir_rel_path_eval_verified.name
             )
 
         # then:
@@ -164,13 +164,13 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.fs.create_dir("valid_dir")
         self.fs.create_symlink("symlink_to_dir", "valid_dir")
         mock_state_args_parsed.return_value = argparse.Namespace(
-            **{ArgConst.name_target_env_dir_rel_path: "symlink_to_dir"},
+            **{CommandArg.name_local_env.value: "symlink_to_dir"},
         )
 
         # when:
 
         self.env_ctx.bootstrap_state(
-            EnvState.state_target_env_dir_rel_path_verified.name
+            EnvState.state_client_local_env_dir_rel_path_eval_verified.name
         )
 
         # then:

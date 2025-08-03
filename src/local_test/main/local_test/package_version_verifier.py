@@ -1,6 +1,6 @@
 import os.path
 
-import tomli
+from local_test.toml_handler import load_toml_data
 
 
 def verify_package_version(
@@ -32,8 +32,7 @@ def verify_package_version(
 
     # when:
 
-    with open(toml_path, "rb") as f:
-        toml_data = tomli.load(f)
+    toml_data = load_toml_data(toml_path)
 
     # then:
 

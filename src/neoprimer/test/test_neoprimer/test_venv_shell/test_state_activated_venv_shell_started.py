@@ -8,11 +8,9 @@ from neoprimer import venv_shell
 from neoprimer.venv_shell import Bootstrapper_state_activated_venv_shell_started
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
-    Bootstrapper_state_local_venv_dir_path_finalized,
-    Bootstrapper_state_py_exec_updated_proto_kernel_code,
+    Bootstrapper_state_env_local_venv_dir_abs_path_eval_finalized,
+    Bootstrapper_state_py_exec_updated_proto_code,
     ConfConstGeneral,
-    EnvContext,
-    EnvState,
     PythonExecutable,
 )
 
@@ -31,19 +29,19 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
 
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_path_finalized.__name__}._bootstrap_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_env_local_venv_dir_abs_path_eval_finalized.__name__}._bootstrap_once"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_py_exec_updated_proto_kernel_code.__name__}._bootstrap_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_py_exec_updated_proto_code.__name__}._bootstrap_once"
     )
     @patch(f"{venv_shell.__name__}.create_temp_file")
     @patch(f"{primer_kernel.__name__}.os.execv")
-    def test_state_client_conf_file_abs_path_global_exists(
+    def test_state_primer_conf_client_file_abs_path_eval_finalized_exists(
         self,
         mock_execv,
         mock_create_temp_file,
-        mock_state_py_exec_updated_proto_kernel_code,
-        mock_state_local_venv_dir_path_finalized,
+        mock_state_py_exec_updated_proto_code,
+        mock_state_env_local_venv_dir_abs_path_eval_finalized,
     ):
 
         # given:
@@ -59,13 +57,15 @@ class ThisTestClass(BasePyfakefsTestClass):
         temp_file_fake = self.fs.create_file(temp_file_path)
         mock_create_temp_file.return_value = open(temp_file_fake.path, "w")
 
-        mock_state_py_exec_updated_proto_kernel_code.return_value = (
+        mock_state_py_exec_updated_proto_code.return_value = (
             PythonExecutable.py_exec_updated_protoprimer_package
         )
 
-        mock_state_local_venv_dir_path_finalized.return_value = mock_client_dir
+        mock_state_env_local_venv_dir_abs_path_eval_finalized.return_value = (
+            mock_client_dir
+        )
         expected_venv_activate_path = os.path.join(
-            mock_state_local_venv_dir_path_finalized.return_value,
+            mock_state_env_local_venv_dir_abs_path_eval_finalized.return_value,
             ConfConstGeneral.file_rel_path_venv_activate,
         )
 

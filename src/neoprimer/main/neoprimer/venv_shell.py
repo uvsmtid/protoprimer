@@ -26,8 +26,8 @@ class Bootstrapper_state_activated_venv_shell_started(
         super().__init__(
             env_ctx=env_ctx,
             state_parents=[
-                EnvState.state_py_exec_updated_proto_kernel_code.name,
-                EnvState.state_local_venv_dir_path_finalized.name,
+                EnvState.state_py_exec_updated_proto_code.name,
+                EnvState.state_env_local_venv_dir_abs_path_eval_finalized.name,
             ],
             env_state=self.state_activated_venv_shell_started,
         )
@@ -36,22 +36,22 @@ class Bootstrapper_state_activated_venv_shell_started(
         self,
     ) -> StateValueType:
 
-        state_py_exec_updated_proto_kernel_code = self.bootstrap_parent_state(
-            EnvState.state_py_exec_updated_proto_kernel_code.name
+        state_py_exec_updated_proto_code = self.bootstrap_parent_state(
+            EnvState.state_py_exec_updated_proto_code.name
         )
 
         # TODO: this should be the last executable here:
         assert (
-            state_py_exec_updated_proto_kernel_code
+            state_py_exec_updated_proto_code
             >= PythonExecutable.py_exec_updated_protoprimer_package
         )
 
-        state_local_venv_dir_path_finalized = self.bootstrap_parent_state(
-            EnvState.state_local_venv_dir_path_finalized.name
+        state_env_local_venv_dir_abs_path_eval_finalized = self.bootstrap_parent_state(
+            EnvState.state_env_local_venv_dir_abs_path_eval_finalized.name
         )
 
         venv_path_to_activate = os.path.join(
-            state_local_venv_dir_path_finalized,
+            state_env_local_venv_dir_abs_path_eval_finalized,
             ConfConstGeneral.file_rel_path_venv_activate,
         )
 
