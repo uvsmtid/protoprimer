@@ -64,8 +64,6 @@ def customize_env_context():
 
     env_ctx.register_bootstrapper(Bootstrapper_state_hello_world_printed(env_ctx))
 
-    env_ctx.populate_dependencies()
-
     env_ctx.default_target = CustomEnvState.state_hello_world_printed.name
 
     return env_ctx

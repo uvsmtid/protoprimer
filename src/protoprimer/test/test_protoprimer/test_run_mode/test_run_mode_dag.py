@@ -21,7 +21,7 @@ def test_relationship():
         CommandArg.name_run_mode.value,
     )
     assert_test_module_name_embeds_str(
-        RunMode.print_dag.name,
+        RunMode.mode_dag.name,
     )
 
 
@@ -37,7 +37,7 @@ class ThisTestClass(BaseTestClass):
         test_args = [
             os.path.basename(primer_kernel.__file__),
             ArgConst.arg_run_mode,
-            RunMode.print_dag.name,
+            RunMode.mode_dag.name,
             ArgConst.arg_target_state_name,
             given_state_name,
         ]
@@ -63,7 +63,7 @@ class ThisTestClass(BaseTestClass):
         test_args = [
             os.path.basename(primer_kernel.__file__),
             ArgConst.arg_run_mode,
-            RunMode.print_dag.name,
+            RunMode.mode_dag.name,
         ]
 
         # when:

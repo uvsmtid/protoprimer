@@ -22,8 +22,6 @@ def customize_env_context():
         Bootstrapper_state_activated_venv_shell_started(env_ctx)
     )
 
-    env_ctx.populate_dependencies()
-
     env_ctx.default_target = (
         Bootstrapper_state_activated_venv_shell_started.state_activated_venv_shell_started
     )
