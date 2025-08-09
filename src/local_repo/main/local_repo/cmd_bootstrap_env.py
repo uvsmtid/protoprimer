@@ -123,8 +123,6 @@ def customize_env_context():
     env_ctx.register_bootstrapper(Bootstrapper_state_pre_commit_installed(env_ctx))
     env_ctx.register_bootstrapper(Bootstrapper_state_pre_commit_configured(env_ctx))
 
-    env_ctx.populate_dependencies()
-
     env_ctx.default_target = CustomEnvState.state_pre_commit_configured.name
 
     return env_ctx

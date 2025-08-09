@@ -33,9 +33,10 @@ import pathlib
 import subprocess
 import sys
 import tempfile
+import typing
 import venv
 
-__version__ = "0.0.4"
+__version__ = "0.0.4.dev1"
 
 from typing import (
     Any,
@@ -48,7 +49,9 @@ logger: logging.Logger = logging.getLogger()
 StateValueType = TypeVar("StateValueType")
 
 
-def main(configure_env_context=None):
+def main(
+    configure_env_context: typing.Callable[[], EnvContext] | None = None,
+):
 
     try:
         ensure_min_python_version()
@@ -120,12 +123,14 @@ class RunMode(enum.Enum):
     See FT_11_27_29_83.run_mode.md
     """
 
-    print_dag = enum.auto()
+    mode_dag = "print_dag"
 
-    bootstrap_env = enum.auto()
+    mode_prime = "prime_env"
 
     # TODO: implement:
-    check_env = enum.auto()
+    mode_check = "check_env"
+
+    mode_wizard = "conf_wizard"
 
 
 class FilesystemObject(enum.Enum):
@@ -277,8 +282,9 @@ class ConfField(enum.Enum):
 
 class ConfConstGeneral:
 
-    default_primer_kernel_module = "primer_kernel"
-    default_proto_code_module = "proto_kernel"
+    name_proto_code = "proto_kernel"
+    name_primer_kernel_module = "primer_kernel"
+    default_proto_code_module = f"{name_proto_code}"
     default_proto_code_basename = f"{default_proto_code_module}.py"
 
     # TODO: use lambdas to generate based on input (instead of None):
@@ -367,6 +373,88 @@ class ConfConstEnv:
     default_project_rel_path_to_extras_dict = {}
 
 
+class FieldWizardMeta:
+
+    def __init__(
+        self,
+        field_name: str,
+        field_help: str,
+        field_leap: ConfLeap,
+    ):
+        self.field_name: str = field_name
+        self.field_help: str = field_help
+        self.field_leap: ConfLeap = field_leap
+
+
+class WizardField(enum.Enum):
+
+    field_primer_ref_root_dir_rel_path = FieldWizardMeta(
+        field_name=ConfField.field_primer_ref_root_dir_rel_path.value,
+        field_help=(
+            f"Field `{ConfField.field_primer_ref_root_dir_rel_path.value}` leads to the client reference root (or `{PathName.path_ref_root.value}` for short) "
+            f"from the proto code script [TODO: extract from]. "
+            f"Subsequently, the client reference root `{PathName.path_ref_root.value}` is used as a base path for the most of the relative paths. "
+        ),
+        field_leap=ConfLeap.leap_primer,
+    )
+
+    field_primer_conf_client_file_rel_path = FieldWizardMeta(
+        field_name=ConfField.field_primer_conf_client_file_rel_path.value,
+        field_help=(
+            f"Field `{ConfField.field_primer_conf_client_file_rel_path.value}` leads to the client global configuration (or `{PathName.path_conf_client.value}` for short) "
+            f"from the client reference root `{PathName.path_ref_root.value}`. "
+            f"Subsequently, the client global configuration `{PathName.path_conf_client.value}` "
+            f"is used by every deployment (configuration not specific of the local environment). "
+        ),
+        field_leap=ConfLeap.leap_primer,
+    )
+
+    field_client_link_name_dir_rel_path = FieldWizardMeta(
+        field_name=ConfField.field_client_link_name_dir_rel_path.value,
+        field_help=(
+            # TODO:
+            f"Field `{ConfField.field_client_link_name_dir_rel_path.value}` TODO"
+        ),
+        field_leap=ConfLeap.leap_client,
+    )
+
+    field_client_default_target_dir_rel_path = FieldWizardMeta(
+        field_name=ConfField.field_client_default_target_dir_rel_path.value,
+        field_help=(
+            # TODO:
+            f"Field `{ConfField.field_client_default_target_dir_rel_path.value}` TODO"
+        ),
+        field_leap=ConfLeap.leap_client,
+    )
+
+    field_env_local_python_file_abs_path = FieldWizardMeta(
+        field_name=ConfField.field_env_local_python_file_abs_path.value,
+        field_help=(
+            # TODO:
+            f"Field `{ConfField.field_env_local_python_file_abs_path.value}` TODO"
+        ),
+        field_leap=ConfLeap.leap_env,
+    )
+
+    field_env_local_venv_dir_rel_path = FieldWizardMeta(
+        field_name=ConfField.field_env_local_venv_dir_rel_path.value,
+        field_help=(
+            # TODO:
+            f"Field `{ConfField.field_env_local_venv_dir_rel_path.value}` TODO"
+        ),
+        field_leap=ConfLeap.leap_env,
+    )
+
+    field_env_project_rel_path_to_extras_dict = FieldWizardMeta(
+        field_name=ConfField.field_env_project_rel_path_to_extras_dict.value,
+        field_help=(
+            # TODO:
+            f"Field `{ConfField.field_env_project_rel_path_to_extras_dict.value}` TODO"
+        ),
+        field_leap=ConfLeap.leap_env,
+    )
+
+
 def init_arg_parser():
 
     arg_parser = argparse.ArgumentParser(
@@ -415,8 +503,9 @@ def init_arg_parser():
     arg_parser.add_argument(
         ArgConst.arg_run_mode,
         type=str,
+        # TODO: Use run_mode.value, not .name:
         choices=[run_mode.name for run_mode in RunMode],
-        default=RunMode.bootstrap_env.name,
+        default=RunMode.mode_prime.name,
         help=f"Select {RunMode.__name__}.",
     )
     arg_parser.add_argument(
@@ -613,6 +702,7 @@ class PythonExecutable(enum.IntEnum):
         return f"{self.name}[{self.value}]"
 
 
+# TODO: Call it something else (not Bootstrapper as we normally use term Primer, but we also have Wizard):
 class AbstractStateBootstrapper(Generic[StateValueType]):
 
     def __init__(
@@ -635,13 +725,6 @@ class AbstractStateBootstrapper(Generic[StateValueType]):
         for state_parent in state_parents:
             assert type(state_parent) is str
 
-        state_parent: str
-        for state_parent in self.state_parents:
-            self.env_ctx.add_dependency_edge(
-                state_parent,
-                env_state,
-            )
-
     def accept_visitor(
         self,
         bootstrapper_visitor: AbstractBootstrapperVisitor,
@@ -652,12 +735,6 @@ class AbstractStateBootstrapper(Generic[StateValueType]):
         self,
     ) -> str:
         return self.env_state
-
-    def set_state_parents(
-        self,
-        state_parents: list[str],
-    ):
-        self.state_parents = state_parents
 
     def get_state_parents(
         self,
@@ -677,13 +754,7 @@ class AbstractStateBootstrapper(Generic[StateValueType]):
     def bootstrap_state(
         self,
     ) -> StateValueType:
-        self._ensure_pre_condition()
         return self._bootstrap_state()
-
-    def _ensure_pre_condition(
-        self,
-    ) -> None:
-        pass
 
     def _bootstrap_state(
         self,
@@ -734,11 +805,14 @@ class Bootstrapper_state_input_stderr_log_level_var_loaded(
     def __init__(
         self,
         env_ctx: EnvContext,
+        env_state: str | None = None,
     ):
         super().__init__(
             env_ctx=env_ctx,
             state_parents=[],
-            env_state=EnvState.state_input_stderr_log_level_var_loaded.name,
+            env_state=if_none(
+                env_state, EnvState.state_input_stderr_log_level_var_loaded.name
+            ),
         )
 
     def _bootstrap_once(
@@ -762,13 +836,16 @@ class Bootstrapper_state_default_stderr_log_handler_configured(
     def __init__(
         self,
         env_ctx: EnvContext,
+        env_state: str | None = None,
     ):
         super().__init__(
             env_ctx=env_ctx,
             state_parents=[
                 EnvState.state_input_stderr_log_level_var_loaded.name,
             ],
-            env_state=EnvState.state_default_stderr_log_handler_configured.name,
+            env_state=if_none(
+                env_state, EnvState.state_default_stderr_log_handler_configured.name
+            ),
         )
 
     def _bootstrap_once(
@@ -807,11 +884,12 @@ class Bootstrapper_state_args_parsed(
     def __init__(
         self,
         env_ctx: EnvContext,
+        env_state: str | None = None,
     ):
         super().__init__(
             env_ctx=env_ctx,
             state_parents=[],
-            env_state=EnvState.state_args_parsed.name,
+            env_state=if_none(env_state, EnvState.state_args_parsed.name),
         )
 
     def _bootstrap_once(
@@ -833,6 +911,7 @@ class Bootstrapper_state_input_stderr_log_level_eval_finalized_gconf(
     def __init__(
         self,
         env_ctx: EnvContext,
+        env_state: str | None = None,
     ):
         super().__init__(
             env_ctx=env_ctx,
@@ -840,7 +919,10 @@ class Bootstrapper_state_input_stderr_log_level_eval_finalized_gconf(
                 EnvState.state_default_stderr_log_handler_configured.name,
                 EnvState.state_args_parsed.name,
             ],
-            env_state=EnvState.state_input_stderr_log_level_eval_finalized_gconf.name,
+            env_state=if_none(
+                env_state,
+                EnvState.state_input_stderr_log_level_eval_finalized_gconf.name,
+            ),
         )
 
     def _bootstrap_once(
@@ -888,13 +970,16 @@ class Bootstrapper_state_input_run_mode_arg_loaded_gconf(
     def __init__(
         self,
         env_ctx: EnvContext,
+        env_state: str | None = None,
     ):
         super().__init__(
             env_ctx=env_ctx,
             state_parents=[
                 EnvState.state_args_parsed.name,
             ],
-            env_state=EnvState.state_input_run_mode_arg_loaded_gconf.name,
+            env_state=if_none(
+                env_state, EnvState.state_input_run_mode_arg_loaded_gconf.name
+            ),
         )
 
     def _bootstrap_once(
@@ -920,13 +1005,16 @@ class Bootstrapper_state_input_target_state_name_eval_finalized(
     def __init__(
         self,
         env_ctx: EnvContext,
+        env_state: str | None = None,
     ):
         super().__init__(
             env_ctx=env_ctx,
             state_parents=[
                 EnvState.state_args_parsed.name,
             ],
-            env_state=EnvState.state_input_target_state_name_eval_finalized.name,
+            env_state=if_none(
+                env_state, EnvState.state_input_target_state_name_eval_finalized.name
+            ),
         )
 
     def _bootstrap_once(
@@ -960,6 +1048,7 @@ class Bootstrapper_state_run_mode_executed(AbstractCachingStateBootstrapper[bool
     def __init__(
         self,
         env_ctx: EnvContext,
+        env_state: str | None = None,
     ):
         super().__init__(
             env_ctx=env_ctx,
@@ -968,7 +1057,7 @@ class Bootstrapper_state_run_mode_executed(AbstractCachingStateBootstrapper[bool
                 EnvState.state_input_target_state_name_eval_finalized.name,
                 EnvState.state_input_run_mode_arg_loaded_gconf.name,
             ],
-            env_state=EnvState.state_run_mode_executed.name,
+            env_state=if_none(env_state, EnvState.state_run_mode_executed.name),
         )
 
     def _bootstrap_once(
@@ -997,9 +1086,16 @@ class Bootstrapper_state_run_mode_executed(AbstractCachingStateBootstrapper[bool
         selected_visitor: AbstractBootstrapperVisitor
         if state_input_run_mode_arg_loaded_gconf is None:
             raise ValueError(f"run mode is not defined")
-        elif state_input_run_mode_arg_loaded_gconf == RunMode.print_dag:
+        elif state_input_run_mode_arg_loaded_gconf == RunMode.mode_dag:
             selected_visitor = SinkPrinterVisitor(self.env_ctx)
-        elif state_input_run_mode_arg_loaded_gconf == RunMode.bootstrap_env:
+        elif state_input_run_mode_arg_loaded_gconf == RunMode.mode_prime:
+            selected_visitor = DefaultBootstrapperVisitor(self.env_ctx)
+        elif state_input_run_mode_arg_loaded_gconf == RunMode.mode_wizard:
+            for wizard_state in WizardState:
+                self.env_ctx.register_bootstrapper(
+                    wizard_state.value(self.env_ctx),
+                    replace_existing=True,
+                )
             selected_visitor = DefaultBootstrapperVisitor(self.env_ctx)
         else:
             raise ValueError(
@@ -1019,13 +1115,14 @@ class Bootstrapper_state_input_py_exec_arg_loaded(
     def __init__(
         self,
         env_ctx: EnvContext,
+        env_state: str | None = None,
     ):
         super().__init__(
             env_ctx=env_ctx,
             state_parents=[
                 EnvState.state_args_parsed.name,
             ],
-            env_state=EnvState.state_input_py_exec_arg_loaded.name,
+            env_state=if_none(env_state, EnvState.state_input_py_exec_arg_loaded.name),
         )
 
     def _bootstrap_once(
@@ -1047,6 +1144,7 @@ class Bootstrapper_state_input_proto_code_file_abs_path_eval_finalized(
     def __init__(
         self,
         env_ctx: EnvContext,
+        env_state: str | None = None,
     ):
         super().__init__(
             env_ctx=env_ctx,
@@ -1054,7 +1152,10 @@ class Bootstrapper_state_input_proto_code_file_abs_path_eval_finalized(
                 EnvState.state_input_py_exec_arg_loaded.name,
                 EnvState.state_args_parsed.name,
             ],
-            env_state=EnvState.state_input_proto_code_file_abs_path_eval_finalized.name,
+            env_state=if_none(
+                env_state,
+                EnvState.state_input_proto_code_file_abs_path_eval_finalized.name,
+            ),
         )
 
     def _bootstrap_once(
@@ -1116,13 +1217,17 @@ class Bootstrapper_state_input_proto_code_dir_abs_path_eval_finalized(
     def __init__(
         self,
         env_ctx: EnvContext,
+        env_state: str | None = None,
     ):
         super().__init__(
             env_ctx=env_ctx,
             state_parents=[
                 EnvState.state_input_proto_code_file_abs_path_eval_finalized.name,
             ],
-            env_state=EnvState.state_input_proto_code_dir_abs_path_eval_finalized.name,
+            env_state=if_none(
+                env_state,
+                EnvState.state_input_proto_code_dir_abs_path_eval_finalized.name,
+            ),
         )
 
     def _bootstrap_once(
@@ -1149,13 +1254,17 @@ class Bootstrapper_state_input_proto_conf_primer_file_abs_path_eval_finalized(
     def __init__(
         self,
         env_ctx: EnvContext,
+        env_state: str | None = None,
     ):
         super().__init__(
             env_ctx=env_ctx,
             state_parents=[
                 EnvState.state_input_proto_code_dir_abs_path_eval_finalized.name,
             ],
-            env_state=EnvState.state_input_proto_conf_primer_file_abs_path_eval_finalized.name,
+            env_state=if_none(
+                env_state,
+                EnvState.state_input_proto_conf_primer_file_abs_path_eval_finalized.name,
+            ),
         )
 
     def _bootstrap_once(
@@ -1182,6 +1291,7 @@ class Bootstrapper_state_primer_ref_root_dir_any_path_arg_loaded(
     def __init__(
         self,
         env_ctx: EnvContext,
+        env_state: str | None = None,
     ):
         super().__init__(
             env_ctx=env_ctx,
@@ -1189,7 +1299,9 @@ class Bootstrapper_state_primer_ref_root_dir_any_path_arg_loaded(
                 EnvState.state_args_parsed.name,
                 EnvState.state_input_proto_conf_primer_file_abs_path_eval_finalized.name,
             ],
-            env_state=EnvState.state_primer_ref_root_dir_any_path_arg_loaded.name,
+            env_state=if_none(
+                env_state, EnvState.state_primer_ref_root_dir_any_path_arg_loaded.name
+            ),
         )
 
     def _bootstrap_once(
@@ -1227,6 +1339,7 @@ class Bootstrapper_state_proto_conf_file_data(AbstractCachingStateBootstrapper[d
     def __init__(
         self,
         env_ctx: EnvContext,
+        env_state: str | None = None,
     ):
         super().__init__(
             env_ctx=env_ctx,
@@ -1235,7 +1348,7 @@ class Bootstrapper_state_proto_conf_file_data(AbstractCachingStateBootstrapper[d
                 EnvState.state_input_proto_code_dir_abs_path_eval_finalized.name,
                 EnvState.state_primer_ref_root_dir_any_path_arg_loaded.name,
             ],
-            env_state=EnvState.state_proto_conf_file_data.name,
+            env_state=if_none(env_state, EnvState.state_proto_conf_file_data.name),
         )
 
     def _bootstrap_once(
@@ -1273,7 +1386,68 @@ class Bootstrapper_state_proto_conf_file_data(AbstractCachingStateBootstrapper[d
                 ConfField.field_primer_conf_client_file_rel_path.value: ConfConstPrimer.default_client_conf_file_rel_path,
             }
             write_json_file(
-                state_input_proto_conf_primer_file_abs_path_eval_finalized, file_data
+                state_input_proto_conf_primer_file_abs_path_eval_finalized,
+                file_data,
+            )
+        return file_data
+
+
+# noinspection PyPep8Naming
+class Wizard_state_proto_conf_file_data(AbstractCachingStateBootstrapper[dict]):
+
+    def __init__(
+        self,
+        env_ctx: EnvContext,
+        env_state: str | None = None,
+    ):
+        self.moved_state_name = rename_to_moved_state_name(
+            EnvState.state_proto_conf_file_data.name
+        )
+        super().__init__(
+            env_ctx=env_ctx,
+            state_parents=[
+                EnvState.state_input_proto_conf_primer_file_abs_path_eval_finalized.name,
+                EnvState.state_input_proto_code_dir_abs_path_eval_finalized.name,
+                EnvState.state_primer_ref_root_dir_any_path_arg_loaded.name,
+                EnvState.state_input_py_exec_arg_loaded.name,
+                # UC_27_40_17_59.replace_by_new_and_use_old.md:
+                # Depend on the moved state:
+                self.moved_state_name,
+            ],
+            env_state=if_none(env_state, EnvState.state_proto_conf_file_data.name),
+        )
+
+        # UC_27_40_17_59.replace_by_new_and_use_old.md:
+        # Register the moved state implementation:
+        self.moved_state_bootstrapper = Bootstrapper_state_proto_conf_file_data(
+            env_ctx,
+            self.moved_state_name,
+        )
+        self.env_ctx.register_bootstrapper(self.moved_state_bootstrapper)
+
+    def _bootstrap_once(
+        self,
+    ) -> StateValueType:
+        file_data: dict = self.moved_state_bootstrapper.bootstrap_state()
+
+        state_input_py_exec_arg_loaded = self.bootstrap_parent_state(
+            EnvState.state_input_py_exec_arg_loaded.name
+        )
+
+        if state_input_py_exec_arg_loaded == PythonExecutable.py_exec_arbitrary:
+
+            state_input_proto_conf_primer_file_abs_path_eval_finalized = self.bootstrap_parent_state(
+                EnvState.state_input_proto_conf_primer_file_abs_path_eval_finalized.name
+            )
+
+            wizard_conf_leap(
+                file_data,
+                ConfLeap.leap_primer,
+            )
+
+            write_json_file(
+                state_input_proto_conf_primer_file_abs_path_eval_finalized,
+                file_data,
             )
         return file_data
 
@@ -1286,6 +1460,7 @@ class Bootstrapper_state_primer_ref_root_dir_abs_path_eval_finalized(
     def __init__(
         self,
         env_ctx: EnvContext,
+        env_state: str | None = None,
     ):
         super().__init__(
             env_ctx=env_ctx,
@@ -1293,7 +1468,10 @@ class Bootstrapper_state_primer_ref_root_dir_abs_path_eval_finalized(
                 EnvState.state_proto_conf_file_data.name,
                 EnvState.state_input_proto_code_dir_abs_path_eval_finalized.name,
             ],
-            env_state=EnvState.state_primer_ref_root_dir_abs_path_eval_finalized.name,
+            env_state=if_none(
+                env_state,
+                EnvState.state_primer_ref_root_dir_abs_path_eval_finalized.name,
+            ),
         )
 
     def _bootstrap_once(
@@ -1329,6 +1507,7 @@ class Bootstrapper_state_client_local_env_dir_rel_path_eval_finalized(
     def __init__(
         self,
         env_ctx: EnvContext,
+        env_state: str | None = None,
     ):
         super().__init__(
             env_ctx=env_ctx,
@@ -1336,7 +1515,10 @@ class Bootstrapper_state_client_local_env_dir_rel_path_eval_finalized(
                 EnvState.state_args_parsed.name,
                 EnvState.state_client_conf_file_data.name,
             ],
-            env_state=EnvState.state_client_local_env_dir_rel_path_eval_finalized.name,
+            env_state=if_none(
+                env_state,
+                EnvState.state_client_local_env_dir_rel_path_eval_finalized.name,
+            ),
         )
 
     def _bootstrap_once(
@@ -1366,6 +1548,7 @@ class Bootstrapper_state_primer_conf_client_file_abs_path_eval_finalized(
     def __init__(
         self,
         env_ctx: EnvContext,
+        env_state: str | None = None,
     ):
         super().__init__(
             env_ctx=env_ctx,
@@ -1373,7 +1556,10 @@ class Bootstrapper_state_primer_conf_client_file_abs_path_eval_finalized(
                 EnvState.state_primer_ref_root_dir_abs_path_eval_finalized.name,
                 EnvState.state_proto_conf_file_data.name,
             ],
-            env_state=EnvState.state_primer_conf_client_file_abs_path_eval_finalized.name,
+            env_state=if_none(
+                env_state,
+                EnvState.state_primer_conf_client_file_abs_path_eval_finalized.name,
+            ),
         )
 
     def _bootstrap_once(
@@ -1405,13 +1591,14 @@ class Bootstrapper_state_client_conf_file_data(AbstractCachingStateBootstrapper[
     def __init__(
         self,
         env_ctx: EnvContext,
+        env_state: str | None = None,
     ):
         super().__init__(
             env_ctx=env_ctx,
             state_parents=[
                 EnvState.state_primer_conf_client_file_abs_path_eval_finalized.name,
             ],
-            env_state=EnvState.state_client_conf_file_data.name,
+            env_state=if_none(env_state, EnvState.state_client_conf_file_data.name),
         )
 
     def _bootstrap_once(
@@ -1446,6 +1633,68 @@ class Bootstrapper_state_client_conf_file_data(AbstractCachingStateBootstrapper[
 
 
 # noinspection PyPep8Naming
+class Wizard_state_client_conf_file_data(AbstractCachingStateBootstrapper[dict]):
+
+    def __init__(
+        self,
+        env_ctx: EnvContext,
+        env_state: str | None = None,
+    ):
+        self.moved_state_name = rename_to_moved_state_name(
+            EnvState.state_client_conf_file_data.name
+        )
+        super().__init__(
+            env_ctx=env_ctx,
+            state_parents=[
+                EnvState.state_primer_conf_client_file_abs_path_eval_finalized.name,
+                EnvState.state_input_py_exec_arg_loaded.name,
+                # UC_27_40_17_59.replace_by_new_and_use_old.md:
+                # Depend on the moved state:
+                self.moved_state_name,
+            ],
+            env_state=if_none(env_state, EnvState.state_client_conf_file_data.name),
+        )
+
+        # UC_27_40_17_59.replace_by_new_and_use_old.md:
+        # Register the moved state implementation:
+        self.moved_state_bootstrapper = Bootstrapper_state_client_conf_file_data(
+            env_ctx,
+            self.moved_state_name,
+        )
+        self.env_ctx.register_bootstrapper(self.moved_state_bootstrapper)
+
+    def _bootstrap_once(
+        self,
+    ) -> StateValueType:
+
+        file_data: dict = self.moved_state_bootstrapper.bootstrap_state()
+
+        state_input_py_exec_arg_loaded = self.bootstrap_parent_state(
+            EnvState.state_input_py_exec_arg_loaded.name
+        )
+
+        if state_input_py_exec_arg_loaded == PythonExecutable.py_exec_arbitrary:
+
+            state_primer_conf_client_file_abs_path_eval_finalized = (
+                self.bootstrap_parent_state(
+                    EnvState.state_primer_conf_client_file_abs_path_eval_finalized.name
+                )
+            )
+
+            wizard_conf_leap(
+                file_data,
+                ConfLeap.leap_client,
+            )
+
+            write_json_file(
+                state_primer_conf_client_file_abs_path_eval_finalized,
+                file_data,
+            )
+
+        return file_data
+
+
+# noinspection PyPep8Naming
 class Bootstrapper_state_client_conf_env_dir_abs_path_eval_finalized(
     AbstractCachingStateBootstrapper[str]
 ):
@@ -1453,6 +1702,7 @@ class Bootstrapper_state_client_conf_env_dir_abs_path_eval_finalized(
     def __init__(
         self,
         env_ctx: EnvContext,
+        env_state: str | None = None,
     ):
         super().__init__(
             env_ctx=env_ctx,
@@ -1460,7 +1710,10 @@ class Bootstrapper_state_client_conf_env_dir_abs_path_eval_finalized(
                 EnvState.state_primer_ref_root_dir_abs_path_eval_finalized.name,
                 EnvState.state_client_conf_file_data.name,
             ],
-            env_state=EnvState.state_client_conf_env_dir_abs_path_eval_finalized.name,
+            env_state=if_none(
+                env_state,
+                EnvState.state_client_conf_env_dir_abs_path_eval_finalized.name,
+            ),
         )
 
     def _bootstrap_once(
@@ -1499,13 +1752,17 @@ class Bootstrapper_state_client_local_env_dir_rel_path_eval_verified(
     def __init__(
         self,
         env_ctx: EnvContext,
+        env_state: str | None = None,
     ):
         super().__init__(
             env_ctx=env_ctx,
             state_parents=[
                 EnvState.state_client_local_env_dir_rel_path_eval_finalized.name,
             ],
-            env_state=EnvState.state_client_local_env_dir_rel_path_eval_verified.name,
+            env_state=if_none(
+                env_state,
+                EnvState.state_client_local_env_dir_rel_path_eval_verified.name,
+            ),
         )
 
     def _bootstrap_once(
@@ -1551,6 +1808,7 @@ class Bootstrapper_state_client_conf_env_dir_abs_path_eval_verified(
     def __init__(
         self,
         env_ctx: EnvContext,
+        env_state: str | None = None,
     ):
         super().__init__(
             env_ctx=env_ctx,
@@ -1559,7 +1817,10 @@ class Bootstrapper_state_client_conf_env_dir_abs_path_eval_verified(
                 EnvState.state_client_local_env_dir_rel_path_eval_verified.name,
                 EnvState.state_client_conf_env_dir_abs_path_eval_finalized.name,
             ],
-            env_state=EnvState.state_client_conf_env_dir_abs_path_eval_verified.name,
+            env_state=if_none(
+                env_state,
+                EnvState.state_client_conf_env_dir_abs_path_eval_verified.name,
+            ),
         )
 
     def _bootstrap_once(
@@ -1629,6 +1890,7 @@ class Bootstrapper_state_client_conf_env_file_abs_path_eval_finalized(
     def __init__(
         self,
         env_ctx: EnvContext,
+        env_state: str | None = None,
     ):
         super().__init__(
             env_ctx=env_ctx,
@@ -1637,7 +1899,10 @@ class Bootstrapper_state_client_conf_env_file_abs_path_eval_finalized(
                 EnvState.state_client_conf_env_dir_abs_path_eval_finalized.name,
                 EnvState.state_client_conf_env_dir_abs_path_eval_verified.name,
             ],
-            env_state=EnvState.state_client_conf_env_file_abs_path_eval_finalized.name,
+            env_state=if_none(
+                env_state,
+                EnvState.state_client_conf_env_file_abs_path_eval_finalized.name,
+            ),
         )
 
     def _bootstrap_once(
@@ -1677,13 +1942,14 @@ class Bootstrapper_state_env_conf_file_data(AbstractCachingStateBootstrapper[dic
     def __init__(
         self,
         env_ctx: EnvContext,
+        env_state: str | None = None,
     ):
         super().__init__(
             env_ctx=env_ctx,
             state_parents=[
                 EnvState.state_client_conf_env_file_abs_path_eval_finalized.name,
             ],
-            env_state=EnvState.state_env_conf_file_data.name,
+            env_state=if_none(env_state, EnvState.state_env_conf_file_data.name),
         )
 
     def _bootstrap_once(
@@ -1717,6 +1983,68 @@ class Bootstrapper_state_env_conf_file_data(AbstractCachingStateBootstrapper[dic
 
 
 # noinspection PyPep8Naming
+class Wizard_state_env_conf_file_data(AbstractCachingStateBootstrapper[dict]):
+
+    def __init__(
+        self,
+        env_ctx: EnvContext,
+        env_state: str | None = None,
+    ):
+        self.moved_state_name = rename_to_moved_state_name(
+            EnvState.state_env_conf_file_data.name
+        )
+        super().__init__(
+            env_ctx=env_ctx,
+            state_parents=[
+                EnvState.state_client_conf_env_file_abs_path_eval_finalized.name,
+                EnvState.state_input_py_exec_arg_loaded.name,
+                # UC_27_40_17_59.replace_by_new_and_use_old.md:
+                # Depend on the moved state:
+                self.moved_state_name,
+            ],
+            env_state=if_none(env_state, EnvState.state_env_conf_file_data.name),
+        )
+
+        # UC_27_40_17_59.replace_by_new_and_use_old.md:
+        # Register the moved state implementation:
+        self.moved_state_bootstrapper = Bootstrapper_state_env_conf_file_data(
+            env_ctx,
+            self.moved_state_name,
+        )
+        self.env_ctx.register_bootstrapper(self.moved_state_bootstrapper)
+
+    def _bootstrap_once(
+        self,
+    ) -> StateValueType:
+
+        file_data: dict = self.moved_state_bootstrapper.bootstrap_state()
+
+        state_input_py_exec_arg_loaded = self.bootstrap_parent_state(
+            EnvState.state_input_py_exec_arg_loaded.name
+        )
+
+        if state_input_py_exec_arg_loaded == PythonExecutable.py_exec_arbitrary:
+
+            state_client_conf_env_file_abs_path_eval_finalized = (
+                self.bootstrap_parent_state(
+                    EnvState.state_client_conf_env_file_abs_path_eval_finalized.name
+                )
+            )
+
+            wizard_conf_leap(
+                file_data,
+                ConfLeap.leap_env,
+            )
+
+            write_json_file(
+                state_client_conf_env_file_abs_path_eval_finalized,
+                file_data,
+            )
+
+        return file_data
+
+
+# noinspection PyPep8Naming
 class Bootstrapper_state_env_local_python_file_abs_path_eval_finalized(
     AbstractCachingStateBootstrapper[str]
 ):
@@ -1724,6 +2052,7 @@ class Bootstrapper_state_env_local_python_file_abs_path_eval_finalized(
     def __init__(
         self,
         env_ctx: EnvContext,
+        env_state: str | None = None,
     ):
         super().__init__(
             env_ctx=env_ctx,
@@ -1731,7 +2060,10 @@ class Bootstrapper_state_env_local_python_file_abs_path_eval_finalized(
                 EnvState.state_env_conf_file_data.name,
                 EnvState.state_primer_ref_root_dir_abs_path_eval_finalized.name,
             ],
-            env_state=EnvState.state_env_local_python_file_abs_path_eval_finalized.name,
+            env_state=if_none(
+                env_state,
+                EnvState.state_env_local_python_file_abs_path_eval_finalized.name,
+            ),
         )
 
     def _bootstrap_once(
@@ -1768,6 +2100,7 @@ class Bootstrapper_state_env_local_venv_dir_abs_path_eval_finalized(
     def __init__(
         self,
         env_ctx: EnvContext,
+        env_state: str | None = None,
     ):
         super().__init__(
             env_ctx=env_ctx,
@@ -1775,7 +2108,10 @@ class Bootstrapper_state_env_local_venv_dir_abs_path_eval_finalized(
                 EnvState.state_env_conf_file_data.name,
                 EnvState.state_primer_ref_root_dir_abs_path_eval_finalized.name,
             ],
-            env_state=EnvState.state_env_local_venv_dir_abs_path_eval_finalized.name,
+            env_state=if_none(
+                env_state,
+                EnvState.state_env_local_venv_dir_abs_path_eval_finalized.name,
+            ),
         )
 
     def _bootstrap_once(
@@ -1813,13 +2149,17 @@ class Bootstrapper_state_env_project_rel_path_to_extras_dict_eval_finalized(
     def __init__(
         self,
         env_ctx: EnvContext,
+        env_state: str | None = None,
     ):
         super().__init__(
             env_ctx=env_ctx,
             state_parents=[
                 EnvState.state_env_conf_file_data.name,
             ],
-            env_state=EnvState.state_env_project_rel_path_to_extras_dict_eval_finalized.name,
+            env_state=if_none(
+                env_state,
+                EnvState.state_env_project_rel_path_to_extras_dict_eval_finalized.name,
+            ),
         )
 
     def _bootstrap_once(
@@ -1847,6 +2187,7 @@ class Bootstrapper_state_py_exec_selected(
     def __init__(
         self,
         env_ctx: EnvContext,
+        env_state: str | None = None,
     ):
         super().__init__(
             env_ctx=env_ctx,
@@ -1857,7 +2198,7 @@ class Bootstrapper_state_py_exec_selected(
                 EnvState.state_client_conf_env_file_abs_path_eval_finalized.name,
                 EnvState.state_input_proto_code_file_abs_path_eval_finalized.name,
             ],
-            env_state=EnvState.state_py_exec_selected.name,
+            env_state=if_none(env_state, EnvState.state_py_exec_selected.name),
         )
 
     def _bootstrap_once(
@@ -1996,6 +2337,7 @@ class Bootstrapper_state_protoprimer_package_installed(
     def __init__(
         self,
         env_ctx: EnvContext,
+        env_state: str | None = None,
     ):
         super().__init__(
             env_ctx=env_ctx,
@@ -2004,7 +2346,9 @@ class Bootstrapper_state_protoprimer_package_installed(
                 EnvState.state_primer_ref_root_dir_abs_path_eval_finalized.name,
                 EnvState.state_env_project_rel_path_to_extras_dict_eval_finalized.name,
             ],
-            env_state=EnvState.state_protoprimer_package_installed.name,
+            env_state=if_none(
+                env_state, EnvState.state_protoprimer_package_installed.name
+            ),
         )
 
     def _bootstrap_once(
@@ -2068,6 +2412,7 @@ class Bootstrapper_state_py_exec_updated_protoprimer_package_reached(
     def __init__(
         self,
         env_ctx: EnvContext,
+        env_state: str | None = None,
     ):
         super().__init__(
             env_ctx=env_ctx,
@@ -2076,7 +2421,10 @@ class Bootstrapper_state_py_exec_updated_protoprimer_package_reached(
                 EnvState.state_input_proto_code_file_abs_path_eval_finalized.name,
                 EnvState.state_protoprimer_package_installed.name,
             ],
-            env_state=EnvState.state_py_exec_updated_protoprimer_package_reached.name,
+            env_state=if_none(
+                env_state,
+                EnvState.state_py_exec_updated_protoprimer_package_reached.name,
+            ),
         )
 
     def _bootstrap_once(
@@ -2135,6 +2483,7 @@ class Bootstrapper_state_proto_code_updated(AbstractCachingStateBootstrapper[boo
     def __init__(
         self,
         env_ctx: EnvContext,
+        env_state: str | None = None,
     ):
         super().__init__(
             env_ctx=env_ctx,
@@ -2142,7 +2491,7 @@ class Bootstrapper_state_proto_code_updated(AbstractCachingStateBootstrapper[boo
                 EnvState.state_py_exec_updated_protoprimer_package_reached.name,
                 EnvState.state_input_proto_code_file_abs_path_eval_finalized.name,
             ],
-            env_state=EnvState.state_proto_code_updated.name,
+            env_state=if_none(env_state, EnvState.state_proto_code_updated.name),
         )
 
     def _bootstrap_once(
@@ -2211,6 +2560,7 @@ class Bootstrapper_state_py_exec_updated_proto_code(
     def __init__(
         self,
         env_ctx: EnvContext,
+        env_state: str | None = None,
     ):
         super().__init__(
             env_ctx=env_ctx,
@@ -2219,7 +2569,9 @@ class Bootstrapper_state_py_exec_updated_proto_code(
                 EnvState.state_proto_code_updated.name,
                 EnvState.state_input_proto_code_file_abs_path_eval_finalized.name,
             ],
-            env_state=EnvState.state_py_exec_updated_proto_code.name,
+            env_state=if_none(
+                env_state, EnvState.state_py_exec_updated_proto_code.name
+            ),
         )
 
     def _bootstrap_once(
@@ -2270,6 +2622,19 @@ class Bootstrapper_state_py_exec_updated_proto_code(
         return state_py_exec_updated_proto_code
 
 
+class WizardState(enum.Enum):
+    """
+    These states replace some of the `EnvState` (named the same way) during `RunMode.mode_wizard`.
+    """
+
+    # TODO: Rename ALL to Bootstrapper -> Wizard (because we also have Primer):
+    state_proto_conf_file_data = Wizard_state_proto_conf_file_data
+
+    state_client_conf_file_data = Wizard_state_client_conf_file_data
+
+    state_env_conf_file_data = Wizard_state_env_conf_file_data
+
+
 class EnvState(enum.Enum):
     """
     Environment states to be reached during the bootstrap process.
@@ -2282,6 +2647,7 @@ class EnvState(enum.Enum):
     """
 
     state_input_stderr_log_level_var_loaded = (
+        # TODO: Rename Bootstrapper -> Primer (because we also have Wizard):
         Bootstrapper_state_input_stderr_log_level_var_loaded
     )
 
@@ -2336,10 +2702,10 @@ class EnvState(enum.Enum):
 
     state_client_conf_file_data = Bootstrapper_state_client_conf_file_data
 
-    # TODO:
+    # TODO: not env but global leap_client one:
     # state_client_path_to_python
 
-    # TODO:
+    # TODO: not env but global leap_client one:
     # state_client_path_to_venv
 
     state_client_conf_env_dir_abs_path_eval_finalized = (
@@ -2364,7 +2730,7 @@ class EnvState(enum.Enum):
 
     state_env_conf_file_data = Bootstrapper_state_env_conf_file_data
 
-    # TODO:
+    # TODO: not env but global leap_client one:
     # state_env_log_level
 
     state_env_local_python_file_abs_path_eval_finalized = (
@@ -2419,84 +2785,10 @@ class EnvContext:
     ):
 
         self.state_bootstrappers: dict[str, AbstractStateBootstrapper] = {}
-        self.dependency_edges: list[tuple[str, str]] = []
 
-        self.register_bootstrapper(
-            Bootstrapper_state_input_stderr_log_level_var_loaded(self)
-        )
-        self.register_bootstrapper(
-            Bootstrapper_state_default_stderr_log_handler_configured(self)
-        )
-        self.register_bootstrapper(Bootstrapper_state_args_parsed(self))
-        self.register_bootstrapper(
-            Bootstrapper_state_input_stderr_log_level_eval_finalized_gconf(self)
-        )
-        self.register_bootstrapper(
-            Bootstrapper_state_input_run_mode_arg_loaded_gconf(self)
-        )
-        self.register_bootstrapper(
-            Bootstrapper_state_input_target_state_name_eval_finalized(self)
-        )
-        self.register_bootstrapper(Bootstrapper_state_run_mode_executed(self))
-        self.register_bootstrapper(Bootstrapper_state_input_py_exec_arg_loaded(self))
-        self.register_bootstrapper(
-            Bootstrapper_state_input_proto_code_file_abs_path_eval_finalized(self)
-        )
-        self.register_bootstrapper(
-            Bootstrapper_state_input_proto_code_dir_abs_path_eval_finalized(self)
-        )
-        self.register_bootstrapper(
-            Bootstrapper_state_input_proto_conf_primer_file_abs_path_eval_finalized(
-                self
-            )
-        )
-        self.register_bootstrapper(
-            Bootstrapper_state_primer_ref_root_dir_any_path_arg_loaded(self)
-        )
-        self.register_bootstrapper(Bootstrapper_state_proto_conf_file_data(self))
-        self.register_bootstrapper(
-            Bootstrapper_state_primer_ref_root_dir_abs_path_eval_finalized(self)
-        )
-        self.register_bootstrapper(
-            Bootstrapper_state_client_local_env_dir_rel_path_eval_finalized(self)
-        )
-        self.register_bootstrapper(
-            Bootstrapper_state_primer_conf_client_file_abs_path_eval_finalized(self)
-        )
-        self.register_bootstrapper(Bootstrapper_state_client_conf_file_data(self))
-        self.register_bootstrapper(
-            Bootstrapper_state_client_conf_env_dir_abs_path_eval_finalized(self)
-        )
-        self.register_bootstrapper(
-            Bootstrapper_state_client_local_env_dir_rel_path_eval_verified(self)
-        )
-        self.register_bootstrapper(
-            Bootstrapper_state_client_conf_env_dir_abs_path_eval_verified(self)
-        )
-        self.register_bootstrapper(
-            Bootstrapper_state_client_conf_env_file_abs_path_eval_finalized(self)
-        )
-        self.register_bootstrapper(Bootstrapper_state_env_conf_file_data(self))
-        self.register_bootstrapper(
-            Bootstrapper_state_env_local_python_file_abs_path_eval_finalized(self)
-        )
-        self.register_bootstrapper(
-            Bootstrapper_state_env_local_venv_dir_abs_path_eval_finalized(self)
-        )
-        self.register_bootstrapper(
-            Bootstrapper_state_env_project_rel_path_to_extras_dict_eval_finalized(self)
-        )
-        self.register_bootstrapper(Bootstrapper_state_py_exec_selected(self))
-        self.register_bootstrapper(
-            Bootstrapper_state_protoprimer_package_installed(self)
-        )
-        self.register_bootstrapper(
-            Bootstrapper_state_py_exec_updated_protoprimer_package_reached(self)
-        )
-        self.register_bootstrapper(Bootstrapper_state_proto_code_updated(self))
-        self.register_bootstrapper(Bootstrapper_state_py_exec_updated_proto_code(self))
-
-        self.populate_dependencies()
+        # Build default DAG:
+        for env_state in EnvState:
+            self.register_bootstrapper(env_state.value(self))
 
         # TODO: Do not set it on Context - use bootstrap-able values:
         # TODO: Find "Universal Sink":
@@ -2505,40 +2797,21 @@ class EnvContext:
     def register_bootstrapper(
         self,
         state_bootstrapper: AbstractStateBootstrapper,
-    ):
+        replace_existing: bool = False,
+    ) -> AbstractStateBootstrapper | None:
         env_state: str = state_bootstrapper.get_env_state()
         if env_state in self.state_bootstrappers:
-            raise AssertionError(
-                f"[{AbstractStateBootstrapper.__name__}] for [{env_state}] is already registered."
-            )
+            if replace_existing:
+                existing_bootstrapper = self.state_bootstrappers[env_state]
+                self.state_bootstrappers[env_state] = state_bootstrapper
+                return existing_bootstrapper
+            else:
+                raise AssertionError(
+                    f"[{AbstractStateBootstrapper.__name__}] for [{env_state}] is already registered."
+                )
         else:
             self.state_bootstrappers[env_state] = state_bootstrapper
-
-    def add_dependency_edge(
-        self,
-        parent_state: str,
-        child_state: str,
-    ):
-        self.dependency_edges.append((parent_state, child_state))
-
-    def populate_dependencies(
-        self,
-    ):
-        # Populate a temporary collection of all children per parent:
-        child_parents: dict[str, list[str]] = {}
-        dependency_edge: tuple[str, str]
-        for dependency_edge in self.dependency_edges:
-            parent_dependency: str = dependency_edge[0]
-            child_dependency: str = dependency_edge[1]
-            child_parents.setdefault(child_dependency, []).append(parent_dependency)
-
-        # Set children per parent:
-        for child_id in child_parents.keys():
-            state_bootstrapper: AbstractStateBootstrapper = self.state_bootstrappers[
-                child_id
-            ]
-            state_parents: list[str] = child_parents[child_id]
-            state_bootstrapper.set_state_parents(state_parents)
+            return None
 
     def bootstrap_state(
         self,
@@ -2551,6 +2824,7 @@ class EnvContext:
             raise
         return state_bootstrapper.bootstrap_state()
 
+    # TODO: This is weird. It does not belong here. But it is used as convenient lambda:
     def report_success_status(
         self,
         is_successful: bool,
@@ -2633,6 +2907,116 @@ class CustomFormatter(logging.Formatter):
         return f"{log_color}{log_msg}{self.color_reset}"
 
 
+def rename_to_moved_state_name(state_name: str) -> str:
+    """
+    See UC_27_40_17_59.replace_by_new_and_use_old.md
+    """
+    return f"_{state_name}"
+
+
+def wizard_confirm_single_value(
+    wizard_meta: FieldWizardMeta,
+    curr_param_value: str,
+    sub_ordinal_n: int,
+    sub_size: int,
+    total_ordinal_n: int,
+    total_size: int,
+):
+    """
+    Wizard individual field provided by `FieldWizardMeta`.
+    """
+
+    while True:
+        print("---")
+        print(f"Total progress: {total_ordinal_n}/{total_size}")
+        print(f"[{wizard_meta.field_leap.name}] progress: {sub_ordinal_n}/{sub_size}")
+        print(f"Field: {wizard_meta.field_name}")
+        print(f"Description: {wizard_meta.field_help}")
+        print(
+            f"Enter blank to keep the current value [{curr_param_value}] or provide a new value:"
+        )
+        new_param_value = input(f"[{curr_param_value}] >").strip()
+
+        if new_param_value == "":
+            # blank keeps the current value:
+            new_param_value = curr_param_value
+
+        user_confirmation = (
+            input(
+                f"Confirm the value [{new_param_value}] (enter blank to skip, or y/n) >"
+            )
+            .lower()
+            .strip()
+        )
+
+        if user_confirmation == "y":
+            print(f"Confirming...")
+            curr_param_value = new_param_value
+            return curr_param_value
+        elif user_confirmation == "":
+            print(f"Skipping...")
+            return curr_param_value
+        else:
+            print(f"Retrying...")
+            continue
+
+
+def wizard_conf_leap(
+    file_data,
+    conf_leap: ConfLeap,
+) -> None:
+    """
+    Wizard through every field for the given `ConfLeap`.
+    """
+
+    enumerated_conf_leap_fields = []
+    for total_ordinal_i, wizard_field in enumerate(WizardField):
+        if wizard_field.value.field_leap == conf_leap:
+            enumerated_conf_leap_fields.append((total_ordinal_i, wizard_field))
+
+    total_size = len(WizardField)
+    sub_size = len(enumerated_conf_leap_fields)
+
+    while True:
+
+        # Wizard fields:
+        for sub_ordinal_i, (total_ordinal_i, wizard_field) in enumerate(
+            enumerated_conf_leap_fields
+        ):
+            field_value = wizard_confirm_single_value(
+                wizard_field.value,
+                file_data[wizard_field.value.field_name],
+                sub_ordinal_i + 1,
+                sub_size,
+                total_ordinal_i + 1,
+                total_size,
+            )
+            file_data[wizard_field.value.field_name] = field_value
+
+        # Confirm fields together:
+        print("===")
+        print(f"[{conf_leap.name}] summary:")
+        for total_ordinal_i, wizard_field in enumerated_conf_leap_fields:
+            print(
+                f"    {wizard_field.value.field_name}: {file_data[wizard_field.value.field_name]}"
+            )
+
+        while True:
+            user_confirmation = input(f"Confirm the values (y/n) >").lower().strip()
+
+            if user_confirmation == "y":
+                print(f"Confirming...")
+                # break the inner and the outer loops:
+                return
+            elif user_confirmation == "":
+                # continue the inner loop
+                continue
+            else:
+                print(f"Retrying...")
+                # break the inner loop to retry the outer:
+                break
+
+
 def switch_python(
     curr_py_exec: PythonExecutable,
     curr_python_path: str,
@@ -2713,6 +3097,7 @@ def write_json_file(
 ) -> None:
     with open(file_path, "w", encoding="utf-8") as file_obj:
         json.dump(file_data, file_obj, indent=4)
+        file_obj.write("\n")
 
 
 def read_text_file(
@@ -2812,6 +3197,16 @@ def install_package(
             package_name,
         ]
     )
+
+
+def if_none(
+    given_value: str,
+    default_value: str,
+) -> str:
+    if given_value is None:
+        return default_value
+    else:
+        return given_value
 
 
 def is_venv() -> bool:
