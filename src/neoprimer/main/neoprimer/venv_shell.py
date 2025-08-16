@@ -1,7 +1,7 @@
 import os
 
 from protoprimer.primer_kernel import (
-    AbstractCachingStateBootstrapper,
+    AbstractCachingStateNode,
     ConfConstGeneral,
     create_temp_file,
     EnvContext,
@@ -13,9 +13,7 @@ from protoprimer.primer_kernel import (
 
 
 # noinspection PyPep8Naming
-class Bootstrapper_state_activated_venv_shell_started(
-    AbstractCachingStateBootstrapper[bool]
-):
+class Bootstrapper_state_activated_venv_shell_started(AbstractCachingStateNode[bool]):
 
     state_activated_venv_shell_started = "state_activated_venv_shell_started"
 
@@ -25,18 +23,18 @@ class Bootstrapper_state_activated_venv_shell_started(
     ):
         super().__init__(
             env_ctx=env_ctx,
-            state_parents=[
+            parent_states=[
                 EnvState.state_py_exec_updated_proto_code.name,
                 EnvState.state_env_local_venv_dir_abs_path_eval_finalized.name,
             ],
-            env_state=self.state_activated_venv_shell_started,
+            state_name=self.state_activated_venv_shell_started,
         )
 
-    def _bootstrap_once(
+    def _eval_state_once(
         self,
     ) -> StateValueType:
 
-        state_py_exec_updated_proto_code = self.bootstrap_parent_state(
+        state_py_exec_updated_proto_code = self.eval_parent_state(
             EnvState.state_py_exec_updated_proto_code.name
         )
 
@@ -46,7 +44,7 @@ class Bootstrapper_state_activated_venv_shell_started(
             >= PythonExecutable.py_exec_updated_protoprimer_package
         )
 
-        state_env_local_venv_dir_abs_path_eval_finalized = self.bootstrap_parent_state(
+        state_env_local_venv_dir_abs_path_eval_finalized = self.eval_parent_state(
             EnvState.state_env_local_venv_dir_abs_path_eval_finalized.name
         )
 

@@ -4,7 +4,6 @@ import enum
 
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer.primer_kernel import (
-    CommandArg,
     ConfField,
 )
 from test_protoprimer.test_naming.naming_metadata import (
@@ -18,10 +17,10 @@ class FieldMeta(AbstractMeta):
 
     def __init__(
         self,
-        field_name: FieldName,
+        conf_field: ConfField,
         name_category: NameCategory,
     ):
-        self.field_name: CommandArg = field_name
+        self.field_name: ConfField = conf_field
         self.name_category: NameCategory = name_category
 
     def get_prod_item(self):
@@ -69,8 +68,18 @@ class FieldName(enum.Enum):
         NameCategory.category_path_field,
     )
 
-    field_env_project_rel_path_to_extras_dict = FieldMeta(
-        ConfField.field_env_project_rel_path_to_extras_dict,
+    field_env_project_descriptors = FieldMeta(
+        ConfField.field_env_project_descriptors,
+        NameCategory.category_value_field,
+    )
+
+    field_env_build_root_dir_rel_path = FieldMeta(
+        ConfField.field_env_build_root_dir_rel_path,
+        NameCategory.category_path_field,
+    )
+
+    field_env_install_extras = FieldMeta(
+        ConfField.field_env_install_extras,
         NameCategory.category_value_field,
     )
 

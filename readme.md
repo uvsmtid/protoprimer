@@ -1,13 +1,14 @@
 
 [![lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-purple.svg?color=purple)](https://github.com/uvsmtid/protoprimer)
 [![PyPI version](https://img.shields.io/pypi/v/protoprimer.svg?color=blue&label=package)](https://pypi.org/project/protoprimer)
-[![PyPI downloads](https://img.shields.io/pypi/dm/protoprimer.svg?color=blue)](https://pypi.org/project/protoprimer)
 [![GitHub test job](https://img.shields.io/github/actions/workflow/status/uvsmtid/protoprimer/test.yaml.svg?label=test)](https://github.com/uvsmtid/protoprimer/actions/workflows/test.yaml)
 [![GitHub lint job](https://img.shields.io/github/actions/workflow/status/uvsmtid/protoprimer/lint.yaml.svg?label=lint)](https://github.com/uvsmtid/protoprimer/actions/workflows/lint.yaml)
 [![code coverage](https://img.shields.io/coveralls/github/uvsmtid/protoprimer.svg?color=brightgreen)](https://coveralls.io/github/uvsmtid/protoprimer)
 <!--
 TODO: nothing to show:
 [![contributors](https://img.shields.io/github/contributors/uvsmtid/protoprimer.svg?color=white)](https://github.com/uvsmtid/protoprimer/graphs/contributors)
+TODO: not accessible anymore:
+[![PyPI downloads](https://img.shields.io/pypi/dm/protoprimer.svg?color=blue)](https://pypi.org/project/protoprimer)
 -->
 
 # `protoprimer`
@@ -15,46 +16,50 @@ TODO: nothing to show:
 ## TL;DR
 
 *   Let's say you have a `repo.git`.
-*   Let's say everyone has to prepare/init/bootstrap/prime the repo\
-    (after they clone it, before they do anything).
-*   That's exactly what `protoprimer` does -\
-    it provides a script to run after the repo clone:
+
+*   Every time people clone it, before they can do anything,\
+    they have to prepare/bootstrap/prime the repo.
+
+    You want a one-step no-arg command to prime the repo clone:
 
     ```sh
     ./prime
     ```
 
-As a side effect, it irradicates (non-test-able) shell scripts allowing pure `python` automation.
+As a byproduct, it facilitates pure `python` automation irradicating (non-test-able & unreadable) shell scripts.
 
 ## Why `proto*`?
 
-`protoprimer` design aims to survive with **minimal pre-conditions**:
+`proto` = early, when nothing exists yet.
+
+The `protoprimer` design aims to survive with **minimal pre-conditions**:
 
 *   no dependencies pre-installed on the system
-*   no `venv` pre-initialized via extra instructions
-*   no args to document for user consumption
+*   no `venv` pre-initialized with specific `python` version
+*   no args for the user to understand
 *   no special shell config
 *   ...
-*   just naked `python` (relatively omnipresent) + a stand-alone copy of [proto_code][FT_90_65_67_62.proto_code.md].
-
-`proto` = early, when nothing is born yet.
+*   just naked `python` (relatively omnipresent) + [a stand-alone copy][FT_90_65_67_62.proto_code.md] of the `protoprimer`.
 
 ## How does it know what to do?
 
-Early steps are **very common and very boring** (which is the [original_motivation][original_motivation.md] not to do it again):
+It is configurable (once):
 
-*   switch from initial `python` binary to the version required by configuration
+```sh
+./prime --wizard
+```
+
+The generated configuration is versioned and reused on the repo clone.
+
+Early steps run in **very inconvenient conditions**, but they are also **very common and very boring**:
+
+*   find all the target environment configurations in a flexible repo filesystem layout
 *   init `venv` and install the necessary dependency
-*   switch `python` again to the one provided by the fresh `venv`
-*   capture the state to keep it reproducible
-
-Early steps are also well-scoped and customize-able (they grow with the repo complexity but have the limit):
-
-*   override defaults by target environment config
-*   support flexible repo filesystem layout
+*   switch from initial `python` binary to the `venv` version required by configuration
+*   capture the env state to keep it reproducible
 *   delegate to client-specific modules to do the rest (**more interesting stuff**)
 
-In short, the `primer`'s tedious job is done in the early **inconvenient conditions** before anything else can run.
+That is the scope of the `protoprimer`.
 
 ## How to install it?
 

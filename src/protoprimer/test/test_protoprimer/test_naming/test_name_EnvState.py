@@ -46,6 +46,11 @@ class StateName(enum.Enum):
     This enum re-lists all items from the `EnvState` enum with metadata to verify their naming.
     """
 
+    state_process_status_initialized = StateMeta(
+        EnvState.state_process_status_initialized,
+        NameCategory.category_state_mutation,
+    )
+
     state_input_stderr_log_level_var_loaded = StateMeta(
         EnvState.state_input_stderr_log_level_var_loaded,
         NameCategory.category_named_value,
@@ -61,6 +66,11 @@ class StateName(enum.Enum):
         NameCategory.category_loaded_data,
     )
 
+    state_input_wizard_stage_arg_loaded = StateMeta(
+        EnvState.state_input_wizard_stage_arg_loaded,
+        NameCategory.category_named_value,
+    )
+
     state_input_stderr_log_level_eval_finalized_gconf = StateMeta(
         EnvState.state_input_stderr_log_level_eval_finalized_gconf,
         NameCategory.category_named_value,
@@ -71,8 +81,8 @@ class StateName(enum.Enum):
         NameCategory.category_named_value,
     )
 
-    state_input_target_state_name_eval_finalized = StateMeta(
-        EnvState.state_input_target_state_name_eval_finalized,
+    state_input_target_state_eval_finalized = StateMeta(
+        EnvState.state_input_target_state_eval_finalized,
         NameCategory.category_named_value,
     )
 
@@ -166,8 +176,8 @@ class StateName(enum.Enum):
         NameCategory.category_path_value,
     )
 
-    state_env_project_rel_path_to_extras_dict_eval_finalized = StateMeta(
-        EnvState.state_env_project_rel_path_to_extras_dict_eval_finalized,
+    state_env_project_descriptors_eval_finalized = StateMeta(
+        EnvState.state_env_project_descriptors_eval_finalized,
         NameCategory.category_named_value,
     )
 
@@ -194,6 +204,11 @@ class StateName(enum.Enum):
     state_py_exec_updated_proto_code = StateMeta(
         EnvState.state_py_exec_updated_proto_code,
         NameCategory.category_python_exec,
+    )
+
+    state_process_status_reported = StateMeta(
+        EnvState.state_process_status_reported,
+        NameCategory.category_state_mutation,
     )
 
 

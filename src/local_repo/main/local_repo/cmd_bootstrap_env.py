@@ -7,7 +7,7 @@ import subprocess
 import sys
 
 from protoprimer.primer_kernel import (
-    AbstractCachingStateBootstrapper,
+    AbstractCachingStateNode,
     EnvContext,
     EnvState,
     install_package,
@@ -24,7 +24,7 @@ def custom_main():
 
 
 # noinspection PyPep8Naming
-class Bootstrapper_state_pre_commit_installed(AbstractCachingStateBootstrapper[bool]):
+class Bootstrapper_state_pre_commit_installed(AbstractCachingStateNode[bool]):
 
     def __init__(
         self,
@@ -32,18 +32,18 @@ class Bootstrapper_state_pre_commit_installed(AbstractCachingStateBootstrapper[b
     ):
         super().__init__(
             env_ctx=env_ctx,
-            state_parents=[
+            parent_states=[
                 TargetState.target_full_proto_bootstrap,
             ],
-            env_state=CustomEnvState.state_pre_commit_installed.name,
+            state_name=CustomEnvState.state_pre_commit_installed.name,
         )
 
-    def _bootstrap_once(
+    def _eval_state_once(
         self,
     ) -> StateValueType:
         # Bootstrap all dependencies:
-        for env_state in self.state_parents:
-            self.bootstrap_parent_state(env_state)
+        for state_name in self.parent_states:
+            self.eval_parent_state(state_name)
 
         install_package(
             "pre-commit",
@@ -52,7 +52,7 @@ class Bootstrapper_state_pre_commit_installed(AbstractCachingStateBootstrapper[b
 
 
 # noinspection PyPep8Naming
-class Bootstrapper_state_pre_commit_configured(AbstractCachingStateBootstrapper[bool]):
+class Bootstrapper_state_pre_commit_configured(AbstractCachingStateNode[bool]):
 
     def __init__(
         self,
@@ -60,25 +60,23 @@ class Bootstrapper_state_pre_commit_configured(AbstractCachingStateBootstrapper[
     ):
         super().__init__(
             env_ctx=env_ctx,
-            state_parents=[
+            parent_states=[
                 CustomEnvState.state_pre_commit_installed.name,
                 EnvState.state_primer_conf_client_file_abs_path_eval_finalized.name,
             ],
-            env_state=CustomEnvState.state_pre_commit_configured.name,
+            state_name=CustomEnvState.state_pre_commit_configured.name,
         )
 
-    def _bootstrap_once(
+    def _eval_state_once(
         self,
     ) -> StateValueType:
-        state_pre_commit_installed = self.bootstrap_parent_state(
+        state_pre_commit_installed = self.eval_parent_state(
             CustomEnvState.state_pre_commit_installed.name
         )
         assert state_pre_commit_installed
 
-        state_primer_conf_client_file_abs_path_eval_finalized = (
-            self.bootstrap_parent_state(
-                EnvState.state_primer_conf_client_file_abs_path_eval_finalized.name
-            )
+        state_primer_conf_client_file_abs_path_eval_finalized = self.eval_parent_state(
+            EnvState.state_primer_conf_client_file_abs_path_eval_finalized.name
         )
         client_conf_dir_path = os.path.dirname(
             state_primer_conf_client_file_abs_path_eval_finalized
@@ -117,13 +115,14 @@ class CustomEnvState(enum.Enum):
 
 
 def customize_env_context():
+    """
+    See UC_10_80_27_57.extend_dag.md
+    """
 
     env_ctx = EnvContext()
 
-    env_ctx.register_bootstrapper(Bootstrapper_state_pre_commit_installed(env_ctx))
-    env_ctx.register_bootstrapper(Bootstrapper_state_pre_commit_configured(env_ctx))
-
-    env_ctx.populate_dependencies()
+    env_ctx.state_graph.register_node(Bootstrapper_state_pre_commit_installed(env_ctx))
+    env_ctx.state_graph.register_node(Bootstrapper_state_pre_commit_configured(env_ctx))
 
     env_ctx.default_target = CustomEnvState.state_pre_commit_configured.name
 
