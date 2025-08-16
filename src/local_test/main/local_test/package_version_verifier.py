@@ -17,17 +17,19 @@ def verify_package_version(
         "__version__",
     )
 
-    toml_path = os.path.join(
-        # 3 levels up without basename: ../../../.
-        os.path.dirname(
+    toml_path: str = str(
+        os.path.join(
+            # 3 levels up without basename: ../../../.
             os.path.dirname(
                 os.path.dirname(
-                    os.path.dirname(__file__),
+                    os.path.dirname(
+                        os.path.dirname(__file__),
+                    ),
                 ),
             ),
-        ),
-        module_obj.__name__,
-        "pyproject.toml",
+            module_obj.__name__,
+            "pyproject.toml",
+        )
     )
 
     # when:

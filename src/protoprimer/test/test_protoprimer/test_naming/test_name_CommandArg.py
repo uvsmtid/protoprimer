@@ -66,8 +66,13 @@ class ArgName(enum.Enum):
         NameCategory.category_named_arg_value,
     )
 
-    name_target_state_name = ArgMeta(
-        CommandArg.name_target_state_name,
+    name_wizard_stage = ArgMeta(
+        CommandArg.name_wizard_stage,
+        NameCategory.category_named_arg_value,
+    )
+
+    name_target_state = ArgMeta(
+        CommandArg.name_target_state,
         NameCategory.category_named_arg_value,
     )
 

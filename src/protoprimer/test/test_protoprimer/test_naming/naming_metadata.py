@@ -5,6 +5,7 @@ This module defines naming metadata which enforces naming convention.
 from __future__ import annotations
 
 import enum
+import typing
 
 from local_test.consistent_naming import verify_name_enum_order_in_name
 from protoprimer.primer_kernel import (
@@ -65,9 +66,9 @@ class CategoryMeta:
 
     def __init__(
         self,
-        name_enums: list[enum.Enum],
+        name_enums: list[typing.Type[enum.Enum]],
     ):
-        self.name_enums: list[enum.Enum] = name_enums
+        self.name_enums: list[typing.Type[enum.Enum]] = name_enums
 
 
 class NameCategory(enum.Enum):

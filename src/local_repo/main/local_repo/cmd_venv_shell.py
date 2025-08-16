@@ -16,13 +16,15 @@ def custom_main():
 
 
 def customize_env_context():
+    """
+    See UC_10_80_27_57.extend_dag.md
+    """
+
     env_ctx = EnvContext()
 
-    env_ctx.register_bootstrapper(
+    env_ctx.state_graph.register_node(
         Bootstrapper_state_activated_venv_shell_started(env_ctx)
     )
-
-    env_ctx.populate_dependencies()
 
     env_ctx.default_target = (
         Bootstrapper_state_activated_venv_shell_started.state_activated_venv_shell_started

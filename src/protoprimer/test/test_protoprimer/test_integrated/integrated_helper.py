@@ -18,6 +18,7 @@ def switch_to_test_dir_with_plain_proto_code(
     test_dir_abs_path = tmp_path
     assert test_dir_abs_path.is_absolute()
     assert test_dir_abs_path.is_dir()
+    # TODO: Rename it (after copying) to FT_90_65_67_62.proto_code.md:
     proto_code_file_abs_path = protoprimer.primer_kernel.__file__
     proto_code_file_basename = os.path.basename(proto_code_file_abs_path)
     os.chdir(test_dir_abs_path)

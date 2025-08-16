@@ -29,10 +29,10 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
 
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_env_local_venv_dir_abs_path_eval_finalized.__name__}._bootstrap_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_env_local_venv_dir_abs_path_eval_finalized.__name__}._eval_state_once"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_py_exec_updated_proto_code.__name__}._bootstrap_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_py_exec_updated_proto_code.__name__}._eval_state_once"
     )
     @patch(f"{venv_shell.__name__}.create_temp_file")
     @patch(f"{primer_kernel.__name__}.os.execv")
@@ -71,7 +71,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # when:
 
-        self.env_ctx.bootstrap_state(
+        self.env_ctx.state_graph.eval_state(
             Bootstrapper_state_activated_venv_shell_started.state_activated_venv_shell_started
         )
 

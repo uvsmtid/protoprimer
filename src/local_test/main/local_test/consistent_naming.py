@@ -1,12 +1,13 @@
 from __future__ import annotations
 
 import enum
+import typing
 
 
 def verify_name_enum_order_in_name(
-    name_enums: list[enum.Enum],
+    name_enums: list[typing.Type[enum.Enum]],
     given_name: str,
-) -> enum.Enum | None:
+) -> typing.Type[enum.Enum] | None:
     """
     This function verifies consistent naming.
 
@@ -23,10 +24,12 @@ def verify_name_enum_order_in_name(
         found_index: int = -1
 
         # Find the first matching string from the given enum `name_enum`:
-        meta_item = list(name_enum)[0]
+        meta_item: enum.Enum = list(name_enum)[0]
         for meta_item in name_enum:
             assert type(meta_item.value) is str
-            found_index = given_name.find(meta_item.value, current_search_start_index)
+            found_index = given_name.find(
+                str(meta_item.value), current_search_start_index
+            )
 
             # ensure the found name component is the one separated by `_` (underscore):
             if found_index >= 1 and given_name[found_index - 1] != "_":
@@ -38,6 +41,6 @@ def verify_name_enum_order_in_name(
         if found_index == -1:
             return name_enum
         else:
-            current_search_start_index = found_index + len(meta_item.value)
+            current_search_start_index = found_index + len(str(meta_item.value))
 
     return None
