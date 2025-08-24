@@ -14,6 +14,7 @@ from protoprimer.primer_kernel import (
     PythonExecutable,
     WizardStage,
 )
+from test_protoprimer.misc_tools.mock_verifier import assert_parent_states_mocked
 
 
 @pytest.fixture
@@ -53,6 +54,11 @@ def test_py_exec_required(
 
     # given:
 
+    assert_parent_states_mocked(
+        env_ctx,
+        EnvState.state_py_exec_updated_protoprimer_package_reached,
+    )
+
     mock_state_input_wizard_stage_arg_loaded.return_value = WizardStage.wizard_started
 
     mock_state_protoprimer_package_installed.return_value = True
@@ -86,6 +92,9 @@ def test_py_exec_required(
 
 
 @patch(
+    f"{primer_kernel.__name__}.{Bootstrapper_state_input_wizard_stage_arg_loaded.__name__}._eval_state_once"
+)
+@patch(
     f"{primer_kernel.__name__}.{Bootstrapper_state_input_proto_code_file_abs_path_eval_finalized.__name__}._eval_state_once"
 )
 @patch(
@@ -98,10 +107,16 @@ def test_py_exec_updated_protoprimer_package(
     mock_state_protoprimer_package_installed,
     mock_state_input_py_exec_arg_loaded,
     mock_state_input_proto_code_file_abs_path_eval_finalized,
+    mock_state_input_wizard_stage_arg_loaded,
     env_ctx,
 ):
 
     # given:
+
+    assert_parent_states_mocked(
+        env_ctx,
+        EnvState.state_py_exec_updated_protoprimer_package_reached,
+    )
 
     mock_state_protoprimer_package_installed.return_value = True
 

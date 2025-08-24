@@ -5,10 +5,6 @@ import subprocess
 
 import protoprimer
 from local_test.toml_handler import save_toml_data
-from test_protoprimer.test_integrated.integrated_helper import (
-    switch_to_test_dir_with_plain_proto_code,
-)
-
 from protoprimer.primer_kernel import (
     ArgConst,
     ConfConstClient,
@@ -16,8 +12,10 @@ from protoprimer.primer_kernel import (
     ConfConstPrimer,
     ConfDst,
     ConfLeap,
-    RunMode,
     WizardField,
+)
+from test_protoprimer.test_integrated.integrated_helper import (
+    switch_to_test_dir_with_plain_proto_code,
 )
 
 
@@ -53,12 +51,8 @@ def test_wizard_mode_interaction(tmp_path: pathlib.Path):
     command_args = [
         "./primer_kernel.py",
         ArgConst.arg_mode_wizard,
-        # TODO: remove these args (use Wizard to set them or load from config only, no args):
-        ArgConst.arg_ref_root_dir_rel_path,
-        ".",
-        ArgConst.arg_local_env_dir_rel_path,
-        ".",
     ]
+
     sub_proc = subprocess.Popen(
         command_args,
         stdin=subprocess.PIPE,
@@ -106,7 +100,7 @@ def test_wizard_mode_interaction(tmp_path: pathlib.Path):
     gconf_dir = tmp_path / ConfDst.dst_global.value
     lconf_dir = tmp_path / ConfDst.dst_local.value
 
-    conf_primer_file = tmp_path / ConfConstInput.default_file_basename_conf_proto
+    conf_primer_file = tmp_path / ConfConstInput.default_file_basename_conf_primer
     conf_client_file = tmp_path / ConfConstPrimer.default_client_conf_file_rel_path
     conf_env_file = tmp_path / ConfConstClient.default_file_basename_leap_env
 

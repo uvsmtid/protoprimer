@@ -12,6 +12,7 @@ from protoprimer.primer_kernel import (
     EnvContext,
     EnvState,
 )
+from test_protoprimer.misc_tools.mock_verifier import assert_parent_states_mocked
 
 
 # noinspection PyPep8Naming
@@ -34,6 +35,11 @@ class ThisTestClass(BasePyfakefsTestClass):
     ):
 
         # given:
+
+        assert_parent_states_mocked(
+            self.env_ctx,
+            EnvState.state_env_conf_file_data,
+        )
 
         mock_conf_file = "/mock/path/to/env_conf.json"
         mock_state_client_conf_env_file_abs_path_eval_finalized.return_value = (
@@ -63,6 +69,11 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # given:
 
+        assert_parent_states_mocked(
+            self.env_ctx,
+            EnvState.state_env_conf_file_data,
+        )
+
         mock_conf_file = "/mock/path/to/env_conf.json"
         self.fs.create_dir("/mock/path/to")
         mock_state_client_conf_env_file_abs_path_eval_finalized.return_value = (
@@ -73,22 +84,9 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # when:
 
-        state_value = self.env_ctx.state_graph.eval_state(
-            EnvState.state_env_conf_file_data.name
-        )
+        with self.assertRaises(AssertionError) as ctx:
+            self.env_ctx.state_graph.eval_state(EnvState.state_env_conf_file_data.name)
 
         # then:
 
-        self.assertTrue(os.path.exists(mock_conf_file))
-
-        expected_data = {
-            ConfField.field_env_local_python_file_abs_path.value: ConfConstEnv.default_file_abs_path_python,
-            ConfField.field_env_local_venv_dir_rel_path.value: ConfConstEnv.default_dir_rel_path_venv,
-            ConfField.field_env_project_descriptors.value: ConfConstEnv.default_project_descriptors,
-        }
-
-        with open(mock_conf_file, "r") as f:
-            file_data = json.load(f)
-
-        self.assertEqual(file_data, expected_data)
-        self.assertEqual(state_value, expected_data)
+        self.assertIn("does not exists", str(ctx.exception))

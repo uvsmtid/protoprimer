@@ -111,11 +111,6 @@ class StateName(enum.Enum):
         NameCategory.category_path_value,
     )
 
-    state_primer_ref_root_dir_any_path_arg_loaded = StateMeta(
-        EnvState.state_primer_ref_root_dir_any_path_arg_loaded,
-        NameCategory.category_path_value,
-    )
-
     state_proto_conf_file_data = StateMeta(
         EnvState.state_proto_conf_file_data,
         NameCategory.category_loaded_data,
@@ -153,6 +148,11 @@ class StateName(enum.Enum):
 
     state_client_conf_env_dir_abs_path_eval_verified = StateMeta(
         EnvState.state_client_conf_env_dir_abs_path_eval_verified,
+        NameCategory.category_path_value,
+    )
+
+    state_client_link_name_dir_rel_path_eval_finalized = StateMeta(
+        EnvState.state_client_link_name_dir_rel_path_eval_finalized,
         NameCategory.category_path_value,
     )
 

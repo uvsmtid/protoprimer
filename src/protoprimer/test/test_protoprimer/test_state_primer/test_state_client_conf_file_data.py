@@ -14,6 +14,7 @@ from protoprimer.primer_kernel import (
     EnvContext,
     EnvState,
 )
+from test_protoprimer.misc_tools.mock_verifier import assert_parent_states_mocked
 
 
 # noinspection PyPep8Naming
@@ -28,25 +29,23 @@ class ThisTestClass(BasePyfakefsTestClass):
         assert_test_module_name_embeds_str(EnvState.state_client_conf_file_data.name)
 
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_primer_ref_root_dir_abs_path_eval_finalized.__name__}._eval_state_once"
-    )
-    @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_primer_conf_client_file_abs_path_eval_finalized.__name__}._eval_state_once"
     )
     def test_state_primer_conf_client_file_abs_path_eval_finalized_exists(
         self,
         mock_state_primer_conf_client_file_abs_path_eval_finalized,
-        mock_state_primer_ref_root_dir_abs_path_eval_finalized,
     ):
 
         # given:
 
+        assert_parent_states_mocked(
+            self.env_ctx,
+            EnvState.state_client_conf_file_data,
+        )
+
         mock_client_dir = "/mock_client_dir"
         self.fs.create_dir(mock_client_dir)
         os.chdir(mock_client_dir)
-        mock_state_primer_ref_root_dir_abs_path_eval_finalized.return_value = (
-            mock_client_dir
-        )
         state_primer_conf_client_file_abs_path_eval_finalized = os.path.join(
             mock_client_dir,
             ConfConstPrimer.default_client_conf_file_rel_path,
@@ -71,25 +70,23 @@ class ThisTestClass(BasePyfakefsTestClass):
         # no exception happens
 
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_primer_ref_root_dir_abs_path_eval_finalized.__name__}._eval_state_once"
-    )
-    @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_primer_conf_client_file_abs_path_eval_finalized.__name__}._eval_state_once"
     )
     def test_state_primer_conf_client_file_abs_path_eval_finalized_missing(
         self,
         mock_state_primer_conf_client_file_abs_path_eval_finalized,
-        mock_state_primer_ref_root_dir_abs_path_eval_finalized,
     ):
 
         # given:
 
+        assert_parent_states_mocked(
+            self.env_ctx,
+            EnvState.state_client_conf_file_data,
+        )
+
         mock_client_dir = "/mock_client_dir"
         self.fs.create_dir(mock_client_dir)
         os.chdir(mock_client_dir)
-        mock_state_primer_ref_root_dir_abs_path_eval_finalized.return_value = (
-            mock_client_dir
-        )
         state_primer_conf_client_file_abs_path_eval_finalized = os.path.join(
             mock_client_dir,
             ConfConstPrimer.default_client_conf_file_rel_path,
@@ -98,29 +95,17 @@ class ThisTestClass(BasePyfakefsTestClass):
             state_primer_conf_client_file_abs_path_eval_finalized
         )
 
-        # when:
-
         self.assertFalse(
             os.path.isfile(state_primer_conf_client_file_abs_path_eval_finalized)
         )
-        state_value = self.env_ctx.state_graph.eval_state(
-            EnvState.state_client_conf_file_data.name
-        )
+
+        # when:
+
+        with self.assertRaises(AssertionError) as ctx:
+            self.env_ctx.state_graph.eval_state(
+                EnvState.state_client_conf_file_data.name
+            )
 
         # then:
 
-        # file created:
-        self.assertTrue(
-            os.path.isfile(state_primer_conf_client_file_abs_path_eval_finalized)
-        )
-
-        expected_data = {
-            ConfField.field_client_link_name_dir_rel_path.value: ConfConstClient.default_dir_rel_path_leap_env_link_name,
-            ConfField.field_client_default_target_dir_rel_path.value: ConfConstClient.default_client_default_target_dir_rel_path,
-        }
-
-        with open(state_primer_conf_client_file_abs_path_eval_finalized, "r") as f:
-            file_data = json.load(f)
-
-        self.assertEqual(file_data, expected_data)
-        self.assertEqual(state_value, expected_data)
+        self.assertIn("does not exists", str(ctx.exception))

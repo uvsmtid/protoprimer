@@ -49,7 +49,7 @@ It is configurable (once):
 ./prime --wizard
 ```
 
-The generated configuration is versioned and reused on the repo clone.
+The generated configuration is versioned and reused on all the subsequent repo clones.
 
 Early steps run in **very inconvenient conditions**, but they are also **very common and very boring**:
 

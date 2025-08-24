@@ -12,6 +12,7 @@ from protoprimer.primer_kernel import (
     EnvContext,
     EnvState,
 )
+from test_protoprimer.misc_tools.mock_verifier import assert_parent_states_mocked
 
 
 @pytest.fixture
@@ -39,6 +40,11 @@ def test_allow_rel_file_abs_path_python(
 ):
 
     # given:
+
+    assert_parent_states_mocked(
+        env_ctx,
+        EnvState.state_env_local_python_file_abs_path_eval_finalized,
+    )
 
     mock_state_primer_ref_root_dir_abs_path_eval_finalized.return_value = (
         "/abs/to/ref/dir"

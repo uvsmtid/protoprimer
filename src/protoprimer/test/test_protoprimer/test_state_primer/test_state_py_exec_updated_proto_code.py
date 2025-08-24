@@ -14,6 +14,7 @@ from protoprimer.primer_kernel import (
     PythonExecutable,
     WizardStage,
 )
+from test_protoprimer.misc_tools.mock_verifier import assert_parent_states_mocked
 
 
 # noinspection PyPep8Naming
@@ -52,6 +53,11 @@ class ThisTestClass(BasePyfakefsTestClass):
     ):
 
         # given:
+
+        assert_parent_states_mocked(
+            self.env_ctx,
+            EnvState.state_py_exec_updated_proto_code,
+        )
 
         mock_state_input_wizard_stage_arg_loaded.return_value = (
             WizardStage.wizard_started
@@ -110,6 +116,11 @@ class ThisTestClass(BasePyfakefsTestClass):
         """
 
         # given:
+
+        assert_parent_states_mocked(
+            self.env_ctx,
+            EnvState.state_py_exec_updated_proto_code,
+        )
 
         mock_state_input_wizard_stage_arg_loaded.return_value = (
             WizardStage.wizard_started

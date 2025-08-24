@@ -41,16 +41,6 @@ class ArgName(enum.Enum):
         NameCategory.category_path_arg_value,
     )
 
-    name_local_env = ArgMeta(
-        CommandArg.name_local_env,
-        NameCategory.category_path_arg_value,
-    )
-
-    name_ref_root = ArgMeta(
-        CommandArg.name_ref_root,
-        NameCategory.category_path_arg_value,
-    )
-
     name_py_exec = ArgMeta(
         CommandArg.name_py_exec,
         NameCategory.category_named_arg_value,
