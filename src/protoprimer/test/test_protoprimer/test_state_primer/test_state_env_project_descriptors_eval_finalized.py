@@ -10,6 +10,7 @@ from protoprimer.primer_kernel import (
     EnvContext,
     EnvState,
 )
+from test_protoprimer.misc_tools.mock_verifier import assert_parent_states_mocked
 
 
 @pytest.fixture
@@ -31,6 +32,11 @@ def test_py_exec_venv(
     env_ctx,
 ):
     # given:
+
+    assert_parent_states_mocked(
+        env_ctx,
+        EnvState.state_env_project_descriptors_eval_finalized,
+    )
 
     project_descriptors: list[dict] = [
         {

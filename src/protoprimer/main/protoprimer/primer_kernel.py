@@ -37,7 +37,7 @@ import tempfile
 import typing
 import venv
 
-__version__ = "0.0.4"
+__version__ = "0.0.5"
 
 from typing import (
     Any,
@@ -75,6 +75,7 @@ def main(
             atexit.register(lambda: env_ctx.report_success_status(0))
         else:
             atexit.register(lambda: env_ctx.report_success_status(1))
+        raise
     except:
         atexit.register(lambda: env_ctx.report_success_status(1))
         raise
@@ -293,12 +294,6 @@ class CommandArg(enum.Enum):
     name_proto_code = (
         f"{PathName.path_proto_code.value}_{FilesystemObject.fs_object_file.value}"
     )
-    name_local_env = (
-        f"{PathName.path_local_env.value}_{FilesystemObject.fs_object_dir.value}"
-    )
-    name_ref_root = (
-        f"{PathName.path_ref_root.value}_{FilesystemObject.fs_object_dir.value}"
-    )
 
     name_py_exec = str(ValueName.value_py_exec.value)
     name_primer_runtime = str(ValueName.value_primer_runtime.value)
@@ -322,8 +317,6 @@ class ArgConst:
     arg_mode_wizard = f"--{RunMode.mode_wizard.value}"
 
     arg_proto_code_abs_file_path = f"--{CommandArg.name_proto_code.value}"
-    arg_local_env_dir_rel_path = f"--{CommandArg.name_local_env.value}"
-    arg_ref_root_dir_rel_path = f"--{CommandArg.name_ref_root.value}"
     arg_py_exec = f"--{CommandArg.name_py_exec.value}"
     arg_primer_runtime = f"--{CommandArg.name_primer_runtime.value}"
     arg_run_mode = f"--{CommandArg.name_run_mode.value}"
@@ -416,7 +409,7 @@ class ConfConstInput:
     dir_abs_path_current = ConfConstGeneral.input_based
 
     # Next T_89_41_35_82.conf_leap.md: `ConfLeap.leap_primer`:
-    default_file_basename_conf_proto = f"{ConfConstGeneral.default_proto_code_module}.{PathName.path_conf_primer.value}.json"
+    default_file_basename_conf_primer = f"{ConfConstGeneral.default_proto_code_module}.{PathName.path_conf_primer.value}.json"
 
     ext_env_var_PATH: str = "PATH"
 
@@ -948,13 +941,6 @@ def init_arg_parser():
         ),
     )
     arg_parser.add_argument(
-        # TODO: Remove this - use wizard instead:
-        ArgConst.arg_ref_root_dir_rel_path,
-        type=str,
-        default=None,
-        help="Path to client ref root (relative to current directory or absolute).",
-    )
-    arg_parser.add_argument(
         ArgConst.arg_py_exec,
         type=str,
         default=PythonExecutable.py_exec_unknown.name,
@@ -963,14 +949,6 @@ def init_arg_parser():
             if suppress_internal_args
             else f"Used internally: specifies known `{PythonExecutable.__name__}`."
         ),
-    )
-    arg_parser.add_argument(
-        # TODO: Remove this - use wizard instead:
-        ArgConst.arg_local_env_dir_rel_path,
-        type=str,
-        default=None,
-        # TODO: Rephrase (it should be more generic):
-        help="Path to one of the dirs (normally under `@/dst/`) to be used as target for `@/conf/` symlink.",
     )
     return arg_parser
 
@@ -1759,58 +1737,8 @@ class Bootstrapper_state_input_proto_conf_primer_file_abs_path_eval_finalized(
         # TODO: be able to configure path:
         return os.path.join(
             state_input_proto_code_dir_abs_path_eval_finalized,
-            ConfConstInput.default_file_basename_conf_proto,
+            ConfConstInput.default_file_basename_conf_primer,
         )
-
-
-# noinspection PyPep8Naming
-class Bootstrapper_state_primer_ref_root_dir_any_path_arg_loaded(
-    AbstractCachingStateNode[str]
-):
-
-    def __init__(
-        self,
-        env_ctx: EnvContext,
-        state_name: str | None = None,
-    ):
-        super().__init__(
-            env_ctx=env_ctx,
-            parent_states=[
-                EnvState.state_args_parsed.name,
-                EnvState.state_input_proto_conf_primer_file_abs_path_eval_finalized.name,
-            ],
-            state_name=if_none(
-                state_name, EnvState.state_primer_ref_root_dir_any_path_arg_loaded.name
-            ),
-        )
-
-    def _eval_state_once(
-        self,
-    ) -> StateValueType:
-
-        state_args_parsed: argparse.Namespace = self.eval_parent_state(
-            EnvState.state_args_parsed.name
-        )
-
-        state_primer_ref_root_dir_any_path_arg_loaded = getattr(
-            state_args_parsed,
-            CommandArg.name_ref_root.value,
-        )
-
-        state_input_proto_conf_primer_file_abs_path_eval_finalized = (
-            self.eval_parent_state(
-                EnvState.state_input_proto_conf_primer_file_abs_path_eval_finalized.name
-            )
-        )
-
-        if not os.path.exists(
-            state_input_proto_conf_primer_file_abs_path_eval_finalized
-        ):
-            if state_primer_ref_root_dir_any_path_arg_loaded is None:
-                raise AssertionError(
-                    f"Unable to evaluate [{EnvState.state_primer_ref_root_dir_any_path_arg_loaded.name}]: file [{state_input_proto_conf_primer_file_abs_path_eval_finalized}] does not exists and [{ArgConst.arg_ref_root_dir_rel_path}] is not specified."
-                )
-        return state_primer_ref_root_dir_any_path_arg_loaded
 
 
 # noinspection PyPep8Naming
@@ -1825,8 +1753,6 @@ class Bootstrapper_state_proto_conf_file_data(AbstractCachingStateNode[dict]):
             env_ctx=env_ctx,
             parent_states=[
                 EnvState.state_input_proto_conf_primer_file_abs_path_eval_finalized.name,
-                EnvState.state_input_proto_code_dir_abs_path_eval_finalized.name,
-                EnvState.state_primer_ref_root_dir_any_path_arg_loaded.name,
             ],
             state_name=if_none(state_name, EnvState.state_proto_conf_file_data.name),
         )
@@ -1846,26 +1772,10 @@ class Bootstrapper_state_proto_conf_file_data(AbstractCachingStateNode[dict]):
                 state_input_proto_conf_primer_file_abs_path_eval_finalized
             )
         else:
-            state_input_proto_code_dir_abs_path_eval_finalized = self.eval_parent_state(
-                EnvState.state_input_proto_code_dir_abs_path_eval_finalized.name
-            )
-            state_primer_ref_root_dir_any_path_arg_loaded = self.eval_parent_state(
-                EnvState.state_primer_ref_root_dir_any_path_arg_loaded.name
-            )
-            assert state_primer_ref_root_dir_any_path_arg_loaded is not None
-
-            # Generate file data when missing (first time):
-            file_data = {
-                # Compute value of the relative path:
-                ConfField.field_primer_ref_root_dir_rel_path.value: os.path.relpath(
-                    state_primer_ref_root_dir_any_path_arg_loaded,
-                    state_input_proto_code_dir_abs_path_eval_finalized,
-                ),
-                ConfField.field_primer_conf_client_file_rel_path.value: ConfConstPrimer.default_client_conf_file_rel_path,
-            }
-            write_json_file(
-                state_input_proto_conf_primer_file_abs_path_eval_finalized,
-                file_data,
+            raise AssertionError(
+                error_on_missing_conf_file(
+                    state_input_proto_conf_primer_file_abs_path_eval_finalized
+                )
             )
         return file_data
 
@@ -1887,7 +1797,6 @@ class Wizard_state_proto_conf_file_data(AbstractCachingStateNode[dict]):
                 EnvState.state_input_wizard_stage_arg_loaded.name,
                 EnvState.state_input_proto_conf_primer_file_abs_path_eval_finalized.name,
                 EnvState.state_input_proto_code_dir_abs_path_eval_finalized.name,
-                EnvState.state_primer_ref_root_dir_any_path_arg_loaded.name,
                 # UC_27_40_17_59.replace_by_new_and_use_old.md:
                 # Depend on the moved state:
                 self.moved_state_name,
@@ -1906,7 +1815,6 @@ class Wizard_state_proto_conf_file_data(AbstractCachingStateNode[dict]):
     def _eval_state_once(
         self,
     ) -> StateValueType:
-        file_data: dict = self.moved_state_node.eval_own_state()
 
         state_input_proto_conf_primer_file_abs_path_eval_finalized = (
             self.eval_parent_state(
@@ -1914,25 +1822,16 @@ class Wizard_state_proto_conf_file_data(AbstractCachingStateNode[dict]):
             )
         )
 
-        wizard_stage: WizardStage = (
-            self.env_ctx.mutable_state_input_wizard_stage_arg_loaded.get_curr_value(
-                self,
-            )
+        file_data = wizard_conf_file(
+            self,
+            ConfLeap.leap_primer,
+            state_input_proto_conf_primer_file_abs_path_eval_finalized,
+            default_file_data={
+                ConfField.field_primer_ref_root_dir_rel_path.value: ".",
+                ConfField.field_primer_conf_client_file_rel_path.value: ConfConstPrimer.default_client_conf_file_rel_path,
+            },
         )
 
-        if wizard_stage == WizardStage.wizard_started:
-
-            wizard_conf_leap(
-                self,
-                ConfLeap.leap_primer,
-                state_input_proto_conf_primer_file_abs_path_eval_finalized,
-                file_data,
-            )
-
-            write_json_file(
-                state_input_proto_conf_primer_file_abs_path_eval_finalized,
-                file_data,
-            )
         return file_data
 
 
@@ -1999,7 +1898,6 @@ class Bootstrapper_state_client_local_env_dir_rel_path_eval_finalized(
         super().__init__(
             env_ctx=env_ctx,
             parent_states=[
-                EnvState.state_args_parsed.name,
                 EnvState.state_client_conf_file_data.name,
             ],
             state_name=if_none(
@@ -2011,18 +1909,17 @@ class Bootstrapper_state_client_local_env_dir_rel_path_eval_finalized(
     def _eval_state_once(
         self,
     ) -> StateValueType:
-        state_client_local_env_dir_rel_path_eval_finalized = getattr(
-            self.eval_parent_state(EnvState.state_args_parsed.name),
-            CommandArg.name_local_env.value,
+        state_client_conf_file_data: dict = self.eval_parent_state(
+            EnvState.state_client_conf_file_data.name
+        )
+        state_client_local_env_dir_rel_path_eval_finalized = (
+            state_client_conf_file_data.get(
+                ConfField.field_client_default_target_dir_rel_path.value,
+            )
         )
         if state_client_local_env_dir_rel_path_eval_finalized is None:
-            state_client_conf_file_data: dict = self.eval_parent_state(
-                EnvState.state_client_conf_file_data.name
-            )
-            state_client_local_env_dir_rel_path_eval_finalized = (
-                state_client_conf_file_data.get(
-                    ConfField.field_client_default_target_dir_rel_path.value,
-                )
+            raise AssertionError(
+                f"Field `{ConfField.field_client_default_target_dir_rel_path.value}` is [{state_client_local_env_dir_rel_path_eval_finalized}] - re-run with [{ArgConst.arg_mode_wizard}] to set it."
             )
         return state_client_local_env_dir_rel_path_eval_finalized
 
@@ -2100,22 +1997,10 @@ class Bootstrapper_state_client_conf_file_data(AbstractCachingStateNode[dict]):
                 state_primer_conf_client_file_abs_path_eval_finalized
             )
         else:
-            # Generate file data when missing (first time):
-            file_data = {
-                # TODO: Decide how to support (or avoid) evaluation of value if it does not exist.
-                #       Maybe support few actions: check_if_exists and bootstrap_if_does_not_exists?
-                #       Using default when value is missing in data does not work here.
-                ConfField.field_client_link_name_dir_rel_path.value: ConfConstClient.default_dir_rel_path_leap_env_link_name,
-                # TODO: This should not be part of the file - defaults should be configured, not generated (or generated by extensible code):
-                # TODO: Prompt use in wizard and validate the value refers to an existing directory:
-                ConfField.field_client_default_target_dir_rel_path.value: ConfConstClient.default_client_default_target_dir_rel_path,
-            }
-            os.makedirs(
-                os.path.dirname(state_primer_conf_client_file_abs_path_eval_finalized),
-                exist_ok=True,
-            )
-            write_json_file(
-                state_primer_conf_client_file_abs_path_eval_finalized, file_data
+            raise AssertionError(
+                error_on_missing_conf_file(
+                    state_primer_conf_client_file_abs_path_eval_finalized
+                )
             )
         return file_data
 
@@ -2155,31 +2040,24 @@ class Wizard_state_client_conf_file_data(AbstractCachingStateNode[dict]):
         self,
     ) -> StateValueType:
 
-        file_data: dict = self.moved_state_node.eval_own_state()
-
         state_primer_conf_client_file_abs_path_eval_finalized = self.eval_parent_state(
             EnvState.state_primer_conf_client_file_abs_path_eval_finalized.name
         )
 
-        wizard_stage: WizardStage = (
-            self.env_ctx.mutable_state_input_wizard_stage_arg_loaded.get_curr_value(
-                self,
-            )
+        file_data = wizard_conf_file(
+            self,
+            ConfLeap.leap_client,
+            state_primer_conf_client_file_abs_path_eval_finalized,
+            default_file_data={
+                # TODO: Decide how to support (or avoid) evaluation of value if it does not exist.
+                #       Maybe support few actions: check_if_exists and bootstrap_if_does_not_exists?
+                #       Using default when value is missing in data does not work here.
+                ConfField.field_client_link_name_dir_rel_path.value: ConfConstClient.default_dir_rel_path_leap_env_link_name,
+                # TODO: This should not be part of the file - defaults should be configured, not generated (or generated by extensible code):
+                # TODO: Prompt use in wizard and validate the value refers to an existing directory:
+                ConfField.field_client_default_target_dir_rel_path.value: ConfConstClient.default_client_default_target_dir_rel_path,
+            },
         )
-
-        if wizard_stage == WizardStage.wizard_started:
-
-            wizard_conf_leap(
-                self,
-                ConfLeap.leap_client,
-                state_primer_conf_client_file_abs_path_eval_finalized,
-                file_data,
-            )
-
-            write_json_file(
-                state_primer_conf_client_file_abs_path_eval_finalized,
-                file_data,
-            )
 
         return file_data
 
@@ -2314,12 +2192,16 @@ class Bootstrapper_state_client_conf_env_dir_abs_path_eval_verified(
     def _eval_state_once(
         self,
     ) -> StateValueType:
+
         state_client_conf_env_dir_abs_path_eval_finalized = self.eval_parent_state(
             EnvState.state_client_conf_env_dir_abs_path_eval_finalized.name
         )
+
         state_client_local_env_dir_rel_path_eval_finalized = self.eval_parent_state(
             EnvState.state_client_local_env_dir_rel_path_eval_finalized.name
         )
+        assert state_client_local_env_dir_rel_path_eval_finalized is not None
+
         if os.path.exists(state_client_conf_env_dir_abs_path_eval_finalized):
             if os.path.islink(state_client_conf_env_dir_abs_path_eval_finalized):
                 if os.path.isdir(state_client_conf_env_dir_abs_path_eval_finalized):
@@ -2351,26 +2233,56 @@ class Bootstrapper_state_client_conf_env_dir_abs_path_eval_verified(
                     f"The `@/conf/` [{state_client_conf_env_dir_abs_path_eval_finalized}] is not a symlink.",
                 )
         else:
-            if state_client_local_env_dir_rel_path_eval_finalized is None:
-                raise AssertionError(
-                    f"The `@/conf/` dir does not exists and `{CommandArg.name_local_env.value}` is not provided - see `--help`.",
-                )
-            else:
-                state_client_local_env_dir_rel_path_eval_verified = (
-                    self.eval_parent_state(
-                        EnvState.state_client_local_env_dir_rel_path_eval_verified.name
-                    )
-                )
-                assert state_client_local_env_dir_rel_path_eval_verified
+            state_client_local_env_dir_rel_path_eval_verified = self.eval_parent_state(
+                EnvState.state_client_local_env_dir_rel_path_eval_verified.name
+            )
+            assert state_client_local_env_dir_rel_path_eval_verified
 
-                os.symlink(
-                    os.path.normpath(
-                        state_client_local_env_dir_rel_path_eval_finalized
-                    ),
-                    state_client_conf_env_dir_abs_path_eval_finalized,
-                )
+            os.symlink(
+                os.path.normpath(state_client_local_env_dir_rel_path_eval_finalized),
+                state_client_conf_env_dir_abs_path_eval_finalized,
+            )
 
         return True
+
+
+# noinspection PyPep8Naming
+class Bootstrapper_state_client_link_name_dir_rel_path_eval_finalized(
+    AbstractCachingStateNode[str]
+):
+
+    def __init__(
+        self,
+        env_ctx: EnvContext,
+        state_name: str | None = None,
+    ):
+        super().__init__(
+            env_ctx=env_ctx,
+            parent_states=[
+                EnvState.state_client_conf_file_data.name,
+            ],
+            state_name=if_none(
+                state_name,
+                EnvState.state_client_link_name_dir_rel_path_eval_finalized.name,
+            ),
+        )
+
+    def _eval_state_once(
+        self,
+    ) -> StateValueType:
+        state_client_conf_file_data: dict = self.eval_parent_state(
+            EnvState.state_client_conf_file_data.name
+        )
+        state_client_link_name_dir_rel_path_eval_finalized = (
+            state_client_conf_file_data.get(
+                ConfField.field_client_link_name_dir_rel_path.value,
+            )
+        )
+        if state_client_link_name_dir_rel_path_eval_finalized is None:
+            raise AssertionError(
+                f"Field `{ConfField.field_client_link_name_dir_rel_path.value}` is [{state_client_link_name_dir_rel_path_eval_finalized}] - re-run with [{ArgConst.arg_mode_wizard}] to set it."
+            )
+        return state_client_link_name_dir_rel_path_eval_finalized
 
 
 # noinspection PyPep8Naming
@@ -2389,6 +2301,7 @@ class Bootstrapper_state_client_conf_env_file_abs_path_eval_finalized(
                 EnvState.state_primer_ref_root_dir_abs_path_eval_finalized.name,
                 EnvState.state_client_conf_env_dir_abs_path_eval_finalized.name,
                 EnvState.state_client_conf_env_dir_abs_path_eval_verified.name,
+                EnvState.state_client_link_name_dir_rel_path_eval_finalized.name,
             ],
             state_name=if_none(
                 state_name,
@@ -2407,9 +2320,14 @@ class Bootstrapper_state_client_conf_env_file_abs_path_eval_finalized(
         state_primer_ref_root_dir_abs_path_eval_finalized = self.eval_parent_state(
             EnvState.state_primer_ref_root_dir_abs_path_eval_finalized.name
         )
+
+        state_client_link_name_dir_rel_path_eval_finalized = self.eval_parent_state(
+            EnvState.state_client_link_name_dir_rel_path_eval_finalized.name
+        )
+
         state_client_conf_env_file_abs_path_eval_finalized = os.path.join(
             state_primer_ref_root_dir_abs_path_eval_finalized,
-            ConfConstClient.default_dir_rel_path_leap_env_link_name,
+            state_client_link_name_dir_rel_path_eval_finalized,
             # TODO: Do not use default values directly - resolve it differently at the prev|next step based on the need:
             ConfConstClient.default_file_basename_leap_env,
         )
@@ -2455,19 +2373,10 @@ class Bootstrapper_state_env_conf_file_data(AbstractCachingStateNode[dict]):
                 state_client_conf_env_file_abs_path_eval_finalized
             )
         else:
-            file_data = {
-                # TODO: Do not use default values directly - resolve it differently at the prev|next step based on the need:
-                ConfField.field_env_local_python_file_abs_path.value: ConfConstEnv.default_file_abs_path_python,
-                # TODO: Do not use default values directly - resolve it differently at the prev|next step based on the need:
-                ConfField.field_env_local_venv_dir_rel_path.value: ConfConstEnv.default_dir_rel_path_venv,
-                ConfField.field_env_project_descriptors.value: ConfConstEnv.default_project_descriptors,
-            }
-            # TODO: This creates a directory with `ConfConstClient.default_dir_rel_path_leap_env_link_name` instead of symlink.
-            #       But this happens only if dependency
-            #       `state_client_conf_env_file_abs_path_eval_finalized` -> `state_client_conf_env_dir_abs_path_eval_verified`
-            #       was not executed (which is not possible outside of tests).
-            write_json_file(
-                state_client_conf_env_file_abs_path_eval_finalized, file_data
+            raise AssertionError(
+                error_on_missing_conf_file(
+                    state_client_conf_env_file_abs_path_eval_finalized
+                )
             )
         return file_data
 
@@ -2507,31 +2416,26 @@ class Wizard_state_env_conf_file_data(AbstractCachingStateNode[dict]):
         self,
     ) -> StateValueType:
 
-        file_data: dict = self.moved_state_node.eval_own_state()
-
         state_client_conf_env_file_abs_path_eval_finalized = self.eval_parent_state(
             EnvState.state_client_conf_env_file_abs_path_eval_finalized.name
         )
 
-        wizard_stage: WizardStage = (
-            self.env_ctx.mutable_state_input_wizard_stage_arg_loaded.get_curr_value(
-                self,
-            )
+        # TODO: This creates a directory with `ConfConstClient.default_dir_rel_path_leap_env_link_name` instead of symlink.
+        #       But this happens only if dependency
+        #       `state_client_conf_env_file_abs_path_eval_finalized` -> `state_client_conf_env_dir_abs_path_eval_verified`
+        #       was not executed (which is not possible outside of tests).
+        file_data = wizard_conf_file(
+            self,
+            ConfLeap.leap_env,
+            state_client_conf_env_file_abs_path_eval_finalized,
+            default_file_data={
+                # TODO: Do not use default values directly - resolve it differently at the prev|next step based on the need:
+                ConfField.field_env_local_python_file_abs_path.value: ConfConstEnv.default_file_abs_path_python,
+                # TODO: Do not use default values directly - resolve it differently at the prev|next step based on the need:
+                ConfField.field_env_local_venv_dir_rel_path.value: ConfConstEnv.default_dir_rel_path_venv,
+                ConfField.field_env_project_descriptors.value: ConfConstEnv.default_project_descriptors,
+            },
         )
-
-        if wizard_stage == WizardStage.wizard_started:
-
-            wizard_conf_leap(
-                self,
-                ConfLeap.leap_env,
-                state_client_conf_env_file_abs_path_eval_finalized,
-                file_data,
-            )
-
-            write_json_file(
-                state_client_conf_env_file_abs_path_eval_finalized,
-                file_data,
-            )
 
         # Finish the wizard because this is the final wizard state:
         self.env_ctx.mutable_state_input_wizard_stage_arg_loaded.set_curr_value(
@@ -3248,10 +3152,6 @@ class EnvState(enum.Enum):
         Bootstrapper_state_input_proto_conf_primer_file_abs_path_eval_finalized
     )
 
-    state_primer_ref_root_dir_any_path_arg_loaded = (
-        Bootstrapper_state_primer_ref_root_dir_any_path_arg_loaded
-    )
-
     # The state is wizard-able by `Wizard_state_proto_conf_file_data`:
     state_proto_conf_file_data = Bootstrapper_state_proto_conf_file_data
 
@@ -3286,6 +3186,10 @@ class EnvState(enum.Enum):
 
     state_client_conf_env_dir_abs_path_eval_verified = (
         Bootstrapper_state_client_conf_env_dir_abs_path_eval_verified
+    )
+
+    state_client_link_name_dir_rel_path_eval_finalized = (
+        Bootstrapper_state_client_link_name_dir_rel_path_eval_finalized
     )
 
     state_client_conf_env_file_abs_path_eval_finalized = (
@@ -3503,7 +3407,6 @@ class EnvContext:
 
         # Finally, report the current status:
         node_state_process_status_reported.eval_own_state()
-        node_state_process_status_reported.eval_own_state()
 
 
 class CustomFormatter(logging.Formatter):
@@ -3559,6 +3462,14 @@ def rename_to_moved_state_name(state_name: str) -> str:
     See UC_27_40_17_59.replace_by_new_and_use_old.md
     """
     return f"_{state_name}"
+
+
+def error_on_missing_conf_file(
+    file_abs_path: str,
+) -> str:
+    raise AssertionError(
+        f"File [{file_abs_path}] does not exists - re-run with [{ArgConst.arg_mode_wizard}] to create it."
+    )
 
 
 def wizard_confirm_single_value(
@@ -3682,6 +3593,48 @@ def wizard_confirm_single_value(
                 break
             else:
                 continue
+
+
+def wizard_conf_file(
+    state_node: StateNode,
+    conf_leap: ConfLeap,
+    conf_abs_path: str,
+    # TODO: Instead of providing entire file, populate `FieldWizardMeta` how to compute default value:
+    default_file_data: dict,
+) -> dict:
+    """
+    A wrapper over `wizard_conf_leap` to persist the file data.
+    """
+
+    file_data: dict
+    if os.path.exists(conf_abs_path):
+        file_data = read_json_file(conf_abs_path)
+    else:
+        file_data = default_file_data
+
+    wizard_stage: WizardStage = (
+        state_node.env_ctx.mutable_state_input_wizard_stage_arg_loaded.get_curr_value(
+            state_node,
+        )
+    )
+
+    if wizard_stage == WizardStage.wizard_started:
+        wizard_conf_leap(
+            state_node,
+            conf_leap,
+            conf_abs_path,
+            file_data,
+        )
+        os.makedirs(
+            os.path.dirname(conf_abs_path),
+            exist_ok=True,
+        )
+        write_json_file(
+            conf_abs_path,
+            file_data,
+        )
+
+    return file_data
 
 
 def wizard_conf_leap(

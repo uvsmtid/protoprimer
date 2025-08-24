@@ -13,6 +13,7 @@ from protoprimer.primer_kernel import (
     EnvState,
     PythonExecutable,
 )
+from test_protoprimer.misc_tools.mock_verifier import assert_parent_states_mocked
 
 
 # noinspection PyPep8Naming
@@ -49,6 +50,11 @@ class ThisTestClass(BasePyfakefsTestClass):
     ):
 
         # given:
+
+        assert_parent_states_mocked(
+            self.env_ctx,
+            EnvState.state_protoprimer_package_installed,
+        )
 
         mock_client_ref_root_dir = "/mock_client_ref_root_dir"
         self.fs.create_dir(mock_client_ref_root_dir)
@@ -126,6 +132,11 @@ class ThisTestClass(BasePyfakefsTestClass):
     ):
 
         # given:
+
+        assert_parent_states_mocked(
+            self.env_ctx,
+            EnvState.state_protoprimer_package_installed,
+        )
 
         mock_client_dir = "/mock_client_dir"
         self.fs.create_dir(mock_client_dir)

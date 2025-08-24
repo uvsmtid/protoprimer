@@ -16,6 +16,7 @@ from protoprimer.primer_kernel import (
     EnvContext,
     EnvState,
 )
+from test_protoprimer.misc_tools.mock_verifier import assert_parent_states_mocked
 
 
 # noinspection PyPep8Naming
@@ -31,9 +32,22 @@ class ThisTestClass(BasePyfakefsTestClass):
             EnvState.state_input_stderr_log_level_eval_finalized_gconf.name
         )
 
+    @patch(
+        f"{primer_kernel.__name__}.{Bootstrapper_state_default_stderr_log_handler_configured.__name__}._eval_state_once"
+    )
+    @patch(
+        f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}._eval_state_once"
+    )
     def test_not_yet_at_required_python(
         self,
+        mock_state_args_parsed,
+        mock_state_default_stderr_logger_configured,
     ):
+
+        assert_parent_states_mocked(
+            self.env_ctx,
+            EnvState.state_input_stderr_log_level_eval_finalized_gconf,
+        )
 
         default_log_level = logging.NOTSET
 
@@ -136,21 +150,18 @@ class ThisTestClass(BasePyfakefsTestClass):
                     **{ArgConst.dest_verbose: stderr_log_level_verbose},
                 )
 
+                mock_state_default_stderr_logger_configured.return_value = (
+                    stderr_handler
+                )
+                mock_state_args_parsed.return_value = parsed_args
+
                 # when:
 
-                with patch(
-                    f"{primer_kernel.__name__}.{Bootstrapper_state_default_stderr_log_handler_configured.__name__}._eval_state_once"
-                ) as mock_state_default_stderr_logger_configured:
-                    mock_state_default_stderr_logger_configured.return_value = (
-                        stderr_handler
+                actual_state_input_stderr_log_level_eval_finalized_gconf = (
+                    self.env_ctx.state_graph.eval_state(
+                        EnvState.state_input_stderr_log_level_eval_finalized_gconf.name
                     )
-                    with patch(
-                        f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}._eval_state_once"
-                    ) as mock_state_args_parsed:
-                        mock_state_args_parsed.return_value = parsed_args
-                        actual_state_input_stderr_log_level_eval_finalized_gconf = self.env_ctx.state_graph.eval_state(
-                            EnvState.state_input_stderr_log_level_eval_finalized_gconf.name
-                        )
+                )
 
                 # then:
 

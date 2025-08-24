@@ -8,10 +8,15 @@ from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     ArgConst,
     Bootstrapper_state_input_proto_code_file_abs_path_eval_finalized,
+    ConfConstClient,
     ConfConstEnv,
     ConfConstGeneral,
+    ConfConstInput,
+    ConfConstPrimer,
+    ConfField,
     main,
     PythonExecutable,
+    write_json_file,
 )
 
 
@@ -37,6 +42,53 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.fs.create_dir(mock_client_dir)
         os.chdir(mock_client_dir)
 
+        default_env_dir_rel_path = os.path.join(
+            "dst_env_conf",
+            "default_env",
+        )
+        self.fs.create_dir(default_env_dir_rel_path)
+        self.fs.create_dir(
+            os.path.dirname(ConfConstPrimer.default_client_conf_file_rel_path)
+        )
+
+        primer_conf_data = {
+            ConfField.field_primer_ref_root_dir_rel_path.value: ".",
+            ConfField.field_primer_conf_client_file_rel_path.value: ConfConstPrimer.default_client_conf_file_rel_path,
+        }
+        write_json_file(
+            os.path.join(
+                mock_client_dir,
+                ConfConstInput.default_file_basename_conf_primer,
+            ),
+            primer_conf_data,
+        )
+
+        client_conf_data = {
+            ConfField.field_client_link_name_dir_rel_path.value: ConfConstClient.default_dir_rel_path_leap_env_link_name,
+            ConfField.field_client_default_target_dir_rel_path.value: default_env_dir_rel_path,
+        }
+        write_json_file(
+            os.path.join(
+                mock_client_dir,
+                ConfConstPrimer.default_client_conf_file_rel_path,
+            ),
+            client_conf_data,
+        )
+
+        env_conf_data = {
+            ConfField.field_env_local_python_file_abs_path.value: ConfConstEnv.default_file_abs_path_python,
+            ConfField.field_env_local_venv_dir_rel_path.value: ConfConstEnv.default_dir_rel_path_venv,
+            ConfField.field_env_project_descriptors.value: ConfConstEnv.default_project_descriptors,
+        }
+        write_json_file(
+            os.path.join(
+                mock_client_dir,
+                default_env_dir_rel_path,
+                ConfConstClient.default_file_basename_leap_env,
+            ),
+            env_conf_data,
+        )
+
         state_input_proto_code_file_abs_path_eval_finalized = os.path.join(
             mock_client_dir,
             ConfConstGeneral.default_proto_code_basename,
@@ -48,18 +100,8 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         script_basename = os.path.basename(os.path.abspath(__file__))
 
-        dst_dir_path = os.path.join(
-            "dst_env_conf",
-            "default_env",
-        )
-        self.fs.create_dir(dst_dir_path)
-
         test_args = [
             script_basename,
-            ArgConst.arg_local_env_dir_rel_path,
-            dst_dir_path,
-            ArgConst.arg_ref_root_dir_rel_path,
-            mock_client_dir,
         ]
 
         execv_args = [

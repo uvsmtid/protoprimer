@@ -1,3 +1,4 @@
+import os
 from unittest.mock import patch
 
 from local_test.base_test_class import BasePyfakefsTestClass
@@ -18,6 +19,7 @@ from protoprimer.primer_kernel import (
     WizardStage,
     write_json_file,
 )
+from test_protoprimer.misc_tools.mock_verifier import assert_parent_states_mocked
 
 
 # noinspection PyPep8Naming
@@ -54,7 +56,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     )
     def test_wizard_triggered(
         self,
-        mock_moved_bootstrap_once,
+        mock_state_env_conf_file_data,
         mock_state_client_conf_env_file_abs_path_eval_finalized,
         mock_wizard_conf_leap,
         mock_write_json_file,
@@ -63,17 +65,28 @@ class ThisTestClass(BasePyfakefsTestClass):
     ):
         # given:
 
+        assert_parent_states_mocked(
+            self.env_ctx,
+            EnvState.state_env_conf_file_data,
+        )
+
         mock_state_input_wizard_stage_arg_loaded.return_value = (
             WizardStage.wizard_started
         )
 
-        mock_file_path = "/mock/path/to/file"
+        mock_file_abs_path = "/mock/path/to/file.json"
+        self.fs.create_dir(os.path.dirname(mock_file_abs_path))
         mock_state_client_conf_env_file_abs_path_eval_finalized.return_value = (
-            mock_file_path
+            mock_file_abs_path
         )
 
-        initial_data = {"test": "data"}
-        mock_moved_bootstrap_once.return_value = initial_data
+        mock_file_data = {"test": "data"}
+        mock_state_env_conf_file_data.return_value = mock_file_data
+
+        write_json_file(
+            mock_file_abs_path,
+            mock_file_data,
+        )
 
         # when:
 
@@ -86,13 +99,13 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_wizard_conf_leap.assert_called_once_with(
             self.wizard_bootstrapper,
             ConfLeap.leap_env,
-            mock_file_path,
-            initial_data,
+            mock_file_abs_path,
+            mock_file_data,
         )
-        self.assertEqual(state_value, initial_data)
+        self.assertEqual(state_value, mock_file_data)
         mock_write_json_file.assert_called_once_with(
-            mock_file_path,
-            initial_data,
+            mock_file_abs_path,
+            mock_file_data,
         )
 
     @patch(f"{primer_kernel.__name__}.{StateNode.__name__}")
@@ -117,17 +130,28 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # given:
 
+        assert_parent_states_mocked(
+            self.env_ctx,
+            EnvState.state_env_conf_file_data,
+        )
+
         mock_state_input_wizard_stage_arg_loaded.return_value = (
             WizardStage.wizard_finished
         )
 
-        mock_file_path = "/mock/path/to/file"
+        mock_file_abs_path = "/mock/path/to/file.json"
+        self.fs.create_dir(os.path.dirname(mock_file_abs_path))
         mock_state_client_conf_env_file_abs_path_eval_finalized.return_value = (
-            mock_file_path
+            mock_file_abs_path
         )
 
-        initial_data = {"test": "data"}
-        mock_state_env_conf_file_data.return_value = initial_data
+        mock_file_data = {"test": "data"}
+        mock_state_env_conf_file_data.return_value = mock_file_data
+
+        write_json_file(
+            mock_file_abs_path,
+            mock_file_data,
+        )
 
         # when:
 
@@ -138,4 +162,4 @@ class ThisTestClass(BasePyfakefsTestClass):
         # then:
 
         mock_wizard_conf_leap.assert_not_called()
-        self.assertEqual(state_value, initial_data)
+        self.assertEqual(state_value, mock_file_data)

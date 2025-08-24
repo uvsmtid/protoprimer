@@ -7,12 +7,15 @@ from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     Bootstrapper_state_args_parsed,
+    Bootstrapper_state_input_py_exec_arg_loaded,
+    Bootstrapper_state_input_wizard_stage_arg_loaded,
     CommandArg,
     EnvContext,
     EnvState,
     PythonExecutable,
     WizardStage,
 )
+from test_protoprimer.misc_tools.mock_verifier import assert_parent_states_mocked
 
 
 @pytest.fixture
@@ -31,10 +34,18 @@ def test_relationship():
 @patch(f"{primer_kernel.__name__}.switch_python")
 @patch(f"{primer_kernel.__name__}.is_venv")
 @patch(
+    f"{primer_kernel.__name__}.{Bootstrapper_state_input_wizard_stage_arg_loaded.__name__}._eval_state_once"
+)
+@patch(
+    f"{primer_kernel.__name__}.{Bootstrapper_state_input_py_exec_arg_loaded.__name__}._eval_state_once"
+)
+@patch(
     f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}._eval_state_once"
 )
 def test_py_exec_unknown_in_venv(
     mock_state_args_parsed,
+    mock_state_input_py_exec_arg_loaded,
+    mock_state_input_wizard_stage_arg_loaded,
     mock_is_venv,
     mock_switch_python,
     mock_get_path_to_base_python,
@@ -43,12 +54,19 @@ def test_py_exec_unknown_in_venv(
 ):
     # given:
 
+    assert_parent_states_mocked(
+        env_ctx,
+        EnvState.state_input_proto_code_file_abs_path_eval_finalized,
+    )
+
     mock_state_args_parsed.return_value = argparse.Namespace(
         **{
             CommandArg.name_py_exec.value: PythonExecutable.py_exec_unknown.name,
             CommandArg.name_wizard_stage.value: WizardStage.wizard_started.name,
         },
     )
+    mock_state_input_py_exec_arg_loaded.return_value = PythonExecutable.py_exec_unknown
+    mock_state_input_wizard_stage_arg_loaded.return_value = WizardStage.wizard_started
 
     mock_is_venv.return_value = True
 
@@ -75,20 +93,35 @@ def test_py_exec_unknown_in_venv(
 
 @patch(f"{primer_kernel.__name__}.is_venv")
 @patch(
+    f"{primer_kernel.__name__}.{Bootstrapper_state_input_wizard_stage_arg_loaded.__name__}._eval_state_once"
+)
+@patch(
+    f"{primer_kernel.__name__}.{Bootstrapper_state_input_py_exec_arg_loaded.__name__}._eval_state_once"
+)
+@patch(
     f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}._eval_state_once"
 )
 def test_py_exec_unknown_not_in_venv(
     mock_state_args_parsed,
+    mock_state_input_py_exec_arg_loaded,
+    mock_state_input_wizard_stage_arg_loaded,
     mock_is_venv,
     env_ctx,
 ):
     # given:
+
+    assert_parent_states_mocked(
+        env_ctx,
+        EnvState.state_input_proto_code_file_abs_path_eval_finalized,
+    )
 
     mock_state_args_parsed.return_value = argparse.Namespace(
         **{
             CommandArg.name_py_exec.value: PythonExecutable.py_exec_unknown.name,
         },
     )
+    mock_state_input_py_exec_arg_loaded.return_value = PythonExecutable.py_exec_unknown
+    mock_state_input_wizard_stage_arg_loaded.return_value = WizardStage.wizard_started
 
     mock_is_venv.return_value = False
 
@@ -104,13 +137,26 @@ def test_py_exec_unknown_not_in_venv(
 
 
 @patch(
+    f"{primer_kernel.__name__}.{Bootstrapper_state_input_wizard_stage_arg_loaded.__name__}._eval_state_once"
+)
+@patch(
+    f"{primer_kernel.__name__}.{Bootstrapper_state_input_py_exec_arg_loaded.__name__}._eval_state_once"
+)
+@patch(
     f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}._eval_state_once"
 )
 def test_py_exec_venv(
     mock_state_args_parsed,
+    mock_state_input_py_exec_arg_loaded,
+    mock_state_input_wizard_stage_arg_loaded,
     env_ctx,
 ):
     # given:
+
+    assert_parent_states_mocked(
+        env_ctx,
+        EnvState.state_input_proto_code_file_abs_path_eval_finalized,
+    )
 
     proto_code_abs_file_path = "/path/to/proto_kernel.py"
 
@@ -120,6 +166,8 @@ def test_py_exec_venv(
             CommandArg.name_proto_code.value: proto_code_abs_file_path,
         },
     )
+    mock_state_input_py_exec_arg_loaded.return_value = PythonExecutable.py_exec_venv
+    mock_state_input_wizard_stage_arg_loaded.return_value = WizardStage.wizard_started
 
     # when:
 
@@ -133,13 +181,26 @@ def test_py_exec_venv(
 
 
 @patch(
+    f"{primer_kernel.__name__}.{Bootstrapper_state_input_wizard_stage_arg_loaded.__name__}._eval_state_once"
+)
+@patch(
+    f"{primer_kernel.__name__}.{Bootstrapper_state_input_py_exec_arg_loaded.__name__}._eval_state_once"
+)
+@patch(
     f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}._eval_state_once"
 )
 def test_py_exec_venv_no_arg(
     mock_state_args_parsed,
+    mock_state_input_py_exec_arg_loaded,
+    mock_state_input_wizard_stage_arg_loaded,
     env_ctx,
 ):
     # given:
+
+    assert_parent_states_mocked(
+        env_ctx,
+        EnvState.state_input_proto_code_file_abs_path_eval_finalized,
+    )
 
     mock_state_args_parsed.return_value = argparse.Namespace(
         **{
@@ -147,6 +208,8 @@ def test_py_exec_venv_no_arg(
             CommandArg.name_proto_code.value: None,
         },
     )
+    mock_state_input_py_exec_arg_loaded.return_value = PythonExecutable.py_exec_venv
+    mock_state_input_wizard_stage_arg_loaded.return_value = WizardStage.wizard_started
 
     # when/then:
 
@@ -160,20 +223,37 @@ def test_py_exec_venv_no_arg(
 
 @patch(f"{primer_kernel.__name__}.is_venv")
 @patch(
+    f"{primer_kernel.__name__}.{Bootstrapper_state_input_wizard_stage_arg_loaded.__name__}._eval_state_once"
+)
+@patch(
+    f"{primer_kernel.__name__}.{Bootstrapper_state_input_py_exec_arg_loaded.__name__}._eval_state_once"
+)
+@patch(
     f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}._eval_state_once"
 )
 def test_py_exec_arbitrary_not_in_venv(
     mock_state_args_parsed,
+    mock_state_input_py_exec_arg_loaded,
+    mock_state_input_wizard_stage_arg_loaded,
     mock_is_venv,
     env_ctx,
 ):
     # given:
+
+    assert_parent_states_mocked(
+        env_ctx,
+        EnvState.state_input_proto_code_file_abs_path_eval_finalized,
+    )
 
     mock_state_args_parsed.return_value = argparse.Namespace(
         **{
             CommandArg.name_py_exec.value: PythonExecutable.py_exec_arbitrary.name,
         },
     )
+    mock_state_input_py_exec_arg_loaded.return_value = (
+        PythonExecutable.py_exec_arbitrary
+    )
+    mock_state_input_wizard_stage_arg_loaded.return_value = WizardStage.wizard_started
 
     mock_is_venv.return_value = False
 

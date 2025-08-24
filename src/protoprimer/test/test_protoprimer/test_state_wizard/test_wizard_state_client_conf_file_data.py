@@ -21,6 +21,7 @@ from protoprimer.primer_kernel import (
     WizardStage,
     write_json_file,
 )
+from test_protoprimer.misc_tools.mock_verifier import assert_parent_states_mocked
 
 
 # noinspection PyPep8Naming
@@ -65,17 +66,28 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # given:
 
+        assert_parent_states_mocked(
+            self.env_ctx,
+            EnvState.state_client_conf_file_data,
+        )
+
         mock_state_input_wizard_stage_arg_loaded.return_value = (
             WizardStage.wizard_started
         )
 
-        mock_abs_path = "/test/path"
+        mock_file_abs_path = "/test/path/to/file.json"
+        self.fs.create_dir(os.path.dirname(mock_file_abs_path))
         mock_state_primer_conf_client_file_abs_path_eval_finalized.return_value = (
-            mock_abs_path
+            mock_file_abs_path
         )
 
         mock_file_data = {"test": "data"}
         mock_state_client_conf_file_data.return_value = mock_file_data
+
+        write_json_file(
+            mock_file_abs_path,
+            mock_file_data,
+        )
 
         # when:
 
@@ -89,11 +101,11 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_wizard_conf_leap.assert_called_once_with(
             self.wizard_bootstrapper,
             ConfLeap.leap_client,
-            mock_abs_path,
+            mock_file_abs_path,
             mock_file_data,
         )
         mock_write_json_file.assert_called_once_with(
-            mock_abs_path,
+            mock_file_abs_path,
             mock_file_data,
         )
 
@@ -119,17 +131,28 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # given:
 
+        assert_parent_states_mocked(
+            self.env_ctx,
+            EnvState.state_client_conf_file_data,
+        )
+
         mock_state_input_wizard_stage_arg_loaded.return_value = (
             WizardStage.wizard_finished
         )
 
-        mock_abs_path = "/test/path"
+        mock_file_abs_path = "/test/path/to/file.json"
+        self.fs.create_dir(os.path.dirname(mock_file_abs_path))
         mock_state_primer_conf_client_file_abs_path_eval_finalized.return_value = (
-            mock_abs_path
+            mock_file_abs_path
         )
 
         mock_file_data = {"test": "data"}
         mock_state_client_conf_file_data.return_value = mock_file_data
+
+        write_json_file(
+            mock_file_abs_path,
+            mock_file_data,
+        )
 
         # when:
 
