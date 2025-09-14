@@ -26,13 +26,17 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.setUpPyfakefs()
 
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_input_proto_code_file_abs_path_eval_finalized.__name__}._eval_state_once"
+        f"{primer_kernel.__name__}.get_default_start_id", return_value="mock_start_id"
+    )
+    @patch(
+        f"{primer_kernel.__name__}.{Bootstrapper_state_input_proto_code_file_abs_path_eval_finalized.__name__}.eval_own_state"
     )
     @patch(f"{primer_kernel.__name__}.os.execv")
     def test_prime_switches_from_py_exec_unknown(
         self,
         mock_execv,
         mock_state_input_proto_code_file_abs_path_eval_finalized,
+        mock_get_default_start_id,
     ):
         assert_test_func_name_embeds_str(PythonExecutable.py_exec_unknown.name)
 
@@ -107,8 +111,12 @@ class ThisTestClass(BasePyfakefsTestClass):
         execv_args = [
             ConfConstEnv.default_file_abs_path_python,
             *test_args,
+            ArgConst.arg_reinstall,
+            "False",
             ArgConst.arg_py_exec,
             PythonExecutable.py_exec_required.name,
+            ArgConst.arg_start_id,
+            "mock_start_id",
             ArgConst.arg_proto_code_abs_file_path,
             state_input_proto_code_file_abs_path_eval_finalized,
         ]

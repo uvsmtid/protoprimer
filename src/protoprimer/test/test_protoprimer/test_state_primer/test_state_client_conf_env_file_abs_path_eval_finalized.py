@@ -7,7 +7,6 @@ from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     Bootstrapper_state_client_conf_env_dir_abs_path_eval_finalized,
     Bootstrapper_state_client_conf_env_dir_abs_path_eval_verified,
-    Bootstrapper_state_client_conf_env_file_abs_path_eval_finalized,
     Bootstrapper_state_client_link_name_dir_rel_path_eval_finalized,
     Bootstrapper_state_primer_ref_root_dir_abs_path_eval_finalized,
     ConfConstClient,
@@ -31,16 +30,16 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
 
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_link_name_dir_rel_path_eval_finalized.__name__}._eval_state_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_link_name_dir_rel_path_eval_finalized.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_env_dir_abs_path_eval_verified.__name__}._eval_state_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_env_dir_abs_path_eval_verified.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_primer_ref_root_dir_abs_path_eval_finalized.__name__}._eval_state_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_primer_ref_root_dir_abs_path_eval_finalized.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_env_dir_abs_path_eval_finalized.__name__}._eval_state_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_env_dir_abs_path_eval_finalized.__name__}.eval_own_state"
     )
     def test_success_when_all_parent_states_are_set(
         self,
@@ -94,16 +93,16 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
 
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_link_name_dir_rel_path_eval_finalized.__name__}._eval_state_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_link_name_dir_rel_path_eval_finalized.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_env_dir_abs_path_eval_verified.__name__}._eval_state_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_env_dir_abs_path_eval_verified.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_primer_ref_root_dir_abs_path_eval_finalized.__name__}._eval_state_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_primer_ref_root_dir_abs_path_eval_finalized.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_env_dir_abs_path_eval_finalized.__name__}._eval_state_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_env_dir_abs_path_eval_finalized.__name__}.eval_own_state"
     )
     def test_failure_when_path_is_not_sub_path(
         self,

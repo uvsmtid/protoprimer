@@ -25,7 +25,7 @@ def test_relationship():
 
 
 @patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_env_conf_file_data.__name__}._eval_state_once"
+    f"{primer_kernel.__name__}.{Bootstrapper_state_env_conf_file_data.__name__}.eval_own_state"
 )
 def test_py_exec_venv(
     mock_state_env_conf_file_data,

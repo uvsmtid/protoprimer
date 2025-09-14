@@ -1,18 +1,19 @@
-import pytest
 from unittest.mock import (
     MagicMock,
     patch,
 )
+
+import pytest
 
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     ConfLeap,
     StateNode,
-    WizardField,
     wizard_conf_leap,
     wizard_confirm_single_value,
     wizard_print_summary,
+    WizardField,
 )
 
 

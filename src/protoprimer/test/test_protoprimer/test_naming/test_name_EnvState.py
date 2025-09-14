@@ -61,6 +61,11 @@ class StateName(enum.Enum):
         NameCategory.category_state_mutation,
     )
 
+    state_default_file_log_handler_configured = StateMeta(
+        EnvState.state_default_file_log_handler_configured,
+        NameCategory.category_state_mutation,
+    )
+
     state_args_parsed = StateMeta(
         EnvState.state_args_parsed,
         NameCategory.category_loaded_data,
@@ -71,13 +76,13 @@ class StateName(enum.Enum):
         NameCategory.category_named_value,
     )
 
-    state_input_stderr_log_level_eval_finalized_gconf = StateMeta(
-        EnvState.state_input_stderr_log_level_eval_finalized_gconf,
+    state_input_stderr_log_level_eval_finalized = StateMeta(
+        EnvState.state_input_stderr_log_level_eval_finalized,
         NameCategory.category_named_value,
     )
 
-    state_input_run_mode_arg_loaded_gconf = StateMeta(
-        EnvState.state_input_run_mode_arg_loaded_gconf,
+    state_input_run_mode_arg_loaded = StateMeta(
+        EnvState.state_input_run_mode_arg_loaded,
         NameCategory.category_named_value,
     )
 
@@ -94,6 +99,11 @@ class StateName(enum.Enum):
     state_input_py_exec_arg_loaded = StateMeta(
         EnvState.state_input_py_exec_arg_loaded,
         NameCategory.category_named_value,
+    )
+
+    state_py_exec_arbitrary_reached = StateMeta(
+        EnvState.state_py_exec_arbitrary_reached,
+        NameCategory.category_python_exec,
     )
 
     state_input_proto_code_file_abs_path_eval_finalized = StateMeta(
@@ -176,14 +186,39 @@ class StateName(enum.Enum):
         NameCategory.category_path_value,
     )
 
+    state_env_local_log_dir_abs_path_eval_finalized = StateMeta(
+        EnvState.state_env_local_log_dir_abs_path_eval_finalized,
+        NameCategory.category_path_value,
+    )
+
+    state_env_local_tmp_dir_abs_path_eval_finalized = StateMeta(
+        EnvState.state_env_local_tmp_dir_abs_path_eval_finalized,
+        NameCategory.category_path_value,
+    )
+
     state_env_project_descriptors_eval_finalized = StateMeta(
         EnvState.state_env_project_descriptors_eval_finalized,
         NameCategory.category_named_value,
     )
 
-    state_py_exec_selected = StateMeta(
-        EnvState.state_py_exec_selected,
+    state_py_exec_required_reached = StateMeta(
+        EnvState.state_py_exec_required_reached,
         NameCategory.category_python_exec,
+    )
+
+    state_reinstall_triggered = StateMeta(
+        EnvState.state_reinstall_triggered,
+        NameCategory.category_state_mutation,
+    )
+
+    state_py_exec_venv_reached = StateMeta(
+        EnvState.state_py_exec_venv_reached,
+        NameCategory.category_python_exec,
+    )
+
+    state_version_constraints_generated = StateMeta(
+        EnvState.state_version_constraints_generated,
+        NameCategory.category_state_mutation,
     )
 
     state_protoprimer_package_installed = StateMeta(

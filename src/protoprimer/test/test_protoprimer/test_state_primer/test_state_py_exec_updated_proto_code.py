@@ -1,13 +1,16 @@
+import argparse
 from unittest.mock import patch
 
 from local_test.base_test_class import BasePyfakefsTestClass
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
+    Bootstrapper_state_args_parsed,
     Bootstrapper_state_input_proto_code_file_abs_path_eval_finalized,
     Bootstrapper_state_input_py_exec_arg_loaded,
     Bootstrapper_state_input_wizard_stage_arg_loaded,
     Bootstrapper_state_proto_code_updated,
+    CommandArg,
     EnvContext,
     EnvState,
     get_path_to_curr_python,
@@ -31,16 +34,19 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
 
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_input_wizard_stage_arg_loaded.__name__}._eval_state_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_input_py_exec_arg_loaded.__name__}._eval_state_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_input_wizard_stage_arg_loaded.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_proto_code_updated.__name__}._eval_state_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_input_py_exec_arg_loaded.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_input_proto_code_file_abs_path_eval_finalized.__name__}._eval_state_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_proto_code_updated.__name__}.eval_own_state"
+    )
+    @patch(
+        f"{primer_kernel.__name__}.{Bootstrapper_state_input_proto_code_file_abs_path_eval_finalized.__name__}.eval_own_state"
     )
     @patch(f"{primer_kernel.__name__}.switch_python")
     def test_not_yet_at_required_python(
@@ -50,6 +56,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_proto_code_updated,
         mock_state_input_py_exec_arg_loaded,
         mock_state_input_wizard_stage_arg_loaded,
+        mock_state_args_parsed,
     ):
 
         # given:
@@ -59,6 +66,12 @@ class ThisTestClass(BasePyfakefsTestClass):
             EnvState.state_py_exec_updated_proto_code,
         )
 
+        mock_state_args_parsed.return_value = argparse.Namespace(
+            **{
+                CommandArg.name_start_id.value: "mock_start_id",
+                CommandArg.name_reinstall.value: False,
+            }
+        )
         mock_state_input_wizard_stage_arg_loaded.return_value = (
             WizardStage.wizard_started
         )
@@ -86,21 +99,26 @@ class ThisTestClass(BasePyfakefsTestClass):
             curr_python_path=get_path_to_curr_python(),
             next_py_exec=PythonExecutable.py_exec_updated_proto_code,
             next_python_path=get_path_to_curr_python(),
+            start_id="mock_start_id",
             proto_code_abs_file_path=mock_state_input_proto_code_file_abs_path_eval_finalized.return_value,
             wizard_stage=WizardStage.wizard_started,
+            do_reinstall=False,
         )
 
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_input_wizard_stage_arg_loaded.__name__}._eval_state_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_input_py_exec_arg_loaded.__name__}._eval_state_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_input_wizard_stage_arg_loaded.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_proto_code_updated.__name__}._eval_state_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_input_py_exec_arg_loaded.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_input_proto_code_file_abs_path_eval_finalized.__name__}._eval_state_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_proto_code_updated.__name__}.eval_own_state"
+    )
+    @patch(
+        f"{primer_kernel.__name__}.{Bootstrapper_state_input_proto_code_file_abs_path_eval_finalized.__name__}.eval_own_state"
     )
     @patch(f"{primer_kernel.__name__}.switch_python")
     def test_already_required_python(
@@ -110,6 +128,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_proto_code_updated,
         mock_state_input_py_exec_arg_loaded,
         mock_state_input_wizard_stage_arg_loaded,
+        mock_state_args_parsed,
     ):
         """
         UC_90_98_17_93.run_under_venv.md
@@ -122,6 +141,12 @@ class ThisTestClass(BasePyfakefsTestClass):
             EnvState.state_py_exec_updated_proto_code,
         )
 
+        mock_state_args_parsed.return_value = argparse.Namespace(
+            **{
+                CommandArg.name_start_id.value: "mock_start_id",
+                CommandArg.name_reinstall.value: False,
+            }
+        )
         mock_state_input_wizard_stage_arg_loaded.return_value = (
             WizardStage.wizard_started
         )

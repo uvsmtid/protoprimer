@@ -1,7 +1,5 @@
-import os
-import subprocess
-import pytest
 import pathlib
+import subprocess
 
 from test_protoprimer.test_integrated.integrated_helper import (
     switch_to_test_dir_with_plain_proto_code,

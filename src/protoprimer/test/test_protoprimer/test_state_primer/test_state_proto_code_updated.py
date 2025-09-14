@@ -28,10 +28,10 @@ class ThisTestClass(BasePyfakefsTestClass):
         assert_test_module_name_embeds_str(EnvState.state_proto_code_updated.name)
 
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_input_proto_code_file_abs_path_eval_finalized.__name__}._eval_state_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_input_proto_code_file_abs_path_eval_finalized.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_py_exec_updated_protoprimer_package_reached.__name__}._eval_state_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_py_exec_updated_protoprimer_package_reached.__name__}.eval_own_state"
     )
     @patch(f"{primer_kernel.__name__}.os.execv")
     def test_state_proto_code_updated(
@@ -82,7 +82,13 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         proto_kernel_obj = self.fs.get_object(proto_code_abs_file_path)
         self.assertIn(
-            ConfConstGeneral.func_get_proto_code_generated_boilerplate(
+            ConfConstGeneral.func_get_proto_code_generated_boilerplate_single_header(
+                protoprimer.primer_kernel
+            ),
+            proto_kernel_obj.contents,
+        )
+        self.assertIn(
+            ConfConstGeneral.func_get_proto_code_generated_boilerplate_multiple_body(
                 protoprimer.primer_kernel
             ),
             proto_kernel_obj.contents,

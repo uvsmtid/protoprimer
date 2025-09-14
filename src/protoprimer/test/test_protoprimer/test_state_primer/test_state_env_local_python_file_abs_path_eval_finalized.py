@@ -27,10 +27,10 @@ def test_relationship():
 
 
 @patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_env_conf_file_data.__name__}._eval_state_once"
+    f"{primer_kernel.__name__}.{Bootstrapper_state_env_conf_file_data.__name__}.eval_own_state"
 )
 @patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_primer_ref_root_dir_abs_path_eval_finalized.__name__}._eval_state_once"
+    f"{primer_kernel.__name__}.{Bootstrapper_state_primer_ref_root_dir_abs_path_eval_finalized.__name__}.eval_own_state"
 )
 # TODO: if `rel, it should not be named `abs` - see: ConfConstEnv.field_env_local_python_file_abs_path.value
 def test_allow_rel_file_abs_path_python(

@@ -1,5 +1,4 @@
 import os
-import sys
 from unittest.mock import patch
 
 from local_test.name_assertion import assert_test_module_name_embeds_str

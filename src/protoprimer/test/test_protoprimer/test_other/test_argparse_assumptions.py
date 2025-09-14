@@ -12,7 +12,6 @@ from protoprimer.primer_kernel import (
     CommandArg,
     init_arg_parser,
     PythonExecutable,
-    RunMode,
 )
 
 

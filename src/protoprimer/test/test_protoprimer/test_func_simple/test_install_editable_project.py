@@ -1,3 +1,4 @@
+import os
 import subprocess
 from unittest.mock import (
     MagicMock,
@@ -45,6 +46,7 @@ def test_install_editable_single_project(
     install_editable_project(
         "/mock",
         project_descriptors,
+        "/mock/constraints.txt",
     )
 
     # then:
@@ -54,6 +56,8 @@ def test_install_editable_single_project(
         "-m",
         "pip",
         "install",
+        "--constraint",
+        "/mock/constraints.txt",
         "--editable",
         "/mock/path/to/project[test]",
     ]
@@ -96,6 +100,7 @@ def test_install_editable_multiple_projects(
     install_editable_project(
         "/mock",
         project_descriptors,
+        "/mock/constraints.txt",
     )
 
     # then:
@@ -105,6 +110,8 @@ def test_install_editable_multiple_projects(
         "-m",
         "pip",
         "install",
+        "--constraint",
+        "/mock/constraints.txt",
         "--editable",
         "/mock/path/to/project/a",
         "--editable",

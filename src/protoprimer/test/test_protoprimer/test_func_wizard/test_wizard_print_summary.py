@@ -1,16 +1,17 @@
 import copy
 import json
-import pytest
 from unittest.mock import (
     MagicMock,
     patch,
 )
 
+import pytest
+
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer.primer_kernel import (
     ConfLeap,
-    WizardField,
     wizard_print_summary,
+    WizardField,
 )
 
 

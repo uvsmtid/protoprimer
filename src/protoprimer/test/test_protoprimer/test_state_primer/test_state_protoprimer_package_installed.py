@@ -5,9 +5,10 @@ from local_test.base_test_class import BasePyfakefsTestClass
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
+    Bootstrapper_state_client_conf_env_dir_abs_path_eval_finalized,
     Bootstrapper_state_env_project_descriptors_eval_finalized,
     Bootstrapper_state_primer_ref_root_dir_abs_path_eval_finalized,
-    Bootstrapper_state_py_exec_selected,
+    Bootstrapper_state_py_exec_venv_reached,
     ConfField,
     EnvContext,
     EnvState,
@@ -30,13 +31,16 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
 
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_primer_ref_root_dir_abs_path_eval_finalized.__name__}._eval_state_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_env_dir_abs_path_eval_finalized.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_py_exec_selected.__name__}._eval_state_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_primer_ref_root_dir_abs_path_eval_finalized.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_env_project_descriptors_eval_finalized.__name__}._eval_state_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_py_exec_venv_reached.__name__}.eval_own_state"
+    )
+    @patch(
+        f"{primer_kernel.__name__}.{Bootstrapper_state_env_project_descriptors_eval_finalized.__name__}.eval_own_state"
     )
     @patch(
         f"{primer_kernel.__name__}.install_editable_project",
@@ -45,8 +49,9 @@ class ThisTestClass(BasePyfakefsTestClass):
         self,
         mock_install_editable_project,
         mock_state_env_project_rel_path_to_extras_list_finalized_lconf,
-        mock_state_py_exec_selected,
+        mock_state_py_exec_venv_reached,
         mock_state_primer_ref_root_dir_abs_path_eval_finalized,
+        mock_state_client_conf_env_dir_abs_path_eval_finalized,
     ):
 
         # given:
@@ -60,10 +65,16 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.fs.create_dir(mock_client_ref_root_dir)
         os.chdir(mock_client_ref_root_dir)
 
-        mock_state_py_exec_selected.return_value = PythonExecutable.py_exec_venv
+        mock_state_py_exec_venv_reached.return_value = PythonExecutable.py_exec_venv
 
         mock_state_primer_ref_root_dir_abs_path_eval_finalized.return_value = (
             mock_client_ref_root_dir
+        )
+
+        mock_client_conf_env_dir = "/mock_client_conf_env_dir"
+        self.fs.create_dir(mock_client_conf_env_dir)
+        mock_state_client_conf_env_dir_abs_path_eval_finalized.return_value = (
+            mock_client_conf_env_dir
         )
 
         project_descriptors: list[dict] = []
@@ -109,16 +120,23 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_install_editable_project.assert_called_once_with(
             mock_client_ref_root_dir,
             project_descriptors,
+            os.path.join(
+                mock_state_client_conf_env_dir_abs_path_eval_finalized.return_value,
+                "constraints.txt",
+            ),
         )
 
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_primer_ref_root_dir_abs_path_eval_finalized.__name__}._eval_state_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_env_dir_abs_path_eval_finalized.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_py_exec_selected.__name__}._eval_state_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_primer_ref_root_dir_abs_path_eval_finalized.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_env_project_descriptors_eval_finalized.__name__}._eval_state_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_py_exec_venv_reached.__name__}.eval_own_state"
+    )
+    @patch(
+        f"{primer_kernel.__name__}.{Bootstrapper_state_env_project_descriptors_eval_finalized.__name__}.eval_own_state"
     )
     @patch(
         f"{primer_kernel.__name__}.install_editable_project",
@@ -127,8 +145,9 @@ class ThisTestClass(BasePyfakefsTestClass):
         self,
         mock_install_editable_project,
         mock_state_env_project_rel_path_to_extras_list_finalized_lconf,
-        mock_state_py_exec_selected,
+        mock_state_py_exec_venv_reached,
         mock_state_primer_ref_root_dir_abs_path_eval_finalized,
+        mock_state_client_conf_env_dir_abs_path_eval_finalized,
     ):
 
         # given:
@@ -142,10 +161,16 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.fs.create_dir(mock_client_dir)
         os.chdir(mock_client_dir)
 
-        mock_state_py_exec_selected.return_value = PythonExecutable.py_exec_venv
+        mock_state_py_exec_venv_reached.return_value = PythonExecutable.py_exec_venv
 
         mock_state_primer_ref_root_dir_abs_path_eval_finalized.return_value = (
             mock_client_dir
+        )
+
+        mock_client_conf_env_dir = "/mock_client_conf_env_dir"
+        self.fs.create_dir(mock_client_conf_env_dir)
+        mock_state_client_conf_env_dir_abs_path_eval_finalized.return_value = (
+            mock_client_conf_env_dir
         )
 
         project_rel_path_to_extras_list = []

@@ -1,5 +1,4 @@
 import json
-import os
 from unittest.mock import patch
 
 from local_test.base_test_class import BasePyfakefsTestClass
@@ -7,7 +6,6 @@ from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     Bootstrapper_state_input_proto_conf_primer_file_abs_path_eval_finalized,
-    ConfField,
     EnvContext,
     EnvState,
 )
@@ -26,7 +24,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         assert_test_module_name_embeds_str(EnvState.state_proto_conf_file_data.name)
 
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_input_proto_conf_primer_file_abs_path_eval_finalized.__name__}._eval_state_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_input_proto_conf_primer_file_abs_path_eval_finalized.__name__}.eval_own_state"
     )
     def test_conf_file_exists(
         self,
@@ -57,7 +55,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.assertEqual(state_value, {"test": "data"})
 
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_input_proto_conf_primer_file_abs_path_eval_finalized.__name__}._eval_state_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_input_proto_conf_primer_file_abs_path_eval_finalized.__name__}.eval_own_state"
     )
     def test_conf_file_missing(
         self,

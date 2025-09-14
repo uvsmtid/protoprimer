@@ -7,8 +7,6 @@ from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     Bootstrapper_state_client_conf_env_file_abs_path_eval_finalized,
-    ConfConstEnv,
-    ConfField,
     EnvContext,
     EnvState,
 )
@@ -27,7 +25,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         assert_test_module_name_embeds_str(EnvState.state_env_conf_file_data.name)
 
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_env_file_abs_path_eval_finalized.__name__}._eval_state_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_env_file_abs_path_eval_finalized.__name__}.eval_own_state"
     )
     def test_state_env_conf_file_data_exists(
         self,
@@ -60,7 +58,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.assertEqual(state_value, mock_data)
 
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_env_file_abs_path_eval_finalized.__name__}._eval_state_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_env_file_abs_path_eval_finalized.__name__}.eval_own_state"
     )
     def test_state_env_conf_file_data_missing(
         self,

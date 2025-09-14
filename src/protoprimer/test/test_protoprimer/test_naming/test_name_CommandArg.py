@@ -51,6 +51,11 @@ class ArgName(enum.Enum):
         NameCategory.category_named_arg_value,
     )
 
+    name_start_id = ArgMeta(
+        CommandArg.name_start_id,
+        NameCategory.category_named_arg_value,
+    )
+
     name_run_mode = ArgMeta(
         CommandArg.name_run_mode,
         NameCategory.category_named_arg_value,
@@ -63,6 +68,11 @@ class ArgName(enum.Enum):
 
     name_target_state = ArgMeta(
         CommandArg.name_target_state,
+        NameCategory.category_named_arg_value,
+    )
+
+    name_reinstall = ArgMeta(
+        CommandArg.name_reinstall,
         NameCategory.category_named_arg_value,
     )
 

@@ -1,4 +1,3 @@
-import sys
 from unittest.mock import patch
 
 from local_test.base_test_class import BasePyfakefsTestClass
@@ -6,7 +5,6 @@ from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     Bootstrapper_state_args_parsed,
-    CommandArg,
     EnvContext,
     EnvState,
     WizardStage,
@@ -27,7 +25,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
 
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}._eval_state_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.eval_own_state"
     )
     def test_default_wizard_stage(
         self,
