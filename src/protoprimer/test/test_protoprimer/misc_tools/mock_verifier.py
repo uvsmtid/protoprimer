@@ -16,12 +16,12 @@ def assert_parent_states_mocked(
     expected_mocked_state_names = set(target_state_node.get_parent_states())
 
     # Add the target state itself to the set of expected mocked states if it's being mocked in the test
-    if isinstance(getattr(target_env_state.value, "_eval_state_once"), MagicMock):
+    if isinstance(getattr(target_env_state.value, "eval_own_state"), MagicMock):
         expected_mocked_state_names.add(target_env_state.name)
 
     for env_state_item in EnvState:
         bootstrapper_class = env_state_item.value
-        eval_method = getattr(bootstrapper_class, "_eval_state_once")
+        eval_method = getattr(bootstrapper_class, "eval_own_state")
 
         is_mocked = isinstance(eval_method, MagicMock)
 

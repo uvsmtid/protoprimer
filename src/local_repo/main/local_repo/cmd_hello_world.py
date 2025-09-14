@@ -40,12 +40,6 @@ class Bootstrapper_state_hello_world_printed(AbstractCachingStateNode[bool]):
         self,
     ) -> StateValueType:
 
-        # TODO: Make it simpler: it does not have to be explicit loop. It should probably be default behavior.
-
-        # Bootstrap all dependencies:
-        for state_name in self.parent_states:
-            self.eval_parent_state(state_name)
-
         print("Hello, world!")
 
         return True

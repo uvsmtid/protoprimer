@@ -29,14 +29,14 @@ class ThisTestClass(BasePyfakefsTestClass):
     # noinspection PyMethodMayBeStatic
     def test_relationship(self):
         assert_test_module_name_embeds_str(
-            EnvState.state_input_stderr_log_level_eval_finalized_gconf.name
+            EnvState.state_input_stderr_log_level_eval_finalized.name
         )
 
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_default_stderr_log_handler_configured.__name__}._eval_state_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_default_stderr_log_handler_configured.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}._eval_state_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.eval_own_state"
     )
     def test_not_yet_at_required_python(
         self,
@@ -46,7 +46,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         assert_parent_states_mocked(
             self.env_ctx,
-            EnvState.state_input_stderr_log_level_eval_finalized_gconf,
+            EnvState.state_input_stderr_log_level_eval_finalized,
         )
 
         default_log_level = logging.NOTSET
@@ -133,7 +133,7 @@ class ThisTestClass(BasePyfakefsTestClass):
                     stderr_log_level_silent,
                     stderr_log_level_quiet,
                     stderr_log_level_verbose,
-                    expected_state_input_stderr_log_level_eval_finalized_gconf,
+                    expected_state_input_stderr_log_level_eval_finalized,
                     case_comment,
                 ) = test_case
 
@@ -157,15 +157,15 @@ class ThisTestClass(BasePyfakefsTestClass):
 
                 # when:
 
-                actual_state_input_stderr_log_level_eval_finalized_gconf = (
+                actual_state_input_stderr_log_level_eval_finalized = (
                     self.env_ctx.state_graph.eval_state(
-                        EnvState.state_input_stderr_log_level_eval_finalized_gconf.name
+                        EnvState.state_input_stderr_log_level_eval_finalized.name
                     )
                 )
 
                 # then:
 
                 self.assertEqual(
-                    expected_state_input_stderr_log_level_eval_finalized_gconf,
-                    actual_state_input_stderr_log_level_eval_finalized_gconf,
+                    expected_state_input_stderr_log_level_eval_finalized,
+                    actual_state_input_stderr_log_level_eval_finalized,
                 )

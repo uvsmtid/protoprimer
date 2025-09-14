@@ -9,6 +9,10 @@
 # (no trailing slash `/` because it can be a symlink):
 /lconf
 
+# As configgured for `protoprimer`:
+/log/
+/tmp/
+
 # Python (recursively):
 __pycache__/
 

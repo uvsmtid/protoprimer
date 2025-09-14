@@ -7,12 +7,10 @@ from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     Bootstrapper_state_client_conf_env_file_abs_path_eval_finalized,
     Bootstrapper_state_env_conf_file_data,
-    Bootstrapper_state_input_py_exec_arg_loaded,
     Bootstrapper_state_input_wizard_stage_arg_loaded,
     ConfLeap,
     EnvContext,
     EnvState,
-    PythonExecutable,
     StateNode,
     wizard_conf_leap,
     Wizard_state_env_conf_file_data,
@@ -44,15 +42,15 @@ class ThisTestClass(BasePyfakefsTestClass):
 
     @patch(f"{primer_kernel.__name__}.{StateNode.__name__}")
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_input_wizard_stage_arg_loaded.__name__}._eval_state_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_input_wizard_stage_arg_loaded.__name__}.eval_own_state"
     )
     @patch(f"{primer_kernel.__name__}.{write_json_file.__name__}")
     @patch(f"{primer_kernel.__name__}.{wizard_conf_leap.__name__}")
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_env_file_abs_path_eval_finalized.__name__}._eval_state_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_env_file_abs_path_eval_finalized.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_env_conf_file_data.__name__}._eval_state_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_env_conf_file_data.__name__}.eval_own_state"
     )
     def test_wizard_triggered(
         self,
@@ -110,14 +108,14 @@ class ThisTestClass(BasePyfakefsTestClass):
 
     @patch(f"{primer_kernel.__name__}.{StateNode.__name__}")
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_input_wizard_stage_arg_loaded.__name__}._eval_state_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_input_wizard_stage_arg_loaded.__name__}.eval_own_state"
     )
     @patch(f"{primer_kernel.__name__}.{wizard_conf_leap.__name__}")
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_env_file_abs_path_eval_finalized.__name__}._eval_state_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_env_file_abs_path_eval_finalized.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_env_conf_file_data.__name__}._eval_state_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_env_conf_file_data.__name__}.eval_own_state"
     )
     def test_wizard_not_triggered(
         self,

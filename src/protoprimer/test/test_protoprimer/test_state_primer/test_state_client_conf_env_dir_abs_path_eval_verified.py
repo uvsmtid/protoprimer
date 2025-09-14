@@ -9,7 +9,6 @@ from protoprimer.primer_kernel import (
     Bootstrapper_state_client_conf_env_dir_abs_path_eval_finalized,
     Bootstrapper_state_client_local_env_dir_rel_path_eval_finalized,
     Bootstrapper_state_client_local_env_dir_rel_path_eval_verified,
-    Bootstrapper_state_primer_ref_root_dir_abs_path_eval_finalized,
     ConfConstClient,
     ConfConstInput,
     ConfConstPrimer,
@@ -35,13 +34,13 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
 
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_local_env_dir_rel_path_eval_verified.__name__}._eval_state_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_local_env_dir_rel_path_eval_verified.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_local_env_dir_rel_path_eval_finalized.__name__}._eval_state_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_local_env_dir_rel_path_eval_finalized.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_env_dir_abs_path_eval_finalized.__name__}._eval_state_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_env_dir_abs_path_eval_finalized.__name__}.eval_own_state"
     )
     def test_success_when_conf_symlink_exists_and_target_dst_dir_unspecified(
         self,
@@ -109,13 +108,13 @@ class ThisTestClass(BasePyfakefsTestClass):
         # no exception happens
 
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_local_env_dir_rel_path_eval_verified.__name__}._eval_state_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_local_env_dir_rel_path_eval_verified.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_local_env_dir_rel_path_eval_finalized.__name__}._eval_state_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_local_env_dir_rel_path_eval_finalized.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_env_dir_abs_path_eval_finalized.__name__}._eval_state_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_env_dir_abs_path_eval_finalized.__name__}.eval_own_state"
     )
     def test_success_when_conf_symlink_exists_and_target_dst_dir_matches(
         self,
@@ -176,13 +175,13 @@ class ThisTestClass(BasePyfakefsTestClass):
         # no exception happens
 
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_local_env_dir_rel_path_eval_verified.__name__}._eval_state_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_local_env_dir_rel_path_eval_verified.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_local_env_dir_rel_path_eval_finalized.__name__}._eval_state_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_local_env_dir_rel_path_eval_finalized.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_env_dir_abs_path_eval_finalized.__name__}._eval_state_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_env_dir_abs_path_eval_finalized.__name__}.eval_own_state"
     )
     def test_failure_when_conf_symlink_exists_but_target_dst_dir_mismatches(
         self,
@@ -248,13 +247,13 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.assertIn("not the same as the provided target", str(ctx.exception))
 
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_local_env_dir_rel_path_eval_verified.__name__}._eval_state_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_local_env_dir_rel_path_eval_verified.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_local_env_dir_rel_path_eval_finalized.__name__}._eval_state_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_local_env_dir_rel_path_eval_finalized.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_env_dir_abs_path_eval_finalized.__name__}._eval_state_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_env_dir_abs_path_eval_finalized.__name__}.eval_own_state"
     )
     def test_failure_when_conf_symlink_is_not_directory(
         self,
@@ -316,13 +315,13 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.assertIn("target is not a directory", str(ctx.exception))
 
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_local_env_dir_rel_path_eval_verified.__name__}._eval_state_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_local_env_dir_rel_path_eval_verified.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_local_env_dir_rel_path_eval_finalized.__name__}._eval_state_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_local_env_dir_rel_path_eval_finalized.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_env_dir_abs_path_eval_finalized.__name__}._eval_state_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_env_dir_abs_path_eval_finalized.__name__}.eval_own_state"
     )
     def test_failure_when_conf_is_not_symlink(
         self,
@@ -384,13 +383,13 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.assertIn("is not a symlink", str(ctx.exception))
 
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_local_env_dir_rel_path_eval_verified.__name__}._eval_state_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_local_env_dir_rel_path_eval_verified.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_local_env_dir_rel_path_eval_finalized.__name__}._eval_state_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_local_env_dir_rel_path_eval_finalized.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_env_dir_abs_path_eval_finalized.__name__}._eval_state_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_env_dir_abs_path_eval_finalized.__name__}.eval_own_state"
     )
     def test_success_when_conf_symlink_is_created_if_it_is_missing_and_target_dir_is_given(
         self,
@@ -454,13 +453,13 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
 
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_local_env_dir_rel_path_eval_verified.__name__}._eval_state_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_local_env_dir_rel_path_eval_verified.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_local_env_dir_rel_path_eval_finalized.__name__}._eval_state_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_local_env_dir_rel_path_eval_finalized.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_env_dir_abs_path_eval_finalized.__name__}._eval_state_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_env_dir_abs_path_eval_finalized.__name__}.eval_own_state"
     )
     def test_success_when_conf_symlink_is_created_with_normalized_target(
         self,

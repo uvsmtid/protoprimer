@@ -6,8 +6,8 @@ from test_protoprimer.test_naming.naming_metadata import verify_naming_conventio
 
 
 class NamingTestBase:
-    prod_enum: enum.EnumMeta = None
-    test_enum: enum.EnumMeta = None
+    prod_enum = None
+    test_enum = None
     enum_prefix: str = None
 
     def test_naming_convention(self):
@@ -37,8 +37,14 @@ class NamingTestBase:
 
         # prod_enum -> test_enum:
         for prod_enum_name in prod_enum_names:
-            assert prod_enum_name in test_enum_names
+            if prod_enum_name not in test_enum_names:
+                raise AssertionError(
+                    f"`{self.prod_enum.__name__}`: prod [{prod_enum_name}] not in test"
+                )
 
         # test_enum -> prod_enum:
         for test_enum_name in test_enum_names:
-            assert test_enum_name in prod_enum_names
+            if test_enum_name not in prod_enum_names:
+                raise AssertionError(
+                    f"`{self.prod_enum.__name__}`: test [{test_enum_name}] not in prod"
+                )

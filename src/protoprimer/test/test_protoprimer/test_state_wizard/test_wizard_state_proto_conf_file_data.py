@@ -5,20 +5,17 @@ from local_test.base_test_class import BasePyfakefsTestClass
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
-    Bootstrapper_state_input_proto_conf_primer_file_abs_path_eval_finalized,
     Bootstrapper_state_input_proto_code_dir_abs_path_eval_finalized,
+    Bootstrapper_state_input_proto_conf_primer_file_abs_path_eval_finalized,
     Bootstrapper_state_input_wizard_stage_arg_loaded,
     Bootstrapper_state_proto_conf_file_data,
     ConfLeap,
     EnvContext,
     EnvState,
-    PythonExecutable,
-    StateNode,
     wizard_conf_leap,
     Wizard_state_proto_conf_file_data,
     WizardStage,
     write_json_file,
-    rename_to_moved_state_name,
 )
 from test_protoprimer.misc_tools.mock_verifier import assert_parent_states_mocked
 
@@ -46,16 +43,16 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(f"{primer_kernel.__name__}.{wizard_conf_leap.__name__}")
     @patch(f"{primer_kernel.__name__}.{write_json_file.__name__}")
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_input_wizard_stage_arg_loaded.__name__}._eval_state_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_input_wizard_stage_arg_loaded.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_input_proto_code_dir_abs_path_eval_finalized.__name__}._eval_state_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_input_proto_code_dir_abs_path_eval_finalized.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_input_proto_conf_primer_file_abs_path_eval_finalized.__name__}._eval_state_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_input_proto_conf_primer_file_abs_path_eval_finalized.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_proto_conf_file_data.__name__}._eval_state_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_proto_conf_file_data.__name__}.eval_own_state"
     )
     def test_wizard_triggered(
         self,
@@ -113,16 +110,16 @@ class ThisTestClass(BasePyfakefsTestClass):
 
     @patch(f"{primer_kernel.__name__}.{wizard_conf_leap.__name__}")
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_input_wizard_stage_arg_loaded.__name__}._eval_state_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_input_wizard_stage_arg_loaded.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_input_proto_code_dir_abs_path_eval_finalized.__name__}._eval_state_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_input_proto_code_dir_abs_path_eval_finalized.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_input_proto_conf_primer_file_abs_path_eval_finalized.__name__}._eval_state_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_input_proto_conf_primer_file_abs_path_eval_finalized.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_proto_conf_file_data.__name__}._eval_state_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_proto_conf_file_data.__name__}.eval_own_state"
     )
     def test_wizard_not_triggered(
         self,

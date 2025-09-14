@@ -1,5 +1,4 @@
 import os
-import sys
 from unittest.mock import patch
 
 from local_test.base_test_class import BasePyfakefsTestClass
@@ -7,8 +6,6 @@ from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     Bootstrapper_state_client_conf_file_data,
-    Bootstrapper_state_client_local_env_dir_rel_path_eval_finalized,
-    ConfConstClient,
     ConfConstInput,
     ConfConstPrimer,
     ConfField,
@@ -33,7 +30,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
 
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data.__name__}._eval_state_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data.__name__}.eval_own_state"
     )
     def test_success_when_field_is_present(
         self,
@@ -82,7 +79,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
 
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data.__name__}._eval_state_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data.__name__}.eval_own_state"
     )
     def test_failure_when_field_is_missing(
         self,
@@ -129,7 +126,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
 
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data.__name__}._eval_state_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data.__name__}.eval_own_state"
     )
     def test_success_when_field_is_empty_string(
         self,

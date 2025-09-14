@@ -80,6 +80,10 @@ def test_wizard_mode_interaction(tmp_path: pathlib.Path):
         ("", WizardField.field_env_local_python_file_abs_path),
         ("", WizardField.field_env_local_venv_dir_rel_path),
         ("", WizardField.field_env_local_venv_dir_rel_path),
+        ("", WizardField.field_env_local_log_dir_rel_path),
+        ("", WizardField.field_env_local_log_dir_rel_path),
+        ("", WizardField.field_env_local_tmp_dir_rel_path),
+        ("", WizardField.field_env_local_tmp_dir_rel_path),
         ("pyproject", WizardField.field_env_build_root_dir_rel_path),
         ("y", WizardField.field_env_build_root_dir_rel_path),
         # ---

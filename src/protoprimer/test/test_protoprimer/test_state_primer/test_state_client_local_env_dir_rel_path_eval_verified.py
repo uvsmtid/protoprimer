@@ -1,11 +1,9 @@
-import argparse
 from unittest.mock import patch
 
 from local_test.base_test_class import BasePyfakefsTestClass
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
-    Bootstrapper_state_args_parsed,
     Bootstrapper_state_client_local_env_dir_rel_path_eval_finalized,
     EnvContext,
     EnvState,
@@ -27,7 +25,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
 
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_local_env_dir_rel_path_eval_finalized.__name__}._eval_state_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_local_env_dir_rel_path_eval_finalized.__name__}.eval_own_state"
     )
     def test_success_on_valid_relative_dir(
         self,
@@ -57,7 +55,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         # no exception happens
 
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_local_env_dir_rel_path_eval_finalized.__name__}._eval_state_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_local_env_dir_rel_path_eval_finalized.__name__}.eval_own_state"
     )
     def test_failure_on_absolute_path(
         self,
@@ -87,7 +85,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.assertIn("must not be absolute", str(ctx.exception))
 
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_local_env_dir_rel_path_eval_finalized.__name__}._eval_state_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_local_env_dir_rel_path_eval_finalized.__name__}.eval_own_state"
     )
     def test_failure_on_path_with_dot_dot(
         self,
@@ -117,7 +115,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.assertIn("must not contain `..`", str(ctx.exception))
 
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_local_env_dir_rel_path_eval_finalized.__name__}._eval_state_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_local_env_dir_rel_path_eval_finalized.__name__}.eval_own_state"
     )
     def test_failure_on_non_directory_path(
         self,
@@ -148,7 +146,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.assertIn("must lead to a directory", str(ctx.exception))
 
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_local_env_dir_rel_path_eval_finalized.__name__}._eval_state_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_local_env_dir_rel_path_eval_finalized.__name__}.eval_own_state"
     )
     def test_failure_on_non_existent_path(
         self,
@@ -178,7 +176,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.assertIn("must lead to a directory", str(ctx.exception))
 
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_local_env_dir_rel_path_eval_finalized.__name__}._eval_state_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_local_env_dir_rel_path_eval_finalized.__name__}.eval_own_state"
     )
     def test_success_on_symlink_leading_to_a_dir(
         self,

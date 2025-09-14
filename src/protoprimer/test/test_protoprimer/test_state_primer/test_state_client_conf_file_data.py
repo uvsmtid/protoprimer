@@ -7,10 +7,7 @@ from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     Bootstrapper_state_primer_conf_client_file_abs_path_eval_finalized,
-    Bootstrapper_state_primer_ref_root_dir_abs_path_eval_finalized,
-    ConfConstClient,
     ConfConstPrimer,
-    ConfField,
     EnvContext,
     EnvState,
 )
@@ -29,7 +26,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         assert_test_module_name_embeds_str(EnvState.state_client_conf_file_data.name)
 
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_primer_conf_client_file_abs_path_eval_finalized.__name__}._eval_state_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_primer_conf_client_file_abs_path_eval_finalized.__name__}.eval_own_state"
     )
     def test_state_primer_conf_client_file_abs_path_eval_finalized_exists(
         self,
@@ -70,7 +67,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         # no exception happens
 
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_primer_conf_client_file_abs_path_eval_finalized.__name__}._eval_state_once"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_primer_conf_client_file_abs_path_eval_finalized.__name__}.eval_own_state"
     )
     def test_state_primer_conf_client_file_abs_path_eval_finalized_missing(
         self,
