@@ -15,18 +15,18 @@ TODO: not accessible anymore:
 
 ## TL;DR
 
-*   Let's say you have a `repo.git`.
+Every time people clone some `repo.git`,\
+they may have to prepare/bootstrap/prime the repo,\
+ideally, using one-step no-arg command:
 
-*   Every time people clone it, before they can do anything,\
-    they have to prepare/bootstrap/prime the repo.
+```sh
+./prime
+```
 
-    You want a one-step no-arg command to prime the repo clone:
+The `protoprimer` solves non-trivial "chicken & egg" problems in `python` to make `venv` ready before `venv` is ready.
 
-    ```sh
-    ./prime
-    ```
-
-As a byproduct, it facilitates pure `python` automation irradicating (non-test-able & unreadable) shell scripts.
+As a byproduct, it enables pure `python` automation by\
+avoiding (non-test-able, less readable, error-prone) shell scripts.
 
 ## Why `proto*`?
 
@@ -43,13 +43,13 @@ The `protoprimer` design aims to survive with **minimal pre-conditions**:
 
 ## How does it know what to do?
 
-It is configurable (once):
+It is configurable (one-time):
 
 ```sh
 ./prime --wizard
 ```
 
-The generated configuration is versioned and reused on all the subsequent repo clones.
+The generated configuration is reused on all the subsequent repo clones.
 
 Early steps run in **very inconvenient conditions**, but they are also **very common and very boring**:
 
@@ -102,7 +102,26 @@ What makes `protoprimer` different:
 *   limited scope: early initialization in less predictable (dev) environments
 *   pure `python`: all state dependencies, trigger conditions, build instructions, custom extensions, ...
 
+## Directory structure
+
+Each subdirectory of [src][src] directory contains related subprojects (with corresponding `pyproject.toml`):
+*   [protoprimer][protoprimer] is the main project that addresses running Python code before `venv` is fully configured
+*   [neoprimer][neoprimer] contains extensions with code useful run after `venv` is fully configured
+*   [local_repo][local_repo] hosts various non-release-able support scripts for this repo
+*   [local_test][local_test] provides non-release-able test help code
+
 ---
+
+[primer_kernel.py]: src/protoprimer/main/protoprimer/primer_kernel.py
+[proto_kernel.py]: cmd/proto_code/proto_kernel.py
+
+[local_repo]: src/local_repo
+[local_test]: src/local_test
+[protoprimer]: src/protoprimer
+[neoprimer]: src/neoprimer
+
+[src]: src
+[cmd]: cmd
 
 [readme.md]: readme.md
 [local_proto_kernel.py]: src/protoprimer/main/protoprimer/primer_kernel.py
