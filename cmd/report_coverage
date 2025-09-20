@@ -1,11 +1,27 @@
 #!/usr/bin/env python3
-import os
-
-from proto_kernel import delegate_to_venv
 
 if __name__ == "__main__":
 
-    if not delegate_to_venv(
+    proto_kernel_rel_path = "./proto_code/proto_kernel.py"
+
+    # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+    # Boilerplate to import `proto_kernel` from `protoprimer`
+    import os
+    import sys
+
+    # Import `proto_kernel` from `./proto_code` dir relative to curr file:
+    sys.path.append(
+        os.path.join(
+            os.path.dirname(__file__),
+            os.path.dirname(proto_kernel_rel_path),
+        ),
+    )
+    import proto_kernel
+
+    sys.path.pop()
+    # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+    if not proto_kernel.delegate_to_venv(
         # ./cmd/file -> ./
         ref_root_abs_path=os.path.dirname(os.path.dirname(__file__)),
     ):
