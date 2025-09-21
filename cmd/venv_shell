@@ -1,11 +1,31 @@
 #!/usr/bin/env python3
 
+import os
+
 if __name__ == "__main__":
 
-    try:
-        from local_repo.cmd_venv_shell import custom_main as selected_main
+    proto_kernel_rel_path = "./proto_code/proto_kernel.py"
 
-    except ImportError:
-        from proto_kernel import main as selected_main
+    # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+    # Boilerplate to import `proto_kernel` from `protoprimer`
+    import os
+    import sys
 
-    selected_main()
+    # Import `proto_kernel` from `./proto_code` dir relative to curr file:
+    sys.path.append(
+        os.path.join(
+            os.path.dirname(__file__),
+            os.path.dirname(proto_kernel_rel_path),
+        ),
+    )
+    import proto_kernel
+
+    sys.path.pop()
+    # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+    os.environ["PROTOPRIMER_DO_INSTALL"] = str(False)
+
+    proto_kernel.run_main(
+        "neoprimer.cmd_venv_shell",
+        "custom_main",
+    )

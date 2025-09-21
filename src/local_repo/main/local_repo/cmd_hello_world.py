@@ -52,7 +52,7 @@ class CustomEnvState(enum.Enum):
 
 def customize_env_context():
     """
-    See UC_10_80_27_57.extend_dag.md
+    See UC_10_80_27_57.extend_DAG.md
     """
 
     # TODO: Make it simpler: have a builder? At least env_ctx.populate_dependencies() does not have to be explicit.
@@ -61,7 +61,7 @@ def customize_env_context():
 
     env_ctx.state_graph.register_node(Bootstrapper_state_hello_world_printed(env_ctx))
 
-    env_ctx.default_target = CustomEnvState.state_hello_world_printed.name
+    env_ctx.final_state = CustomEnvState.state_hello_world_printed.name
 
     return env_ctx
 
