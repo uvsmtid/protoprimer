@@ -3,6 +3,7 @@ import os.path
 from packaging.version import Version
 
 from local_test.toml_handler import load_toml_data
+from protoprimer.primer_kernel import ConfConstClient
 
 
 def verify_package_version(
@@ -30,7 +31,7 @@ def verify_package_version(
                 ),
             ),
             module_obj.__name__,
-            "pyproject.toml",
+            ConfConstClient.default_pyproject_toml_basename,
         )
     )
 

@@ -36,7 +36,7 @@ repos:
         -   id: black
             args: [
                 "--force-exclude",
-                "cmd/proto_kernel.py",
+                "cmd/proto_code/proto_kernel.py",
             ]
             stages: [
                 "pre-commit",

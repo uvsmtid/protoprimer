@@ -12,7 +12,7 @@ pre_commit==4.3.0
 pyfakefs==5.9.3
 Pygments==2.19.2
 pytest==8.4.2
-pytest-mock==3.15.0
+pytest-mock==3.15.1
 PyYAML==6.0.2
 setuptools==80.9.0
 tomli==2.2.1

@@ -15,18 +15,19 @@ TODO: not accessible anymore:
 
 ## TL;DR
 
-*   Let's say you have a `repo.git`.
+Every time people clone some `repo.git`,\
+they may have to prepare/bootstrap/prime the repo,\
+ideally, using one-step no-arg command:
 
-*   Every time people clone it, before they can do anything,\
-    they have to prepare/bootstrap/prime the repo.
+```sh
+./prime
+```
 
-    You want a one-step no-arg command to prime the repo clone:
+To use `python`, the `protoprimer` solves the "chicken & egg" problem\
+of running `venv`-dependent user code when `venv` is not ready.
 
-    ```sh
-    ./prime
-    ```
-
-As a byproduct, it facilitates pure `python` automation irradicating (non-test-able & unreadable) shell scripts.
+As a byproduct, it enables direct pure `python` execution by\
+avoiding intermediate (non-test-able, less readable, error-prone) shell scripts.
 
 ## Why `proto*`?
 
@@ -41,48 +42,43 @@ The `protoprimer` design aims to survive with **minimal pre-conditions**:
 *   ...
 *   just naked `python` (relatively omnipresent) + [a stand-alone copy][FT_90_65_67_62.proto_code.md] of the `protoprimer`.
 
-## How does it know what to do?
-
-It is configurable (once):
-
-```sh
-./prime --wizard
-```
-
-The generated configuration is versioned and reused on all the subsequent repo clones.
-
-Early steps run in **very inconvenient conditions**, but they are also **very common and very boring**:
-
-*   find all the target environment configurations in a flexible repo filesystem layout
-*   init `venv` and install the necessary dependency
-*   switch from initial `python` binary to the `venv` version required by configuration
-*   capture the env state to keep it reproducible
-*   delegate to client-specific modules to do the rest (**more interesting stuff**)
-
-That is the scope of the `protoprimer`.
-
 ## How to install it?
 
-Commit [`proto_kernel.py`][local_proto_kernel.py] into the target client repo\
+Commit the entire content of [`proto_kernel.py`][local_proto_kernel.py] into the target client repo\
 (to be immediately available on repo clone).
 
 Then, try:
 
-```
-python ./proto_kernel.py -h
+```sh
+./proto_kernel.py -h
 ```
 
-The script is stand-alone, but it auto-updates itself from `protoprimer` package when `venv` is ready.
+The script is stand-alone, but it auto-updates itself from the `protoprimer` package when `venv` is ready.
 
-This is what [`./prime`][local_prime] delegates execution to, for example.
+## How to tell it what to do?
+
+It is configurable (one-time):
+
+```sh
+./proto_kernel.py --wizard
+```
+
+The generated configuration is reused in all the subsequent repo clones.
 
 ## How does it work?
 
-For example, [`./prime`][local_prime] (a dummy proxy) relies on `./cmd/proto_kernel.py` (a copy) which, in turn:
-*   bootstraps the environment, first, via itself (standalone), then, via `protoprimer.primer_kernel` (in `venv`)
-*   auto-updates its copy within the client repo (to be available on repo clone)
-*   provides a [SOLID][SOLID_wiki]-extensible framework to pull a specific state with all its [DAG][DAG_wiki] of dependencies
-*   eventually passes control back to [`./prime`][local_prime] which may trigger additional client-specific steps
+The entire repo is centered around the single [primer_kernel.py][primer_kernel.py] file.
+
+It uses an extensible [DAG][DAG_wiki] to boostrap a specific state with all its dependencies.
+
+For example,\
+[`./prime`][local_prime] (a dummy proxy) relies on\
+[`proto_kernel.py`][local_proto_kernel.py] (a local stand-alone copy)\
+which:
+*   first, bootstraps the environment via itself (outside `venv`),
+*   then, continues to bootstrap it via `protoprimer.primer_kernel` (inside `venv`)
+*   auto-updates the copy within the client repo (to be available on repo clone)
+*   eventually passes control back to trigger additional client-specific steps
 
 See details on the [bootstrap process][FT_57_87_94_94.bootstrap_process.md].
 
@@ -93,16 +89,40 @@ TODO
 
 -->
 
-## Similarities & Differences
+## What are the primary features?
 
-Anyone who knows [`make`][make_wiki], or [`systemd`][systemd_wiki], ...
-(or other tools to bootstrap an environment to the target state) will find `protoprimer` similar.
+Early steps run in **very inconvenient conditions**, but they are also **very common and very boring**:
 
-What makes `protoprimer` different:
-*   limited scope: early initialization in less predictable (dev) environments
-*   pure `python`: all state dependencies, trigger conditions, build instructions, custom extensions, ...
+*   distinguish (A) global repo-wide and (B) local environment-specific configuration
+*   respect a flexible repo filesystem layout (choices made by the target client repo)
+*   init `venv`, install the necessary dependency, pin versions
+*   switch initial arbitrary OS-picked `python` binary to the required version
+*   delegate to client-specific modules to do the rest (**more interesting stuff**)
+
+Roughly:
+*   pre-`venv` runtime is the scope of `protoprimer`
+*   post-`venv` runtime is the scope of `neoprimer`
+
+## Directory structure
+
+Each subdirectory of [src][src] directory contains related subprojects (with corresponding `pyproject.toml`):
+*   [protoprimer][protoprimer] is the main project that addresses running Python code before `venv` is fully configured
+*   [neoprimer][neoprimer] contains extensions with code useful run after `venv` is fully configured
+*   [local_repo][local_repo] hosts various non-release-able support scripts for this repo
+*   [local_test][local_test] provides non-release-able test help code
 
 ---
+
+[primer_kernel.py]: src/protoprimer/main/protoprimer/primer_kernel.py
+[proto_kernel.py]: cmd/proto_code/proto_kernel.py
+
+[local_repo]: src/local_repo
+[local_test]: src/local_test
+[protoprimer]: src/protoprimer
+[neoprimer]: src/neoprimer
+
+[src]: src
+[cmd]: cmd
 
 [readme.md]: readme.md
 [local_proto_kernel.py]: src/protoprimer/main/protoprimer/primer_kernel.py

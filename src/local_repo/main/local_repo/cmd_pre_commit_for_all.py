@@ -24,6 +24,7 @@ def main():
             "run",
             "--all-files",
             "--config",
+            # TODO: Have a way to use config directory set for the protoprimer:
             "gconf/pre_commit.yaml",
         ],
     )
