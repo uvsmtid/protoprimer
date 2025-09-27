@@ -12,7 +12,7 @@ from protoprimer.primer_kernel import (
     EnvState,
     main,
     RunMode,
-    SinkPrinterVisitor,
+    GraphPrinter,
 )
 
 
@@ -52,7 +52,7 @@ class ThisTestClass(BaseTestClass):
         stdout_text = fake_stdout.getvalue()
         self.assertEqual(
             stdout_text,
-            f"{given_state_name}: {SinkPrinterVisitor.rendered_no_parents}" + "\n",
+            f"{given_state_name}: {GraphPrinter.rendered_no_parents}" + "\n",
         )
 
     def test_print_dag_default(self):

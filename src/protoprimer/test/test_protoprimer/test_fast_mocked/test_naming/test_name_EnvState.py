@@ -243,8 +243,8 @@ class StateName(enum.Enum):
         NameCategory.category_state_mutation,
     )
 
-    state_process_status_reported = StateMeta(
-        EnvState.state_process_status_reported,
+    state_status_line_printed = StateMeta(
+        EnvState.state_status_line_printed,
         NameCategory.category_state_mutation,
     )
 

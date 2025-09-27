@@ -49,7 +49,7 @@ class TestTargetDependencies:
             self.some_state_run_mode_executed_dependencies
         )
         allowed_missing_dependencies.add(EnvState.state_process_status_initialized.name)
-        allowed_missing_dependencies.add(EnvState.state_process_status_reported.name)
+        allowed_missing_dependencies.add(EnvState.state_status_line_printed.name)
 
         missing_dependencies -= allowed_missing_dependencies
 
