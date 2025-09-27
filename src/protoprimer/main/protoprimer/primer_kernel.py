@@ -59,15 +59,18 @@ def main(
             TargetState.target_run_mode_executed
         )
         assert state_run_mode_executed
-        atexit.register(lambda: env_ctx.report_success_status(0))
+        atexit.register(lambda: env_ctx.print_status_line(0))
     except SystemExit as sys_exit:
-        if sys_exit.code == 0:
-            atexit.register(lambda: env_ctx.report_success_status(0))
+        exit_code: int = sys_exit.code
+        if exit_code is None or exit_code == 0:
+            atexit.register(lambda: env_ctx.print_status_line(0))
         else:
-            atexit.register(lambda: env_ctx.report_success_status(1))
+            atexit.register(lambda: env_ctx.print_status_line(exit_code))
+        # We only catch `SystemExit` to print the status line.
+        # The actual exit code is already in-flight with `SystemExit`, propagate it:
         raise
     except:
-        atexit.register(lambda: env_ctx.report_success_status(1))
+        atexit.register(lambda: env_ctx.print_status_line(1))
         raise
 
 
@@ -442,7 +445,9 @@ class ConfConstInput:
     # Next FT_89_41_35_82.conf_leap.md: `ConfLeap.leap_primer`:
     default_file_basename_conf_primer = f"{ConfConstGeneral.default_proto_code_module}.{PathName.path_conf_primer.value}.json"
 
+    ext_env_var_VIRTUAL_ENV: str = "VIRTUAL_ENV"
     ext_env_var_PATH: str = "PATH"
+    ext_env_var_PYTHONPATH: str = "PYTHONPATH"
 
     default_PROTOPRIMER_DEFAULT_LOG_LEVEL: str = "INFO"
 
@@ -1024,6 +1029,7 @@ def init_arg_parser():
         ),
     )
     arg_parser.add_argument(
+        # TODO: Remove this arg - it does not support any strong use case:
         SyntaxArg.arg_final_state,
         type=str,
         # TODO: Decide to print choices or not (they look too excessive). Maybe print those in `TargetState` only?
@@ -1081,20 +1087,21 @@ def str2bool(v):
         raise argparse.ArgumentTypeError(f"[{bool.__name__}] value expected.")
 
 
-# TODO: This is not really a visitor anymore:
-class AbstractNodeVisitor:
+class RunStrategy:
     """
-    Visitor pattern to work with graph nodes.
+    See related:
+    *   `RunMode`
+    *   FT_11_27_29_83.run_mode.md
     """
 
-    def visit_node(
+    def execute_strategy(
         self,
         state_node: StateNode,
     ) -> None:
         raise NotImplementedError()
 
 
-class DefaultNodeVisitor(AbstractNodeVisitor):
+class ExitCodeReporter(RunStrategy):
 
     def __init__(
         self,
@@ -1103,7 +1110,7 @@ class DefaultNodeVisitor(AbstractNodeVisitor):
         super().__init__()
         self.env_ctx: EnvContext = env_ctx
 
-    def visit_node(
+    def execute_strategy(
         self,
         state_node: StateNode,
     ) -> None:
@@ -1114,10 +1121,13 @@ class DefaultNodeVisitor(AbstractNodeVisitor):
         But it may not reach all nodes because
         dependencies will be conditionally evaluated by the implementation of those nodes.
         """
-        state_node.eval_own_state()
+        # NOTE: The `EnvContext.final_state` must return `int` with this strategy:
+        exit_code: int = state_node.eval_own_state()
+        assert isinstance(exit_code, int), "`exit_code` must be an `int`"
+        sys.exit(exit_code)
 
 
-class SinkPrinterVisitor(AbstractNodeVisitor):
+class GraphPrinter(RunStrategy):
     """
     This class prints reduced DAG of `EnvState`-s.
 
@@ -1137,7 +1147,7 @@ class SinkPrinterVisitor(AbstractNodeVisitor):
         self.state_graph: StateGraph = state_graph
         self.already_printed: set[str] = set()
 
-    def visit_node(
+    def execute_strategy(
         self,
         state_node: StateNode,
     ) -> None:
@@ -1249,12 +1259,6 @@ class StateNode(Generic[StateValueType]):
 
         for state_parent in parent_states:
             assert type(state_parent) is str
-
-    def accept_visitor(
-        self,
-        node_visitor: AbstractNodeVisitor,
-    ) -> None:
-        node_visitor.visit_node(self)
 
     def get_state_name(
         self,
@@ -1651,7 +1655,7 @@ class Bootstrapper_state_run_mode_executed(AbstractCachingStateNode[bool]):
     """
     This is a special node - it traverses ALL nodes.
 
-    BUT: It does not depend on ALL nodes - instead, it uses a visitor as a run mode strategy implementation.
+    BUT: It does not depend on ALL nodes - instead, it uses a run mode strategy implementation.
     """
 
     def __init__(
@@ -1690,26 +1694,26 @@ class Bootstrapper_state_run_mode_executed(AbstractCachingStateNode[bool]):
             state_input_final_state_eval_finalized
         ]
 
-        selected_visitor: AbstractNodeVisitor
+        selected_strategy: RunStrategy
         if state_input_run_mode_arg_loaded is None:
             raise ValueError(f"run mode is not defined")
         elif state_input_run_mode_arg_loaded == RunMode.mode_graph:
-            selected_visitor = SinkPrinterVisitor(self.env_ctx.state_graph)
+            selected_strategy = GraphPrinter(self.env_ctx.state_graph)
         elif state_input_run_mode_arg_loaded == RunMode.mode_prime:
-            selected_visitor = DefaultNodeVisitor(self.env_ctx)
+            selected_strategy = ExitCodeReporter(self.env_ctx)
         elif state_input_run_mode_arg_loaded == RunMode.mode_wizard:
             for wizard_state in WizardState:
                 self.env_ctx.state_graph.register_node(
                     wizard_state.value(self.env_ctx),
                     replace_existing=True,
                 )
-            selected_visitor = DefaultNodeVisitor(self.env_ctx)
+            selected_strategy = ExitCodeReporter(self.env_ctx)
         else:
             raise ValueError(
                 f"cannot handle run mode [{state_input_run_mode_arg_loaded}]"
             )
 
-        selected_visitor.visit_node(state_node)
+        selected_strategy.execute_strategy(state_node)
 
         return True
 
@@ -1791,25 +1795,47 @@ class Bootstrapper_state_py_exec_arbitrary_reached(
             state_input_py_exec_arg_loaded.value
             == PythonExecutable.py_exec_unknown.value
         ):
-            if is_venv():
-                # UC_90_98_17_93.run_under_venv.md
-                # Switch out of the current `venv` -
-                # it might be a wrong one,
-                # and even if it is the right one,
-                # child states require out of `venv` execution:
-                path_to_curr_python = get_path_to_curr_python()
-                path_to_next_python = get_path_to_base_python()
-                switch_python(
-                    curr_py_exec=state_input_py_exec_arg_loaded,
-                    curr_python_path=path_to_curr_python,
-                    next_py_exec=PythonExecutable.py_exec_arbitrary,
-                    next_python_path=path_to_next_python,
-                    start_id=start_id,
-                    proto_code_abs_file_path=None,
-                    wizard_stage=self.env_ctx.mutable_state_input_wizard_stage_arg_loaded.get_curr_value(
-                        self,
-                    ),
+            log_python_context(logging.DEBUG)
+
+            # UC_90_98_17_93.run_under_venv.md
+            # Switch out of the current `venv` -
+            # it might be a wrong one,
+            # and even if it is the right one,
+            # child states require out of `venv` execution.
+
+            cleaned_env = os.environ.copy()
+
+            orig_venv_abs_path = cleaned_env.pop(
+                ConfConstInput.ext_env_var_VIRTUAL_ENV, None
+            )
+            orig_PYTHONPATH_value = cleaned_env.pop(
+                ConfConstInput.ext_env_var_PYTHONPATH, None
+            )
+            orig_PATH_value: str = cleaned_env.get(ConfConstInput.ext_env_var_PATH, "")
+
+            if orig_venv_abs_path is not None:
+                # Remove `venv/bin` dir from the `PATH` env var:
+                venv_bin_abs_path: str = os.path.join(orig_venv_abs_path, "bin")
+                PATH_parts: list[str] = orig_PATH_value.split(os.pathsep)
+                cleaned_path_parts = [p for p in PATH_parts if p != venv_bin_abs_path]
+                cleaned_env[ConfConstInput.ext_env_var_PATH] = os.pathsep.join(
+                    cleaned_path_parts
                 )
+
+            path_to_curr_python = get_path_to_curr_python()
+            path_to_next_python = get_path_to_base_python()
+            switch_python(
+                curr_py_exec=state_input_py_exec_arg_loaded,
+                curr_python_path=path_to_curr_python,
+                next_py_exec=PythonExecutable.py_exec_arbitrary,
+                next_python_path=path_to_next_python,
+                start_id=start_id,
+                proto_code_abs_file_path=None,
+                wizard_stage=self.env_ctx.mutable_state_input_wizard_stage_arg_loaded.get_curr_value(
+                    self,
+                ),
+                required_environ=cleaned_env,
+            )
 
         return state_input_py_exec_arg_loaded
 
@@ -3652,7 +3678,7 @@ class Bootstrapper_state_py_exec_updated_proto_code(
 
 
 # noinspection PyPep8Naming
-class Bootstrapper_state_command_executed(AbstractCachingStateNode[bool]):
+class Bootstrapper_state_command_executed(AbstractCachingStateNode[int]):
 
     def __init__(
         self,
@@ -3662,6 +3688,7 @@ class Bootstrapper_state_command_executed(AbstractCachingStateNode[bool]):
         super().__init__(
             env_ctx=env_ctx,
             parent_states=[
+                EnvState.state_process_status_initialized.name,
                 EnvState.state_py_exec_updated_proto_code.name,
                 EnvState.state_args_parsed.name,
             ],
@@ -3671,6 +3698,12 @@ class Bootstrapper_state_command_executed(AbstractCachingStateNode[bool]):
     def _eval_state_once(
         self,
     ) -> StateValueType:
+
+        mutable_state_process_status_initialized = (
+            self.env_ctx.mutable_state_process_status_initialized.get_curr_value(self)
+        )
+        assert mutable_state_process_status_initialized == 0
+
         state_py_exec_updated_proto_code: PythonExecutable = self.eval_parent_state(
             EnvState.state_py_exec_updated_proto_code.name
         )
@@ -3688,16 +3721,18 @@ class Bootstrapper_state_command_executed(AbstractCachingStateNode[bool]):
             ParsedArg.name_command.value,
         )
 
+        exit_code: int = 0
         if command_to_execute:
             logger.debug(f"executing command: {command_to_execute}")
-            subprocess.check_call(command_to_execute, shell=True)
-            return True
-        else:
-            return False
+            sub_proc = subprocess.run(command_to_execute, shell=True)
+            exit_code = sub_proc.returncode
+
+        self.env_ctx.mutable_state_process_status_initialized.set_curr_value(exit_code)
+        return exit_code
 
 
 # noinspection PyPep8Naming
-class Bootstrapper_process_status_reported(AbstractCachingStateNode[int]):
+class Bootstrapper_state_status_line_printed(AbstractCachingStateNode[int]):
 
     def __init__(
         self,
@@ -3712,7 +3747,7 @@ class Bootstrapper_process_status_reported(AbstractCachingStateNode[int]):
             ],
             state_name=if_none(
                 state_name,
-                EnvState.state_process_status_reported.name,
+                EnvState.state_status_line_printed.name,
             ),
         )
 
@@ -3727,7 +3762,7 @@ class Bootstrapper_process_status_reported(AbstractCachingStateNode[int]):
         color_failure = "\033[41m\033[97m"
         color_reset = "\033[0m"
 
-        state_process_status_initialized = (
+        state_process_status_initialized: int = (
             self.env_ctx.mutable_state_process_status_initialized.get_curr_value(self)
         )
 
@@ -3751,6 +3786,8 @@ class Bootstrapper_process_status_reported(AbstractCachingStateNode[int]):
                 file=sys.stderr,
                 flush=True,
             )
+
+        return state_process_status_initialized
 
 
 class WizardState(enum.Enum):
@@ -3915,7 +3952,7 @@ class EnvState(enum.Enum):
 
     state_command_executed = Bootstrapper_state_command_executed
 
-    state_process_status_reported = Bootstrapper_process_status_reported
+    state_status_line_printed = Bootstrapper_state_status_line_printed
 
 
 # TODO: Convert this to Enum?
@@ -3930,13 +3967,13 @@ class TargetState:
     # A special state which triggers execution in the specific `RunMode`:
     target_run_mode_executed: str = EnvState.state_run_mode_executed.name
 
-    # Used for `EnvState.state_process_status_reported` to report exit code.
+    # Used for `EnvState.state_status_line_printed` to report exit code.
     target_stderr_log_handler: str = (
         EnvState.state_default_stderr_log_handler_configured.name
     )
 
     # A special state which runs at the end of execution:
-    target_process_status_reported: str = EnvState.state_process_status_reported.name
+    target_process_status_reported: str = EnvState.state_status_line_printed.name
 
 
 class StateGraph:
@@ -4067,10 +4104,10 @@ class EnvContext:
         for env_state in EnvState:
             self.state_graph.register_node(env_state.value(self))
 
-    def report_success_status(
+    def print_status_line(
         self,
         new_status_code: int,
-    ):
+    ) -> None:
         """
         TODO: this looks awkward:
         """
@@ -4082,26 +4119,28 @@ class EnvContext:
 
         # Use `StateNode` to work around the `MutableValue` defence
         # (which only allows reading it if `StateNode` declares the necessary dependency):
-        node_state_process_status_reported = self.state_graph.get_state_node(
-            EnvState.state_process_status_reported.name
+        node_state_status_line_printed: StateNode[int] = (
+            self.state_graph.get_state_node(EnvState.state_status_line_printed.name)
         )
 
         # Avoid overriding non-zero `old_status_code`:
-        old_status_code = self.mutable_state_process_status_initialized.get_curr_value(
-            node_state_process_status_reported
+        old_status_code: int = (
+            self.mutable_state_process_status_initialized.get_curr_value(
+                node_state_status_line_printed
+            )
         )
         if old_status_code == 0:
             self.mutable_state_process_status_initialized.set_curr_value(
                 new_status_code
             )
 
-        # Finally, report the current status:
-        node_state_process_status_reported.eval_own_state()
+        # Finally, report the current status (normally, in `stderr`):
+        node_state_status_line_printed.eval_own_state()
 
 
 class RegularFormatter(logging.Formatter):
     """
-    Custom formatter with proper timestamp.
+    Custom formatter with the proper timestamp.
     """
 
     def __init__(
@@ -4452,6 +4491,7 @@ def switch_python(
     start_id: str,
     proto_code_abs_file_path: str | None,
     wizard_stage: WizardStage,
+    required_environ: dict | None = None,
 ):
     logger.info(
         f"switching from current `python` interpreter [{curr_python_path}][{curr_py_exec.name}] to [{next_python_path}][{next_py_exec.name}] with `{ParsedArg.name_proto_code.value}`[{proto_code_abs_file_path}]"
@@ -4498,10 +4538,17 @@ def switch_python(
         )
 
     logger.info(f"exec_argv: {exec_argv}")
-    os.execv(
-        next_python_path,
-        exec_argv,
-    )
+    if required_environ is None:
+        os.execv(
+            next_python_path,
+            exec_argv,
+        )
+    else:
+        os.execve(
+            path=next_python_path,
+            argv=exec_argv,
+            env=required_environ,
+        )
 
 
 def get_file_name_timestamp():
@@ -4700,7 +4747,32 @@ def if_none(
 
 
 def is_venv() -> bool:
-    return sys.prefix != sys.base_prefix
+    # TODO: assert VIRTUAL_ENV or not assert?
+    if sys.prefix != sys.base_prefix:
+        # assert os.environ["VIRTUAL_ENV"]
+        return True
+    else:
+        # assert not os.environ["VIRTUAL_ENV"]
+        return False
+
+
+def log_python_context(log_level: int = logging.INFO):
+    logger.log(
+        log_level,
+        f"`{ConfConstInput.ext_env_var_VIRTUAL_ENV}`: {os.environ.get(ConfConstInput.ext_env_var_VIRTUAL_ENV, None)}",
+    )
+    logger.log(
+        log_level,
+        f"orig `{ConfConstInput.ext_env_var_PATH}`: {os.environ.get(ConfConstInput.ext_env_var_PATH, None)}",
+    )
+    logger.log(
+        log_level,
+        f"orig `{ConfConstInput.ext_env_var_PYTHONPATH}`: {os.environ.get(ConfConstInput.ext_env_var_PYTHONPATH, None)}",
+    )
+    logger.log(
+        log_level,
+        f"orig `sys.path`: {sys.path}",
+    )
 
 
 def warn_if_non_venv_package_installed():
@@ -4730,9 +4802,10 @@ def warn_if_non_venv_package_installed():
                 break
 
         if package_location:
+            log_python_context()
             # TODO: Figure out why `test_plain_proto_code_in_wizard_mode.py` complains here:
             logger.warning(
-                f"The `{ConfConstGeneral.name_protoprimer_package}` package is installed outside of `venv` as seen by `python` executable [{sys.executable}]."
+                f"The `{ConfConstGeneral.name_protoprimer_package}` package is installed outside of `venv` as seen by `python` executable [{sys.executable}] using `sys.prefix` [{sys.prefix}]."
             )
 
     except subprocess.CalledProcessError:
@@ -4806,6 +4879,9 @@ def run_main(
     If `ImportError` occurs (when `venv` is not ready), it falls back to running `main` from `proto_kernel`.
     """
     try:
+        # TODO: Use env var instead of --py_exec arg.
+        #       If it still fails to import at specific py_exec level, also fail here.
+
         # `PrimerRuntime.runtime_neo`:
         custom_module = importlib.import_module(neo_main_module)
         selected_main = getattr(custom_module, neo_main_function)

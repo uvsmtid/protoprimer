@@ -24,7 +24,7 @@ ideally, using one-step no-arg command:
 ```
 
 To use `python`, the `protoprimer` solves the "chicken & egg" problem\
-of running `venv`-dependent user code when `venv` is not ready.
+of starting `venv`-dependent user code when `venv` is not ready.
 
 As a byproduct, it enables direct pure `python` execution by\
 avoiding intermediate (non-test-able, less readable, error-prone) shell scripts.
