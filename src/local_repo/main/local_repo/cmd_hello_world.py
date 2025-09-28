@@ -7,7 +7,7 @@ from protoprimer.primer_kernel import (
     AbstractCachingStateNode,
     EnvContext,
     main,
-    StateValueType,
+    ValueType,
     TargetState,
 )
 
@@ -38,7 +38,7 @@ class Bootstrapper_state_hello_world_printed(AbstractCachingStateNode[bool]):
 
     def _eval_state_once(
         self,
-    ) -> StateValueType:
+    ) -> ValueType:
 
         print("Hello, world!")
 

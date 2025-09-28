@@ -6,7 +6,6 @@ from local_test.base_test_class import BasePyfakefsTestClass
 from local_test.name_assertion import assert_test_func_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
-    SyntaxArg,
     Bootstrapper_state_input_proto_code_file_abs_path_eval_finalized,
     ConfConstClient,
     ConfConstEnv,
@@ -14,8 +13,10 @@ from protoprimer.primer_kernel import (
     ConfConstInput,
     ConfConstPrimer,
     ConfField,
+    EnvVar,
     main,
     PythonExecutable,
+    SyntaxArg,
     write_json_file,
 )
 
@@ -25,16 +26,17 @@ class ThisTestClass(BasePyfakefsTestClass):
     def setUp(self):
         self.setUpPyfakefs()
 
+    @patch.dict(f"{os.__name__}.environ", {}, clear=True)
     @patch(
         f"{primer_kernel.__name__}.get_default_start_id", return_value="mock_start_id"
     )
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_input_proto_code_file_abs_path_eval_finalized.__name__}.eval_own_state"
     )
-    @patch(f"{primer_kernel.__name__}.os.execv")
+    @patch(f"{primer_kernel.__name__}.os.execve")
     def test_prime_switches_from_py_exec_unknown(
         self,
-        mock_execv,
+        mock_execve,
         mock_state_input_proto_code_file_abs_path_eval_finalized,
         mock_get_default_start_id,
     ):
@@ -111,33 +113,36 @@ class ThisTestClass(BasePyfakefsTestClass):
         execv_args = [
             ConfConstEnv.default_file_abs_path_python,
             *test_args,
-            SyntaxArg.arg_py_exec,
-            PythonExecutable.py_exec_required.name,
             SyntaxArg.arg_start_id,
             "mock_start_id",
             SyntaxArg.arg_proto_code_abs_file_path,
             state_input_proto_code_file_abs_path_eval_finalized,
         ]
 
-        def execv_side_effect_with_exception(
-            exec_path,
+        def execve_side_effect_with_exception(
+            path,
             argv,
+            env,
         ):
             raise AssertionError(argv)
 
-        mock_execv.side_effect = execv_side_effect_with_exception
+        mock_execve.side_effect = execve_side_effect_with_exception
 
         # when:
 
         with patch.object(sys, "argv", test_args):
-            # this assertion comes from `mock_execv`:
+            # this assertion comes from `mock_execve`:
             with self.assertRaises(AssertionError) as cm:
                 main()
             self.assertEqual(execv_args, cm.exception.args[0])
 
         # then:
 
-        mock_execv.assert_called_once_with(
-            ConfConstEnv.default_file_abs_path_python,
-            execv_args,
+        mock_execve.assert_called_once_with(
+            path=ConfConstEnv.default_file_abs_path_python,
+            argv=execv_args,
+            env={
+                EnvVar.var_PROTOPRIMER_PY_EXEC.value: PythonExecutable.py_exec_required.name,
+                EnvVar.var_PROTOPRIMER_STDERR_LOG_LEVEL.value: "INFO",
+            },
         )

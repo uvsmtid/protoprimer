@@ -48,11 +48,6 @@ class StateName(enum.Enum):
     This enum re-lists all items from the `EnvState` enum with metadata to verify their naming.
     """
 
-    state_process_status_initialized = StateMeta(
-        EnvState.state_process_status_initialized,
-        NameCategory.category_state_mutation,
-    )
-
     state_input_stderr_log_level_var_loaded = StateMeta(
         EnvState.state_input_stderr_log_level_var_loaded,
         NameCategory.category_named_value,
@@ -103,8 +98,8 @@ class StateName(enum.Enum):
         NameCategory.category_state_mutation,
     )
 
-    state_input_py_exec_arg_loaded = StateMeta(
-        EnvState.state_input_py_exec_arg_loaded,
+    state_input_py_exec_var_loaded = StateMeta(
+        EnvState.state_input_py_exec_var_loaded,
         NameCategory.category_named_value,
     )
 
@@ -240,11 +235,6 @@ class StateName(enum.Enum):
 
     state_command_executed = StateMeta(
         EnvState.state_command_executed,
-        NameCategory.category_state_mutation,
-    )
-
-    state_process_status_reported = StateMeta(
-        EnvState.state_process_status_reported,
         NameCategory.category_state_mutation,
     )
 

@@ -5,6 +5,9 @@ from unittest.mock import (
 
 import pytest
 
+from local_test.mock_verifier import (
+    assert_parent_states_mocked,
+)
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
@@ -15,14 +18,11 @@ from protoprimer.primer_kernel import (
     Bootstrapper_state_input_proto_code_file_abs_path_eval_finalized,
     Bootstrapper_state_input_wizard_stage_arg_loaded,
     Bootstrapper_state_py_exec_required_reached,
-    ParsedArg,
     ConfConstEnv,
     EnvContext,
     EnvState,
+    ParsedArg,
     PythonExecutable,
-)
-from test_protoprimer.test_fast_mocked.misc_tools.mock_verifier import (
-    assert_parent_states_mocked,
 )
 
 
@@ -72,10 +72,12 @@ def test_reinstall_true(
     mock_os_path_exists,
     env_ctx,
 ):
+
     # given:
+
     assert_parent_states_mocked(
         env_ctx,
-        EnvState.state_reinstall_triggered,
+        EnvState.state_reinstall_triggered.name,
     )
     mock_state_args_parsed.return_value = argparse.Namespace(
         **{
@@ -92,10 +94,12 @@ def test_reinstall_true(
     mock_os_path_exists.return_value = True
 
     # when:
-    result = env_ctx.state_graph.eval_state(EnvState.state_reinstall_triggered.name)
+    state_value = env_ctx.state_graph.eval_state(
+        EnvState.state_reinstall_triggered.name
+    )
 
     # then:
-    assert result is True
+    assert state_value is True
     mock_shutil_move.assert_called_once_with(
         "/path/to/venv", "/path/to/tmp/venv.before.mock_start_id"
     )
@@ -144,7 +148,7 @@ def test_reinstall_false(
     # given:
     assert_parent_states_mocked(
         env_ctx,
-        EnvState.state_reinstall_triggered,
+        EnvState.state_reinstall_triggered.name,
     )
     mock_state_args_parsed.return_value = argparse.Namespace(
         **{
@@ -155,10 +159,12 @@ def test_reinstall_false(
     mock_state_py_exec_required_reached.return_value = PythonExecutable.py_exec_required
 
     # when:
-    result = env_ctx.state_graph.eval_state(EnvState.state_reinstall_triggered.name)
+    state_value = env_ctx.state_graph.eval_state(
+        EnvState.state_reinstall_triggered.name
+    )
 
     # then:
-    assert result is False
+    assert state_value is False
     mock_shutil_move.assert_not_called()
     mock_os_remove.assert_not_called()
 
@@ -203,7 +209,7 @@ def test_reinstall_true_but_py_exec_not_required(
     # given:
     assert_parent_states_mocked(
         env_ctx,
-        EnvState.state_reinstall_triggered,
+        EnvState.state_reinstall_triggered.name,
     )
     mock_state_args_parsed.return_value = argparse.Namespace(
         **{
@@ -214,9 +220,11 @@ def test_reinstall_true_but_py_exec_not_required(
     mock_state_py_exec_required_reached.return_value = PythonExecutable.py_exec_venv
 
     # when:
-    result = env_ctx.state_graph.eval_state(EnvState.state_reinstall_triggered.name)
+    state_value = env_ctx.state_graph.eval_state(
+        EnvState.state_reinstall_triggered.name
+    )
 
     # then:
-    assert result is False
+    assert state_value is False
     mock_shutil_move.assert_not_called()
     mock_os_remove.assert_not_called()

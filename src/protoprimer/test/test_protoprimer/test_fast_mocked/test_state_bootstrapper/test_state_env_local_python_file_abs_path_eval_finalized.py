@@ -3,6 +3,9 @@ from unittest.mock import patch
 
 import pytest
 
+from local_test.mock_verifier import (
+    assert_parent_states_mocked,
+)
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
@@ -11,9 +14,6 @@ from protoprimer.primer_kernel import (
     ConfField,
     EnvContext,
     EnvState,
-)
-from test_protoprimer.test_fast_mocked.misc_tools.mock_verifier import (
-    assert_parent_states_mocked,
 )
 
 
@@ -45,7 +45,7 @@ def test_allow_rel_file_abs_path_python(
 
     assert_parent_states_mocked(
         env_ctx,
-        EnvState.state_env_local_python_file_abs_path_eval_finalized,
+        EnvState.state_env_local_python_file_abs_path_eval_finalized.name,
     )
 
     mock_state_primer_ref_root_dir_abs_path_eval_finalized.return_value = (
@@ -60,13 +60,13 @@ def test_allow_rel_file_abs_path_python(
 
     # when:
 
-    ret_val: str = env_ctx.state_graph.eval_state(
+    state_value: str = env_ctx.state_graph.eval_state(
         EnvState.state_env_local_python_file_abs_path_eval_finalized.name
     )
 
     # then:
 
-    assert ret_val == os.path.join(
+    assert state_value == os.path.join(
         mock_state_primer_ref_root_dir_abs_path_eval_finalized.return_value,
         rel_path_to_python,
     )

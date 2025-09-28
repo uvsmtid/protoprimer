@@ -3,6 +3,9 @@ import os
 from unittest.mock import patch
 
 from local_test.base_test_class import BasePyfakefsTestClass
+from local_test.mock_verifier import (
+    assert_parent_states_mocked,
+)
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
@@ -13,18 +16,15 @@ from protoprimer.primer_kernel import (
     Bootstrapper_state_env_local_tmp_dir_abs_path_eval_finalized,
     Bootstrapper_state_env_local_venv_dir_abs_path_eval_finalized,
     Bootstrapper_state_input_proto_code_file_abs_path_eval_finalized,
-    Bootstrapper_state_input_py_exec_arg_loaded,
+    Bootstrapper_state_input_py_exec_var_loaded,
     Bootstrapper_state_input_wizard_stage_arg_loaded,
-    ParsedArg,
     ConfConstEnv,
     ConfConstGeneral,
     EnvContext,
     EnvState,
+    ParsedArg,
     PythonExecutable,
     WizardStage,
-)
-from test_protoprimer.test_fast_mocked.misc_tools.mock_verifier import (
-    assert_parent_states_mocked,
 )
 
 mock_client_dir = "/mock_client_dir"
@@ -79,7 +79,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{Bootstrapper_state_input_proto_code_file_abs_path_eval_finalized.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_input_py_exec_arg_loaded.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_input_py_exec_var_loaded.__name__}.eval_own_state"
     )
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_env_file_abs_path_eval_finalized.__name__}.eval_own_state"
@@ -94,17 +94,17 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.get_path_to_curr_python",
         return_value=ConfConstEnv.default_file_abs_path_python,
     )
-    @patch(f"{primer_kernel.__name__}.os.execv")
+    @patch(f"{primer_kernel.__name__}.os.execve")
     @patch(f"{primer_kernel.__name__}.venv.create")
     def test_success_on_arbitrary_py_exec_outside_venv(
         self,
         mock_venv_create,
-        mock_execv,
+        mock_execve,
         mock_get_path_to_curr_python,
         mock_state_env_local_python_file_abs_path_eval_finalized,
         mock_state_env_local_venv_dir_abs_path_eval_finalized,
         mock_state_client_conf_env_file_abs_path_eval_finalized,
-        mock_state_input_py_exec_arg_loaded,
+        mock_state_input_py_exec_var_loaded,
         mock_state_input_proto_code_file_abs_path_eval_finalized,
         mock_state_input_wizard_stage_arg_loaded,
         mock_state_args_parsed,
@@ -116,7 +116,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         assert_parent_states_mocked(
             self.env_ctx,
-            EnvState.state_py_exec_required_reached,
+            EnvState.state_py_exec_required_reached.name,
         )
 
         mock_state_args_parsed.return_value = argparse.Namespace(
@@ -133,7 +133,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
 
         # Important: it should be `py_exec_arbitrary` for this test case:
-        mock_state_input_py_exec_arg_loaded.return_value = (
+        mock_state_input_py_exec_var_loaded.return_value = (
             PythonExecutable.py_exec_arbitrary
         )
 
@@ -159,7 +159,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # then:
 
-        # With `py_exec_arbitrary`, we expect `execv` to be called to switch `python`.
-        mock_execv.assert_called_once()
+        # With `py_exec_arbitrary`, we expect `execve` to be called to switch `python`.
+        mock_execve.assert_called_once()
         mock_venv_create.assert_not_called()
         mock_get_path_to_curr_python.assert_called_once()

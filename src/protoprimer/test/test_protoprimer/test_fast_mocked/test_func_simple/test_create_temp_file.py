@@ -23,4 +23,5 @@ def test_create_temp_file(mock_named_temporary_file):
     mock_named_temporary_file.assert_called_once_with(
         mode="w+t",
         encoding="utf-8",
+        delete=False,
     )

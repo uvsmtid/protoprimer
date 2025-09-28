@@ -5,6 +5,7 @@ import sys
 
 from protoprimer.primer_kernel import (
     AbstractCachingStateNode,
+    Bootstrapper_state_command_executed,
     ConfConstGeneral,
     create_temp_file,
     EnvContext,
@@ -13,12 +14,14 @@ from protoprimer.primer_kernel import (
     logger,
     ParsedArg,
     PythonExecutable,
-    StateValueType,
+    ValueType,
 )
 
 
 # noinspection PyPep8Naming
-class Bootstrapper_state_activated_venv_shell_started(AbstractCachingStateNode[bool]):
+class Bootstrapper_state_activated_venv_shell_started(
+    Bootstrapper_state_command_executed
+):
 
     state_activated_venv_shell_started = "state_activated_venv_shell_started"
 
@@ -30,25 +33,16 @@ class Bootstrapper_state_activated_venv_shell_started(AbstractCachingStateNode[b
             env_ctx=env_ctx,
             parent_states=[
                 EnvState.state_args_parsed.name,
+                EnvState.state_default_stderr_log_handler_configured.name,
                 EnvState.state_py_exec_updated_proto_code.name,
                 EnvState.state_env_local_venv_dir_abs_path_eval_finalized.name,
             ],
             state_name=self.state_activated_venv_shell_started,
         )
 
-    def _eval_state_once(
+    def _prepare_shell_env(
         self,
-    ) -> StateValueType:
-
-        state_py_exec_updated_proto_code = self.eval_parent_state(
-            EnvState.state_py_exec_updated_proto_code.name
-        )
-
-        # TODO: this should be the last executable here:
-        assert (
-            state_py_exec_updated_proto_code
-            >= PythonExecutable.py_exec_updated_protoprimer_package
-        )
+    ) -> ValueType:
 
         state_env_local_venv_dir_abs_path_eval_finalized = self.eval_parent_state(
             EnvState.state_env_local_venv_dir_abs_path_eval_finalized.name
@@ -59,43 +53,26 @@ class Bootstrapper_state_activated_venv_shell_started(AbstractCachingStateNode[b
             ConfConstGeneral.file_rel_path_venv_activate,
         )
 
-        state_args_parsed: argparse.Namespace = self.eval_parent_state(
-            EnvState.state_args_parsed.name
-        )
+        # NOTE: Normally, FT_75_87_82_46.entry_script.md starting `venv_shell` sets this env var to
+        #       avoid time-consuming installation, so it is removed here before starting the command:
+        del os.environ[EnvVar.var_PROTOPRIMER_DO_INSTALL.value]
 
-        command_to_execute: str = getattr(
-            state_args_parsed,
-            ParsedArg.name_command.value,
-        )
-
-        # NOTE: Normally, FT_75_87_82_46.entry_script.md starting `venv_shell` set this env var to
-        #       avoid time-consuming installation, so it is removed here:
-        del os.environ[EnvVar.evn_var_PROTOPRIMER_DO_INSTALL.value]
-
+        # TODO: Move file under configured tmp dir:
         temp_file = create_temp_file()
         temp_file.write(f"source ~/.bashrc && source {venv_path_to_activate}")
         temp_file.flush()
         file_path = temp_file.name
-        logger.info(f"file_path: {file_path}")
-        shell_args: list[str] = [
-            "bash",
+        logger.debug(f"file_path: {file_path}")
+
+        shell_basename: str = os.path.basename(self.shell_abs_path)
+        # TODO: To support other shells, need to prepare their equivalents of `--init-file` arg:
+        assert shell_basename in ["bash"]
+
+        self.shell_args: list[str] = [
+            shell_basename,
             "--init-file",
             file_path,
         ]
 
-        if command_to_execute:
-            shell_args.extend(
-                [
-                    "-c",
-                    command_to_execute,
-                ]
-            )
-
-        os.execv(
-            # TODO: get path automatically:
-            "/usr/bin/bash",
-            shell_args,
-        )
-
-        # noinspection PyUnreachableCode
-        return True
+        # Start shell regardless of `ParsedArg.name_command`:
+        self.start_shell = True

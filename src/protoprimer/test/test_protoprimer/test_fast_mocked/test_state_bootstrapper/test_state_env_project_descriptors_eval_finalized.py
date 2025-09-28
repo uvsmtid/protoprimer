@@ -2,6 +2,9 @@ from unittest.mock import patch
 
 import pytest
 
+from local_test.mock_verifier import (
+    assert_parent_states_mocked,
+)
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
@@ -9,9 +12,6 @@ from protoprimer.primer_kernel import (
     ConfField,
     EnvContext,
     EnvState,
-)
-from test_protoprimer.test_fast_mocked.misc_tools.mock_verifier import (
-    assert_parent_states_mocked,
 )
 
 
@@ -37,7 +37,7 @@ def test_py_exec_venv(
 
     assert_parent_states_mocked(
         env_ctx,
-        EnvState.state_env_project_descriptors_eval_finalized,
+        EnvState.state_env_project_descriptors_eval_finalized.name,
     )
 
     project_descriptors: list[dict] = [
@@ -57,10 +57,10 @@ def test_py_exec_venv(
 
     # when:
 
-    ret_val: str = env_ctx.state_graph.eval_state(
+    state_value: str = env_ctx.state_graph.eval_state(
         EnvState.state_env_project_descriptors_eval_finalized.name
     )
 
     # then:
 
-    assert project_descriptors == ret_val
+    assert project_descriptors == state_value

@@ -1,8 +1,8 @@
 import enum
 import inspect
 from typing import (
-    Type,
     List,
+    Type,
     Union,
 )
 

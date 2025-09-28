@@ -1,7 +1,6 @@
 import pathlib
 import stat
 import subprocess
-import unittest
 
 from local_repo.sub_proc_util import (
     get_command_code,
@@ -26,8 +25,6 @@ from protoprimer.primer_kernel import (
 )
 
 
-# TODO: Fix it later (see assertions below)
-@unittest.skip
 def test_venv_shell_no_update(tmp_path: pathlib.Path):
 
     # given:
@@ -125,7 +122,7 @@ if __name__ == "__main__":
     # when:
     # Run the interactive shell and pipe "exit 42" to its stdin to make it terminate with a specific exit code.
     sub_proc = subprocess.run(
-        "./venv_shell",
+        "./venv_shell -v",
         shell=True,
         input="exit 42\n",
         text=True,
@@ -133,10 +130,7 @@ if __name__ == "__main__":
 
     # then:
 
-    # TODO: Fix this script (the command works from command line, not in the test).
-    #       See also this log line which is apparently involved:
-    #           package is installed outside of `venv`
-    # assert sub_proc.returncode == 42
+    assert sub_proc.returncode == 42
 
     pip_freeze_output_after_shell = get_command_output(f"{venv_pip} freeze")
     package_version_after_shell = extract_package_version(
@@ -145,8 +139,6 @@ if __name__ == "__main__":
     assert package_version_install == package_version_after_shell
 
 
-# TODO: Fix it:
-@unittest.skip
 def test_venv_shell_command_execution(tmp_path: pathlib.Path):
 
     # given:

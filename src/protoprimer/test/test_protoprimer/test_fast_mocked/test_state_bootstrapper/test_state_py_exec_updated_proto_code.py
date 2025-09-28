@@ -2,23 +2,23 @@ import argparse
 from unittest.mock import patch
 
 from local_test.base_test_class import BasePyfakefsTestClass
+from local_test.mock_verifier import (
+    assert_parent_states_mocked,
+)
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     Bootstrapper_state_args_parsed,
     Bootstrapper_state_input_proto_code_file_abs_path_eval_finalized,
-    Bootstrapper_state_input_py_exec_arg_loaded,
+    Bootstrapper_state_input_py_exec_var_loaded,
     Bootstrapper_state_input_wizard_stage_arg_loaded,
     Bootstrapper_state_proto_code_updated,
-    ParsedArg,
     EnvContext,
     EnvState,
     get_path_to_curr_python,
+    ParsedArg,
     PythonExecutable,
     WizardStage,
-)
-from test_protoprimer.test_fast_mocked.misc_tools.mock_verifier import (
-    assert_parent_states_mocked,
 )
 
 
@@ -42,7 +42,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{Bootstrapper_state_input_wizard_stage_arg_loaded.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_input_py_exec_arg_loaded.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_input_py_exec_var_loaded.__name__}.eval_own_state"
     )
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_proto_code_updated.__name__}.eval_own_state"
@@ -56,7 +56,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_switch_python,
         mock_state_input_proto_code_file_abs_path_eval_finalized,
         mock_state_proto_code_updated,
-        mock_state_input_py_exec_arg_loaded,
+        mock_state_input_py_exec_var_loaded,
         mock_state_input_wizard_stage_arg_loaded,
         mock_state_args_parsed,
     ):
@@ -65,7 +65,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         assert_parent_states_mocked(
             self.env_ctx,
-            EnvState.state_py_exec_updated_proto_code,
+            EnvState.state_py_exec_updated_proto_code.name,
         )
 
         mock_state_args_parsed.return_value = argparse.Namespace(
@@ -84,7 +84,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         mock_state_proto_code_updated.return_value = True
 
-        mock_state_input_py_exec_arg_loaded.return_value = (
+        mock_state_input_py_exec_var_loaded.return_value = (
             PythonExecutable.py_exec_unknown
         )
 
@@ -113,7 +113,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{Bootstrapper_state_input_wizard_stage_arg_loaded.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_input_py_exec_arg_loaded.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_input_py_exec_var_loaded.__name__}.eval_own_state"
     )
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_proto_code_updated.__name__}.eval_own_state"
@@ -127,7 +127,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_switch_python,
         mock_state_input_proto_code_file_abs_path_eval_finalized,
         mock_state_proto_code_updated,
-        mock_state_input_py_exec_arg_loaded,
+        mock_state_input_py_exec_var_loaded,
         mock_state_input_wizard_stage_arg_loaded,
         mock_state_args_parsed,
     ):
@@ -139,7 +139,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         assert_parent_states_mocked(
             self.env_ctx,
-            EnvState.state_py_exec_updated_proto_code,
+            EnvState.state_py_exec_updated_proto_code.name,
         )
 
         mock_state_args_parsed.return_value = argparse.Namespace(
@@ -158,7 +158,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         mock_state_proto_code_updated.return_value = True
 
-        mock_state_input_py_exec_arg_loaded.return_value = (
+        mock_state_input_py_exec_var_loaded.return_value = (
             PythonExecutable.py_exec_updated_proto_code
         )
 
