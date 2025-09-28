@@ -3,11 +3,11 @@ import enum
 
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer.primer_kernel import (
-    ParsedArg,
     ConfDst,
     ConfLeap,
     EnvVar,
     FilesystemObject,
+    ParsedArg,
     PathName,
     PathType,
     PrimerRuntime,

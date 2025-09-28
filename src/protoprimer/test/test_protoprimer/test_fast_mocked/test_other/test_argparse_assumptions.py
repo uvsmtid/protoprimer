@@ -8,10 +8,9 @@ from local_test.base_test_class import BaseTestClass
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
-    SyntaxArg,
-    ParsedArg,
     init_arg_parser,
-    PythonExecutable,
+    ParsedArg,
+    SyntaxArg,
 )
 
 
@@ -30,12 +29,12 @@ class ThisTestClass(BaseTestClass):
 
         test_args = [
             os.path.basename(primer_kernel.__file__),
-            SyntaxArg.arg_py_exec,
-            PythonExecutable.py_exec_arbitrary.name,
-            SyntaxArg.arg_py_exec,
-            PythonExecutable.py_exec_required.name,
-            SyntaxArg.arg_py_exec,
-            PythonExecutable.py_exec_venv.name,
+            SyntaxArg.arg_start_id,
+            "first",
+            SyntaxArg.arg_start_id,
+            "second",
+            SyntaxArg.arg_start_id,
+            "third",
         ]
 
         # when:
@@ -49,9 +48,9 @@ class ThisTestClass(BaseTestClass):
         assert (
             getattr(
                 parsed_args,
-                ParsedArg.name_py_exec.value,
+                ParsedArg.name_start_id.value,
             )
-            == PythonExecutable.py_exec_venv.name
+            == "third"
         )
 
     def test_multiple_mutually_exclusive_options(self):

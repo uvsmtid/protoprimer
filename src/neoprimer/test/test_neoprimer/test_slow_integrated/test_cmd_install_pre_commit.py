@@ -1,5 +1,6 @@
 import pathlib
 import stat
+import subprocess
 
 from local_repo.sub_proc_util import get_command_code
 from local_test.integrated_helper import (
@@ -117,6 +118,54 @@ if __name__ == "__main__":
         f.write(pre_commit_config_content)
 
     # ===
+
+    subprocess.run(
+        [
+            "git",
+            "init",
+        ],
+        check=True,
+        cwd=ref_root_abs_path,
+    )
+    subprocess.run(
+        [
+            "git",
+            "config",
+            "user.name",
+            f"{test_install_pre_commit.__name__}",
+        ],
+        check=True,
+        cwd=ref_root_abs_path,
+    )
+    subprocess.run(
+        [
+            "git",
+            "config",
+            "user.email",
+            f"{test_install_pre_commit.__name__}@example.com",
+        ],
+        check=True,
+        cwd=ref_root_abs_path,
+    )
+    subprocess.run(
+        [
+            "git",
+            "add",
+            ".",
+        ],
+        check=True,
+        cwd=ref_root_abs_path,
+    )
+    subprocess.run(
+        [
+            "git",
+            "commit",
+            "-m",
+            "initial commit",
+        ],
+        check=True,
+        cwd=ref_root_abs_path,
+    )
 
     # when:
     get_command_code("./install_pre_commit")

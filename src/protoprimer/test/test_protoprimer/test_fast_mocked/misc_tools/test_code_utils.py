@@ -1,6 +1,9 @@
 import enum
 
-from .code_utils import get_enum_item_line_number, get_class_line_number
+from test_protoprimer.test_fast_mocked.misc_tools.code_utils import (
+    get_class_line_number,
+    get_enum_item_line_number,
+)
 
 
 class DummyEnumForTest(enum.Enum):
@@ -18,10 +21,10 @@ class DerivedDummyClassForTest(BaseDummyClassForTest):
 
 
 def test_get_enum_item_line_number() -> None:
-    assert get_enum_item_line_number(DummyEnumForTest.SECOND_ITEM_FOR_TEST) == 8
+    assert get_enum_item_line_number(DummyEnumForTest.SECOND_ITEM_FOR_TEST) == 11
 
 
 def test_get_class_line_number() -> None:
-    assert get_class_line_number(DummyEnumForTest) == 6
-    assert get_class_line_number(BaseDummyClassForTest) == 12
-    assert get_class_line_number(DerivedDummyClassForTest) == 16
+    assert get_class_line_number(DummyEnumForTest) == 9
+    assert get_class_line_number(BaseDummyClassForTest) == 15
+    assert get_class_line_number(DerivedDummyClassForTest) == 19

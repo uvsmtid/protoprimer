@@ -48,8 +48,6 @@ class TestTargetDependencies:
         allowed_missing_dependencies = set(
             self.some_state_run_mode_executed_dependencies
         )
-        allowed_missing_dependencies.add(EnvState.state_process_status_initialized.name)
-        allowed_missing_dependencies.add(EnvState.state_process_status_reported.name)
 
         missing_dependencies -= allowed_missing_dependencies
 

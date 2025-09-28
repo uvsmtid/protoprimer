@@ -5,6 +5,7 @@ import pathlib
 import protoprimer
 from local_repo.sub_proc_util import get_command_code
 from local_test.toml_handler import save_toml_data
+from neoprimer import venv_shell
 from protoprimer.primer_kernel import (
     ConfConstClient,
     ConfConstEnv,
@@ -37,6 +38,7 @@ def create_plain_proto_code(
     """
 
     primer_kernel_abs_path = protoprimer.primer_kernel.__file__
+    logger.info(f"primer_kernel_abs_path: {primer_kernel_abs_path}")
 
     # Create a `proto_code` directory:
     proto_code_dir_abs_path = proto_code_dir_abs_path
@@ -64,6 +66,8 @@ def create_test_pyproject_toml(
 
     # From `primer_kernel.py` sources to `./src/protoprimer/` where `pyproject.toml` is:
     protoprimer_project_dir = pathlib.Path(protoprimer.__file__).parent.parent.parent
+    # From `venv_shell.py` sources to `./src/neoprimer/` where `pyproject.toml` is:
+    neoprimer_project_dir = pathlib.Path(venv_shell.__file__).parent.parent.parent
 
     pyproject_file_abs_path = (
         project_dir_abs_path / ConfConstClient.default_pyproject_toml_basename
@@ -75,6 +79,7 @@ def create_test_pyproject_toml(
             "version": "0.0.0.dev0",
             "dependencies": [
                 f"protoprimer @ file://{protoprimer_project_dir}",
+                f"neoprimer @ file://{neoprimer_project_dir}",
             ]
             + extra_dependencies,
         }

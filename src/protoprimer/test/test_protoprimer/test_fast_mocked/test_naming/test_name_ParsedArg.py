@@ -53,11 +53,6 @@ class ArgName(enum.Enum):
         NameCategory.category_named_arg_action,
     )
 
-    name_py_exec = ArgMeta(
-        ParsedArg.name_py_exec,
-        NameCategory.category_named_arg_value,
-    )
-
     name_primer_runtime = ArgMeta(
         ParsedArg.name_primer_runtime,
         NameCategory.category_named_arg_value,

@@ -3,18 +3,18 @@ from unittest.mock import patch
 
 import pytest
 
+from local_test.mock_verifier import (
+    assert_parent_states_mocked,
+)
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     Bootstrapper_state_args_parsed,
     Bootstrapper_state_py_exec_arbitrary_reached,
-    ParsedArg,
     EnvContext,
     EnvState,
+    ParsedArg,
     PythonExecutable,
-)
-from test_protoprimer.test_fast_mocked.misc_tools.mock_verifier import (
-    assert_parent_states_mocked,
 )
 
 
@@ -46,13 +46,11 @@ def test_py_exec_arbitrary_not_in_venv(
 
     assert_parent_states_mocked(
         env_ctx,
-        EnvState.state_input_proto_code_file_abs_path_eval_finalized,
+        EnvState.state_input_proto_code_file_abs_path_eval_finalized.name,
     )
 
     mock_state_args_parsed.return_value = argparse.Namespace(
-        **{
-            ParsedArg.name_py_exec.value: PythonExecutable.py_exec_arbitrary.name,
-        },
+        **{},
     )
     mock_state_py_exec_arbitrary_reached.return_value = (
         PythonExecutable.py_exec_arbitrary
@@ -62,13 +60,13 @@ def test_py_exec_arbitrary_not_in_venv(
 
     # when:
 
-    ret_val: str = env_ctx.state_graph.eval_state(
+    state_value: str = env_ctx.state_graph.eval_state(
         EnvState.state_input_proto_code_file_abs_path_eval_finalized.name
     )
 
     # then:
 
-    assert ret_val == primer_kernel.__file__
+    assert state_value == primer_kernel.__file__
 
 
 @patch(
@@ -86,14 +84,13 @@ def test_py_exec_venv(
 
     assert_parent_states_mocked(
         env_ctx,
-        EnvState.state_input_proto_code_file_abs_path_eval_finalized,
+        EnvState.state_input_proto_code_file_abs_path_eval_finalized.name,
     )
 
     proto_code_abs_file_path = "/path/to/proto_kernel.py"
 
     mock_state_args_parsed.return_value = argparse.Namespace(
         **{
-            ParsedArg.name_py_exec.value: PythonExecutable.py_exec_venv.name,
             ParsedArg.name_proto_code.value: proto_code_abs_file_path,
         },
     )
@@ -101,13 +98,13 @@ def test_py_exec_venv(
 
     # when:
 
-    ret_val: str = env_ctx.state_graph.eval_state(
+    state_value: str = env_ctx.state_graph.eval_state(
         EnvState.state_input_proto_code_file_abs_path_eval_finalized.name
     )
 
     # then:
 
-    assert ret_val == proto_code_abs_file_path
+    assert state_value == proto_code_abs_file_path
 
 
 @patch(
@@ -125,12 +122,11 @@ def test_py_exec_venv_no_arg(
 
     assert_parent_states_mocked(
         env_ctx,
-        EnvState.state_input_proto_code_file_abs_path_eval_finalized,
+        EnvState.state_input_proto_code_file_abs_path_eval_finalized.name,
     )
 
     mock_state_args_parsed.return_value = argparse.Namespace(
         **{
-            ParsedArg.name_py_exec.value: PythonExecutable.py_exec_venv.name,
             ParsedArg.name_proto_code.value: None,
         },
     )

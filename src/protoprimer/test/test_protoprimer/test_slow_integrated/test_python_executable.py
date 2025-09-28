@@ -17,6 +17,7 @@ from protoprimer.primer_kernel import (
     ConfConstGeneral,
     ConfConstInput,
     ConfConstPrimer,
+    EnvVar,
     PythonExecutable,
     SyntaxArg,
 )
@@ -176,8 +177,6 @@ def test_python_from_required_venv(
     command_args = [
         str(required_venv_python),
         str(proto_code_file),
-        SyntaxArg.arg_py_exec,
-        PythonExecutable.py_exec_venv.name,
         SyntaxArg.arg_proto_code_abs_file_path,
         str(proto_code_file),
     ]
@@ -189,4 +188,7 @@ def test_python_from_required_venv(
         capture_output=False,
         text=True,
         check=True,
+        env={
+            EnvVar.var_PROTOPRIMER_PY_EXEC.value: PythonExecutable.py_exec_venv.name,
+        },
     )

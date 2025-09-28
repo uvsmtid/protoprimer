@@ -3,7 +3,9 @@ import os
 from unittest.mock import patch
 
 from local_test.base_test_class import BasePyfakefsTestClass
-from local_test.line_number import line_no
+from local_test.mock_verifier import (
+    assert_parent_states_mocked,
+)
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
@@ -19,9 +21,6 @@ from protoprimer.primer_kernel import (
     EnvState,
     ParsedArg,
     PythonExecutable,
-)
-from test_protoprimer.test_fast_mocked.misc_tools.mock_verifier import (
-    assert_parent_states_mocked,
 )
 
 
@@ -72,7 +71,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         # given:
         assert_parent_states_mocked(
             self.env_ctx,
-            EnvState.state_protoprimer_package_installed,
+            EnvState.state_protoprimer_package_installed.name,
         )
         self.fs.reset()
         self.env_ctx = EnvContext()
@@ -173,7 +172,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         # given:
         assert_parent_states_mocked(
             self.env_ctx,
-            EnvState.state_protoprimer_package_installed,
+            EnvState.state_protoprimer_package_installed.name,
         )
         self.fs.reset()
         self.env_ctx = EnvContext()
@@ -274,7 +273,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         # given:
         assert_parent_states_mocked(
             self.env_ctx,
-            EnvState.state_protoprimer_package_installed,
+            EnvState.state_protoprimer_package_installed.name,
         )
         self.fs.reset()
         self.env_ctx = EnvContext()
@@ -370,7 +369,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         assert_parent_states_mocked(
             self.env_ctx,
-            EnvState.state_protoprimer_package_installed,
+            EnvState.state_protoprimer_package_installed.name,
         )
 
         mock_client_dir = "/mock_client_dir"

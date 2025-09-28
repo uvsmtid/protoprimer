@@ -1,25 +1,26 @@
 from __future__ import annotations
 
+import logging
 import os
 import subprocess
 import sys
 
-from local_repo.cmd_bootstrap_env import (
-    CustomEnvState,
-    logger,
-)
 from protoprimer.primer_kernel import (
     AbstractCachingStateNode,
     EnvContext,
     EnvState,
     install_package,
-    StateValueType,
+    ValueType,
     TargetState,
 )
+
+logger = logging.getLogger()
 
 
 # noinspection PyPep8Naming
 class Bootstrapper_state_pre_commit_installed(AbstractCachingStateNode[bool]):
+
+    state_pre_commit_installed = "state_pre_commit_installed"
 
     def __init__(
         self,
@@ -30,12 +31,12 @@ class Bootstrapper_state_pre_commit_installed(AbstractCachingStateNode[bool]):
             parent_states=[
                 TargetState.target_full_proto_bootstrap,
             ],
-            state_name=CustomEnvState.state_pre_commit_installed.name,
+            state_name=self.state_pre_commit_installed,
         )
 
     def _eval_state_once(
         self,
-    ) -> StateValueType:
+    ) -> ValueType:
         # Bootstrap all dependencies:
         for state_name in self.parent_states:
             self.eval_parent_state(state_name)
@@ -47,7 +48,9 @@ class Bootstrapper_state_pre_commit_installed(AbstractCachingStateNode[bool]):
 
 
 # noinspection PyPep8Naming
-class Bootstrapper_state_pre_commit_configured(AbstractCachingStateNode[bool]):
+class Bootstrapper_state_pre_commit_configured(AbstractCachingStateNode[int]):
+
+    state_pre_commit_configured = "state_pre_commit_configured"
 
     def __init__(
         self,
@@ -56,17 +59,17 @@ class Bootstrapper_state_pre_commit_configured(AbstractCachingStateNode[bool]):
         super().__init__(
             env_ctx=env_ctx,
             parent_states=[
-                CustomEnvState.state_pre_commit_installed.name,
+                Bootstrapper_state_pre_commit_installed.state_pre_commit_installed,
                 EnvState.state_primer_conf_client_file_abs_path_eval_finalized.name,
             ],
-            state_name=CustomEnvState.state_pre_commit_configured.name,
+            state_name=self.state_pre_commit_configured,
         )
 
     def _eval_state_once(
         self,
-    ) -> StateValueType:
+    ) -> ValueType:
         state_pre_commit_installed = self.eval_parent_state(
-            CustomEnvState.state_pre_commit_installed.name
+            Bootstrapper_state_pre_commit_installed.state_pre_commit_installed
         )
         assert state_pre_commit_installed
 
@@ -99,4 +102,4 @@ class Bootstrapper_state_pre_commit_configured(AbstractCachingStateNode[bool]):
                 pre_commit_conf_file_path,
             ]
         )
-        return True
+        return 0

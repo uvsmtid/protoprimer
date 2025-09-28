@@ -1,6 +1,9 @@
 from unittest.mock import patch
 
 from local_test.base_test_class import BasePyfakefsTestClass
+from local_test.mock_verifier import (
+    assert_parent_states_mocked,
+)
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
@@ -33,6 +36,11 @@ class ThisTestClass(BasePyfakefsTestClass):
     ):
 
         # given:
+
+        assert_parent_states_mocked(
+            self.env_ctx,
+            EnvState.state_input_wizard_stage_arg_loaded.name,
+        )
 
         mock_state_args_parsed.return_value = (
             primer_kernel.init_arg_parser().parse_args([])

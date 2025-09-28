@@ -23,8 +23,8 @@ ideally, using one-step no-arg command:
 ./prime
 ```
 
-To use `python`, the `protoprimer` solves the "chicken & egg" problem\
-of running `venv`-dependent user code when `venv` is not ready.
+The `protoprimer` solves the "chicken & egg" problem\
+of bootstrapping `venv`-dependent user code using `python` when `venv` is not ready.
 
 As a byproduct, it enables direct pure `python` execution by\
 avoiding intermediate (non-test-able, less readable, error-prone) shell scripts.
@@ -35,10 +35,11 @@ avoiding intermediate (non-test-able, less readable, error-prone) shell scripts.
 
 The `protoprimer` design aims to survive with **minimal pre-conditions**:
 
-*   no dependencies pre-installed on the system
-*   no `venv` pre-initialized with specific `python` version
-*   no args for the user to understand
+*   no pre-installed dependencies
+*   no pre-initialized `venv`
+*   no required `python` version in `PATH`
 *   no special shell config
+*   no user CLI args to guess (by default)
 *   ...
 *   just naked `python` (relatively omnipresent) + [a stand-alone copy][FT_90_65_67_62.proto_code.md] of the `protoprimer`.
 
@@ -72,7 +73,7 @@ The entire repo is centered around the single [primer_kernel.py][primer_kernel.p
 It uses an extensible [DAG][DAG_wiki] to boostrap a specific state with all its dependencies.
 
 For example,\
-[`./prime`][local_prime] (a dummy proxy) relies on\
+[`./prime`][local_prime] (a trivial proxy) relies on\
 [`proto_kernel.py`][local_proto_kernel.py] (a local stand-alone copy)\
 which:
 *   first, bootstraps the environment via itself (outside `venv`),

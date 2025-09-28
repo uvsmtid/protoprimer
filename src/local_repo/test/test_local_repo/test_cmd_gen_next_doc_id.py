@@ -1,10 +1,10 @@
-import pytest
-from unittest.mock import MagicMock, patch
-from local_repo import cmd_gen_next_doc_id
-import os
-import argparse
-import logging
 import random
+from unittest.mock import (
+    MagicMock,
+    patch,
+)
+
+from local_repo import cmd_gen_next_doc_id
 
 
 def test_get_prefix_and_ids_happy_path() -> None:

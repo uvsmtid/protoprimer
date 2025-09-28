@@ -3,22 +3,22 @@ from unittest.mock import patch
 
 import pytest
 
+from local_test.mock_verifier import (
+    assert_parent_states_mocked,
+)
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     Bootstrapper_state_args_parsed,
     Bootstrapper_state_input_proto_code_file_abs_path_eval_finalized,
-    Bootstrapper_state_input_py_exec_arg_loaded,
+    Bootstrapper_state_input_py_exec_var_loaded,
     Bootstrapper_state_input_wizard_stage_arg_loaded,
     Bootstrapper_state_version_constraints_generated,
-    ParsedArg,
     EnvContext,
     EnvState,
+    ParsedArg,
     PythonExecutable,
     WizardStage,
-)
-from test_protoprimer.test_fast_mocked.misc_tools.mock_verifier import (
-    assert_parent_states_mocked,
 )
 
 
@@ -45,14 +45,14 @@ def test_relationship():
     f"{primer_kernel.__name__}.{Bootstrapper_state_input_proto_code_file_abs_path_eval_finalized.__name__}.eval_own_state"
 )
 @patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_input_py_exec_arg_loaded.__name__}.eval_own_state"
+    f"{primer_kernel.__name__}.{Bootstrapper_state_input_py_exec_var_loaded.__name__}.eval_own_state"
 )
 @patch(
     f"{primer_kernel.__name__}.{Bootstrapper_state_version_constraints_generated.__name__}.eval_own_state"
 )
 def test_py_exec_required(
     mock_state_version_constraints_generated,
-    mock_state_input_py_exec_arg_loaded,
+    mock_state_input_py_exec_var_loaded,
     mock_state_input_proto_code_file_abs_path_eval_finalized,
     mock_switch_python,
     mock_get_path_to_curr_python,
@@ -65,7 +65,7 @@ def test_py_exec_required(
 
     assert_parent_states_mocked(
         env_ctx,
-        EnvState.state_py_exec_updated_protoprimer_package_reached,
+        EnvState.state_py_exec_updated_protoprimer_package_reached.name,
     )
 
     mock_state_args_parsed.return_value = argparse.Namespace(
@@ -78,7 +78,7 @@ def test_py_exec_required(
 
     mock_state_version_constraints_generated.return_value = True
 
-    mock_state_input_py_exec_arg_loaded.return_value = PythonExecutable.py_exec_required
+    mock_state_input_py_exec_var_loaded.return_value = PythonExecutable.py_exec_required
 
     mock_state_input_proto_code_file_abs_path_eval_finalized.return_value = (
         "path/to/whatever"
@@ -88,7 +88,7 @@ def test_py_exec_required(
 
     # when:
 
-    ret_val = env_ctx.state_graph.eval_state(
+    state_value = env_ctx.state_graph.eval_state(
         EnvState.state_py_exec_updated_protoprimer_package_reached.name
     )
 
@@ -104,7 +104,7 @@ def test_py_exec_required(
         wizard_stage=WizardStage.wizard_started,
     )
 
-    assert ret_val == PythonExecutable.py_exec_updated_protoprimer_package
+    assert state_value == PythonExecutable.py_exec_updated_protoprimer_package
 
 
 @patch(
@@ -117,14 +117,14 @@ def test_py_exec_required(
     f"{primer_kernel.__name__}.{Bootstrapper_state_input_proto_code_file_abs_path_eval_finalized.__name__}.eval_own_state"
 )
 @patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_input_py_exec_arg_loaded.__name__}.eval_own_state"
+    f"{primer_kernel.__name__}.{Bootstrapper_state_input_py_exec_var_loaded.__name__}.eval_own_state"
 )
 @patch(
     f"{primer_kernel.__name__}.{Bootstrapper_state_version_constraints_generated.__name__}.eval_own_state"
 )
 def test_py_exec_updated_protoprimer_package(
     mock_state_version_constraints_generated,
-    mock_state_input_py_exec_arg_loaded,
+    mock_state_input_py_exec_var_loaded,
     mock_state_input_proto_code_file_abs_path_eval_finalized,
     mock_state_input_wizard_stage_arg_loaded,
     mock_state_args_parsed,
@@ -135,7 +135,7 @@ def test_py_exec_updated_protoprimer_package(
 
     assert_parent_states_mocked(
         env_ctx,
-        EnvState.state_py_exec_updated_protoprimer_package_reached,
+        EnvState.state_py_exec_updated_protoprimer_package_reached.name,
     )
 
     mock_state_args_parsed.return_value = argparse.Namespace(
@@ -146,7 +146,7 @@ def test_py_exec_updated_protoprimer_package(
     )
     mock_state_version_constraints_generated.return_value = True
 
-    mock_state_input_py_exec_arg_loaded.return_value = (
+    mock_state_input_py_exec_var_loaded.return_value = (
         PythonExecutable.py_exec_updated_protoprimer_package
     )
 
@@ -156,10 +156,10 @@ def test_py_exec_updated_protoprimer_package(
 
     # when:
 
-    ret_val = env_ctx.state_graph.eval_state(
+    state_value = env_ctx.state_graph.eval_state(
         EnvState.state_py_exec_updated_protoprimer_package_reached.name
     )
 
     # then:
 
-    assert ret_val == PythonExecutable.py_exec_updated_protoprimer_package
+    assert state_value == PythonExecutable.py_exec_updated_protoprimer_package

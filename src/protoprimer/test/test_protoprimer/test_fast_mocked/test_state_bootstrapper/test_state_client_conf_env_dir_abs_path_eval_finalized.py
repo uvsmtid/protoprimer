@@ -3,22 +3,22 @@ import sys
 from unittest.mock import patch
 
 from local_test.base_test_class import BasePyfakefsTestClass
+from local_test.mock_verifier import (
+    assert_parent_states_mocked,
+)
 from local_test.name_assertion import assert_test_module_name_embeds_str
+from neoprimer.cmd_install_pre_commit import customize_env_context
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
+    Bootstrapper_state_client_conf_file_data,
     Bootstrapper_state_client_local_env_dir_rel_path_eval_finalized,
     Bootstrapper_state_primer_ref_root_dir_abs_path_eval_finalized,
-    Bootstrapper_state_client_conf_file_data,
     ConfConstClient,
     ConfConstInput,
     ConfConstPrimer,
     ConfField,
-    EnvContext,
     EnvState,
     write_json_file,
-)
-from test_protoprimer.test_fast_mocked.misc_tools.mock_verifier import (
-    assert_parent_states_mocked,
 )
 
 
@@ -27,7 +27,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
     def setUp(self):
         self.setUpPyfakefs()
-        self.env_ctx = EnvContext()
+        self.env_ctx = customize_env_context()
 
     # noinspection PyMethodMayBeStatic
     def test_relationship(self):
@@ -55,7 +55,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         assert_parent_states_mocked(
             self.env_ctx,
-            EnvState.state_client_conf_env_dir_abs_path_eval_finalized,
+            EnvState.state_client_conf_env_dir_abs_path_eval_finalized.name,
         )
 
         mock_client_dir = "/mock_client_dir"
@@ -132,7 +132,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         assert_parent_states_mocked(
             self.env_ctx,
-            EnvState.state_client_conf_env_dir_abs_path_eval_finalized,
+            EnvState.state_client_conf_env_dir_abs_path_eval_finalized.name,
         )
 
         mock_client_dir = "/mock_client_dir"
@@ -202,7 +202,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         assert_parent_states_mocked(
             self.env_ctx,
-            EnvState.state_client_conf_env_dir_abs_path_eval_finalized,
+            EnvState.state_client_conf_env_dir_abs_path_eval_finalized.name,
         )
 
         mock_client_dir = "/mock_client_dir"
@@ -278,7 +278,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         assert_parent_states_mocked(
             self.env_ctx,
-            EnvState.state_client_conf_env_dir_abs_path_eval_finalized,
+            EnvState.state_client_conf_env_dir_abs_path_eval_finalized.name,
         )
 
         mock_client_dir = "/mock_client_dir"
@@ -349,7 +349,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         assert_parent_states_mocked(
             self.env_ctx,
-            EnvState.state_client_conf_env_dir_abs_path_eval_finalized,
+            EnvState.state_client_conf_env_dir_abs_path_eval_finalized.name,
         )
 
         mock_client_dir = "/mock_client_dir"
@@ -420,7 +420,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         assert_parent_states_mocked(
             self.env_ctx,
-            EnvState.state_client_conf_env_dir_abs_path_eval_finalized,
+            EnvState.state_client_conf_env_dir_abs_path_eval_finalized.name,
         )
 
         mock_client_dir = "/mock_client_dir"
@@ -493,7 +493,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         assert_parent_states_mocked(
             self.env_ctx,
-            EnvState.state_client_conf_env_dir_abs_path_eval_finalized,
+            EnvState.state_client_conf_env_dir_abs_path_eval_finalized.name,
         )
 
         mock_client_dir = "/mock_client_dir"

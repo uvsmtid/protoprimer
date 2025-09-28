@@ -7,17 +7,21 @@ from protoprimer.primer_kernel import (
 
 
 def assert_parent_states_mocked(
+    # TODO: pass `StateGraph`.
     env_ctx: EnvContext,
-    final_env_state: EnvState,
+    state_name: str,
+    # UC_27_40_17_59.replace_by_new_and_use_old.md:
+    is_replaced_impl: bool = False,
 ) -> None:
-    final_state_node = env_ctx.state_graph.get_state_node(final_env_state.name)
+    final_state_node = env_ctx.state_graph.get_state_node(state_name)
     assert final_state_node is not None
 
     expected_mocked_state_names = set(final_state_node.get_parent_states())
 
-    # Add the target state itself to the set of expected mocked states if it's being mocked in the test
-    if isinstance(getattr(final_env_state.value, "eval_own_state"), MagicMock):
-        expected_mocked_state_names.add(final_env_state.name)
+    # Add the target state itself to the set of expected mocked states
+    # (this is used for wizard implementation as it replaces non-wizard implementation):
+    if is_replaced_impl:
+        expected_mocked_state_names.add(state_name)
 
     for env_state_item in EnvState:
         bootstrapper_class = env_state_item.value
@@ -40,7 +44,7 @@ def assert_parent_states_mocked(
             # If the state is not expected to be mocked, it must not be mocked:
             assert (
                 not is_mocked
-            ), f"State [{env_state_item.name}] is mocked but is not an expected parent of [{final_env_state.name}]."
+            ), f"State [{env_state_item.name}] is mocked but is not an expected parent of [{state_name}]."
         else:
             # If the state is expected to be mocked, it must be mocked:
             assert (
