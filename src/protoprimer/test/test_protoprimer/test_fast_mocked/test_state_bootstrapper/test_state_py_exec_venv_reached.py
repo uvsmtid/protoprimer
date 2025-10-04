@@ -16,6 +16,7 @@ from protoprimer.primer_kernel import (
     Bootstrapper_state_env_local_venv_dir_abs_path_eval_finalized,
     Bootstrapper_state_input_proto_code_file_abs_path_eval_finalized,
     Bootstrapper_state_input_py_exec_var_loaded,
+    Bootstrapper_state_input_start_id_var_loaded,
     Bootstrapper_state_input_wizard_stage_arg_loaded,
     Bootstrapper_state_reinstall_triggered,
     ConfConstEnv,
@@ -68,6 +69,9 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch.dict(f"{os.__name__}.environ", {}, clear=True)
     @patch.object(sys, "argv", ["/path/to/script.py", "--some-arg"])
     @patch(
+        f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.eval_own_state"
+    )
+    @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_reinstall_triggered.__name__}.eval_own_state"
     )
     @patch(
@@ -110,6 +114,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_input_wizard_stage_arg_loaded,
         mock_state_args_parsed,
         mock_state_reinstall_triggered,
+        mock_state_input_start_id_var_loaded,
     ):
 
         # given:
@@ -121,10 +126,10 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         mock_state_args_parsed.return_value = argparse.Namespace(
             **{
-                ParsedArg.name_start_id.value: "mock_start_id",
                 ParsedArg.name_reinstall.value: False,
             }
         )
+        mock_state_input_start_id_var_loaded.return_value = "mock_start_id"
         mock_state_reinstall_triggered.return_value = False
         mock_state_input_wizard_stage_arg_loaded.return_value = (
             WizardStage.wizard_started
@@ -167,21 +172,22 @@ class ThisTestClass(BasePyfakefsTestClass):
             path_to_required_python,
             "/path/to/script.py",
             "--some-arg",
-            SyntaxArg.arg_start_id,
-            "mock_start_id",
-            SyntaxArg.arg_proto_code_abs_file_path,
-            state_input_proto_code_file_abs_path_eval_finalized,
         ]
         mock_execve.assert_called_once_with(
             path=path_to_required_python,
             argv=expected_argv,
             env={
-                EnvVar.var_PROTOPRIMER_PY_EXEC.value: PythonExecutable.py_exec_venv.name
+                EnvVar.var_PROTOPRIMER_PY_EXEC.value: PythonExecutable.py_exec_venv.name,
+                EnvVar.var_PROTOPRIMER_START_ID.value: "mock_start_id",
+                EnvVar.var_PROTOPRIMER_PROTO_CODE.value: state_input_proto_code_file_abs_path_eval_finalized,
             },
         )
         mock_get_path_to_curr_python.assert_called_once()
 
     ####################################################################################################################
+    @patch(
+        f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.eval_own_state"
+    )
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_reinstall_triggered.__name__}.eval_own_state"
     )
@@ -225,6 +231,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_input_wizard_stage_arg_loaded,
         mock_state_args_parsed,
         mock_state_reinstall_triggered,
+        mock_state_input_start_id_var_loaded,
     ):
 
         # given:
@@ -236,10 +243,10 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         mock_state_args_parsed.return_value = argparse.Namespace(
             **{
-                ParsedArg.name_start_id.value: "mock_start_id",
                 ParsedArg.name_reinstall.value: False,
             }
         )
+        mock_state_input_start_id_var_loaded.return_value = "mock_start_id"
         mock_state_reinstall_triggered.return_value = False
         mock_state_input_wizard_stage_arg_loaded.return_value = (
             WizardStage.wizard_started
@@ -276,6 +283,9 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_get_path_to_curr_python.assert_called_once()
 
     ####################################################################################################################
+    @patch(
+        f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.eval_own_state"
+    )
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_reinstall_triggered.__name__}.eval_own_state"
     )
@@ -320,6 +330,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_input_wizard_stage_arg_loaded,
         mock_state_args_parsed,
         mock_state_reinstall_triggered,
+        mock_state_input_start_id_var_loaded,
     ):
 
         # given:
@@ -331,10 +342,10 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         mock_state_args_parsed.return_value = argparse.Namespace(
             **{
-                "start_id": "mock_start_id",
                 ParsedArg.name_reinstall.value: False,
             }
         )
+        mock_state_input_start_id_var_loaded.return_value = "mock_start_id"
         mock_state_reinstall_triggered.return_value = False
         mock_state_input_wizard_stage_arg_loaded.return_value = (
             WizardStage.wizard_started
@@ -373,6 +384,9 @@ class ThisTestClass(BasePyfakefsTestClass):
     ####################################################################################################################
     @patch.dict(f"{os.__name__}.environ", {}, clear=True)
     @patch.object(sys, "argv", ["/path/to/script.py", "--some-arg"])
+    @patch(
+        f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.eval_own_state"
+    )
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_reinstall_triggered.__name__}.eval_own_state"
     )
@@ -416,6 +430,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_input_wizard_stage_arg_loaded,
         mock_state_args_parsed,
         mock_state_reinstall_triggered,
+        mock_state_input_start_id_var_loaded,
     ):
 
         # given:
@@ -427,10 +442,10 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         mock_state_args_parsed.return_value = argparse.Namespace(
             **{
-                ParsedArg.name_start_id.value: "mock_start_id",
                 ParsedArg.name_reinstall.value: False,
             }
         )
+        mock_state_input_start_id_var_loaded.return_value = "mock_start_id"
         mock_state_reinstall_triggered.return_value = False
         mock_state_input_wizard_stage_arg_loaded.return_value = (
             WizardStage.wizard_started
@@ -469,6 +484,9 @@ class ThisTestClass(BasePyfakefsTestClass):
     ####################################################################################################################
     @patch.dict(f"{os.__name__}.environ", {}, clear=True)
     @patch.object(sys, "argv", ["/path/to/script.py", "--some-arg"])
+    @patch(
+        f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.eval_own_state"
+    )
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_reinstall_triggered.__name__}.eval_own_state"
     )
@@ -512,6 +530,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_input_wizard_stage_arg_loaded,
         mock_state_args_parsed,
         mock_state_reinstall_triggered,
+        mock_state_input_start_id_var_loaded,
     ):
 
         # given:
@@ -523,10 +542,10 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         mock_state_args_parsed.return_value = argparse.Namespace(
             **{
-                "start_id": "mock_start_id",
                 ParsedArg.name_reinstall.value: False,
             }
         )
+        mock_state_input_start_id_var_loaded.return_value = "mock_start_id"
         mock_state_reinstall_triggered.return_value = False
         mock_state_input_wizard_stage_arg_loaded.return_value = (
             WizardStage.wizard_started
@@ -569,16 +588,14 @@ class ThisTestClass(BasePyfakefsTestClass):
             path_to_venv_python,
             "/path/to/script.py",
             "--some-arg",
-            SyntaxArg.arg_start_id,
-            "mock_start_id",
-            SyntaxArg.arg_proto_code_abs_file_path,
-            state_input_proto_code_file_abs_path_eval_finalized,
         ]
         mock_execve.assert_called_once_with(
             path=path_to_venv_python,
             argv=expected_argv,
             env={
-                EnvVar.var_PROTOPRIMER_PY_EXEC.value: PythonExecutable.py_exec_venv.name
+                EnvVar.var_PROTOPRIMER_PY_EXEC.value: PythonExecutable.py_exec_venv.name,
+                EnvVar.var_PROTOPRIMER_START_ID.value: "mock_start_id",
+                EnvVar.var_PROTOPRIMER_PROTO_CODE.value: state_input_proto_code_file_abs_path_eval_finalized,
             },
         )
         mock_get_path_to_curr_python.assert_called_once()
@@ -586,6 +603,9 @@ class ThisTestClass(BasePyfakefsTestClass):
     ####################################################################################################################
     @patch.dict(f"{os.__name__}.environ", {}, clear=True)
     @patch.object(sys, "argv", ["/path/to/script.py", "--some-arg"])
+    @patch(
+        f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.eval_own_state"
+    )
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_reinstall_triggered.__name__}.eval_own_state"
     )
@@ -629,6 +649,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_input_wizard_stage_arg_loaded,
         mock_state_args_parsed,
         mock_state_reinstall_triggered,
+        mock_state_input_start_id_var_loaded,
     ):
 
         # given:
@@ -640,10 +661,10 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         mock_state_args_parsed.return_value = argparse.Namespace(
             **{
-                ParsedArg.name_start_id.value: "mock_start_id",
                 ParsedArg.name_reinstall.value: False,
             }
         )
+        mock_state_input_start_id_var_loaded.return_value = "mock_start_id"
         mock_state_reinstall_triggered.return_value = False
         mock_state_input_wizard_stage_arg_loaded.return_value = (
             WizardStage.wizard_started
@@ -683,16 +704,14 @@ class ThisTestClass(BasePyfakefsTestClass):
             path_to_venv_python,
             "/path/to/script.py",
             "--some-arg",
-            SyntaxArg.arg_start_id,
-            "mock_start_id",
-            SyntaxArg.arg_proto_code_abs_file_path,
-            state_input_proto_code_file_abs_path_eval_finalized,
         ]
         mock_execve.assert_called_once_with(
             path=path_to_venv_python,
             argv=expected_argv,
             env={
-                EnvVar.var_PROTOPRIMER_PY_EXEC.value: PythonExecutable.py_exec_venv.name
+                EnvVar.var_PROTOPRIMER_PY_EXEC.value: PythonExecutable.py_exec_venv.name,
+                EnvVar.var_PROTOPRIMER_START_ID.value: "mock_start_id",
+                EnvVar.var_PROTOPRIMER_PROTO_CODE.value: state_input_proto_code_file_abs_path_eval_finalized,
             },
         )
 
@@ -701,6 +720,9 @@ class ThisTestClass(BasePyfakefsTestClass):
     ####################################################################################################################
     @patch.dict(f"{os.__name__}.environ", {}, clear=True)
     @patch.object(sys, "argv", ["/path/to/script.py", "--some-arg"])
+    @patch(
+        f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.eval_own_state"
+    )
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_reinstall_triggered.__name__}.eval_own_state"
     )
@@ -744,6 +766,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_input_wizard_stage_arg_loaded,
         mock_state_args_parsed,
         mock_state_reinstall_triggered,
+        mock_state_input_start_id_var_loaded,
     ):
 
         # given:
@@ -755,10 +778,10 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         mock_state_args_parsed.return_value = argparse.Namespace(
             **{
-                ParsedArg.name_start_id.value: "mock_start_id",
                 ParsedArg.name_reinstall.value: False,
             }
         )
+        mock_state_input_start_id_var_loaded.return_value = "mock_start_id"
         mock_state_reinstall_triggered.return_value = False
         mock_state_input_wizard_stage_arg_loaded.return_value = (
             WizardStage.wizard_started
@@ -794,17 +817,209 @@ class ThisTestClass(BasePyfakefsTestClass):
             "/not/the/parent/of/current/python/bin/python",
             "/path/to/script.py",
             "--some-arg",
-            SyntaxArg.arg_start_id,
-            "mock_start_id",
-            SyntaxArg.arg_proto_code_abs_file_path,
-            "any/path",
         ]
         mock_execve.assert_called_once_with(
             path="/not/the/parent/of/current/python/bin/python",
             argv=expected_argv,
             env={
-                EnvVar.var_PROTOPRIMER_PY_EXEC.value: PythonExecutable.py_exec_venv.name
+                EnvVar.var_PROTOPRIMER_PY_EXEC.value: PythonExecutable.py_exec_venv.name,
+                EnvVar.var_PROTOPRIMER_START_ID.value: "mock_start_id",
+                EnvVar.var_PROTOPRIMER_PROTO_CODE.value: "any/path",
             },
         )
         mock_venv_create.assert_called_once()
+        mock_get_path_to_curr_python.assert_called_once()
+
+    ####################################################################################################################
+    @patch.dict(f"{os.__name__}.environ", {}, clear=True)
+    @patch.object(sys, "argv", ["/path/to/script.py", "--some-arg"])
+    @patch(
+        f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.eval_own_state"
+    )
+    @patch(
+        f"{primer_kernel.__name__}.{Bootstrapper_state_reinstall_triggered.__name__}.eval_own_state"
+    )
+    @patch(
+        f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.eval_own_state"
+    )
+    @patch(
+        f"{primer_kernel.__name__}.{Bootstrapper_state_input_wizard_stage_arg_loaded.__name__}.eval_own_state"
+    )
+    @patch(
+        f"{primer_kernel.__name__}.{Bootstrapper_state_input_proto_code_file_abs_path_eval_finalized.__name__}.eval_own_state"
+    )
+    @patch(
+        f"{primer_kernel.__name__}.{Bootstrapper_state_input_py_exec_var_loaded.__name__}.eval_own_state"
+    )
+    @patch(
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_env_file_abs_path_eval_finalized.__name__}.eval_own_state"
+    )
+    @patch(
+        f"{primer_kernel.__name__}.{Bootstrapper_state_env_local_venv_dir_abs_path_eval_finalized.__name__}.eval_own_state"
+    )
+    @patch(
+        f"{primer_kernel.__name__}.{Bootstrapper_state_env_local_python_file_abs_path_eval_finalized.__name__}.eval_own_state"
+    )
+    @patch(
+        f"{primer_kernel.__name__}.get_path_to_curr_python",
+    )
+    @patch(f"{primer_kernel.__name__}.os.execve")
+    @patch(f"{primer_kernel.__name__}.venv.create")
+    def test_success_when_py_exec_is_already_venv(
+        self,
+        mock_venv_create,
+        mock_execve,
+        mock_get_path_to_curr_python,
+        mock_state_env_local_python_file_abs_path_eval_finalized,
+        mock_state_env_local_venv_dir_abs_path_eval_finalized,
+        mock_state_client_conf_env_file_abs_path_eval_finalized,
+        mock_state_input_py_exec_var_loaded,
+        mock_state_input_proto_code_file_abs_path_eval_finalized,
+        mock_state_input_wizard_stage_arg_loaded,
+        mock_state_args_parsed,
+        mock_state_reinstall_triggered,
+        mock_state_input_start_id_var_loaded,
+    ):
+
+        # given:
+
+        assert_parent_states_mocked(
+            self.env_ctx,
+            EnvState.state_py_exec_venv_reached.name,
+        )
+
+        mock_state_input_py_exec_var_loaded.return_value = PythonExecutable.py_exec_venv
+
+        # when:
+
+        actual_result = self.env_ctx.state_graph.eval_state(
+            EnvState.state_py_exec_venv_reached.name
+        )
+
+        # then:
+
+        self.assertEqual(PythonExecutable.py_exec_venv, actual_result)
+
+        mock_venv_create.assert_not_called()
+        mock_execve.assert_not_called()
+
+    ####################################################################################################################
+    @patch.dict(f"{os.__name__}.environ", {}, clear=True)
+    @patch.object(sys, "argv", ["/path/to/script.py", "--some-arg"])
+    @patch(f"{primer_kernel.__name__}.logger.info")
+    @patch(
+        f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.eval_own_state"
+    )
+    @patch(
+        f"{primer_kernel.__name__}.{Bootstrapper_state_reinstall_triggered.__name__}.eval_own_state"
+    )
+    @patch(
+        f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.eval_own_state"
+    )
+    @patch(
+        f"{primer_kernel.__name__}.{Bootstrapper_state_input_wizard_stage_arg_loaded.__name__}.eval_own_state"
+    )
+    @patch(
+        f"{primer_kernel.__name__}.{Bootstrapper_state_input_proto_code_file_abs_path_eval_finalized.__name__}.eval_own_state"
+    )
+    @patch(
+        f"{primer_kernel.__name__}.{Bootstrapper_state_input_py_exec_var_loaded.__name__}.eval_own_state"
+    )
+    @patch(
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_env_file_abs_path_eval_finalized.__name__}.eval_own_state"
+    )
+    @patch(
+        f"{primer_kernel.__name__}.{Bootstrapper_state_env_local_venv_dir_abs_path_eval_finalized.__name__}.eval_own_state"
+    )
+    @patch(
+        f"{primer_kernel.__name__}.{Bootstrapper_state_env_local_python_file_abs_path_eval_finalized.__name__}.eval_own_state"
+    )
+    @patch(
+        f"{primer_kernel.__name__}.get_path_to_curr_python",
+        return_value=ConfConstEnv.default_file_abs_path_python,
+    )
+    @patch(f"{primer_kernel.__name__}.os.execve")
+    @patch(f"{primer_kernel.__name__}.venv.create")
+    def test_success_when_reusing_existing_venv(
+        self,
+        mock_venv_create,
+        mock_execve,
+        mock_get_path_to_curr_python,
+        mock_state_env_local_python_file_abs_path_eval_finalized,
+        mock_state_env_local_venv_dir_abs_path_eval_finalized,
+        mock_state_client_conf_env_file_abs_path_eval_finalized,
+        mock_state_input_py_exec_var_loaded,
+        mock_state_input_proto_code_file_abs_path_eval_finalized,
+        mock_state_input_wizard_stage_arg_loaded,
+        mock_state_args_parsed,
+        mock_state_reinstall_triggered,
+        mock_state_input_start_id_var_loaded,
+        mock_logger_info,
+    ):
+
+        # given:
+
+        assert_parent_states_mocked(
+            self.env_ctx,
+            EnvState.state_py_exec_venv_reached.name,
+        )
+
+        mock_state_args_parsed.return_value = argparse.Namespace(
+            **{
+                ParsedArg.name_reinstall.value: False,
+            }
+        )
+        mock_state_input_start_id_var_loaded.return_value = "mock_start_id"
+        mock_state_reinstall_triggered.return_value = False
+        mock_state_input_wizard_stage_arg_loaded.return_value = (
+            WizardStage.wizard_started
+        )
+        mock_state_input_proto_code_file_abs_path_eval_finalized.return_value = (
+            state_input_proto_code_file_abs_path_eval_finalized
+        )
+        mock_state_input_py_exec_var_loaded.return_value = (
+            PythonExecutable.py_exec_required
+        )
+        mock_state_env_local_python_file_abs_path_eval_finalized.return_value = (
+            ConfConstEnv.default_file_abs_path_python
+        )
+        path_to_venv = os.path.join(
+            mock_client_dir, ConfConstEnv.default_dir_rel_path_venv
+        )
+        mock_state_env_local_venv_dir_abs_path_eval_finalized.return_value = (
+            path_to_venv
+        )
+        mock_state_client_conf_env_file_abs_path_eval_finalized.return_value = (
+            "fake: " + EnvState.state_client_conf_env_file_abs_path_eval_finalized.name
+        )
+
+        self.fs.create_dir(path_to_venv)
+
+        # when:
+
+        self.env_ctx.state_graph.eval_state(EnvState.state_py_exec_venv_reached.name)
+
+        # then:
+
+        mock_venv_create.assert_not_called()
+        mock_logger_info.assert_any_call(f"reusing existing `venv` [{path_to_venv}]")
+
+        path_to_venv_python = os.path.join(
+            path_to_venv,
+            ConfConstGeneral.file_rel_path_venv_python,
+        )
+        expected_argv = [
+            path_to_venv_python,
+            "/path/to/script.py",
+            "--some-arg",
+        ]
+        mock_execve.assert_called_once_with(
+            path=path_to_venv_python,
+            argv=expected_argv,
+            env={
+                EnvVar.var_PROTOPRIMER_PY_EXEC.value: PythonExecutable.py_exec_venv.name,
+                EnvVar.var_PROTOPRIMER_START_ID.value: "mock_start_id",
+                EnvVar.var_PROTOPRIMER_PROTO_CODE.value: state_input_proto_code_file_abs_path_eval_finalized,
+            },
+        )
         mock_get_path_to_curr_python.assert_called_once()
