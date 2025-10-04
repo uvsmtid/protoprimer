@@ -11,6 +11,7 @@ from protoprimer.primer_kernel import (
     Bootstrapper_state_args_parsed,
     Bootstrapper_state_input_proto_code_file_abs_path_eval_finalized,
     Bootstrapper_state_input_py_exec_var_loaded,
+    Bootstrapper_state_input_start_id_var_loaded,
     Bootstrapper_state_input_wizard_stage_arg_loaded,
     Bootstrapper_state_proto_code_updated,
     EnvContext,
@@ -36,6 +37,9 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
 
     @patch(
+        f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.eval_own_state"
+    )
+    @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.eval_own_state"
     )
     @patch(
@@ -59,6 +63,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_input_py_exec_var_loaded,
         mock_state_input_wizard_stage_arg_loaded,
         mock_state_args_parsed,
+        mock_state_input_start_id_var_loaded,
     ):
 
         # given:
@@ -70,10 +75,10 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         mock_state_args_parsed.return_value = argparse.Namespace(
             **{
-                ParsedArg.name_start_id.value: "mock_start_id",
                 ParsedArg.name_reinstall.value: False,
             }
         )
+        mock_state_input_start_id_var_loaded.return_value = "mock_start_id"
         mock_state_input_wizard_stage_arg_loaded.return_value = (
             WizardStage.wizard_started
         )
@@ -107,6 +112,9 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
 
     @patch(
+        f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.eval_own_state"
+    )
+    @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.eval_own_state"
     )
     @patch(
@@ -130,6 +138,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_input_py_exec_var_loaded,
         mock_state_input_wizard_stage_arg_loaded,
         mock_state_args_parsed,
+        mock_state_input_start_id_var_loaded,
     ):
         """
         UC_90_98_17_93.run_under_venv.md
@@ -144,10 +153,10 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         mock_state_args_parsed.return_value = argparse.Namespace(
             **{
-                ParsedArg.name_start_id.value: "mock_start_id",
                 ParsedArg.name_reinstall.value: False,
             }
         )
+        mock_state_input_start_id_var_loaded.return_value = "mock_start_id"
         mock_state_input_wizard_stage_arg_loaded.return_value = (
             WizardStage.wizard_started
         )

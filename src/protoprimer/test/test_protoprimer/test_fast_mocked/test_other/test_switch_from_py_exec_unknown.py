@@ -113,10 +113,6 @@ class ThisTestClass(BasePyfakefsTestClass):
         execv_args = [
             ConfConstEnv.default_file_abs_path_python,
             *test_args,
-            SyntaxArg.arg_start_id,
-            "mock_start_id",
-            SyntaxArg.arg_proto_code_abs_file_path,
-            state_input_proto_code_file_abs_path_eval_finalized,
         ]
 
         def execve_side_effect_with_exception(
@@ -143,6 +139,8 @@ class ThisTestClass(BasePyfakefsTestClass):
             argv=execv_args,
             env={
                 EnvVar.var_PROTOPRIMER_PY_EXEC.value: PythonExecutable.py_exec_required.name,
+                EnvVar.var_PROTOPRIMER_START_ID.value: "mock_start_id",
                 EnvVar.var_PROTOPRIMER_STDERR_LOG_LEVEL.value: "INFO",
+                EnvVar.var_PROTOPRIMER_PROTO_CODE.value: state_input_proto_code_file_abs_path_eval_finalized,
             },
         )

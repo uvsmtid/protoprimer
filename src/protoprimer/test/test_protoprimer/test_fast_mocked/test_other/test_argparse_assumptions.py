@@ -29,11 +29,11 @@ class ThisTestClass(BaseTestClass):
 
         test_args = [
             os.path.basename(primer_kernel.__file__),
-            SyntaxArg.arg_start_id,
+            SyntaxArg.arg_env,
             "first",
-            SyntaxArg.arg_start_id,
+            SyntaxArg.arg_env,
             "second",
-            SyntaxArg.arg_start_id,
+            SyntaxArg.arg_env,
             "third",
         ]
 
@@ -48,7 +48,7 @@ class ThisTestClass(BaseTestClass):
         assert (
             getattr(
                 parsed_args,
-                ParsedArg.name_start_id.value,
+                ParsedArg.name_local_env_conf_dir.value,
             )
             == "third"
         )

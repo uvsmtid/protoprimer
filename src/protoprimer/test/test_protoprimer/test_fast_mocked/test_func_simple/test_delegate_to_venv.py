@@ -97,3 +97,32 @@ class TestSuite:
         assert os.environ[ConfConstInput.ext_env_var_PATH].endswith(self.original_path)
 
         self.mock_path_exists.assert_called_once_with(expected_venv_python)
+
+    def test_venv_python_does_not_exist(self):
+
+        # given:
+
+        self.mock_is_venv.return_value = False
+        self.mock_path_exists.return_value = False
+
+        ref_root_path = "/mock/client/dir"
+
+        # when:
+
+        with pytest.raises(AssertionError) as exc_info:
+            delegate_to_venv(ref_root_path)
+
+        # then:
+
+        expected_venv_python = os.path.join(
+            ref_root_path,
+            ConfConstEnv.default_dir_rel_path_venv,
+            ConfConstGeneral.file_rel_path_venv_python,
+        )
+
+        assert str(exc_info.value) == (
+            f"`{expected_venv_python}` does not exist - has `venv` been bootstrapped?"
+        )
+
+        self.mock_execv.assert_not_called()
+        self.mock_path_exists.assert_called_once_with(expected_venv_python)

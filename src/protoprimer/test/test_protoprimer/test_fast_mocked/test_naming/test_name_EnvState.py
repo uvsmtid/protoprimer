@@ -103,6 +103,16 @@ class StateName(enum.Enum):
         NameCategory.category_named_value,
     )
 
+    state_input_start_id_var_loaded = StateMeta(
+        EnvState.state_input_start_id_var_loaded,
+        NameCategory.category_named_value,
+    )
+
+    state_input_proto_code_file_abs_path_var_loaded = StateMeta(
+        EnvState.state_input_proto_code_file_abs_path_var_loaded,
+        NameCategory.category_path_value,
+    )
+
     state_py_exec_arbitrary_reached = StateMeta(
         EnvState.state_py_exec_arbitrary_reached,
         NameCategory.category_python_exec,
@@ -148,8 +158,8 @@ class StateName(enum.Enum):
         NameCategory.category_path_value,
     )
 
-    state_client_local_env_dir_rel_path_eval_finalized = StateMeta(
-        EnvState.state_client_local_env_dir_rel_path_eval_finalized,
+    state_client_local_env_conf_dir_rel_path_eval_finalized = StateMeta(
+        EnvState.state_client_local_env_conf_dir_rel_path_eval_finalized,
         NameCategory.category_path_value,
     )
 
@@ -249,17 +259,17 @@ class TestStateName(NamingTestBase):
             self.prod_enum.__name__,
         )
 
-    def test_state_client_local_env_dir_rel_path_eval_finalized(self):
+    def test_state_client_local_env_conf_dir_rel_path_eval_finalized(self):
         """
         A sample for debugging.
         """
         assert_test_func_name_embeds_str(
-            self.test_enum.state_client_local_env_dir_rel_path_eval_finalized.name,
+            self.test_enum.state_client_local_env_conf_dir_rel_path_eval_finalized.name,
         )
 
         ret_val: enum.Enum | None = verify_name_enum_order_in_name(
-            self.test_enum.state_client_local_env_dir_rel_path_eval_finalized.value.get_category().value.name_enums,
-            self.test_enum.state_client_local_env_dir_rel_path_eval_finalized.name,
+            self.test_enum.state_client_local_env_conf_dir_rel_path_eval_finalized.value.get_category().value.name_enums,
+            self.test_enum.state_client_local_env_conf_dir_rel_path_eval_finalized.name,
         )
 
         assert ret_val is None
