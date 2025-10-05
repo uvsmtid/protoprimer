@@ -23,7 +23,7 @@ class TestEnvStateOrdering:
         env_context_instance = EnvContext()
         state_graph_instance = env_context_instance.state_graph
 
-        # Create a mapping from state name to its ordinal position in the enum:
+        # Create a mapping from the state name to its ordinal position in the enum:
         env_state_name_to_ordinal = {
             env_state.name: index for index, env_state in enumerate(EnvState)
         }
@@ -54,7 +54,7 @@ class TestEnvStateOrdering:
         env_context_instance = EnvContext()
         state_graph_instance = env_context_instance.state_graph
 
-        # Create a mapping from state name to the line number of its implementation class:
+        # Create a mapping from the state name to the line number of its implementation class:
         state_name_to_line_number = {
             env_state.name: get_class_line_number(env_state.value)
             for env_state in EnvState
@@ -90,7 +90,7 @@ class TestEnvStateOrdering:
         for curr_env_state in EnvState:
             curr_line_number = get_class_line_number(curr_env_state.value)
 
-            # EnvState-s are already defined in the right order:
+            # `EnvState`-s are already defined in the right order:
             if curr_line_number < prev_line_number:
                 def_violations.append(
                     f"class for "

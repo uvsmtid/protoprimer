@@ -25,7 +25,7 @@ Because shell scripts:
 
 *   are not test-able (there is no such practice)
 *   are cryptic, full of special cases, and allow unpredictable user overrides
-*   have no stack traces on failure (often leading to excessive logging to compensate that)
+*   have no stack traces on failure (often leading to excessive logging to compensate for that)
 
 [All these and more][FT_44_72_60_67.python_vs_shell.md] made `protoprimer` "allow `python`-only scripts" its secondary objective.
 

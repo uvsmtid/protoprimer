@@ -12,6 +12,7 @@ from protoprimer.primer_kernel import (
     Bootstrapper_state_args_parsed,
     Bootstrapper_state_input_proto_code_file_abs_path_eval_finalized,
     Bootstrapper_state_input_py_exec_var_loaded,
+    Bootstrapper_state_input_start_id_var_loaded,
     Bootstrapper_state_input_wizard_stage_arg_loaded,
     Bootstrapper_state_version_constraints_generated,
     EnvContext,
@@ -33,6 +34,9 @@ def test_relationship():
     )
 
 
+@patch(
+    f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.eval_own_state"
+)
 @patch(
     f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.eval_own_state"
 )
@@ -58,6 +62,7 @@ def test_py_exec_required(
     mock_get_path_to_curr_python,
     mock_state_input_wizard_stage_arg_loaded,
     mock_state_args_parsed,
+    mock_state_input_start_id_var_loaded,
     env_ctx,
 ):
 
@@ -70,10 +75,10 @@ def test_py_exec_required(
 
     mock_state_args_parsed.return_value = argparse.Namespace(
         **{
-            ParsedArg.name_start_id.value: "mock_start_id",
             ParsedArg.name_reinstall.value: False,
         }
     )
+    mock_state_input_start_id_var_loaded.return_value = "mock_start_id"
     mock_state_input_wizard_stage_arg_loaded.return_value = WizardStage.wizard_started
 
     mock_state_version_constraints_generated.return_value = True
@@ -108,6 +113,9 @@ def test_py_exec_required(
 
 
 @patch(
+    f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.eval_own_state"
+)
+@patch(
     f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.eval_own_state"
 )
 @patch(
@@ -128,6 +136,7 @@ def test_py_exec_updated_protoprimer_package(
     mock_state_input_proto_code_file_abs_path_eval_finalized,
     mock_state_input_wizard_stage_arg_loaded,
     mock_state_args_parsed,
+    mock_state_input_start_id_var_loaded,
     env_ctx,
 ):
 
@@ -140,10 +149,10 @@ def test_py_exec_updated_protoprimer_package(
 
     mock_state_args_parsed.return_value = argparse.Namespace(
         **{
-            ParsedArg.name_start_id.value: "mock_start_id",
             ParsedArg.name_reinstall.value: False,
         }
     )
+    mock_state_input_start_id_var_loaded.return_value = "mock_start_id"
     mock_state_version_constraints_generated.return_value = True
 
     mock_state_input_py_exec_var_loaded.return_value = (

@@ -52,16 +52,14 @@ def test_switch_python(
         next_python_path,
         "/path/to/script.py",
         "--some-arg",
-        SyntaxArg.arg_start_id,
-        start_id,
-        SyntaxArg.arg_proto_code_abs_file_path,
-        proto_code_abs_file_path,
     ]
     mock_execve.assert_called_once_with(
         path=next_python_path,
         argv=expected_argv,
         env={
             EnvVar.var_PROTOPRIMER_PY_EXEC.value: PythonExecutable.py_exec_required.name,
+            EnvVar.var_PROTOPRIMER_START_ID.value: start_id,
+            EnvVar.var_PROTOPRIMER_PROTO_CODE.value: proto_code_abs_file_path,
         },
     )
 
@@ -97,10 +95,6 @@ def test_switch_python_with_wizard_finished(
         next_python_path,
         "/path/to/script.py",
         "--some-arg",
-        SyntaxArg.arg_start_id,
-        start_id,
-        SyntaxArg.arg_proto_code_abs_file_path,
-        proto_code_abs_file_path,
         SyntaxArg.arg_wizard_stage,
         wizard_stage.value,
     ]
@@ -109,6 +103,8 @@ def test_switch_python_with_wizard_finished(
         argv=expected_argv,
         env={
             EnvVar.var_PROTOPRIMER_PY_EXEC.value: PythonExecutable.py_exec_required.name,
+            EnvVar.var_PROTOPRIMER_START_ID.value: start_id,
+            EnvVar.var_PROTOPRIMER_PROTO_CODE.value: proto_code_abs_file_path,
         },
     )
 
@@ -144,13 +140,12 @@ def test_switch_python_no_proto_code(
         next_python_path,
         "/path/to/script.py",
         "--some-arg",
-        SyntaxArg.arg_start_id,
-        start_id,
     ]
     mock_execve.assert_called_once_with(
         path=next_python_path,
         argv=expected_argv,
         env={
             EnvVar.var_PROTOPRIMER_PY_EXEC.value: PythonExecutable.py_exec_required.name,
+            EnvVar.var_PROTOPRIMER_START_ID.value: start_id,
         },
     )
