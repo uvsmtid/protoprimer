@@ -21,8 +21,6 @@ from protoprimer.primer_kernel import (
     ConfDst,
 )
 
-IS_CI = os.getenv("CI") == "true"
-
 
 def test_prime(tmp_path: pathlib.Path):
 

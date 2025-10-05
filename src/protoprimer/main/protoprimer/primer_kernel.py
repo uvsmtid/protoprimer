@@ -28,7 +28,7 @@ import tempfile
 import typing
 import venv
 
-__version__ = "0.0.6"
+__version__ = "0.0.7"
 
 from typing import (
     Any,
@@ -174,6 +174,11 @@ class TermColor(enum.Enum):
     reset_style = "\033[0m"
 
 
+class KeyWord(enum.Enum):
+
+    key_env = "env"
+
+
 class ConfLeap(enum.Enum):
     """
     See FT_89_41_35_82.conf_leap.md
@@ -185,7 +190,7 @@ class ConfLeap(enum.Enum):
 
     leap_client = "client"
 
-    leap_env = "env"
+    leap_env = f"{KeyWord.key_env.value}"
 
 
 class PrimerRuntime(enum.Enum):
@@ -260,6 +265,10 @@ class EnvVar(enum.Enum):
 
     var_PROTOPRIMER_DO_INSTALL = "PROTOPRIMER_DO_INSTALL"
 
+    var_PROTOPRIMER_PROTO_CODE = "PROTOPRIMER_PROTO_CODE"
+
+    var_PROTOPRIMER_START_ID = "PROTOPRIMER_START_ID"
+
 
 class ConfDst(enum.Enum):
     """
@@ -295,11 +304,14 @@ class ValueName(enum.Enum):
 
     value_install_extras = "install_extras"
 
+    value_local_env = "local_env"
+
 
 class PathName(enum.Enum):
 
     path_proto_code = "proto_code"
 
+    # TODO: use another suffix (not `dir`) as `dir` is specified by `FilesystemObject.fs_object_dir`
     # TODO: make use of it in naming states (instead of using only `path_proto_code`):
     path_proto_dir = "proto_dir"
 
@@ -309,7 +321,7 @@ class PathName(enum.Enum):
     # See FT_89_41_35_82.conf_leap.md / primer
     path_conf_primer = f"conf_{ConfLeap.leap_primer.value}"
 
-    # See FT_89_41_35_82.conf_leap.md / env
+    # See FT_89_41_35_82.conf_leap.md / client
     path_conf_client = f"conf_{ConfLeap.leap_client.value}"
 
     # See FT_89_41_35_82.conf_leap.md / env
@@ -320,7 +332,7 @@ class PathName(enum.Enum):
 
     path_default_env = "default_env"
 
-    path_local_env = "local_env"
+    path_local_env_conf = f"{ValueName.value_local_env.value}_conf"
 
     path_local_python = "local_python"
 
@@ -334,8 +346,9 @@ class PathName(enum.Enum):
 
 
 class ParsedArg(enum.Enum):
-    name_proto_code = (
-        f"{PathName.path_proto_code.value}_{FilesystemObject.fs_object_file.value}"
+
+    name_local_env_conf_dir = (
+        f"{PathName.path_local_env_conf.value}_{FilesystemObject.fs_object_dir.value}"
     )
 
     name_reinstall = f"do_{CommandAction.action_reinstall.value}"
@@ -343,13 +356,11 @@ class ParsedArg(enum.Enum):
     name_command = f"run_{CommandAction.action_command.value}"
 
     name_primer_runtime = str(ValueName.value_primer_runtime.value)
-    name_start_id = str(ValueName.value_start_id.value)
     name_run_mode = str(ValueName.value_run_mode.value)
     name_wizard_stage = str(ValueName.value_wizard_stage.value)
     name_final_state = str(ValueName.value_final_state.value)
 
 
-# TODO: Add file_log_level (but not via CLI, via config):
 class LogLevel(enum.Enum):
     name_silent = "silent"
     name_quiet = "quiet"
@@ -365,9 +376,7 @@ class SyntaxArg:
     arg_mode_check = f"--{RunMode.mode_check.value}"
     arg_mode_wizard = f"--{RunMode.mode_wizard.value}"
 
-    arg_proto_code_abs_file_path = f"--{ParsedArg.name_proto_code.value}"
     arg_primer_runtime = f"--{ParsedArg.name_primer_runtime.value}"
-    arg_start_id = f"--{ParsedArg.name_start_id.value}"
     arg_run_mode = f"--{ParsedArg.name_run_mode.value}"
     arg_wizard_stage = f"--{ParsedArg.name_wizard_stage.value}"
     arg_final_state = f"--{ParsedArg.name_final_state.value}"
@@ -386,6 +395,9 @@ class SyntaxArg:
     arg_v = f"-{LogLevel.name_verbose.value[0]}"
     arg_verbose = f"--{LogLevel.name_verbose.value}"
     dest_verbose = f"{ValueName.value_stderr_log_level}_{LogLevel.name_verbose.value}"
+
+    arg_e = f"-{KeyWord.key_env.value[0]}"
+    arg_env = f"--{KeyWord.key_env.value}"
 
 
 class ConfField(enum.Enum):
@@ -972,6 +984,7 @@ def init_arg_parser():
         const=True,
         default=False,
         dest=ParsedArg.name_reinstall.value,
+        metavar=ParsedArg.name_reinstall.value,
         help="Re-create `venv`, re-install dependencies, and re-pin versions.",
     )
 
@@ -980,7 +993,17 @@ def init_arg_parser():
         SyntaxArg.arg_command,
         type=str,
         dest=ParsedArg.name_command.value,
+        metavar=ParsedArg.name_command.value,
         help="Command to execute after the bootstrap.",
+    )
+
+    arg_parser.add_argument(
+        SyntaxArg.arg_env,
+        type=str,
+        default=None,
+        dest=ParsedArg.name_local_env_conf_dir.value,
+        metavar=ParsedArg.name_local_env_conf_dir.value,
+        help="Path to the env-specific config dir.",
     )
 
     mutex_group = arg_parser.add_mutually_exclusive_group()
@@ -988,46 +1011,38 @@ def init_arg_parser():
     mutex_group.add_argument(
         SyntaxArg.arg_mode_prime,
         action="store_const",
-        dest=ParsedArg.name_run_mode.value,
         const=RunMode.mode_prime.value,
+        dest=ParsedArg.name_run_mode.value,
+        metavar=ParsedArg.name_run_mode.value,
         help="Prime the environment to be ready to use.",
     )
     mutex_group.add_argument(
         SyntaxArg.arg_mode_check,
         action="store_const",
-        dest=ParsedArg.name_run_mode.value,
         const=RunMode.mode_check.value,
+        dest=ParsedArg.name_run_mode.value,
+        metavar=ParsedArg.name_run_mode.value,
         help="Check the environment configuration.",
     )
     mutex_group.add_argument(
         SyntaxArg.arg_mode_wizard,
         action="store_const",
-        dest=ParsedArg.name_run_mode.value,
         const=RunMode.mode_wizard.value,
+        dest=ParsedArg.name_run_mode.value,
+        metavar=ParsedArg.name_run_mode.value,
         help="Wizard through the environment configuration.",
     )
     mutex_group.add_argument(
         SyntaxArg.arg_mode_graph,
         action="store_const",
-        dest=ParsedArg.name_run_mode.value,
         const=RunMode.mode_graph.value,
+        dest=ParsedArg.name_run_mode.value,
+        metavar=ParsedArg.name_run_mode.value,
         help="Render the graph of state dependencies.",
     )
 
     mutex_group.set_defaults(run_mode=RunMode.mode_prime.value)
 
-    arg_parser.add_argument(
-        # TODO: Make use of or clean up:
-        SyntaxArg.arg_primer_runtime,
-        type=str,
-        choices=[context_phase.name for context_phase in PrimerRuntime],
-        default=PrimerRuntime.runtime_proto.name,
-        help=(
-            argparse.SUPPRESS
-            if suppress_internal_args
-            else f"Used internally: specifies `{PrimerRuntime.__name__}`."
-        ),
-    )
     # TODO: Use only -q and -v options in a simpler way:
     arg_parser.add_argument(
         SyntaxArg.arg_s,
@@ -1071,36 +1086,14 @@ def init_arg_parser():
         # choices=[state_name.name for state_name in EnvState],
         # Keep default `None` to indicate there was no user override (and select the actual default conditionally):
         default=None,
+        dest=ParsedArg.name_final_state.value,
+        metavar=ParsedArg.name_final_state.value,
         # TODO: Compute universal sink:
         help=f"Select final `{EnvState.__name__}` name.",
-    )
-    arg_parser.add_argument(
-        SyntaxArg.arg_proto_code_abs_file_path,
-        type=str,
-        default=None,
-        help=(
-            argparse.SUPPRESS
-            if suppress_internal_args
-            else f"Used internally: path to `{ConfConstGeneral.name_proto_code}` identified before `{PythonExecutable.py_exec_venv.name}`."
-        ),
-    )
-    arg_parser.add_argument(
-        SyntaxArg.arg_start_id,
-        type=str,
-        default=get_default_start_id(),
-        help=(
-            argparse.SUPPRESS
-            if suppress_internal_args
-            else (
-                f"Used internally: specifies `{ValueName.value_start_id}` "
-                f"which associates multiple `os.execv` invocations."
-            )
-        ),
     )
     return arg_parser
 
 
-# TODO: add test
 def str2bool(v):
     if isinstance(v, bool):
         return v
@@ -1661,8 +1654,8 @@ class Bootstrapper_state_run_mode_executed(AbstractCachingStateNode[bool]):
             env_ctx=env_ctx,
             parent_states=[
                 EnvState.state_input_stderr_log_level_eval_finalized.name,
-                EnvState.state_input_final_state_eval_finalized.name,
                 EnvState.state_input_run_mode_arg_loaded.name,
+                EnvState.state_input_final_state_eval_finalized.name,
             ],
             state_name=if_none(state_name, EnvState.state_run_mode_executed.name),
         )
@@ -1744,6 +1737,69 @@ class Bootstrapper_state_input_py_exec_var_loaded(
 
 
 # noinspection PyPep8Naming
+class Bootstrapper_state_input_start_id_var_loaded(AbstractCachingStateNode[str]):
+
+    def __init__(
+        self,
+        env_ctx: EnvContext,
+        state_name: str | None = None,
+    ):
+        super().__init__(
+            env_ctx=env_ctx,
+            parent_states=[],
+            state_name=if_none(
+                state_name, EnvState.state_input_start_id_var_loaded.name
+            ),
+        )
+
+    def _eval_state_once(
+        self,
+    ) -> ValueType:
+        return os.getenv(
+            EnvVar.var_PROTOPRIMER_START_ID.value,
+            get_default_start_id(),
+        )
+
+
+# noinspection PyPep8Naming
+class Bootstrapper_state_input_proto_code_file_abs_path_var_loaded(
+    AbstractCachingStateNode[str]
+):
+
+    def __init__(
+        self,
+        env_ctx: EnvContext,
+        state_name: str | None = None,
+    ):
+        super().__init__(
+            env_ctx=env_ctx,
+            parent_states=[],
+            state_name=if_none(
+                state_name,
+                EnvState.state_input_proto_code_file_abs_path_var_loaded.name,
+            ),
+        )
+
+    def _eval_state_once(
+        self,
+    ) -> ValueType:
+        state_input_proto_code_file_abs_path_var_loaded: str | None = os.getenv(
+            EnvVar.var_PROTOPRIMER_PROTO_CODE.value,
+            None,
+        )
+        if state_input_proto_code_file_abs_path_var_loaded is not None:
+            if not os.path.isabs(state_input_proto_code_file_abs_path_var_loaded):
+                raise AssertionError(
+                    f"`{EnvVar.var_PROTOPRIMER_PROTO_CODE.value}` must specify absolute path"
+                )
+            if not os.path.isfile(state_input_proto_code_file_abs_path_var_loaded):
+                raise AssertionError(
+                    f"file {state_input_proto_code_file_abs_path_var_loaded} is not available"
+                )
+        return state_input_proto_code_file_abs_path_var_loaded
+
+
+# noinspection PyPep8Naming
 class Bootstrapper_state_py_exec_arbitrary_reached(
     AbstractCachingStateNode[PythonExecutable]
 ):
@@ -1759,9 +1815,9 @@ class Bootstrapper_state_py_exec_arbitrary_reached(
         super().__init__(
             env_ctx=env_ctx,
             parent_states=[
-                EnvState.state_input_py_exec_var_loaded.name,
-                EnvState.state_args_parsed.name,
                 EnvState.state_input_wizard_stage_arg_loaded.name,
+                EnvState.state_input_py_exec_var_loaded.name,
+                EnvState.state_input_start_id_var_loaded.name,
             ],
             state_name=if_none(
                 state_name,
@@ -1776,13 +1832,8 @@ class Bootstrapper_state_py_exec_arbitrary_reached(
             EnvState.state_input_py_exec_var_loaded.name
         )
 
-        state_args_parsed: argparse.Namespace = self.eval_parent_state(
-            EnvState.state_args_parsed.name
-        )
-
-        start_id: str = getattr(
-            state_args_parsed,
-            ParsedArg.name_start_id.value,
+        state_input_start_id_var_loaded: str = self.eval_parent_state(
+            EnvState.state_input_start_id_var_loaded.name
         )
 
         if (
@@ -1823,7 +1874,7 @@ class Bootstrapper_state_py_exec_arbitrary_reached(
                 curr_python_path=path_to_curr_python,
                 next_py_exec=PythonExecutable.py_exec_arbitrary,
                 next_python_path=path_to_next_python,
-                start_id=start_id,
+                start_id=state_input_start_id_var_loaded,
                 proto_code_abs_file_path=None,
                 wizard_stage=self.env_ctx.mutable_state_input_wizard_stage_arg_loaded.get_curr_value(
                     self,
@@ -1846,8 +1897,8 @@ class Bootstrapper_state_input_proto_code_file_abs_path_eval_finalized(
         super().__init__(
             env_ctx=env_ctx,
             parent_states=[
+                EnvState.state_input_proto_code_file_abs_path_var_loaded.name,
                 EnvState.state_py_exec_arbitrary_reached.name,
-                EnvState.state_args_parsed.name,
             ],
             state_name=if_none(
                 state_name,
@@ -1863,23 +1914,21 @@ class Bootstrapper_state_input_proto_code_file_abs_path_eval_finalized(
             EnvState.state_py_exec_arbitrary_reached.name
         )
 
-        state_args_parsed: argparse.Namespace = self.eval_parent_state(
-            EnvState.state_args_parsed.name
+        state_input_proto_code_file_abs_path_var_loaded: str | None = (
+            self.eval_parent_state(
+                EnvState.state_input_proto_code_file_abs_path_var_loaded.name
+            )
         )
 
         state_input_proto_code_file_abs_path_eval_finalized: str
         if state_py_exec_arbitrary_reached.value >= PythonExecutable.py_exec_venv.value:
-            arg_proto_code_abs_file_path = getattr(
-                state_args_parsed,
-                ParsedArg.name_proto_code.value,
-            )
-            if arg_proto_code_abs_file_path is None:
+            if state_input_proto_code_file_abs_path_var_loaded is None:
                 raise AssertionError(
-                    f"`{SyntaxArg.arg_proto_code_abs_file_path}` is not specified at `{EnvState.state_py_exec_arbitrary_reached.name}` [{state_py_exec_arbitrary_reached}]"
+                    f"`{EnvVar.var_PROTOPRIMER_PROTO_CODE.value}` is not specified at `{EnvState.state_py_exec_arbitrary_reached.name}` [{state_py_exec_arbitrary_reached}]"
                 )
-            # rely on the path given in args:
+            # rely on the path given in env var:
             state_input_proto_code_file_abs_path_eval_finalized = (
-                arg_proto_code_abs_file_path
+                state_input_proto_code_file_abs_path_var_loaded
             )
         else:
             assert not is_venv()
@@ -2022,8 +2071,8 @@ class Wizard_state_proto_conf_file_data(AbstractCachingStateNode[dict]):
             env_ctx=env_ctx,
             parent_states=[
                 EnvState.state_input_wizard_stage_arg_loaded.name,
-                EnvState.state_input_proto_conf_primer_file_abs_path_eval_finalized.name,
                 EnvState.state_input_proto_code_dir_abs_path_eval_finalized.name,
+                EnvState.state_input_proto_conf_primer_file_abs_path_eval_finalized.name,
                 # UC_27_40_17_59.replace_by_new_and_use_old.md:
                 # Depend on the moved state:
                 self.moved_state_name,
@@ -2077,8 +2126,8 @@ class Bootstrapper_state_primer_ref_root_dir_abs_path_eval_finalized(
         super().__init__(
             env_ctx=env_ctx,
             parent_states=[
-                EnvState.state_proto_conf_file_data.name,
                 EnvState.state_input_proto_code_dir_abs_path_eval_finalized.name,
+                EnvState.state_proto_conf_file_data.name,
             ],
             state_name=if_none(
                 state_name,
@@ -2127,8 +2176,8 @@ class Bootstrapper_state_primer_conf_client_file_abs_path_eval_finalized(
         super().__init__(
             env_ctx=env_ctx,
             parent_states=[
-                EnvState.state_primer_ref_root_dir_abs_path_eval_finalized.name,
                 EnvState.state_proto_conf_file_data.name,
+                EnvState.state_primer_ref_root_dir_abs_path_eval_finalized.name,
             ],
             state_name=if_none(
                 state_name,
@@ -2260,7 +2309,7 @@ class Wizard_state_client_conf_file_data(AbstractCachingStateNode[dict]):
 
 
 # noinspection PyPep8Naming
-class Bootstrapper_state_client_local_env_dir_rel_path_eval_finalized(
+class Bootstrapper_state_client_local_env_conf_dir_rel_path_eval_finalized(
     AbstractCachingStateNode[str]
 ):
 
@@ -2272,53 +2321,125 @@ class Bootstrapper_state_client_local_env_dir_rel_path_eval_finalized(
         super().__init__(
             env_ctx=env_ctx,
             parent_states=[
+                EnvState.state_args_parsed.name,
+                EnvState.state_primer_ref_root_dir_abs_path_eval_finalized.name,
                 EnvState.state_client_conf_file_data.name,
             ],
             state_name=if_none(
                 state_name,
-                EnvState.state_client_local_env_dir_rel_path_eval_finalized.name,
+                EnvState.state_client_local_env_conf_dir_rel_path_eval_finalized.name,
             ),
         )
 
     def _eval_state_once(
         self,
     ) -> ValueType:
-        state_client_conf_file_data: dict = self.eval_parent_state(
-            EnvState.state_client_conf_file_data.name
-        )
-        state_client_local_env_dir_rel_path_eval_finalized = (
-            state_client_conf_file_data.get(
-                ConfField.field_client_default_env_dir_rel_path.value,
-            )
-        )
-        if state_client_local_env_dir_rel_path_eval_finalized is None:
-            raise AssertionError(
-                f"Field `{ConfField.field_client_default_env_dir_rel_path.value}` is [{state_client_local_env_dir_rel_path_eval_finalized}] - re-run with [{SyntaxArg.arg_mode_wizard}] to set it."
-            )
-        """
-        Raises exception if the target path of the `@/conf/` symlink is not allowed.
 
-        NOTE:
-        At the moment, only target paths under `client_dir` (under `@/`) are allowed.
-        This is not a strict requirement and can be relaxed in the future.
-        """
-        if os.path.isabs(state_client_local_env_dir_rel_path_eval_finalized):
+        client_local_env_dir_any_path: str = (
+            self._select_client_local_env_dir_any_path()
+        )
+        client_local_env_dir_abs_path: str = self._select_client_local_env_dir_abs_path(
+            client_local_env_dir_any_path
+        )
+
+        if not os.path.isdir(client_local_env_dir_abs_path):
             raise AssertionError(
-                f"Target for `@/conf/` symlink [{state_client_local_env_dir_rel_path_eval_finalized}] must not be absolute path."
+                f"`{PathName.path_local_env_conf.value}` [{client_local_env_dir_abs_path}] must be a dir."
             )
-        elif (
-            ".."
-            in pathlib.Path(state_client_local_env_dir_rel_path_eval_finalized).parts
+
+        state_primer_ref_root_dir_abs_path_eval_finalized = self.eval_parent_state(
+            EnvState.state_primer_ref_root_dir_abs_path_eval_finalized.name
+        )
+        if not is_sub_path(
+            client_local_env_dir_abs_path,
+            state_primer_ref_root_dir_abs_path_eval_finalized,
         ):
             raise AssertionError(
-                f"Target for `@/conf/` symlink [{state_client_local_env_dir_rel_path_eval_finalized}] must not contain `..` path segments."
+                f"`{PathName.path_local_env_conf.value}` [{client_local_env_dir_abs_path}] is not under `{EnvState.state_primer_ref_root_dir_abs_path_eval_finalized.name}` [{state_primer_ref_root_dir_abs_path_eval_finalized}]."
             )
-        elif not os.path.isdir(state_client_local_env_dir_rel_path_eval_finalized):
-            # TODO: This has to be fixed as the rel path is tested against curr dir as base, but must be tested against client ref root:
+
+        state_client_local_env_conf_dir_rel_path_eval_finalized: str = os.path.normpath(
+            rel_path(
+                client_local_env_dir_abs_path,
+                state_primer_ref_root_dir_abs_path_eval_finalized,
+            )
+        )
+
+        assert (
+            ".."
+            not in pathlib.Path(
+                state_client_local_env_conf_dir_rel_path_eval_finalized
+            ).parts
+        )
+
+        return state_client_local_env_conf_dir_rel_path_eval_finalized
+
+    def _select_client_local_env_dir_any_path(
+        self,
+    ) -> str:
+        state_args_parsed: argparse.Namespace = self.eval_parent_state(
+            EnvState.state_args_parsed.name
+        )
+        env_conf_dir_any_path: str | None = getattr(
+            state_args_parsed,
+            ParsedArg.name_local_env_conf_dir.value,
+        )
+        if env_conf_dir_any_path is None:
+            # Use the default env configured:
+            state_client_conf_file_data: dict = self.eval_parent_state(
+                EnvState.state_client_conf_file_data.name
+            )
+            field_client_default_env_dir_rel_path = state_client_conf_file_data.get(
+                ConfField.field_client_default_env_dir_rel_path.value,
+            )
+            if field_client_default_env_dir_rel_path is None:
+                raise AssertionError(
+                    f"Field `{ConfField.field_client_default_env_dir_rel_path.value}` is [{field_client_default_env_dir_rel_path}] - re-run with [{SyntaxArg.arg_mode_wizard}] to set it."
+                )
+            if os.path.isabs(field_client_default_env_dir_rel_path):
+                raise AssertionError(
+                    f"Field `{ConfField.field_client_default_env_dir_rel_path.value}` must be a relative path."
+                )
+            return field_client_default_env_dir_rel_path
+        else:
+            return env_conf_dir_any_path
+
+    def _select_client_local_env_dir_abs_path(
+        self,
+        client_local_env_dir_any_path: str,
+    ) -> str:
+        """
+        Determine the target dir abs path by trying the path it is relative to.
+
+        *   If the input path is already absolute, return as is.
+        *   Use ref root as the base first.
+        *   Use curr dir as the base last.
+        """
+
+        if os.path.isabs(client_local_env_dir_any_path):
+            return client_local_env_dir_any_path
+        else:
+            state_primer_ref_root_dir_abs_path_eval_finalized = self.eval_parent_state(
+                EnvState.state_primer_ref_root_dir_abs_path_eval_finalized.name
+            )
+            # ===
+            abs_path = os.path.join(
+                state_primer_ref_root_dir_abs_path_eval_finalized,
+                client_local_env_dir_any_path,
+            )
+            if os.path.isdir(abs_path):
+                return abs_path
+            # ===
+            abs_path = os.path.join(
+                os.getcwd(),
+                client_local_env_dir_any_path,
+            )
+            if os.path.isdir(abs_path):
+                return abs_path
+            # ===
             raise AssertionError(
-                f"Target for `@/conf/` symlink [{state_client_local_env_dir_rel_path_eval_finalized}] must lead to a directory."
+                f"`{PathName.path_local_env_conf.value}` [{client_local_env_dir_any_path}] is relative to neither `{PathName.path_ref_root.value}` [{state_primer_ref_root_dir_abs_path_eval_finalized}] nor curr dir [{os.getcwd()}]."
             )
-        return os.path.normpath(state_client_local_env_dir_rel_path_eval_finalized)
 
 
 # noinspection PyPep8Naming
@@ -2336,7 +2457,7 @@ class Bootstrapper_state_client_conf_env_dir_abs_path_eval_finalized(
             parent_states=[
                 EnvState.state_primer_ref_root_dir_abs_path_eval_finalized.name,
                 EnvState.state_client_conf_file_data.name,
-                EnvState.state_client_local_env_dir_rel_path_eval_finalized.name,
+                EnvState.state_client_local_env_conf_dir_rel_path_eval_finalized.name,
             ],
             state_name=if_none(
                 state_name,
@@ -2370,15 +2491,17 @@ class Bootstrapper_state_client_conf_env_dir_abs_path_eval_finalized(
             env_conf_dir_rel_path,
         )
 
-        state_client_local_env_dir_rel_path_eval_finalized = self.eval_parent_state(
-            EnvState.state_client_local_env_dir_rel_path_eval_finalized.name
+        state_client_local_env_conf_dir_rel_path_eval_finalized = (
+            self.eval_parent_state(
+                EnvState.state_client_local_env_conf_dir_rel_path_eval_finalized.name
+            )
         )
-        assert state_client_local_env_dir_rel_path_eval_finalized is not None
+        assert state_client_local_env_conf_dir_rel_path_eval_finalized is not None
 
         if os.path.exists(state_client_conf_env_dir_abs_path_eval_finalized):
             if os.path.islink(state_client_conf_env_dir_abs_path_eval_finalized):
                 if os.path.isdir(state_client_conf_env_dir_abs_path_eval_finalized):
-                    if state_client_local_env_dir_rel_path_eval_finalized is None:
+                    if state_client_local_env_conf_dir_rel_path_eval_finalized is None:
                         # TODO: Can we make it mandatory?
                         #       In cases when there is no env-specifics,
                         #       it can point to ref root (and entire link can be avoided if name is blank)?
@@ -2393,11 +2516,11 @@ class Bootstrapper_state_client_conf_env_dir_abs_path_eval_finalized(
                         )
 
                         if (
-                            state_client_local_env_dir_rel_path_eval_finalized
+                            state_client_local_env_conf_dir_rel_path_eval_finalized
                             != conf_dir_path
                         ):
                             raise AssertionError(
-                                f"The `@/conf/` target [{conf_dir_path}] is not the same as the provided target [{state_client_local_env_dir_rel_path_eval_finalized}]."
+                                f"The `@/conf/` target [{conf_dir_path}] is not the same as the provided target [{state_client_local_env_conf_dir_rel_path_eval_finalized}]."
                             )
                 else:
                     raise AssertionError(
@@ -2409,7 +2532,9 @@ class Bootstrapper_state_client_conf_env_dir_abs_path_eval_finalized(
                 )
         else:
             os.symlink(
-                os.path.normpath(state_client_local_env_dir_rel_path_eval_finalized),
+                os.path.normpath(
+                    state_client_local_env_conf_dir_rel_path_eval_finalized
+                ),
                 state_client_conf_env_dir_abs_path_eval_finalized,
             )
 
@@ -2482,15 +2607,17 @@ class Bootstrapper_state_client_conf_env_file_abs_path_eval_finalized(
         self,
     ) -> ValueType:
 
-        state_primer_ref_root_dir_abs_path_eval_finalized = self.eval_parent_state(
+        state_primer_ref_root_dir_abs_path_eval_finalized: str = self.eval_parent_state(
             EnvState.state_primer_ref_root_dir_abs_path_eval_finalized.name
         )
 
-        state_client_link_name_dir_rel_path_eval_finalized = self.eval_parent_state(
-            EnvState.state_client_link_name_dir_rel_path_eval_finalized.name
+        state_client_link_name_dir_rel_path_eval_finalized: str = (
+            self.eval_parent_state(
+                EnvState.state_client_link_name_dir_rel_path_eval_finalized.name
+            )
         )
 
-        state_client_conf_env_file_abs_path_eval_finalized = os.path.join(
+        state_client_conf_env_file_abs_path_eval_finalized: str = os.path.join(
             state_primer_ref_root_dir_abs_path_eval_finalized,
             state_client_link_name_dir_rel_path_eval_finalized,
             # TODO: Do not use default values directly - resolve it differently at the prev|next step based on the need:
@@ -2631,8 +2758,8 @@ class Bootstrapper_state_env_local_python_file_abs_path_eval_finalized(
         super().__init__(
             env_ctx=env_ctx,
             parent_states=[
-                EnvState.state_env_conf_file_data.name,
                 EnvState.state_primer_ref_root_dir_abs_path_eval_finalized.name,
+                EnvState.state_env_conf_file_data.name,
             ],
             state_name=if_none(
                 state_name,
@@ -2679,8 +2806,8 @@ class Bootstrapper_state_env_local_venv_dir_abs_path_eval_finalized(
         super().__init__(
             env_ctx=env_ctx,
             parent_states=[
-                EnvState.state_env_conf_file_data.name,
                 EnvState.state_primer_ref_root_dir_abs_path_eval_finalized.name,
+                EnvState.state_env_conf_file_data.name,
             ],
             state_name=if_none(
                 state_name,
@@ -2727,8 +2854,8 @@ class Bootstrapper_state_env_local_log_dir_abs_path_eval_finalized(
         super().__init__(
             env_ctx=env_ctx,
             parent_states=[
-                EnvState.state_env_conf_file_data.name,
                 EnvState.state_primer_ref_root_dir_abs_path_eval_finalized.name,
+                EnvState.state_env_conf_file_data.name,
             ],
             state_name=if_none(
                 state_name,
@@ -2777,8 +2904,8 @@ class Bootstrapper_state_env_local_tmp_dir_abs_path_eval_finalized(
         super().__init__(
             env_ctx=env_ctx,
             parent_states=[
-                EnvState.state_env_conf_file_data.name,
                 EnvState.state_primer_ref_root_dir_abs_path_eval_finalized.name,
+                EnvState.state_env_conf_file_data.name,
             ],
             state_name=if_none(
                 state_name,
@@ -2864,8 +2991,9 @@ class Bootstrapper_state_default_file_log_handler_configured(
             env_ctx=env_ctx,
             parent_states=[
                 EnvState.state_args_parsed.name,
-                EnvState.state_env_local_log_dir_abs_path_eval_finalized.name,
                 EnvState.state_input_stderr_log_level_eval_finalized.name,
+                EnvState.state_input_start_id_var_loaded.name,
+                EnvState.state_env_local_log_dir_abs_path_eval_finalized.name,
             ],
             state_name=if_none(
                 state_name,
@@ -2877,13 +3005,8 @@ class Bootstrapper_state_default_file_log_handler_configured(
         self,
     ) -> ValueType:
 
-        state_args_parsed: argparse.Namespace = self.eval_parent_state(
-            EnvState.state_args_parsed.name
-        )
-
-        start_id: str = getattr(
-            state_args_parsed,
-            ParsedArg.name_start_id.value,
+        state_input_start_id_var_loaded: str = self.eval_parent_state(
+            EnvState.state_input_start_id_var_loaded.name
         )
 
         state_env_local_log_dir_abs_path_eval_finalized: str = self.eval_parent_state(
@@ -2897,7 +3020,7 @@ class Bootstrapper_state_default_file_log_handler_configured(
         script_path = sys.argv[0]
         script_name = os.path.basename(script_path)
 
-        file_log_name = f"{script_name}.{start_id}.log"
+        file_log_name = f"{script_name}.{state_input_start_id_var_loaded}.log"
         # TODO: Configure MAX file log level in the config file (NOTE: the higher the level the fewer the log entries):
         file_log_level: int = logging.INFO
         # Increase the log level at most to what is used by stderr:
@@ -2942,15 +3065,16 @@ class Bootstrapper_state_py_exec_required_reached(
         super().__init__(
             env_ctx=env_ctx,
             parent_states=[
+                EnvState.state_args_parsed.name,
                 EnvState.state_input_wizard_stage_arg_loaded.name,
                 EnvState.state_input_py_exec_var_loaded.name,
+                EnvState.state_input_start_id_var_loaded.name,
+                EnvState.state_input_proto_code_file_abs_path_eval_finalized.name,
+                EnvState.state_client_conf_env_file_abs_path_eval_finalized.name,
                 EnvState.state_env_local_python_file_abs_path_eval_finalized.name,
                 EnvState.state_env_local_venv_dir_abs_path_eval_finalized.name,
-                EnvState.state_client_conf_env_file_abs_path_eval_finalized.name,
-                EnvState.state_input_proto_code_file_abs_path_eval_finalized.name,
-                EnvState.state_default_file_log_handler_configured.name,
                 EnvState.state_env_local_tmp_dir_abs_path_eval_finalized.name,
-                EnvState.state_args_parsed.name,
+                EnvState.state_default_file_log_handler_configured.name,
             ],
             state_name=if_none(
                 state_name, EnvState.state_py_exec_required_reached.name
@@ -2973,13 +3097,8 @@ class Bootstrapper_state_py_exec_required_reached(
             EnvState.state_env_local_tmp_dir_abs_path_eval_finalized.name
         )
 
-        state_args_parsed: argparse.Namespace = self.eval_parent_state(
-            EnvState.state_args_parsed.name
-        )
-
-        start_id: str = getattr(
-            state_args_parsed,
-            ParsedArg.name_start_id.value,
+        state_input_start_id_var_loaded: str = self.eval_parent_state(
+            EnvState.state_input_start_id_var_loaded.name
         )
 
         state_input_py_exec_var_loaded: PythonExecutable = self.eval_parent_state(
@@ -2992,10 +3111,12 @@ class Bootstrapper_state_py_exec_required_reached(
             )
         )
 
-        state_env_local_python_file_abs_path_eval_finalized = self.eval_parent_state(
-            EnvState.state_env_local_python_file_abs_path_eval_finalized.name
+        state_env_local_python_file_abs_path_eval_finalized: str = (
+            self.eval_parent_state(
+                EnvState.state_env_local_python_file_abs_path_eval_finalized.name
+            )
         )
-        state_env_local_venv_dir_abs_path_eval_finalized = self.eval_parent_state(
+        state_env_local_venv_dir_abs_path_eval_finalized: str = self.eval_parent_state(
             EnvState.state_env_local_venv_dir_abs_path_eval_finalized.name
         )
 
@@ -3024,7 +3145,7 @@ class Bootstrapper_state_py_exec_required_reached(
                 curr_python_path=path_to_curr_python,
                 next_py_exec=PythonExecutable.py_exec_required,
                 next_python_path=state_env_local_python_file_abs_path_eval_finalized,
-                start_id=start_id,
+                start_id=state_input_start_id_var_loaded,
                 proto_code_abs_file_path=state_input_proto_code_file_abs_path_eval_finalized,
                 wizard_stage=self.env_ctx.mutable_state_input_wizard_stage_arg_loaded.get_curr_value(
                     self,
@@ -3052,12 +3173,13 @@ class Bootstrapper_state_reinstall_triggered(AbstractCachingStateNode[bool]):
             env_ctx=env_ctx,
             parent_states=[
                 EnvState.state_args_parsed.name,
-                EnvState.state_env_local_venv_dir_abs_path_eval_finalized.name,
                 EnvState.state_input_wizard_stage_arg_loaded.name,
+                EnvState.state_input_start_id_var_loaded.name,
+                EnvState.state_input_proto_code_file_abs_path_eval_finalized.name,
                 EnvState.state_client_conf_env_dir_abs_path_eval_finalized.name,
+                EnvState.state_env_local_venv_dir_abs_path_eval_finalized.name,
                 EnvState.state_env_local_tmp_dir_abs_path_eval_finalized.name,
                 EnvState.state_py_exec_required_reached.name,
-                EnvState.state_input_proto_code_file_abs_path_eval_finalized.name,
             ],
             state_name=if_none(state_name, EnvState.state_reinstall_triggered.name),
         )
@@ -3066,13 +3188,12 @@ class Bootstrapper_state_reinstall_triggered(AbstractCachingStateNode[bool]):
         self,
     ) -> ValueType:
 
-        state_args_parsed: argparse.Namespace = self.eval_parent_state(
-            EnvState.state_args_parsed.name
+        state_input_start_id_var_loaded: str = self.eval_parent_state(
+            EnvState.state_input_start_id_var_loaded.name
         )
 
-        start_id: str = getattr(
-            state_args_parsed,
-            ParsedArg.name_start_id.value,
+        state_args_parsed: argparse.Namespace = self.eval_parent_state(
+            EnvState.state_args_parsed.name
         )
 
         do_reinstall: bool = getattr(
@@ -3111,7 +3232,7 @@ class Bootstrapper_state_reinstall_triggered(AbstractCachingStateNode[bool]):
 
             moved_venv_dir = os.path.join(
                 state_env_local_tmp_dir_abs_path_eval_finalized,
-                f"venv.before.{start_id}",
+                f"venv.before.{state_input_start_id_var_loaded}",
             )
 
             logger.info(
@@ -3152,14 +3273,15 @@ class Bootstrapper_state_py_exec_venv_reached(
         super().__init__(
             env_ctx=env_ctx,
             parent_states=[
-                EnvState.state_reinstall_triggered.name,
+                EnvState.state_args_parsed.name,
                 EnvState.state_input_wizard_stage_arg_loaded.name,
                 EnvState.state_input_py_exec_var_loaded.name,
+                EnvState.state_input_start_id_var_loaded.name,
+                EnvState.state_input_proto_code_file_abs_path_eval_finalized.name,
+                EnvState.state_client_conf_env_file_abs_path_eval_finalized.name,
                 EnvState.state_env_local_python_file_abs_path_eval_finalized.name,
                 EnvState.state_env_local_venv_dir_abs_path_eval_finalized.name,
-                EnvState.state_client_conf_env_file_abs_path_eval_finalized.name,
-                EnvState.state_input_proto_code_file_abs_path_eval_finalized.name,
-                EnvState.state_args_parsed.name,
+                EnvState.state_reinstall_triggered.name,
             ],
             state_name=if_none(state_name, EnvState.state_py_exec_venv_reached.name),
         )
@@ -3170,13 +3292,8 @@ class Bootstrapper_state_py_exec_venv_reached(
 
         state_py_exec_venv_reached: PythonExecutable
 
-        state_args_parsed: argparse.Namespace = self.eval_parent_state(
-            EnvState.state_args_parsed.name
-        )
-
-        start_id: str = getattr(
-            state_args_parsed,
-            ParsedArg.name_start_id.value,
+        state_input_start_id_var_loaded: str = self.eval_parent_state(
+            EnvState.state_input_start_id_var_loaded.name
         )
 
         state_reinstall_triggered: bool = self.eval_parent_state(
@@ -3193,18 +3310,20 @@ class Bootstrapper_state_py_exec_venv_reached(
             )
         )
 
-        state_env_local_python_file_abs_path_eval_finalized = self.eval_parent_state(
-            EnvState.state_env_local_python_file_abs_path_eval_finalized.name
+        state_env_local_python_file_abs_path_eval_finalized: str = (
+            self.eval_parent_state(
+                EnvState.state_env_local_python_file_abs_path_eval_finalized.name
+            )
         )
-        state_env_local_venv_dir_abs_path_eval_finalized = self.eval_parent_state(
+        state_env_local_venv_dir_abs_path_eval_finalized: str = self.eval_parent_state(
             EnvState.state_env_local_venv_dir_abs_path_eval_finalized.name
         )
 
-        venv_path_to_python = os.path.join(
+        venv_path_to_python: str = os.path.join(
             state_env_local_venv_dir_abs_path_eval_finalized,
             ConfConstGeneral.file_rel_path_venv_python,
         )
-        path_to_curr_python = get_path_to_curr_python()
+        path_to_curr_python: str = get_path_to_curr_python()
         logger.debug(f"path_to_curr_python: {path_to_curr_python}")
 
         # Do not do anything if beyond `PythonExecutable.py_exec_venv`:
@@ -3238,7 +3357,7 @@ class Bootstrapper_state_py_exec_venv_reached(
             curr_python_path=state_env_local_python_file_abs_path_eval_finalized,
             next_py_exec=PythonExecutable.py_exec_venv,
             next_python_path=venv_path_to_python,
-            start_id=start_id,
+            start_id=state_input_start_id_var_loaded,
             proto_code_abs_file_path=state_input_proto_code_file_abs_path_eval_finalized,
             wizard_stage=self.env_ctx.mutable_state_input_wizard_stage_arg_loaded.get_curr_value(
                 self,
@@ -3259,12 +3378,12 @@ class Bootstrapper_state_protoprimer_package_installed(AbstractCachingStateNode[
         super().__init__(
             env_ctx=env_ctx,
             parent_states=[
-                EnvState.state_args_parsed.name,
                 EnvState.state_input_do_install_var_loaded.name,
-                EnvState.state_py_exec_venv_reached.name,
+                EnvState.state_args_parsed.name,
                 EnvState.state_primer_ref_root_dir_abs_path_eval_finalized.name,
                 EnvState.state_client_conf_env_dir_abs_path_eval_finalized.name,
                 EnvState.state_env_project_descriptors_eval_finalized.name,
+                EnvState.state_py_exec_venv_reached.name,
             ],
             state_name=if_none(
                 state_name, EnvState.state_protoprimer_package_installed.name
@@ -3370,8 +3489,8 @@ class Bootstrapper_state_version_constraints_generated(AbstractCachingStateNode[
         super().__init__(
             env_ctx=env_ctx,
             parent_states=[
-                EnvState.state_protoprimer_package_installed.name,
                 EnvState.state_client_conf_env_dir_abs_path_eval_finalized.name,
+                EnvState.state_protoprimer_package_installed.name,
             ],
             state_name=if_none(
                 state_name, EnvState.state_version_constraints_generated.name
@@ -3425,11 +3544,12 @@ class Bootstrapper_state_py_exec_updated_protoprimer_package_reached(
         super().__init__(
             env_ctx=env_ctx,
             parent_states=[
+                EnvState.state_args_parsed.name,
                 EnvState.state_input_wizard_stage_arg_loaded.name,
                 EnvState.state_input_py_exec_var_loaded.name,
+                EnvState.state_input_start_id_var_loaded.name,
                 EnvState.state_input_proto_code_file_abs_path_eval_finalized.name,
                 EnvState.state_version_constraints_generated.name,
-                EnvState.state_args_parsed.name,
             ],
             state_name=if_none(
                 state_name,
@@ -3463,13 +3583,8 @@ class Bootstrapper_state_py_exec_updated_protoprimer_package_reached(
         ):
             venv_path_to_python = get_path_to_curr_python()
 
-            state_args_parsed: argparse.Namespace = self.eval_parent_state(
-                EnvState.state_args_parsed.name
-            )
-
-            start_id: str = getattr(
-                state_args_parsed,
-                ParsedArg.name_start_id.value,
+            state_input_start_id_var_loaded: str = self.eval_parent_state(
+                EnvState.state_input_start_id_var_loaded.name
             )
 
             state_py_exec_updated_protoprimer_package_reached = (
@@ -3484,7 +3599,7 @@ class Bootstrapper_state_py_exec_updated_protoprimer_package_reached(
                 curr_python_path=venv_path_to_python,
                 next_py_exec=PythonExecutable.py_exec_updated_protoprimer_package,
                 next_python_path=venv_path_to_python,
-                start_id=start_id,
+                start_id=state_input_start_id_var_loaded,
                 proto_code_abs_file_path=state_input_proto_code_file_abs_path_eval_finalized,
                 wizard_stage=self.env_ctx.mutable_state_input_wizard_stage_arg_loaded.get_curr_value(
                     self,
@@ -3513,8 +3628,8 @@ class Bootstrapper_state_proto_code_updated(AbstractCachingStateNode[bool]):
         super().__init__(
             env_ctx=env_ctx,
             parent_states=[
-                EnvState.state_py_exec_updated_protoprimer_package_reached.name,
                 EnvState.state_input_proto_code_file_abs_path_eval_finalized.name,
+                EnvState.state_py_exec_updated_protoprimer_package_reached.name,
             ],
             state_name=if_none(state_name, EnvState.state_proto_code_updated.name),
         )
@@ -3599,11 +3714,12 @@ class Bootstrapper_state_py_exec_updated_proto_code(
         super().__init__(
             env_ctx=env_ctx,
             parent_states=[
+                EnvState.state_args_parsed.name,
                 EnvState.state_input_wizard_stage_arg_loaded.name,
                 EnvState.state_input_py_exec_var_loaded.name,
-                EnvState.state_proto_code_updated.name,
+                EnvState.state_input_start_id_var_loaded.name,
                 EnvState.state_input_proto_code_file_abs_path_eval_finalized.name,
-                EnvState.state_args_parsed.name,
+                EnvState.state_proto_code_updated.name,
             ],
             state_name=if_none(
                 state_name, EnvState.state_py_exec_updated_proto_code.name
@@ -3638,13 +3754,8 @@ class Bootstrapper_state_py_exec_updated_proto_code(
             < PythonExecutable.py_exec_updated_proto_code.value
         ):
 
-            state_args_parsed: argparse.Namespace = self.eval_parent_state(
-                EnvState.state_args_parsed.name
-            )
-
-            start_id: str = getattr(
-                state_args_parsed,
-                ParsedArg.name_start_id.value,
+            state_input_start_id_var_loaded: str = self.eval_parent_state(
+                EnvState.state_input_start_id_var_loaded.name
             )
 
             state_py_exec_updated_proto_code = (
@@ -3659,7 +3770,7 @@ class Bootstrapper_state_py_exec_updated_proto_code(
                 curr_python_path=venv_path_to_python,
                 next_py_exec=PythonExecutable.py_exec_updated_proto_code,
                 next_python_path=venv_path_to_python,
-                start_id=start_id,
+                start_id=state_input_start_id_var_loaded,
                 proto_code_abs_file_path=state_input_proto_code_file_abs_path_eval_finalized,
                 wizard_stage=self.env_ctx.mutable_state_input_wizard_stage_arg_loaded.get_curr_value(
                     self,
@@ -3689,8 +3800,8 @@ class Bootstrapper_state_command_executed(AbstractCachingStateNode[int]):
             parent_states=if_none(
                 parent_states,
                 [
-                    EnvState.state_args_parsed.name,
                     EnvState.state_default_stderr_log_handler_configured.name,
+                    EnvState.state_args_parsed.name,
                     EnvState.state_py_exec_updated_proto_code.name,
                 ],
             ),
@@ -3816,6 +3927,12 @@ class EnvState(enum.Enum):
 
     state_input_py_exec_var_loaded = Bootstrapper_state_input_py_exec_var_loaded
 
+    state_input_start_id_var_loaded = Bootstrapper_state_input_start_id_var_loaded
+
+    state_input_proto_code_file_abs_path_var_loaded = (
+        Bootstrapper_state_input_proto_code_file_abs_path_var_loaded
+    )
+
     state_py_exec_arbitrary_reached = Bootstrapper_state_py_exec_arbitrary_reached
 
     state_input_proto_code_file_abs_path_eval_finalized = (
@@ -3844,8 +3961,8 @@ class EnvState(enum.Enum):
     # The state is wizard-able by `Wizard_state_client_conf_file_data`:
     state_client_conf_file_data = Bootstrapper_state_client_conf_file_data
 
-    state_client_local_env_dir_rel_path_eval_finalized = (
-        Bootstrapper_state_client_local_env_dir_rel_path_eval_finalized
+    state_client_local_env_conf_dir_rel_path_eval_finalized = (
+        Bootstrapper_state_client_local_env_conf_dir_rel_path_eval_finalized
     )
 
     state_client_conf_env_dir_abs_path_eval_finalized = (
@@ -4491,7 +4608,7 @@ def switch_python(
     required_environ: dict | None = None,
 ):
     logger.info(
-        f"switching from current `python` interpreter [{curr_python_path}][{curr_py_exec.name}] to [{next_python_path}][{next_py_exec.name}] with `{ParsedArg.name_proto_code.value}`[{proto_code_abs_file_path}]"
+        f"switching from current `python` interpreter [{curr_python_path}][{curr_py_exec.name}] to [{next_python_path}][{next_py_exec.name}] with `{EnvVar.var_PROTOPRIMER_PROTO_CODE.value}`[{proto_code_abs_file_path}]"
         "\n"
         "\n"
         f"{'=' * 40}"
@@ -4503,25 +4620,6 @@ def switch_python(
         *sys.argv,
         # ---
     ]
-
-    if SyntaxArg.arg_start_id not in sys.argv:
-        exec_argv.extend(
-            [
-                SyntaxArg.arg_start_id,
-                start_id,
-            ]
-        )
-
-    # Once `SyntaxArg.arg_proto_code_abs_file_path` is specified, it is never changed (no need to override):
-    if (proto_code_abs_file_path is not None) and (
-        SyntaxArg.arg_proto_code_abs_file_path not in exec_argv
-    ):
-        exec_argv.extend(
-            [
-                SyntaxArg.arg_proto_code_abs_file_path,
-                proto_code_abs_file_path,
-            ]
-        )
 
     if wizard_stage != WizardStage.wizard_started:
         exec_argv.extend(
@@ -4535,6 +4633,11 @@ def switch_python(
         required_environ = os.environ.copy()
 
     required_environ[EnvVar.var_PROTOPRIMER_PY_EXEC.value] = next_py_exec.name
+    required_environ[EnvVar.var_PROTOPRIMER_START_ID.value] = start_id
+    if proto_code_abs_file_path is not None:
+        required_environ[EnvVar.var_PROTOPRIMER_PROTO_CODE.value] = (
+            proto_code_abs_file_path
+        )
 
     logger.info(f"exec_argv: {exec_argv}")
     os.execve(
@@ -4590,17 +4693,29 @@ def create_temp_file():
 
 
 def is_sub_path(
-    abs_sub_path,
-    abs_base_base,
-):
+    abs_sub_path: str,
+    abs_base_base: str,
+) -> bool:
     try:
-        pathlib.PurePath(abs_sub_path).relative_to(pathlib.PurePath(abs_base_base))
+        rel_path(
+            abs_sub_path,
+            abs_base_base,
+        )
         return True
     except ValueError:
         return False
 
 
-def get_path_to_curr_python():
+def rel_path(
+    target_any_path: str,
+    source_any_path: str,
+) -> str:
+    return str(
+        pathlib.PurePath(target_any_path).relative_to(pathlib.PurePath(source_any_path))
+    )
+
+
+def get_path_to_curr_python() -> str:
     return sys.executable
 
 

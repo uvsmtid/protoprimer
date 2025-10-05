@@ -11,7 +11,7 @@ from neoprimer.cmd_install_pre_commit import customize_env_context
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     Bootstrapper_state_client_conf_file_data,
-    Bootstrapper_state_client_local_env_dir_rel_path_eval_finalized,
+    Bootstrapper_state_client_local_env_conf_dir_rel_path_eval_finalized,
     Bootstrapper_state_primer_ref_root_dir_abs_path_eval_finalized,
     ConfConstClient,
     ConfConstInput,
@@ -42,11 +42,11 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{Bootstrapper_state_primer_ref_root_dir_abs_path_eval_finalized.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_local_env_dir_rel_path_eval_finalized.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_local_env_conf_dir_rel_path_eval_finalized.__name__}.eval_own_state"
     )
     def test_success_when_conf_symlink_exists_and_target_dst_dir_unspecified(
         self,
-        mock_state_client_local_env_dir_rel_path_eval_finalized,
+        mock_state_client_local_env_conf_dir_rel_path_eval_finalized,
         mock_state_primer_ref_root_dir_abs_path_eval_finalized,
         mock_state_client_conf_file_data,
     ):
@@ -97,7 +97,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             client_script_basename,
         ]
 
-        mock_state_client_local_env_dir_rel_path_eval_finalized.return_value = (
+        mock_state_client_local_env_conf_dir_rel_path_eval_finalized.return_value = (
             mock_target_dir
         )
 
@@ -119,11 +119,11 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{Bootstrapper_state_primer_ref_root_dir_abs_path_eval_finalized.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_local_env_dir_rel_path_eval_finalized.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_local_env_conf_dir_rel_path_eval_finalized.__name__}.eval_own_state"
     )
     def test_success_when_conf_symlink_exists_and_target_dst_dir_matches(
         self,
-        mock_state_client_local_env_dir_rel_path_eval_finalized,
+        mock_state_client_local_env_conf_dir_rel_path_eval_finalized,
         mock_state_primer_ref_root_dir_abs_path_eval_finalized,
         mock_state_client_conf_file_data,
     ):
@@ -168,7 +168,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             state_client_conf_env_dir_abs_path_eval_finalized,
             target_dst_dir_path,
         )
-        mock_state_client_local_env_dir_rel_path_eval_finalized.return_value = (
+        mock_state_client_local_env_conf_dir_rel_path_eval_finalized.return_value = (
             target_dst_dir_path
         )
 
@@ -189,11 +189,11 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{Bootstrapper_state_primer_ref_root_dir_abs_path_eval_finalized.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_local_env_dir_rel_path_eval_finalized.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_local_env_conf_dir_rel_path_eval_finalized.__name__}.eval_own_state"
     )
     def test_failure_when_conf_symlink_exists_but_target_dst_dir_mismatches(
         self,
-        mock_state_client_local_env_dir_rel_path_eval_finalized,
+        mock_state_client_local_env_conf_dir_rel_path_eval_finalized,
         mock_state_primer_ref_root_dir_abs_path_eval_finalized,
         mock_state_client_conf_file_data,
     ):
@@ -243,7 +243,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             actual_target_dir,
         )
 
-        mock_state_client_local_env_dir_rel_path_eval_finalized.return_value = (
+        mock_state_client_local_env_conf_dir_rel_path_eval_finalized.return_value = (
             expected_target_dir
         )
 
@@ -265,11 +265,11 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{Bootstrapper_state_primer_ref_root_dir_abs_path_eval_finalized.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_local_env_dir_rel_path_eval_finalized.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_local_env_conf_dir_rel_path_eval_finalized.__name__}.eval_own_state"
     )
     def test_failure_when_conf_symlink_is_not_directory(
         self,
-        mock_state_client_local_env_dir_rel_path_eval_finalized,
+        mock_state_client_local_env_conf_dir_rel_path_eval_finalized,
         mock_state_primer_ref_root_dir_abs_path_eval_finalized,
         mock_state_client_conf_file_data,
     ):
@@ -314,7 +314,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             state_client_conf_env_dir_abs_path_eval_finalized,
             mock_not_a_dir,
         )
-        mock_state_client_local_env_dir_rel_path_eval_finalized.return_value = (
+        mock_state_client_local_env_conf_dir_rel_path_eval_finalized.return_value = (
             mock_not_a_dir
         )
 
@@ -336,11 +336,11 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{Bootstrapper_state_primer_ref_root_dir_abs_path_eval_finalized.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_local_env_dir_rel_path_eval_finalized.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_local_env_conf_dir_rel_path_eval_finalized.__name__}.eval_own_state"
     )
     def test_failure_when_conf_is_not_symlink(
         self,
-        mock_state_client_local_env_dir_rel_path_eval_finalized,
+        mock_state_client_local_env_conf_dir_rel_path_eval_finalized,
         mock_state_primer_ref_root_dir_abs_path_eval_finalized,
         mock_state_client_conf_file_data,
     ):
@@ -384,7 +384,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             client_script_basename,
         ]
 
-        mock_state_client_local_env_dir_rel_path_eval_finalized.return_value = (
+        mock_state_client_local_env_conf_dir_rel_path_eval_finalized.return_value = (
             "some_dir"
         )
 
@@ -407,11 +407,11 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{Bootstrapper_state_primer_ref_root_dir_abs_path_eval_finalized.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_local_env_dir_rel_path_eval_finalized.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_local_env_conf_dir_rel_path_eval_finalized.__name__}.eval_own_state"
     )
     def test_success_when_conf_symlink_is_created_if_it_is_missing_and_target_dir_is_given(
         self,
-        mock_state_client_local_env_dir_rel_path_eval_finalized,
+        mock_state_client_local_env_conf_dir_rel_path_eval_finalized,
         mock_state_primer_ref_root_dir_abs_path_eval_finalized,
         mock_state_client_conf_file_data,
     ):
@@ -453,7 +453,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
         self.fs.create_dir(target_dst_dir_path)
 
-        mock_state_client_local_env_dir_rel_path_eval_finalized.return_value = (
+        mock_state_client_local_env_conf_dir_rel_path_eval_finalized.return_value = (
             target_dst_dir_path
         )
 
@@ -480,11 +480,11 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{Bootstrapper_state_primer_ref_root_dir_abs_path_eval_finalized.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_local_env_dir_rel_path_eval_finalized.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_local_env_conf_dir_rel_path_eval_finalized.__name__}.eval_own_state"
     )
     def test_success_when_conf_symlink_is_created_with_normalized_target(
         self,
-        mock_state_client_local_env_dir_rel_path_eval_finalized,
+        mock_state_client_local_env_conf_dir_rel_path_eval_finalized,
         mock_state_primer_ref_root_dir_abs_path_eval_finalized,
         mock_state_client_conf_file_data,
     ):
@@ -526,7 +526,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
         self.fs.create_dir(target_dst_dir_path_normalized)
 
-        mock_state_client_local_env_dir_rel_path_eval_finalized.return_value = (
+        mock_state_client_local_env_conf_dir_rel_path_eval_finalized.return_value = (
             target_dst_dir_path_non_normalized
         )
 

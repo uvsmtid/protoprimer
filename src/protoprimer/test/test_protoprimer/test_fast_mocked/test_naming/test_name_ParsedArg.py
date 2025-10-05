@@ -38,8 +38,8 @@ class ArgMeta(AbstractMeta):
 
 class ArgName(enum.Enum):
 
-    name_proto_code = ArgMeta(
-        ParsedArg.name_proto_code,
+    name_local_env_conf_dir = ArgMeta(
+        ParsedArg.name_local_env_conf_dir,
         NameCategory.category_path_arg_value,
     )
 
@@ -55,11 +55,6 @@ class ArgName(enum.Enum):
 
     name_primer_runtime = ArgMeta(
         ParsedArg.name_primer_runtime,
-        NameCategory.category_named_arg_value,
-    )
-
-    name_start_id = ArgMeta(
-        ParsedArg.name_start_id,
         NameCategory.category_named_arg_value,
     )
 

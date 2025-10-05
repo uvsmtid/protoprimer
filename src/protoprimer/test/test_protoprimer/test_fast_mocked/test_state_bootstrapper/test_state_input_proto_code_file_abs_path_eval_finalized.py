@@ -9,11 +9,10 @@ from local_test.mock_verifier import (
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
-    Bootstrapper_state_args_parsed,
+    Bootstrapper_state_input_proto_code_file_abs_path_var_loaded,
     Bootstrapper_state_py_exec_arbitrary_reached,
     EnvContext,
     EnvState,
-    ParsedArg,
     PythonExecutable,
 )
 
@@ -34,10 +33,10 @@ def test_relationship():
     f"{primer_kernel.__name__}.{Bootstrapper_state_py_exec_arbitrary_reached.__name__}.eval_own_state"
 )
 @patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.eval_own_state"
+    f"{primer_kernel.__name__}.{Bootstrapper_state_input_proto_code_file_abs_path_var_loaded.__name__}.eval_own_state"
 )
 def test_py_exec_arbitrary_not_in_venv(
-    mock_state_args_parsed,
+    mock_state_input_proto_code_file_abs_path_var_loaded,
     mock_state_py_exec_arbitrary_reached,
     mock_is_venv,
     env_ctx,
@@ -49,9 +48,6 @@ def test_py_exec_arbitrary_not_in_venv(
         EnvState.state_input_proto_code_file_abs_path_eval_finalized.name,
     )
 
-    mock_state_args_parsed.return_value = argparse.Namespace(
-        **{},
-    )
     mock_state_py_exec_arbitrary_reached.return_value = (
         PythonExecutable.py_exec_arbitrary
     )
@@ -73,10 +69,10 @@ def test_py_exec_arbitrary_not_in_venv(
     f"{primer_kernel.__name__}.{Bootstrapper_state_py_exec_arbitrary_reached.__name__}.eval_own_state"
 )
 @patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.eval_own_state"
+    f"{primer_kernel.__name__}.{Bootstrapper_state_input_proto_code_file_abs_path_var_loaded.__name__}.eval_own_state"
 )
 def test_py_exec_venv(
-    mock_state_args_parsed,
+    mock_state_input_proto_code_file_abs_path_var_loaded,
     mock_state_py_exec_arbitrary_reached,
     env_ctx,
 ):
@@ -89,10 +85,8 @@ def test_py_exec_venv(
 
     proto_code_abs_file_path = "/path/to/proto_kernel.py"
 
-    mock_state_args_parsed.return_value = argparse.Namespace(
-        **{
-            ParsedArg.name_proto_code.value: proto_code_abs_file_path,
-        },
+    mock_state_input_proto_code_file_abs_path_var_loaded.return_value = (
+        proto_code_abs_file_path
     )
     mock_state_py_exec_arbitrary_reached.return_value = PythonExecutable.py_exec_venv
 
@@ -108,14 +102,14 @@ def test_py_exec_venv(
 
 
 @patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_py_exec_arbitrary_reached.__name__}.eval_own_state"
+    f"{primer_kernel.__name__}.{Bootstrapper_state_input_proto_code_file_abs_path_var_loaded.__name__}.eval_own_state"
 )
 @patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.eval_own_state"
+    f"{primer_kernel.__name__}.{Bootstrapper_state_py_exec_arbitrary_reached.__name__}.eval_own_state"
 )
 def test_py_exec_venv_no_arg(
-    mock_state_args_parsed,
     mock_state_py_exec_arbitrary_reached,
+    mock_state_input_proto_code_file_abs_path_var_loaded,
     env_ctx,
 ):
     # given:
@@ -125,11 +119,7 @@ def test_py_exec_venv_no_arg(
         EnvState.state_input_proto_code_file_abs_path_eval_finalized.name,
     )
 
-    mock_state_args_parsed.return_value = argparse.Namespace(
-        **{
-            ParsedArg.name_proto_code.value: None,
-        },
-    )
+    mock_state_input_proto_code_file_abs_path_var_loaded.return_value = None
     mock_state_py_exec_arbitrary_reached.return_value = PythonExecutable.py_exec_venv
 
     # when/then:

@@ -16,6 +16,7 @@ from protoprimer.primer_kernel import (
     Bootstrapper_state_env_local_tmp_dir_abs_path_eval_finalized,
     Bootstrapper_state_env_local_venv_dir_abs_path_eval_finalized,
     Bootstrapper_state_input_proto_code_file_abs_path_eval_finalized,
+    Bootstrapper_state_input_start_id_var_loaded,
     Bootstrapper_state_input_wizard_stage_arg_loaded,
     Bootstrapper_state_py_exec_required_reached,
     ConfConstEnv,
@@ -35,6 +36,9 @@ def test_relationship():
     assert_test_module_name_embeds_str(EnvState.state_reinstall_triggered.name)
 
 
+@patch(
+    f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.eval_own_state"
+)
 @patch("os.path.exists")
 @patch("os.remove")
 @patch(f"{primer_kernel.__name__}.shutil.move")
@@ -70,6 +74,7 @@ def test_reinstall_true(
     mock_shutil_move,
     mock_os_remove,
     mock_os_path_exists,
+    mock_state_input_start_id_var_loaded,
     env_ctx,
 ):
 
@@ -82,9 +87,9 @@ def test_reinstall_true(
     mock_state_args_parsed.return_value = argparse.Namespace(
         **{
             ParsedArg.name_reinstall.value: True,
-            ParsedArg.name_start_id.value: "mock_start_id",
         }
     )
+    mock_state_input_start_id_var_loaded.return_value = "mock_start_id"
     mock_state_py_exec_required_reached.return_value = PythonExecutable.py_exec_required
     mock_state_env_local_venv_dir_abs_path_eval_finalized.return_value = "/path/to/venv"
     mock_state_env_local_tmp_dir_abs_path_eval_finalized.return_value = "/path/to/tmp"
@@ -111,6 +116,9 @@ def test_reinstall_true(
 @patch("os.path.exists")
 @patch("os.remove")
 @patch("shutil.move")
+@patch(
+    f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.eval_own_state"
+)
 @patch(
     f"{primer_kernel.__name__}.{Bootstrapper_state_py_exec_required_reached.__name__}.eval_own_state"
 )
@@ -140,6 +148,7 @@ def test_reinstall_false(
     mock_state_client_conf_env_dir_abs_path_eval_finalized,
     mock_state_env_local_tmp_dir_abs_path_eval_finalized,
     mock_state_py_exec_required_reached,
+    mock_state_input_start_id_var_loaded,
     mock_shutil_move,
     mock_os_remove,
     mock_os_path_exists,
@@ -153,7 +162,6 @@ def test_reinstall_false(
     mock_state_args_parsed.return_value = argparse.Namespace(
         **{
             ParsedArg.name_reinstall.value: False,
-            ParsedArg.name_start_id.value: "mock_start_id",
         }
     )
     mock_state_py_exec_required_reached.return_value = PythonExecutable.py_exec_required
@@ -172,6 +180,9 @@ def test_reinstall_false(
 @patch("os.path.exists")
 @patch("os.remove")
 @patch("shutil.move")
+@patch(
+    f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.eval_own_state"
+)
 @patch(
     f"{primer_kernel.__name__}.{Bootstrapper_state_py_exec_required_reached.__name__}.eval_own_state"
 )
@@ -201,6 +212,7 @@ def test_reinstall_true_but_py_exec_not_required(
     mock_state_client_conf_env_dir_abs_path_eval_finalized,
     mock_state_env_local_tmp_dir_abs_path_eval_finalized,
     mock_state_py_exec_required_reached,
+    mock_state_input_start_id_var_loaded,
     mock_shutil_move,
     mock_os_remove,
     mock_os_path_exists,
@@ -214,9 +226,9 @@ def test_reinstall_true_but_py_exec_not_required(
     mock_state_args_parsed.return_value = argparse.Namespace(
         **{
             ParsedArg.name_reinstall.value: True,
-            ParsedArg.name_start_id.value: "mock_start_id",
         }
     )
+    mock_state_input_start_id_var_loaded.return_value = "mock_start_id"
     mock_state_py_exec_required_reached.return_value = PythonExecutable.py_exec_venv
 
     # when:

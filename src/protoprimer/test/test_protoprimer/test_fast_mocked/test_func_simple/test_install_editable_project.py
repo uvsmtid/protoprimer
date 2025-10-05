@@ -120,3 +120,48 @@ def test_install_editable_multiple_projects(
     ]
     mock_check_call.assert_called_once_with(expected_command)
     mock_get_path_to_curr_python.assert_called_once()
+
+
+@patch(f"{subprocess.__name__}.check_call")
+@patch(
+    f"{primer_kernel.__name__}.get_path_to_curr_python",
+    return_value="/mock/path/to/python",
+)
+def test_install_editable_no_extras_field(
+    mock_get_path_to_curr_python: MagicMock,
+    mock_check_call: MagicMock,
+):
+    """
+    Test install_editable_project when no extras are provided.
+    """
+
+    # given:
+
+    project_descriptors = [
+        {
+            ConfField.field_env_build_root_dir_rel_path.value: "path/to/project",
+        },
+    ]
+
+    # when:
+
+    install_editable_project(
+        "/mock",
+        project_descriptors,
+        "/mock/constraints.txt",
+    )
+
+    # then:
+
+    expected_command = [
+        "/mock/path/to/python",
+        "-m",
+        "pip",
+        "install",
+        "--constraint",
+        "/mock/constraints.txt",
+        "--editable",
+        "/mock/path/to/project",
+    ]
+    mock_check_call.assert_called_once_with(expected_command)
+    mock_get_path_to_curr_python.assert_called_once()
