@@ -11,10 +11,10 @@ from neoprimer import pre_commit
 from neoprimer.cmd_install_pre_commit import customize_env_context
 from neoprimer.pre_commit import (
     Bootstrapper_state_pre_commit_configured,
-    Bootstrapper_state_pre_commit_installed,
 )
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
+    Bootstrapper_state_command_executed,
     Bootstrapper_state_primer_conf_client_file_abs_path_eval_finalized,
     write_json_file,
 )
@@ -37,9 +37,8 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(f"{primer_kernel.__name__}.os.execve")
     @patch("sys.argv", [""])
     @patch(f"{primer_kernel.__name__}.is_venv", return_value=False)
-    @patch(f"{primer_kernel.__name__}.warn_if_non_venv_package_installed")
     @patch(
-        f"{pre_commit.__name__}.{Bootstrapper_state_pre_commit_installed.__name__}.eval_own_state",
+        f"{primer_kernel.__name__}.{Bootstrapper_state_command_executed.__name__}.eval_own_state",
         return_value=True,
     )
     @patch(
@@ -48,8 +47,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     def test_state_evaluation(
         self,
         mock_state_primer_conf_client_file_abs_path_eval_finalized,
-        mock_state_pre_commit_installed,
-        mock_warn_if_non_venv_package_installed,
+        mock_command_executed_eval_own_state,
         mock_is_venv,
         mock_execve,
         mock_check_call,

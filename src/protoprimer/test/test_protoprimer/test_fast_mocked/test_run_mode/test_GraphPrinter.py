@@ -1,7 +1,7 @@
 import os
 import sys
 from io import StringIO
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 
 from local_test.base_test_class import BaseTestClass
 from local_test.name_assertion import assert_test_module_name_embeds_str
@@ -18,10 +18,7 @@ from protoprimer.primer_kernel import (
 
 def test_relationship():
     assert_test_module_name_embeds_str(
-        ParsedArg.name_run_mode.value,
-    )
-    assert_test_module_name_embeds_str(
-        RunMode.mode_graph.name,
+        GraphPrinter.__name__,
     )
 
 
@@ -73,3 +70,25 @@ class ThisTestClass(BaseTestClass):
         # then:
 
         # do not assert huge output, if it does not fail, that is enough
+
+    @patch(f"{sys.__name__}.stdout", new_callable=StringIO)
+    def test_print_dag_already_printed(self, fake_stdout):
+        # given:
+        mock_state_graph = MagicMock()
+        mock_node_a = MagicMock()
+        mock_node_a.get_state_name.return_value = "A"
+        mock_node_a.get_parent_states.return_value = []
+
+        mock_state_graph.state_nodes = {
+            "A": mock_node_a,
+        }
+
+        graph_printer = GraphPrinter(mock_state_graph)
+        graph_printer.already_printed.add("A")
+
+        # when:
+        graph_printer.execute_strategy(mock_node_a)
+
+        # then:
+        stdout_text = fake_stdout.getvalue()
+        self.assertEqual("", stdout_text)

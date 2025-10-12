@@ -3,7 +3,7 @@ This file can be loaded into an AI/LLM agent for the initial context.
 
 ## Expected AI/LLM behavior
 
-*   Do not commit or stage changes. Leave them. They will be committed by a human after review.
+*   Do not commit or stage changes - they will be committed by a human after review.
 *   When changes have been made, use the testing method described (below).
 *   Follow the code style (below).
 *   To not fix TODO-s. Focus on the specific task instead. A human will clean those TODO-s without you.

@@ -16,13 +16,17 @@ from local_test.integrated_helper import (
     test_pyproject_src_dir_rel_path,
 )
 from local_test.package_version_verifier import extract_package_version
+from neoprimer import cmd_venv_shell
+from neoprimer.cmd_venv_shell import custom_main
 from protoprimer.primer_kernel import (
     ConfConstClient,
     ConfConstEnv,
     ConfConstInput,
     ConfConstPrimer,
+    EnvVar,
     SyntaxArg,
 )
+from protoprimer.proto_generator import generate_entry_script_content
 
 
 def test_venv_shell_no_update(tmp_path: pathlib.Path):
@@ -95,25 +99,11 @@ def test_venv_shell_no_update(tmp_path: pathlib.Path):
 
     # given:
 
-    venv_shell_script_content = """#!/usr/bin/env python3
-import os
-if __name__ == "__main__":
-    os.environ["PROTOPRIMER_DO_INSTALL"] = str(False)
-    proto_kernel_rel_path = "./proto_code/proto_kernel.py"
-    import sys
-    sys.path.append(
-        os.path.join(
-            os.path.dirname(__file__),
-            os.path.dirname(proto_kernel_rel_path),
-        ),
-    )
-    import proto_kernel
-    sys.path.pop()
-    proto_kernel.run_main(
+    venv_shell_script_content = generate_entry_script_content(
         "neoprimer.cmd_venv_shell",
         "custom_main",
+        {"PROTOPRIMER_DO_INSTALL": "False"},
     )
-"""
     venv_shell_script_path = ref_root_abs_path / "venv_shell"
     with open(venv_shell_script_path, "w") as f:
         f.write(venv_shell_script_content)
@@ -192,25 +182,13 @@ def test_venv_shell_command_execution(tmp_path: pathlib.Path):
 
     # ===
 
-    venv_shell_script_content = """#!/usr/bin/env python3
-import os
-if __name__ == "__main__":
-    os.environ["PROTOPRIMER_DO_INSTALL"] = str(False)
-    proto_kernel_rel_path = "./proto_code/proto_kernel.py"
-    import sys
-    sys.path.append(
-        os.path.join(
-            os.path.dirname(__file__),
-            os.path.dirname(proto_kernel_rel_path),
-        ),
+    venv_shell_script_content = generate_entry_script_content(
+        f"{cmd_venv_shell.__name__}",
+        f"{custom_main.__name__}",
+        {
+            f"{EnvVar.var_PROTOPRIMER_DO_INSTALL.value}": str(False),
+        },
     )
-    import proto_kernel
-    sys.path.pop()
-    proto_kernel.run_main(
-        "neoprimer.cmd_venv_shell",
-        "custom_main",
-    )
-"""
     venv_shell_script_path = ref_root_abs_path / "venv_shell"
     with open(venv_shell_script_path, "w") as f:
         f.write(venv_shell_script_content)

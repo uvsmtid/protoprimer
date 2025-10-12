@@ -12,12 +12,15 @@ from local_test.integrated_helper import (
     switch_to_ref_root_abs_path,
     test_pyproject_src_dir_rel_path,
 )
+from neoprimer import cmd_install_pre_commit
+from neoprimer.cmd_install_pre_commit import custom_main
 from protoprimer.primer_kernel import (
     ConfConstClient,
     ConfConstEnv,
     ConfConstInput,
     ConfConstPrimer,
 )
+from protoprimer.proto_generator import generate_entry_script_content
 
 
 def test_install_pre_commit(tmp_path: pathlib.Path):
@@ -68,34 +71,10 @@ def test_install_pre_commit(tmp_path: pathlib.Path):
 
     # ===
 
-    install_pre_commit_script_content = """#!/usr/bin/env python3
-
-if __name__ == "__main__":
-
-    proto_kernel_rel_path = "./proto_code/proto_kernel.py"
-
-    # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-    # Boilerplate to import `proto_kernel` from `protoprimer`
-    import os
-    import sys
-
-    # Import `proto_kernel` from `./proto_code` dir relative to curr file:
-    sys.path.append(
-        os.path.join(
-            os.path.dirname(__file__),
-            os.path.dirname(proto_kernel_rel_path),
-        ),
+    install_pre_commit_script_content = generate_entry_script_content(
+        f"{cmd_install_pre_commit.__name__}",
+        f"{custom_main.__name__}",
     )
-    import proto_kernel
-
-    sys.path.pop()
-    # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-
-    proto_kernel.run_main(
-        "neoprimer.cmd_install_pre_commit",
-        "custom_main",
-    )
-"""
     install_pre_commit_script_path = ref_root_abs_path / "install_pre_commit"
     with open(install_pre_commit_script_path, "w") as f:
         f.write(install_pre_commit_script_content)

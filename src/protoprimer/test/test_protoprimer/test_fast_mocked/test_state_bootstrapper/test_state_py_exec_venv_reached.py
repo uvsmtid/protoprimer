@@ -162,6 +162,7 @@ class ThisTestClass(BasePyfakefsTestClass):
                 ConfConstEnv.default_dir_rel_path_venv,
             ),
             with_pip=True,
+            upgrade_deps=True,
         )
         path_to_required_python = os.path.join(
             mock_client_dir,
@@ -579,6 +580,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_venv_create.assert_called_once_with(
             path_to_venv,
             with_pip=True,
+            upgrade_deps=True,
         )
         path_to_venv_python = os.path.join(
             path_to_venv,
@@ -694,6 +696,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_venv_create.assert_called_once_with(
             non_default_dir_abs_path_venv,
             with_pip=True,
+            upgrade_deps=True,
         )
 
         path_to_venv_python = os.path.join(

@@ -5,7 +5,6 @@ import logging
 
 from neoprimer.pre_commit import (
     Bootstrapper_state_pre_commit_configured,
-    Bootstrapper_state_pre_commit_installed,
 )
 from protoprimer.primer_kernel import (
     EnvContext,
@@ -21,8 +20,6 @@ def custom_main():
 
 class CustomEnvState(enum.Enum):
 
-    state_pre_commit_installed = Bootstrapper_state_pre_commit_installed
-
     state_pre_commit_configured = Bootstrapper_state_pre_commit_configured
 
 
@@ -33,7 +30,6 @@ def customize_env_context():
 
     env_ctx = EnvContext()
 
-    env_ctx.state_graph.register_node(Bootstrapper_state_pre_commit_installed(env_ctx))
     env_ctx.state_graph.register_node(Bootstrapper_state_pre_commit_configured(env_ctx))
 
     env_ctx.final_state = CustomEnvState.state_pre_commit_configured.name
