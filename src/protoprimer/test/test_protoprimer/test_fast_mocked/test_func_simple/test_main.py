@@ -171,3 +171,55 @@ def test_main_atexit_on_success(
     registered_lambda()
     # and:
     mock_env_ctx_instance.print_exit_line.assert_called_once_with(0)
+
+
+@patch(f"{protoprimer.primer_kernel.__name__}.atexit.register")
+@patch(f"{protoprimer.primer_kernel.__name__}.EnvContext")
+@patch(f"{protoprimer.primer_kernel.__name__}.ensure_min_python_version")
+def test_main_system_exit_0(
+    mock_ensure_min_python_version,
+    mock_env_context,
+    mock_atexit_register,
+):
+    # given:
+    mock_env_ctx_instance = MagicMock()
+    mock_env_context.return_value = mock_env_ctx_instance
+    mock_env_ctx_instance.state_graph.eval_state.side_effect = SystemExit(0)
+
+    # when/then:
+    with pytest.raises(SystemExit):
+        main()
+
+    # then:
+    mock_atexit_register.assert_called_once()
+    # and:
+    registered_lambda = mock_atexit_register.call_args[0][0]
+    registered_lambda()
+    # and:
+    mock_env_ctx_instance.print_exit_line.assert_called_once_with(0)
+
+
+@patch(f"{protoprimer.primer_kernel.__name__}.atexit.register")
+@patch(f"{protoprimer.primer_kernel.__name__}.EnvContext")
+@patch(f"{protoprimer.primer_kernel.__name__}.ensure_min_python_version")
+def test_main_system_exit_none(
+    mock_ensure_min_python_version,
+    mock_env_context,
+    mock_atexit_register,
+):
+    # given:
+    mock_env_ctx_instance = MagicMock()
+    mock_env_context.return_value = mock_env_ctx_instance
+    mock_env_ctx_instance.state_graph.eval_state.side_effect = SystemExit(None)
+
+    # when/then:
+    with pytest.raises(SystemExit):
+        main()
+
+    # then:
+    mock_atexit_register.assert_called_once()
+    # and:
+    registered_lambda = mock_atexit_register.call_args[0][0]
+    registered_lambda()
+    # and:
+    mock_env_ctx_instance.print_exit_line.assert_called_once_with(0)

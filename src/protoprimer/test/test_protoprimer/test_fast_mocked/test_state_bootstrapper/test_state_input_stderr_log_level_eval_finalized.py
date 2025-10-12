@@ -306,3 +306,41 @@ class ThisTestClass(BasePyfakefsTestClass):
             os.environ[EnvVar.var_PROTOPRIMER_STDERR_LOG_LEVEL.value],
             logging.getLevelName(logging.ERROR),
         )
+
+    @patch(
+        f"{primer_kernel.__name__}.{Bootstrapper_state_default_stderr_log_handler_configured.__name__}.eval_own_state"
+    )
+    @patch(
+        f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.eval_own_state"
+    )
+    @patch(
+        f"{primer_kernel.__name__}.{Bootstrapper_state_input_stderr_log_level_var_loaded.__name__}.eval_own_state"
+    )
+    def test_verbose_2_only(
+        self,
+        mock_state_input_stderr_log_level_var_loaded,
+        mock_state_args_parsed,
+        mock_state_default_stderr_logger_configured,
+    ):
+        # given:
+        assert_parent_states_mocked(
+            self.env_ctx,
+            EnvState.state_input_stderr_log_level_eval_finalized.name,
+        )
+        default_log_level = logging.INFO
+        stderr_handler = logging.StreamHandler(sys.stderr)
+        stderr_handler.setLevel(default_log_level)
+        mock_state_default_stderr_logger_configured.return_value = stderr_handler
+        mock_state_input_stderr_log_level_var_loaded.return_value = default_log_level
+        parsed_args = argparse.Namespace(
+            **{SyntaxArg.dest_silent: None},
+            **{SyntaxArg.dest_quiet: None},
+            **{SyntaxArg.dest_verbose: 2},
+        )
+        mock_state_args_parsed.return_value = parsed_args
+        # when:
+        state_value = self.env_ctx.state_graph.eval_state(
+            EnvState.state_input_stderr_log_level_eval_finalized.name
+        )
+        # then:
+        self.assertEqual(logging.NOTSET, state_value)

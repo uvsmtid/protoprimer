@@ -57,6 +57,10 @@ class EnvVarName(enum.Enum):
         EnvVar.var_PROTOPRIMER_START_ID,
         NameCategory.category_loaded_data,
     )
+    var_PROTOPRIMER_USE_UV = EnvVarMeta(
+        EnvVar.var_PROTOPRIMER_USE_UV,
+        NameCategory.category_loaded_data,
+    )
 
 
 class TestEnvVarName(NamingTestBase):

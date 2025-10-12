@@ -20,6 +20,7 @@ from protoprimer.primer_kernel import (
     EnvContext,
     EnvState,
     ParsedArg,
+    PackageDriverPip,
     PythonExecutable,
 )
 
@@ -55,12 +56,10 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.eval_own_state"
     )
-    @patch(
-        f"{primer_kernel.__name__}.install_editable_project",
-    )
+    @patch(f"{primer_kernel.__name__}.{PackageDriverPip.__name__}.install_dependencies")
     def test_default_install(
         self,
-        mock_install_editable_project,
+        mock_install_dependencies,
         mock_state_args_parsed,
         mock_state_input_do_install_var_loaded,
         mock_state_env_project_rel_path_to_extras_list_finalized_lconf,
@@ -75,7 +74,6 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
         self.fs.reset()
         self.env_ctx = EnvContext()
-        mock_install_editable_project.reset_mock()
         mock_client_ref_root_dir = "/mock_client_ref_root_dir"
         self.fs.create_dir(mock_client_ref_root_dir)
         os.chdir(mock_client_ref_root_dir)
@@ -129,14 +127,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             EnvState.state_protoprimer_package_installed.name
         )
         # then:
-        mock_install_editable_project.assert_called_once_with(
-            mock_client_ref_root_dir,
-            project_descriptors,
-            os.path.join(
-                mock_state_client_conf_env_dir_abs_path_eval_finalized.return_value,
-                "constraints.txt",
-            ),
-        )
+        mock_install_dependencies.assert_called_once()
 
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_env_dir_abs_path_eval_finalized.__name__}.eval_own_state"
@@ -156,12 +147,10 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.eval_own_state"
     )
-    @patch(
-        f"{primer_kernel.__name__}.install_editable_project",
-    )
+    @patch(f"{primer_kernel.__name__}.{PackageDriverPip.__name__}.install_dependencies")
     def test_reinstall(
         self,
-        mock_install_editable_project,
+        mock_install_dependencies,
         mock_state_args_parsed,
         mock_state_input_do_install_var_loaded,
         mock_state_env_project_rel_path_to_extras_list_finalized_lconf,
@@ -176,7 +165,6 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
         self.fs.reset()
         self.env_ctx = EnvContext()
-        mock_install_editable_project.reset_mock()
         mock_client_ref_root_dir = "/mock_client_ref_root_dir"
         self.fs.create_dir(mock_client_ref_root_dir)
         os.chdir(mock_client_ref_root_dir)
@@ -230,14 +218,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             EnvState.state_protoprimer_package_installed.name
         )
         # then:
-        mock_install_editable_project.assert_called_once_with(
-            mock_client_ref_root_dir,
-            project_descriptors,
-            os.path.join(
-                mock_state_client_conf_env_dir_abs_path_eval_finalized.return_value,
-                "constraints.txt",
-            ),
-        )
+        mock_install_dependencies.assert_called_once()
 
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_env_dir_abs_path_eval_finalized.__name__}.eval_own_state"
@@ -257,12 +238,10 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.eval_own_state"
     )
-    @patch(
-        f"{primer_kernel.__name__}.install_editable_project",
-    )
+    @patch(f"{primer_kernel.__name__}.{PackageDriverPip.__name__}.install_dependencies")
     def test_no_install_triggered(
         self,
-        mock_install_editable_project,
+        mock_install_dependencies,
         mock_state_args_parsed,
         mock_state_input_do_install_var_loaded,
         mock_state_env_project_rel_path_to_extras_list_finalized_lconf,
@@ -277,7 +256,6 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
         self.fs.reset()
         self.env_ctx = EnvContext()
-        mock_install_editable_project.reset_mock()
         mock_client_ref_root_dir = "/mock_client_ref_root_dir"
         self.fs.create_dir(mock_client_ref_root_dir)
         os.chdir(mock_client_ref_root_dir)
@@ -331,7 +309,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             EnvState.state_protoprimer_package_installed.name
         )
         # then:
-        mock_install_editable_project.assert_not_called()
+        mock_install_dependencies.assert_not_called()
 
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_env_dir_abs_path_eval_finalized.__name__}.eval_own_state"
@@ -351,12 +329,10 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.eval_own_state"
     )
-    @patch(
-        f"{primer_kernel.__name__}.install_editable_project",
-    )
+    @patch(f"{primer_kernel.__name__}.{PackageDriverPip.__name__}.install_dependencies")
     def test_nothing_to_install(
         self,
-        mock_install_editable_project,
+        mock_install_dependencies,
         mock_state_args_parsed,
         mock_state_input_do_install_var_loaded,
         mock_state_env_project_rel_path_to_extras_list_finalized_lconf,
@@ -409,4 +385,4 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # then:
 
-        mock_install_editable_project.assert_not_called()
+        mock_install_dependencies.assert_not_called()

@@ -32,41 +32,73 @@ Instead, consider a one-step no-arg command invoking the `protoprimer`:
 ./prime
 ```
 
-Nobody wants to re-invent this command.
+Not a trivial code to afford re-invent-ing this every time (especially, with support for different environments).
+
+### Idea
+
+Invert the role of the shell/`uv`:
+*   instead of relying on the presence of shell/`uv` executable to bootstrap `python`
+*   rely on the presence of `python` executable (of any version) to bootstrap different `python` version
+
+```mermaid
+---
+config:
+  look: handDrawn
+  theme: neutral
+---
+flowchart LR;
+    python_exec["any<br>`python`<br>executable"];
+    entry_script["entry script<br>`prime`"];
+    proto_code["bootstrap code<br>`protoprimer`"];
+    pip_driver["`pip`"];
+    uv_driver["`uv`"];
+    invis_1[ ];
+    invis_2[ ];
+
+    python_exec --> entry_script;
+    entry_script --> proto_code;
+    proto_code --> pip_driver;
+    proto_code --> uv_driver;
+
+    pip_driver ~~~ invis_1;
+    uv_driver ~~~ invis_2;
+
+    style invis_1 fill:none,stroke:none;
+    style invis_2 fill:none,stroke:none;
+```
+
+Relying on `python`:
+*   is more robust for the **single-step** bootstrap (due to ubiquitousness of `python` than `uv`)
+*   uses **easily modifiable** _interpreted_ `python` code to wrap calls to any _compiled_ binary
+
+Subsequently, `uv` can be used under the hood (optionally) for its speed.
 
 ### Focus
 
-The `protoprimer` hides the complexity of **the two main use cases**:
+The `protoprimer` exposes API-s to reuse its internals (e.g. config discovery, DAG, ...)\
+and **hides the details** of both (as an **app** and as a **lib**):
 *   bootstrapping required `python` version and `venv` by arbitrary `python` from the `PATH`
-*   direct `python` script execution (without explicit `venv` activation and `shell` wrappers)
-
-It also exposes API-s to reuse its internals (e.g. config discovery, DAG, ...).
+*   executing `python` scripts directly (without explicit `venv` activation and `shell` wrappers)
 
 ### Usage
 
-See:
+Bootstrap (default env):
 
 ```sh
-./prime --help
+./prime
+```
+
+Bootstrap (special env):
+
+```sh
+#             any/path/to/conf/dir
+./prime --env dst/special_env
 ```
 
 Init basic config:
 
 ```sh
 ./prime --wizard
-```
-
-Boostrap default env (equivalents):
-
-```sh
-./prime
-./prime --prime
-```
-
-Bootstrap non-default env:
-
-```sh
-./prime --env dst/special_env
 ```
 
 Reset: re-create venv, re-install deps, re-pin versions:

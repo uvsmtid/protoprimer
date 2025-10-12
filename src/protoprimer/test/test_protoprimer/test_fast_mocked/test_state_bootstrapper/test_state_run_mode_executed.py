@@ -160,3 +160,72 @@ def test_run_mode_wizard(
             env_ctx.state_graph.state_nodes[wizard_state.name],
             wizard_state.value,
         )
+
+
+@patch(
+    f"{primer_kernel.__name__}.{Bootstrapper_state_input_final_state_eval_finalized.__name__}.eval_own_state"
+)
+@patch(
+    f"{primer_kernel.__name__}.{Bootstrapper_state_input_stderr_log_level_eval_finalized.__name__}.eval_own_state"
+)
+@patch(
+    f"{primer_kernel.__name__}.{Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
+)
+def test_run_mode_none(
+    mock_state_input_run_mode_arg_loaded,
+    mock_state_input_stderr_log_level_eval_finalized,
+    mock_state_input_final_state_eval_finalized,
+    env_ctx,
+):
+    # given:
+
+    assert_parent_states_mocked(
+        env_ctx,
+        EnvState.state_run_mode_executed.name,
+    )
+
+    mock_state_input_run_mode_arg_loaded.return_value = None
+
+    mock_state_input_stderr_log_level_eval_finalized.return_value = 0
+    mock_state_input_final_state_eval_finalized.return_value = "mock_final_state"
+
+    mock_state_node = MagicMock()
+    env_ctx.state_graph.state_nodes["mock_final_state"] = mock_state_node
+
+    # when/then:
+    with pytest.raises(ValueError, match="run mode is not defined"):
+        env_ctx.state_graph.eval_state(EnvState.state_run_mode_executed.name)
+
+
+@patch(
+    f"{primer_kernel.__name__}.{Bootstrapper_state_input_final_state_eval_finalized.__name__}.eval_own_state"
+)
+@patch(
+    f"{primer_kernel.__name__}.{Bootstrapper_state_input_stderr_log_level_eval_finalized.__name__}.eval_own_state"
+)
+@patch(
+    f"{primer_kernel.__name__}.{Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
+)
+def test_run_mode_invalid(
+    mock_state_input_run_mode_arg_loaded,
+    mock_state_input_stderr_log_level_eval_finalized,
+    mock_state_input_final_state_eval_finalized,
+    env_ctx,
+):
+    # given:
+
+    assert_parent_states_mocked(
+        env_ctx,
+        EnvState.state_run_mode_executed.name,
+    )
+
+    mock_state_input_run_mode_arg_loaded.return_value = "invalid_run_mode"
+    mock_state_input_stderr_log_level_eval_finalized.return_value = 0
+    mock_state_input_final_state_eval_finalized.return_value = "mock_final_state"
+
+    mock_state_node = MagicMock()
+    env_ctx.state_graph.state_nodes["mock_final_state"] = mock_state_node
+
+    # when/then:
+    with pytest.raises(ValueError, match="cannot handle run mode"):
+        env_ctx.state_graph.eval_state(EnvState.state_run_mode_executed.name)

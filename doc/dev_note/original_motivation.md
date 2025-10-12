@@ -3,7 +3,7 @@
 
 ## When to use it?
 
-*   you need a command to boostrap `venv` (for users of your project) with dependencies, generate config, etc.
+*   you need a command to bootstrap `venv` (for users of your project) with dependencies, generate config, etc.
 *   the command has to require **no args** and has no pre-conditions by default
 *   you do not want to "re-invent the wheel" for extra requirements with flexible configuration
 

@@ -28,7 +28,9 @@ import tempfile
 import typing
 import venv
 
-__version__ = "0.0.7"
+# The release process ensures that content in this file matches the version below while tagging the release commit
+# (otherwise, if the file comes from a different commit, the version is irrelevant):
+__version__ = "0.0.8"
 
 from typing import (
     Any,
@@ -113,9 +115,6 @@ class PythonExecutable(enum.IntEnum):
 
     # After making the updated `proto_code` effective:
     py_exec_updated_proto_code = 5
-
-    # TODO: make "proto" clone of client extension effective:
-    py_exec_updated_client_package = 6
 
     def __str__(self):
         return f"{self.name}[{self.value}]"
@@ -268,6 +267,8 @@ class EnvVar(enum.Enum):
     var_PROTOPRIMER_PROTO_CODE = "PROTOPRIMER_PROTO_CODE"
 
     var_PROTOPRIMER_START_ID = "PROTOPRIMER_START_ID"
+
+    var_PROTOPRIMER_USE_UV = "PROTOPRIMER_USE_UV"
 
 
 class ConfDst(enum.Enum):
@@ -1284,14 +1285,14 @@ class AbstractCachingStateNode(StateNode[ValueType]):
         env_ctx: EnvContext,
         parent_states: list[str],
         state_name: str,
-        auto_boostrap_parents: bool = True,
+        auto_bootstrap_parents: bool = True,
     ):
         super().__init__(
             env_ctx=env_ctx,
             parent_states=parent_states,
             state_name=state_name,
         )
-        self.auto_boostrap_parents: bool = auto_boostrap_parents
+        self.auto_bootstrap_parents: bool = auto_bootstrap_parents
         self.is_cached: bool = False
         self.cached_value: ValueType | None = None
 
@@ -1300,7 +1301,7 @@ class AbstractCachingStateNode(StateNode[ValueType]):
     ) -> ValueType:
         if not self.is_cached:
 
-            if self.auto_boostrap_parents:
+            if self.auto_bootstrap_parents:
                 # Bootstrap all dependencies:
                 for state_name in self.parent_states:
                     self.eval_parent_state(state_name)
@@ -1932,7 +1933,7 @@ class Bootstrapper_state_input_proto_code_file_abs_path_eval_finalized(
             )
         else:
             assert not is_venv()
-            warn_if_non_venv_package_installed()
+            log_python_context()
             state_input_proto_code_file_abs_path_eval_finalized = os.path.abspath(
                 __file__
             )
@@ -2079,7 +2080,7 @@ class Wizard_state_proto_conf_file_data(AbstractCachingStateNode[dict]):
             ],
             state_name=if_none(state_name, EnvState.state_proto_conf_file_data.name),
             # Bootstrap manually to avoid touching `moved_state_node`:
-            auto_boostrap_parents=False,
+            auto_bootstrap_parents=False,
         )
 
         # UC_27_40_17_59.replace_by_new_and_use_old.md:
@@ -2271,7 +2272,7 @@ class Wizard_state_client_conf_file_data(AbstractCachingStateNode[dict]):
             ],
             state_name=if_none(state_name, EnvState.state_client_conf_file_data.name),
             # Bootstrap manually to avoid touching `moved_state_node`:
-            auto_boostrap_parents=False,
+            auto_bootstrap_parents=False,
         )
 
         # UC_27_40_17_59.replace_by_new_and_use_old.md:
@@ -2502,6 +2503,7 @@ class Bootstrapper_state_client_conf_env_dir_abs_path_eval_finalized(
             if os.path.islink(state_client_conf_env_dir_abs_path_eval_finalized):
                 if os.path.isdir(state_client_conf_env_dir_abs_path_eval_finalized):
                     if state_client_local_env_conf_dir_rel_path_eval_finalized is None:
+                        # TODO: this line is unreachable (as of time of writing this comment):
                         # TODO: Can we make it mandatory?
                         #       In cases when there is no env-specifics,
                         #       it can point to ref root (and entire link can be avoided if name is blank)?
@@ -2699,7 +2701,7 @@ class Wizard_state_env_conf_file_data(AbstractCachingStateNode[dict]):
             ],
             state_name=if_none(state_name, EnvState.state_env_conf_file_data.name),
             # Bootstrap manually to avoid touching `moved_state_node`:
-            auto_boostrap_parents=False,
+            auto_bootstrap_parents=False,
         )
 
         # UC_27_40_17_59.replace_by_new_and_use_old.md:
@@ -3341,12 +3343,9 @@ class Bootstrapper_state_py_exec_venv_reached(
         assert state_input_py_exec_var_loaded <= PythonExecutable.py_exec_required
         state_py_exec_venv_reached = PythonExecutable.py_exec_required
         if not os.path.exists(state_env_local_venv_dir_abs_path_eval_finalized):
-            logger.info(
-                f"creating `venv` [{state_env_local_venv_dir_abs_path_eval_finalized}]"
-            )
-            venv.create(
+            self.env_ctx.package_driver.create_venv(
+                state_env_local_python_file_abs_path_eval_finalized,
                 state_env_local_venv_dir_abs_path_eval_finalized,
-                with_pip=True,
             )
         else:
             logger.info(
@@ -3448,28 +3447,11 @@ class Bootstrapper_state_protoprimer_package_installed(AbstractCachingStateNode[
             )
             return True
 
-        # pre-validate:
-        for env_project_descriptor in state_env_project_descriptors_eval_finalized:
-            # FT_46_37_27_11.editable_install.md
-
-            field_env_build_root_dir_rel_path = os.path.join(
-                state_primer_ref_root_dir_abs_path_eval_finalized,
-                env_project_descriptor[
-                    ConfField.field_env_build_root_dir_rel_path.value
-                ],
-            )
-            assert os.path.isfile(
-                os.path.join(
-                    field_env_build_root_dir_rel_path,
-                    ConfConstClient.default_pyproject_toml_basename,
-                )
-            )
-
-        # install:
-        install_editable_project(
+        self.env_ctx.package_driver.install_dependencies(
             state_primer_ref_root_dir_abs_path_eval_finalized,
-            state_env_project_descriptors_eval_finalized,
+            get_path_to_curr_python(),
             constraints_txt_path,
+            state_env_project_descriptors_eval_finalized,
         )
 
         return True
@@ -3511,22 +3493,13 @@ class Bootstrapper_state_version_constraints_generated(AbstractCachingStateNode[
             EnvState.state_client_conf_env_dir_abs_path_eval_finalized.name
         )
 
-        constraints_txt_path = os.path.join(
-            state_client_conf_env_dir_abs_path_eval_finalized,
-            ConfConstEnv.constraints_txt_basename,
+        self.env_ctx.package_driver.pin_versions(
+            get_path_to_curr_python(),
+            os.path.join(
+                state_client_conf_env_dir_abs_path_eval_finalized,
+                ConfConstEnv.constraints_txt_basename,
+            ),
         )
-        logger.info(f"generating version constraints file [{constraints_txt_path}]")
-        with open(constraints_txt_path, "w") as f:
-            subprocess.check_call(
-                [
-                    get_path_to_curr_python(),
-                    "-m",
-                    "pip",
-                    "freeze",
-                    "--exclude-editable",
-                ],
-                stdout=f,
-            )
 
         return True
 
@@ -4168,6 +4141,191 @@ class MutableValue(Generic[ValueType]):
         )
 
 
+class PackageDriverBase:
+
+    def create_venv(
+        self,
+        file_abs_path_local_python: str,
+        dir_abs_path_local_venv: str,
+    ) -> None:
+        logger.info(f"creating `venv` [{dir_abs_path_local_venv}]")
+        self._create_venv_impl(file_abs_path_local_python, dir_abs_path_local_venv)
+
+    def _create_venv_impl(
+        self,
+        file_abs_path_local_python: str,
+        dir_abs_path_local_venv: str,
+    ) -> None:
+        raise NotImplementedError()
+
+    def install_dependencies(
+        self,
+        ref_root_dir_abs_path: str,
+        file_abs_path_local_python: str,
+        constraints_file_abs_path: str,
+        project_descriptors: list[dict],
+    ) -> None:
+        """
+        Install each project from the `project_descriptors`.
+
+        The assumption is that they use `pyproject.toml`.
+
+        See also:
+        *   UC_78_58_06_54.no_stray_packages.md
+        *   FT_46_37_27_11.editable_install.md
+        """
+
+        editable_project_install_args = []
+        for project_descriptor in project_descriptors:
+            project_build_root_dir_rel_path = project_descriptor[
+                ConfField.field_env_build_root_dir_rel_path.value
+            ]
+            project_build_root_dir_abs_path = os.path.join(
+                ref_root_dir_abs_path,
+                project_build_root_dir_rel_path,
+            )
+
+            install_extras: list[str]
+            if ConfField.field_env_install_extras.value in project_descriptor:
+                install_extras = project_descriptor[
+                    ConfField.field_env_install_extras.value
+                ]
+            else:
+                install_extras = []
+
+            editable_project_install_args.append("--editable")
+            if len(install_extras) > 0:
+                editable_project_install_args.append(
+                    f"{project_build_root_dir_abs_path}[{','.join(install_extras)}]"
+                )
+            else:
+                editable_project_install_args.append(
+                    f"{project_build_root_dir_abs_path}"
+                )
+
+        sub_proc_args = self.get_install_dependencies_cmd(
+            file_abs_path_local_python,
+        )
+        sub_proc_args.extend(
+            [
+                "--constraint",
+                constraints_file_abs_path,
+            ]
+        )
+
+        sub_proc_args.extend(editable_project_install_args)
+
+        logger.info(f"installing projects: {' '.join(sub_proc_args)}")
+
+        subprocess.check_call(sub_proc_args)
+
+    def get_install_dependencies_cmd(
+        self,
+        file_abs_path_local_python: str,
+    ) -> list[str]:
+        raise NotImplementedError()
+
+    def pin_versions(
+        self,
+        file_abs_path_local_python: str,
+        constraints_file_abs_path: str,
+    ) -> None:
+        logger.info(
+            f"generating version constraints file [{constraints_file_abs_path}]"
+        )
+        with open(constraints_file_abs_path, "w") as f:
+            subprocess.check_call(
+                self._get_pin_versions_cmd(file_abs_path_local_python),
+                stdout=f,
+            )
+
+    def _get_pin_versions_cmd(
+        self,
+        file_abs_path_local_python: str,
+    ) -> list[str]:
+        raise NotImplementedError()
+
+
+class PackageDriverPip(PackageDriverBase):
+
+    def _create_venv_impl(
+        self,
+        file_abs_path_local_python: str,
+        dir_abs_path_local_venv: str,
+    ) -> None:
+        venv.create(
+            dir_abs_path_local_venv,
+            with_pip=True,
+            upgrade_deps=True,
+        )
+
+    def get_install_dependencies_cmd(
+        self,
+        file_abs_path_local_python: str,
+    ) -> list[str]:
+        return [
+            file_abs_path_local_python,
+            "-m",
+            "pip",
+            "install",
+        ]
+
+    def _get_pin_versions_cmd(
+        self,
+        file_abs_path_local_python: str,
+    ) -> list[str]:
+        return [
+            file_abs_path_local_python,
+            "-m",
+            "pip",
+            "freeze",
+            "--exclude-editable",
+        ]
+
+
+class PackageDriverUv(PackageDriverBase):
+
+    def _create_venv_impl(
+        self,
+        file_abs_path_local_python: str,
+        dir_abs_path_local_venv: str,
+    ) -> None:
+        subprocess.check_call(
+            [
+                "uv",
+                "venv",
+                "--python",
+                file_abs_path_local_python,
+                dir_abs_path_local_venv,
+            ]
+        )
+
+    def get_install_dependencies_cmd(
+        self,
+        file_abs_path_local_python: str,
+    ) -> list[str]:
+        return [
+            "uv",
+            "pip",
+            "install",
+            "--python",
+            file_abs_path_local_python,
+        ]
+
+    def _get_pin_versions_cmd(
+        self,
+        file_abs_path_local_python: str,
+    ) -> list[str]:
+        return [
+            "uv",
+            "pip",
+            "freeze",
+            "--exclude-editable",
+            "--python",
+            file_abs_path_local_python,
+        ]
+
+
 class EnvContext:
 
     def __init__(
@@ -4179,10 +4337,15 @@ class EnvContext:
         # TODO: Find "Universal Sink":
         self.final_state: str = TargetState.target_full_proto_bootstrap
 
-        self.mutable_state_input_wizard_stage_arg_loaded: MutableValue[WizardStage] = (
-            MutableValue(
-                EnvState.state_input_wizard_stage_arg_loaded.name,
-            )
+        # TODO: Do not keep it in `EvnContex`, use `StateNode` which returns
+        #       the required `PackageDriverBase`.
+        if str2bool(os.getenv(EnvVar.var_PROTOPRIMER_USE_UV.value, str(False))):
+            self.package_driver: PackageDriverBase = PackageDriverUv()
+        else:
+            self.package_driver: PackageDriverBase = PackageDriverPip()
+
+        self.mutable_state_input_wizard_stage_arg_loaded = MutableValue(
+            EnvState.state_input_wizard_stage_arg_loaded.name,
         )
 
         self._build_default_graph()
@@ -4799,80 +4962,6 @@ def insert_every_n_lines(
     )
 
 
-def install_editable_project(
-    ref_root_dir_abs_path: str,
-    project_descriptors: list[dict],
-    constraints_txt_path: str,
-):
-    """
-    Install each project from the `project_descriptors`.
-
-    The assumption is that they use `pyproject.toml`.
-
-    The result is equivalent of:
-    ```sh
-    path/to/python -m pip --editable path/to/project/a --editable path/to/project/b --editable path/to/project/c ...
-    ```
-
-    FT_46_37_27_11.editable_install.md
-    """
-
-    editable_project_install_args = []
-    for project_descriptor in project_descriptors:
-        project_build_root_dir_rel_path = project_descriptor[
-            ConfField.field_env_build_root_dir_rel_path.value
-        ]
-        project_build_root_dir_abs_path = os.path.join(
-            ref_root_dir_abs_path,
-            project_build_root_dir_rel_path,
-        )
-
-        install_extras: list[str]
-        if ConfField.field_env_install_extras.value in project_descriptor:
-            install_extras = project_descriptor[
-                ConfField.field_env_install_extras.value
-            ]
-        else:
-            install_extras = []
-
-        editable_project_install_args.append("--editable")
-        if len(install_extras) > 0:
-            editable_project_install_args.append(
-                f"{project_build_root_dir_abs_path}[{','.join(install_extras)}]"
-            )
-        else:
-            editable_project_install_args.append(f"{project_build_root_dir_abs_path}")
-
-    sub_proc_args = [
-        get_path_to_curr_python(),
-        "-m",
-        "pip",
-        "install",
-        "--constraint",
-        constraints_txt_path,
-    ]
-
-    sub_proc_args.extend(editable_project_install_args)
-
-    logger.info(f"installing projects: {' '.join(sub_proc_args)}")
-
-    subprocess.check_call(sub_proc_args)
-
-
-def install_package(
-    package_name: str,
-):
-    subprocess.check_call(
-        [
-            get_path_to_curr_python(),
-            "-m",
-            "pip",
-            "install",
-            package_name,
-        ]
-    )
-
-
 def if_none(
     given_value: ValueType | None,
     default_value: ValueType,
@@ -4894,6 +4983,10 @@ def is_venv() -> bool:
 
 
 def log_python_context(log_level: int = logging.INFO):
+    """
+    This function helps to ensure and verify:
+    UC_88_09_19_74.no_installation_outside_venv.md
+    """
     logger.log(
         log_level,
         f"`{ConfConstInput.ext_env_var_VIRTUAL_ENV}`: {os.environ.get(ConfConstInput.ext_env_var_VIRTUAL_ENV, None)}",
@@ -4922,45 +5015,6 @@ def log_python_context(log_level: int = logging.INFO):
         log_level,
         f"`sys.executable`: {sys.executable}",
     )
-
-
-def warn_if_non_venv_package_installed():
-    """
-    Implements UC_88_09_19_74.no_installation_outside_venv.md:
-    warns if the `protoprimer` is a package installed (outside `venv`).
-    """
-    assert not is_venv()
-
-    try:
-        pip_show_output = subprocess.check_output(
-            [
-                sys.executable,
-                "-m",
-                "pip",
-                "show",
-                ConfConstGeneral.name_protoprimer_package,
-            ],
-            text=True,
-            stderr=subprocess.PIPE,
-        )
-
-        package_location: str | None = None
-        for output_line in pip_show_output.splitlines():
-            if output_line.startswith("Location:"):
-                package_location = output_line.split(":", 1)[1].strip()
-                break
-
-        if package_location:
-            log_python_context()
-            # TODO: Figure out why `test_plain_proto_code_in_wizard_mode.py` complains here:
-            logger.warning(
-                f"The `{ConfConstGeneral.name_protoprimer_package}` package is installed outside of `venv`."
-            )
-
-    except subprocess.CalledProcessError:
-        # `pip show` returns non-zero exit code if package is not found.
-        # This is the expected case.
-        pass
 
 
 def delegate_to_venv(
@@ -5038,7 +5092,7 @@ def run_main(
                 ConfConstInput.default_PROTOPRIMER_PY_EXEC,
             )
         ]
-        if py_exec.value >= PythonExecutable.py_exec_updated_client_package.value:
+        if py_exec.value >= PythonExecutable.py_exec_updated_proto_code.value:
             raise AssertionError(
                 f"Failed to import `{neo_main_module}` with `{EnvVar.var_PROTOPRIMER_PY_EXEC.value}` [{py_exec.name}]."
                 f"Does install process contain `{neo_main_module}` or has it as a (transitive) dependency?"

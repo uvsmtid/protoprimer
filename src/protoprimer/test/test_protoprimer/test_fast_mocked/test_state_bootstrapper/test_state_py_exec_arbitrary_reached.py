@@ -40,7 +40,6 @@ def test_relationship():
     },
     clear=True,
 )
-@patch(f"{primer_kernel.__name__}.warn_if_non_venv_package_installed")
 @patch(f"{primer_kernel.__name__}.get_path_to_curr_python")
 @patch(f"{primer_kernel.__name__}.get_path_to_base_python")
 @patch(f"{primer_kernel.__name__}.switch_python")
@@ -60,7 +59,6 @@ def test_py_exec_unknown_in_venv(
     mock_switch_python,
     mock_get_path_to_base_python,
     mock_get_path_to_curr_python,
-    mock_warn_if_non_venv_package_installed,
     env_ctx,
 ):
     # given:
@@ -96,7 +94,6 @@ def test_py_exec_unknown_in_venv(
 
 
 @patch.dict(f"{os.__name__}.environ", {}, clear=True)
-@patch(f"{primer_kernel.__name__}.warn_if_non_venv_package_installed")
 @patch(f"{primer_kernel.__name__}.switch_python")
 @patch(
     f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.eval_own_state"
@@ -112,7 +109,6 @@ def test_py_exec_unknown_not_in_venv(
     mock_state_input_wizard_stage_arg_loaded,
     mock_state_input_start_id_var_loaded,
     mock_switch_python,
-    mock_warn_if_non_venv_package_installed,
     env_ctx,
 ):
     # given:
