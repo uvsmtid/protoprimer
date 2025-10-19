@@ -12,7 +12,7 @@ authors = [
 description = "A self-contained, no-deps, zero-args-friendly, clonnable, multi-stage bootstrapper with extensible DAG to escape from shell scripts in pure Python"
 readme = "readme.md"
 # FT_84_11_73_28: supported python versions:
-requires-python = ">=3.8"
+requires-python = ">=3.7"
 license = { text = "MIT" }
 
 keywords = [
