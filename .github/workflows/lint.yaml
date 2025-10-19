@@ -15,7 +15,7 @@ jobs:
             -   uses: actions/setup-python@v5
                 with:
                     # FT_84_11_73_28: supported python versions:
-                    python-version: 3.13
+                    python-version: 3.14
 
             -   run: "python -c \"import sys; print(sys.version);\""
 

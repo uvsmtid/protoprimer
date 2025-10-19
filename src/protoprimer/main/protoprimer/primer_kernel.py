@@ -83,7 +83,7 @@ def ensure_min_python_version():
     """
 
     # FT_84_11_73_28: supported python versions:
-    version_tuple: tuple[int, int, int] = (3, 8, 0)
+    version_tuple: tuple[int, int, int] = (3, 7, 0)
 
     if sys.version_info < version_tuple:
         raise AssertionError(
