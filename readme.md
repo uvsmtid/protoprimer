@@ -3,7 +3,7 @@
 [![PyPI version](https://img.shields.io/pypi/v/protoprimer.svg?color=blue&label=package)](https://pypi.org/project/protoprimer)
 <!-- FT_84_11_73_28: supported python versions: -->
 [![GitHub test 3.7 job](https://img.shields.io/github/actions/workflow/status/uvsmtid/protoprimer/test_new_python.yaml.svg?label=test%203.7)](https://github.com/uvsmtid/protoprimer/actions/workflows/test_3.7.yaml)
-[![GitHub test 3.13 job](https://img.shields.io/github/actions/workflow/status/uvsmtid/protoprimer/test_new_python.yaml.svg?label=test%203.13)](https://github.com/uvsmtid/protoprimer/actions/workflows/test_3.13.yaml)
+[![GitHub test 3.14 job](https://img.shields.io/github/actions/workflow/status/uvsmtid/protoprimer/test_new_python.yaml.svg?label=test%203.14)](https://github.com/uvsmtid/protoprimer/actions/workflows/test_3.14.yaml)
 [![GitHub lint job](https://img.shields.io/github/actions/workflow/status/uvsmtid/protoprimer/lint.yaml.svg?label=lint)](https://github.com/uvsmtid/protoprimer/actions/workflows/lint.yaml)
 [![code coverage](https://img.shields.io/coveralls/github/uvsmtid/protoprimer.svg?color=brightgreen)](https://coveralls.io/github/uvsmtid/protoprimer)
 <!--
