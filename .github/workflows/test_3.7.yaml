@@ -9,7 +9,7 @@ on:
         -   cron: "0 10 * * *"
 jobs:
     bootstrap_scenarios:
-        runs-on: ubuntu-latest
+        runs-on: ubuntu-22.04
 
         strategy:
             # When one of the jobs fails, this prevents canceling another job (for another Python version):
@@ -18,7 +18,6 @@ jobs:
                 # FT_84_11_73_28: supported python versions:
                 python-version:
                     -   3.7
-                    -   3.13
         steps:
             -   run: "echo runner.os: ${{ runner.os }}"
             -   run: "echo github.repository: ${{ github.repository }}"
