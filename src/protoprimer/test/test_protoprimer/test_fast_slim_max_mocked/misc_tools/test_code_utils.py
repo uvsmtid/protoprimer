@@ -1,6 +1,6 @@
 import enum
 
-from test_protoprimer.test_fast_mocked.misc_tools.code_utils import (
+from test_protoprimer.test_fast_slim_max_mocked.misc_tools.code_utils import (
     get_class_line_number,
     get_enum_item_line_number,
 )

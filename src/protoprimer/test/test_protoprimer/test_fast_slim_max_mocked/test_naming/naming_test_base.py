@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from test_protoprimer.test_fast_mocked.test_naming.naming_metadata import (
+from test_protoprimer.test_fast_slim_max_mocked.test_naming.naming_metadata import (
     verify_naming_convention,
 )
 

@@ -35,6 +35,10 @@ jobs:
             -   run: "${{ github.workspace }}/prime"
             -   run: "${{ github.workspace }}/cmd/bootstrap_env"
 
+            -   name: ensure git has no local changes and untracked files
+                # NOTE: Unlike the latest version, the earlier one may use a different set of dependencies:
+                run: "test -z \"$(git status --porcelain -- ':!dst/default_env/constraints.txt')\""
+
             -   run: "${{ github.workspace }}/venv/bin/python -m pytest"
 
             -   run: "echo job.status: ${{ job.status }}"

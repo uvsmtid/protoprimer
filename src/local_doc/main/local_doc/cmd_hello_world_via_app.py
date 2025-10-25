@@ -1,3 +1,4 @@
+# FT_93_57_03_75.app_vs_lib.md: see also `cmd_hello_world_via_lib.py`
 from __future__ import annotations
 
 import enum
@@ -19,7 +20,7 @@ def custom_main():
 
 
 # noinspection PyPep8Naming
-class Bootstrapper_state_hello_world_printed(AbstractCachingStateNode[bool]):
+class Bootstrapper_state_hello_world_printed(AbstractCachingStateNode[int]):
 
     # TODO: Make it simpler: can this be simplified?
     #       Need to find a way to simplify specifying the state name and their dependencies.
@@ -42,7 +43,7 @@ class Bootstrapper_state_hello_world_printed(AbstractCachingStateNode[bool]):
 
         print("Hello, world!")
 
-        return True
+        return 0
 
 
 class CustomEnvState(enum.Enum):

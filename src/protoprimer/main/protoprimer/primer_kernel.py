@@ -30,7 +30,7 @@ import venv
 
 # The release process ensures that content in this file matches the version below while tagging the release commit
 # (otherwise, if the file comes from a different commit, the version is irrelevant):
-__version__ = "0.0.8"
+__version__ = "0.0.9"
 
 from typing import (
     Any,
@@ -1416,18 +1416,9 @@ class Bootstrapper_state_default_stderr_log_handler_configured(
         )
         assert state_input_stderr_log_level_var_loaded >= 0
 
-        # Log everything (the filters are supposed to be set on output handlers instead):
-        logger.setLevel(logging.NOTSET)
-
-        stderr_handler: logging.Handler = logging.StreamHandler(sys.stderr)
-        stderr_handler.addFilter(PythonExecutableFilter())
-
-        stderr_formatter = ColorFormatter()
-
-        stderr_handler.setLevel(state_input_stderr_log_level_var_loaded)
-        stderr_handler.setFormatter(stderr_formatter)
-
-        logger.addHandler(stderr_handler)
+        stderr_handler: logging.Handler = configure_stderr_logger(
+            state_input_stderr_log_level_var_loaded
+        )
 
         return stderr_handler
 
@@ -4469,6 +4460,26 @@ class ColorFormatter(RegularFormatter):
         return f"{log_color}{log_msg}{self.color_reset}"
 
 
+def configure_stderr_logger(
+    state_input_stderr_log_level_var_loaded: int,
+) -> logging.Handler:
+
+    # Log everything (the filters are supposed to be set on output handlers instead):
+    logger.setLevel(logging.NOTSET)
+
+    stderr_handler: logging.Handler = logging.StreamHandler(sys.stderr)
+    stderr_handler.addFilter(PythonExecutableFilter())
+
+    stderr_formatter = ColorFormatter()
+
+    stderr_handler.setLevel(state_input_stderr_log_level_var_loaded)
+    stderr_handler.setFormatter(stderr_formatter)
+
+    logger.addHandler(stderr_handler)
+
+    return stderr_handler
+
+
 def rename_to_moved_state_name(state_name: str) -> str:
     """
     See UC_27_40_17_59.replace_by_new_and_use_old.md
@@ -5017,33 +5028,32 @@ def log_python_context(log_level: int = logging.INFO):
     )
 
 
-def delegate_to_venv(
+def switch_to_venv(
     # TODO: TODO_28_48_19_20.api_to_traverse_config_when_primed.md:
     #       See usage - find a way to automatically provide it given the path to the `proto_kernel`.
-    ref_root_abs_path: str,
+    ref_root_dir_abs_path: str,
 ) -> bool:
     """
-    This is a helper function to delegate script execution to a `python` from `venv`.
+    This is a helper function to run FT_75_87_82_46 entry script by `python` executable from `venv`.
 
-    It is supposed to be used in FT_75_87_82_46 entry scripts.
-    The entry script must know how to compute the path to `ref_root_path`
+    The entry script must know how to compute the path to `ref_root_dir_abs_path`
     (e.g., it must know its path within the client dir structure).
 
     The function fails if `venv` is not created - the user must trigger the bootstrap manually.
 
-    :return: `False` if already inside `venv`, otherwise start itself inside `venv`.
+    :return: `True` if already inside `venv`, otherwise start itself inside `venv`.
     """
 
     if not is_venv():
 
         venv_bin = os.path.join(
-            ref_root_abs_path,
+            ref_root_dir_abs_path,
             # TODO: This might be passed as arg to the func (that being a default):
             ConfConstEnv.default_dir_rel_path_venv,
             ConfConstGeneral.file_rel_path_venv_bin,
         )
         venv_python = os.path.join(
-            ref_root_abs_path,
+            ref_root_dir_abs_path,
             # TODO: This might be passed as arg to the func (that being a default):
             ConfConstEnv.default_dir_rel_path_venv,
             ConfConstGeneral.file_rel_path_venv_python,
@@ -5068,8 +5078,8 @@ def delegate_to_venv(
             ],
         )
     else:
-        # Not delegated:
-        return False
+        # already switched:
+        return True
 
 
 def run_main(
@@ -5094,8 +5104,9 @@ def run_main(
         ]
         if py_exec.value >= PythonExecutable.py_exec_updated_proto_code.value:
             raise AssertionError(
-                f"Failed to import `{neo_main_module}` with `{EnvVar.var_PROTOPRIMER_PY_EXEC.value}` [{py_exec.name}]."
-                f"Does install process contain `{neo_main_module}` or has it as a (transitive) dependency?"
+                f"Failed to import `{neo_main_module}` with `{EnvVar.var_PROTOPRIMER_PY_EXEC.value}` [{py_exec.name}]. "
+                # See: UC_78_58_06_54.no_stray_packages.md
+                f"Is `{neo_main_module}` a (transitive) dependency of any `pyproject.toml` being installed? "
             )
         # `PrimerRuntime.runtime_proto`:
         selected_main = main

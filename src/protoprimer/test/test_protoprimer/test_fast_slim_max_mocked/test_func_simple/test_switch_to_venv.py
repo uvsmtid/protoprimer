@@ -9,13 +9,13 @@ from protoprimer.primer_kernel import (
     ConfConstEnv,
     ConfConstGeneral,
     ConfConstInput,
-    delegate_to_venv,
+    switch_to_venv,
 )
 
 
 def test_relationship():
     assert_test_module_name_embeds_str(
-        delegate_to_venv.__name__,
+        switch_to_venv.__name__,
     )
 
 
@@ -48,9 +48,9 @@ class TestSuite:
 
         # when:
 
-        ret_val = delegate_to_venv(ref_root_path)
+        ret_val = switch_to_venv(ref_root_path)
 
-        assert ret_val is False
+        assert ret_val is True
         self.mock_execv.assert_not_called()
         self.mock_path_exists.assert_not_called()
         assert os.environ.get("PATH", "") == self.original_path
@@ -66,7 +66,7 @@ class TestSuite:
 
         # when:
 
-        delegate_to_venv(ref_root_path)
+        switch_to_venv(ref_root_path)
 
         # then:
 
@@ -110,7 +110,7 @@ class TestSuite:
         # when:
 
         with pytest.raises(AssertionError) as exc_info:
-            delegate_to_venv(ref_root_path)
+            switch_to_venv(ref_root_path)
 
         # then:
 
