@@ -3,7 +3,7 @@ This file can be loaded into an AI/LLM agent for the initial context.
 
 ## Expected AI/LLM behavior
 
-*   Do not commit or stage changes - they will be committed by a human after review.
+*   Leave changes uncommitted - they will be committed by a human after review.
 *   When changes have been made, use the testing method described (below).
 *   Follow the code style (below).
 *   To not fix TODO-s. Focus on the specific task instead. A human will clean those TODO-s without you.
@@ -30,7 +30,7 @@ The final goal of the bootstrap process is `TargetState.target_full_proto_bootst
 *   Any imports inside `./src/` files should not escape that `./src/` directory.
 *   Do not change `sys.path` or `PYTHONPATH` - these are not acceptable fixes.
 *   Do not install anything with `pip`.
-*   Run tests only under the [test_fast_mocked][test_fast_mocked] directory to get quick feedback.
+*   Run tests only under the [test_fast_slim_max_mocked][test_fast_slim_max_mocked] directory to get quick feedback.
 
 Only when your changes are under `test_slow_integrated` directory,
 run `pytest` for all directories.
@@ -102,5 +102,5 @@ run `pytest` for all directories.
 [src]: ../../src
 [cmd]: ../../cmd
 
-[test_fast_mocked]: ../../src/protoprimer/test/test_protoprimer/test_fast_mocked
+[test_fast_slim_max_mocked]: ../../src/protoprimer/test/test_protoprimer/test_fast_slim_max_mocked
 [test_slow_integrated]: ../../src/protoprimer/test/test_protoprimer/test_slow_integrated

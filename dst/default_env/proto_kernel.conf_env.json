@@ -5,6 +5,10 @@
     "env_local_tmp_dir_rel_path": "tmp",
     "env_project_descriptors": [
         {
+            "env_build_root_dir_rel_path": "src/local_doc",
+            "env_install_extras": []
+        },
+        {
             "env_build_root_dir_rel_path": "src/local_repo",
             "env_install_extras": []
         },

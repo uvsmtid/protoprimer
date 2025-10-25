@@ -23,18 +23,18 @@ if __name__ == "__main__":
 
     # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     # Boilerplate to import `proto_kernel` from `protoprimer`
-    import sys
+    import os
+    import importlib.util
 
-    # Import `proto_kernel` from `./proto_code` dir relative to curr file:
-    sys.path.append(
+    proto_spec = importlib.util.spec_from_file_location(
+        "proto_kernel",
         os.path.join(
             os.path.dirname(__file__),
-            os.path.dirname(proto_kernel_rel_path),
+            proto_kernel_rel_path,
         ),
     )
-    import proto_kernel
-
-    sys.path.pop()
+    proto_kernel = importlib.util.module_from_spec(proto_spec)
+    proto_spec.loader.exec_module(proto_kernel)
     # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
     proto_kernel.run_main(

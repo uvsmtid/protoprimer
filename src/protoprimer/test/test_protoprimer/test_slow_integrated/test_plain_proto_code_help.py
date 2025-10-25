@@ -9,8 +9,6 @@ from local_test.integrated_helper import (
     switch_to_ref_root_abs_path,
 )
 
-IS_CI = os.getenv("CI") == "true"
-
 
 def test_help(tmp_path: pathlib.Path):
 

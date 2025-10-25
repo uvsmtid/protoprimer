@@ -6,12 +6,12 @@ import enum
 
 # It is expected to be run under activated `venv`.
 
-# It must be run from repo root:
+# It must be run from the repo root:
 # ./cmd/publish_package -h
 
 # A single "atomic" step to make a release:
 # - ensure no local modifications
-# - ensure commit is published
+# - ensure the commit is published
 # - create tag
 # - publish package
 
@@ -138,7 +138,7 @@ def _publish_package(
     git_tag = get_command_output("git describe --tags")
     print(f"INFO: curr git_tag: {git_tag}", file=sys.stderr)
 
-    # Versions has to be prefixed with `v` in tag:
+    # Versions have to be prefixed with `v` in tags:
     if get_tag_name(package_name, distrib_version) != git_tag:
         git_tag = get_tag_name(package_name, distrib_version)
         if not is_dev_version:

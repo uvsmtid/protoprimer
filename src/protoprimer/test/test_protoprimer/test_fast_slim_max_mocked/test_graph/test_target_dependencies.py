@@ -5,7 +5,7 @@ from protoprimer.primer_kernel import (
     EnvState,
     TargetState,
 )
-from test_protoprimer.test_fast_mocked.misc_tools.graph_utils import (
+from test_protoprimer.test_fast_slim_max_mocked.misc_tools.graph_utils import (
     get_transitive_dependencies,
 )
 

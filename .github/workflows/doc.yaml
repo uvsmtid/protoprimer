@@ -3,30 +3,19 @@ on:
     push:
         branches:
         -   "*"
-    schedule:
-        # Keep running periodically to detect issues with newly released dependencies:
-        # Every day at 18:00 SGT:
-        -   cron: "0 10 * * *"
 jobs:
     bootstrap_scenarios:
         runs-on: ubuntu-latest
 
-        strategy:
-            # When one of the jobs fails, this prevents canceling another job (for another Python version):
-            fail-fast: false
-            matrix:
-                # FT_84_11_73_28: supported python versions:
-                python-version:
-                    -   3.14
         steps:
             -   run: "echo runner.os: ${{ runner.os }}"
             -   run: "echo github.repository: ${{ github.repository }}"
             -   run: "echo github.ref: ${{ github.ref }}"
 
-            -   name: "matrix.python-version: ${{ matrix.python-version }}"
-                uses: actions/setup-python@v5
+            -   uses: actions/setup-python@v5
                 with:
-                    python-version: ${{ matrix.python-version }}
+                    # FT_84_11_73_28: supported python versions:
+                    python-version: 3.14
 
             -   run: "python -c \"import sys; print(sys.version);\""
 
@@ -38,6 +27,9 @@ jobs:
             -   name: ensure git has no local changes and untracked files
                 run: "test -z \"$(git status --porcelain)\""
 
-            -   run: "${{ github.workspace }}/venv/bin/python -m pytest"
+            # TODO: At the moment, we do not render docs, for now just check that `gen_next_doc_id` works:
+            -   run: "${{ github.workspace }}/cmd/gen_next_doc_id ${{ github.workspace }}/doc/feature_topic"
+            -   run: "${{ github.workspace }}/cmd/gen_next_doc_id ${{ github.workspace }}/doc/use_case"
+            -   run: "${{ github.workspace }}/cmd/gen_next_doc_id ${{ github.workspace }}/doc/task_ref"
 
             -   run: "echo job.status: ${{ job.status }}"

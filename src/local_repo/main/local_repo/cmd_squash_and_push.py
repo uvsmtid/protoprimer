@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import argparse
 
 # The script creates a new `squashed_branch_name` from the current `source_branch_name`
 # by squashing with all the comments against common ancestor with `target_branch`
@@ -13,6 +14,9 @@ from local_repo.sub_proc_util import (
 
 
 def main():
+
+    parsed_args = init_arg_parser().parse_args()
+
     target_branch: str = "origin/main"
     squashed_tag: str = "SQUASHED"
     exit_code: int
@@ -64,7 +68,7 @@ def main():
     # Squash by staging for commit:
     get_command_code(f"git reset --soft {git_base_commit}")
 
-    # Use branch name as the commit message:
+    # Use the branch name as the commit message:
     get_command_code(f'git commit -m "{source_branch_name}"')
 
     # Fetch before force-push:
@@ -73,12 +77,24 @@ def main():
     # Push:
     get_command_code(f'git push -f origin "HEAD:{source_branch_name}"')
 
-    # Set remote target branch named after the source branch:
+    # Set the remote target branch named after the source branch:
     get_command_code(f'git branch --set-upstream-to="origin/{source_branch_name}"')
 
     # Clean up:
     get_command_code(f"git checkout {source_branch_name}")
     get_command_code(f"git branch -D {squashed_branch_name}")
+
+
+def init_arg_parser():
+
+    arg_parser = argparse.ArgumentParser(
+        description=(
+            "Squash commits of the current branch against the target branch and "
+            "push that commit to the remote as the current branch. "
+        ),
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+    )
+    return arg_parser
 
 
 if __name__ == "__main__":

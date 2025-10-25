@@ -14,8 +14,8 @@ from protoprimer.primer_kernel import (
     RunMode,
     ValueName,
 )
-from test_protoprimer.test_fast_mocked.test_naming import naming_metadata
-from test_protoprimer.test_fast_mocked.test_naming.naming_metadata import (
+from test_protoprimer.test_fast_slim_max_mocked.test_naming import naming_metadata
+from test_protoprimer.test_fast_slim_max_mocked.test_naming.naming_metadata import (
     ValueSource,
 )
 

@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# FT_93_57_03_75.app_vs_lib.md: see also `./cmd/hello_world_via_app`
 
 if __name__ == "__main__":
 
@@ -17,7 +18,10 @@ if __name__ == "__main__":
     spec.loader.exec_module(proto_kernel)
     # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-    proto_kernel.run_main(
-        "local_repo.cmd_bootstrap_env",
-        "custom_main",
-    )
+    if proto_kernel.switch_to_venv(
+        # ./cmd/file -> ./
+        ref_root_dir_abs_path=os.path.dirname(os.path.dirname(__file__)),
+    ):
+        from local_doc.cmd_hello_world_via_lib import main
+
+        main()

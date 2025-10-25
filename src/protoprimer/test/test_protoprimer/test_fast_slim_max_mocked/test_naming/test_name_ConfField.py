@@ -6,11 +6,11 @@ from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer.primer_kernel import (
     ConfField,
 )
-from test_protoprimer.test_fast_mocked.test_naming.naming_metadata import (
+from test_protoprimer.test_fast_slim_max_mocked.test_naming.naming_metadata import (
     AbstractMeta,
     NameCategory,
 )
-from test_protoprimer.test_fast_mocked.test_naming.naming_test_base import (
+from test_protoprimer.test_fast_slim_max_mocked.test_naming.naming_test_base import (
     NamingTestBase,
 )
 

@@ -1,6 +1,8 @@
 import logging
 import os
 import pathlib
+import shutil
+import stat
 
 import protoprimer
 from local_repo.sub_proc_util import get_command_code
@@ -46,15 +48,14 @@ def create_plain_proto_code(
 
     # Copy `primer_kernel.py` to `proto_code/proto_kernel.py`:
     proto_kernel_abs_path = proto_code_dir_abs_path / "proto_kernel.py"
-    get_command_code(
-        f"cp {primer_kernel_abs_path} {proto_kernel_abs_path}",
-    )
+
+    shutil.copy(primer_kernel_abs_path, proto_kernel_abs_path)
 
     # Make the `primer_kernel.py` executable:
     if proto_kernel_abs_path.exists():
-        get_command_code(
-            f"chmod u+x {proto_kernel_abs_path}",
-        )
+        curr_stat = os.stat(proto_kernel_abs_path)
+        next_stat = curr_stat.st_mode | stat.S_IXUSR
+        os.chmod(proto_kernel_abs_path, next_stat)
 
 
 def create_test_pyproject_toml(
