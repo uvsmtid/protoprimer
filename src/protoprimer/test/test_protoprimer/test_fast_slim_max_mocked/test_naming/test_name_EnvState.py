@@ -198,6 +198,11 @@ class StateName(enum.Enum):
         NameCategory.category_path_value,
     )
 
+    state_env_local_cache_dir_abs_path_eval_finalized = StateMeta(
+        EnvState.state_env_local_cache_dir_abs_path_eval_finalized,
+        NameCategory.category_path_value,
+    )
+
     state_env_project_descriptors_eval_finalized = StateMeta(
         EnvState.state_env_project_descriptors_eval_finalized,
         NameCategory.category_named_value,
@@ -210,6 +215,11 @@ class StateName(enum.Enum):
 
     state_reinstall_triggered = StateMeta(
         EnvState.state_reinstall_triggered,
+        NameCategory.category_state_mutation,
+    )
+
+    state_package_driver_selected = StateMeta(
+        EnvState.state_package_driver_selected,
         NameCategory.category_state_mutation,
     )
 
@@ -245,6 +255,11 @@ class StateName(enum.Enum):
 
     state_command_executed = StateMeta(
         EnvState.state_command_executed,
+        NameCategory.category_state_mutation,
+    )
+
+    state_package_driver_inited = StateMeta(
+        EnvState.state_package_driver_inited,
         NameCategory.category_state_mutation,
     )
 

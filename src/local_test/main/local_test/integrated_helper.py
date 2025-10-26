@@ -14,6 +14,7 @@ from protoprimer.primer_kernel import (
     ConfConstInput,
     ConfConstPrimer,
     ConfField,
+    PackageDriverType,
     write_json_file,
 )
 
@@ -34,7 +35,7 @@ def switch_to_ref_root_abs_path(tmp_path: pathlib.Path) -> pathlib.Path:
 
 def create_plain_proto_code(
     proto_code_dir_abs_path: pathlib.Path,
-) -> None:
+) -> pathlib.Path:
     """
     Creates a test dir with FT_90_65_67_62.proto_code.md.
     """
@@ -54,8 +55,13 @@ def create_plain_proto_code(
     # Make the `primer_kernel.py` executable:
     if proto_kernel_abs_path.exists():
         curr_stat = os.stat(proto_kernel_abs_path)
-        next_stat = curr_stat.st_mode | stat.S_IXUSR
+        next_stat = curr_stat.st_mode | stat.S_IXUSR | stat.S_IRUSR | stat.S_IWUSR
         os.chmod(proto_kernel_abs_path, next_stat)
+
+    # TODO: Instead of returning, set `EvnVar.var_PROTOPRIMER_PROTO_CODE` in case of `EnvVar.var_PROTOPRIMER_TEST_MODE`.
+    #       This would allow running `test_slow_integrated` wrapped in mocks set by `test_fast_slim_max_mocked`
+    #       without modifications.
+    return proto_kernel_abs_path
 
 
 def create_test_pyproject_toml(
@@ -170,6 +176,9 @@ def create_conf_env_file(
     env_conf_data = {
         ConfField.field_env_local_python_file_abs_path.value: python_abs_path,
         ConfField.field_env_local_venv_dir_rel_path.value: venv_dir_rel_path,
+        # TODO: Parameterize tests to succeed with
+        #       both `PackageDriverType.driver_pip` and `PackageDriverType.driver_uv`.
+        ConfField.field_env_package_driver.value: PackageDriverType.driver_pip.name,
         ConfField.field_env_project_descriptors.value: [
             {
                 ConfField.field_env_build_root_dir_rel_path.value: str(

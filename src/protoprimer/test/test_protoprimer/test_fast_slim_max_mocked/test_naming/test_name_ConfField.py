@@ -95,6 +95,16 @@ class FieldName(enum.Enum):
         NameCategory.category_path_field,
     )
 
+    field_env_local_cache_dir_rel_path = FieldMeta(
+        ConfField.field_env_local_cache_dir_rel_path,
+        NameCategory.category_path_field,
+    )
+
+    field_env_package_driver = FieldMeta(
+        ConfField.field_env_package_driver,
+        NameCategory.category_value_field,
+    )
+
 
 class TestFieldName(NamingTestBase):
     prod_enum = ConfField

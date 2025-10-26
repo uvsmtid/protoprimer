@@ -57,8 +57,12 @@ class EnvVarName(enum.Enum):
         EnvVar.var_PROTOPRIMER_START_ID,
         NameCategory.category_loaded_data,
     )
-    var_PROTOPRIMER_USE_UV = EnvVarMeta(
-        EnvVar.var_PROTOPRIMER_USE_UV,
+    var_PROTOPRIMER_PACKAGE_DRIVER = EnvVarMeta(
+        EnvVar.var_PROTOPRIMER_PACKAGE_DRIVER,
+        NameCategory.category_loaded_data,
+    )
+    var_PROTOPRIMER_TEST_MODE = EnvVarMeta(
+        EnvVar.var_PROTOPRIMER_TEST_MODE,
         NameCategory.category_loaded_data,
     )
 

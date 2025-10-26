@@ -15,6 +15,7 @@ from protoprimer.primer_kernel import (
     Bootstrapper_state_input_do_install_var_loaded,
     Bootstrapper_state_primer_ref_root_dir_abs_path_eval_finalized,
     Bootstrapper_state_py_exec_venv_reached,
+    Bootstrapper_state_package_driver_inited,
     ConfConstClient,
     ConfField,
     EnvContext,
@@ -56,10 +57,12 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.eval_own_state"
     )
-    @patch(f"{primer_kernel.__name__}.{PackageDriverPip.__name__}.install_dependencies")
+    @patch(
+        f"{primer_kernel.__name__}.{Bootstrapper_state_package_driver_inited.__name__}.eval_own_state"
+    )
     def test_default_install(
         self,
-        mock_install_dependencies,
+        mock_state_package_driver_inited,
         mock_state_args_parsed,
         mock_state_input_do_install_var_loaded,
         mock_state_env_project_rel_path_to_extras_list_finalized_lconf,
@@ -127,7 +130,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             EnvState.state_protoprimer_package_installed.name
         )
         # then:
-        mock_install_dependencies.assert_called_once()
+        mock_state_package_driver_inited.return_value.install_dependencies.assert_called_once()
 
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_env_dir_abs_path_eval_finalized.__name__}.eval_own_state"
@@ -147,10 +150,12 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.eval_own_state"
     )
-    @patch(f"{primer_kernel.__name__}.{PackageDriverPip.__name__}.install_dependencies")
+    @patch(
+        f"{primer_kernel.__name__}.{Bootstrapper_state_package_driver_inited.__name__}.eval_own_state"
+    )
     def test_reinstall(
         self,
-        mock_install_dependencies,
+        mock_state_package_driver_inited,
         mock_state_args_parsed,
         mock_state_input_do_install_var_loaded,
         mock_state_env_project_rel_path_to_extras_list_finalized_lconf,
@@ -218,7 +223,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             EnvState.state_protoprimer_package_installed.name
         )
         # then:
-        mock_install_dependencies.assert_called_once()
+        mock_state_package_driver_inited.return_value.install_dependencies.assert_called_once()
 
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_env_dir_abs_path_eval_finalized.__name__}.eval_own_state"
@@ -238,10 +243,12 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.eval_own_state"
     )
-    @patch(f"{primer_kernel.__name__}.{PackageDriverPip.__name__}.install_dependencies")
+    @patch(
+        f"{primer_kernel.__name__}.{Bootstrapper_state_package_driver_inited.__name__}.eval_own_state"
+    )
     def test_no_install_triggered(
         self,
-        mock_install_dependencies,
+        mock_state_package_driver_inited,
         mock_state_args_parsed,
         mock_state_input_do_install_var_loaded,
         mock_state_env_project_rel_path_to_extras_list_finalized_lconf,
@@ -309,7 +316,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             EnvState.state_protoprimer_package_installed.name
         )
         # then:
-        mock_install_dependencies.assert_not_called()
+        mock_state_package_driver_inited.return_value.install_dependencies.assert_not_called()
 
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_env_dir_abs_path_eval_finalized.__name__}.eval_own_state"
@@ -329,10 +336,12 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.eval_own_state"
     )
-    @patch(f"{primer_kernel.__name__}.{PackageDriverPip.__name__}.install_dependencies")
+    @patch(
+        f"{primer_kernel.__name__}.{Bootstrapper_state_package_driver_inited.__name__}.eval_own_state"
+    )
     def test_nothing_to_install(
         self,
-        mock_install_dependencies,
+        mock_state_package_driver_inited,
         mock_state_args_parsed,
         mock_state_input_do_install_var_loaded,
         mock_state_env_project_rel_path_to_extras_list_finalized_lconf,
@@ -385,4 +394,4 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # then:
 
-        mock_install_dependencies.assert_not_called()
+        mock_state_package_driver_inited.return_value.install_dependencies.assert_not_called()

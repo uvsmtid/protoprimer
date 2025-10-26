@@ -1,9 +1,9 @@
+import copy
 import os
 import pathlib
 import sys
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 
-import pytest
 from pyfakefs.fake_filesystem import FakeFilesystem
 
 import protoprimer
@@ -22,11 +22,17 @@ from protoprimer.primer_kernel import (
     ConfConstInput,
     ConfConstPrimer,
     ConfDst,
+    EnvVar,
     main,
+    SyntaxArg,
 )
 
 
 class ExecCalled(Exception):
+    pass
+
+
+class ExitCalled(Exception):
     pass
 
 
@@ -38,13 +44,34 @@ def mock_execve(*args, **kwargs):
     raise ExecCalled(args, kwargs)
 
 
-@pytest.mark.skip("incomplete & experimental")
+def mock_exit(*args, **kwargs):
+    raise ExitCalled(args, kwargs)
+
+
+def mock_install_packages(
+    self, file_abs_path_local_python: str, given_packages: list[str]
+):
+    if given_packages == ["uv"]:
+        bin_dir = pathlib.Path(file_abs_path_local_python).parent
+        bin_dir.mkdir(parents=True, exist_ok=True)
+        (bin_dir / "uv").touch()
+
+
+# @pytest.mark.skip("incomplete & experimental")
+# TODO: Figure out a way to run any `test_slow_integrated` wrapped into these mocks
+#       without any modifications.
+@patch(
+    "protoprimer.primer_kernel.PackageDriverPip.install_packages",
+    new=mock_install_packages,
+)
+@patch("sys.exit", side_effect=mock_exit)
 @patch("os.execv", side_effect=mock_execv)
 @patch("os.execve", side_effect=mock_execve)
 @patch("subprocess.check_call", return_value=0)
 @patch("venv.create")
 @patch("shutil.move")
 def test_prime_with_mocked_execv(
+    mock_exit_call,
     mock_execv_call,
     mock_execve_call,
     mock_check_call,
@@ -52,6 +79,9 @@ def test_prime_with_mocked_execv(
     mock_shutil_move,
     fs: FakeFilesystem,
 ):
+    """
+    See `test_perimeter.md` and `test_fast_fat_min_mocked`.
+    """
 
     # given:
 
@@ -66,7 +96,7 @@ def test_prime_with_mocked_execv(
     proto_code_dir_abs_path = (
         ref_root_abs_path / ConfConstInput.default_proto_conf_dir_rel_path
     )
-    create_plain_proto_code(proto_code_dir_abs_path)
+    proto_code_abs_path = create_plain_proto_code(proto_code_dir_abs_path)
     create_conf_primer_file(
         ref_root_abs_path,
         proto_code_dir_abs_path,
@@ -98,26 +128,42 @@ def test_prime_with_mocked_execv(
 
     # ===
     # when:
-    argv = [
+    mocked_argv = [
         str(proto_code_dir_abs_path / ConfConstGeneral.default_proto_code_basename),
+        SyntaxArg.arg_v,
     ]
+    mocked_env = copy.deepcopy(os.environ)
+    mocked_env[EnvVar.var_PROTOPRIMER_TEST_MODE.value] = ""
+    mocked_env[EnvVar.var_PROTOPRIMER_PROTO_CODE.value] = str(proto_code_abs_path)
     for _ in range(10):
         try:
-            with patch.object(
-                sys,
-                "argv",
-                argv,
+            with patch.dict(
+                os.environ,
+                mocked_env,
             ):
-                main()
-            break
+                with patch.object(
+                    sys,
+                    "argv",
+                    mocked_argv,
+                ):
+                    main()
+                break
         except ExecCalled as e:
-            args, kwargs = e.args
-            if "argv" in kwargs:
-                argv = kwargs["argv"]
+            exec_args, exec_kwargs = e.args
+            if "argv" in exec_kwargs:
+                mocked_argv = exec_kwargs["argv"]
             else:
-                argv = args[1]
-            if isinstance(argv, tuple):
-                argv = list(argv)
+                mocked_argv = exec_args[1]
+            if "env" in exec_kwargs:
+                mocked_env = exec_kwargs["env"]
+
+            # As long as `python` is invoked, remove 0-indexed arg:
+            assert "python" in mocked_argv[0]
+            mocked_argv = mocked_argv[1:]
+        except ExitCalled as e:
+            exec_args, exec_kwargs = e.args
+            assert exec_args[0] == 0
+            break
 
     # then:
     gconf_dir = ref_root_abs_path / ConfDst.dst_global.value

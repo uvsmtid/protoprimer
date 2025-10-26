@@ -320,6 +320,8 @@ The subsequent bootstraps is the main purpose of the `protoprimer` as an app.
     git commit -m 'Copy `proto_kernel.py` from `protoprimer`'
     ```
 
+### Example from this repo
+
 Instead of the `path/to/own_copy`, this repo uses this specific path for **proto code**:
 
 ```sh
