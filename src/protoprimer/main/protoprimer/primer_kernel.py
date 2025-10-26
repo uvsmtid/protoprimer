@@ -268,7 +268,12 @@ class EnvVar(enum.Enum):
 
     var_PROTOPRIMER_START_ID = "PROTOPRIMER_START_ID"
 
-    var_PROTOPRIMER_USE_UV = "PROTOPRIMER_USE_UV"
+    var_PROTOPRIMER_PACKAGE_DRIVER = "PROTOPRIMER_PACKAGE_DRIVER"
+
+    var_PROTOPRIMER_TEST_MODE = "PROTOPRIMER_TEST_MODE"
+    """
+    See `test_perimeter.md` and `test_fast_fat_min_mocked`.
+    """
 
 
 class ConfDst(enum.Enum):
@@ -307,6 +312,8 @@ class ValueName(enum.Enum):
 
     value_local_env = "local_env"
 
+    value_package_driver = "package_driver"
+
 
 class PathName(enum.Enum):
 
@@ -342,6 +349,8 @@ class PathName(enum.Enum):
     path_local_log = "local_log"
 
     path_local_tmp = "local_tmp"
+
+    path_local_cache = "local_cache"
 
     path_build_root = "build_root"
 
@@ -418,6 +427,12 @@ class ConfField(enum.Enum):
     field_env_local_log_dir_rel_path = f"{ConfLeap.leap_env.value}_{PathName.path_local_log.value}_{FilesystemObject.fs_object_dir.value}_{PathType.path_rel.value}"
 
     field_env_local_tmp_dir_rel_path = f"{ConfLeap.leap_env.value}_{PathName.path_local_tmp.value}_{FilesystemObject.fs_object_dir.value}_{PathType.path_rel.value}"
+
+    field_env_local_cache_dir_rel_path = f"{ConfLeap.leap_env.value}_{PathName.path_local_cache.value}_{FilesystemObject.fs_object_dir.value}_{PathType.path_rel.value}"
+
+    field_env_package_driver = (
+        f"{ConfLeap.leap_env.value}_{ValueName.value_package_driver.value}"
+    )
 
     field_env_project_descriptors = (
         f"{ConfLeap.leap_env.value}_{ValueName.value_project_descriptors.value}"
@@ -548,6 +563,221 @@ class ConfConstClient:
     default_pyproject_toml_basename = "pyproject.toml"
 
 
+class PackageDriverBase:
+
+    def create_venv(
+        self,
+        file_abs_path_local_python: str,
+        dir_abs_path_local_venv: str,
+    ) -> None:
+        logger.info(f"creating `venv` [{dir_abs_path_local_venv}]")
+        self._create_venv_impl(file_abs_path_local_python, dir_abs_path_local_venv)
+
+    def _create_venv_impl(
+        self,
+        file_abs_path_local_python: str,
+        dir_abs_path_local_venv: str,
+    ) -> None:
+        raise NotImplementedError()
+
+    def install_packages(
+        self,
+        file_abs_path_local_python: str,
+        given_packages: list[str],
+    ):
+        sub_proc_args: list[str] = self.get_install_dependencies_cmd(
+            file_abs_path_local_python,
+        )
+        sub_proc_args.extend(given_packages)
+
+        logger.info(f"installing packages: {' '.join(sub_proc_args)}")
+
+        subprocess.check_call(sub_proc_args)
+
+    def install_dependencies(
+        self,
+        ref_root_dir_abs_path: str,
+        file_abs_path_local_python: str,
+        constraints_file_abs_path: str,
+        project_descriptors: list[dict],
+    ) -> None:
+        """
+        Install each project from the `project_descriptors`.
+
+        The assumption is that they use `pyproject.toml`.
+
+        See also:
+        *   UC_78_58_06_54.no_stray_packages.md
+        *   FT_46_37_27_11.editable_install.md
+        """
+
+        editable_project_install_args = []
+        for project_descriptor in project_descriptors:
+            project_build_root_dir_rel_path = project_descriptor[
+                ConfField.field_env_build_root_dir_rel_path.value
+            ]
+            project_build_root_dir_abs_path = os.path.join(
+                ref_root_dir_abs_path,
+                project_build_root_dir_rel_path,
+            )
+
+            install_extras: list[str]
+            if ConfField.field_env_install_extras.value in project_descriptor:
+                install_extras = project_descriptor[
+                    ConfField.field_env_install_extras.value
+                ]
+            else:
+                install_extras = []
+
+            editable_project_install_args.append("--editable")
+            if len(install_extras) > 0:
+                editable_project_install_args.append(
+                    f"{project_build_root_dir_abs_path}[{','.join(install_extras)}]"
+                )
+            else:
+                editable_project_install_args.append(
+                    f"{project_build_root_dir_abs_path}"
+                )
+
+        sub_proc_args = self.get_install_dependencies_cmd(
+            file_abs_path_local_python,
+        )
+        sub_proc_args.extend(
+            [
+                "--constraint",
+                constraints_file_abs_path,
+            ]
+        )
+
+        sub_proc_args.extend(editable_project_install_args)
+
+        logger.info(f"installing projects: {' '.join(sub_proc_args)}")
+
+        subprocess.check_call(sub_proc_args)
+
+    def get_install_dependencies_cmd(
+        self,
+        file_abs_path_local_python: str,
+    ) -> list[str]:
+        raise NotImplementedError()
+
+    def pin_versions(
+        self,
+        file_abs_path_local_python: str,
+        constraints_file_abs_path: str,
+    ) -> None:
+        logger.info(
+            f"generating version constraints file [{constraints_file_abs_path}]"
+        )
+        with open(constraints_file_abs_path, "w") as f:
+            subprocess.check_call(
+                self._get_pin_versions_cmd(file_abs_path_local_python),
+                stdout=f,
+            )
+
+    def _get_pin_versions_cmd(
+        self,
+        file_abs_path_local_python: str,
+    ) -> list[str]:
+        raise NotImplementedError()
+
+
+class PackageDriverPip(PackageDriverBase):
+
+    def _create_venv_impl(
+        self,
+        file_abs_path_local_python: str,
+        dir_abs_path_local_venv: str,
+    ) -> None:
+        venv.create(
+            dir_abs_path_local_venv,
+            with_pip=True,
+            upgrade_deps=True,
+        )
+
+    def get_install_dependencies_cmd(
+        self,
+        file_abs_path_local_python: str,
+    ) -> list[str]:
+        return [
+            file_abs_path_local_python,
+            "-m",
+            "pip",
+            "install",
+        ]
+
+    def _get_pin_versions_cmd(
+        self,
+        file_abs_path_local_python: str,
+    ) -> list[str]:
+        return [
+            file_abs_path_local_python,
+            "-m",
+            "pip",
+            "freeze",
+            "--exclude-editable",
+        ]
+
+
+class PackageDriverUv(PackageDriverBase):
+
+    def __init__(
+        self,
+        uv_exec_abs_path: str,
+    ):
+        self.uv_exec_abs_path: str = uv_exec_abs_path
+
+    def _create_venv_impl(
+        self,
+        file_abs_path_local_python: str,
+        dir_abs_path_local_venv: str,
+    ) -> None:
+        subprocess.check_call(
+            [
+                self.uv_exec_abs_path,
+                "venv",
+                "--python",
+                file_abs_path_local_python,
+                dir_abs_path_local_venv,
+            ]
+        )
+
+    def get_install_dependencies_cmd(
+        self,
+        file_abs_path_local_python: str,
+    ) -> list[str]:
+        return [
+            self.uv_exec_abs_path,
+            "pip",
+            "install",
+            "--python",
+            file_abs_path_local_python,
+        ]
+
+    def _get_pin_versions_cmd(
+        self,
+        file_abs_path_local_python: str,
+    ) -> list[str]:
+        return [
+            self.uv_exec_abs_path,
+            "pip",
+            "freeze",
+            "--exclude-editable",
+            "--python",
+            file_abs_path_local_python,
+        ]
+
+
+class PackageDriverType(enum.Enum):
+    """
+    See UC_09_61_98_94.installer_pip_vs_uv.md
+    """
+
+    driver_pip = PackageDriverPip
+
+    driver_uv = PackageDriverUv
+
+
 class ConfConstEnv:
     """
     Constants for FT_89_41_35_82.conf_leap.md / leap_env
@@ -561,6 +791,10 @@ class ConfConstEnv:
     default_dir_rel_path_log = "log"
 
     default_dir_rel_path_tmp = "tmp"
+
+    default_dir_rel_path_cache = "cache"
+
+    default_package_driver = PackageDriverType.driver_uv.name
 
     default_project_descriptors = []
 
@@ -1923,11 +2157,17 @@ class Bootstrapper_state_input_proto_code_file_abs_path_eval_finalized(
                 state_input_proto_code_file_abs_path_var_loaded
             )
         else:
-            assert not is_venv()
             log_python_context()
-            state_input_proto_code_file_abs_path_eval_finalized = os.path.abspath(
-                __file__
-            )
+            if os.environ.get(EnvVar.var_PROTOPRIMER_TEST_MODE.value, None) is None:
+                assert not is_venv()
+                state_input_proto_code_file_abs_path_eval_finalized = os.path.abspath(
+                    __file__
+                )
+            else:
+                assert state_input_proto_code_file_abs_path_var_loaded is not None
+                state_input_proto_code_file_abs_path_eval_finalized = (
+                    state_input_proto_code_file_abs_path_var_loaded
+                )
 
         assert os.path.isabs(state_input_proto_code_file_abs_path_eval_finalized)
         return state_input_proto_code_file_abs_path_eval_finalized
@@ -2935,6 +3175,56 @@ class Bootstrapper_state_env_local_tmp_dir_abs_path_eval_finalized(
 
 
 # noinspection PyPep8Naming
+class Bootstrapper_state_env_local_cache_dir_abs_path_eval_finalized(
+    AbstractCachingStateNode[str]
+):
+
+    def __init__(
+        self,
+        env_ctx: EnvContext,
+        state_name: str | None = None,
+    ):
+        super().__init__(
+            env_ctx=env_ctx,
+            parent_states=[
+                EnvState.state_primer_ref_root_dir_abs_path_eval_finalized.name,
+                EnvState.state_env_conf_file_data.name,
+            ],
+            state_name=if_none(
+                state_name,
+                EnvState.state_env_local_cache_dir_abs_path_eval_finalized.name,
+            ),
+        )
+
+    def _eval_state_once(
+        self,
+    ) -> ValueType:
+        state_env_conf_file_data: dict = self.eval_parent_state(
+            EnvState.state_env_conf_file_data.name
+        )
+
+        field_env_local_cache_dir_rel_path = state_env_conf_file_data.get(
+            ConfField.field_env_local_cache_dir_rel_path.value,
+            ConfConstEnv.default_dir_rel_path_cache,
+        )
+
+        state_primer_ref_root_dir_abs_path_eval_finalized: str = self.eval_parent_state(
+            EnvState.state_primer_ref_root_dir_abs_path_eval_finalized.name
+        )
+
+        state_env_local_cache_dir_abs_path_eval_finalized = os.path.join(
+            state_primer_ref_root_dir_abs_path_eval_finalized,
+            field_env_local_cache_dir_rel_path,
+        )
+        state_env_local_cache_dir_abs_path_eval_finalized = os.path.normpath(
+            state_env_local_cache_dir_abs_path_eval_finalized
+        )
+
+        assert os.path.isabs(state_env_local_cache_dir_abs_path_eval_finalized)
+        return state_env_local_cache_dir_abs_path_eval_finalized
+
+
+# noinspection PyPep8Naming
 class Bootstrapper_state_env_project_descriptors_eval_finalized(
     AbstractCachingStateNode[list]
 ):
@@ -3251,6 +3541,149 @@ class Bootstrapper_state_reinstall_triggered(AbstractCachingStateNode[bool]):
 
 
 # noinspection PyPep8Naming
+class Bootstrapper_state_package_driver_selected(
+    AbstractCachingStateNode[PackageDriverType]
+):
+
+    def __init__(
+        self,
+        env_ctx: EnvContext,
+        state_name: str | None = None,
+    ):
+        super().__init__(
+            env_ctx=env_ctx,
+            parent_states=[
+                EnvState.state_env_conf_file_data.name,
+                EnvState.state_env_local_cache_dir_abs_path_eval_finalized.name,
+            ],
+            state_name=if_none(
+                state_name,
+                EnvState.state_package_driver_selected.name,
+            ),
+        )
+
+    def _eval_state_once(
+        self,
+    ) -> ValueType:
+        state_env_conf_file_data: dict = self.eval_parent_state(
+            EnvState.state_env_conf_file_data.name
+        )
+
+        field_env_package_driver: PackageDriverType
+
+        if os.environ.get(EnvVar.var_PROTOPRIMER_PACKAGE_DRIVER.value, None) is None:
+            field_env_package_driver = PackageDriverType[
+                state_env_conf_file_data.get(
+                    ConfField.field_env_package_driver.value,
+                    ConfConstEnv.default_package_driver,
+                )
+            ]
+        else:
+            field_env_package_driver = PackageDriverType[
+                os.environ.get(EnvVar.var_PROTOPRIMER_PACKAGE_DRIVER.value)
+            ]
+
+        return field_env_package_driver
+
+
+# noinspection PyPep8Naming
+class Bootstrapper_state_package_driver_inited(
+    AbstractCachingStateNode[PackageDriverBase]
+):
+    def __init__(
+        self,
+        env_ctx: EnvContext,
+        state_name: str | None = None,
+    ):
+        super().__init__(
+            env_ctx=env_ctx,
+            parent_states=[
+                EnvState.state_env_local_python_file_abs_path_eval_finalized.name,
+                EnvState.state_env_local_cache_dir_abs_path_eval_finalized.name,
+                EnvState.state_reinstall_triggered.name,
+                EnvState.state_package_driver_selected.name,
+            ],
+            state_name=if_none(state_name, EnvState.state_package_driver_inited.name),
+        )
+
+    def _eval_state_once(
+        self,
+    ) -> ValueType:
+
+        state_env_local_python_file_abs_path_eval_finalized: str = (
+            self.eval_parent_state(
+                EnvState.state_env_local_python_file_abs_path_eval_finalized.name
+            )
+        )
+
+        state_package_driver_selected: PackageDriverType = self.eval_parent_state(
+            EnvState.state_package_driver_selected.name
+        )
+
+        state_env_local_cache_dir_abs_path_eval_finalized: str = self.eval_parent_state(
+            EnvState.state_env_local_cache_dir_abs_path_eval_finalized.name
+        )
+
+        package_driver: PackageDriverBase
+        if PackageDriverType.driver_uv == state_package_driver_selected:
+            # TODO: assert python version suitable for `uv`
+
+            path_to_uv_venv = os.path.join(
+                # TODO: make it relative to "cache/venv" specifically (instead of directly to "cache"):
+                state_env_local_cache_dir_abs_path_eval_finalized,
+                # TODO: use constants:
+                "venv",
+                # TODO: use constants:
+                "uv.venv",
+            )
+            uv_exec_abs_path = os.path.join(
+                path_to_uv_venv,
+                # TODO: use constants:
+                "bin",
+                # TODO: use constants:
+                "uv",
+            )
+
+            if not os.path.exists(uv_exec_abs_path):
+                # To use `PackageDriverType.driver_uv`, use `PackageDriverType.driver_pip` to install `uv` first:
+                pip_driver = PackageDriverPip()
+                pip_driver.create_venv(
+                    state_env_local_python_file_abs_path_eval_finalized,
+                    path_to_uv_venv,
+                )
+                uv_exec_venv_python_abs_path = os.path.join(
+                    path_to_uv_venv,
+                    # TODO: use constants:
+                    "bin",
+                    # TODO: use constants:
+                    "python",
+                )
+                pip_driver.install_packages(
+                    uv_exec_venv_python_abs_path,
+                    [
+                        "uv",
+                    ],
+                )
+
+            assert os.path.isfile(uv_exec_abs_path)
+
+            package_driver = PackageDriverUv(
+                uv_exec_abs_path=uv_exec_abs_path,
+            )
+
+        elif PackageDriverType.driver_pip == state_package_driver_selected:
+            # Nothing to do:
+            # `PackageDriverType.driver_pip` is available by default with the new ` venv ` without installation.
+            package_driver = PackageDriverPip()
+        else:
+            raise AssertionError(
+                f"unsupported `{PackageDriverType.__name__}` [{state_package_driver_selected.name}]"
+            )
+
+        return package_driver
+
+
+# noinspection PyPep8Naming
 class Bootstrapper_state_py_exec_venv_reached(
     AbstractCachingStateNode[PythonExecutable]
 ):
@@ -3275,6 +3708,7 @@ class Bootstrapper_state_py_exec_venv_reached(
                 EnvState.state_env_local_python_file_abs_path_eval_finalized.name,
                 EnvState.state_env_local_venv_dir_abs_path_eval_finalized.name,
                 EnvState.state_reinstall_triggered.name,
+                EnvState.state_package_driver_inited.name,
             ],
             state_name=if_none(state_name, EnvState.state_py_exec_venv_reached.name),
         )
@@ -3312,6 +3746,10 @@ class Bootstrapper_state_py_exec_venv_reached(
             EnvState.state_env_local_venv_dir_abs_path_eval_finalized.name
         )
 
+        state_package_driver_inited: PackageDriverBase = self.eval_parent_state(
+            EnvState.state_package_driver_inited.name
+        )
+
         venv_path_to_python: str = os.path.join(
             state_env_local_venv_dir_abs_path_eval_finalized,
             ConfConstGeneral.file_rel_path_venv_python,
@@ -3327,14 +3765,16 @@ class Bootstrapper_state_py_exec_venv_reached(
             path_to_curr_python,
             state_env_local_venv_dir_abs_path_eval_finalized,
         ), f"Current `python` [{path_to_curr_python}] must be outside of `venv` [{state_env_local_venv_dir_abs_path_eval_finalized}]."
-        assert (
-            path_to_curr_python == state_env_local_python_file_abs_path_eval_finalized
-        ), f"Current `python` [{path_to_curr_python}] must match the required one [{state_env_local_python_file_abs_path_eval_finalized}]."
+        if os.environ.get(EnvVar.var_PROTOPRIMER_TEST_MODE.value, None) is None:
+            assert (
+                path_to_curr_python
+                == state_env_local_python_file_abs_path_eval_finalized
+            ), f"Current `python` [{path_to_curr_python}] must match the required one [{state_env_local_python_file_abs_path_eval_finalized}]."
 
         assert state_input_py_exec_var_loaded <= PythonExecutable.py_exec_required
         state_py_exec_venv_reached = PythonExecutable.py_exec_required
         if not os.path.exists(state_env_local_venv_dir_abs_path_eval_finalized):
-            self.env_ctx.package_driver.create_venv(
+            state_package_driver_inited.create_venv(
                 state_env_local_python_file_abs_path_eval_finalized,
                 state_env_local_venv_dir_abs_path_eval_finalized,
             )
@@ -3373,6 +3813,7 @@ class Bootstrapper_state_protoprimer_package_installed(AbstractCachingStateNode[
                 EnvState.state_primer_ref_root_dir_abs_path_eval_finalized.name,
                 EnvState.state_client_conf_env_dir_abs_path_eval_finalized.name,
                 EnvState.state_env_project_descriptors_eval_finalized.name,
+                EnvState.state_package_driver_inited.name,
                 EnvState.state_py_exec_venv_reached.name,
             ],
             state_name=if_none(
@@ -3411,6 +3852,10 @@ class Bootstrapper_state_protoprimer_package_installed(AbstractCachingStateNode[
             )
         )
 
+        state_package_driver_inited: PackageDriverBase = self.eval_parent_state(
+            EnvState.state_package_driver_inited.name
+        )
+
         do_reinstall: bool = getattr(
             state_args_parsed,
             ParsedArg.name_reinstall.value,
@@ -3438,7 +3883,7 @@ class Bootstrapper_state_protoprimer_package_installed(AbstractCachingStateNode[
             )
             return True
 
-        self.env_ctx.package_driver.install_dependencies(
+        state_package_driver_inited.install_dependencies(
             state_primer_ref_root_dir_abs_path_eval_finalized,
             get_path_to_curr_python(),
             constraints_txt_path,
@@ -3463,6 +3908,7 @@ class Bootstrapper_state_version_constraints_generated(AbstractCachingStateNode[
             env_ctx=env_ctx,
             parent_states=[
                 EnvState.state_client_conf_env_dir_abs_path_eval_finalized.name,
+                EnvState.state_package_driver_inited.name,
                 EnvState.state_protoprimer_package_installed.name,
             ],
             state_name=if_none(
@@ -3484,7 +3930,11 @@ class Bootstrapper_state_version_constraints_generated(AbstractCachingStateNode[
             EnvState.state_client_conf_env_dir_abs_path_eval_finalized.name
         )
 
-        self.env_ctx.package_driver.pin_versions(
+        state_package_driver_inited: PackageDriverBase = self.eval_parent_state(
+            EnvState.state_package_driver_inited.name
+        )
+
+        state_package_driver_inited.pin_versions(
             get_path_to_curr_python(),
             os.path.join(
                 state_client_conf_env_dir_abs_path_eval_finalized,
@@ -3624,7 +4074,7 @@ class Bootstrapper_state_proto_code_updated(AbstractCachingStateNode[bool]):
         import protoprimer
 
         # Use generator from an immutable (source) `primer_kernel`
-        # instead of current local (target) `proto_code` module to avoid:
+        # instead of the current local (target) `proto_code` module to avoid:
         # generated code inside generated code inside generated code ...
         generated_content_single_header: str = (
             protoprimer.primer_kernel.ConfConstGeneral.func_get_proto_code_generated_boilerplate_single_header(
@@ -3967,6 +4417,11 @@ class EnvState(enum.Enum):
         Bootstrapper_state_env_local_tmp_dir_abs_path_eval_finalized
     )
 
+    # TODO: log, tmp, venv, ... dirs should better be configured at client level:
+    state_env_local_cache_dir_abs_path_eval_finalized = (
+        Bootstrapper_state_env_local_cache_dir_abs_path_eval_finalized
+    )
+
     state_env_project_descriptors_eval_finalized = (
         Bootstrapper_state_env_project_descriptors_eval_finalized
     )
@@ -3978,6 +4433,10 @@ class EnvState(enum.Enum):
     state_py_exec_required_reached = Bootstrapper_state_py_exec_required_reached
 
     state_reinstall_triggered = Bootstrapper_state_reinstall_triggered
+
+    state_package_driver_selected = Bootstrapper_state_package_driver_selected
+
+    state_package_driver_inited = Bootstrapper_state_package_driver_inited
 
     state_py_exec_venv_reached = Bootstrapper_state_py_exec_venv_reached
 
@@ -4132,191 +4591,6 @@ class MutableValue(Generic[ValueType]):
         )
 
 
-class PackageDriverBase:
-
-    def create_venv(
-        self,
-        file_abs_path_local_python: str,
-        dir_abs_path_local_venv: str,
-    ) -> None:
-        logger.info(f"creating `venv` [{dir_abs_path_local_venv}]")
-        self._create_venv_impl(file_abs_path_local_python, dir_abs_path_local_venv)
-
-    def _create_venv_impl(
-        self,
-        file_abs_path_local_python: str,
-        dir_abs_path_local_venv: str,
-    ) -> None:
-        raise NotImplementedError()
-
-    def install_dependencies(
-        self,
-        ref_root_dir_abs_path: str,
-        file_abs_path_local_python: str,
-        constraints_file_abs_path: str,
-        project_descriptors: list[dict],
-    ) -> None:
-        """
-        Install each project from the `project_descriptors`.
-
-        The assumption is that they use `pyproject.toml`.
-
-        See also:
-        *   UC_78_58_06_54.no_stray_packages.md
-        *   FT_46_37_27_11.editable_install.md
-        """
-
-        editable_project_install_args = []
-        for project_descriptor in project_descriptors:
-            project_build_root_dir_rel_path = project_descriptor[
-                ConfField.field_env_build_root_dir_rel_path.value
-            ]
-            project_build_root_dir_abs_path = os.path.join(
-                ref_root_dir_abs_path,
-                project_build_root_dir_rel_path,
-            )
-
-            install_extras: list[str]
-            if ConfField.field_env_install_extras.value in project_descriptor:
-                install_extras = project_descriptor[
-                    ConfField.field_env_install_extras.value
-                ]
-            else:
-                install_extras = []
-
-            editable_project_install_args.append("--editable")
-            if len(install_extras) > 0:
-                editable_project_install_args.append(
-                    f"{project_build_root_dir_abs_path}[{','.join(install_extras)}]"
-                )
-            else:
-                editable_project_install_args.append(
-                    f"{project_build_root_dir_abs_path}"
-                )
-
-        sub_proc_args = self.get_install_dependencies_cmd(
-            file_abs_path_local_python,
-        )
-        sub_proc_args.extend(
-            [
-                "--constraint",
-                constraints_file_abs_path,
-            ]
-        )
-
-        sub_proc_args.extend(editable_project_install_args)
-
-        logger.info(f"installing projects: {' '.join(sub_proc_args)}")
-
-        subprocess.check_call(sub_proc_args)
-
-    def get_install_dependencies_cmd(
-        self,
-        file_abs_path_local_python: str,
-    ) -> list[str]:
-        raise NotImplementedError()
-
-    def pin_versions(
-        self,
-        file_abs_path_local_python: str,
-        constraints_file_abs_path: str,
-    ) -> None:
-        logger.info(
-            f"generating version constraints file [{constraints_file_abs_path}]"
-        )
-        with open(constraints_file_abs_path, "w") as f:
-            subprocess.check_call(
-                self._get_pin_versions_cmd(file_abs_path_local_python),
-                stdout=f,
-            )
-
-    def _get_pin_versions_cmd(
-        self,
-        file_abs_path_local_python: str,
-    ) -> list[str]:
-        raise NotImplementedError()
-
-
-class PackageDriverPip(PackageDriverBase):
-
-    def _create_venv_impl(
-        self,
-        file_abs_path_local_python: str,
-        dir_abs_path_local_venv: str,
-    ) -> None:
-        venv.create(
-            dir_abs_path_local_venv,
-            with_pip=True,
-            upgrade_deps=True,
-        )
-
-    def get_install_dependencies_cmd(
-        self,
-        file_abs_path_local_python: str,
-    ) -> list[str]:
-        return [
-            file_abs_path_local_python,
-            "-m",
-            "pip",
-            "install",
-        ]
-
-    def _get_pin_versions_cmd(
-        self,
-        file_abs_path_local_python: str,
-    ) -> list[str]:
-        return [
-            file_abs_path_local_python,
-            "-m",
-            "pip",
-            "freeze",
-            "--exclude-editable",
-        ]
-
-
-class PackageDriverUv(PackageDriverBase):
-
-    def _create_venv_impl(
-        self,
-        file_abs_path_local_python: str,
-        dir_abs_path_local_venv: str,
-    ) -> None:
-        subprocess.check_call(
-            [
-                "uv",
-                "venv",
-                "--python",
-                file_abs_path_local_python,
-                dir_abs_path_local_venv,
-            ]
-        )
-
-    def get_install_dependencies_cmd(
-        self,
-        file_abs_path_local_python: str,
-    ) -> list[str]:
-        return [
-            "uv",
-            "pip",
-            "install",
-            "--python",
-            file_abs_path_local_python,
-        ]
-
-    def _get_pin_versions_cmd(
-        self,
-        file_abs_path_local_python: str,
-    ) -> list[str]:
-        return [
-            "uv",
-            "pip",
-            "freeze",
-            "--exclude-editable",
-            "--python",
-            file_abs_path_local_python,
-        ]
-
-
 class EnvContext:
 
     def __init__(
@@ -4327,13 +4601,6 @@ class EnvContext:
         # TODO: Do not set it on Context - use bootstrap-able values:
         # TODO: Find "Universal Sink":
         self.final_state: str = TargetState.target_full_proto_bootstrap
-
-        # TODO: Do not keep it in `EvnContex`, use `StateNode` which returns
-        #       the required `PackageDriverBase`.
-        if str2bool(os.getenv(EnvVar.var_PROTOPRIMER_USE_UV.value, str(False))):
-            self.package_driver: PackageDriverBase = PackageDriverUv()
-        else:
-            self.package_driver: PackageDriverBase = PackageDriverPip()
 
         self.mutable_state_input_wizard_stage_arg_loaded = MutableValue(
             EnvState.state_input_wizard_stage_arg_loaded.name,
@@ -4467,16 +4734,26 @@ def configure_stderr_logger(
     # Log everything (the filters are supposed to be set on output handlers instead):
     logger.setLevel(logging.NOTSET)
 
-    stderr_handler: logging.Handler = logging.StreamHandler(sys.stderr)
-    stderr_handler.addFilter(PythonExecutableFilter())
+    handler_class = logging.StreamHandler
+    stderr_handler: logging.Handler | None = None
+    if os.environ.get(EnvVar.var_PROTOPRIMER_TEST_MODE.value, None) is not None:
+        # Prevent duplicate handler (when `os.execv*` calls restart `main` again in tests).
+        # Select `stderr` handler:
+        for handler_instance in logger.handlers:
+            if isinstance(handler_instance, handler_class):
+                if handler_instance.stream is sys.stderr:
+                    stderr_handler = handler_instance
+                    break
 
-    stderr_formatter = ColorFormatter()
+    if stderr_handler is None:
+        stderr_handler: logging.Handler = handler_class(sys.stderr)
+
+        stderr_handler.addFilter(PythonExecutableFilter())
+        stderr_handler.setFormatter(ColorFormatter())
+
+        logger.addHandler(stderr_handler)
 
     stderr_handler.setLevel(state_input_stderr_log_level_var_loaded)
-    stderr_handler.setFormatter(stderr_formatter)
-
-    logger.addHandler(stderr_handler)
-
     return stderr_handler
 
 

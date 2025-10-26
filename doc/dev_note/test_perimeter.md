@@ -1,4 +1,6 @@
 
+## Test perimeters
+
 There are the following test perimeters (from min to max):
 
 *   [test_fast_slim_max_mocked][test_fast_slim_max_mocked]
@@ -18,6 +20,8 @@ There are the following test perimeters (from min to max):
     It is relatively slow (especially, for installation of packages via `pip`),
     but provides the confidence that things are not broken in realistic conditions.
 
+## PyCharm test configurations
+
 To run tests in PyCharm, there are two configurations:
 
 *   [pytest_fast.run.xml][pytest_fast.run.xml]
@@ -28,6 +32,17 @@ To run tests in PyCharm, there are two configurations:
 
     Run everything.
 
+## `test_fast_fat_min_mocked` limitations
+
+Due to the nature of the `protoprimer`, this test mode affects some prod code.
+
+To make it explicit, all such prod code extensions work with `EnvVar.var_PROTOPRIMER_TEST_MODE`.
+
+The main condition: the `venv` of the test runner is not escape-able.
+This means [FT_90_65_67_62.proto_code.md][FT_90_65_67_62.proto_code.md] cannot be selected automatically
+(`proto_code` will always be from the `venv` of the test runner).
+This means `EnvVar.var_PROTOPRIMER_PROTO_CODE` must also be set for such tests for the bootstrap process to complete.
+
 ---
 
 [test_fast_slim_max_mocked]: ../../src/protoprimer/test/test_protoprimer/test_fast_slim_max_mocked
@@ -36,3 +51,5 @@ To run tests in PyCharm, there are two configurations:
 
 [pytest_fast.run.xml]: ../../.run/pytest_fast.run.xml
 [pytest_all.run.xml]: ../../.run/pytest_all.run.xml
+
+[FT_90_65_67_62.proto_code.md]: ../feature_topic/FT_90_65_67_62.proto_code.md

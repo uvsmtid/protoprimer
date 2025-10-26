@@ -21,7 +21,8 @@ def test_relationship():
 @patch(f"{subprocess.__name__}.{subprocess.check_call.__name__}")
 def test_create_venv(mock_subprocess_check_call):
     # given:
-    install_driver = PackageDriverUv()
+    uv_exec_abs_path = "/tmp/uv"
+    install_driver = PackageDriverUv(uv_exec_abs_path=uv_exec_abs_path)
     file_abs_path_local_python = "/tmp/python"
     venv_dir_abs_path = "/tmp/test_venv"
 
@@ -34,7 +35,7 @@ def test_create_venv(mock_subprocess_check_call):
     # then:
     mock_subprocess_check_call.assert_called_once_with(
         [
-            "uv",
+            uv_exec_abs_path,
             "venv",
             "--python",
             file_abs_path_local_python,
@@ -46,7 +47,8 @@ def test_create_venv(mock_subprocess_check_call):
 @patch(f"{subprocess.__name__}.{subprocess.check_call.__name__}")
 def test_install_dependencies(mock_subprocess_check_call):
     # given:
-    install_driver = PackageDriverUv()
+    uv_exec_abs_path = "/tmp/uv"
+    install_driver = PackageDriverUv(uv_exec_abs_path=uv_exec_abs_path)
     ref_root_dir_abs_path = "/tmp"
     file_abs_path_local_python = "/tmp/test_venv/bin/python"
     constraints_file_abs_path = "/tmp/constraints.txt"
@@ -72,7 +74,7 @@ def test_install_dependencies(mock_subprocess_check_call):
     # then:
     mock_subprocess_check_call.assert_called_once_with(
         [
-            "uv",
+            uv_exec_abs_path,
             "pip",
             "install",
             "--python",
@@ -90,7 +92,8 @@ def test_install_dependencies(mock_subprocess_check_call):
 @patch(f"{subprocess.__name__}.{subprocess.check_call.__name__}")
 def test_pin_versions(mock_subprocess_check_call):
     # given:
-    install_driver = PackageDriverUv()
+    uv_exec_abs_path = "/tmp/uv"
+    install_driver = PackageDriverUv(uv_exec_abs_path=uv_exec_abs_path)
     file_abs_path_local_python = "/tmp/test_venv/bin/python"
     constraints_file_abs_path = "/tmp/constraints.txt"
 
@@ -104,7 +107,7 @@ def test_pin_versions(mock_subprocess_check_call):
     # then:
     mock_subprocess_check_call.assert_called_once_with(
         [
-            "uv",
+            uv_exec_abs_path,
             "pip",
             "freeze",
             "--exclude-editable",

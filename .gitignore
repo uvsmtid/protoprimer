@@ -12,6 +12,7 @@
 # As configgured for `protoprimer`:
 /log/
 /tmp/
+/cache/
 
 # Python (recursively):
 __pycache__/

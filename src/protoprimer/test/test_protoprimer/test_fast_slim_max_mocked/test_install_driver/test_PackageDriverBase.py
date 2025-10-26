@@ -3,7 +3,14 @@ import subprocess
 import pytest
 from unittest.mock import patch, mock_open
 
+from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer.primer_kernel import PackageDriverBase, ConfField
+
+
+def test_relationship():
+    assert_test_module_name_embeds_str(
+        PackageDriverBase.__name__,
+    )
 
 
 class PackageDriverConcrete(PackageDriverBase):
@@ -145,3 +152,29 @@ def test_package_driver_base_get_pin_versions_cmd_raises_not_implemented_error()
     # when/then:
     with pytest.raises(NotImplementedError):
         PackageDriverBase._get_pin_versions_cmd(None, "python_path")
+
+
+@patch.object(PackageDriverConcrete, "get_install_dependencies_cmd")
+@patch(f"{subprocess.__name__}.check_call")
+def test_package_driver_base_install_packages(mock_check_call, mock_get_cmd_base):
+    # given:
+    driver = PackageDriverConcrete()
+    mock_get_cmd_base.return_value = ["base", "command"]
+    packages_to_install = ["package1", "package2"]
+
+    # when:
+    driver.install_packages(
+        file_abs_path_local_python="python_path",
+        given_packages=packages_to_install,
+    )
+
+    # then:
+    mock_get_cmd_base.assert_called_once_with("python_path")
+    mock_check_call.assert_called_once_with(
+        [
+            "base",
+            "command",
+            "package1",
+            "package2",
+        ]
+    )
