@@ -1,3 +1,4 @@
+import os
 import subprocess
 
 import pytest
@@ -15,16 +16,16 @@ def test_relationship():
 
 class PackageDriverConcrete(PackageDriverBase):
     def _create_venv_impl(
-        self, file_abs_path_local_python: str, dir_abs_path_local_venv: str
+        self, local_python_file_abs_path: str, local_venv_dir_abs_path: str
     ) -> None:
         pass
 
     def get_install_dependencies_cmd(
-        self, file_abs_path_local_python: str
+        self, local_python_file_abs_path: str
     ) -> list[str]:
         return []
 
-    def _get_pin_versions_cmd(self, file_abs_path_local_python: str) -> list[str]:
+    def _get_pin_versions_cmd(self, local_python_file_abs_path: str) -> list[str]:
         return []
 
 
@@ -58,7 +59,7 @@ def test_package_driver_base_install_dependencies(mock_check_call, mock_get_cmd_
     # when:
     driver.install_dependencies(
         ref_root_dir_abs_path="/ref",
-        file_abs_path_local_python="python_path",
+        local_python_file_abs_path="python_path",
         constraints_file_abs_path="constraints_path",
         project_descriptors=[
             {
@@ -117,7 +118,7 @@ def test_package_driver_base_install_dependencies_no_extras(
     # when:
     driver.install_dependencies(
         ref_root_dir_abs_path="/ref",
-        file_abs_path_local_python="python_path",
+        local_python_file_abs_path="python_path",
         constraints_file_abs_path="constraints_path",
         project_descriptors=[
             {
@@ -164,7 +165,7 @@ def test_package_driver_base_install_packages(mock_check_call, mock_get_cmd_base
 
     # when:
     driver.install_packages(
-        file_abs_path_local_python="python_path",
+        local_python_file_abs_path="python_path",
         given_packages=packages_to_install,
     )
 

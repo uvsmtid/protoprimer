@@ -8,7 +8,7 @@ from local_test.mock_verifier import (
 )
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from neoprimer import pre_commit
-from neoprimer.cmd_install_pre_commit import customize_env_context
+from local_repo.cmd_bootstrap_env import customize_env_context
 from neoprimer.pre_commit import (
     Bootstrapper_state_pre_commit_configured,
 )

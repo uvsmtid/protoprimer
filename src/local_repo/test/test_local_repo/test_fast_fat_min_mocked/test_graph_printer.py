@@ -1,75 +1,45 @@
 import os
 import sys
 from io import StringIO
-from unittest.mock import patch, MagicMock
+from unittest.mock import (
+    MagicMock,
+    patch,
+)
 
+from local_repo import graph_printer
+from local_repo.cmd_print_graph import custom_main
+from local_repo.graph_printer import GraphPrinter
 from local_test.base_test_class import BaseTestClass
 from local_test.name_assertion import assert_test_module_name_embeds_str
-from protoprimer import primer_kernel
-from protoprimer.primer_kernel import (
-    SyntaxArg,
-    ParsedArg,
-    EnvState,
-    main,
-    RunMode,
-    GraphPrinter,
-)
 
 
 def test_relationship():
     assert_test_module_name_embeds_str(
-        GraphPrinter.__name__,
+        graph_printer.__name__.split(".")[-1],
     )
 
 
 # noinspection PyMethodMayBeStatic
 class ThisTestClass(BaseTestClass):
 
-    def test_print_dag_no_parents(self):
-
-        # given:
-
-        given_state_name: str = EnvState.state_input_stderr_log_level_var_loaded.name
-
-        test_args = [
-            os.path.basename(primer_kernel.__file__),
-            SyntaxArg.arg_mode_graph,
-            SyntaxArg.arg_final_state,
-            given_state_name,
-        ]
-
-        # when:
-
-        with patch("sys.stdout", new=StringIO()) as fake_stdout:
-            with patch.object(sys, "argv", test_args):
-                main()
-
-        # then:
-
-        stdout_text = fake_stdout.getvalue()
-        self.assertEqual(
-            stdout_text,
-            f"{given_state_name}: {GraphPrinter.rendered_no_parents}" + "\n",
-        )
-
     def test_print_dag_default(self):
 
         # given:
 
         test_args = [
-            os.path.basename(primer_kernel.__file__),
-            SyntaxArg.arg_mode_graph,
+            # whatever:
+            os.path.basename(graph_printer.__file__),
         ]
 
         # when:
 
         with patch("sys.stdout", new=StringIO()) as fake_stdout:
             with patch.object(sys, "argv", test_args):
-                main()
+                custom_main()
 
         # then:
 
-        # do not assert huge output, if it does not fail, that is enough
+        # do not assert huge output - if it does not fail, that is enough
 
     @patch(f"{sys.__name__}.stdout", new_callable=StringIO)
     def test_print_dag_already_printed(self, fake_stdout):
@@ -90,5 +60,6 @@ class ThisTestClass(BaseTestClass):
         graph_printer.execute_strategy(mock_node_a)
 
         # then:
+        # already printed node is not printed:
         stdout_text = fake_stdout.getvalue()
         self.assertEqual("", stdout_text)

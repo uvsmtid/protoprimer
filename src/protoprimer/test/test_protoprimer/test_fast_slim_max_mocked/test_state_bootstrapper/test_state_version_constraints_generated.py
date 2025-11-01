@@ -65,7 +65,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
 
         def pin_versions_impl(
-            file_abs_path_local_python,
+            local_python_file_abs_path,
             constraints_file_abs_path,
         ):
             self.fs.create_file(constraints_file_abs_path)

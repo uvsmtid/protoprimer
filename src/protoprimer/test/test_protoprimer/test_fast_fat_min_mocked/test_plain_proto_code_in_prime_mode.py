@@ -49,10 +49,10 @@ def mock_exit(*args, **kwargs):
 
 
 def mock_install_packages(
-    self, file_abs_path_local_python: str, given_packages: list[str]
+    self, local_python_file_abs_path: str, given_packages: list[str]
 ):
     if given_packages == ["uv"]:
-        bin_dir = pathlib.Path(file_abs_path_local_python).parent
+        bin_dir = pathlib.Path(local_python_file_abs_path).parent
         bin_dir.mkdir(parents=True, exist_ok=True)
         (bin_dir / "uv").touch()
 
