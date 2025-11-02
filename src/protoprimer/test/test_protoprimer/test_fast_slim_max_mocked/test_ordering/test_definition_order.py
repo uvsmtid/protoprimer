@@ -7,7 +7,9 @@ from protoprimer.primer_kernel import (
     EnvState,
     StateNode,
 )
-from ..misc_tools.code_utils import get_class_line_number
+from test_protoprimer.test_fast_slim_max_mocked.misc_tools.code_utils import (
+    get_class_line_number,
+)
 
 
 def _report_violations(

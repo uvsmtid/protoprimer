@@ -30,7 +30,7 @@ import venv
 
 # The release process ensures that content in this file matches the version below while tagging the release commit
 # (otherwise, if the file comes from a different commit, the version is irrelevant):
-__version__ = "0.0.9"
+__version__ = "0.0.10"
 
 from typing import (
     Any,
@@ -59,7 +59,7 @@ def main(
         # TODO: Do not call `state_graph.eval_state` directly - evaluate state via child state (to check that this is eligible).
         #       But... What is the child state here?
         state_run_mode_executed: bool = env_ctx.state_graph.eval_state(
-            TargetState.target_run_mode_executed
+            TargetState.target_run_mode_executed.value.name
         )
         assert state_run_mode_executed
         atexit.register(lambda: env_ctx.print_exit_line(0))
@@ -215,8 +215,6 @@ class RunMode(enum.Enum):
     mode_check = "check"
 
     mode_wizard = "wizard"
-
-    mode_graph = "graph"
 
 
 class CommandAction(enum.Enum):
@@ -381,7 +379,6 @@ class SyntaxArg:
 
     arg_reinstall = f"--{CommandAction.action_reinstall.value}"
 
-    arg_mode_graph = f"--{RunMode.mode_graph.value}"
     arg_mode_prime = f"--{RunMode.mode_prime.value}"
     arg_mode_check = f"--{RunMode.mode_check.value}"
     arg_mode_wizard = f"--{RunMode.mode_wizard.value}"
@@ -453,6 +450,8 @@ class ConfConstGeneral:
     default_proto_code_module = "proto_kernel"
     default_proto_code_basename = f"{default_proto_code_module}.py"
 
+    name_uv_package = "uv"
+
     # TODO: use lambdas to generate based on input (instead of None):
     # This is a value declared for completeness,
     # but unused (evaluated dynamically via the bootstrap process):
@@ -472,10 +471,9 @@ class ConfConstGeneral:
         "activate",
     )
 
-    func_get_proto_code_generated_boilerplate_multiple_body = lambda module_obj: (
-        f"""
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-"""
+    file_rel_path_venv_uv = os.path.join(
+        file_rel_path_venv_bin,
+        "uv",
     )
 
     func_get_proto_code_generated_boilerplate_single_header = lambda module_obj: (
@@ -489,6 +487,12 @@ class ConfConstGeneral:
 # but it should not be linted
 # (as its content/style is governed by the source repo).
 ################################################################################
+"""
+    )
+
+    func_get_proto_code_generated_boilerplate_multiple_body = lambda module_obj: (
+        f"""
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 """
     )
 
@@ -565,28 +569,39 @@ class ConfConstClient:
 
 class PackageDriverBase:
 
+    def get_type(
+        self,
+    ) -> PackageDriverType:
+        raise NotImplementedError()
+
+    def is_mine_venv(
+        self,
+        local_venv_dir_abs_path: str,
+    ) -> bool:
+        return self.get_type() == get_venv_type(local_venv_dir_abs_path)
+
     def create_venv(
         self,
-        file_abs_path_local_python: str,
-        dir_abs_path_local_venv: str,
+        local_python_file_abs_path: str,
+        local_venv_dir_abs_path: str,
     ) -> None:
-        logger.info(f"creating `venv` [{dir_abs_path_local_venv}]")
-        self._create_venv_impl(file_abs_path_local_python, dir_abs_path_local_venv)
+        logger.info(f"creating `venv` [{local_venv_dir_abs_path}]")
+        self._create_venv_impl(local_python_file_abs_path, local_venv_dir_abs_path)
 
     def _create_venv_impl(
         self,
-        file_abs_path_local_python: str,
-        dir_abs_path_local_venv: str,
+        local_python_file_abs_path: str,
+        local_venv_dir_abs_path: str,
     ) -> None:
         raise NotImplementedError()
 
     def install_packages(
         self,
-        file_abs_path_local_python: str,
+        local_python_file_abs_path: str,
         given_packages: list[str],
     ):
         sub_proc_args: list[str] = self.get_install_dependencies_cmd(
-            file_abs_path_local_python,
+            local_python_file_abs_path,
         )
         sub_proc_args.extend(given_packages)
 
@@ -597,7 +612,7 @@ class PackageDriverBase:
     def install_dependencies(
         self,
         ref_root_dir_abs_path: str,
-        file_abs_path_local_python: str,
+        local_python_file_abs_path: str,
         constraints_file_abs_path: str,
         project_descriptors: list[dict],
     ) -> None:
@@ -640,7 +655,7 @@ class PackageDriverBase:
                 )
 
         sub_proc_args = self.get_install_dependencies_cmd(
-            file_abs_path_local_python,
+            local_python_file_abs_path,
         )
         sub_proc_args.extend(
             [
@@ -657,13 +672,13 @@ class PackageDriverBase:
 
     def get_install_dependencies_cmd(
         self,
-        file_abs_path_local_python: str,
+        local_python_file_abs_path: str,
     ) -> list[str]:
         raise NotImplementedError()
 
     def pin_versions(
         self,
-        file_abs_path_local_python: str,
+        local_python_file_abs_path: str,
         constraints_file_abs_path: str,
     ) -> None:
         logger.info(
@@ -671,36 +686,41 @@ class PackageDriverBase:
         )
         with open(constraints_file_abs_path, "w") as f:
             subprocess.check_call(
-                self._get_pin_versions_cmd(file_abs_path_local_python),
+                self._get_pin_versions_cmd(local_python_file_abs_path),
                 stdout=f,
             )
 
     def _get_pin_versions_cmd(
         self,
-        file_abs_path_local_python: str,
+        local_python_file_abs_path: str,
     ) -> list[str]:
         raise NotImplementedError()
 
 
 class PackageDriverPip(PackageDriverBase):
 
+    def get_type(
+        self,
+    ) -> PackageDriverType:
+        return PackageDriverType.driver_pip
+
     def _create_venv_impl(
         self,
-        file_abs_path_local_python: str,
-        dir_abs_path_local_venv: str,
+        local_python_file_abs_path: str,
+        local_venv_dir_abs_path: str,
     ) -> None:
         venv.create(
-            dir_abs_path_local_venv,
+            local_venv_dir_abs_path,
             with_pip=True,
             upgrade_deps=True,
         )
 
     def get_install_dependencies_cmd(
         self,
-        file_abs_path_local_python: str,
+        local_python_file_abs_path: str,
     ) -> list[str]:
         return [
-            file_abs_path_local_python,
+            local_python_file_abs_path,
             "-m",
             "pip",
             "install",
@@ -708,10 +728,10 @@ class PackageDriverPip(PackageDriverBase):
 
     def _get_pin_versions_cmd(
         self,
-        file_abs_path_local_python: str,
+        local_python_file_abs_path: str,
     ) -> list[str]:
         return [
-            file_abs_path_local_python,
+            local_python_file_abs_path,
             "-m",
             "pip",
             "freeze",
@@ -727,36 +747,41 @@ class PackageDriverUv(PackageDriverBase):
     ):
         self.uv_exec_abs_path: str = uv_exec_abs_path
 
+    def get_type(
+        self,
+    ) -> PackageDriverType:
+        return PackageDriverType.driver_uv
+
     def _create_venv_impl(
         self,
-        file_abs_path_local_python: str,
-        dir_abs_path_local_venv: str,
+        local_python_file_abs_path: str,
+        local_venv_dir_abs_path: str,
     ) -> None:
         subprocess.check_call(
             [
                 self.uv_exec_abs_path,
                 "venv",
                 "--python",
-                file_abs_path_local_python,
-                dir_abs_path_local_venv,
+                local_python_file_abs_path,
+                local_venv_dir_abs_path,
             ]
         )
 
     def get_install_dependencies_cmd(
         self,
-        file_abs_path_local_python: str,
+        local_python_file_abs_path: str,
     ) -> list[str]:
         return [
             self.uv_exec_abs_path,
             "pip",
             "install",
             "--python",
-            file_abs_path_local_python,
+            local_python_file_abs_path,
         ]
 
     def _get_pin_versions_cmd(
         self,
-        file_abs_path_local_python: str,
+        local_python_file_abs_path: str,
     ) -> list[str]:
         return [
             self.uv_exec_abs_path,
@@ -764,7 +789,7 @@ class PackageDriverUv(PackageDriverBase):
             "freeze",
             "--exclude-editable",
             "--python",
-            file_abs_path_local_python,
+            local_python_file_abs_path,
         ]
 
 
@@ -1267,14 +1292,6 @@ def init_arg_parser():
         metavar=ParsedArg.name_run_mode.value,
         help="Wizard through the environment configuration.",
     )
-    mutex_group.add_argument(
-        SyntaxArg.arg_mode_graph,
-        action="store_const",
-        const=RunMode.mode_graph.value,
-        dest=ParsedArg.name_run_mode.value,
-        metavar=ParsedArg.name_run_mode.value,
-        help="Render the graph of state dependencies.",
-    )
 
     mutex_group.set_defaults(run_mode=RunMode.mode_prime.value)
 
@@ -1378,83 +1395,6 @@ class ExitCodeReporter(RunStrategy):
         exit_code: int = state_node.eval_own_state()
         assert type(exit_code) is int, "`exit_code` must be an `int`"
         sys.exit(exit_code)
-
-
-class GraphPrinter(RunStrategy):
-    """
-    This class prints reduced DAG of `EnvState`-s.
-
-    Full DAG for a target may involve the same dependency/parent multiple times.
-    Printing each dependency multiple times (with all its transient dependencies) looks excessive.
-    Instead, this class prints each dependency/parent only if any of its siblings have not been printed yet.
-    Therefore, there is some duplication, but the result is both more concise and less confusing.
-    """
-
-    rendered_no_parents: str = "[none]"
-
-    def __init__(
-        self,
-        state_graph: StateGraph,
-    ):
-        super().__init__()
-        self.state_graph: StateGraph = state_graph
-        self.already_printed: set[str] = set()
-
-    def execute_strategy(
-        self,
-        state_node: StateNode,
-    ) -> None:
-        self.print_node_parents(
-            state_node,
-            force_print=False,
-            level=0,
-        )
-
-    def print_node_parents(
-        self,
-        state_node,
-        force_print: bool,
-        level: int,
-    ) -> None:
-        if state_node.get_state_name() in self.already_printed and not force_print:
-            return
-        else:
-            self.already_printed.add(state_node.get_state_name())
-
-        # Indented name:
-        print(
-            f"{' ' * level * 4}{state_node.get_state_name()}",
-            end="",
-        )
-        # Dependencies (parents):
-        rendered_parent_states: str
-        if len(state_node.get_parent_states()) > 0:
-            rendered_parent_states = " ".join(state_node.get_parent_states())
-        else:
-            rendered_parent_states = self.rendered_no_parents
-        print(
-            f": {rendered_parent_states}",
-            end="",
-        )
-        # new line:
-        print()
-
-        # Check ahead if any of the dependencies (parents) are not printed:
-        any_parent_to_print: bool = False
-        for state_parent in state_node.get_parent_states():
-            if state_parent not in self.already_printed:
-                any_parent_to_print = True
-                break
-
-        # Recurse:
-        if any_parent_to_print:
-            for state_parent in state_node.get_parent_states():
-                self.print_node_parents(
-                    self.state_graph.state_nodes[state_parent],
-                    # Even if this state was already printed, since we are printing siblings, print them all:
-                    force_print=any_parent_to_print,
-                    level=level + 1,
-                )
 
 
 class StateNode(Generic[ValueType]):
@@ -1910,8 +1850,6 @@ class Bootstrapper_state_run_mode_executed(AbstractCachingStateNode[bool]):
         selected_strategy: RunStrategy
         if state_input_run_mode_arg_loaded is None:
             raise ValueError(f"run mode is not defined")
-        elif state_input_run_mode_arg_loaded == RunMode.mode_graph:
-            selected_strategy = GraphPrinter(self.env_ctx.state_graph)
         elif state_input_run_mode_arg_loaded == RunMode.mode_prime:
             selected_strategy = ExitCodeReporter(self.env_ctx)
         elif state_input_run_mode_arg_loaded == RunMode.mode_wizard:
@@ -3261,6 +3199,52 @@ class Bootstrapper_state_env_project_descriptors_eval_finalized(
 
 
 # noinspection PyPep8Naming
+class Bootstrapper_state_package_driver_selected(
+    AbstractCachingStateNode[PackageDriverType]
+):
+
+    def __init__(
+        self,
+        env_ctx: EnvContext,
+        state_name: str | None = None,
+    ):
+        super().__init__(
+            env_ctx=env_ctx,
+            parent_states=[
+                EnvState.state_env_conf_file_data.name,
+                EnvState.state_env_local_cache_dir_abs_path_eval_finalized.name,
+            ],
+            state_name=if_none(
+                state_name,
+                EnvState.state_package_driver_selected.name,
+            ),
+        )
+
+    def _eval_state_once(
+        self,
+    ) -> ValueType:
+        state_env_conf_file_data: dict = self.eval_parent_state(
+            EnvState.state_env_conf_file_data.name
+        )
+
+        field_env_package_driver: PackageDriverType
+
+        if os.environ.get(EnvVar.var_PROTOPRIMER_PACKAGE_DRIVER.value, None) is None:
+            field_env_package_driver = PackageDriverType[
+                state_env_conf_file_data.get(
+                    ConfField.field_env_package_driver.value,
+                    ConfConstEnv.default_package_driver,
+                )
+            ]
+        else:
+            field_env_package_driver = PackageDriverType[
+                os.environ.get(EnvVar.var_PROTOPRIMER_PACKAGE_DRIVER.value)
+            ]
+
+        return field_env_package_driver
+
+
+# noinspection PyPep8Naming
 class Bootstrapper_state_default_file_log_handler_configured(
     AbstractCachingStateNode[logging.Handler]
 ):
@@ -3541,52 +3525,6 @@ class Bootstrapper_state_reinstall_triggered(AbstractCachingStateNode[bool]):
 
 
 # noinspection PyPep8Naming
-class Bootstrapper_state_package_driver_selected(
-    AbstractCachingStateNode[PackageDriverType]
-):
-
-    def __init__(
-        self,
-        env_ctx: EnvContext,
-        state_name: str | None = None,
-    ):
-        super().__init__(
-            env_ctx=env_ctx,
-            parent_states=[
-                EnvState.state_env_conf_file_data.name,
-                EnvState.state_env_local_cache_dir_abs_path_eval_finalized.name,
-            ],
-            state_name=if_none(
-                state_name,
-                EnvState.state_package_driver_selected.name,
-            ),
-        )
-
-    def _eval_state_once(
-        self,
-    ) -> ValueType:
-        state_env_conf_file_data: dict = self.eval_parent_state(
-            EnvState.state_env_conf_file_data.name
-        )
-
-        field_env_package_driver: PackageDriverType
-
-        if os.environ.get(EnvVar.var_PROTOPRIMER_PACKAGE_DRIVER.value, None) is None:
-            field_env_package_driver = PackageDriverType[
-                state_env_conf_file_data.get(
-                    ConfField.field_env_package_driver.value,
-                    ConfConstEnv.default_package_driver,
-                )
-            ]
-        else:
-            field_env_package_driver = PackageDriverType[
-                os.environ.get(EnvVar.var_PROTOPRIMER_PACKAGE_DRIVER.value)
-            ]
-
-        return field_env_package_driver
-
-
-# noinspection PyPep8Naming
 class Bootstrapper_state_package_driver_inited(
     AbstractCachingStateNode[PackageDriverBase]
 ):
@@ -3600,8 +3538,8 @@ class Bootstrapper_state_package_driver_inited(
             parent_states=[
                 EnvState.state_env_local_python_file_abs_path_eval_finalized.name,
                 EnvState.state_env_local_cache_dir_abs_path_eval_finalized.name,
-                EnvState.state_reinstall_triggered.name,
                 EnvState.state_package_driver_selected.name,
+                EnvState.state_reinstall_triggered.name,
             ],
             state_name=if_none(state_name, EnvState.state_package_driver_inited.name),
         )
@@ -3628,20 +3566,17 @@ class Bootstrapper_state_package_driver_inited(
         if PackageDriverType.driver_uv == state_package_driver_selected:
             # TODO: assert python version suitable for `uv`
 
-            path_to_uv_venv = os.path.join(
+            uv_venv_abs_path = os.path.join(
                 # TODO: make it relative to "cache/venv" specifically (instead of directly to "cache"):
                 state_env_local_cache_dir_abs_path_eval_finalized,
-                # TODO: use constants:
+                # TODO: take from config (or default constant):
                 "venv",
-                # TODO: use constants:
+                # TODO: take from config (or default constant):
                 "uv.venv",
             )
             uv_exec_abs_path = os.path.join(
-                path_to_uv_venv,
-                # TODO: use constants:
-                "bin",
-                # TODO: use constants:
-                "uv",
+                uv_venv_abs_path,
+                ConfConstGeneral.file_rel_path_venv_uv,
             )
 
             if not os.path.exists(uv_exec_abs_path):
@@ -3649,19 +3584,16 @@ class Bootstrapper_state_package_driver_inited(
                 pip_driver = PackageDriverPip()
                 pip_driver.create_venv(
                     state_env_local_python_file_abs_path_eval_finalized,
-                    path_to_uv_venv,
+                    uv_venv_abs_path,
                 )
                 uv_exec_venv_python_abs_path = os.path.join(
-                    path_to_uv_venv,
-                    # TODO: use constants:
-                    "bin",
-                    # TODO: use constants:
-                    "python",
+                    uv_venv_abs_path,
+                    ConfConstGeneral.file_rel_path_venv_python,
                 )
                 pip_driver.install_packages(
                     uv_exec_venv_python_abs_path,
                     [
-                        "uv",
+                        ConfConstGeneral.name_uv_package,
                     ],
                 )
 
@@ -3782,6 +3714,13 @@ class Bootstrapper_state_py_exec_venv_reached(
             logger.info(
                 f"reusing existing `venv` [{state_env_local_venv_dir_abs_path_eval_finalized}]"
             )
+            if not state_package_driver_inited.is_mine_venv(
+                state_env_local_venv_dir_abs_path_eval_finalized,
+            ):
+                raise AssertionError(
+                    f"`venv` [{state_env_local_venv_dir_abs_path_eval_finalized}] was not created by this driver [{state_package_driver_inited.get_type().name}] retry with [{SyntaxArg.arg_reinstall}]"
+                )
+
         switch_python(
             curr_py_exec=state_input_py_exec_var_loaded,
             curr_python_path=state_env_local_python_file_abs_path_eval_finalized,
@@ -4394,9 +4333,6 @@ class EnvState(enum.Enum):
     # The state is wizard-able by `Wizard_state_env_conf_file_data`:
     state_env_conf_file_data = Bootstrapper_state_env_conf_file_data
 
-    # TODO: not env but global leap_client one:
-    # state_env_log_level
-
     # TODO: rename: `local_python` -> `required_python`:
     state_env_local_python_file_abs_path_eval_finalized = (
         Bootstrapper_state_env_local_python_file_abs_path_eval_finalized
@@ -4426,6 +4362,8 @@ class EnvState(enum.Enum):
         Bootstrapper_state_env_project_descriptors_eval_finalized
     )
 
+    state_package_driver_selected = Bootstrapper_state_package_driver_selected
+
     state_default_file_log_handler_configured = (
         Bootstrapper_state_default_file_log_handler_configured
     )
@@ -4433,8 +4371,6 @@ class EnvState(enum.Enum):
     state_py_exec_required_reached = Bootstrapper_state_py_exec_required_reached
 
     state_reinstall_triggered = Bootstrapper_state_reinstall_triggered
-
-    state_package_driver_selected = Bootstrapper_state_package_driver_selected
 
     state_package_driver_inited = Bootstrapper_state_package_driver_inited
 
@@ -4462,22 +4398,22 @@ class EnvState(enum.Enum):
     state_command_executed = Bootstrapper_state_command_executed
 
 
-# TODO: Convert this to Enum?
-class TargetState:
+class TargetState(enum.Enum):
     """
     Special `EnvState`-s.
     """
 
-    # The final state before switching to `PrimerRuntime.runtime_neo`:
-    target_full_proto_bootstrap: str = EnvState.state_command_executed.name
+    # Used for `EnvState.state_status_line_printed` to report exit code:
+    target_stderr_log_handler = EnvState.state_default_stderr_log_handler_configured
 
     # A special state which triggers execution in the specific `RunMode`:
-    target_run_mode_executed: str = EnvState.state_run_mode_executed.name
+    target_run_mode_executed = EnvState.state_run_mode_executed
 
-    # Used for `EnvState.state_status_line_printed` to report exit code.
-    target_stderr_log_handler: str = (
-        EnvState.state_default_stderr_log_handler_configured.name
-    )
+    # When all config files loaded:
+    target_config_loaded = EnvState.state_package_driver_selected
+
+    # The final state before switching to `PrimerRuntime.runtime_neo`:
+    target_proto_bootstrap_completed = EnvState.state_command_executed
 
 
 class StateGraph:
@@ -4600,7 +4536,7 @@ class EnvContext:
 
         # TODO: Do not set it on Context - use bootstrap-able values:
         # TODO: Find "Universal Sink":
-        self.final_state: str = TargetState.target_full_proto_bootstrap
+        self.final_state: str = TargetState.target_proto_bootstrap_completed.value.name
 
         self.mutable_state_input_wizard_stage_arg_loaded = MutableValue(
             EnvState.state_input_wizard_stage_arg_loaded.name,
@@ -5268,6 +5204,48 @@ def is_venv() -> bool:
     else:
         # assert not os.environ["VIRTUAL_ENV"]
         return False
+
+
+def is_uv_venv(
+    venv_cfg_file_abs_path: str,
+) -> bool:
+    with open(venv_cfg_file_abs_path, "r") as cfg_file:
+        for file_line in cfg_file:
+            if file_line.strip().startswith("uv ="):
+                return True
+    return False
+
+
+def is_pip_venv(
+    venv_cfg_file_abs_path: str,
+) -> bool:
+    # Not sure how to check if it regular `venv` other than saying it is not by `uv`:
+    return not is_uv_venv(
+        venv_cfg_file_abs_path,
+    )
+
+
+def get_venv_type(
+    local_venv_dir_abs_path: str,
+) -> PackageDriverType:
+    venv_cfg_file_abs_path = os.path.join(
+        local_venv_dir_abs_path,
+        # TODO: use constant:
+        "pyvenv.cfg",
+    )
+    if not os.path.exists(venv_cfg_file_abs_path):
+        raise AssertionError(
+            f"File [{venv_cfg_file_abs_path}] does not exist",
+        )
+
+    if is_uv_venv(venv_cfg_file_abs_path):
+        return PackageDriverType.driver_uv
+    elif is_pip_venv(venv_cfg_file_abs_path):
+        return PackageDriverType.driver_pip
+    else:
+        raise AssertionError(
+            f"Cannot determine `venv` type by file [{venv_cfg_file_abs_path}]",
+        )
 
 
 def log_python_context(log_level: int = logging.INFO):

@@ -208,6 +208,11 @@ class StateName(enum.Enum):
         NameCategory.category_named_value,
     )
 
+    state_package_driver_selected = StateMeta(
+        EnvState.state_package_driver_selected,
+        NameCategory.category_state_mutation,
+    )
+
     state_py_exec_required_reached = StateMeta(
         EnvState.state_py_exec_required_reached,
         NameCategory.category_python_exec,
@@ -215,11 +220,6 @@ class StateName(enum.Enum):
 
     state_reinstall_triggered = StateMeta(
         EnvState.state_reinstall_triggered,
-        NameCategory.category_state_mutation,
-    )
-
-    state_package_driver_selected = StateMeta(
-        EnvState.state_package_driver_selected,
         NameCategory.category_state_mutation,
     )
 

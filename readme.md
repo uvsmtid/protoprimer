@@ -112,8 +112,7 @@ to the client code which customizes and completes the bootstrap process.
 
 ### Why not `uv`?
 
-Yes, the `protoprimer` relies on `uv`\
-(this answer should make this section skip-able).\
+Yes, the `protoprimer` relies on `uv`.\
 Yet `python` runs first.
 
 <details>

@@ -28,7 +28,7 @@ class Bootstrapper_state_pre_commit_configured(AbstractCachingStateNode[int]):
         super().__init__(
             env_ctx=env_ctx,
             parent_states=[
-                TargetState.target_full_proto_bootstrap,
+                TargetState.target_proto_bootstrap_completed.value.name,
                 EnvState.state_primer_conf_client_file_abs_path_eval_finalized.name,
             ],
             state_name=self.state_pre_commit_configured,

@@ -14,7 +14,7 @@ def test_relationship():
     assert_test_module_name_embeds_str(file_name)
 
 
-def test_cmd_run(tmp_path: pathlib.Path):
+def test_cmd_run():
 
     with change_to_known_repo_path("."):
         get_command_code(f"./cmd/{file_name}")

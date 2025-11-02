@@ -15,7 +15,7 @@ class TestTargetDependencies:
     This test ensures there are no dangling states in the DAG that are not part of target states.
     """
 
-    # These are not dependencies of `TargetState.target_full_proto_bootstrap`,
+    # These are not dependencies of `TargetState.target_proto_bootstrap_completed`,
     # but they are dependencies of `TargetState.target_run_mode_executed`.
     some_state_run_mode_executed_dependencies = [
         EnvState.state_input_run_mode_arg_loaded.name,
@@ -23,7 +23,7 @@ class TestTargetDependencies:
         EnvState.state_run_mode_executed.name,
     ]
 
-    def test_all_env_states_are_dependencies_of_target_full_proto_bootstrap(
+    def test_all_env_states_are_dependencies_of_target_proto_bootstrap_completed(
         self,
     ):
         # given:
@@ -65,7 +65,7 @@ class TestTargetDependencies:
 
         env_context_instance = EnvContext()
         state_graph_instance = env_context_instance.state_graph
-        final_state_name = TargetState.target_run_mode_executed
+        final_state_name = TargetState.target_run_mode_executed.value.name
 
         # when:
 
