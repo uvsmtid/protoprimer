@@ -22,7 +22,7 @@ Each `EnvState` enum item points to the implementation of the state (derived fro
 
 When a bootstrap process starts, eventually, method `_eval_state_once` does the job.
 
-The final goal of the bootstrap process is `TargetState.target_full_proto_bootstrap`.
+The final goal of the bootstrap process is `TargetState.target_proto_bootstrap_completed`.
 
 ## Testing changes
 

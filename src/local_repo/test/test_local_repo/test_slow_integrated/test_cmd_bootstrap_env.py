@@ -2,6 +2,8 @@ import pathlib
 import stat
 import subprocess
 
+from local_repo import cmd_bootstrap_env
+from local_repo.cmd_bootstrap_env import custom_main
 from local_repo.sub_proc_util import get_command_code
 from local_test.integrated_helper import (
     create_conf_client_file,
@@ -12,8 +14,6 @@ from local_test.integrated_helper import (
     switch_to_ref_root_abs_path,
     test_pyproject_src_dir_rel_path,
 )
-from neoprimer import cmd_install_pre_commit
-from neoprimer.cmd_install_pre_commit import custom_main
 from protoprimer.primer_kernel import (
     ConfConstClient,
     ConfConstEnv,
@@ -23,7 +23,7 @@ from protoprimer.primer_kernel import (
 from protoprimer.proto_generator import generate_entry_script_content
 
 
-def test_install_pre_commit(tmp_path: pathlib.Path):
+def test_bootstrap_env(tmp_path: pathlib.Path):
 
     # given:
 
@@ -71,15 +71,15 @@ def test_install_pre_commit(tmp_path: pathlib.Path):
 
     # ===
 
-    install_pre_commit_script_content = generate_entry_script_content(
-        f"{cmd_install_pre_commit.__name__}",
+    bootstrap_env_script_content = generate_entry_script_content(
+        f"{cmd_bootstrap_env.__name__}",
         f"{custom_main.__name__}",
     )
-    install_pre_commit_script_path = ref_root_abs_path / "install_pre_commit"
-    with open(install_pre_commit_script_path, "w") as f:
-        f.write(install_pre_commit_script_content)
-    install_pre_commit_script_path.chmod(
-        install_pre_commit_script_path.stat().st_mode | stat.S_IEXEC
+    bootstrap_env_script_path = ref_root_abs_path / "bootstrap_env"
+    with open(bootstrap_env_script_path, "w") as f:
+        f.write(bootstrap_env_script_content)
+    bootstrap_env_script_path.chmod(
+        bootstrap_env_script_path.stat().st_mode | stat.S_IEXEC
     )
 
     # ===
@@ -111,7 +111,7 @@ def test_install_pre_commit(tmp_path: pathlib.Path):
             "git",
             "config",
             "user.name",
-            f"{test_install_pre_commit.__name__}",
+            f"{test_bootstrap_env.__name__}",
         ],
         check=True,
         cwd=ref_root_abs_path,
@@ -121,7 +121,7 @@ def test_install_pre_commit(tmp_path: pathlib.Path):
             "git",
             "config",
             "user.email",
-            f"{test_install_pre_commit.__name__}@example.com",
+            f"{test_bootstrap_env.__name__}@example.com",
         ],
         check=True,
         cwd=ref_root_abs_path,
@@ -147,7 +147,7 @@ def test_install_pre_commit(tmp_path: pathlib.Path):
     )
 
     # when:
-    get_command_code("./install_pre_commit")
+    get_command_code("./bootstrap_env")
 
     # then:
     venv_dir = ref_root_abs_path / ConfConstEnv.default_dir_rel_path_venv

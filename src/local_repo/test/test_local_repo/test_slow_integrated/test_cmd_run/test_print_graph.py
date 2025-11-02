@@ -6,7 +6,7 @@ from local_repo.sub_proc_util import (
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from local_test.repo_tree import change_to_known_repo_path
 
-file_name = "squash_and_push"
+file_name = "print_graph"
 
 
 # noinspection PyPep8Naming

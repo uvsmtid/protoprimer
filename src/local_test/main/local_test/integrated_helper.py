@@ -4,6 +4,9 @@ import pathlib
 import shutil
 import stat
 
+import local_repo
+import local_test
+import neoprimer
 import protoprimer
 from local_repo.sub_proc_util import get_command_code
 from local_test.toml_handler import save_toml_data
@@ -17,6 +20,7 @@ from protoprimer.primer_kernel import (
     PackageDriverType,
     write_json_file,
 )
+from src.local_doc.main import local_doc
 
 logger = logging.getLogger()
 
@@ -73,8 +77,11 @@ def create_test_pyproject_toml(
 
     # From `primer_kernel.py` sources to `./src/protoprimer/` where `pyproject.toml` is:
     protoprimer_project_dir = pathlib.Path(protoprimer.__file__).parent.parent.parent
-    # From `venv_shell.py` sources to `./src/neoprimer/` where `pyproject.toml` is:
-    neoprimer_project_dir = pathlib.Path(venv_shell.__file__).parent.parent.parent
+    # From `./src/protoprimer/` to all other `pyproject.toml`:
+    local_doc_project_dir = protoprimer_project_dir.parent / "local_doc"
+    local_repo_project_dir = protoprimer_project_dir.parent / "local_repo"
+    local_test_project_dir = protoprimer_project_dir.parent / "local_test"
+    neoprimer_project_dir = protoprimer_project_dir.parent / "neoprimer"
 
     pyproject_file_abs_path = (
         project_dir_abs_path / ConfConstClient.default_pyproject_toml_basename
@@ -85,8 +92,11 @@ def create_test_pyproject_toml(
             "name": "whatever",
             "version": "0.0.0.dev0",
             "dependencies": [
-                f"protoprimer @ file://{protoprimer_project_dir}",
+                f"local_doc @ file://{local_doc_project_dir}",
+                f"local_repo @ file://{local_repo_project_dir}",
+                f"local_test @ file://{local_test_project_dir}",
                 f"neoprimer @ file://{neoprimer_project_dir}",
+                f"protoprimer @ file://{protoprimer_project_dir}",
             ]
             + extra_dependencies,
         }

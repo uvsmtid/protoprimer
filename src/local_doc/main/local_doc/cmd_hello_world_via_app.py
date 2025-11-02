@@ -32,7 +32,7 @@ class Bootstrapper_state_hello_world_printed(AbstractCachingStateNode[int]):
         super().__init__(
             env_ctx=env_ctx,
             parent_states=[
-                TargetState.target_full_proto_bootstrap,
+                TargetState.target_proto_bootstrap_completed.value.name,
             ],
             state_name=CustomEnvState.state_hello_world_printed.name,
         )

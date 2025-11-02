@@ -17,10 +17,10 @@ from protoprimer.primer_kernel import (
     EnvContext,
     EnvState,
     ExitCodeReporter,
-    GraphPrinter,
     RunMode,
     WizardState,
 )
+from local_repo.graph_printer import GraphPrinterText
 
 
 @pytest.fixture
@@ -30,47 +30,6 @@ def env_ctx():
 
 def test_relationship():
     assert_test_module_name_embeds_str(EnvState.state_run_mode_executed.name)
-
-
-@patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_input_final_state_eval_finalized.__name__}.eval_own_state"
-)
-@patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_input_stderr_log_level_eval_finalized.__name__}.eval_own_state"
-)
-@patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
-)
-@patch(f"{primer_kernel.__name__}.{GraphPrinter.__name__}.execute_strategy")
-def test_run_mode_graph(
-    mock_graph_printer_execute_strategy,
-    mock_state_input_run_mode_arg_loaded,
-    mock_state_input_stderr_log_level_eval_finalized,
-    mock_state_input_final_state_eval_finalized,
-    env_ctx,
-):
-    # given:
-
-    assert_parent_states_mocked(
-        env_ctx,
-        EnvState.state_run_mode_executed.name,
-    )
-
-    mock_state_input_run_mode_arg_loaded.return_value = RunMode.mode_graph
-    mock_state_input_stderr_log_level_eval_finalized.return_value = 0
-    mock_state_input_final_state_eval_finalized.return_value = "mock_final_state"
-
-    mock_state_node = MagicMock()
-    env_ctx.state_graph.state_nodes["mock_final_state"] = mock_state_node
-
-    # when:
-
-    state_value = env_ctx.state_graph.eval_state(EnvState.state_run_mode_executed.name)
-
-    # then:
-
-    assert state_value is True
-    mock_graph_printer_execute_strategy.assert_called_once_with(mock_state_node)
 
 
 @patch(
