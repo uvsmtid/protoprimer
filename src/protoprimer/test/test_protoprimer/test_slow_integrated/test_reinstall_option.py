@@ -4,6 +4,7 @@ from local_repo.sub_proc_util import (
     get_command_code,
     get_command_output,
 )
+from local_test.fat_mocked_helper import run_primer_main
 from local_test.integrated_helper import (
     create_conf_client_file,
     create_conf_env_file,
@@ -29,23 +30,25 @@ def test_reinstall(tmp_path: pathlib.Path):
 
     ref_root_abs_path = switch_to_ref_root_abs_path(tmp_path)
 
-    # ===
+    # === create `ConfLeap.leap_primer`
 
     proto_code_dir_abs_path = (
         ref_root_abs_path / ConfConstInput.default_proto_conf_dir_rel_path
     )
-    create_plain_proto_code(proto_code_dir_abs_path)
+    proto_kernel_abs_path: pathlib.Path = create_plain_proto_code(
+        proto_code_dir_abs_path
+    )
     create_conf_primer_file(
         ref_root_abs_path,
         proto_code_dir_abs_path,
     )
 
-    # ===
+    # === create `pyproject.toml`
 
     project_dir_abs_path = ref_root_abs_path / test_pyproject_src_dir_rel_path
     create_test_pyproject_toml(project_dir_abs_path, ["pyfakefs"])
 
-    # ===
+    # === create `ConfLeap.leap_env` / `default_env`
 
     conf_env_dir_abs_path = (
         ref_root_abs_path / ConfConstClient.default_client_default_env_dir_rel_path
@@ -57,7 +60,7 @@ def test_reinstall(tmp_path: pathlib.Path):
         project_dir_abs_path,
     )
 
-    # ===
+    # === create `ConfLeap.leap_client`
 
     conf_client_dir_abs_path = (
         ref_root_abs_path / ConfConstPrimer.default_client_conf_dir_rel_path
@@ -77,7 +80,12 @@ def test_reinstall(tmp_path: pathlib.Path):
 
     # when:
 
-    get_command_code("./proto_code/proto_kernel.py")
+    run_primer_main(
+        [
+            str(proto_kernel_abs_path),
+            SyntaxArg.arg_v,
+        ]
+    )
 
     # then:
 
@@ -92,7 +100,13 @@ def test_reinstall(tmp_path: pathlib.Path):
 
     # when:
 
-    get_command_code(f"./proto_code/proto_kernel.py {SyntaxArg.arg_reinstall}")
+    run_primer_main(
+        [
+            str(proto_kernel_abs_path),
+            SyntaxArg.arg_v,
+            SyntaxArg.arg_reinstall,
+        ]
+    )
 
     # then:
 

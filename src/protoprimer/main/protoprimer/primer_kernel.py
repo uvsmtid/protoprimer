@@ -28,15 +28,15 @@ import tempfile
 import typing
 import venv
 
-# The release process ensures that content in this file matches the version below while tagging the release commit
-# (otherwise, if the file comes from a different commit, the version is irrelevant):
-__version__ = "0.0.10"
-
 from typing import (
     Any,
     Generic,
     TypeVar,
 )
+
+# The release process ensures that content in this file matches the version below while tagging the release commit
+# (otherwise, if the file comes from a different commit, the version is irrelevant):
+__version__ = "0.0.10"
 
 logger: logging.Logger = logging.getLogger()
 
@@ -122,7 +122,7 @@ class PythonExecutable(enum.IntEnum):
 
 class TermColor(enum.Enum):
     """
-    Color codes for terminal text
+    ANSI escape codes for terminal text colors:
 
     Reference:
     *   https://pkg.go.dev/github.com/whitedevops/colors
@@ -2102,6 +2102,7 @@ class Bootstrapper_state_input_proto_code_file_abs_path_eval_finalized(
                     __file__
                 )
             else:
+                # `EnvVar.var_PROTOPRIMER_TEST_MODE`: rely on the path given in env var:
                 assert state_input_proto_code_file_abs_path_var_loaded is not None
                 state_input_proto_code_file_abs_path_eval_finalized = (
                     state_input_proto_code_file_abs_path_var_loaded
@@ -2136,10 +2137,12 @@ class Bootstrapper_state_input_proto_code_dir_abs_path_eval_finalized(
         self,
     ) -> ValueType:
 
-        state_input_proto_code_file_abs_path_eval_finalized = self.eval_parent_state(
-            EnvState.state_input_proto_code_file_abs_path_eval_finalized.name
+        state_input_proto_code_file_abs_path_eval_finalized: str = (
+            self.eval_parent_state(
+                EnvState.state_input_proto_code_file_abs_path_eval_finalized.name
+            )
         )
-        state_input_proto_code_dir_abs_path_eval_finalized = os.path.dirname(
+        state_input_proto_code_dir_abs_path_eval_finalized: str = os.path.dirname(
             state_input_proto_code_file_abs_path_eval_finalized
         )
 
@@ -2212,17 +2215,17 @@ class Bootstrapper_state_proto_conf_file_data(AbstractCachingStateNode[dict]):
             file_data = read_json_file(
                 state_input_proto_conf_primer_file_abs_path_eval_finalized
             )
-        else:
-            raise AssertionError(
-                error_on_missing_conf_file(
-                    state_input_proto_conf_primer_file_abs_path_eval_finalized
-                )
+            verify_conf_file_data(
+                state_input_proto_conf_primer_file_abs_path_eval_finalized,
+                file_data,
+                ConfLeap.leap_primer,
             )
-        verify_conf_file_data(
-            state_input_proto_conf_primer_file_abs_path_eval_finalized,
-            file_data,
-            ConfLeap.leap_primer,
-        )
+        else:
+            warn_on_missing_conf_file(
+                state_input_proto_conf_primer_file_abs_path_eval_finalized
+            )
+            file_data = {}
+
         return file_data
 
 
@@ -2308,22 +2311,34 @@ class Bootstrapper_state_primer_ref_root_dir_abs_path_eval_finalized(
     def _eval_state_once(
         self,
     ) -> ValueType:
-        state_proto_conf_file_data = self.eval_parent_state(
+        state_proto_conf_file_data: dict = self.eval_parent_state(
             EnvState.state_proto_conf_file_data.name
         )
 
-        field_client_dir_rel_path = state_proto_conf_file_data[
-            ConfField.field_primer_ref_root_dir_rel_path.value
-        ]
-
-        state_input_proto_code_dir_abs_path_eval_finalized = self.eval_parent_state(
-            EnvState.state_input_proto_code_dir_abs_path_eval_finalized.name
+        field_client_dir_rel_path: str | None = state_proto_conf_file_data.get(
+            ConfField.field_primer_ref_root_dir_rel_path.value,
+            None,
         )
 
-        state_primer_ref_root_dir_abs_path_eval_finalized = os.path.join(
-            state_input_proto_code_dir_abs_path_eval_finalized,
-            field_client_dir_rel_path,
+        state_input_proto_code_dir_abs_path_eval_finalized: str = (
+            self.eval_parent_state(
+                EnvState.state_input_proto_code_dir_abs_path_eval_finalized.name
+            )
         )
+
+        state_primer_ref_root_dir_abs_path_eval_finalized: str
+        if field_client_dir_rel_path is None:
+            logger.warning(
+                f"Field `{ConfField.field_primer_ref_root_dir_rel_path.value}` is [{field_client_dir_rel_path}] - re-run with [{SyntaxArg.arg_mode_wizard}] to set it."
+            )
+            state_primer_ref_root_dir_abs_path_eval_finalized = (
+                state_input_proto_code_dir_abs_path_eval_finalized
+            )
+        else:
+            state_primer_ref_root_dir_abs_path_eval_finalized = os.path.join(
+                state_input_proto_code_dir_abs_path_eval_finalized,
+                field_client_dir_rel_path,
+            )
 
         state_primer_ref_root_dir_abs_path_eval_finalized = os.path.normpath(
             state_primer_ref_root_dir_abs_path_eval_finalized
@@ -2358,22 +2373,31 @@ class Bootstrapper_state_primer_conf_client_file_abs_path_eval_finalized(
     def _eval_state_once(
         self,
     ) -> ValueType:
-        state_primer_ref_root_dir_abs_path_eval_finalized = self.eval_parent_state(
+        state_primer_ref_root_dir_abs_path_eval_finalized: str = self.eval_parent_state(
             EnvState.state_primer_ref_root_dir_abs_path_eval_finalized.name
         )
 
-        state_proto_conf_file_data = self.eval_parent_state(
+        state_proto_conf_file_data: dict = self.eval_parent_state(
             EnvState.state_proto_conf_file_data.name
         )
 
-        field_client_config_rel_path = state_proto_conf_file_data[
-            ConfField.field_primer_conf_client_file_rel_path.value
-        ]
-
-        state_primer_conf_client_file_abs_path_eval_finalized = os.path.join(
-            state_primer_ref_root_dir_abs_path_eval_finalized,
-            field_client_config_rel_path,
+        field_client_config_rel_path: str | None = state_proto_conf_file_data.get(
+            ConfField.field_primer_conf_client_file_rel_path.value,
+            None,
         )
+
+        state_primer_conf_client_file_abs_path_eval_finalized: str | None
+        if field_client_config_rel_path is None:
+            # No client config:
+            logger.warning(
+                f"Field `{ConfField.field_primer_conf_client_file_rel_path.value}` is [{field_client_config_rel_path}] - re-run with [{SyntaxArg.arg_mode_wizard}] to set it."
+            )
+            state_primer_conf_client_file_abs_path_eval_finalized = None
+        else:
+            state_primer_conf_client_file_abs_path_eval_finalized = os.path.join(
+                state_primer_ref_root_dir_abs_path_eval_finalized,
+                field_client_config_rel_path,
+            )
 
         return state_primer_conf_client_file_abs_path_eval_finalized
 
@@ -2398,24 +2422,31 @@ class Bootstrapper_state_client_conf_file_data(AbstractCachingStateNode[dict]):
         self,
     ) -> ValueType:
 
-        state_primer_conf_client_file_abs_path_eval_finalized = self.eval_parent_state(
-            EnvState.state_primer_conf_client_file_abs_path_eval_finalized.name
+        state_primer_conf_client_file_abs_path_eval_finalized: str | None = (
+            self.eval_parent_state(
+                EnvState.state_primer_conf_client_file_abs_path_eval_finalized.name
+            )
         )
-        if os.path.exists(state_primer_conf_client_file_abs_path_eval_finalized):
+
+        file_data: dict
+        if state_primer_conf_client_file_abs_path_eval_finalized is None:
+            file_data = {}
+        elif os.path.exists(state_primer_conf_client_file_abs_path_eval_finalized):
             file_data = read_json_file(
                 state_primer_conf_client_file_abs_path_eval_finalized
             )
-        else:
-            raise AssertionError(
-                error_on_missing_conf_file(
-                    state_primer_conf_client_file_abs_path_eval_finalized
-                )
+            verify_conf_file_data(
+                state_primer_conf_client_file_abs_path_eval_finalized,
+                file_data,
+                ConfLeap.leap_client,
             )
-        verify_conf_file_data(
-            state_primer_conf_client_file_abs_path_eval_finalized,
-            file_data,
-            ConfLeap.leap_client,
-        )
+        else:
+            # TODO: Maybe fail with assertion given that file is configured:
+            warn_on_missing_conf_file(
+                state_primer_conf_client_file_abs_path_eval_finalized
+            )
+            file_data = {}
+
         return file_data
 
 
@@ -2505,9 +2536,12 @@ class Bootstrapper_state_client_local_env_conf_dir_rel_path_eval_finalized(
         self,
     ) -> ValueType:
 
-        client_local_env_dir_any_path: str = (
+        client_local_env_dir_any_path: str | None = (
             self._select_client_local_env_dir_any_path()
         )
+        if client_local_env_dir_any_path is None:
+            return None
+
         client_local_env_dir_abs_path: str = self._select_client_local_env_dir_abs_path(
             client_local_env_dir_any_path
         )
@@ -2546,7 +2580,7 @@ class Bootstrapper_state_client_local_env_conf_dir_rel_path_eval_finalized(
 
     def _select_client_local_env_dir_any_path(
         self,
-    ) -> str:
+    ) -> str | None:
         state_args_parsed: argparse.Namespace = self.eval_parent_state(
             EnvState.state_args_parsed.name
         )
@@ -2559,13 +2593,17 @@ class Bootstrapper_state_client_local_env_conf_dir_rel_path_eval_finalized(
             state_client_conf_file_data: dict = self.eval_parent_state(
                 EnvState.state_client_conf_file_data.name
             )
-            field_client_default_env_dir_rel_path = state_client_conf_file_data.get(
-                ConfField.field_client_default_env_dir_rel_path.value,
+            field_client_default_env_dir_rel_path: str | None = (
+                state_client_conf_file_data.get(
+                    ConfField.field_client_default_env_dir_rel_path.value,
+                    None,
+                )
             )
             if field_client_default_env_dir_rel_path is None:
-                raise AssertionError(
+                logger.warning(
                     f"Field `{ConfField.field_client_default_env_dir_rel_path.value}` is [{field_client_default_env_dir_rel_path}] - re-run with [{SyntaxArg.arg_mode_wizard}] to set it."
                 )
+                return None
             if os.path.isabs(field_client_default_env_dir_rel_path):
                 raise AssertionError(
                     f"Field `{ConfField.field_client_default_env_dir_rel_path.value}` must be a relative path."
@@ -2638,61 +2676,52 @@ class Bootstrapper_state_client_conf_env_dir_abs_path_eval_finalized(
     def _eval_state_once(
         self,
     ) -> ValueType:
+
+        state_primer_ref_root_dir_abs_path_eval_finalized: str = self.eval_parent_state(
+            EnvState.state_primer_ref_root_dir_abs_path_eval_finalized.name
+        )
+
+        state_client_local_env_conf_dir_rel_path_eval_finalized: str | None = (
+            self.eval_parent_state(
+                EnvState.state_client_local_env_conf_dir_rel_path_eval_finalized.name
+            )
+        )
+
+        if state_client_local_env_conf_dir_rel_path_eval_finalized is None:
+            # No symlink target => no `conf_leap` => use `client_conf`:
+            return state_primer_ref_root_dir_abs_path_eval_finalized
+
         file_data: dict = self.eval_parent_state(
             EnvState.state_client_conf_file_data.name
         )
 
-        env_conf_dir_rel_path = file_data.get(
+        env_conf_dir_rel_path: str = file_data.get(
             ConfField.field_client_link_name_dir_rel_path.value,
             ConfConstClient.default_dir_rel_path_leap_env_link_name,
         )
 
         assert not os.path.isabs(env_conf_dir_rel_path)
 
-        state_primer_ref_root_dir_abs_path_eval_finalized = self.eval_parent_state(
-            EnvState.state_primer_ref_root_dir_abs_path_eval_finalized.name
-        )
-
         # Convert to absolute:
-        state_client_conf_env_dir_abs_path_eval_finalized = os.path.join(
-            self.eval_parent_state(
-                EnvState.state_primer_ref_root_dir_abs_path_eval_finalized.name
-            ),
+        state_client_conf_env_dir_abs_path_eval_finalized: str = os.path.join(
+            state_primer_ref_root_dir_abs_path_eval_finalized,
             env_conf_dir_rel_path,
         )
-
-        state_client_local_env_conf_dir_rel_path_eval_finalized = (
-            self.eval_parent_state(
-                EnvState.state_client_local_env_conf_dir_rel_path_eval_finalized.name
-            )
-        )
-        assert state_client_local_env_conf_dir_rel_path_eval_finalized is not None
 
         if os.path.exists(state_client_conf_env_dir_abs_path_eval_finalized):
             if os.path.islink(state_client_conf_env_dir_abs_path_eval_finalized):
                 if os.path.isdir(state_client_conf_env_dir_abs_path_eval_finalized):
-                    if state_client_local_env_conf_dir_rel_path_eval_finalized is None:
-                        # TODO: this line is unreachable (as of time of writing this comment):
-                        # TODO: Can we make it mandatory?
-                        #       In cases when there is no env-specifics,
-                        #       it can point to ref root (and entire link can be avoided if name is blank)?
-                        # not configured or not specified => not required by user => nothing to do:
-                        pass
-                    else:
-                        # Compare the existing link target and the configured one:
-                        conf_dir_path = os.path.normpath(
-                            os.readlink(
-                                state_client_conf_env_dir_abs_path_eval_finalized
-                            )
+                    # Compare the existing link target and the configured one:
+                    conf_dir_path = os.path.normpath(
+                        os.readlink(state_client_conf_env_dir_abs_path_eval_finalized)
+                    )
+                    if (
+                        state_client_local_env_conf_dir_rel_path_eval_finalized
+                        != conf_dir_path
+                    ):
+                        raise AssertionError(
+                            f"The `@/conf/` target [{conf_dir_path}] is not the same as the provided target [{state_client_local_env_conf_dir_rel_path_eval_finalized}]."
                         )
-
-                        if (
-                            state_client_local_env_conf_dir_rel_path_eval_finalized
-                            != conf_dir_path
-                        ):
-                            raise AssertionError(
-                                f"The `@/conf/` target [{conf_dir_path}] is not the same as the provided target [{state_client_local_env_conf_dir_rel_path_eval_finalized}]."
-                            )
                 else:
                     raise AssertionError(
                         f"The `@/conf/` [{state_client_conf_env_dir_abs_path_eval_finalized}] target is not a directory.",
@@ -2736,16 +2765,17 @@ class Bootstrapper_state_client_link_name_dir_rel_path_eval_finalized(
     def _eval_state_once(
         self,
     ) -> ValueType:
+
         state_client_conf_file_data: dict = self.eval_parent_state(
             EnvState.state_client_conf_file_data.name
         )
-        state_client_link_name_dir_rel_path_eval_finalized = (
+        state_client_link_name_dir_rel_path_eval_finalized: str | None = (
             state_client_conf_file_data.get(
                 ConfField.field_client_link_name_dir_rel_path.value,
             )
         )
         if state_client_link_name_dir_rel_path_eval_finalized is None:
-            raise AssertionError(
+            logger.warning(
                 f"Field `{ConfField.field_client_link_name_dir_rel_path.value}` is [{state_client_link_name_dir_rel_path_eval_finalized}] - re-run with [{SyntaxArg.arg_mode_wizard}] to set it."
             )
         return state_client_link_name_dir_rel_path_eval_finalized
@@ -2781,20 +2811,30 @@ class Bootstrapper_state_client_conf_env_file_abs_path_eval_finalized(
         state_primer_ref_root_dir_abs_path_eval_finalized: str = self.eval_parent_state(
             EnvState.state_primer_ref_root_dir_abs_path_eval_finalized.name
         )
+        assert state_primer_ref_root_dir_abs_path_eval_finalized is not None
 
-        state_client_link_name_dir_rel_path_eval_finalized: str = (
+        state_client_link_name_dir_rel_path_eval_finalized: str | None = (
             self.eval_parent_state(
                 EnvState.state_client_link_name_dir_rel_path_eval_finalized.name
             )
         )
 
-        state_client_conf_env_file_abs_path_eval_finalized: str = os.path.join(
-            state_primer_ref_root_dir_abs_path_eval_finalized,
-            state_client_link_name_dir_rel_path_eval_finalized,
-            # TODO: Do not use default values directly - resolve it differently at the prev|next step based on the need:
-            ConfConstClient.default_file_basename_leap_env,
-        )
-        state_client_conf_env_dir_abs_path_eval_finalized = self.eval_parent_state(
+        state_client_conf_env_file_abs_path_eval_finalized: str
+        if state_client_link_name_dir_rel_path_eval_finalized is None:
+            state_client_conf_env_file_abs_path_eval_finalized = os.path.join(
+                state_primer_ref_root_dir_abs_path_eval_finalized,
+                # TODO: Do not use default values directly - resolve it differently at the prev|next step based on the need:
+                ConfConstClient.default_file_basename_leap_env,
+            )
+        else:
+            state_client_conf_env_file_abs_path_eval_finalized = os.path.join(
+                state_primer_ref_root_dir_abs_path_eval_finalized,
+                state_client_link_name_dir_rel_path_eval_finalized,
+                # TODO: Do not use default values directly - resolve it differently at the prev|next step based on the need:
+                ConfConstClient.default_file_basename_leap_env,
+            )
+
+        state_client_conf_env_dir_abs_path_eval_finalized: str = self.eval_parent_state(
             EnvState.state_client_conf_env_dir_abs_path_eval_finalized.name
         )
         if not is_sub_path(
@@ -2804,6 +2844,7 @@ class Bootstrapper_state_client_conf_env_file_abs_path_eval_finalized(
             raise AssertionError(
                 f"The config file path [{state_client_conf_env_file_abs_path_eval_finalized}] is not under the config dir path [{state_client_conf_env_dir_abs_path_eval_finalized}].",
             )
+
         return state_client_conf_env_file_abs_path_eval_finalized
 
 
@@ -2829,22 +2870,30 @@ class Bootstrapper_state_env_conf_file_data(AbstractCachingStateNode[dict]):
         state_client_conf_env_file_abs_path_eval_finalized = self.eval_parent_state(
             EnvState.state_client_conf_env_file_abs_path_eval_finalized.name
         )
+
         file_data: dict
         if os.path.exists(state_client_conf_env_file_abs_path_eval_finalized):
             file_data = read_json_file(
                 state_client_conf_env_file_abs_path_eval_finalized
             )
-        else:
-            raise AssertionError(
-                error_on_missing_conf_file(
-                    state_client_conf_env_file_abs_path_eval_finalized
-                )
+            verify_conf_file_data(
+                state_client_conf_env_file_abs_path_eval_finalized,
+                file_data,
+                ConfLeap.leap_env,
             )
-        verify_conf_file_data(
-            state_client_conf_env_file_abs_path_eval_finalized,
-            file_data,
-            ConfLeap.leap_env,
-        )
+        else:
+            warn_on_missing_conf_file(
+                state_client_conf_env_file_abs_path_eval_finalized
+            )
+            # TODO: If `pyproject.toml` exists, use `.`, if not, use empty list:
+            file_data = {
+                # TODO: `ConfConstEnv.default_project_descriptors` is not suitable for `instant` condition:
+                ConfField.field_env_project_descriptors.value: [
+                    {
+                        ConfField.field_env_build_root_dir_rel_path.value: ".",
+                    },
+                ],
+            }
         return file_data
 
 
@@ -3597,7 +3646,8 @@ class Bootstrapper_state_package_driver_inited(
                     ],
                 )
 
-            assert os.path.isfile(uv_exec_abs_path)
+            if os.environ.get(EnvVar.var_PROTOPRIMER_TEST_MODE.value, None) is None:
+                assert os.path.isfile(uv_exec_abs_path)
 
             package_driver = PackageDriverUv(
                 uv_exec_abs_path=uv_exec_abs_path,
@@ -3693,15 +3743,22 @@ class Bootstrapper_state_py_exec_venv_reached(
         if state_input_py_exec_var_loaded >= PythonExecutable.py_exec_venv:
             return state_input_py_exec_var_loaded
 
-        assert not is_sub_path(
+        if is_sub_path(
             path_to_curr_python,
             state_env_local_venv_dir_abs_path_eval_finalized,
-        ), f"Current `python` [{path_to_curr_python}] must be outside of `venv` [{state_env_local_venv_dir_abs_path_eval_finalized}]."
+        ):
+            raise AssertionError(
+                f"Current `python` [{path_to_curr_python}] must be outside of `venv` [{state_env_local_venv_dir_abs_path_eval_finalized}]."
+            )
+
         if os.environ.get(EnvVar.var_PROTOPRIMER_TEST_MODE.value, None) is None:
-            assert (
+            if (
                 path_to_curr_python
-                == state_env_local_python_file_abs_path_eval_finalized
-            ), f"Current `python` [{path_to_curr_python}] must match the required one [{state_env_local_python_file_abs_path_eval_finalized}]."
+                != state_env_local_python_file_abs_path_eval_finalized
+            ):
+                raise AssertionError(
+                    f"Current `python` [{path_to_curr_python}] must match the required one [{state_env_local_python_file_abs_path_eval_finalized}]."
+                )
 
         assert state_input_py_exec_var_loaded <= PythonExecutable.py_exec_required
         state_py_exec_venv_reached = PythonExecutable.py_exec_required
@@ -3970,6 +4027,8 @@ class Bootstrapper_state_py_exec_updated_protoprimer_package_reached(
 # noinspection PyPep8Naming
 class Bootstrapper_state_proto_code_updated(AbstractCachingStateNode[bool]):
     """
+    Return `True` if content of the `proto_kernel` has changed.
+
     TODO: UC_52_87_82_92.conditional_auto_update.md
     """
 
@@ -3990,6 +4049,7 @@ class Bootstrapper_state_proto_code_updated(AbstractCachingStateNode[bool]):
     def _eval_state_once(
         self,
     ) -> ValueType:
+
         state_py_exec_updated_protoprimer_package_reached: PythonExecutable = (
             self.eval_parent_state(
                 EnvState.state_py_exec_updated_protoprimer_package_reached.name
@@ -4000,7 +4060,12 @@ class Bootstrapper_state_proto_code_updated(AbstractCachingStateNode[bool]):
             >= PythonExecutable.py_exec_updated_protoprimer_package
         )
 
-        # TODO: optimize: run this logic only when `PythonExecutable.py_exec_updated_protoprimer_package`
+        if (
+            state_py_exec_updated_protoprimer_package_reached
+            != PythonExecutable.py_exec_updated_protoprimer_package
+        ):
+            # Update only after package installation, otherwise, nothing to do:
+            return False
 
         state_input_proto_code_file_abs_path_eval_finalized = self.eval_parent_state(
             EnvState.state_input_proto_code_file_abs_path_eval_finalized.name
@@ -4010,7 +4075,16 @@ class Bootstrapper_state_proto_code_updated(AbstractCachingStateNode[bool]):
         assert os.path.isfile(state_input_proto_code_file_abs_path_eval_finalized)
 
         assert is_venv()
-        import protoprimer
+        try:
+            import protoprimer
+        except ImportError:
+            logger.warning(
+                f"Module `{ConfConstGeneral.name_protoprimer_package}` is missing in `venv`. "
+                f"{get_import_error_hint(ConfConstGeneral.name_protoprimer_package)} "
+            )
+            # These must be "instant" conditions.
+            # No module => no update:
+            return False
 
         # Use generator from an immutable (source) `primer_kernel`
         # instead of the current local (target) `proto_code` module to avoid:
@@ -4028,6 +4102,9 @@ class Bootstrapper_state_proto_code_updated(AbstractCachingStateNode[bool]):
 
         primer_kernel_abs_path = os.path.abspath(protoprimer.primer_kernel.__file__)
         primer_kernel_text: str = read_text_file(primer_kernel_abs_path)
+        proto_code_text_old: str = read_text_file(
+            state_input_proto_code_file_abs_path_eval_finalized,
+        )
 
         # Update body:
         proto_code_text_periodic = insert_every_n_lines(
@@ -4039,19 +4116,18 @@ class Bootstrapper_state_proto_code_updated(AbstractCachingStateNode[bool]):
         # Update header:
         file_lines = proto_code_text_periodic.splitlines()
         file_lines.insert(1, generated_content_single_header)
-        proto_code_text = "\n".join(file_lines)
+        proto_code_text_new = "\n".join(file_lines)
 
         logger.debug(
             f"writing `primer_kernel_abs_path` [{primer_kernel_abs_path}] over `state_input_proto_code_file_abs_path_eval_finalized` [{state_input_proto_code_file_abs_path_eval_finalized}]"
         )
         write_text_file(
             file_path=state_input_proto_code_file_abs_path_eval_finalized,
-            file_data=proto_code_text,
+            file_data=proto_code_text_new,
         )
 
-        # TODO: optimize: return true if content changed:
-
-        return True
+        is_updated: bool = proto_code_text_old != proto_code_text_new
+        return is_updated
 
 
 # noinspection PyPep8Naming
@@ -4098,7 +4174,12 @@ class Bootstrapper_state_py_exec_updated_proto_code(
         state_proto_code_updated: bool = self.eval_parent_state(
             EnvState.state_proto_code_updated.name
         )
-        assert state_proto_code_updated
+        if not state_proto_code_updated:
+            # If not updated, no point to restart:
+            state_py_exec_updated_proto_code = (
+                PythonExecutable.py_exec_updated_proto_code
+            )
+            return state_py_exec_updated_proto_code
 
         venv_path_to_python = get_path_to_curr_python()
 
@@ -4187,6 +4268,8 @@ class Bootstrapper_state_command_executed(AbstractCachingStateNode[int]):
             EnvState.state_args_parsed.name
         )
 
+        self._clean_env_vars()
+
         command_line: str = getattr(
             state_args_parsed,
             ParsedArg.name_command.value,
@@ -4216,6 +4299,10 @@ class Bootstrapper_state_command_executed(AbstractCachingStateNode[int]):
         else:
             # Otherwise, exit_code is 0:
             return 0
+
+    def _clean_env_vars(self):
+        for env_var in EnvVar:
+            os.environ.pop(env_var.value, None)
 
     def _prepare_shell_env(self):
         shell_basename: str = os.path.basename(self.shell_abs_path)
@@ -4642,19 +4729,13 @@ class ColorFormatter(RegularFormatter):
     Custom formatter with color based on log level.
     """
 
-    # ANSI escape codes for colors:
-    color_reset = "\033[0m"
+    color_reset = TermColor.reset_style.value
     color_set = {
-        # cyan:
-        "DEBUG": "\033[36m",
-        # green:
-        "INFO": "\033[32m",
-        # yellow:
-        "WARNING": "\033[33m",
-        # red:
-        "ERROR": "\033[31m",
-        # bold red:
-        "CRITICAL": "\033[1;31m",
+        "DEBUG": TermColor.fore_dark_cyan.value,
+        "INFO": TermColor.fore_dark_green.value,
+        "WARNING": TermColor.fore_dark_yellow.value,
+        "ERROR": TermColor.fore_dark_red.value,
+        "CRITICAL": TermColor.fore_bold_dark_red.value,
     }
 
     def format(self, log_record):
@@ -4700,10 +4781,10 @@ def rename_to_moved_state_name(state_name: str) -> str:
     return f"_{state_name}"
 
 
-def error_on_missing_conf_file(
+def warn_on_missing_conf_file(
     file_abs_path: str,
-) -> str:
-    raise AssertionError(
+) -> None:
+    logger.warning(
         f"File [{file_abs_path}] does not exists - re-run with [{SyntaxArg.arg_mode_wizard}] to create it."
     )
 
@@ -5283,6 +5364,13 @@ def log_python_context(log_level: int = logging.INFO):
     )
 
 
+def get_import_error_hint(
+    neo_main_module: str,
+) -> str:
+    # See: UC_78_58_06_54.no_stray_packages.md
+    return f"Is `{neo_main_module}` a (transitive) dependency of any `{ConfConstClient.default_pyproject_toml_basename}` being installed?"
+
+
 def switch_to_venv(
     # TODO: TODO_28_48_19_20.api_to_traverse_config_when_primed.md:
     #       See usage - find a way to automatically provide it given the path to the `proto_kernel`.
@@ -5360,8 +5448,7 @@ def run_main(
         if py_exec.value >= PythonExecutable.py_exec_updated_proto_code.value:
             raise AssertionError(
                 f"Failed to import `{neo_main_module}` with `{EnvVar.var_PROTOPRIMER_PY_EXEC.value}` [{py_exec.name}]. "
-                # See: UC_78_58_06_54.no_stray_packages.md
-                f"Is `{neo_main_module}` a (transitive) dependency of any `pyproject.toml` being installed? "
+                f"{get_import_error_hint(neo_main_module)} "
             )
         # `PrimerRuntime.runtime_proto`:
         selected_main = main

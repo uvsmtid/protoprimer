@@ -1,6 +1,21 @@
 from inspect import currentframe
 
 
+def assert_test_module_name_embeds_another_module_name(
+    module_name: str,
+):
+    """
+    Ensure the caller test module name contains the last part of the given `module_name`.
+    """
+
+    # take the last part:
+    prod_name = module_name.split(".")[-1]
+
+    caller_frame = currentframe().f_back
+    simple_test_module_name = caller_frame.f_globals["__name__"].split(".")[-1]
+    _assert_test_name_embeds_prod_name(prod_name, simple_test_module_name)
+
+
 def assert_test_module_name_embeds_str(
     prod_name: str,
 ):
@@ -29,9 +44,9 @@ def _assert_test_name_embeds_prod_name(
     """
     This function ensures that names in prod code and test code do not diverge due to refactoring.
 
-    That programmatically establishes relationship between prod code and test code via cross-references.
+    That programmatically establishes the relationship between prod code and test code via cross-references.
     This function should not be called directly (with its `str` args) -
-    that defeat the purpose as strings easily diverge.
+    that defeats the purpose as strings easily diverge.
     Instead, an appropriate wrapper function should be called with references (e.g., to classes).
     """
     assert prod_name in test_name

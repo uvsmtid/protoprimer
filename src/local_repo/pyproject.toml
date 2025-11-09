@@ -16,8 +16,8 @@ classifiers = [
 requires-python = ">=3.7"
 
 dependencies = [
-    "pre-commit",
     "setuptools",
+    "pre-commit",
 ]
 
 [tool.setuptools.packages.find]

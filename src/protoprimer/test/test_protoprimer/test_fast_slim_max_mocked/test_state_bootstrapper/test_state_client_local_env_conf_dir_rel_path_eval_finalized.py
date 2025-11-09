@@ -1,5 +1,6 @@
 import argparse
 import os
+from logging import WARNING
 from unittest.mock import patch
 
 from local_test.base_test_class import BasePyfakefsTestClass
@@ -199,6 +200,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_primer_ref_root_dir_abs_path_eval_finalized,
     ):
         # given:
+
         assert_parent_states_mocked(
             self.env_ctx,
             EnvState.state_client_local_env_conf_dir_rel_path_eval_finalized.name,
@@ -216,15 +218,17 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_client_conf_file_data.return_value = client_conf_file_data
 
         # when:
-        with self.assertRaises(AssertionError) as ctx:
+
+        with self.assertLogs(primer_kernel.logger, level=WARNING) as log_dst:
             self.env_ctx.state_graph.eval_state(
                 EnvState.state_client_local_env_conf_dir_rel_path_eval_finalized.name
             )
 
         # then:
+
         self.assertIn(
-            f"Field `{ConfField.field_client_default_env_dir_rel_path.value}` is [None]",
-            str(ctx.exception),
+            f"Field `{ConfField.field_client_default_env_dir_rel_path.value}` is [{None}]",
+            log_dst.output[0],
         )
 
     @patch(

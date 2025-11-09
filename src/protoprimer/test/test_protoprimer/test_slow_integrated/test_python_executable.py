@@ -40,7 +40,7 @@ def test_python_from_arbitrary_venv(
 
     ref_root_abs_path = switch_to_ref_root_abs_path(tmp_path)
 
-    # ===
+    # === create `ConfLeap.leap_primer`
 
     # An arbitrary venv to start from:
     arbitrary_venv_dir = ref_root_abs_path / "arbitrary_venv"
@@ -49,23 +49,25 @@ def test_python_from_arbitrary_venv(
         arbitrary_venv_dir / ConfConstGeneral.file_rel_path_venv_python
     )
 
-    # ===
+    # === create `ConfLeap.leap_primer`
 
     proto_code_dir_abs_path = (
         ref_root_abs_path / ConfConstInput.default_proto_conf_dir_rel_path
     )
-    create_plain_proto_code(proto_code_dir_abs_path)
+    proto_kernel_abs_path: pathlib.Path = create_plain_proto_code(
+        proto_code_dir_abs_path
+    )
     create_conf_primer_file(
         ref_root_abs_path,
         proto_code_dir_abs_path,
     )
 
-    # ===
+    # === create `pyproject.toml`
 
     project_dir_abs_path = ref_root_abs_path / test_pyproject_src_dir_rel_path
     create_test_pyproject_toml(project_dir_abs_path)
 
-    # ===
+    # === create `ConfLeap.leap_env` / `default_env`
 
     conf_env_dir_abs_path = (
         ref_root_abs_path / ConfConstClient.default_client_default_env_dir_rel_path
@@ -77,7 +79,7 @@ def test_python_from_arbitrary_venv(
         project_dir_abs_path,
     )
 
-    # ===
+    # === create `ConfLeap.leap_client`
 
     conf_client_dir_abs_path = (
         ref_root_abs_path / ConfConstPrimer.default_client_conf_dir_rel_path
@@ -91,7 +93,7 @@ def test_python_from_arbitrary_venv(
 
     command_args = [
         str(arbitrary_venv_python),
-        "./proto_code/proto_kernel.py",
+        proto_kernel_abs_path,
     ]
 
     # when:
@@ -115,7 +117,7 @@ def test_python_from_required_venv(
 
     ref_root_abs_path = switch_to_ref_root_abs_path(tmp_path)
 
-    # ===
+    # === create `ConfLeap.leap_primer`
 
     # Create the required `venv`:
     required_venv_dir_rel_path = "required_venv"
@@ -125,7 +127,7 @@ def test_python_from_required_venv(
         required_venv_dir_abs_path / ConfConstGeneral.file_rel_path_venv_python
     )
 
-    # ===
+    # === create `ConfLeap.leap_primer`
 
     proto_code_dir_abs_path = (
         ref_root_abs_path / ConfConstInput.default_proto_conf_dir_rel_path
@@ -136,12 +138,12 @@ def test_python_from_required_venv(
         proto_code_dir_abs_path,
     )
 
-    # ===
+    # === create `pyproject.toml`
 
     project_dir_abs_path = ref_root_abs_path / test_pyproject_src_dir_rel_path
     create_test_pyproject_toml(project_dir_abs_path)
 
-    # ===
+    # === create `ConfLeap.leap_env` / `default_env`
 
     conf_env_dir_abs_path = (
         ref_root_abs_path / ConfConstClient.default_client_default_env_dir_rel_path
@@ -155,7 +157,7 @@ def test_python_from_required_venv(
         venv_dir_rel_path=required_venv_dir_rel_path,
     )
 
-    # ===
+    # === create `ConfLeap.leap_client`
 
     conf_client_dir_abs_path = (
         ref_root_abs_path / ConfConstPrimer.default_client_conf_dir_rel_path

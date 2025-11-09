@@ -95,3 +95,45 @@ class ThisTestClass(BasePyfakefsTestClass):
             ),
             proto_kernel_obj.contents,
         )
+
+    @patch(
+        f"{primer_kernel.__name__}.is_venv",
+        return_value=True,
+    )
+    @patch(
+        f"{primer_kernel.__name__}.{Bootstrapper_state_input_proto_code_file_abs_path_eval_finalized.__name__}.eval_own_state"
+    )
+    @patch(
+        f"{primer_kernel.__name__}.{Bootstrapper_state_py_exec_updated_protoprimer_package_reached.__name__}.eval_own_state"
+    )
+    def test_importerror_when_protoprimer_is_missing(
+        self,
+        mock_state_py_exec_updated_protoprimer_package_reached,
+        mock_state_input_proto_code_file_abs_path_eval_finalized,
+        mock_is_venv,
+    ):
+        # given:
+        assert_parent_states_mocked(
+            self.env_ctx,
+            EnvState.state_proto_code_updated.name,
+        )
+        mock_state_py_exec_updated_protoprimer_package_reached.return_value = (
+            PythonExecutable.py_exec_updated_protoprimer_package
+        )
+
+        fake_path = "/fake/path"
+        self.fs.create_file(fake_path)
+        mock_state_input_proto_code_file_abs_path_eval_finalized.return_value = (
+            fake_path
+        )
+
+        # when:
+        with patch.dict("sys.modules", {"protoprimer": None}):
+            with self.assertLogs(primer_kernel.logger, level="WARNING") as cm:
+                result = self.env_ctx.state_graph.eval_state(
+                    EnvState.state_proto_code_updated.name
+                )
+
+        # then:
+        self.assertFalse(result)
+        self.assertIn("Module `protoprimer` is missing in `venv`", cm.output[0])

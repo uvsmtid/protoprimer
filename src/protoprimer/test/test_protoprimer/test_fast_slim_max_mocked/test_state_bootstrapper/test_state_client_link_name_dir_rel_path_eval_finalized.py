@@ -1,3 +1,4 @@
+from logging import WARNING
 from unittest.mock import patch
 
 from local_test.base_test_class import BasePyfakefsTestClass
@@ -62,6 +63,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_client_conf_file_data,
     ):
         # given:
+
         assert_parent_states_mocked(
             self.env_ctx,
             EnvState.state_client_link_name_dir_rel_path_eval_finalized.name,
@@ -69,13 +71,15 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_client_conf_file_data.return_value = {}
 
         # when:
-        with self.assertRaises(AssertionError) as ctx:
+
+        with self.assertLogs(primer_kernel.logger, level=WARNING) as log_dst:
             self.env_ctx.state_graph.eval_state(
                 EnvState.state_client_link_name_dir_rel_path_eval_finalized.name
             )
 
         # then:
+
         self.assertIn(
             f"Field `{ConfField.field_client_link_name_dir_rel_path.value}` is [None] - re-run with [{SyntaxArg.arg_mode_wizard}] to set it.",
-            str(ctx.exception),
+            log_dst.output[0],
         )

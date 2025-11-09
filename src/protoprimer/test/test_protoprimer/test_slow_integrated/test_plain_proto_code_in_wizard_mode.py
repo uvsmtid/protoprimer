@@ -32,7 +32,9 @@ def test_wizard_mode_interaction(tmp_path: pathlib.Path):
     proto_code_dir_abs_path = (
         ref_root_abs_path / ConfConstInput.default_proto_conf_dir_rel_path
     )
-    create_plain_proto_code(proto_code_dir_abs_path)
+    proto_kernel_abs_path: pathlib.Path = create_plain_proto_code(
+        proto_code_dir_abs_path
+    )
     create_conf_primer_file(
         ref_root_abs_path,
         proto_code_dir_abs_path,
@@ -52,7 +54,7 @@ def test_wizard_mode_interaction(tmp_path: pathlib.Path):
     # ===
 
     command_args = [
-        "./proto_code/proto_kernel.py",
+        proto_kernel_abs_path,
         SyntaxArg.arg_mode_wizard,
     ]
 

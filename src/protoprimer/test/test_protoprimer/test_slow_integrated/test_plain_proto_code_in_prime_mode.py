@@ -4,6 +4,7 @@ import pathlib
 from local_repo.sub_proc_util import (
     get_command_code,
 )
+from local_test.fat_mocked_helper import run_primer_main
 from local_test.integrated_helper import (
     create_conf_client_file,
     create_conf_env_file,
@@ -19,6 +20,7 @@ from protoprimer.primer_kernel import (
     ConfConstInput,
     ConfConstPrimer,
     ConfDst,
+    SyntaxArg,
 )
 
 
@@ -28,24 +30,26 @@ def test_prime(tmp_path: pathlib.Path):
 
     ref_root_abs_path = switch_to_ref_root_abs_path(tmp_path)
 
-    # ===
+    # === create `ConfLeap.leap_primer`
 
     proto_code_dir_abs_path = (
         ref_root_abs_path / ConfConstInput.default_proto_conf_dir_rel_path
     )
-    create_plain_proto_code(proto_code_dir_abs_path)
+    proto_kernel_abs_path: pathlib.Path = create_plain_proto_code(
+        proto_code_dir_abs_path
+    )
     create_conf_primer_file(
         ref_root_abs_path,
         proto_code_dir_abs_path,
     )
 
-    # ===
+    # === create `pyproject.toml`
 
     # TODO: Figure out how can minimal layout be achieved (when `pyproject.toml` is in the ref root)?
     project_dir_abs_path = ref_root_abs_path / test_pyproject_src_dir_rel_path
     create_test_pyproject_toml(project_dir_abs_path)
 
-    # ===
+    # === create `ConfLeap.leap_env` / `default_env`
 
     conf_env_dir_abs_path = (
         ref_root_abs_path / ConfConstClient.default_client_default_env_dir_rel_path
@@ -57,7 +61,7 @@ def test_prime(tmp_path: pathlib.Path):
         project_dir_abs_path,
     )
 
-    # ===
+    # === create `ConfLeap.leap_client`
 
     conf_client_dir_abs_path = (
         ref_root_abs_path / ConfConstPrimer.default_client_conf_dir_rel_path
@@ -76,7 +80,12 @@ def test_prime(tmp_path: pathlib.Path):
     # TODO: This is not how it is supposed to work.
     #       Instead of running bootstrap/prime directly with missing values passed as args,
     #       create a wizard collecting that info from user and capturing it inside config files.
-    get_command_code(" ./proto_code/proto_kernel.py ")
+    run_primer_main(
+        [
+            str(proto_kernel_abs_path),
+            SyntaxArg.arg_v,
+        ]
+    )
 
     # then:
 

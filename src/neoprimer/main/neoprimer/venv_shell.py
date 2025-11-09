@@ -1,10 +1,6 @@
-import argparse
 import os
-import subprocess
-import sys
 
 from protoprimer.primer_kernel import (
-    AbstractCachingStateNode,
     Bootstrapper_state_command_executed,
     ConfConstGeneral,
     create_temp_file,
@@ -12,8 +8,6 @@ from protoprimer.primer_kernel import (
     EnvState,
     EnvVar,
     logger,
-    ParsedArg,
-    PythonExecutable,
     ValueType,
 )
 
@@ -52,10 +46,6 @@ class Bootstrapper_state_activated_venv_shell_started(
             state_env_local_venv_dir_abs_path_eval_finalized,
             ConfConstGeneral.file_rel_path_venv_activate,
         )
-
-        # NOTE: Normally, FT_75_87_82_46.entry_script.md starting `venv_shell` sets this env var to
-        #       avoid time-consuming installation, so it is removed here before starting the command:
-        del os.environ[EnvVar.var_PROTOPRIMER_DO_INSTALL.value]
 
         # TODO: Move file under configured tmp dir:
         temp_file = create_temp_file()
