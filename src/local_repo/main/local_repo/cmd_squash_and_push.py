@@ -59,7 +59,7 @@ def main():
     squashed_branch_name = f"{source_branch_name}.{squashed_tag}.{git_short_commit}"
 
     # Find a common ancestor between source branch and target branch
-    # (basically, this is where source branch was branched off from the trunk):
+    # (basically, this is where the source branch was branched off from the trunk):
     git_base_commit = get_command_output(f"git merge-base HEAD {target_branch}")
 
     # Use separate branch to squash:

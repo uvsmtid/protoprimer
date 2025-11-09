@@ -1,5 +1,6 @@
 import json
 import os
+from logging import WARNING
 from unittest.mock import patch
 
 from local_test.base_test_class import BasePyfakefsTestClass
@@ -84,9 +85,9 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # when:
 
-        with self.assertRaises(AssertionError) as ctx:
+        with self.assertLogs(primer_kernel.logger, level=WARNING) as log_dst:
             self.env_ctx.state_graph.eval_state(EnvState.state_env_conf_file_data.name)
 
         # then:
 
-        self.assertIn("does not exists", str(ctx.exception))
+        self.assertIn("does not exists", log_dst.output[0])

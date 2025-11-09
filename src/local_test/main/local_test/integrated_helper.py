@@ -20,7 +20,6 @@ from protoprimer.primer_kernel import (
     PackageDriverType,
     write_json_file,
 )
-from src.local_doc.main import local_doc
 
 logger = logging.getLogger()
 

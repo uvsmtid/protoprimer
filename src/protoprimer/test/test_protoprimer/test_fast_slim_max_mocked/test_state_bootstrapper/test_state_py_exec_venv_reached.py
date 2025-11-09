@@ -1064,3 +1064,117 @@ class ThisTestClass(BasePyfakefsTestClass):
             },
         )
         mock_get_path_to_curr_python.assert_called_once()
+
+    ####################################################################################################################
+    @patch.dict(f"{os.__name__}.environ", {}, clear=True)
+    @patch.object(sys, "argv", ["/path/to/script.py", f"--{SyntaxArg.arg_reinstall}"])
+    @patch(f"{primer_kernel.__name__}.logger.info")
+    @patch(
+        f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.eval_own_state"
+    )
+    @patch(
+        f"{primer_kernel.__name__}.{Bootstrapper_state_reinstall_triggered.__name__}.eval_own_state"
+    )
+    @patch(
+        f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.eval_own_state"
+    )
+    @patch(
+        f"{primer_kernel.__name__}.{Bootstrapper_state_input_wizard_stage_arg_loaded.__name__}.eval_own_state"
+    )
+    @patch(
+        f"{primer_kernel.__name__}.{Bootstrapper_state_input_proto_code_file_abs_path_eval_finalized.__name__}.eval_own_state"
+    )
+    @patch(
+        f"{primer_kernel.__name__}.{Bootstrapper_state_input_py_exec_var_loaded.__name__}.eval_own_state"
+    )
+    @patch(
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_env_file_abs_path_eval_finalized.__name__}.eval_own_state"
+    )
+    @patch(
+        f"{primer_kernel.__name__}.{Bootstrapper_state_env_local_venv_dir_abs_path_eval_finalized.__name__}.eval_own_state"
+    )
+    @patch(
+        f"{primer_kernel.__name__}.{Bootstrapper_state_env_local_python_file_abs_path_eval_finalized.__name__}.eval_own_state"
+    )
+    @patch(
+        f"{primer_kernel.__name__}.{Bootstrapper_state_package_driver_inited.__name__}.eval_own_state"
+    )
+    @patch(
+        f"{primer_kernel.__name__}.get_path_to_curr_python",
+        return_value=ConfConstEnv.default_file_abs_path_python,
+    )
+    @patch(f"{primer_kernel.__name__}.os.execve")
+    @patch(f"{primer_kernel.__name__}.venv.create")
+    def test_failure_when_reusing_existing_venv_of_wrong_type(
+        self,
+        mock_venv_create,
+        mock_execve,
+        mock_get_path_to_curr_python,
+        mock_state_package_driver_inited,
+        mock_state_env_local_python_file_abs_path_eval_finalized,
+        mock_state_env_local_venv_dir_abs_path_eval_finalized,
+        mock_state_client_conf_env_file_abs_path_eval_finalized,
+        mock_state_input_py_exec_var_loaded,
+        mock_state_input_proto_code_file_abs_path_eval_finalized,
+        mock_state_input_wizard_stage_arg_loaded,
+        mock_state_args_parsed,
+        mock_state_reinstall_triggered,
+        mock_state_input_start_id_var_loaded,
+        mock_logger_info,
+    ):
+        # given:
+        assert_parent_states_mocked(
+            self.env_ctx,
+            EnvState.state_py_exec_venv_reached.name,
+        )
+
+        mock_state_args_parsed.return_value = argparse.Namespace(
+            **{
+                ParsedArg.name_reinstall.value: False,
+            }
+        )
+        mock_state_input_start_id_var_loaded.return_value = "mock_start_id"
+        mock_state_reinstall_triggered.return_value = False
+        mock_state_input_wizard_stage_arg_loaded.return_value = (
+            WizardStage.wizard_started
+        )
+        mock_state_input_proto_code_file_abs_path_eval_finalized.return_value = (
+            state_input_proto_code_file_abs_path_eval_finalized
+        )
+        mock_state_input_py_exec_var_loaded.return_value = (
+            PythonExecutable.py_exec_required
+        )
+        mock_state_env_local_python_file_abs_path_eval_finalized.return_value = (
+            ConfConstEnv.default_file_abs_path_python
+        )
+        path_to_venv = os.path.join(
+            mock_client_dir, ConfConstEnv.default_dir_rel_path_venv
+        )
+        mock_state_env_local_venv_dir_abs_path_eval_finalized.return_value = (
+            path_to_venv
+        )
+        mock_state_client_conf_env_file_abs_path_eval_finalized.return_value = (
+            "fake: " + EnvState.state_client_conf_env_file_abs_path_eval_finalized.name
+        )
+
+        # Create a uv-style venv
+        self.fs.create_dir(path_to_venv)
+        self.fs.create_file(
+            os.path.join(path_to_venv, "pyvenv.cfg"), contents="uv = 1.2.3"
+        )
+
+        # But the driver is pip
+        from protoprimer.primer_kernel import PackageDriverPip
+
+        mock_state_package_driver_inited.return_value = PackageDriverPip()
+
+        # when:
+        with self.assertRaises(AssertionError) as cm:
+            self.env_ctx.state_graph.eval_state(
+                EnvState.state_py_exec_venv_reached.name
+            )
+
+        # then:
+        self.assertIn("was not created by this driver", str(cm.exception))
+        mock_venv_create.assert_not_called()
+        mock_execve.assert_not_called()

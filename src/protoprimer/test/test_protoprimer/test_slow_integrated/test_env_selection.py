@@ -3,6 +3,7 @@ import shutil
 import os
 
 from local_repo.sub_proc_util import get_command_code
+from local_test.fat_mocked_helper import run_primer_main
 from local_test.integrated_helper import (
     create_conf_client_file,
     create_conf_env_file,
@@ -32,7 +33,9 @@ def test_env_selection(tmp_path: pathlib.Path):
     proto_code_dir_abs_path = (
         ref_root_abs_path / ConfConstInput.default_proto_conf_dir_rel_path
     )
-    create_plain_proto_code(proto_code_dir_abs_path)
+    proto_kernel_abs_path: pathlib.Path = create_plain_proto_code(
+        proto_code_dir_abs_path
+    )
     create_conf_primer_file(
         ref_root_abs_path,
         proto_code_dir_abs_path,
@@ -72,6 +75,7 @@ def test_env_selection(tmp_path: pathlib.Path):
     conf_client_dir_abs_path = (
         ref_root_abs_path / ConfConstPrimer.default_client_conf_dir_rel_path
     )
+
     create_conf_client_file(
         ref_root_abs_path,
         conf_client_dir_abs_path,
@@ -81,7 +85,12 @@ def test_env_selection(tmp_path: pathlib.Path):
     # when:
     # bootstrap with `default_env`
 
-    get_command_code("./proto_code/proto_kernel.py")
+    run_primer_main(
+        [
+            str(proto_kernel_abs_path),
+            SyntaxArg.arg_v,
+        ]
+    )
 
     # then:
     # assert `default_env` created
@@ -102,8 +111,13 @@ def test_env_selection(tmp_path: pathlib.Path):
     # when:
     # bootstrap with `special_env`
 
-    get_command_code(
-        f"./proto_code/proto_kernel.py {SyntaxArg.arg_env} {special_env_dir_name}"
+    run_primer_main(
+        [
+            str(proto_kernel_abs_path),
+            SyntaxArg.arg_v,
+            SyntaxArg.arg_env,
+            special_env_dir_name,
+        ]
     )
 
     # then:

@@ -9,7 +9,7 @@ version = "0.0.10"
 authors = [
     { name = "uvsmtid", email = "uvsmtid@gmail.com" },
 ]
-description = "A single-touch bootstrapper to run venv code: self-contained, no-deps, zero-args-default, portable way to escape from shell scripts in pure Python with extensible multi-stage DAG :rocket:"
+description = "A single-touch bootstrap to start pre-venv code: self-contained, no-deps, zero-args-default, cross-platform way to escape from shell scripts in pure Python with extensible multi-stage DAG :rocket:"
 readme = "readme.md"
 # FT_84_11_73_28: supported python versions:
 requires-python = ">=3.7"
@@ -38,13 +38,9 @@ keywords = [
 ]
 
 classifiers = [
-    "Development Status :: 3 - Alpha",
-    "Environment :: Console",
     "Intended Audience :: Information Technology",
-    "Topic :: Terminals",
-    "Topic :: System :: Shells",
     "Programming Language :: Python :: 3",
-    "Operating System :: POSIX :: Linux",
+    "Operating System :: OS Independent",
 ]
 
 dependencies = []

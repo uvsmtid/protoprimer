@@ -545,3 +545,39 @@ class ThisTestClass(BasePyfakefsTestClass):
             os.readlink(state_client_conf_env_dir_abs_path_eval_finalized),
             target_dst_dir_path_normalized,
         )
+
+    @patch(
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data.__name__}.eval_own_state"
+    )
+    @patch(
+        f"{primer_kernel.__name__}.{Bootstrapper_state_primer_ref_root_dir_abs_path_eval_finalized.__name__}.eval_own_state"
+    )
+    @patch(
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_local_env_conf_dir_rel_path_eval_finalized.__name__}.eval_own_state"
+    )
+    def test_success_when_local_env_conf_dir_is_none(
+        self,
+        mock_state_client_local_env_conf_dir_rel_path_eval_finalized,
+        mock_state_primer_ref_root_dir_abs_path_eval_finalized,
+        mock_state_client_conf_file_data,
+    ):
+        # given:
+        assert_parent_states_mocked(
+            self.env_ctx,
+            EnvState.state_client_conf_env_dir_abs_path_eval_finalized.name,
+        )
+
+        mock_ref_root = "/mock_ref_root"
+        mock_state_primer_ref_root_dir_abs_path_eval_finalized.return_value = (
+            mock_ref_root
+        )
+        mock_state_client_local_env_conf_dir_rel_path_eval_finalized.return_value = None
+        mock_state_client_conf_file_data.return_value = {}  # Not used in this branch
+
+        # when:
+        result = self.env_ctx.state_graph.eval_state(
+            EnvState.state_client_conf_env_dir_abs_path_eval_finalized.name
+        )
+
+        # then:
+        self.assertEqual(result, mock_ref_root)

@@ -15,13 +15,15 @@ from local_repo.graph_printer import (
     SubGraph,
 )
 from local_test.base_test_class import BaseTestClass
-from local_test.name_assertion import assert_test_module_name_embeds_str
+from local_test.name_assertion import (
+    assert_test_module_name_embeds_another_module_name,
+)
 from protoprimer.primer_kernel import EnvState
 
 
 def test_relationship():
-    assert_test_module_name_embeds_str(
-        graph_printer.__name__.split(".")[-1],
+    assert_test_module_name_embeds_another_module_name(
+        graph_printer.__name__,
     )
 
 

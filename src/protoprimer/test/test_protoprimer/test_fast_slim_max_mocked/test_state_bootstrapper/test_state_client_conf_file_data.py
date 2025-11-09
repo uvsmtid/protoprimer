@@ -1,5 +1,6 @@
 import json
 import os
+from logging import WARNING
 from unittest.mock import patch
 
 from local_test.base_test_class import BasePyfakefsTestClass
@@ -100,11 +101,33 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # when:
 
-        with self.assertRaises(AssertionError) as ctx:
+        with self.assertLogs(primer_kernel.logger, level=WARNING) as log_dst:
             self.env_ctx.state_graph.eval_state(
                 EnvState.state_client_conf_file_data.name
             )
 
         # then:
 
-        self.assertIn("does not exists", str(ctx.exception))
+        self.assertIn("does not exists", log_dst.output[0])
+
+    @patch(
+        f"{primer_kernel.__name__}.{Bootstrapper_state_primer_conf_client_file_abs_path_eval_finalized.__name__}.eval_own_state"
+    )
+    def test_state_primer_conf_client_file_abs_path_is_none(
+        self,
+        mock_state_primer_conf_client_file_abs_path_eval_finalized,
+    ):
+        # given:
+        assert_parent_states_mocked(
+            self.env_ctx,
+            EnvState.state_client_conf_file_data.name,
+        )
+        mock_state_primer_conf_client_file_abs_path_eval_finalized.return_value = None
+
+        # when:
+        result = self.env_ctx.state_graph.eval_state(
+            EnvState.state_client_conf_file_data.name
+        )
+
+        # then:
+        self.assertEqual(result, {})

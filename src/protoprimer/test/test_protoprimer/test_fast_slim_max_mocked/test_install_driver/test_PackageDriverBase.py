@@ -179,3 +179,10 @@ def test_package_driver_base_install_packages(mock_check_call, mock_get_cmd_base
             "package2",
         ]
     )
+
+
+def test_package_driver_base_get_type_raises_not_implemented_error():
+    # given:
+    # when/then:
+    with pytest.raises(NotImplementedError):
+        PackageDriverBase.get_type(None)
