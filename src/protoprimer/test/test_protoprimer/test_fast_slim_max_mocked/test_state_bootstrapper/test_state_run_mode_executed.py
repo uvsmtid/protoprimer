@@ -20,7 +20,6 @@ from protoprimer.primer_kernel import (
     RunMode,
     WizardState,
 )
-from local_repo.graph_printer import GraphPrinterText
 
 
 @pytest.fixture

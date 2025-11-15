@@ -1,7 +1,6 @@
-import os
 from unittest.mock import (
-    patch,
     Mock,
+    patch,
 )
 
 import pytest
@@ -12,14 +11,14 @@ from local_test.mock_verifier import (
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
-    Bootstrapper_state_env_local_python_file_abs_path_eval_finalized,
     Bootstrapper_state_env_local_cache_dir_abs_path_eval_finalized,
-    Bootstrapper_state_reinstall_triggered,
+    Bootstrapper_state_merged_required_python_file_abs_path_eval_finalized,
     Bootstrapper_state_package_driver_selected,
+    Bootstrapper_state_reinstall_triggered,
     EnvContext,
     EnvState,
-    PackageDriverType,
     PackageDriverPip,
+    PackageDriverType,
     PackageDriverUv,
 )
 
@@ -43,10 +42,10 @@ def test_relationship():
     f"{primer_kernel.__name__}.{Bootstrapper_state_env_local_cache_dir_abs_path_eval_finalized.__name__}.eval_own_state"
 )
 @patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_env_local_python_file_abs_path_eval_finalized.__name__}.eval_own_state"
+    f"{primer_kernel.__name__}.{Bootstrapper_state_merged_required_python_file_abs_path_eval_finalized.__name__}.eval_own_state"
 )
 def test_pip_driver_inited(
-    mock_state_env_local_python_file_abs_path_eval_finalized,
+    mock_state_merged_required_python_file_abs_path_eval_finalized,
     mock_state_env_local_cache_dir_abs_path_eval_finalized,
     mock_state_reinstall_triggered,
     mock_state_package_driver_selected,
@@ -58,7 +57,7 @@ def test_pip_driver_inited(
         EnvState.state_package_driver_inited.name,
     )
     mock_state_package_driver_selected.return_value = PackageDriverType.driver_pip
-    mock_state_env_local_python_file_abs_path_eval_finalized.return_value = (
+    mock_state_merged_required_python_file_abs_path_eval_finalized.return_value = (
         "/usr/bin/python"
     )
     mock_state_env_local_cache_dir_abs_path_eval_finalized.return_value = "/cache"
@@ -87,10 +86,10 @@ def test_pip_driver_inited(
     f"{primer_kernel.__name__}.{Bootstrapper_state_env_local_cache_dir_abs_path_eval_finalized.__name__}.eval_own_state"
 )
 @patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_env_local_python_file_abs_path_eval_finalized.__name__}.eval_own_state"
+    f"{primer_kernel.__name__}.{Bootstrapper_state_merged_required_python_file_abs_path_eval_finalized.__name__}.eval_own_state"
 )
 def test_uv_driver_inited_when_not_installed(
-    mock_state_env_local_python_file_abs_path_eval_finalized,
+    mock_state_merged_required_python_file_abs_path_eval_finalized,
     mock_state_env_local_cache_dir_abs_path_eval_finalized,
     mock_state_reinstall_triggered,
     mock_state_package_driver_selected,
@@ -106,7 +105,7 @@ def test_uv_driver_inited_when_not_installed(
         EnvState.state_package_driver_inited.name,
     )
     mock_state_package_driver_selected.return_value = PackageDriverType.driver_uv
-    mock_state_env_local_python_file_abs_path_eval_finalized.return_value = (
+    mock_state_merged_required_python_file_abs_path_eval_finalized.return_value = (
         "/usr/bin/python"
     )
     mock_state_env_local_cache_dir_abs_path_eval_finalized.return_value = "/cache"
@@ -147,10 +146,10 @@ def test_uv_driver_inited_when_not_installed(
     f"{primer_kernel.__name__}.{Bootstrapper_state_env_local_cache_dir_abs_path_eval_finalized.__name__}.eval_own_state"
 )
 @patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_env_local_python_file_abs_path_eval_finalized.__name__}.eval_own_state"
+    f"{primer_kernel.__name__}.{Bootstrapper_state_merged_required_python_file_abs_path_eval_finalized.__name__}.eval_own_state"
 )
 def test_uv_driver_inited_when_already_installed(
-    mock_state_env_local_python_file_abs_path_eval_finalized,
+    mock_state_merged_required_python_file_abs_path_eval_finalized,
     mock_state_env_local_cache_dir_abs_path_eval_finalized,
     mock_state_reinstall_triggered,
     mock_state_package_driver_selected,
@@ -166,7 +165,7 @@ def test_uv_driver_inited_when_already_installed(
         EnvState.state_package_driver_inited.name,
     )
     mock_state_package_driver_selected.return_value = PackageDriverType.driver_uv
-    mock_state_env_local_python_file_abs_path_eval_finalized.return_value = (
+    mock_state_merged_required_python_file_abs_path_eval_finalized.return_value = (
         "/usr/bin/python"
     )
     mock_state_env_local_cache_dir_abs_path_eval_finalized.return_value = "/cache"
@@ -196,10 +195,10 @@ def test_uv_driver_inited_when_already_installed(
     f"{primer_kernel.__name__}.{Bootstrapper_state_env_local_cache_dir_abs_path_eval_finalized.__name__}.eval_own_state"
 )
 @patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_env_local_python_file_abs_path_eval_finalized.__name__}.eval_own_state"
+    f"{primer_kernel.__name__}.{Bootstrapper_state_merged_required_python_file_abs_path_eval_finalized.__name__}.eval_own_state"
 )
 def test_unsupported_driver(
-    mock_state_env_local_python_file_abs_path_eval_finalized,
+    mock_state_merged_required_python_file_abs_path_eval_finalized,
     mock_state_env_local_cache_dir_abs_path_eval_finalized,
     mock_state_reinstall_triggered,
     mock_state_package_driver_selected,
@@ -213,7 +212,7 @@ def test_unsupported_driver(
     mock_driver = Mock()
     mock_driver.name = "unsupported_driver"
     mock_state_package_driver_selected.return_value = mock_driver
-    mock_state_env_local_python_file_abs_path_eval_finalized.return_value = (
+    mock_state_merged_required_python_file_abs_path_eval_finalized.return_value = (
         "/usr/bin/python"
     )
     mock_state_env_local_cache_dir_abs_path_eval_finalized.return_value = "/cache"

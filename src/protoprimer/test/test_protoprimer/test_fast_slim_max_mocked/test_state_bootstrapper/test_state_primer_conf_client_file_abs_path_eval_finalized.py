@@ -1,14 +1,15 @@
 import os
-from unittest.mock import patch
-import pytest
 from logging import WARNING
+from unittest.mock import patch
+
+import pytest
 
 from local_test.mock_verifier import assert_parent_states_mocked
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
-    Bootstrapper_state_proto_conf_file_data,
     Bootstrapper_state_primer_ref_root_dir_abs_path_eval_finalized,
+    Bootstrapper_state_proto_conf_file_data,
     ConfField,
     EnvContext,
     EnvState,

@@ -43,7 +43,8 @@ def test_wizard_confirm_single_value_happy_path_default(mock_input: MagicMock):
     wizard_meta = FieldWizardMeta(
         field_name="test_field",
         field_help=lambda wizard_meta, state_node, file_data: "help for test field",
-        field_leap=ConfLeap.leap_primer,
+        field_possible_leaps=[ConfLeap.leap_primer],
+        field_wizard_leaps=[ConfLeap.leap_primer],
         root_ancestor_field=None,
         warn_if_not_wizard_able=lambda wizard_meta, state_node, file_data: None,
         read_value=mock_read_value,
@@ -58,6 +59,7 @@ def test_wizard_confirm_single_value_happy_path_default(mock_input: MagicMock):
 
     wizard_confirm_single_value(
         state_node=mock_state_node,
+        conf_leap=ConfLeap.leap_primer,
         wizard_meta=wizard_meta,
         file_data=file_data,
         sub_ordinal_n=1,
@@ -101,7 +103,8 @@ def test_wizard_confirm_single_value_new_value(mock_input: MagicMock):
     wizard_meta = FieldWizardMeta(
         field_name="test_field",
         field_help=lambda wizard_meta, state_node, file_data: "help for test field",
-        field_leap=ConfLeap.leap_primer,
+        field_possible_leaps=[ConfLeap.leap_primer],
+        field_wizard_leaps=[ConfLeap.leap_primer],
         root_ancestor_field=None,
         warn_if_not_wizard_able=lambda wizard_meta, state_node, file_data: None,
         read_value=mock_read_value,
@@ -116,6 +119,7 @@ def test_wizard_confirm_single_value_new_value(mock_input: MagicMock):
 
     wizard_confirm_single_value(
         state_node=mock_state_node,
+        conf_leap=ConfLeap.leap_primer,
         wizard_meta=wizard_meta,
         file_data=file_data,
         sub_ordinal_n=1,
@@ -159,7 +163,8 @@ def test_wizard_confirm_single_value_retry(mock_input: MagicMock):
     wizard_meta = FieldWizardMeta(
         field_name="test_field",
         field_help=lambda wizard_meta, state_node, file_data: "help for test field",
-        field_leap=ConfLeap.leap_primer,
+        field_possible_leaps=[ConfLeap.leap_primer],
+        field_wizard_leaps=[ConfLeap.leap_primer],
         root_ancestor_field=None,
         warn_if_not_wizard_able=lambda wizard_meta, state_node, file_data: None,
         read_value=mock_read_value,
@@ -174,6 +179,7 @@ def test_wizard_confirm_single_value_retry(mock_input: MagicMock):
 
     wizard_confirm_single_value(
         state_node=mock_state_node,
+        conf_leap=ConfLeap.leap_primer,
         wizard_meta=wizard_meta,
         file_data=file_data,
         sub_ordinal_n=1,
@@ -213,7 +219,8 @@ def test_wizard_confirm_single_value_skip(mock_input: MagicMock):
     wizard_meta = FieldWizardMeta(
         field_name="test_field",
         field_help=lambda wizard_meta, state_node, file_data: "help for test field",
-        field_leap=ConfLeap.leap_primer,
+        field_possible_leaps=[ConfLeap.leap_primer],
+        field_wizard_leaps=[ConfLeap.leap_primer],
         root_ancestor_field=None,
         warn_if_not_wizard_able=lambda wizard_meta, state_node, file_data: None,
         read_value=mock_read_value,
@@ -228,6 +235,7 @@ def test_wizard_confirm_single_value_skip(mock_input: MagicMock):
 
     wizard_confirm_single_value(
         state_node=mock_state_node,
+        conf_leap=ConfLeap.leap_primer,
         wizard_meta=wizard_meta,
         file_data=file_data,
         sub_ordinal_n=1,
@@ -270,7 +278,8 @@ def test_wizard_confirm_single_value_with_warning(mock_input: MagicMock):
     wizard_meta = FieldWizardMeta(
         field_name="test_field",
         field_help=lambda wizard_meta, state_node, file_data: "help for test field",
-        field_leap=ConfLeap.leap_primer,
+        field_possible_leaps=[ConfLeap.leap_primer],
+        field_wizard_leaps=[ConfLeap.leap_primer],
         root_ancestor_field=None,
         warn_if_not_wizard_able=mock_warn,
         read_value=mock_read_value,
@@ -284,6 +293,7 @@ def test_wizard_confirm_single_value_with_warning(mock_input: MagicMock):
 
     wizard_confirm_single_value(
         state_node=mock_state_node,
+        conf_leap=ConfLeap.leap_primer,
         wizard_meta=wizard_meta,
         file_data=file_data,
         sub_ordinal_n=1,
@@ -322,7 +332,8 @@ def test_wizard_confirm_single_value_with_warning_retry(mock_input: MagicMock):
     wizard_meta = FieldWizardMeta(
         field_name="test_field",
         field_help=lambda wizard_meta, state_node, file_data: "help for test field",
-        field_leap=ConfLeap.leap_primer,
+        field_possible_leaps=[ConfLeap.leap_primer],
+        field_wizard_leaps=[ConfLeap.leap_primer],
         root_ancestor_field=None,
         warn_if_not_wizard_able=mock_warn,
         read_value=mock_read_value,
@@ -336,6 +347,7 @@ def test_wizard_confirm_single_value_with_warning_retry(mock_input: MagicMock):
 
     wizard_confirm_single_value(
         state_node=mock_state_node,
+        conf_leap=ConfLeap.leap_primer,
         wizard_meta=wizard_meta,
         file_data=file_data,
         sub_ordinal_n=1,
@@ -373,7 +385,8 @@ def test_wizard_confirm_single_value_invalid_confirmation(mock_input: MagicMock)
     wizard_meta = FieldWizardMeta(
         field_name="test_field",
         field_help=lambda wizard_meta, state_node, file_data: "help for test field",
-        field_leap=ConfLeap.leap_primer,
+        field_possible_leaps=[ConfLeap.leap_primer],
+        field_wizard_leaps=[ConfLeap.leap_primer],
         root_ancestor_field=None,
         warn_if_not_wizard_able=lambda wizard_meta, state_node, file_data: None,
         read_value=mock_read_value,
@@ -388,6 +401,7 @@ def test_wizard_confirm_single_value_invalid_confirmation(mock_input: MagicMock)
 
     wizard_confirm_single_value(
         state_node=mock_state_node,
+        conf_leap=ConfLeap.leap_primer,
         wizard_meta=wizard_meta,
         file_data=file_data,
         sub_ordinal_n=1,
@@ -443,7 +457,8 @@ def test_wizard_confirm_single_value_invalid_value(
     wizard_meta = FieldWizardMeta(
         field_name="test_field",
         field_help=lambda wizard_meta, state_node, file_data: "help for test field",
-        field_leap=ConfLeap.leap_primer,
+        field_possible_leaps=[ConfLeap.leap_primer],
+        field_wizard_leaps=[ConfLeap.leap_primer],
         root_ancestor_field=None,
         warn_if_not_wizard_able=lambda wizard_meta, state_node, file_data: None,
         read_value=mock_read_value,
@@ -458,6 +473,7 @@ def test_wizard_confirm_single_value_invalid_value(
 
     wizard_confirm_single_value(
         state_node=mock_state_node,
+        conf_leap=ConfLeap.leap_primer,
         wizard_meta=wizard_meta,
         file_data=file_data,
         sub_ordinal_n=1,
@@ -527,7 +543,8 @@ def test_wizard_confirm_single_value_with_review(
     wizard_meta = FieldWizardMeta(
         field_name="test_field",
         field_help=lambda wizard_meta, state_node, file_data: "help for test field",
-        field_leap=ConfLeap.leap_primer,
+        field_possible_leaps=[ConfLeap.leap_primer],
+        field_wizard_leaps=[ConfLeap.leap_primer],
         root_ancestor_field=None,
         warn_if_not_wizard_able=lambda wizard_meta, state_node, file_data: None,
         read_value=mock_read_value,
@@ -541,6 +558,7 @@ def test_wizard_confirm_single_value_with_review(
 
     wizard_confirm_single_value(
         state_node=mock_state_node,
+        conf_leap=ConfLeap.leap_primer,
         wizard_meta=wizard_meta,
         file_data=file_data,
         sub_ordinal_n=1,

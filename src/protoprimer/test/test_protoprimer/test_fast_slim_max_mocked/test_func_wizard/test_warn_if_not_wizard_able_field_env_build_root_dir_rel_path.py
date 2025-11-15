@@ -27,7 +27,8 @@ def test_no_project_descriptors():
     wizard_meta = FieldWizardMeta(
         field_name=ConfField.field_env_build_root_dir_rel_path.value,
         field_help=lambda wizard_meta, state_node, file_data: "dummy help",
-        field_leap=ConfLeap.leap_env,
+        field_possible_leaps=[ConfLeap.leap_env],
+        field_wizard_leaps=[ConfLeap.leap_env],
         root_ancestor_field=None,
         warn_if_not_wizard_able=MagicMock(),
         read_value=MagicMock(spec=WizardField.read_value_trivially),
@@ -61,7 +62,8 @@ def test_empty_project_descriptors():
     wizard_meta = FieldWizardMeta(
         field_name=ConfField.field_env_build_root_dir_rel_path.value,
         field_help=lambda wizard_meta, state_node, file_data: "dummy help",
-        field_leap=ConfLeap.leap_env,
+        field_possible_leaps=[ConfLeap.leap_env],
+        field_wizard_leaps=[ConfLeap.leap_env],
         root_ancestor_field=None,
         warn_if_not_wizard_able=MagicMock(),
         read_value=MagicMock(spec=WizardField.read_value_trivially),
@@ -95,7 +97,8 @@ def test_multiple_project_descriptors():
     wizard_meta = FieldWizardMeta(
         field_name=ConfField.field_env_build_root_dir_rel_path.value,
         field_help=lambda wizard_meta, state_node, file_data: "dummy help",
-        field_leap=ConfLeap.leap_env,
+        field_possible_leaps=[ConfLeap.leap_env],
+        field_wizard_leaps=[ConfLeap.leap_env],
         root_ancestor_field=None,
         warn_if_not_wizard_able=MagicMock(),
         read_value=MagicMock(spec=WizardField.read_value_trivially),
@@ -130,7 +133,8 @@ def test_single_project_with_install_extras():
     wizard_meta = FieldWizardMeta(
         field_name=ConfField.field_env_build_root_dir_rel_path.value,
         field_help=lambda wizard_meta, state_node, file_data: "dummy help",
-        field_leap=ConfLeap.leap_env,
+        field_possible_leaps=[ConfLeap.leap_env],
+        field_wizard_leaps=[ConfLeap.leap_env],
         root_ancestor_field=None,
         warn_if_not_wizard_able=MagicMock(),
         read_value=MagicMock(spec=WizardField.read_value_trivially),
@@ -172,7 +176,8 @@ def test_single_project_happy_path():
     wizard_meta = FieldWizardMeta(
         field_name=ConfField.field_env_build_root_dir_rel_path.value,
         field_help=lambda wizard_meta, state_node, file_data: "dummy help",
-        field_leap=ConfLeap.leap_env,
+        field_possible_leaps=[ConfLeap.leap_env],
+        field_wizard_leaps=[ConfLeap.leap_env],
         root_ancestor_field=None,
         warn_if_not_wizard_able=MagicMock(),
         read_value=MagicMock(spec=WizardField.read_value_trivially),
@@ -213,7 +218,8 @@ def test_single_project_no_install_extras():
     wizard_meta = FieldWizardMeta(
         field_name=ConfField.field_env_build_root_dir_rel_path.value,
         field_help=lambda wizard_meta, state_node, file_data: "dummy help",
-        field_leap=ConfLeap.leap_env,
+        field_possible_leaps=[ConfLeap.leap_env],
+        field_wizard_leaps=[ConfLeap.leap_env],
         root_ancestor_field=None,
         warn_if_not_wizard_able=MagicMock(),
         read_value=MagicMock(spec=WizardField.read_value_trivially),
@@ -253,7 +259,8 @@ def test_single_project_no_build_root():
     wizard_meta = FieldWizardMeta(
         field_name=ConfField.field_env_build_root_dir_rel_path.value,
         field_help=lambda wizard_meta, state_node, file_data: "dummy help",
-        field_leap=ConfLeap.leap_env,
+        field_possible_leaps=[ConfLeap.leap_env],
+        field_wizard_leaps=[ConfLeap.leap_env],
         root_ancestor_field=None,
         warn_if_not_wizard_able=MagicMock(),
         read_value=MagicMock(spec=WizardField.read_value_trivially),

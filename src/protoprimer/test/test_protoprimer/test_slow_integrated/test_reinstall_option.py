@@ -1,7 +1,6 @@
 import pathlib
 
 from local_repo.sub_proc_util import (
-    get_command_code,
     get_command_output,
 )
 from local_test.fat_mocked_helper import run_primer_main

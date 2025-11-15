@@ -1,7 +1,8 @@
 import os
-from unittest.mock import patch
-import pytest
 from logging import WARNING
+from unittest.mock import patch
+
+import pytest
 
 from local_test.mock_verifier import assert_parent_states_mocked
 from local_test.name_assertion import assert_test_module_name_embeds_str

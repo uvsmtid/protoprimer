@@ -8,6 +8,7 @@ import pytest
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer.primer_kernel import (
     ConfField,
+    ConfLeap,
     StateNode,
     wizard_confirm_single_value,
     WizardField,
@@ -145,6 +146,7 @@ def test_wizard_confirm_single_value_field_primer_ref_root_dir_rel_path(
 
     wizard_confirm_single_value(
         state_node=mock_state_node,
+        conf_leap=ConfLeap.leap_primer,
         wizard_meta=wizard_meta,
         file_data=file_data,
         sub_ordinal_n=1,

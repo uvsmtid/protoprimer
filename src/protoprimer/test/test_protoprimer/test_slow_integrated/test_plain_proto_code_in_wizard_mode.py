@@ -78,11 +78,11 @@ def test_wizard_mode_interaction(tmp_path: pathlib.Path):
         ("", WizardField.field_client_link_name_dir_rel_path),
         ("", WizardField.field_client_default_env_dir_rel_path),
         ("", WizardField.field_client_default_env_dir_rel_path),
+        ("", WizardField.field_required_python_file_abs_path),
+        ("", WizardField.field_required_python_file_abs_path),
         # ---
         ("y", ConfLeap.leap_client),
         # ---
-        ("", WizardField.field_env_local_python_file_abs_path),
-        ("", WizardField.field_env_local_python_file_abs_path),
         ("", WizardField.field_env_local_venv_dir_rel_path),
         ("", WizardField.field_env_local_venv_dir_rel_path),
         ("", WizardField.field_env_local_log_dir_rel_path),

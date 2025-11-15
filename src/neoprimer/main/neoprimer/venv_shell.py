@@ -6,7 +6,6 @@ from protoprimer.primer_kernel import (
     create_temp_file,
     EnvContext,
     EnvState,
-    EnvVar,
     logger,
     ValueType,
 )

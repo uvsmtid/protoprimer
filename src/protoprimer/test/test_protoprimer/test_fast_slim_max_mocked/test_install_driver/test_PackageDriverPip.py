@@ -1,11 +1,11 @@
 import os
 import subprocess
 import venv
-import pytest
 from unittest.mock import (
     patch,
-    mock_open,
 )
+
+import pytest
 
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
@@ -43,7 +43,7 @@ def test_install_dependencies(mock_subprocess_check_call):
     # given:
     install_driver = PackageDriverPip()
     ref_root_dir_abs_path = "/tmp"
-    local_python_file_abs_path = "/tmp/test_venv/bin/python"
+    required_python_file_abs_path = "/tmp/test_venv/bin/python"
     constraints_file_abs_path = "/tmp/constraints.txt"
     project_descriptors = [
         {
@@ -59,7 +59,7 @@ def test_install_dependencies(mock_subprocess_check_call):
     # when:
     install_driver.install_dependencies(
         ref_root_dir_abs_path=ref_root_dir_abs_path,
-        local_python_file_abs_path=local_python_file_abs_path,
+        required_python_file_abs_path=required_python_file_abs_path,
         constraints_file_abs_path=constraints_file_abs_path,
         project_descriptors=project_descriptors,
     )
@@ -67,7 +67,7 @@ def test_install_dependencies(mock_subprocess_check_call):
     # then:
     mock_subprocess_check_call.assert_called_once_with(
         [
-            local_python_file_abs_path,
+            required_python_file_abs_path,
             "-m",
             "pip",
             "install",

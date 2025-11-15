@@ -1,7 +1,12 @@
 import os
+
 import pytest
+
 from local_test.name_assertion import assert_test_module_name_embeds_str
-from protoprimer.primer_kernel import get_venv_type, PackageDriverType
+from protoprimer.primer_kernel import (
+    get_venv_type,
+    PackageDriverType,
+)
 
 
 def test_relationship():
