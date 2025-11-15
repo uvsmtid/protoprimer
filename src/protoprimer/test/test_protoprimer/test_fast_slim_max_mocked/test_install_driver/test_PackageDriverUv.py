@@ -1,10 +1,11 @@
 import os
 import subprocess
-import pytest
 from unittest.mock import (
-    patch,
     mock_open,
+    patch,
 )
+
+import pytest
 
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
@@ -25,12 +26,12 @@ def test_create_venv(mock_subprocess_check_call):
     # given:
     uv_exec_abs_path = "/tmp/uv"
     install_driver = PackageDriverUv(uv_exec_abs_path=uv_exec_abs_path)
-    local_python_file_abs_path = "/tmp/python"
+    required_python_file_abs_path = "/tmp/python"
     venv_dir_abs_path = "/tmp/test_venv"
 
     # when:
     install_driver.create_venv(
-        local_python_file_abs_path=local_python_file_abs_path,
+        required_python_file_abs_path=required_python_file_abs_path,
         local_venv_dir_abs_path=venv_dir_abs_path,
     )
 
@@ -40,7 +41,7 @@ def test_create_venv(mock_subprocess_check_call):
             uv_exec_abs_path,
             "venv",
             "--python",
-            local_python_file_abs_path,
+            required_python_file_abs_path,
             venv_dir_abs_path,
         ]
     )
@@ -52,7 +53,7 @@ def test_install_dependencies(mock_subprocess_check_call):
     uv_exec_abs_path = "/tmp/uv"
     install_driver = PackageDriverUv(uv_exec_abs_path=uv_exec_abs_path)
     ref_root_dir_abs_path = "/tmp"
-    local_python_file_abs_path = "/tmp/test_venv/bin/python"
+    required_python_file_abs_path = "/tmp/test_venv/bin/python"
     constraints_file_abs_path = "/tmp/constraints.txt"
     project_descriptors = [
         {
@@ -68,7 +69,7 @@ def test_install_dependencies(mock_subprocess_check_call):
     # when:
     install_driver.install_dependencies(
         ref_root_dir_abs_path=ref_root_dir_abs_path,
-        local_python_file_abs_path=local_python_file_abs_path,
+        required_python_file_abs_path=required_python_file_abs_path,
         constraints_file_abs_path=constraints_file_abs_path,
         project_descriptors=project_descriptors,
     )
@@ -80,7 +81,7 @@ def test_install_dependencies(mock_subprocess_check_call):
             "pip",
             "install",
             "--python",
-            local_python_file_abs_path,
+            required_python_file_abs_path,
             "--constraint",
             constraints_file_abs_path,
             "--editable",
@@ -96,13 +97,13 @@ def test_pin_versions(mock_subprocess_check_call):
     # given:
     uv_exec_abs_path = "/tmp/uv"
     install_driver = PackageDriverUv(uv_exec_abs_path=uv_exec_abs_path)
-    local_python_file_abs_path = "/tmp/test_venv/bin/python"
+    required_python_file_abs_path = "/tmp/test_venv/bin/python"
     constraints_file_abs_path = "/tmp/constraints.txt"
 
     # when:
     with patch("builtins.open", mock_open()) as mock_file:
         install_driver.pin_versions(
-            local_python_file_abs_path=local_python_file_abs_path,
+            required_python_file_abs_path=required_python_file_abs_path,
             constraints_file_abs_path=constraints_file_abs_path,
         )
 
@@ -114,7 +115,7 @@ def test_pin_versions(mock_subprocess_check_call):
             "freeze",
             "--exclude-editable",
             "--python",
-            local_python_file_abs_path,
+            required_python_file_abs_path,
         ],
         stdout=mock_file(),
     )

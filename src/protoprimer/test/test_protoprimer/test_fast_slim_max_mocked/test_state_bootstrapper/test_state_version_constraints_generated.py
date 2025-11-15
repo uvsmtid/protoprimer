@@ -1,5 +1,4 @@
 import os
-import subprocess
 from unittest.mock import (
     patch,
 )
@@ -12,8 +11,8 @@ from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     Bootstrapper_state_client_conf_env_dir_abs_path_eval_finalized,
-    Bootstrapper_state_protoprimer_package_installed,
     Bootstrapper_state_package_driver_inited,
+    Bootstrapper_state_protoprimer_package_installed,
     ConfConstEnv,
     EnvContext,
     EnvState,
@@ -65,7 +64,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
 
         def pin_versions_impl(
-            local_python_file_abs_path,
+            required_python_file_abs_path,
             constraints_file_abs_path,
         ):
             self.fs.create_file(constraints_file_abs_path)

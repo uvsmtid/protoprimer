@@ -9,8 +9,8 @@ from protoprimer.primer_kernel import (
     AbstractCachingStateNode,
     EnvContext,
     EnvState,
-    ValueType,
     TargetState,
+    ValueType,
 )
 
 logger = logging.getLogger()

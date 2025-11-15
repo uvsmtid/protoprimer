@@ -124,8 +124,8 @@ class StateMeta(enum.Enum):
         env_state=EnvState.state_env_conf_file_data,
         sub_graph=SubGraph.graph_config,
     )
-    state_env_local_python_file_abs_path_eval_finalized = StateNodeMeta(
-        env_state=EnvState.state_env_local_python_file_abs_path_eval_finalized,
+    state_merged_required_python_file_abs_path_eval_finalized = StateNodeMeta(
+        env_state=EnvState.state_merged_required_python_file_abs_path_eval_finalized,
         sub_graph=SubGraph.graph_config,
     )
     state_env_local_venv_dir_abs_path_eval_finalized = StateNodeMeta(

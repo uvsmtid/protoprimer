@@ -1,6 +1,10 @@
 import unittest
 from unittest.mock import Mock
-from protoprimer.primer_kernel import StateGraph, StateNode
+
+from protoprimer.primer_kernel import (
+    StateGraph,
+    StateNode,
+)
 
 
 class TestStateGraph(unittest.TestCase):

@@ -1,4 +1,3 @@
-import os
 import pathlib
 
 from local_repo.sub_proc_util import (

@@ -178,8 +178,8 @@ class StateName(enum.Enum):
         NameCategory.category_loaded_data,
     )
 
-    state_env_local_python_file_abs_path_eval_finalized = StateMeta(
-        EnvState.state_env_local_python_file_abs_path_eval_finalized,
+    state_merged_required_python_file_abs_path_eval_finalized = StateMeta(
+        EnvState.state_merged_required_python_file_abs_path_eval_finalized,
         NameCategory.category_path_value,
     )
 

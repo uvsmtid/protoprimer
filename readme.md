@@ -499,7 +499,7 @@ conf_client = {
 # ./dst/default_env/proto_kernel.conf_env.json:
 conf_env = {
     # points to the required `python` version `venv` has to be initialized with:
-    "env_local_python_file_abs_path": "/usr/bin/python",
+    "required_python_file_abs_path": "/usr/bin/python",
     # points to the `python` project path within this repo:
     "env_project_descriptors": [
         {
