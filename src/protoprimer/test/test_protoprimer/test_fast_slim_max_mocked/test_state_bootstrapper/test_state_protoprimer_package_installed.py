@@ -11,17 +11,16 @@ from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     Bootstrapper_state_args_parsed,
     Bootstrapper_state_client_conf_env_dir_abs_path_eval_finalized,
-    Bootstrapper_state_env_project_descriptors_eval_finalized,
+    Bootstrapper_state_merged_project_descriptors_eval_finalized,
     Bootstrapper_state_input_do_install_var_loaded,
+    Bootstrapper_state_package_driver_inited,
     Bootstrapper_state_primer_ref_root_dir_abs_path_eval_finalized,
     Bootstrapper_state_py_exec_venv_reached,
-    Bootstrapper_state_package_driver_inited,
     ConfConstClient,
     ConfField,
     EnvContext,
     EnvState,
     ParsedArg,
-    PackageDriverPip,
     PythonExecutable,
 )
 
@@ -49,7 +48,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{Bootstrapper_state_py_exec_venv_reached.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_env_project_descriptors_eval_finalized.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_merged_project_descriptors_eval_finalized.__name__}.eval_own_state"
     )
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_input_do_install_var_loaded.__name__}.eval_own_state"
@@ -142,7 +141,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{Bootstrapper_state_py_exec_venv_reached.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_env_project_descriptors_eval_finalized.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_merged_project_descriptors_eval_finalized.__name__}.eval_own_state"
     )
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_input_do_install_var_loaded.__name__}.eval_own_state"
@@ -235,7 +234,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{Bootstrapper_state_py_exec_venv_reached.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_env_project_descriptors_eval_finalized.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_merged_project_descriptors_eval_finalized.__name__}.eval_own_state"
     )
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_input_do_install_var_loaded.__name__}.eval_own_state"
@@ -328,7 +327,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{Bootstrapper_state_py_exec_venv_reached.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_env_project_descriptors_eval_finalized.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_merged_project_descriptors_eval_finalized.__name__}.eval_own_state"
     )
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_input_do_install_var_loaded.__name__}.eval_own_state"

@@ -1,8 +1,7 @@
+import os
 import pathlib
 import shutil
-import os
 
-from local_repo.sub_proc_util import get_command_code
 from local_test.fat_mocked_helper import run_primer_main
 from local_test.integrated_helper import (
     create_conf_client_file,
@@ -15,9 +14,8 @@ from local_test.integrated_helper import (
 )
 from protoprimer.primer_kernel import (
     ConfConstClient,
-    ConfConstPrimer,
-    ConfConstEnv,
     ConfConstInput,
+    ConfConstPrimer,
     SyntaxArg,
 )
 

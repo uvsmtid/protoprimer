@@ -2,13 +2,11 @@ from __future__ import annotations
 
 import pytest
 
-
 from protoprimer.primer_kernel import (
     EnvContext,
     StateGraph,
     StateNode,
 )
-
 from .graph_utils import (
     get_transitive_dependencies,
     topological_sort,

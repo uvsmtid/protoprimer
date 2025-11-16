@@ -178,38 +178,38 @@ class StateName(enum.Enum):
         NameCategory.category_loaded_data,
     )
 
-    state_env_local_python_file_abs_path_eval_finalized = StateMeta(
-        EnvState.state_env_local_python_file_abs_path_eval_finalized,
+    state_merged_required_python_file_abs_path_eval_finalized = StateMeta(
+        EnvState.state_merged_required_python_file_abs_path_eval_finalized,
         NameCategory.category_path_value,
     )
 
-    state_env_local_venv_dir_abs_path_eval_finalized = StateMeta(
-        EnvState.state_env_local_venv_dir_abs_path_eval_finalized,
+    state_merged_local_venv_dir_abs_path_eval_finalized = StateMeta(
+        EnvState.state_merged_local_venv_dir_abs_path_eval_finalized,
         NameCategory.category_path_value,
     )
 
-    state_env_local_log_dir_abs_path_eval_finalized = StateMeta(
-        EnvState.state_env_local_log_dir_abs_path_eval_finalized,
+    state_merged_local_log_dir_abs_path_eval_finalized = StateMeta(
+        EnvState.state_merged_local_log_dir_abs_path_eval_finalized,
         NameCategory.category_path_value,
     )
 
-    state_env_local_tmp_dir_abs_path_eval_finalized = StateMeta(
-        EnvState.state_env_local_tmp_dir_abs_path_eval_finalized,
+    state_merged_local_tmp_dir_abs_path_eval_finalized = StateMeta(
+        EnvState.state_merged_local_tmp_dir_abs_path_eval_finalized,
         NameCategory.category_path_value,
     )
 
-    state_env_local_cache_dir_abs_path_eval_finalized = StateMeta(
-        EnvState.state_env_local_cache_dir_abs_path_eval_finalized,
+    state_merged_local_cache_dir_abs_path_eval_finalized = StateMeta(
+        EnvState.state_merged_local_cache_dir_abs_path_eval_finalized,
         NameCategory.category_path_value,
     )
 
-    state_env_project_descriptors_eval_finalized = StateMeta(
-        EnvState.state_env_project_descriptors_eval_finalized,
+    state_merged_project_descriptors_eval_finalized = StateMeta(
+        EnvState.state_merged_project_descriptors_eval_finalized,
         NameCategory.category_named_value,
     )
 
-    state_package_driver_selected = StateMeta(
-        EnvState.state_package_driver_selected,
+    state_merged_package_driver_eval_finalized = StateMeta(
+        EnvState.state_merged_package_driver_eval_finalized,
         NameCategory.category_state_mutation,
     )
 

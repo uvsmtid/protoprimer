@@ -8,7 +8,7 @@ from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     Bootstrapper_state_args_parsed,
-    Bootstrapper_state_env_local_log_dir_abs_path_eval_finalized,
+    Bootstrapper_state_merged_local_log_dir_abs_path_eval_finalized,
     Bootstrapper_state_input_start_id_var_loaded,
     Bootstrapper_state_input_stderr_log_level_eval_finalized,
     EnvContext,
@@ -41,7 +41,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_env_local_log_dir_abs_path_eval_finalized.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_merged_local_log_dir_abs_path_eval_finalized.__name__}.eval_own_state"
     )
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_input_stderr_log_level_eval_finalized.__name__}.eval_own_state"
@@ -49,7 +49,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     def test_success_creation(
         self,
         mock_state_input_stderr_log_level_eval_finalized,
-        mock_state_env_local_log_dir_abs_path_eval_finalized,
+        mock_state_merged_local_log_dir_abs_path_eval_finalized,
         mock_state_args_parsed,
         mock_state_input_start_id_var_loaded,
     ):
@@ -60,7 +60,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
         mock_state_input_start_id_var_loaded.return_value = self.mock_start_id
         mock_state_args_parsed.return_value = primer_kernel.argparse.Namespace()
-        mock_state_env_local_log_dir_abs_path_eval_finalized.return_value = (
+        mock_state_merged_local_log_dir_abs_path_eval_finalized.return_value = (
             self.mock_log_dir
         )
         mock_state_input_stderr_log_level_eval_finalized.return_value = logging.INFO
@@ -96,7 +96,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_env_local_log_dir_abs_path_eval_finalized.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_merged_local_log_dir_abs_path_eval_finalized.__name__}.eval_own_state"
     )
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_input_stderr_log_level_eval_finalized.__name__}.eval_own_state"
@@ -104,7 +104,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     def test_log_level_lower_than_default(
         self,
         mock_state_input_stderr_log_level_eval_finalized,
-        mock_state_env_local_log_dir_abs_path_eval_finalized,
+        mock_state_merged_local_log_dir_abs_path_eval_finalized,
         mock_state_args_parsed,
         mock_state_input_start_id_var_loaded,
     ):
@@ -115,7 +115,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
         mock_state_input_start_id_var_loaded.return_value = self.mock_start_id
         mock_state_args_parsed.return_value = primer_kernel.argparse.Namespace()
-        mock_state_env_local_log_dir_abs_path_eval_finalized.return_value = (
+        mock_state_merged_local_log_dir_abs_path_eval_finalized.return_value = (
             self.mock_log_dir
         )
         # Stderr log level is lower (more verbose) than the default file log level (INFO)
@@ -139,7 +139,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_env_local_log_dir_abs_path_eval_finalized.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_merged_local_log_dir_abs_path_eval_finalized.__name__}.eval_own_state"
     )
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_input_stderr_log_level_eval_finalized.__name__}.eval_own_state"
@@ -147,7 +147,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     def test_log_level_higher_than_default(
         self,
         mock_state_input_stderr_log_level_eval_finalized,
-        mock_state_env_local_log_dir_abs_path_eval_finalized,
+        mock_state_merged_local_log_dir_abs_path_eval_finalized,
         mock_state_args_parsed,
         mock_state_input_start_id_var_loaded,
     ):
@@ -158,7 +158,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
         mock_state_input_start_id_var_loaded.return_value = self.mock_start_id
         mock_state_args_parsed.return_value = primer_kernel.argparse.Namespace()
-        mock_state_env_local_log_dir_abs_path_eval_finalized.return_value = (
+        mock_state_merged_local_log_dir_abs_path_eval_finalized.return_value = (
             self.mock_log_dir
         )
         # Stderr log level is higher (less verbose) than the default file log level (INFO)

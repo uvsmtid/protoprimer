@@ -27,7 +27,6 @@ import sys
 import tempfile
 import typing
 import venv
-
 from typing import (
     Any,
     Generic,
@@ -36,7 +35,7 @@ from typing import (
 
 # The release process ensures that content in this file matches the version below while tagging the release commit
 # (otherwise, if the file comes from a different commit, the version is irrelevant):
-__version__ = "0.0.10"
+__version__ = "0.0.11"
 
 logger: logging.Logger = logging.getLogger()
 
@@ -175,7 +174,11 @@ class TermColor(enum.Enum):
 
 class KeyWord(enum.Enum):
 
+    key_input = "input"
+    key_primer = "primer"
+    key_client = "client"
     key_env = "env"
+    key_merged = "merged"
 
 
 class ConfLeap(enum.Enum):
@@ -183,13 +186,17 @@ class ConfLeap(enum.Enum):
     See FT_89_41_35_82.conf_leap.md
     """
 
-    leap_input = "input"
+    # surrogate: no associated config file:
+    leap_input = f"{KeyWord.key_input.value}"
 
-    leap_primer = "primer"
+    leap_primer = f"{KeyWord.key_primer.value}"
 
-    leap_client = "client"
+    leap_client = f"{KeyWord.key_client.value}"
 
     leap_env = f"{KeyWord.key_env.value}"
+
+    # surrogate: no associated config file:
+    leap_merged = f"{KeyWord.key_merged.value}"
 
 
 class PrimerRuntime(enum.Enum):
@@ -340,7 +347,7 @@ class PathName(enum.Enum):
 
     path_local_env_conf = f"{ValueName.value_local_env.value}_conf"
 
-    path_local_python = "local_python"
+    path_required_python = "required_python"
 
     path_local_venv = "local_venv"
 
@@ -409,34 +416,82 @@ class SyntaxArg:
 
 class ConfField(enum.Enum):
 
+    ####################################################################################################################
+    # `ConfLeap.leap_primer`-specific
+
+    # wizard-able:
+    # state_primer_ref_root_dir_abs_path_eval_finalized:
     field_primer_ref_root_dir_rel_path = f"{ConfLeap.leap_primer.value}_{PathName.path_ref_root.value}_{FilesystemObject.fs_object_dir.value}_{PathType.path_rel.value}"
 
+    # wizard-able:
+    # state_primer_conf_client_file_abs_path_eval_finalized:
     field_primer_conf_client_file_rel_path = f"{ConfLeap.leap_primer.value}_{PathName.path_conf_client.value}_{FilesystemObject.fs_object_file.value}_{PathType.path_rel.value}"
 
+    ####################################################################################################################
+    # `ConfLeap.leap_client`-specific
+
+    # wizard-able:
+    # state_client_link_name_dir_rel_path_eval_finalized:
     field_client_link_name_dir_rel_path = f"{ConfLeap.leap_client.value}_{PathName.path_link_name.value}_{FilesystemObject.fs_object_dir.value}_{PathType.path_rel.value}"
 
+    # wizard-able:
+    # state_client_local_env_conf_dir_rel_path_eval_finalized:
     field_client_default_env_dir_rel_path = f"{ConfLeap.leap_client.value}_{PathName.path_default_env.value}_{FilesystemObject.fs_object_dir.value}_{PathType.path_rel.value}"
 
-    field_env_local_python_file_abs_path = f"{ConfLeap.leap_env.value}_{PathName.path_local_python.value}_{FilesystemObject.fs_object_file.value}_{PathType.path_abs.value}"
+    ####################################################################################################################
+    # `ConfLeap.leap_env`-specific
 
-    field_env_local_venv_dir_rel_path = f"{ConfLeap.leap_env.value}_{PathName.path_local_venv.value}_{FilesystemObject.fs_object_dir.value}_{PathType.path_rel.value}"
+    # None at the moment.
 
-    field_env_local_log_dir_rel_path = f"{ConfLeap.leap_env.value}_{PathName.path_local_log.value}_{FilesystemObject.fs_object_dir.value}_{PathType.path_rel.value}"
+    ####################################################################################################################
+    # FT_00_22_19_59.merged_config.md: override-able fields
 
-    field_env_local_tmp_dir_rel_path = f"{ConfLeap.leap_env.value}_{PathName.path_local_tmp.value}_{FilesystemObject.fs_object_dir.value}_{PathType.path_rel.value}"
+    # wizard-able:
+    # state_merged_required_python_file_abs_path_eval_finalized:
+    field_required_python_file_abs_path = f"{PathName.path_required_python.value}_{FilesystemObject.fs_object_file.value}_{PathType.path_abs.value}"
 
-    field_env_local_cache_dir_rel_path = f"{ConfLeap.leap_env.value}_{PathName.path_local_cache.value}_{FilesystemObject.fs_object_dir.value}_{PathType.path_rel.value}"
+    # wizard-able:
+    # state_merged_local_venv_dir_abs_path_eval_finalized:
+    field_local_venv_dir_rel_path = f"{PathName.path_local_venv.value}_{FilesystemObject.fs_object_dir.value}_{PathType.path_rel.value}"
 
-    field_env_package_driver = (
-        f"{ConfLeap.leap_env.value}_{ValueName.value_package_driver.value}"
-    )
+    # TODO: make non-wizard-able-default:
+    # TODO: combine by parent dir:
+    # wizard-able:
+    # state_merged_local_log_dir_abs_path_eval_finalized:
+    field_local_log_dir_rel_path = f"{PathName.path_local_log.value}_{FilesystemObject.fs_object_dir.value}_{PathType.path_rel.value}"
 
-    field_env_project_descriptors = (
-        f"{ConfLeap.leap_env.value}_{ValueName.value_project_descriptors.value}"
-    )
+    # TODO: make non-wizard-able-default:
+    # TODO: combine by parent dir:
+    # wizard-able:
+    # state_merged_local_tmp_dir_abs_path_eval_finalized:
+    field_local_tmp_dir_rel_path = f"{PathName.path_local_tmp.value}_{FilesystemObject.fs_object_dir.value}_{PathType.path_rel.value}"
 
+    # TODO: make non-wizard-able-default:
+    # TODO: combine by parent dir:
+    # NOT wizard-able:
+    # state_merged_local_cache_dir_abs_path_eval_finalized:
+    field_local_cache_dir_rel_path = f"{PathName.path_local_cache.value}_{FilesystemObject.fs_object_dir.value}_{PathType.path_rel.value}"
+
+    # TODO: make wizard-able:
+    # NOT wizard-able:
+    # state_merged_package_driver_eval_finalized:
+    field_package_driver = f"{ValueName.value_package_driver.value}"
+
+    # parent of to-be-wizard-able `field_env_build_root_dir_rel_path` & `field_env_install_extras`:
+    # state_merged_project_descriptors_eval_finalized:
+    field_project_descriptors = f"{ValueName.value_project_descriptors.value}"
+
+    ####################################################################################################################
+
+    # TODO: add to `ConfLeap.leap_client`
+    # wizard-able:
+    # install_dependencies:
     field_env_build_root_dir_rel_path = f"{ConfLeap.leap_env.value}_{PathName.path_build_root.value}_{FilesystemObject.fs_object_dir.value}_{PathType.path_rel.value}"
 
+    # TODO: add to `ConfLeap.leap_client`
+    # non-wizard-able-default:
+    # TODO: make wizard-able
+    # install_dependencies:
     field_env_install_extras = (
         f"{ConfLeap.leap_env.value}_{ValueName.value_install_extras.value}"
     )
@@ -451,6 +506,8 @@ class ConfConstGeneral:
     default_proto_code_basename = f"{default_proto_code_module}.py"
 
     name_uv_package = "uv"
+
+    curr_dir_rel_path = "."
 
     # TODO: use lambdas to generate based on input (instead of None):
     # This is a value declared for completeness,
@@ -582,26 +639,26 @@ class PackageDriverBase:
 
     def create_venv(
         self,
-        local_python_file_abs_path: str,
+        required_python_file_abs_path: str,
         local_venv_dir_abs_path: str,
     ) -> None:
         logger.info(f"creating `venv` [{local_venv_dir_abs_path}]")
-        self._create_venv_impl(local_python_file_abs_path, local_venv_dir_abs_path)
+        self._create_venv_impl(required_python_file_abs_path, local_venv_dir_abs_path)
 
     def _create_venv_impl(
         self,
-        local_python_file_abs_path: str,
+        required_python_file_abs_path: str,
         local_venv_dir_abs_path: str,
     ) -> None:
         raise NotImplementedError()
 
     def install_packages(
         self,
-        local_python_file_abs_path: str,
+        required_python_file_abs_path: str,
         given_packages: list[str],
     ):
         sub_proc_args: list[str] = self.get_install_dependencies_cmd(
-            local_python_file_abs_path,
+            required_python_file_abs_path,
         )
         sub_proc_args.extend(given_packages)
 
@@ -612,7 +669,7 @@ class PackageDriverBase:
     def install_dependencies(
         self,
         ref_root_dir_abs_path: str,
-        local_python_file_abs_path: str,
+        required_python_file_abs_path: str,
         constraints_file_abs_path: str,
         project_descriptors: list[dict],
     ) -> None:
@@ -655,7 +712,7 @@ class PackageDriverBase:
                 )
 
         sub_proc_args = self.get_install_dependencies_cmd(
-            local_python_file_abs_path,
+            required_python_file_abs_path,
         )
         sub_proc_args.extend(
             [
@@ -672,13 +729,13 @@ class PackageDriverBase:
 
     def get_install_dependencies_cmd(
         self,
-        local_python_file_abs_path: str,
+        required_python_file_abs_path: str,
     ) -> list[str]:
         raise NotImplementedError()
 
     def pin_versions(
         self,
-        local_python_file_abs_path: str,
+        required_python_file_abs_path: str,
         constraints_file_abs_path: str,
     ) -> None:
         logger.info(
@@ -686,13 +743,13 @@ class PackageDriverBase:
         )
         with open(constraints_file_abs_path, "w") as f:
             subprocess.check_call(
-                self._get_pin_versions_cmd(local_python_file_abs_path),
+                self._get_pin_versions_cmd(required_python_file_abs_path),
                 stdout=f,
             )
 
     def _get_pin_versions_cmd(
         self,
-        local_python_file_abs_path: str,
+        required_python_file_abs_path: str,
     ) -> list[str]:
         raise NotImplementedError()
 
@@ -706,7 +763,7 @@ class PackageDriverPip(PackageDriverBase):
 
     def _create_venv_impl(
         self,
-        local_python_file_abs_path: str,
+        required_python_file_abs_path: str,
         local_venv_dir_abs_path: str,
     ) -> None:
         venv.create(
@@ -717,10 +774,10 @@ class PackageDriverPip(PackageDriverBase):
 
     def get_install_dependencies_cmd(
         self,
-        local_python_file_abs_path: str,
+        required_python_file_abs_path: str,
     ) -> list[str]:
         return [
-            local_python_file_abs_path,
+            required_python_file_abs_path,
             "-m",
             "pip",
             "install",
@@ -728,10 +785,10 @@ class PackageDriverPip(PackageDriverBase):
 
     def _get_pin_versions_cmd(
         self,
-        local_python_file_abs_path: str,
+        required_python_file_abs_path: str,
     ) -> list[str]:
         return [
-            local_python_file_abs_path,
+            required_python_file_abs_path,
             "-m",
             "pip",
             "freeze",
@@ -754,7 +811,7 @@ class PackageDriverUv(PackageDriverBase):
 
     def _create_venv_impl(
         self,
-        local_python_file_abs_path: str,
+        required_python_file_abs_path: str,
         local_venv_dir_abs_path: str,
     ) -> None:
         subprocess.check_call(
@@ -762,26 +819,26 @@ class PackageDriverUv(PackageDriverBase):
                 self.uv_exec_abs_path,
                 "venv",
                 "--python",
-                local_python_file_abs_path,
+                required_python_file_abs_path,
                 local_venv_dir_abs_path,
             ]
         )
 
     def get_install_dependencies_cmd(
         self,
-        local_python_file_abs_path: str,
+        required_python_file_abs_path: str,
     ) -> list[str]:
         return [
             self.uv_exec_abs_path,
             "pip",
             "install",
             "--python",
-            local_python_file_abs_path,
+            required_python_file_abs_path,
         ]
 
     def _get_pin_versions_cmd(
         self,
-        local_python_file_abs_path: str,
+        required_python_file_abs_path: str,
     ) -> list[str]:
         return [
             self.uv_exec_abs_path,
@@ -789,7 +846,7 @@ class PackageDriverUv(PackageDriverBase):
             "freeze",
             "--exclude-editable",
             "--python",
-            local_python_file_abs_path,
+            required_python_file_abs_path,
         ]
 
 
@@ -832,7 +889,10 @@ class FieldWizardMeta:
         self,
         field_name: str,
         field_help: typing.Callable[[FieldWizardMeta, StateNode, dict], str],
-        field_leap: ConfLeap,
+        # `ConfLeap`-s where the field can exist:
+        field_possible_leaps: list[ConfLeap],
+        # `ConfLeap`-s where the field is wizarded:
+        field_wizard_leaps: list[ConfLeap],
         # Field name which contains this field as a nested structure (normally, `None`):
         root_ancestor_field: str | None,
         # Warn if the wizard cannot handle the field:
@@ -849,26 +909,37 @@ class FieldWizardMeta:
         write_value: typing.Callable[[FieldWizardMeta, StateNode, dict, str], None],
     ):
         self.field_name: str = field_name
+
         self.field_help: typing.Callable[[FieldWizardMeta, StateNode, dict], str] = (
             FieldWizardMeta.get_callable(field_help)
         )
-        self.field_leap: ConfLeap = field_leap
-        # Set to `field_name` if `none` for simplicity:
-        self.root_ancestor_field: str = (
-            field_name if root_ancestor_field is None else root_ancestor_field
-        )
+
+        self.field_possible_leaps: list[ConfLeap] = field_possible_leaps
+
+        self.field_wizard_leaps: list[ConfLeap] = field_wizard_leaps
+
+        if root_ancestor_field is None:
+            # For simplicity, set to `field_name` if `None`:
+            self.root_ancestor_field: str = field_name
+        else:
+            self.root_ancestor_field: str = root_ancestor_field
+
         self.warn_if_not_wizard_able: typing.Callable[
             [FieldWizardMeta, StateNode, dict], str | None
         ] = FieldWizardMeta.get_callable(warn_if_not_wizard_able)
+
         self.read_value: typing.Callable[[FieldWizardMeta, StateNode, dict], str] = (
             FieldWizardMeta.get_callable(read_value)
         )
+
         self.validate_value: typing.Callable[
             [FieldWizardMeta, StateNode, dict, str], str | None
         ] = FieldWizardMeta.get_callable(validate_value)
+
         self.review_value: typing.Callable[
             [FieldWizardMeta, StateNode, dict, str], str | None
         ] = FieldWizardMeta.get_callable(review_value)
+
         self.write_value: typing.Callable[
             [FieldWizardMeta, StateNode, dict, str], None
         ] = FieldWizardMeta.get_callable(write_value)
@@ -887,14 +958,23 @@ class FieldWizardMeta:
 class WizardField(enum.Enum):
 
     @staticmethod
-    def enumerate_conf_leap_fields(
+    def enumerate_conf_leap_wizardable_fields(
         conf_leap: ConfLeap,
     ) -> list[tuple[int, WizardField]]:
-        enumerated_conf_leap_fields: list[tuple[int, WizardField]] = []
+        enumerated_conf_leap_wizardable_fields: list[tuple[int, WizardField]] = []
         for total_ordinal_i, wizard_field in enumerate(WizardField):
-            if wizard_field.value.field_leap == conf_leap:
-                enumerated_conf_leap_fields.append((total_ordinal_i, wizard_field))
-        return enumerated_conf_leap_fields
+            if conf_leap in wizard_field.value.field_wizard_leaps:
+                enumerated_conf_leap_wizardable_fields.append(
+                    (total_ordinal_i, wizard_field)
+                )
+        return enumerated_conf_leap_wizardable_fields
+
+    @staticmethod
+    def enumerate_possible_fields() -> list[tuple[int, WizardField]]:
+        enumerated_possible_fields: list[tuple[int, WizardField]] = []
+        for total_ordinal_i, wizard_field in enumerate(WizardField):
+            enumerated_possible_fields.append((total_ordinal_i, wizard_field))
+        return enumerated_possible_fields
 
     @staticmethod
     def warn_if_not_wizard_able_field_env_build_root_dir_rel_path(
@@ -914,20 +994,18 @@ class WizardField(enum.Enum):
         )
         warn_text = (
             f"WARNING: Field [{ConfField.field_env_build_root_dir_rel_path.value}] cannot be updated by the wizard anymore. "
-            f"To use the wizard for this field again, remove the entire [{ConfField.field_env_project_descriptors.value}] field manually. "
+            f"To use the wizard for this field again, remove the entire [{ConfField.field_project_descriptors.value}] field manually. "
             f"See in the corresponding [{FieldWizardMeta.__name__}] entry in the code. "
         )
-        if ConfField.field_env_project_descriptors.value not in file_data:
+        if ConfField.field_project_descriptors.value not in file_data:
             return None
-        field_env_project_descriptors = file_data[
-            ConfField.field_env_project_descriptors.value
-        ]
-        assert isinstance(field_env_project_descriptors, list)
-        if len(field_env_project_descriptors) > 1:
+        field_project_descriptors = file_data[ConfField.field_project_descriptors.value]
+        assert isinstance(field_project_descriptors, list)
+        if len(field_project_descriptors) > 1:
             return warn_text
-        if len(field_env_project_descriptors) < 1:
+        if len(field_project_descriptors) < 1:
             return None
-        single_project_descriptor = field_env_project_descriptors[0]
+        single_project_descriptor = field_project_descriptors[0]
         assert isinstance(single_project_descriptor, dict)
 
         if (
@@ -968,7 +1046,7 @@ class WizardField(enum.Enum):
                 ConfField.field_env_build_root_dir_rel_path.value
             ]
         else:
-            field_env_build_root_dir_rel_path = "."
+            field_env_build_root_dir_rel_path = ConfConstGeneral.curr_dir_rel_path
         assert isinstance(field_env_build_root_dir_rel_path, str)
 
         return field_env_build_root_dir_rel_path
@@ -987,17 +1065,15 @@ class WizardField(enum.Enum):
         """
         single_project = WizardField.get_assumed_single_project_descriptor(file_data)
         single_project[ConfField.field_env_build_root_dir_rel_path.value] = field_value
-        file_data[ConfField.field_env_project_descriptors.value] = [
+        file_data[ConfField.field_project_descriptors.value] = [
             single_project,
         ]
 
     @staticmethod
     def get_assumed_single_project_descriptor(file_data: dict) -> dict:
         project_descriptors: list[dict]
-        if ConfField.field_env_project_descriptors.value in file_data:
-            project_descriptors = file_data[
-                ConfField.field_env_project_descriptors.value
-            ]
+        if ConfField.field_project_descriptors.value in file_data:
+            project_descriptors = file_data[ConfField.field_project_descriptors.value]
         else:
             project_descriptors = []
         assert isinstance(project_descriptors, list)
@@ -1068,7 +1144,12 @@ class WizardField(enum.Enum):
             f"from the proto code script dir [{state_node.eval_parent_state(EnvState.state_input_proto_code_dir_abs_path_eval_finalized.name)}]. "
             f"Subsequently, the client reference root `{PathName.path_ref_root.value}` is used as a base path for the most of the relative paths. "
         ),
-        field_leap=ConfLeap.leap_primer,
+        field_possible_leaps=[
+            ConfLeap.leap_primer,
+        ],
+        field_wizard_leaps=[
+            ConfLeap.leap_primer,
+        ],
         root_ancestor_field=None,
         warn_if_not_wizard_able=lambda wizard_meta, state_node, file_data: None,
         read_value=read_value_trivially,
@@ -1099,7 +1180,12 @@ class WizardField(enum.Enum):
             f"Subsequently, the client global configuration `{PathName.path_conf_client.value}` (configuration not specific to the local environment) "
             f"is used by every deployment. "
         ),
-        field_leap=ConfLeap.leap_primer,
+        field_possible_leaps=[
+            ConfLeap.leap_primer,
+        ],
+        field_wizard_leaps=[
+            ConfLeap.leap_primer,
+        ],
         root_ancestor_field=None,
         warn_if_not_wizard_able=lambda wizard_meta, state_node, file_data: None,
         read_value=read_value_trivially,
@@ -1120,7 +1206,12 @@ class WizardField(enum.Enum):
             # TODO:
             f"Field `{ConfField.field_client_link_name_dir_rel_path.value}` TODO"
         ),
-        field_leap=ConfLeap.leap_client,
+        field_possible_leaps=[
+            ConfLeap.leap_client,
+        ],
+        field_wizard_leaps=[
+            ConfLeap.leap_client,
+        ],
         root_ancestor_field=None,
         warn_if_not_wizard_able=lambda wizard_meta, state_node, file_data: None,
         read_value=read_value_trivially,
@@ -1137,7 +1228,12 @@ class WizardField(enum.Enum):
             # TODO:
             f"Field `{ConfField.field_client_default_env_dir_rel_path.value}` TODO"
         ),
-        field_leap=ConfLeap.leap_client,
+        field_possible_leaps=[
+            ConfLeap.leap_client,
+        ],
+        field_wizard_leaps=[
+            ConfLeap.leap_client,
+        ],
         root_ancestor_field=None,
         warn_if_not_wizard_able=lambda wizard_meta, state_node, file_data: None,
         read_value=read_value_trivially,
@@ -1148,13 +1244,19 @@ class WizardField(enum.Enum):
         write_value=write_value_trivially,
     )
 
-    field_env_local_python_file_abs_path = FieldWizardMeta(
-        field_name=ConfField.field_env_local_python_file_abs_path.value,
+    field_required_python_file_abs_path = FieldWizardMeta(
+        field_name=ConfField.field_required_python_file_abs_path.value,
         field_help=lambda wizard_meta, state_node, file_data: (
             # TODO:
-            f"Field `{ConfField.field_env_local_python_file_abs_path.value}` TODO"
+            f"Field `{ConfField.field_required_python_file_abs_path.value}` TODO"
         ),
-        field_leap=ConfLeap.leap_env,
+        field_possible_leaps=[
+            ConfLeap.leap_client,
+            ConfLeap.leap_env,
+        ],
+        field_wizard_leaps=[
+            ConfLeap.leap_client,
+        ],
         root_ancestor_field=None,
         warn_if_not_wizard_able=lambda wizard_meta, state_node, file_data: None,
         read_value=read_value_trivially,
@@ -1165,13 +1267,19 @@ class WizardField(enum.Enum):
         write_value=write_value_trivially,
     )
 
-    field_env_local_venv_dir_rel_path = FieldWizardMeta(
-        field_name=ConfField.field_env_local_venv_dir_rel_path.value,
+    field_local_venv_dir_rel_path = FieldWizardMeta(
+        field_name=ConfField.field_local_venv_dir_rel_path.value,
         field_help=lambda wizard_meta, state_node, file_data: (
             # TODO:
-            f"Field `{ConfField.field_env_local_venv_dir_rel_path.value}` TODO"
+            f"Field `{ConfField.field_local_venv_dir_rel_path.value}` TODO"
         ),
-        field_leap=ConfLeap.leap_env,
+        field_possible_leaps=[
+            ConfLeap.leap_client,
+            ConfLeap.leap_env,
+        ],
+        field_wizard_leaps=[
+            ConfLeap.leap_client,
+        ],
         root_ancestor_field=None,
         warn_if_not_wizard_able=lambda wizard_meta, state_node, file_data: None,
         read_value=read_value_trivially,
@@ -1182,12 +1290,18 @@ class WizardField(enum.Enum):
         write_value=write_value_trivially,
     )
 
-    field_env_local_log_dir_rel_path = FieldWizardMeta(
-        field_name=ConfField.field_env_local_log_dir_rel_path.value,
+    field_local_log_dir_rel_path = FieldWizardMeta(
+        field_name=ConfField.field_local_log_dir_rel_path.value,
         field_help=lambda wizard_meta, state_node, file_data: (
-            f"Field `{ConfField.field_env_local_log_dir_rel_path.value}` (or `{PathName.path_local_log.value}` for short) leads to the client with log files."
+            f"Field `{ConfField.field_local_log_dir_rel_path.value}` (or `{PathName.path_local_log.value}` for short) leads to the client with log files."
         ),
-        field_leap=ConfLeap.leap_env,
+        field_possible_leaps=[
+            ConfLeap.leap_client,
+            ConfLeap.leap_env,
+        ],
+        field_wizard_leaps=[
+            ConfLeap.leap_client,
+        ],
         root_ancestor_field=None,
         warn_if_not_wizard_able=lambda wizard_meta, state_node, file_data: None,
         read_value=read_value_trivially,
@@ -1196,12 +1310,18 @@ class WizardField(enum.Enum):
         write_value=write_value_trivially,
     )
 
-    field_env_local_tmp_dir_rel_path = FieldWizardMeta(
-        field_name=ConfField.field_env_local_tmp_dir_rel_path.value,
+    field_local_tmp_dir_rel_path = FieldWizardMeta(
+        field_name=ConfField.field_local_tmp_dir_rel_path.value,
         field_help=lambda wizard_meta, state_node, file_data: (
-            f"Field `{ConfField.field_env_local_tmp_dir_rel_path.value}` (or `{PathName.path_local_tmp.value}` for short) leads to the client with temp files."
+            f"Field `{ConfField.field_local_tmp_dir_rel_path.value}` (or `{PathName.path_local_tmp.value}` for short) leads to the client with temp files."
         ),
-        field_leap=ConfLeap.leap_env,
+        field_possible_leaps=[
+            ConfLeap.leap_client,
+            ConfLeap.leap_env,
+        ],
+        field_wizard_leaps=[
+            ConfLeap.leap_client,
+        ],
         root_ancestor_field=None,
         warn_if_not_wizard_able=lambda wizard_meta, state_node, file_data: None,
         read_value=read_value_trivially,
@@ -1216,8 +1336,14 @@ class WizardField(enum.Enum):
             # TODO:
             f"Field `{ConfField.field_env_build_root_dir_rel_path.value}` TODO"
         ),
-        field_leap=ConfLeap.leap_env,
-        root_ancestor_field=ConfField.field_env_project_descriptors.value,
+        field_possible_leaps=[
+            ConfLeap.leap_client,
+            ConfLeap.leap_env,
+        ],
+        field_wizard_leaps=[
+            ConfLeap.leap_client,
+        ],
+        root_ancestor_field=ConfField.field_project_descriptors.value,
         warn_if_not_wizard_able=warn_if_not_wizard_able_field_env_build_root_dir_rel_path,
         read_value=read_field_env_build_root_dir_rel_path,
         # TODO:
@@ -1495,6 +1621,54 @@ class AbstractCachingStateNode(StateNode[ValueType]):
         raise NotImplementedError()
 
 
+class AbstractMergedFieldCachingStateNode(AbstractCachingStateNode[ValueType]):
+    """
+    Base class which merges field values from `ConfLeap.leap_client` and `ConfLeap.leap_env`.
+
+    See: FT_00_22_19_59.merged_config.md
+    """
+
+    def __init__(
+        self,
+        env_ctx: EnvContext,
+        parent_states: list[str],
+        state_name: str,
+        auto_bootstrap_parents: bool = True,
+    ):
+        super().__init__(
+            env_ctx=env_ctx,
+            parent_states=parent_states,
+            state_name=state_name,
+            auto_bootstrap_parents=auto_bootstrap_parents,
+        )
+        # FT_00_22_19_59.merged_config.md: merges values from both files:
+        assert (
+            EnvState.state_client_conf_file_data.name in parent_states
+            and EnvState.state_env_conf_file_data.name in parent_states
+        )
+
+    def _get_merged_value_or_default(
+        self,
+        field_name: str,
+        default_field_value: ValueType,
+    ) -> ValueType | None:
+        state_client_conf_file_data: dict = self.eval_parent_state(
+            EnvState.state_client_conf_file_data.name
+        )
+        state_env_conf_file_data: dict = self.eval_parent_state(
+            EnvState.state_env_conf_file_data.name
+        )
+        field_value: ValueType | None
+        if field_name in state_env_conf_file_data:
+            field_value = state_env_conf_file_data[field_name]
+        else:
+            field_value = state_client_conf_file_data.get(
+                field_name,
+                default_field_value,
+            )
+        return field_value
+
+
 # noinspection PyPep8Naming
 class Bootstrapper_state_input_stderr_log_level_var_loaded(
     AbstractCachingStateNode[int]
@@ -1509,7 +1683,8 @@ class Bootstrapper_state_input_stderr_log_level_var_loaded(
             env_ctx=env_ctx,
             parent_states=[],
             state_name=if_none(
-                state_name, EnvState.state_input_stderr_log_level_var_loaded.name
+                state_name,
+                EnvState.state_input_stderr_log_level_var_loaded.name,
             ),
         )
 
@@ -1543,7 +1718,8 @@ class Bootstrapper_state_input_do_install_var_loaded(AbstractCachingStateNode[bo
             env_ctx=env_ctx,
             parent_states=[],
             state_name=if_none(
-                state_name, EnvState.state_input_do_install_var_loaded.name
+                state_name,
+                EnvState.state_input_do_install_var_loaded.name,
             ),
         )
 
@@ -1575,7 +1751,8 @@ class Bootstrapper_state_default_stderr_log_handler_configured(
                 EnvState.state_input_stderr_log_level_var_loaded.name,
             ],
             state_name=if_none(
-                state_name, EnvState.state_default_stderr_log_handler_configured.name
+                state_name,
+                EnvState.state_default_stderr_log_handler_configured.name,
             ),
         )
 
@@ -1608,7 +1785,10 @@ class Bootstrapper_state_args_parsed(AbstractCachingStateNode[argparse.Namespace
         super().__init__(
             env_ctx=env_ctx,
             parent_states=[],
-            state_name=if_none(state_name, EnvState.state_args_parsed.name),
+            state_name=if_none(
+                state_name,
+                EnvState.state_args_parsed.name,
+            ),
         )
 
     def _eval_state_once(
@@ -1634,7 +1814,8 @@ class Bootstrapper_state_input_wizard_stage_arg_loaded(
                 EnvState.state_args_parsed.name,
             ],
             state_name=if_none(
-                state_name, EnvState.state_input_wizard_stage_arg_loaded.name
+                state_name,
+                EnvState.state_input_wizard_stage_arg_loaded.name,
             ),
         )
 
@@ -1744,7 +1925,8 @@ class Bootstrapper_state_input_run_mode_arg_loaded(AbstractCachingStateNode[RunM
                 EnvState.state_args_parsed.name,
             ],
             state_name=if_none(
-                state_name, EnvState.state_input_run_mode_arg_loaded.name
+                state_name,
+                EnvState.state_input_run_mode_arg_loaded.name,
             ),
         )
 
@@ -1779,7 +1961,8 @@ class Bootstrapper_state_input_final_state_eval_finalized(
                 EnvState.state_args_parsed.name,
             ],
             state_name=if_none(
-                state_name, EnvState.state_input_final_state_eval_finalized.name
+                state_name,
+                EnvState.state_input_final_state_eval_finalized.name,
             ),
         )
 
@@ -1823,7 +2006,10 @@ class Bootstrapper_state_run_mode_executed(AbstractCachingStateNode[bool]):
                 EnvState.state_input_run_mode_arg_loaded.name,
                 EnvState.state_input_final_state_eval_finalized.name,
             ],
-            state_name=if_none(state_name, EnvState.state_run_mode_executed.name),
+            state_name=if_none(
+                state_name,
+                EnvState.state_run_mode_executed.name,
+            ),
         )
 
     def _eval_state_once(
@@ -1885,7 +2071,8 @@ class Bootstrapper_state_input_py_exec_var_loaded(
                 EnvState.state_args_parsed.name,
             ],
             state_name=if_none(
-                state_name, EnvState.state_input_py_exec_var_loaded.name
+                state_name,
+                EnvState.state_input_py_exec_var_loaded.name,
             ),
         )
 
@@ -1912,7 +2099,8 @@ class Bootstrapper_state_input_start_id_var_loaded(AbstractCachingStateNode[str]
             env_ctx=env_ctx,
             parent_states=[],
             state_name=if_none(
-                state_name, EnvState.state_input_start_id_var_loaded.name
+                state_name,
+                EnvState.state_input_start_id_var_loaded.name,
             ),
         )
 
@@ -2198,7 +2386,10 @@ class Bootstrapper_state_proto_conf_file_data(AbstractCachingStateNode[dict]):
             parent_states=[
                 EnvState.state_input_proto_conf_primer_file_abs_path_eval_finalized.name,
             ],
-            state_name=if_none(state_name, EnvState.state_proto_conf_file_data.name),
+            state_name=if_none(
+                state_name,
+                EnvState.state_proto_conf_file_data.name,
+            ),
         )
 
     def _eval_state_once(
@@ -2215,10 +2406,9 @@ class Bootstrapper_state_proto_conf_file_data(AbstractCachingStateNode[dict]):
             file_data = read_json_file(
                 state_input_proto_conf_primer_file_abs_path_eval_finalized
             )
-            verify_conf_file_data(
+            verify_conf_file_data_contains_known_fields_only(
                 state_input_proto_conf_primer_file_abs_path_eval_finalized,
                 file_data,
-                ConfLeap.leap_primer,
             )
         else:
             warn_on_missing_conf_file(
@@ -2250,7 +2440,10 @@ class Wizard_state_proto_conf_file_data(AbstractCachingStateNode[dict]):
                 # Depend on the moved state:
                 self.moved_state_name,
             ],
-            state_name=if_none(state_name, EnvState.state_proto_conf_file_data.name),
+            state_name=if_none(
+                state_name,
+                EnvState.state_proto_conf_file_data.name,
+            ),
             # Bootstrap manually to avoid touching `moved_state_node`:
             auto_bootstrap_parents=False,
         )
@@ -2278,7 +2471,7 @@ class Wizard_state_proto_conf_file_data(AbstractCachingStateNode[dict]):
             ConfLeap.leap_primer,
             state_input_proto_conf_primer_file_abs_path_eval_finalized,
             default_file_data={
-                ConfField.field_primer_ref_root_dir_rel_path.value: ".",
+                ConfField.field_primer_ref_root_dir_rel_path.value: ConfConstGeneral.curr_dir_rel_path,
                 ConfField.field_primer_conf_client_file_rel_path.value: ConfConstPrimer.default_client_conf_file_rel_path,
             },
         )
@@ -2415,7 +2608,10 @@ class Bootstrapper_state_client_conf_file_data(AbstractCachingStateNode[dict]):
             parent_states=[
                 EnvState.state_primer_conf_client_file_abs_path_eval_finalized.name,
             ],
-            state_name=if_none(state_name, EnvState.state_client_conf_file_data.name),
+            state_name=if_none(
+                state_name,
+                EnvState.state_client_conf_file_data.name,
+            ),
         )
 
     def _eval_state_once(
@@ -2435,10 +2631,9 @@ class Bootstrapper_state_client_conf_file_data(AbstractCachingStateNode[dict]):
             file_data = read_json_file(
                 state_primer_conf_client_file_abs_path_eval_finalized
             )
-            verify_conf_file_data(
+            verify_conf_file_data_contains_known_fields_only(
                 state_primer_conf_client_file_abs_path_eval_finalized,
                 file_data,
-                ConfLeap.leap_client,
             )
         else:
             # TODO: Maybe fail with assertion given that file is configured:
@@ -2470,7 +2665,10 @@ class Wizard_state_client_conf_file_data(AbstractCachingStateNode[dict]):
                 # Depend on the moved state:
                 self.moved_state_name,
             ],
-            state_name=if_none(state_name, EnvState.state_client_conf_file_data.name),
+            state_name=if_none(
+                state_name,
+                EnvState.state_client_conf_file_data.name,
+            ),
             # Bootstrap manually to avoid touching `moved_state_node`:
             auto_bootstrap_parents=False,
         )
@@ -2496,13 +2694,18 @@ class Wizard_state_client_conf_file_data(AbstractCachingStateNode[dict]):
             ConfLeap.leap_client,
             state_primer_conf_client_file_abs_path_eval_finalized,
             default_file_data={
-                # TODO: Decide how to support (or avoid) evaluation of value if it does not exist.
-                #       Maybe support few actions: check_if_exists and bootstrap_if_does_not_exists?
-                #       Using default when value is missing in data does not work here.
+                # TODO: Proposing default (when value is missing in data) does not work here.
+                #       What we want to know (before proposing default) is whether env-specific config even needed.
                 ConfField.field_client_link_name_dir_rel_path.value: ConfConstClient.default_dir_rel_path_leap_env_link_name,
                 # TODO: This should not be part of the file - defaults should be configured, not generated (or generated by extensible code):
                 # TODO: Prompt use in wizard and validate the value refers to an existing directory:
                 ConfField.field_client_default_env_dir_rel_path.value: ConfConstClient.default_client_default_env_dir_rel_path,
+                # TODO: Do not use default values directly - resolve it differently at the prev|next step based on the need:
+                ConfField.field_required_python_file_abs_path.value: ConfConstEnv.default_file_abs_path_python,
+                ConfField.field_local_venv_dir_rel_path.value: ConfConstEnv.default_dir_rel_path_venv,
+                ConfField.field_local_log_dir_rel_path.value: ConfConstEnv.default_dir_rel_path_log,
+                ConfField.field_local_tmp_dir_rel_path.value: ConfConstEnv.default_dir_rel_path_tmp,
+                ConfField.field_project_descriptors.value: ConfConstEnv.default_project_descriptors,
             },
         )
 
@@ -2861,7 +3064,10 @@ class Bootstrapper_state_env_conf_file_data(AbstractCachingStateNode[dict]):
             parent_states=[
                 EnvState.state_client_conf_env_file_abs_path_eval_finalized.name,
             ],
-            state_name=if_none(state_name, EnvState.state_env_conf_file_data.name),
+            state_name=if_none(
+                state_name,
+                EnvState.state_env_conf_file_data.name,
+            ),
         )
 
     def _eval_state_once(
@@ -2876,10 +3082,9 @@ class Bootstrapper_state_env_conf_file_data(AbstractCachingStateNode[dict]):
             file_data = read_json_file(
                 state_client_conf_env_file_abs_path_eval_finalized
             )
-            verify_conf_file_data(
+            verify_conf_file_data_contains_known_fields_only(
                 state_client_conf_env_file_abs_path_eval_finalized,
                 file_data,
-                ConfLeap.leap_env,
             )
         else:
             warn_on_missing_conf_file(
@@ -2888,9 +3093,9 @@ class Bootstrapper_state_env_conf_file_data(AbstractCachingStateNode[dict]):
             # TODO: If `pyproject.toml` exists, use `.`, if not, use empty list:
             file_data = {
                 # TODO: `ConfConstEnv.default_project_descriptors` is not suitable for `instant` condition:
-                ConfField.field_env_project_descriptors.value: [
+                ConfField.field_project_descriptors.value: [
                     {
-                        ConfField.field_env_build_root_dir_rel_path.value: ".",
+                        ConfField.field_env_build_root_dir_rel_path.value: ConfConstGeneral.curr_dir_rel_path,
                     },
                 ],
             }
@@ -2917,7 +3122,10 @@ class Wizard_state_env_conf_file_data(AbstractCachingStateNode[dict]):
                 # Depend on the moved state:
                 self.moved_state_name,
             ],
-            state_name=if_none(state_name, EnvState.state_env_conf_file_data.name),
+            state_name=if_none(
+                state_name,
+                EnvState.state_env_conf_file_data.name,
+            ),
             # Bootstrap manually to avoid touching `moved_state_node`:
             auto_bootstrap_parents=False,
         )
@@ -2946,15 +3154,7 @@ class Wizard_state_env_conf_file_data(AbstractCachingStateNode[dict]):
             self,
             ConfLeap.leap_env,
             state_client_conf_env_file_abs_path_eval_finalized,
-            default_file_data={
-                # TODO: Do not use default values directly - resolve it differently at the prev|next step based on the need:
-                ConfField.field_env_local_python_file_abs_path.value: ConfConstEnv.default_file_abs_path_python,
-                # TODO: Do not use default values directly - resolve it differently at the prev|next step based on the need:
-                ConfField.field_env_local_venv_dir_rel_path.value: ConfConstEnv.default_dir_rel_path_venv,
-                ConfField.field_env_local_log_dir_rel_path.value: ConfConstEnv.default_dir_rel_path_log,
-                ConfField.field_env_local_tmp_dir_rel_path.value: ConfConstEnv.default_dir_rel_path_tmp,
-                ConfField.field_env_project_descriptors.value: ConfConstEnv.default_project_descriptors,
-            },
+            default_file_data={},
         )
 
         # Finish the wizard because this is the final wizard state:
@@ -2966,8 +3166,8 @@ class Wizard_state_env_conf_file_data(AbstractCachingStateNode[dict]):
 
 
 # noinspection PyPep8Naming
-class Bootstrapper_state_env_local_python_file_abs_path_eval_finalized(
-    AbstractCachingStateNode[str]
+class Bootstrapper_state_merged_required_python_file_abs_path_eval_finalized(
+    AbstractMergedFieldCachingStateNode[str]
 ):
 
     def __init__(
@@ -2979,43 +3179,43 @@ class Bootstrapper_state_env_local_python_file_abs_path_eval_finalized(
             env_ctx=env_ctx,
             parent_states=[
                 EnvState.state_primer_ref_root_dir_abs_path_eval_finalized.name,
+                EnvState.state_client_conf_file_data.name,
                 EnvState.state_env_conf_file_data.name,
             ],
             state_name=if_none(
                 state_name,
-                EnvState.state_env_local_python_file_abs_path_eval_finalized.name,
+                EnvState.state_merged_required_python_file_abs_path_eval_finalized.name,
             ),
         )
 
     def _eval_state_once(
         self,
     ) -> ValueType:
-        state_env_conf_file_data: dict = self.eval_parent_state(
-            EnvState.state_env_conf_file_data.name
+
+        state_merged_required_python_file_abs_path_eval_finalized: str = (
+            self._get_merged_value_or_default(
+                ConfField.field_required_python_file_abs_path.value,
+                # TODO: Do not use default values directly - resolve it differently at the prev|next step based on the need:
+                ConfConstEnv.default_file_abs_path_python,
+            )
         )
 
-        state_env_local_python_file_abs_path_eval_finalized = state_env_conf_file_data.get(
-            ConfField.field_env_local_python_file_abs_path.value,
-            # TODO: Do not use default values directly - resolve it differently at the prev|next step based on the need:
-            ConfConstEnv.default_file_abs_path_python,
-        )
-
-        if not os.path.isabs(state_env_local_python_file_abs_path_eval_finalized):
+        if not os.path.isabs(state_merged_required_python_file_abs_path_eval_finalized):
             # TODO: Really? Do we really want to allow specifying `python` using rel path?
-            #       Regardless, even if rel path, the `field_env_local_python_file_abs_path.value` should remove `abs` from the name then.
-            state_env_local_python_file_abs_path_eval_finalized = os.path.join(
+            #       Regardless, even if rel path, the `field_required_python_file_abs_path.value` should remove `abs` from the name then.
+            state_merged_required_python_file_abs_path_eval_finalized = os.path.join(
                 self.eval_parent_state(
                     EnvState.state_primer_ref_root_dir_abs_path_eval_finalized.name
                 ),
-                state_env_local_python_file_abs_path_eval_finalized,
+                state_merged_required_python_file_abs_path_eval_finalized,
             )
 
-        return state_env_local_python_file_abs_path_eval_finalized
+        return state_merged_required_python_file_abs_path_eval_finalized
 
 
 # noinspection PyPep8Naming
-class Bootstrapper_state_env_local_venv_dir_abs_path_eval_finalized(
-    AbstractCachingStateNode[str]
+class Bootstrapper_state_merged_local_venv_dir_abs_path_eval_finalized(
+    AbstractMergedFieldCachingStateNode[str]
 ):
 
     def __init__(
@@ -3027,43 +3227,43 @@ class Bootstrapper_state_env_local_venv_dir_abs_path_eval_finalized(
             env_ctx=env_ctx,
             parent_states=[
                 EnvState.state_primer_ref_root_dir_abs_path_eval_finalized.name,
+                EnvState.state_client_conf_file_data.name,
                 EnvState.state_env_conf_file_data.name,
             ],
             state_name=if_none(
                 state_name,
-                EnvState.state_env_local_venv_dir_abs_path_eval_finalized.name,
+                EnvState.state_merged_local_venv_dir_abs_path_eval_finalized.name,
             ),
         )
 
     def _eval_state_once(
         self,
     ) -> ValueType:
-        state_env_conf_file_data: dict = self.eval_parent_state(
-            EnvState.state_env_conf_file_data.name
+
+        state_merged_local_venv_dir_abs_path_eval_finalized: str = (
+            self._get_merged_value_or_default(
+                ConfField.field_local_venv_dir_rel_path.value,
+                # TODO: Do not use default values directly - resolve it differently at the prev|next step based on the need:
+                ConfConstEnv.default_dir_rel_path_venv,
+            )
         )
 
-        state_env_local_venv_dir_abs_path_eval_finalized = state_env_conf_file_data.get(
-            ConfField.field_env_local_venv_dir_rel_path.value,
-            # TODO: Do not use default values directly - resolve it differently at the prev|next step based on the need:
-            ConfConstEnv.default_dir_rel_path_venv,
-        )
-
-        if not os.path.isabs(state_env_local_venv_dir_abs_path_eval_finalized):
+        if not os.path.isabs(state_merged_local_venv_dir_abs_path_eval_finalized):
             state_primer_ref_root_dir_abs_path_eval_finalized = self.eval_parent_state(
                 EnvState.state_primer_ref_root_dir_abs_path_eval_finalized.name
             )
-            state_env_local_venv_dir_abs_path_eval_finalized = os.path.join(
+            state_merged_local_venv_dir_abs_path_eval_finalized = os.path.join(
                 state_primer_ref_root_dir_abs_path_eval_finalized,
-                state_env_local_venv_dir_abs_path_eval_finalized,
+                state_merged_local_venv_dir_abs_path_eval_finalized,
             )
 
-        assert os.path.isabs(state_env_local_venv_dir_abs_path_eval_finalized)
-        return state_env_local_venv_dir_abs_path_eval_finalized
+        assert os.path.isabs(state_merged_local_venv_dir_abs_path_eval_finalized)
+        return state_merged_local_venv_dir_abs_path_eval_finalized
 
 
 # noinspection PyPep8Naming
-class Bootstrapper_state_env_local_log_dir_abs_path_eval_finalized(
-    AbstractCachingStateNode[str]
+class Bootstrapper_state_merged_local_log_dir_abs_path_eval_finalized(
+    AbstractMergedFieldCachingStateNode[str]
 ):
 
     def __init__(
@@ -3075,23 +3275,21 @@ class Bootstrapper_state_env_local_log_dir_abs_path_eval_finalized(
             env_ctx=env_ctx,
             parent_states=[
                 EnvState.state_primer_ref_root_dir_abs_path_eval_finalized.name,
+                EnvState.state_client_conf_file_data.name,
                 EnvState.state_env_conf_file_data.name,
             ],
             state_name=if_none(
                 state_name,
-                EnvState.state_env_local_log_dir_abs_path_eval_finalized.name,
+                EnvState.state_merged_local_log_dir_abs_path_eval_finalized.name,
             ),
         )
 
     def _eval_state_once(
         self,
     ) -> ValueType:
-        state_env_conf_file_data: dict = self.eval_parent_state(
-            EnvState.state_env_conf_file_data.name
-        )
 
-        field_env_local_log_dir_rel_path = state_env_conf_file_data.get(
-            ConfField.field_env_local_log_dir_rel_path.value,
+        field_local_log_dir_rel_path: str = self._get_merged_value_or_default(
+            ConfField.field_local_log_dir_rel_path.value,
             ConfConstEnv.default_dir_rel_path_log,
         )
 
@@ -3099,21 +3297,21 @@ class Bootstrapper_state_env_local_log_dir_abs_path_eval_finalized(
             EnvState.state_primer_ref_root_dir_abs_path_eval_finalized.name
         )
 
-        state_env_local_log_dir_abs_path_eval_finalized = os.path.join(
+        state_merged_local_log_dir_abs_path_eval_finalized = os.path.join(
             state_primer_ref_root_dir_abs_path_eval_finalized,
-            field_env_local_log_dir_rel_path,
+            field_local_log_dir_rel_path,
         )
-        state_env_local_log_dir_abs_path_eval_finalized = os.path.normpath(
-            state_env_local_log_dir_abs_path_eval_finalized
+        state_merged_local_log_dir_abs_path_eval_finalized = os.path.normpath(
+            state_merged_local_log_dir_abs_path_eval_finalized
         )
 
-        assert os.path.isabs(state_env_local_log_dir_abs_path_eval_finalized)
-        return state_env_local_log_dir_abs_path_eval_finalized
+        assert os.path.isabs(state_merged_local_log_dir_abs_path_eval_finalized)
+        return state_merged_local_log_dir_abs_path_eval_finalized
 
 
 # noinspection PyPep8Naming
-class Bootstrapper_state_env_local_tmp_dir_abs_path_eval_finalized(
-    AbstractCachingStateNode[str]
+class Bootstrapper_state_merged_local_tmp_dir_abs_path_eval_finalized(
+    AbstractMergedFieldCachingStateNode[str]
 ):
 
     def __init__(
@@ -3125,23 +3323,21 @@ class Bootstrapper_state_env_local_tmp_dir_abs_path_eval_finalized(
             env_ctx=env_ctx,
             parent_states=[
                 EnvState.state_primer_ref_root_dir_abs_path_eval_finalized.name,
+                EnvState.state_client_conf_file_data.name,
                 EnvState.state_env_conf_file_data.name,
             ],
             state_name=if_none(
                 state_name,
-                EnvState.state_env_local_tmp_dir_abs_path_eval_finalized.name,
+                EnvState.state_merged_local_tmp_dir_abs_path_eval_finalized.name,
             ),
         )
 
     def _eval_state_once(
         self,
     ) -> ValueType:
-        state_env_conf_file_data: dict = self.eval_parent_state(
-            EnvState.state_env_conf_file_data.name
-        )
 
-        field_env_local_tmp_dir_rel_path = state_env_conf_file_data.get(
-            ConfField.field_env_local_tmp_dir_rel_path.value,
+        field_local_tmp_dir_rel_path: str = self._get_merged_value_or_default(
+            ConfField.field_local_tmp_dir_rel_path.value,
             ConfConstEnv.default_dir_rel_path_tmp,
         )
 
@@ -3149,21 +3345,21 @@ class Bootstrapper_state_env_local_tmp_dir_abs_path_eval_finalized(
             EnvState.state_primer_ref_root_dir_abs_path_eval_finalized.name
         )
 
-        state_env_local_tmp_dir_abs_path_eval_finalized = os.path.join(
+        state_merged_local_tmp_dir_abs_path_eval_finalized = os.path.join(
             state_primer_ref_root_dir_abs_path_eval_finalized,
-            field_env_local_tmp_dir_rel_path,
+            field_local_tmp_dir_rel_path,
         )
-        state_env_local_tmp_dir_abs_path_eval_finalized = os.path.normpath(
-            state_env_local_tmp_dir_abs_path_eval_finalized
+        state_merged_local_tmp_dir_abs_path_eval_finalized = os.path.normpath(
+            state_merged_local_tmp_dir_abs_path_eval_finalized
         )
 
-        assert os.path.isabs(state_env_local_tmp_dir_abs_path_eval_finalized)
-        return state_env_local_tmp_dir_abs_path_eval_finalized
+        assert os.path.isabs(state_merged_local_tmp_dir_abs_path_eval_finalized)
+        return state_merged_local_tmp_dir_abs_path_eval_finalized
 
 
 # noinspection PyPep8Naming
-class Bootstrapper_state_env_local_cache_dir_abs_path_eval_finalized(
-    AbstractCachingStateNode[str]
+class Bootstrapper_state_merged_local_cache_dir_abs_path_eval_finalized(
+    AbstractMergedFieldCachingStateNode[str]
 ):
 
     def __init__(
@@ -3175,23 +3371,21 @@ class Bootstrapper_state_env_local_cache_dir_abs_path_eval_finalized(
             env_ctx=env_ctx,
             parent_states=[
                 EnvState.state_primer_ref_root_dir_abs_path_eval_finalized.name,
+                EnvState.state_client_conf_file_data.name,
                 EnvState.state_env_conf_file_data.name,
             ],
             state_name=if_none(
                 state_name,
-                EnvState.state_env_local_cache_dir_abs_path_eval_finalized.name,
+                EnvState.state_merged_local_cache_dir_abs_path_eval_finalized.name,
             ),
         )
 
     def _eval_state_once(
         self,
     ) -> ValueType:
-        state_env_conf_file_data: dict = self.eval_parent_state(
-            EnvState.state_env_conf_file_data.name
-        )
 
-        field_env_local_cache_dir_rel_path = state_env_conf_file_data.get(
-            ConfField.field_env_local_cache_dir_rel_path.value,
+        field_local_cache_dir_rel_path: str = self._get_merged_value_or_default(
+            ConfField.field_local_cache_dir_rel_path.value,
             ConfConstEnv.default_dir_rel_path_cache,
         )
 
@@ -3199,21 +3393,21 @@ class Bootstrapper_state_env_local_cache_dir_abs_path_eval_finalized(
             EnvState.state_primer_ref_root_dir_abs_path_eval_finalized.name
         )
 
-        state_env_local_cache_dir_abs_path_eval_finalized = os.path.join(
+        state_merged_local_cache_dir_abs_path_eval_finalized = os.path.join(
             state_primer_ref_root_dir_abs_path_eval_finalized,
-            field_env_local_cache_dir_rel_path,
+            field_local_cache_dir_rel_path,
         )
-        state_env_local_cache_dir_abs_path_eval_finalized = os.path.normpath(
-            state_env_local_cache_dir_abs_path_eval_finalized
+        state_merged_local_cache_dir_abs_path_eval_finalized = os.path.normpath(
+            state_merged_local_cache_dir_abs_path_eval_finalized
         )
 
-        assert os.path.isabs(state_env_local_cache_dir_abs_path_eval_finalized)
-        return state_env_local_cache_dir_abs_path_eval_finalized
+        assert os.path.isabs(state_merged_local_cache_dir_abs_path_eval_finalized)
+        return state_merged_local_cache_dir_abs_path_eval_finalized
 
 
 # noinspection PyPep8Naming
-class Bootstrapper_state_env_project_descriptors_eval_finalized(
-    AbstractCachingStateNode[list]
+class Bootstrapper_state_merged_project_descriptors_eval_finalized(
+    AbstractMergedFieldCachingStateNode[list]
 ):
 
     def __init__(
@@ -3224,23 +3418,21 @@ class Bootstrapper_state_env_project_descriptors_eval_finalized(
         super().__init__(
             env_ctx=env_ctx,
             parent_states=[
+                EnvState.state_client_conf_file_data.name,
                 EnvState.state_env_conf_file_data.name,
             ],
             state_name=if_none(
                 state_name,
-                EnvState.state_env_project_descriptors_eval_finalized.name,
+                EnvState.state_merged_project_descriptors_eval_finalized.name,
             ),
         )
 
     def _eval_state_once(
         self,
     ) -> ValueType:
-        state_env_conf_file_data: dict = self.eval_parent_state(
-            EnvState.state_env_conf_file_data.name
-        )
 
-        project_descriptors: list[dict] = state_env_conf_file_data.get(
-            ConfField.field_env_project_descriptors.value,
+        project_descriptors: list = self._get_merged_value_or_default(
+            ConfField.field_project_descriptors.value,
             ConfConstEnv.default_project_descriptors,
         )
 
@@ -3248,7 +3440,7 @@ class Bootstrapper_state_env_project_descriptors_eval_finalized(
 
 
 # noinspection PyPep8Naming
-class Bootstrapper_state_package_driver_selected(
+class Bootstrapper_state_merged_package_driver_eval_finalized(
     AbstractCachingStateNode[PackageDriverType]
 ):
 
@@ -3261,11 +3453,11 @@ class Bootstrapper_state_package_driver_selected(
             env_ctx=env_ctx,
             parent_states=[
                 EnvState.state_env_conf_file_data.name,
-                EnvState.state_env_local_cache_dir_abs_path_eval_finalized.name,
+                EnvState.state_merged_local_cache_dir_abs_path_eval_finalized.name,
             ],
             state_name=if_none(
                 state_name,
-                EnvState.state_package_driver_selected.name,
+                EnvState.state_merged_package_driver_eval_finalized.name,
             ),
         )
 
@@ -3276,21 +3468,21 @@ class Bootstrapper_state_package_driver_selected(
             EnvState.state_env_conf_file_data.name
         )
 
-        field_env_package_driver: PackageDriverType
+        field_package_driver: PackageDriverType
 
         if os.environ.get(EnvVar.var_PROTOPRIMER_PACKAGE_DRIVER.value, None) is None:
-            field_env_package_driver = PackageDriverType[
+            field_package_driver = PackageDriverType[
                 state_env_conf_file_data.get(
-                    ConfField.field_env_package_driver.value,
+                    ConfField.field_package_driver.value,
                     ConfConstEnv.default_package_driver,
                 )
             ]
         else:
-            field_env_package_driver = PackageDriverType[
+            field_package_driver = PackageDriverType[
                 os.environ.get(EnvVar.var_PROTOPRIMER_PACKAGE_DRIVER.value)
             ]
 
-        return field_env_package_driver
+        return field_package_driver
 
 
 # noinspection PyPep8Naming
@@ -3309,7 +3501,7 @@ class Bootstrapper_state_default_file_log_handler_configured(
                 EnvState.state_args_parsed.name,
                 EnvState.state_input_stderr_log_level_eval_finalized.name,
                 EnvState.state_input_start_id_var_loaded.name,
-                EnvState.state_env_local_log_dir_abs_path_eval_finalized.name,
+                EnvState.state_merged_local_log_dir_abs_path_eval_finalized.name,
             ],
             state_name=if_none(
                 state_name,
@@ -3325,8 +3517,10 @@ class Bootstrapper_state_default_file_log_handler_configured(
             EnvState.state_input_start_id_var_loaded.name
         )
 
-        state_env_local_log_dir_abs_path_eval_finalized: str = self.eval_parent_state(
-            EnvState.state_env_local_log_dir_abs_path_eval_finalized.name
+        state_merged_local_log_dir_abs_path_eval_finalized: str = (
+            self.eval_parent_state(
+                EnvState.state_merged_local_log_dir_abs_path_eval_finalized.name
+            )
         )
 
         state_input_stderr_log_level_eval_finalized: int = self.eval_parent_state(
@@ -3344,11 +3538,11 @@ class Bootstrapper_state_default_file_log_handler_configured(
             file_log_level = state_input_stderr_log_level_eval_finalized
 
         log_file_abs_path = os.path.join(
-            state_env_local_log_dir_abs_path_eval_finalized,
+            state_merged_local_log_dir_abs_path_eval_finalized,
             file_log_name,
         )
 
-        os.makedirs(state_env_local_log_dir_abs_path_eval_finalized, exist_ok=True)
+        os.makedirs(state_merged_local_log_dir_abs_path_eval_finalized, exist_ok=True)
 
         file_handler: logging.Handler = logging.FileHandler(log_file_abs_path)
         file_handler.addFilter(PythonExecutableFilter())
@@ -3370,7 +3564,7 @@ class Bootstrapper_state_py_exec_required_reached(
     """
     Recursively runs this script inside the `python` interpreter required by the client.
 
-    The `python` interpreter required by the client is saved into `field_env_local_python_file_abs_path`.
+    The `python` interpreter required by the client is saved into `field_required_python_file_abs_path`.
     """
 
     def __init__(
@@ -3387,13 +3581,14 @@ class Bootstrapper_state_py_exec_required_reached(
                 EnvState.state_input_start_id_var_loaded.name,
                 EnvState.state_input_proto_code_file_abs_path_eval_finalized.name,
                 EnvState.state_client_conf_env_file_abs_path_eval_finalized.name,
-                EnvState.state_env_local_python_file_abs_path_eval_finalized.name,
-                EnvState.state_env_local_venv_dir_abs_path_eval_finalized.name,
-                EnvState.state_env_local_tmp_dir_abs_path_eval_finalized.name,
+                EnvState.state_merged_required_python_file_abs_path_eval_finalized.name,
+                EnvState.state_merged_local_venv_dir_abs_path_eval_finalized.name,
+                EnvState.state_merged_local_tmp_dir_abs_path_eval_finalized.name,
                 EnvState.state_default_file_log_handler_configured.name,
             ],
             state_name=if_none(
-                state_name, EnvState.state_py_exec_required_reached.name
+                state_name,
+                EnvState.state_py_exec_required_reached.name,
             ),
         )
 
@@ -3409,8 +3604,8 @@ class Bootstrapper_state_py_exec_required_reached(
         )
 
         # TODO: Unused, but plugged in to form complete DAG: consider adding intermediate state to plug it in:
-        state_env_local_tmp_dir_abs_path_eval_finalized = self.eval_parent_state(
-            EnvState.state_env_local_tmp_dir_abs_path_eval_finalized.name
+        state_merged_local_tmp_dir_abs_path_eval_finalized = self.eval_parent_state(
+            EnvState.state_merged_local_tmp_dir_abs_path_eval_finalized.name
         )
 
         state_input_start_id_var_loaded: str = self.eval_parent_state(
@@ -3427,19 +3622,21 @@ class Bootstrapper_state_py_exec_required_reached(
             )
         )
 
-        state_env_local_python_file_abs_path_eval_finalized: str = (
+        state_merged_required_python_file_abs_path_eval_finalized: str = (
             self.eval_parent_state(
-                EnvState.state_env_local_python_file_abs_path_eval_finalized.name
+                EnvState.state_merged_required_python_file_abs_path_eval_finalized.name
             )
         )
-        state_env_local_venv_dir_abs_path_eval_finalized: str = self.eval_parent_state(
-            EnvState.state_env_local_venv_dir_abs_path_eval_finalized.name
+        state_merged_local_venv_dir_abs_path_eval_finalized: str = (
+            self.eval_parent_state(
+                EnvState.state_merged_local_venv_dir_abs_path_eval_finalized.name
+            )
         )
 
         assert not is_sub_path(
-            state_env_local_python_file_abs_path_eval_finalized,
-            state_env_local_venv_dir_abs_path_eval_finalized,
-        ), f"Configured `python` [{state_env_local_python_file_abs_path_eval_finalized}] must be outside of configured `venv` [{state_env_local_venv_dir_abs_path_eval_finalized}]"
+            state_merged_required_python_file_abs_path_eval_finalized,
+            state_merged_local_venv_dir_abs_path_eval_finalized,
+        ), f"Configured `python` [{state_merged_required_python_file_abs_path_eval_finalized}] must be outside of configured `venv` [{state_merged_local_venv_dir_abs_path_eval_finalized}]"
 
         path_to_curr_python = get_path_to_curr_python()
         logger.debug(f"path_to_curr_python: {path_to_curr_python}")
@@ -3450,17 +3647,20 @@ class Bootstrapper_state_py_exec_required_reached(
 
         assert not is_sub_path(
             path_to_curr_python,
-            state_env_local_venv_dir_abs_path_eval_finalized,
-        ), f"Current `python` [{path_to_curr_python}] must be outside of the `venv` [{state_env_local_venv_dir_abs_path_eval_finalized}]."
+            state_merged_local_venv_dir_abs_path_eval_finalized,
+        ), f"Current `python` [{path_to_curr_python}] must be outside of the `venv` [{state_merged_local_venv_dir_abs_path_eval_finalized}]."
 
-        if path_to_curr_python != state_env_local_python_file_abs_path_eval_finalized:
+        if (
+            path_to_curr_python
+            != state_merged_required_python_file_abs_path_eval_finalized
+        ):
             assert state_input_py_exec_var_loaded <= PythonExecutable.py_exec_arbitrary
             state_py_exec_required_reached = PythonExecutable.py_exec_arbitrary
             switch_python(
                 curr_py_exec=state_input_py_exec_var_loaded,
                 curr_python_path=path_to_curr_python,
                 next_py_exec=PythonExecutable.py_exec_required,
-                next_python_path=state_env_local_python_file_abs_path_eval_finalized,
+                next_python_path=state_merged_required_python_file_abs_path_eval_finalized,
                 start_id=state_input_start_id_var_loaded,
                 proto_code_abs_file_path=state_input_proto_code_file_abs_path_eval_finalized,
                 wizard_stage=self.env_ctx.mutable_state_input_wizard_stage_arg_loaded.get_curr_value(
@@ -3493,11 +3693,14 @@ class Bootstrapper_state_reinstall_triggered(AbstractCachingStateNode[bool]):
                 EnvState.state_input_start_id_var_loaded.name,
                 EnvState.state_input_proto_code_file_abs_path_eval_finalized.name,
                 EnvState.state_client_conf_env_dir_abs_path_eval_finalized.name,
-                EnvState.state_env_local_venv_dir_abs_path_eval_finalized.name,
-                EnvState.state_env_local_tmp_dir_abs_path_eval_finalized.name,
+                EnvState.state_merged_local_venv_dir_abs_path_eval_finalized.name,
+                EnvState.state_merged_local_tmp_dir_abs_path_eval_finalized.name,
                 EnvState.state_py_exec_required_reached.name,
             ],
-            state_name=if_none(state_name, EnvState.state_reinstall_triggered.name),
+            state_name=if_none(
+                state_name,
+                EnvState.state_reinstall_triggered.name,
+            ),
         )
 
     def _eval_state_once(
@@ -3535,28 +3738,28 @@ class Bootstrapper_state_reinstall_triggered(AbstractCachingStateNode[bool]):
         ):
             return False
 
-        state_env_local_venv_dir_abs_path_eval_finalized = self.eval_parent_state(
-            EnvState.state_env_local_venv_dir_abs_path_eval_finalized.name
+        state_merged_local_venv_dir_abs_path_eval_finalized = self.eval_parent_state(
+            EnvState.state_merged_local_venv_dir_abs_path_eval_finalized.name
         )
-        if os.path.exists(state_env_local_venv_dir_abs_path_eval_finalized):
+        if os.path.exists(state_merged_local_venv_dir_abs_path_eval_finalized):
 
             # Move old `venv` to temporary directory:
 
-            state_env_local_tmp_dir_abs_path_eval_finalized = self.eval_parent_state(
-                EnvState.state_env_local_tmp_dir_abs_path_eval_finalized.name
+            state_merged_local_tmp_dir_abs_path_eval_finalized = self.eval_parent_state(
+                EnvState.state_merged_local_tmp_dir_abs_path_eval_finalized.name
             )
 
             moved_venv_dir = os.path.join(
-                state_env_local_tmp_dir_abs_path_eval_finalized,
+                state_merged_local_tmp_dir_abs_path_eval_finalized,
                 f"venv.before.{state_input_start_id_var_loaded}",
             )
 
             logger.info(
-                f"moving `venv` dir from [{state_env_local_venv_dir_abs_path_eval_finalized}] to [{moved_venv_dir}]"
+                f"moving `venv` dir from [{state_merged_local_venv_dir_abs_path_eval_finalized}] to [{moved_venv_dir}]"
             )
 
             shutil.move(
-                state_env_local_venv_dir_abs_path_eval_finalized, moved_venv_dir
+                state_merged_local_venv_dir_abs_path_eval_finalized, moved_venv_dir
             )
 
         state_client_conf_env_dir_abs_path_eval_finalized = self.eval_parent_state(
@@ -3585,39 +3788,46 @@ class Bootstrapper_state_package_driver_inited(
         super().__init__(
             env_ctx=env_ctx,
             parent_states=[
-                EnvState.state_env_local_python_file_abs_path_eval_finalized.name,
-                EnvState.state_env_local_cache_dir_abs_path_eval_finalized.name,
-                EnvState.state_package_driver_selected.name,
+                EnvState.state_merged_required_python_file_abs_path_eval_finalized.name,
+                EnvState.state_merged_local_cache_dir_abs_path_eval_finalized.name,
+                EnvState.state_merged_package_driver_eval_finalized.name,
                 EnvState.state_reinstall_triggered.name,
             ],
-            state_name=if_none(state_name, EnvState.state_package_driver_inited.name),
+            state_name=if_none(
+                state_name,
+                EnvState.state_package_driver_inited.name,
+            ),
         )
 
     def _eval_state_once(
         self,
     ) -> ValueType:
 
-        state_env_local_python_file_abs_path_eval_finalized: str = (
+        state_merged_required_python_file_abs_path_eval_finalized: str = (
             self.eval_parent_state(
-                EnvState.state_env_local_python_file_abs_path_eval_finalized.name
+                EnvState.state_merged_required_python_file_abs_path_eval_finalized.name
             )
         )
 
-        state_package_driver_selected: PackageDriverType = self.eval_parent_state(
-            EnvState.state_package_driver_selected.name
+        state_merged_package_driver_eval_finalized: PackageDriverType = (
+            self.eval_parent_state(
+                EnvState.state_merged_package_driver_eval_finalized.name
+            )
         )
 
-        state_env_local_cache_dir_abs_path_eval_finalized: str = self.eval_parent_state(
-            EnvState.state_env_local_cache_dir_abs_path_eval_finalized.name
+        state_merged_local_cache_dir_abs_path_eval_finalized: str = (
+            self.eval_parent_state(
+                EnvState.state_merged_local_cache_dir_abs_path_eval_finalized.name
+            )
         )
 
         package_driver: PackageDriverBase
-        if PackageDriverType.driver_uv == state_package_driver_selected:
+        if PackageDriverType.driver_uv == state_merged_package_driver_eval_finalized:
             # TODO: assert python version suitable for `uv`
 
             uv_venv_abs_path = os.path.join(
                 # TODO: make it relative to "cache/venv" specifically (instead of directly to "cache"):
-                state_env_local_cache_dir_abs_path_eval_finalized,
+                state_merged_local_cache_dir_abs_path_eval_finalized,
                 # TODO: take from config (or default constant):
                 "venv",
                 # TODO: take from config (or default constant):
@@ -3632,7 +3842,7 @@ class Bootstrapper_state_package_driver_inited(
                 # To use `PackageDriverType.driver_uv`, use `PackageDriverType.driver_pip` to install `uv` first:
                 pip_driver = PackageDriverPip()
                 pip_driver.create_venv(
-                    state_env_local_python_file_abs_path_eval_finalized,
+                    state_merged_required_python_file_abs_path_eval_finalized,
                     uv_venv_abs_path,
                 )
                 uv_exec_venv_python_abs_path = os.path.join(
@@ -3653,13 +3863,13 @@ class Bootstrapper_state_package_driver_inited(
                 uv_exec_abs_path=uv_exec_abs_path,
             )
 
-        elif PackageDriverType.driver_pip == state_package_driver_selected:
+        elif PackageDriverType.driver_pip == state_merged_package_driver_eval_finalized:
             # Nothing to do:
             # `PackageDriverType.driver_pip` is available by default with the new ` venv ` without installation.
             package_driver = PackageDriverPip()
         else:
             raise AssertionError(
-                f"unsupported `{PackageDriverType.__name__}` [{state_package_driver_selected.name}]"
+                f"unsupported `{PackageDriverType.__name__}` [{state_merged_package_driver_eval_finalized.name}]"
             )
 
         return package_driver
@@ -3687,12 +3897,15 @@ class Bootstrapper_state_py_exec_venv_reached(
                 EnvState.state_input_start_id_var_loaded.name,
                 EnvState.state_input_proto_code_file_abs_path_eval_finalized.name,
                 EnvState.state_client_conf_env_file_abs_path_eval_finalized.name,
-                EnvState.state_env_local_python_file_abs_path_eval_finalized.name,
-                EnvState.state_env_local_venv_dir_abs_path_eval_finalized.name,
+                EnvState.state_merged_required_python_file_abs_path_eval_finalized.name,
+                EnvState.state_merged_local_venv_dir_abs_path_eval_finalized.name,
                 EnvState.state_reinstall_triggered.name,
                 EnvState.state_package_driver_inited.name,
             ],
-            state_name=if_none(state_name, EnvState.state_py_exec_venv_reached.name),
+            state_name=if_none(
+                state_name,
+                EnvState.state_py_exec_venv_reached.name,
+            ),
         )
 
     def _eval_state_once(
@@ -3719,13 +3932,15 @@ class Bootstrapper_state_py_exec_venv_reached(
             )
         )
 
-        state_env_local_python_file_abs_path_eval_finalized: str = (
+        state_merged_required_python_file_abs_path_eval_finalized: str = (
             self.eval_parent_state(
-                EnvState.state_env_local_python_file_abs_path_eval_finalized.name
+                EnvState.state_merged_required_python_file_abs_path_eval_finalized.name
             )
         )
-        state_env_local_venv_dir_abs_path_eval_finalized: str = self.eval_parent_state(
-            EnvState.state_env_local_venv_dir_abs_path_eval_finalized.name
+        state_merged_local_venv_dir_abs_path_eval_finalized: str = (
+            self.eval_parent_state(
+                EnvState.state_merged_local_venv_dir_abs_path_eval_finalized.name
+            )
         )
 
         state_package_driver_inited: PackageDriverBase = self.eval_parent_state(
@@ -3733,7 +3948,7 @@ class Bootstrapper_state_py_exec_venv_reached(
         )
 
         venv_path_to_python: str = os.path.join(
-            state_env_local_venv_dir_abs_path_eval_finalized,
+            state_merged_local_venv_dir_abs_path_eval_finalized,
             ConfConstGeneral.file_rel_path_venv_python,
         )
         path_to_curr_python: str = get_path_to_curr_python()
@@ -3745,42 +3960,42 @@ class Bootstrapper_state_py_exec_venv_reached(
 
         if is_sub_path(
             path_to_curr_python,
-            state_env_local_venv_dir_abs_path_eval_finalized,
+            state_merged_local_venv_dir_abs_path_eval_finalized,
         ):
             raise AssertionError(
-                f"Current `python` [{path_to_curr_python}] must be outside of `venv` [{state_env_local_venv_dir_abs_path_eval_finalized}]."
+                f"Current `python` [{path_to_curr_python}] must be outside of `venv` [{state_merged_local_venv_dir_abs_path_eval_finalized}]."
             )
 
         if os.environ.get(EnvVar.var_PROTOPRIMER_TEST_MODE.value, None) is None:
             if (
                 path_to_curr_python
-                != state_env_local_python_file_abs_path_eval_finalized
+                != state_merged_required_python_file_abs_path_eval_finalized
             ):
                 raise AssertionError(
-                    f"Current `python` [{path_to_curr_python}] must match the required one [{state_env_local_python_file_abs_path_eval_finalized}]."
+                    f"Current `python` [{path_to_curr_python}] must match the required one [{state_merged_required_python_file_abs_path_eval_finalized}]."
                 )
 
         assert state_input_py_exec_var_loaded <= PythonExecutable.py_exec_required
         state_py_exec_venv_reached = PythonExecutable.py_exec_required
-        if not os.path.exists(state_env_local_venv_dir_abs_path_eval_finalized):
+        if not os.path.exists(state_merged_local_venv_dir_abs_path_eval_finalized):
             state_package_driver_inited.create_venv(
-                state_env_local_python_file_abs_path_eval_finalized,
-                state_env_local_venv_dir_abs_path_eval_finalized,
+                state_merged_required_python_file_abs_path_eval_finalized,
+                state_merged_local_venv_dir_abs_path_eval_finalized,
             )
         else:
             logger.info(
-                f"reusing existing `venv` [{state_env_local_venv_dir_abs_path_eval_finalized}]"
+                f"reusing existing `venv` [{state_merged_local_venv_dir_abs_path_eval_finalized}]"
             )
             if not state_package_driver_inited.is_mine_venv(
-                state_env_local_venv_dir_abs_path_eval_finalized,
+                state_merged_local_venv_dir_abs_path_eval_finalized,
             ):
                 raise AssertionError(
-                    f"`venv` [{state_env_local_venv_dir_abs_path_eval_finalized}] was not created by this driver [{state_package_driver_inited.get_type().name}] retry with [{SyntaxArg.arg_reinstall}]"
+                    f"`venv` [{state_merged_local_venv_dir_abs_path_eval_finalized}] was not created by this driver [{state_package_driver_inited.get_type().name}] retry with [{SyntaxArg.arg_reinstall}]"
                 )
 
         switch_python(
             curr_py_exec=state_input_py_exec_var_loaded,
-            curr_python_path=state_env_local_python_file_abs_path_eval_finalized,
+            curr_python_path=state_merged_required_python_file_abs_path_eval_finalized,
             next_py_exec=PythonExecutable.py_exec_venv,
             next_python_path=venv_path_to_python,
             start_id=state_input_start_id_var_loaded,
@@ -3808,12 +4023,13 @@ class Bootstrapper_state_protoprimer_package_installed(AbstractCachingStateNode[
                 EnvState.state_args_parsed.name,
                 EnvState.state_primer_ref_root_dir_abs_path_eval_finalized.name,
                 EnvState.state_client_conf_env_dir_abs_path_eval_finalized.name,
-                EnvState.state_env_project_descriptors_eval_finalized.name,
+                EnvState.state_merged_project_descriptors_eval_finalized.name,
                 EnvState.state_package_driver_inited.name,
                 EnvState.state_py_exec_venv_reached.name,
             ],
             state_name=if_none(
-                state_name, EnvState.state_protoprimer_package_installed.name
+                state_name,
+                EnvState.state_protoprimer_package_installed.name,
             ),
         )
 
@@ -3842,9 +4058,9 @@ class Bootstrapper_state_protoprimer_package_installed(AbstractCachingStateNode[
             EnvState.state_client_conf_env_dir_abs_path_eval_finalized.name
         )
 
-        state_env_project_descriptors_eval_finalized: list[dict] = (
+        state_merged_project_descriptors_eval_finalized: list[dict] = (
             self.eval_parent_state(
-                EnvState.state_env_project_descriptors_eval_finalized.name
+                EnvState.state_merged_project_descriptors_eval_finalized.name
             )
         )
 
@@ -3873,7 +4089,7 @@ class Bootstrapper_state_protoprimer_package_installed(AbstractCachingStateNode[
             logger.info(f"creating empty constraints file [{constraints_txt_path}]")
             write_text_file(constraints_txt_path, "")
 
-        if len(state_env_project_descriptors_eval_finalized) == 0:
+        if len(state_merged_project_descriptors_eval_finalized) == 0:
             logger.warning(
                 f"{ValueName.value_project_descriptors.value} is empty - nothing to install"
             )
@@ -3883,7 +4099,7 @@ class Bootstrapper_state_protoprimer_package_installed(AbstractCachingStateNode[
             state_primer_ref_root_dir_abs_path_eval_finalized,
             get_path_to_curr_python(),
             constraints_txt_path,
-            state_env_project_descriptors_eval_finalized,
+            state_merged_project_descriptors_eval_finalized,
         )
 
         return True
@@ -3908,7 +4124,8 @@ class Bootstrapper_state_version_constraints_generated(AbstractCachingStateNode[
                 EnvState.state_protoprimer_package_installed.name,
             ],
             state_name=if_none(
-                state_name, EnvState.state_version_constraints_generated.name
+                state_name,
+                EnvState.state_version_constraints_generated.name,
             ),
         )
 
@@ -4043,7 +4260,10 @@ class Bootstrapper_state_proto_code_updated(AbstractCachingStateNode[bool]):
                 EnvState.state_input_proto_code_file_abs_path_eval_finalized.name,
                 EnvState.state_py_exec_updated_protoprimer_package_reached.name,
             ],
-            state_name=if_none(state_name, EnvState.state_proto_code_updated.name),
+            state_name=if_none(
+                state_name,
+                EnvState.state_proto_code_updated.name,
+            ),
         )
 
     def _eval_state_once(
@@ -4151,7 +4371,8 @@ class Bootstrapper_state_py_exec_updated_proto_code(
                 EnvState.state_proto_code_updated.name,
             ],
             state_name=if_none(
-                state_name, EnvState.state_py_exec_updated_proto_code.name
+                state_name,
+                EnvState.state_py_exec_updated_proto_code.name,
             ),
         )
 
@@ -4239,7 +4460,10 @@ class Bootstrapper_state_command_executed(AbstractCachingStateNode[int]):
                     EnvState.state_py_exec_updated_proto_code.name,
                 ],
             ),
-            state_name=if_none(state_name, EnvState.state_command_executed.name),
+            state_name=if_none(
+                state_name,
+                EnvState.state_command_executed.name,
+            ),
         )
         self.shell_args: list[str] = []
         # TODO: get path automatically (or by config) - this will not work for everyone:
@@ -4420,36 +4644,37 @@ class EnvState(enum.Enum):
     # The state is wizard-able by `Wizard_state_env_conf_file_data`:
     state_env_conf_file_data = Bootstrapper_state_env_conf_file_data
 
-    # TODO: rename: `local_python` -> `required_python`:
-    state_env_local_python_file_abs_path_eval_finalized = (
-        Bootstrapper_state_env_local_python_file_abs_path_eval_finalized
+    state_merged_required_python_file_abs_path_eval_finalized = (
+        Bootstrapper_state_merged_required_python_file_abs_path_eval_finalized
     )
 
     # TODO: log, tmp, venv, ... dirs should better be configured at client level:
-    state_env_local_venv_dir_abs_path_eval_finalized = (
-        Bootstrapper_state_env_local_venv_dir_abs_path_eval_finalized
+    state_merged_local_venv_dir_abs_path_eval_finalized = (
+        Bootstrapper_state_merged_local_venv_dir_abs_path_eval_finalized
     )
 
     # TODO: log, tmp, venv, ... dirs should better be configured at client level:
-    state_env_local_log_dir_abs_path_eval_finalized = (
-        Bootstrapper_state_env_local_log_dir_abs_path_eval_finalized
+    state_merged_local_log_dir_abs_path_eval_finalized = (
+        Bootstrapper_state_merged_local_log_dir_abs_path_eval_finalized
     )
 
     # TODO: log, tmp, venv, ... dirs should better be configured at client level:
-    state_env_local_tmp_dir_abs_path_eval_finalized = (
-        Bootstrapper_state_env_local_tmp_dir_abs_path_eval_finalized
+    state_merged_local_tmp_dir_abs_path_eval_finalized = (
+        Bootstrapper_state_merged_local_tmp_dir_abs_path_eval_finalized
     )
 
     # TODO: log, tmp, venv, ... dirs should better be configured at client level:
-    state_env_local_cache_dir_abs_path_eval_finalized = (
-        Bootstrapper_state_env_local_cache_dir_abs_path_eval_finalized
+    state_merged_local_cache_dir_abs_path_eval_finalized = (
+        Bootstrapper_state_merged_local_cache_dir_abs_path_eval_finalized
     )
 
-    state_env_project_descriptors_eval_finalized = (
-        Bootstrapper_state_env_project_descriptors_eval_finalized
+    state_merged_project_descriptors_eval_finalized = (
+        Bootstrapper_state_merged_project_descriptors_eval_finalized
     )
 
-    state_package_driver_selected = Bootstrapper_state_package_driver_selected
+    state_merged_package_driver_eval_finalized = (
+        Bootstrapper_state_merged_package_driver_eval_finalized
+    )
 
     state_default_file_log_handler_configured = (
         Bootstrapper_state_default_file_log_handler_configured
@@ -4497,7 +4722,7 @@ class TargetState(enum.Enum):
     target_run_mode_executed = EnvState.state_run_mode_executed
 
     # When all config files loaded:
-    target_config_loaded = EnvState.state_package_driver_selected
+    target_config_loaded = EnvState.state_merged_package_driver_eval_finalized
 
     # The final state before switching to `PrimerRuntime.runtime_neo`:
     target_proto_bootstrap_completed = EnvState.state_command_executed
@@ -4791,6 +5016,7 @@ def warn_on_missing_conf_file(
 
 def wizard_confirm_single_value(
     state_node: StateNode,
+    conf_leap: ConfLeap,
     wizard_meta: FieldWizardMeta,
     file_data: dict,
     sub_ordinal_n: int,
@@ -4805,7 +5031,7 @@ def wizard_confirm_single_value(
     while True:
         print("---")
         print(f"Total progress: {total_ordinal_n}/{total_size}")
-        print(f"[{wizard_meta.field_leap.name}] progress: {sub_ordinal_n}/{sub_size}")
+        print(f"[{conf_leap.name}] progress: {sub_ordinal_n}/{sub_size}")
         print(
             f"{TermColor.field_name.value}Field: {wizard_meta.field_name}{TermColor.reset_style.value}"
         )
@@ -4858,7 +5084,10 @@ def wizard_confirm_single_value(
             )
 
         validation_error = wizard_meta.validate_value(
-            wizard_meta, state_node, file_data, new_param_value
+            wizard_meta,
+            state_node,
+            file_data,
+            new_param_value,
         )
         if validation_error is not None:
             print(
@@ -4929,10 +5158,9 @@ def wizard_conf_file(
     else:
         file_data = default_file_data
 
-    verify_conf_file_data(
+    verify_conf_file_data_contains_known_fields_only(
         conf_abs_path,
         file_data,
-        conf_leap,
     )
 
     wizard_stage: WizardStage = (
@@ -4970,7 +5198,9 @@ def wizard_conf_leap(
     Wizard through every field for the given `ConfLeap`.
     """
 
-    enumerated_conf_leap_fields = WizardField.enumerate_conf_leap_fields(conf_leap)
+    enumerated_conf_leap_fields = WizardField.enumerate_conf_leap_wizardable_fields(
+        conf_leap
+    )
     total_size = len(WizardField)
     sub_size = len(enumerated_conf_leap_fields)
 
@@ -4987,6 +5217,7 @@ def wizard_conf_leap(
         ):
             wizard_confirm_single_value(
                 state_node,
+                conf_leap,
                 wizard_field.value,
                 file_data,
                 sub_ordinal_i + 1,
@@ -5024,7 +5255,9 @@ def wizard_print_summary(
     conf_leap: ConfLeap,
 ) -> None:
 
-    enumerated_conf_leap_fields = WizardField.enumerate_conf_leap_fields(conf_leap)
+    enumerated_conf_leap_fields = WizardField.enumerate_conf_leap_wizardable_fields(
+        conf_leap
+    )
 
     # Construct data for specific `conf_leap` only:
     summary_data = {}
@@ -5041,25 +5274,24 @@ def wizard_print_summary(
     print(json.dumps(summary_data, indent=4))
 
 
-def verify_conf_file_data(
+def verify_conf_file_data_contains_known_fields_only(
     file_path: str,
     file_data: dict,
-    conf_leap: ConfLeap,
 ) -> None:
     """
-    Verifies that the config file data contains all expected fields and no extra fields.
+    Verifies that the config file data contains no unknown fields.
+
+    Because config files can be combined, any defined field (regardless of `ConfLeap`) is possible.
+
+    See: FT_00_22_19_59.merged_config.md
     """
     expected_fields = {
         wizard_field.value.root_ancestor_field
-        for _, wizard_field in WizardField.enumerate_conf_leap_fields(conf_leap)
+        for _, wizard_field in WizardField.enumerate_possible_fields()
     }
     actual_fields = set(file_data.keys())
 
-    missing_fields = expected_fields - actual_fields
     extra_fields = actual_fields - expected_fields
-
-    for field_name in missing_fields:
-        logger.warning(f"missing field [{field_name}] in config file [{file_path}]")
 
     for field_name in extra_fields:
         logger.warning(f"extra field [{field_name}] in config file [{file_path}]")

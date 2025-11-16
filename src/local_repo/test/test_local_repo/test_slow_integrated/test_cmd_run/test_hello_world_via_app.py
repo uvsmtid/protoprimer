@@ -1,5 +1,3 @@
-import pathlib
-
 from local_repo.sub_proc_util import (
     get_command_code,
 )

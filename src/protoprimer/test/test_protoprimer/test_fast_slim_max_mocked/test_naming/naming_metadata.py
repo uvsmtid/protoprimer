@@ -133,19 +133,37 @@ class NameCategory(enum.Enum):
         ],
     )
 
-    category_value_field = CategoryMeta(
+    category_leap_value_field = CategoryMeta(
         name_enums=[
             ConfLeap,
             ValueName,
         ],
     )
 
-    category_path_field = CategoryMeta(
+    category_leap_path_field = CategoryMeta(
         name_enums=[
             ConfLeap,
             PathName,
             FilesystemObject,
             PathType,
+        ],
+    )
+
+    # FT_00_22_19_59.merged_config.md:
+    # similar to `category_leap_path_field` but without `ConfLeap`:
+    category_merged_path_field = CategoryMeta(
+        name_enums=[
+            PathName,
+            FilesystemObject,
+            PathType,
+        ],
+    )
+
+    # FT_00_22_19_59.merged_config.md:
+    # similar to `category_leap_value_field` but without `ConfLeap`:
+    category_merged_value_field = CategoryMeta(
+        name_enums=[
+            ValueName,
         ],
     )
 

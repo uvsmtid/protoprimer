@@ -2,12 +2,12 @@ import os
 import sys
 from unittest.mock import patch
 
+from local_repo.cmd_bootstrap_env import customize_env_context
 from local_test.base_test_class import BasePyfakefsTestClass
 from local_test.mock_verifier import (
     assert_parent_states_mocked,
 )
 from local_test.name_assertion import assert_test_module_name_embeds_str
-from local_repo.cmd_bootstrap_env import customize_env_context
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     Bootstrapper_state_client_conf_file_data,

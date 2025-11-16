@@ -1,20 +1,16 @@
 # !/usr/bin/env python3
-import argparse
-import enum
-
 # Publish artifacts to pypi.org.
-
 # It is expected to be run under activated `venv`.
-
 # It must be run from the repo root:
 # ./cmd/publish_package -h
-
 # A single "atomic" step to make a release:
 # - ensure no local modifications
 # - ensure the commit is published
 # - create tag
 # - publish package
 
+import argparse
+import enum
 import os
 import re
 import shutil
