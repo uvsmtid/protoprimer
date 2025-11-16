@@ -25,6 +25,7 @@ def test_relationship():
 
 def confirm_single_value_side_effect(
     state_node,
+    conf_leap,
     wizard_meta,
     file_data,
     sub_ordinal_n,
@@ -68,7 +69,7 @@ def test_wizard_conf_leap_happy_path(
     conf_abs_path = "/test/path"
 
     expected_file_data = {}
-    for _, wizard_field in WizardField.enumerate_conf_leap_fields(conf_leap):
+    for _, wizard_field in WizardField.enumerate_conf_leap_wizardable_fields(conf_leap):
         wizard_meta = wizard_field.value
         wizard_meta.write_value(
             wizard_meta,
@@ -90,7 +91,7 @@ def test_wizard_conf_leap_happy_path(
 
     assert mock_input.call_count == 1
     assert mock_wizard_confirm_single_value.call_count == len(
-        WizardField.enumerate_conf_leap_fields(conf_leap)
+        WizardField.enumerate_conf_leap_wizardable_fields(conf_leap)
     )
     assert mock_wizard_print_summary.call_count == 2
     assert file_data == expected_file_data
@@ -120,7 +121,7 @@ def test_wizard_conf_leap_retry(
     conf_abs_path = "/test/path"
 
     expected_file_data = {}
-    for _, wizard_field in WizardField.enumerate_conf_leap_fields(conf_leap):
+    for _, wizard_field in WizardField.enumerate_conf_leap_wizardable_fields(conf_leap):
         wizard_meta = wizard_field.value
         wizard_meta.write_value(
             wizard_meta,
@@ -142,7 +143,7 @@ def test_wizard_conf_leap_retry(
 
     assert mock_input.call_count == 2
     assert mock_wizard_confirm_single_value.call_count == 2 * len(
-        WizardField.enumerate_conf_leap_fields(conf_leap)
+        WizardField.enumerate_conf_leap_wizardable_fields(conf_leap)
     )
     assert mock_wizard_print_summary.call_count == 4
     assert file_data == expected_file_data
@@ -172,7 +173,7 @@ def test_wizard_conf_leap_blank_confirmation(
     conf_abs_path = "/test/path"
 
     expected_file_data = {}
-    for _, wizard_field in WizardField.enumerate_conf_leap_fields(conf_leap):
+    for _, wizard_field in WizardField.enumerate_conf_leap_wizardable_fields(conf_leap):
         wizard_meta = wizard_field.value
         wizard_meta.write_value(
             wizard_meta,
@@ -194,7 +195,7 @@ def test_wizard_conf_leap_blank_confirmation(
 
     assert mock_input.call_count == 2
     assert mock_wizard_confirm_single_value.call_count == len(
-        WizardField.enumerate_conf_leap_fields(conf_leap)
+        WizardField.enumerate_conf_leap_wizardable_fields(conf_leap)
     )
     assert mock_wizard_print_summary.call_count == 2
     assert file_data == expected_file_data
@@ -224,7 +225,7 @@ def test_wizard_conf_leap_invalid_confirmation(
     conf_abs_path = "/test/path"
 
     expected_file_data = {}
-    for _, wizard_field in WizardField.enumerate_conf_leap_fields(conf_leap):
+    for _, wizard_field in WizardField.enumerate_conf_leap_wizardable_fields(conf_leap):
         wizard_meta = wizard_field.value
         wizard_meta.write_value(
             wizard_meta,
@@ -246,7 +247,7 @@ def test_wizard_conf_leap_invalid_confirmation(
 
     assert mock_input.call_count == 2
     assert mock_wizard_confirm_single_value.call_count == len(
-        WizardField.enumerate_conf_leap_fields(conf_leap)
+        WizardField.enumerate_conf_leap_wizardable_fields(conf_leap)
     )
     assert mock_wizard_print_summary.call_count == 2
     assert file_data == expected_file_data

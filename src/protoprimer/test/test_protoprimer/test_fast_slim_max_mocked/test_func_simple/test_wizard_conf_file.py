@@ -6,8 +6,8 @@ from unittest.mock import (
 import protoprimer.primer_kernel
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer.primer_kernel import (
-    wizard_conf_file,
     ConfLeap,
+    wizard_conf_file,
     WizardStage,
 )
 
@@ -21,13 +21,15 @@ def test_relationship():
 @patch(f"{protoprimer.primer_kernel.__name__}.write_json_file")
 @patch(f"{protoprimer.primer_kernel.__name__}.os.makedirs")
 @patch(f"{protoprimer.primer_kernel.__name__}.wizard_conf_leap")
-@patch(f"{protoprimer.primer_kernel.__name__}.verify_conf_file_data")
+@patch(
+    f"{protoprimer.primer_kernel.__name__}.verify_conf_file_data_contains_known_fields_only"
+)
 @patch(f"{protoprimer.primer_kernel.__name__}.read_json_file")
 @patch(f"{protoprimer.primer_kernel.__name__}.os.path.exists")
 def test_wizard_conf_file_existing_file(
     mock_os_path_exists,
     mock_read_json_file,
-    mock_verify_conf_file_data,
+    mock_verify_conf_file_data_contains_known_fields_only,
     mock_wizard_conf_leap,
     mock_os_makedirs,
     mock_write_json_file,
@@ -55,10 +57,9 @@ def test_wizard_conf_file_existing_file(
     # then:
     mock_os_path_exists.assert_called_once_with(conf_abs_path_dummy)
     mock_read_json_file.assert_called_once_with(conf_abs_path_dummy)
-    mock_verify_conf_file_data.assert_called_once_with(
+    mock_verify_conf_file_data_contains_known_fields_only.assert_called_once_with(
         conf_abs_path_dummy,
         {"existing_key": "existing_value"},
-        ConfLeap.leap_primer,
     )
     mock_wizard_conf_leap.assert_called_once_with(
         mock_state_node,
@@ -77,13 +78,15 @@ def test_wizard_conf_file_existing_file(
 @patch(f"{protoprimer.primer_kernel.__name__}.write_json_file")
 @patch(f"{protoprimer.primer_kernel.__name__}.os.makedirs")
 @patch(f"{protoprimer.primer_kernel.__name__}.wizard_conf_leap")
-@patch(f"{protoprimer.primer_kernel.__name__}.verify_conf_file_data")
+@patch(
+    f"{protoprimer.primer_kernel.__name__}.verify_conf_file_data_contains_known_fields_only"
+)
 @patch(f"{protoprimer.primer_kernel.__name__}.read_json_file")
 @patch(f"{protoprimer.primer_kernel.__name__}.os.path.exists")
 def test_wizard_conf_file_non_existing_file(
     mock_os_path_exists,
     mock_read_json_file,
-    mock_verify_conf_file_data,
+    mock_verify_conf_file_data_contains_known_fields_only,
     mock_wizard_conf_leap,
     mock_os_makedirs,
     mock_write_json_file,
@@ -110,10 +113,9 @@ def test_wizard_conf_file_non_existing_file(
     # then:
     mock_os_path_exists.assert_called_once_with(conf_abs_path_dummy)
     mock_read_json_file.assert_not_called()
-    mock_verify_conf_file_data.assert_called_once_with(
+    mock_verify_conf_file_data_contains_known_fields_only.assert_called_once_with(
         conf_abs_path_dummy,
         default_file_data_dummy,
-        ConfLeap.leap_primer,
     )
     mock_wizard_conf_leap.assert_called_once_with(
         mock_state_node,
@@ -132,13 +134,15 @@ def test_wizard_conf_file_non_existing_file(
 @patch(f"{protoprimer.primer_kernel.__name__}.write_json_file")
 @patch(f"{protoprimer.primer_kernel.__name__}.os.makedirs")
 @patch(f"{protoprimer.primer_kernel.__name__}.wizard_conf_leap")
-@patch(f"{protoprimer.primer_kernel.__name__}.verify_conf_file_data")
+@patch(
+    f"{protoprimer.primer_kernel.__name__}.verify_conf_file_data_contains_known_fields_only"
+)
 @patch(f"{protoprimer.primer_kernel.__name__}.read_json_file")
 @patch(f"{protoprimer.primer_kernel.__name__}.os.path.exists")
 def test_wizard_conf_file_wizard_finished(
     mock_os_path_exists,
     mock_read_json_file,
-    mock_verify_conf_file_data,
+    mock_verify_conf_file_data_contains_known_fields_only,
     mock_wizard_conf_leap,
     mock_os_makedirs,
     mock_write_json_file,
@@ -166,10 +170,9 @@ def test_wizard_conf_file_wizard_finished(
     # then:
     mock_os_path_exists.assert_called_once_with(conf_abs_path_dummy)
     mock_read_json_file.assert_called_once_with(conf_abs_path_dummy)
-    mock_verify_conf_file_data.assert_called_once_with(
+    mock_verify_conf_file_data_contains_known_fields_only.assert_called_once_with(
         conf_abs_path_dummy,
         {"existing_key": "existing_value"},
-        ConfLeap.leap_primer,
     )
     mock_wizard_conf_leap.assert_not_called()
     mock_os_makedirs.assert_not_called()

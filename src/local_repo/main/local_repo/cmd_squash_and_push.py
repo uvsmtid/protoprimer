@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-import argparse
-
 # The script creates a new `squashed_branch_name` from the current `source_branch_name`
 # by squashing with all the comments against common ancestor with `target_branch`
 # (e.g., first commit common with `origin/main`).
 #
 # The idea is to have a single script with no args to squash everything.
+
+import argparse
 
 from local_repo.sub_proc_util import (
     get_command_code,

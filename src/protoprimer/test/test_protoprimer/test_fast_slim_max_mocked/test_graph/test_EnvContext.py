@@ -9,16 +9,16 @@ from local_test.base_test_class import BasePyfakefsTestClass
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
+    Bootstrapper_state_env_conf_file_data,
+    Bootstrapper_state_merged_local_cache_dir_abs_path_eval_finalized,
+    Bootstrapper_state_merged_required_python_file_abs_path_eval_finalized,
+    Bootstrapper_state_reinstall_triggered,
     EnvContext,
     EnvState,
     EnvVar,
+    PackageDriverPip,
     PackageDriverType,
     PackageDriverUv,
-    PackageDriverPip,
-    Bootstrapper_state_env_local_python_file_abs_path_eval_finalized,
-    Bootstrapper_state_reinstall_triggered,
-    Bootstrapper_state_env_conf_file_data,
-    Bootstrapper_state_env_local_cache_dir_abs_path_eval_finalized,
 )
 
 
@@ -32,7 +32,7 @@ class TestEnvContext(BasePyfakefsTestClass):
         assert_test_module_name_embeds_str(EnvContext.__name__)
 
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_env_local_python_file_abs_path_eval_finalized.__name__}.eval_own_state",
+        f"{primer_kernel.__name__}.{Bootstrapper_state_merged_required_python_file_abs_path_eval_finalized.__name__}.eval_own_state",
         return_value="/usr/bin/python",
     )
     @patch(
@@ -44,7 +44,7 @@ class TestEnvContext(BasePyfakefsTestClass):
         return_value={},
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_env_local_cache_dir_abs_path_eval_finalized.__name__}.eval_own_state",
+        f"{primer_kernel.__name__}.{Bootstrapper_state_merged_local_cache_dir_abs_path_eval_finalized.__name__}.eval_own_state",
         return_value="/tmp",
     )
     @patch("subprocess.check_call")
@@ -68,7 +68,7 @@ class TestEnvContext(BasePyfakefsTestClass):
         },
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_env_local_python_file_abs_path_eval_finalized.__name__}.eval_own_state",
+        f"{primer_kernel.__name__}.{Bootstrapper_state_merged_required_python_file_abs_path_eval_finalized.__name__}.eval_own_state",
         return_value="/usr/bin/python",
     )
     @patch(
@@ -80,7 +80,7 @@ class TestEnvContext(BasePyfakefsTestClass):
         return_value={},
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_env_local_cache_dir_abs_path_eval_finalized.__name__}.eval_own_state",
+        f"{primer_kernel.__name__}.{Bootstrapper_state_merged_local_cache_dir_abs_path_eval_finalized.__name__}.eval_own_state",
         return_value="/tmp",
     )
     @patch("subprocess.check_call")
@@ -104,7 +104,7 @@ class TestEnvContext(BasePyfakefsTestClass):
         },
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_env_local_python_file_abs_path_eval_finalized.__name__}.eval_own_state",
+        f"{primer_kernel.__name__}.{Bootstrapper_state_merged_required_python_file_abs_path_eval_finalized.__name__}.eval_own_state",
         return_value="/usr/bin/python",
     )
     @patch(
@@ -116,7 +116,7 @@ class TestEnvContext(BasePyfakefsTestClass):
         return_value={},
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_env_local_cache_dir_abs_path_eval_finalized.__name__}.eval_own_state",
+        f"{primer_kernel.__name__}.{Bootstrapper_state_merged_local_cache_dir_abs_path_eval_finalized.__name__}.eval_own_state",
         return_value="/tmp",
     )
     def test_init_without_uv(self, mock_cache, mock_conf, mock_reinstall, mock_python):

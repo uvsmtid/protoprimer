@@ -45,7 +45,7 @@ def test_wizard_print_summary(
     original_file_data = copy.deepcopy(file_data)
 
     expected_summary_data = {}
-    for _, wizard_field in WizardField.enumerate_conf_leap_fields(conf_leap):
+    for _, wizard_field in WizardField.enumerate_conf_leap_wizardable_fields(conf_leap):
         wizard_meta = wizard_field.value
         value = wizard_meta.read_value(
             wizard_meta,
@@ -82,7 +82,7 @@ def test_wizard_print_summary(
     [
         conf_leap
         for conf_leap in ConfLeap
-        if len(list(WizardField.enumerate_conf_leap_fields(conf_leap))) > 0
+        if len(list(WizardField.enumerate_conf_leap_wizardable_fields(conf_leap))) > 0
     ],
 )
 @patch("builtins.print")
@@ -94,7 +94,7 @@ def test_wizard_print_summary_missing_field(
     # given:
     mock_state_node = MagicMock()
     file_data = {}
-    wizard_fields = list(WizardField.enumerate_conf_leap_fields(conf_leap))
+    wizard_fields = list(WizardField.enumerate_conf_leap_wizardable_fields(conf_leap))
     for _, wizard_field in wizard_fields[1:]:
         wizard_meta = wizard_field.value
         wizard_meta.write_value(

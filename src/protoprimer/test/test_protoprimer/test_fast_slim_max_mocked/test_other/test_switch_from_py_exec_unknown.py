@@ -16,7 +16,6 @@ from protoprimer.primer_kernel import (
     EnvVar,
     main,
     PythonExecutable,
-    SyntaxArg,
     write_json_file,
 )
 
@@ -82,9 +81,9 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
 
         env_conf_data = {
-            ConfField.field_env_local_python_file_abs_path.value: ConfConstEnv.default_file_abs_path_python,
-            ConfField.field_env_local_venv_dir_rel_path.value: ConfConstEnv.default_dir_rel_path_venv,
-            ConfField.field_env_project_descriptors.value: ConfConstEnv.default_project_descriptors,
+            ConfField.field_required_python_file_abs_path.value: ConfConstEnv.default_file_abs_path_python,
+            ConfField.field_local_venv_dir_rel_path.value: ConfConstEnv.default_dir_rel_path_venv,
+            ConfField.field_project_descriptors.value: ConfConstEnv.default_project_descriptors,
         }
         write_json_file(
             os.path.join(

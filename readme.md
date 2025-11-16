@@ -16,20 +16,23 @@ TODO: Use links to FC/UC docs under `./doc` (when ready) to navigate to details.
 
 # `protoprimer`
 
+An app/lib for bootstrapping `python` code into `venv` directly
+(without intermediate `shell` wrappers).
+
 ## TL;DR
 
-An app/lib for bootstrapping `python` code into `venv` directly
-(without intermediate `shell` wrappers)
-switching to required `python` version/config
-for repo clones in different environments:\
-local/cloud, home/office, A/B/C/...
+See [instant_python_bootstrap][instant_python_bootstrap].
 
-It makes **single-touch** pure `python` commands like this possible
-(no explicit `venv` activation, no `PATH` pollution, no details confusing users):
+The `protoprimer` makes **single-touch** pure `python` commands like this possible (no details confusing users):
 
 ```sh
 ./prime
 ```
+
+It switches (repo clones) to required `python` version/config
+optionally targeting different local environments:
+*   local/cloud/...
+*   Alice/Bob/...
 
 ## Intro
 
@@ -113,7 +116,7 @@ to the client code which customizes and completes the bootstrap process.
 ### Why not `uv`?
 
 Yes, the `protoprimer` relies on `uv`.\
-Yet `python` runs first.
+Yet, it runs `python` first.
 
 <details>
 <summary>details</summary>
@@ -169,6 +172,9 @@ Reset: re-create venv, re-install deps, re-pin versions:
 
 ## Getting started
 
+Use [instant_python_bootstrap][instant_python_bootstrap] to start immediately.
+
+More detailed instructions:
 *   [Install][initial_copy] your `own_copy`.
 *   [Init][init_config] your (repo) config.
 *   [Evolve][subsequent_update] with your dependencies.
@@ -499,9 +505,9 @@ conf_client = {
 # ./dst/default_env/proto_kernel.conf_env.json:
 conf_env = {
     # points to the required `python` version `venv` has to be initialized with:
-    "env_local_python_file_abs_path": "/usr/bin/python",
+    "required_python_file_abs_path": "/usr/bin/python",
     # points to the `python` project path within this repo:
-    "env_project_descriptors": [
+    "project_descriptors": [
         {
             "env_build_root_dir_rel_path": "src/neoprimer",
             "env_install_extras": [],
@@ -623,3 +629,5 @@ Each subdirectory of [src][src] directory contains related sub-projects (with `p
 [initial_copy]: #protoprimer-install-copy
 [init_config]: #protoprimer-init-config
 [subsequent_update]: #protoprimer-evolve-project
+
+[instant_python_bootstrap]: https://github.com/uvsmtid/instant_python_bootstrap

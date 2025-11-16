@@ -18,7 +18,7 @@ def test_relationship():
 
 def test_read_field_env_build_root_dir_rel_path_no_descriptors():
     """
-    Tests when `field_env_project_descriptors` is not in `file_data`.
+    Tests when `field_project_descriptors` is not in `file_data`.
     """
 
     # given:
@@ -42,13 +42,13 @@ def test_read_field_env_build_root_dir_rel_path_no_descriptors():
 
 def test_read_field_env_build_root_dir_rel_path_empty_descriptors():
     """
-    Tests when `field_env_project_descriptors` is an empty list.
+    Tests when `field_project_descriptors` is an empty list.
     """
 
     # given:
 
     file_data = {
-        ConfField.field_env_project_descriptors.value: [],
+        ConfField.field_project_descriptors.value: [],
     }
 
     mock_state_node = MagicMock()
@@ -69,13 +69,13 @@ def test_read_field_env_build_root_dir_rel_path_empty_descriptors():
 
 def test_read_field_env_build_root_dir_rel_path_no_build_root():
     """
-    Tests when `field_env_project_descriptors` has one project, but `field_env_build_root_dir_rel_path` is not in it.
+    Tests when `field_project_descriptors` has one project, but `field_env_build_root_dir_rel_path` is not in it.
     """
 
     # given:
 
     file_data = {
-        ConfField.field_env_project_descriptors.value: [
+        ConfField.field_project_descriptors.value: [
             {},
         ],
     }
@@ -98,13 +98,13 @@ def test_read_field_env_build_root_dir_rel_path_no_build_root():
 
 def test_read_field_env_build_root_dir_rel_path_with_build_root():
     """
-    Tests when `field_env_project_descriptors` has one project, and `field_env_build_root_dir_rel_path` is present.
+    Tests when `field_project_descriptors` has one project, and `field_env_build_root_dir_rel_path` is present.
     """
 
     # given:
 
     file_data = {
-        ConfField.field_env_project_descriptors.value: [
+        ConfField.field_project_descriptors.value: [
             {
                 ConfField.field_env_build_root_dir_rel_path.value: "some/path",
             },

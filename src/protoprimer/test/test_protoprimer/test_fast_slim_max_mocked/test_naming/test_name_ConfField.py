@@ -42,67 +42,67 @@ class FieldName(enum.Enum):
 
     field_primer_ref_root_dir_rel_path = FieldMeta(
         ConfField.field_primer_ref_root_dir_rel_path,
-        NameCategory.category_path_field,
+        NameCategory.category_leap_path_field,
     )
 
     field_primer_conf_client_file_rel_path = FieldMeta(
         ConfField.field_primer_conf_client_file_rel_path,
-        NameCategory.category_path_field,
+        NameCategory.category_leap_path_field,
     )
 
     field_client_link_name_dir_rel_path = FieldMeta(
         ConfField.field_client_link_name_dir_rel_path,
-        NameCategory.category_path_field,
+        NameCategory.category_leap_path_field,
     )
 
     field_client_default_env_dir_rel_path = FieldMeta(
         ConfField.field_client_default_env_dir_rel_path,
-        NameCategory.category_path_field,
+        NameCategory.category_leap_path_field,
     )
 
-    field_env_local_python_file_abs_path = FieldMeta(
-        ConfField.field_env_local_python_file_abs_path,
-        NameCategory.category_path_field,
+    field_required_python_file_abs_path = FieldMeta(
+        ConfField.field_required_python_file_abs_path,
+        NameCategory.category_merged_path_field,
     )
 
-    field_env_local_venv_dir_rel_path = FieldMeta(
-        ConfField.field_env_local_venv_dir_rel_path,
-        NameCategory.category_path_field,
+    field_local_venv_dir_rel_path = FieldMeta(
+        ConfField.field_local_venv_dir_rel_path,
+        NameCategory.category_merged_path_field,
     )
 
-    field_env_project_descriptors = FieldMeta(
-        ConfField.field_env_project_descriptors,
-        NameCategory.category_value_field,
+    field_project_descriptors = FieldMeta(
+        ConfField.field_project_descriptors,
+        NameCategory.category_merged_value_field,
     )
 
     field_env_build_root_dir_rel_path = FieldMeta(
         ConfField.field_env_build_root_dir_rel_path,
-        NameCategory.category_path_field,
+        NameCategory.category_leap_path_field,
     )
 
     field_env_install_extras = FieldMeta(
         ConfField.field_env_install_extras,
-        NameCategory.category_value_field,
+        NameCategory.category_leap_value_field,
     )
 
-    field_env_local_log_dir_rel_path = FieldMeta(
-        ConfField.field_env_local_log_dir_rel_path,
-        NameCategory.category_path_field,
+    field_local_log_dir_rel_path = FieldMeta(
+        ConfField.field_local_log_dir_rel_path,
+        NameCategory.category_merged_path_field,
     )
 
-    field_env_local_tmp_dir_rel_path = FieldMeta(
-        ConfField.field_env_local_tmp_dir_rel_path,
-        NameCategory.category_path_field,
+    field_local_tmp_dir_rel_path = FieldMeta(
+        ConfField.field_local_tmp_dir_rel_path,
+        NameCategory.category_merged_path_field,
     )
 
-    field_env_local_cache_dir_rel_path = FieldMeta(
-        ConfField.field_env_local_cache_dir_rel_path,
-        NameCategory.category_path_field,
+    field_local_cache_dir_rel_path = FieldMeta(
+        ConfField.field_local_cache_dir_rel_path,
+        NameCategory.category_merged_path_field,
     )
 
-    field_env_package_driver = FieldMeta(
-        ConfField.field_env_package_driver,
-        NameCategory.category_value_field,
+    field_package_driver = FieldMeta(
+        ConfField.field_package_driver,
+        NameCategory.category_merged_value_field,
     )
 
 

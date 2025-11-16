@@ -4,13 +4,8 @@ import pathlib
 import shutil
 import stat
 
-import local_repo
-import local_test
-import neoprimer
 import protoprimer
-from local_repo.sub_proc_util import get_command_code
 from local_test.toml_handler import save_toml_data
-from neoprimer import venv_shell
 from protoprimer.primer_kernel import (
     ConfConstClient,
     ConfConstEnv,
@@ -183,12 +178,12 @@ def create_conf_env_file(
     )
 
     env_conf_data = {
-        ConfField.field_env_local_python_file_abs_path.value: python_abs_path,
-        ConfField.field_env_local_venv_dir_rel_path.value: venv_dir_rel_path,
+        ConfField.field_required_python_file_abs_path.value: python_abs_path,
+        ConfField.field_local_venv_dir_rel_path.value: venv_dir_rel_path,
         # TODO: Parameterize tests to succeed with
         #       both `PackageDriverType.driver_pip` and `PackageDriverType.driver_uv`.
-        ConfField.field_env_package_driver.value: PackageDriverType.driver_pip.name,
-        ConfField.field_env_project_descriptors.value: [
+        ConfField.field_package_driver.value: PackageDriverType.driver_pip.name,
+        ConfField.field_project_descriptors.value: [
             {
                 ConfField.field_env_build_root_dir_rel_path.value: str(
                     project_dir_rel_path

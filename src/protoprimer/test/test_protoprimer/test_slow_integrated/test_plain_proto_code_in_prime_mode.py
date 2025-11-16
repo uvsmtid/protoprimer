@@ -1,9 +1,6 @@
 import os
 import pathlib
 
-from local_repo.sub_proc_util import (
-    get_command_code,
-)
 from local_test.fat_mocked_helper import run_primer_main
 from local_test.integrated_helper import (
     create_conf_client_file,

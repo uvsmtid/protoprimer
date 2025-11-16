@@ -19,7 +19,6 @@ from protoprimer.primer_kernel import (
     ConfConstPrimer,
     EnvVar,
     PythonExecutable,
-    SyntaxArg,
 )
 
 

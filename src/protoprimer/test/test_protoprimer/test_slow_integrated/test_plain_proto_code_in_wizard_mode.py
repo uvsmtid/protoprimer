@@ -78,22 +78,24 @@ def test_wizard_mode_interaction(tmp_path: pathlib.Path):
         ("", WizardField.field_client_link_name_dir_rel_path),
         ("", WizardField.field_client_default_env_dir_rel_path),
         ("", WizardField.field_client_default_env_dir_rel_path),
-        # ---
-        ("y", ConfLeap.leap_client),
-        # ---
-        ("", WizardField.field_env_local_python_file_abs_path),
-        ("", WizardField.field_env_local_python_file_abs_path),
-        ("", WizardField.field_env_local_venv_dir_rel_path),
-        ("", WizardField.field_env_local_venv_dir_rel_path),
-        ("", WizardField.field_env_local_log_dir_rel_path),
-        ("", WizardField.field_env_local_log_dir_rel_path),
-        ("", WizardField.field_env_local_tmp_dir_rel_path),
-        ("", WizardField.field_env_local_tmp_dir_rel_path),
+        ("", WizardField.field_required_python_file_abs_path),
+        ("", WizardField.field_required_python_file_abs_path),
+        ("", WizardField.field_local_venv_dir_rel_path),
+        ("", WizardField.field_local_venv_dir_rel_path),
+        ("", WizardField.field_local_log_dir_rel_path),
+        ("", WizardField.field_local_log_dir_rel_path),
+        ("", WizardField.field_local_tmp_dir_rel_path),
+        ("", WizardField.field_local_tmp_dir_rel_path),
         (
             test_pyproject_src_dir_rel_path,
             WizardField.field_env_build_root_dir_rel_path,
         ),
         ("y", WizardField.field_env_build_root_dir_rel_path),
+        # ---
+        ("y", ConfLeap.leap_client),
+        # ---
+        # See: FT_32_54_11_56.wizard_mode.md:
+        # We wizard fields into `ConfLeap.leap_client`.
         # ---
         ("y", ConfLeap.leap_client),
         # ---
