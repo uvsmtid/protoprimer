@@ -88,8 +88,8 @@ class StateMeta(enum.Enum):
         env_state=EnvState.state_input_proto_conf_primer_file_abs_path_eval_finalized,
         sub_graph=SubGraph.graph_config,
     )
-    state_proto_conf_file_data = StateNodeMeta(
-        env_state=EnvState.state_proto_conf_file_data,
+    state_primer_conf_file_data_loaded = StateNodeMeta(
+        env_state=EnvState.state_primer_conf_file_data_loaded,
         sub_graph=SubGraph.graph_config,
     )
     state_primer_ref_root_dir_abs_path_eval_finalized = StateNodeMeta(
@@ -100,8 +100,8 @@ class StateMeta(enum.Enum):
         env_state=EnvState.state_primer_conf_client_file_abs_path_eval_finalized,
         sub_graph=SubGraph.graph_config,
     )
-    state_client_conf_file_data = StateNodeMeta(
-        env_state=EnvState.state_client_conf_file_data,
+    state_client_conf_file_data_loaded = StateNodeMeta(
+        env_state=EnvState.state_client_conf_file_data_loaded,
         sub_graph=SubGraph.graph_config,
     )
     state_client_local_env_conf_dir_rel_path_eval_finalized = StateNodeMeta(
@@ -120,8 +120,8 @@ class StateMeta(enum.Enum):
         env_state=EnvState.state_client_conf_env_file_abs_path_eval_finalized,
         sub_graph=SubGraph.graph_config,
     )
-    state_env_conf_file_data = StateNodeMeta(
-        env_state=EnvState.state_env_conf_file_data,
+    state_env_conf_file_data_loaded = StateNodeMeta(
+        env_state=EnvState.state_env_conf_file_data_loaded,
         sub_graph=SubGraph.graph_config,
     )
     state_merged_required_python_file_abs_path_eval_finalized = StateNodeMeta(
@@ -151,6 +151,10 @@ class StateMeta(enum.Enum):
     state_merged_package_driver_eval_finalized = StateNodeMeta(
         env_state=EnvState.state_merged_package_driver_eval_finalized,
         sub_graph=SubGraph.graph_config,
+    )
+    state_merged_conf_data_printed = StateNodeMeta(
+        env_state=EnvState.state_merged_conf_data_printed,
+        sub_graph=None,
     )
     state_default_file_log_handler_configured = StateNodeMeta(
         env_state=EnvState.state_default_file_log_handler_configured,

@@ -8,7 +8,7 @@ from local_test.mock_verifier import (
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
-    Bootstrapper_state_client_conf_file_data,
+    Bootstrapper_state_client_conf_file_data_loaded,
     ConfField,
     EnvContext,
     EnvState,
@@ -30,11 +30,11 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
 
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.eval_own_state"
     )
     def test_success_when_field_is_present(
         self,
-        mock_state_client_conf_file_data,
+        mock_state_client_conf_file_data_loaded,
     ):
         # given:
         assert_parent_states_mocked(
@@ -45,7 +45,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         client_conf_file_data = {
             ConfField.field_client_link_name_dir_rel_path.value: link_name_value,
         }
-        mock_state_client_conf_file_data.return_value = client_conf_file_data
+        mock_state_client_conf_file_data_loaded.return_value = client_conf_file_data
 
         # when:
         result = self.env_ctx.state_graph.eval_state(
@@ -56,11 +56,11 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.assertEqual(result, link_name_value)
 
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.eval_own_state"
     )
     def test_failure_when_field_is_missing(
         self,
-        mock_state_client_conf_file_data,
+        mock_state_client_conf_file_data_loaded,
     ):
         # given:
 
@@ -68,7 +68,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             self.env_ctx,
             EnvState.state_client_link_name_dir_rel_path_eval_finalized.name,
         )
-        mock_state_client_conf_file_data.return_value = {}
+        mock_state_client_conf_file_data_loaded.return_value = {}
 
         # when:
 

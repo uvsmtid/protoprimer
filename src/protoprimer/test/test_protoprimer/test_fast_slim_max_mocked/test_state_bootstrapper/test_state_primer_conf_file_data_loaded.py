@@ -24,7 +24,9 @@ class ThisTestClass(BasePyfakefsTestClass):
 
     # noinspection PyMethodMayBeStatic
     def test_relationship(self):
-        assert_test_module_name_embeds_str(EnvState.state_proto_conf_file_data.name)
+        assert_test_module_name_embeds_str(
+            EnvState.state_primer_conf_file_data_loaded.name
+        )
 
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_input_proto_conf_primer_file_abs_path_eval_finalized.__name__}.eval_own_state"
@@ -38,7 +40,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         assert_parent_states_mocked(
             self.env_ctx,
-            EnvState.state_proto_conf_file_data.name,
+            EnvState.state_primer_conf_file_data_loaded.name,
         )
 
         mock_file_path = "/mock/path/to/file"
@@ -50,7 +52,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         # when:
 
         state_value = self.env_ctx.state_graph.eval_state(
-            EnvState.state_proto_conf_file_data.name
+            EnvState.state_primer_conf_file_data_loaded.name
         )
 
         # then:
@@ -69,7 +71,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         assert_parent_states_mocked(
             self.env_ctx,
-            EnvState.state_proto_conf_file_data.name,
+            EnvState.state_primer_conf_file_data_loaded.name,
         )
 
         mock_file_path = "/mock/path/to/file"
@@ -82,7 +84,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         with self.assertLogs(primer_kernel.logger, level=WARNING) as log_dst:
             self.env_ctx.state_graph.eval_state(
-                EnvState.state_proto_conf_file_data.name
+                EnvState.state_primer_conf_file_data_loaded.name
             )
 
         # then:
