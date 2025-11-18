@@ -39,31 +39,31 @@ class EnvVarMeta(AbstractMeta):
 class EnvVarName(enum.Enum):
     var_PROTOPRIMER_STDERR_LOG_LEVEL = EnvVarMeta(
         EnvVar.var_PROTOPRIMER_STDERR_LOG_LEVEL,
-        NameCategory.category_loaded_data,
+        NameCategory.category_name_only,
     )
     var_PROTOPRIMER_PY_EXEC = EnvVarMeta(
         EnvVar.var_PROTOPRIMER_PY_EXEC,
-        NameCategory.category_loaded_data,
+        NameCategory.category_name_only,
     )
     var_PROTOPRIMER_DO_INSTALL = EnvVarMeta(
         EnvVar.var_PROTOPRIMER_DO_INSTALL,
-        NameCategory.category_loaded_data,
+        NameCategory.category_name_only,
     )
     var_PROTOPRIMER_PROTO_CODE = EnvVarMeta(
         EnvVar.var_PROTOPRIMER_PROTO_CODE,
-        NameCategory.category_loaded_data,
+        NameCategory.category_name_only,
     )
     var_PROTOPRIMER_START_ID = EnvVarMeta(
         EnvVar.var_PROTOPRIMER_START_ID,
-        NameCategory.category_loaded_data,
+        NameCategory.category_name_only,
     )
     var_PROTOPRIMER_PACKAGE_DRIVER = EnvVarMeta(
         EnvVar.var_PROTOPRIMER_PACKAGE_DRIVER,
-        NameCategory.category_loaded_data,
+        NameCategory.category_name_only,
     )
     var_PROTOPRIMER_TEST_MODE = EnvVarMeta(
         EnvVar.var_PROTOPRIMER_TEST_MODE,
-        NameCategory.category_loaded_data,
+        NameCategory.category_name_only,
     )
 
 

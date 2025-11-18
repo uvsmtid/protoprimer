@@ -25,12 +25,14 @@ class ThisTestClass(BasePyfakefsTestClass):
 
     # noinspection PyMethodMayBeStatic
     def test_relationship(self):
-        assert_test_module_name_embeds_str(EnvState.state_env_conf_file_data.name)
+        assert_test_module_name_embeds_str(
+            EnvState.state_env_conf_file_data_loaded.name
+        )
 
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_env_file_abs_path_eval_finalized.__name__}.eval_own_state"
     )
-    def test_state_env_conf_file_data_exists(
+    def test_state_env_conf_file_data_loaded_exists(
         self,
         mock_state_client_conf_env_file_abs_path_eval_finalized,
     ):
@@ -39,7 +41,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         assert_parent_states_mocked(
             self.env_ctx,
-            EnvState.state_env_conf_file_data.name,
+            EnvState.state_env_conf_file_data_loaded.name,
         )
 
         mock_conf_file = "/mock/path/to/env_conf.json"
@@ -53,7 +55,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         # when:
 
         state_value = self.env_ctx.state_graph.eval_state(
-            EnvState.state_env_conf_file_data.name
+            EnvState.state_env_conf_file_data_loaded.name
         )
 
         # then:
@@ -63,7 +65,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_env_file_abs_path_eval_finalized.__name__}.eval_own_state"
     )
-    def test_state_env_conf_file_data_missing(
+    def test_state_env_conf_file_data_loaded_missing(
         self,
         mock_state_client_conf_env_file_abs_path_eval_finalized,
     ):
@@ -72,7 +74,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         assert_parent_states_mocked(
             self.env_ctx,
-            EnvState.state_env_conf_file_data.name,
+            EnvState.state_env_conf_file_data_loaded.name,
         )
 
         mock_conf_file = "/mock/path/to/env_conf.json"
@@ -86,7 +88,9 @@ class ThisTestClass(BasePyfakefsTestClass):
         # when:
 
         with self.assertLogs(primer_kernel.logger, level=WARNING) as log_dst:
-            self.env_ctx.state_graph.eval_state(EnvState.state_env_conf_file_data.name)
+            self.env_ctx.state_graph.eval_state(
+                EnvState.state_env_conf_file_data_loaded.name
+            )
 
         # then:
 

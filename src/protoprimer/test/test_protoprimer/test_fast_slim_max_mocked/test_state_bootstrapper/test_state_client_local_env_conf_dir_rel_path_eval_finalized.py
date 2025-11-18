@@ -11,7 +11,7 @@ from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     Bootstrapper_state_args_parsed,
-    Bootstrapper_state_client_conf_file_data,
+    Bootstrapper_state_client_conf_file_data_loaded,
     Bootstrapper_state_primer_ref_root_dir_abs_path_eval_finalized,
     ConfField,
     EnvContext,
@@ -41,11 +41,11 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.eval_own_state"
     )
     def test_success_when_arg_is_present_and_rel_to_cwd(
         self,
-        mock_state_client_conf_file_data,
+        mock_state_client_conf_file_data_loaded,
         mock_state_args_parsed,
         mock_state_primer_ref_root_dir_abs_path_eval_finalized,
     ):
@@ -63,7 +63,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             ConfField.field_client_default_env_dir_rel_path.value: "my_env_dir_from_conf",
         }
         self.fs.create_dir(os.path.join(self.mock_ref_root, "my_env_dir_from_conf"))
-        mock_state_client_conf_file_data.return_value = client_conf_file_data
+        mock_state_client_conf_file_data_loaded.return_value = client_conf_file_data
 
         # This should be used:
         arg_value = "my_env_dir_from_arg"
@@ -93,11 +93,11 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.eval_own_state"
     )
     def test_success_when_arg_is_present_and_rel_to_ref_root(
         self,
-        mock_state_client_conf_file_data,
+        mock_state_client_conf_file_data_loaded,
         mock_state_args_parsed,
         mock_state_primer_ref_root_dir_abs_path_eval_finalized,
     ):
@@ -116,7 +116,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             ConfField.field_client_default_env_dir_rel_path.value: "my_env_dir_from_conf",
         }
         self.fs.create_dir(os.path.join(self.mock_ref_root, "my_env_dir_from_conf"))
-        mock_state_client_conf_file_data.return_value = client_conf_file_data
+        mock_state_client_conf_file_data_loaded.return_value = client_conf_file_data
 
         # This should be used:
         arg_value = "my_env_dir_from_arg"
@@ -144,11 +144,11 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.eval_own_state"
     )
     def test_success_when_default_field_is_present(
         self,
-        mock_state_client_conf_file_data,
+        mock_state_client_conf_file_data_loaded,
         mock_state_args_parsed,
         mock_state_primer_ref_root_dir_abs_path_eval_finalized,
     ):
@@ -170,7 +170,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             ConfField.field_client_default_env_dir_rel_path.value: "my_env_dir",
         }
         self.fs.create_dir("my_env_dir")
-        mock_state_client_conf_file_data.return_value = client_conf_file_data
+        mock_state_client_conf_file_data_loaded.return_value = client_conf_file_data
 
         # when:
         state_client_local_env_conf_dir_rel_path_eval_finalized = (
@@ -191,11 +191,11 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.eval_own_state"
     )
     def test_failure_when_default_field_is_missing(
         self,
-        mock_state_client_conf_file_data,
+        mock_state_client_conf_file_data_loaded,
         mock_state_args_parsed,
         mock_state_primer_ref_root_dir_abs_path_eval_finalized,
     ):
@@ -215,7 +215,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
 
         client_conf_file_data = {}
-        mock_state_client_conf_file_data.return_value = client_conf_file_data
+        mock_state_client_conf_file_data_loaded.return_value = client_conf_file_data
 
         # when:
 
@@ -238,11 +238,11 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.eval_own_state"
     )
     def test_failure_when_path_is_not_a_dir(
         self,
-        mock_state_client_conf_file_data,
+        mock_state_client_conf_file_data_loaded,
         mock_state_args_parsed,
         mock_state_primer_ref_root_dir_abs_path_eval_finalized,
     ):
@@ -264,7 +264,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             ConfField.field_client_default_env_dir_rel_path.value: "not_a_dir",
         }
         self.fs.create_file("not_a_dir")
-        mock_state_client_conf_file_data.return_value = client_conf_file_data
+        mock_state_client_conf_file_data_loaded.return_value = client_conf_file_data
 
         # when:
         with self.assertRaises(AssertionError) as ctx:
@@ -282,11 +282,11 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.eval_own_state"
     )
     def test_failure_when_default_path_from_conf_is_absolute(
         self,
-        mock_state_client_conf_file_data,
+        mock_state_client_conf_file_data_loaded,
         mock_state_args_parsed,
         mock_state_primer_ref_root_dir_abs_path_eval_finalized,
     ):
@@ -307,7 +307,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         client_conf_file_data = {
             ConfField.field_client_default_env_dir_rel_path.value: "/abs/path",
         }
-        mock_state_client_conf_file_data.return_value = client_conf_file_data
+        mock_state_client_conf_file_data_loaded.return_value = client_conf_file_data
 
         # when:
         with self.assertRaises(AssertionError) as ctx:
@@ -325,11 +325,11 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.eval_own_state"
     )
     def test_failure_when_path_from_conf_is_outside_ref_root(
         self,
-        mock_state_client_conf_file_data,
+        mock_state_client_conf_file_data_loaded,
         mock_state_args_parsed,
         mock_state_primer_ref_root_dir_abs_path_eval_finalized,
     ):
@@ -343,7 +343,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
         os.chdir(self.mock_ref_root)
 
-        mock_state_client_conf_file_data.return_value = {}  # Should be ignored
+        mock_state_client_conf_file_data_loaded.return_value = {}  # Should be ignored
 
         arg_value = "/abs/path/outside/ref_root"
         self.fs.create_dir(arg_value)
@@ -367,11 +367,11 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.eval_own_state"
     )
     def test_success_when_path_from_conf_is_inside_ref_root(
         self,
-        mock_state_client_conf_file_data,
+        mock_state_client_conf_file_data_loaded,
         mock_state_args_parsed,
         mock_state_primer_ref_root_dir_abs_path_eval_finalized,
     ):
@@ -385,7 +385,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
         os.chdir(self.mock_ref_root)
 
-        mock_state_client_conf_file_data.return_value = {}  # Should be ignored
+        mock_state_client_conf_file_data_loaded.return_value = {}  # Should be ignored
 
         arg_value_rel = "my_env"
         arg_value_abs = os.path.join(self.mock_ref_root, arg_value_rel)
@@ -409,11 +409,11 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.eval_own_state"
     )
     def test_failure_when_path_does_not_exist(
         self,
-        mock_state_client_conf_file_data,
+        mock_state_client_conf_file_data_loaded,
         mock_state_args_parsed,
         mock_state_primer_ref_root_dir_abs_path_eval_finalized,
     ):
@@ -434,7 +434,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         client_conf_file_data = {
             ConfField.field_client_default_env_dir_rel_path.value: "missing_dir",
         }
-        mock_state_client_conf_file_data.return_value = client_conf_file_data
+        mock_state_client_conf_file_data_loaded.return_value = client_conf_file_data
 
         # when:
         with self.assertRaises(AssertionError) as ctx:
@@ -452,11 +452,11 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.eval_own_state"
     )
     def test_success_when_path_leads_to_a_dir(
         self,
-        mock_state_client_conf_file_data,
+        mock_state_client_conf_file_data_loaded,
         mock_state_args_parsed,
         mock_state_primer_ref_root_dir_abs_path_eval_finalized,
     ):
@@ -479,7 +479,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         client_conf_file_data = {
             ConfField.field_client_default_env_dir_rel_path.value: "symlink_to_dir",
         }
-        mock_state_client_conf_file_data.return_value = client_conf_file_data
+        mock_state_client_conf_file_data_loaded.return_value = client_conf_file_data
 
         # when:
         result = self.env_ctx.state_graph.eval_state(
@@ -496,11 +496,11 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.eval_own_state"
     )
     def test_failure_when_path_from_arg_is_not_a_dir(
         self,
-        mock_state_client_conf_file_data,
+        mock_state_client_conf_file_data_loaded,
         mock_state_args_parsed,
         mock_state_primer_ref_root_dir_abs_path_eval_finalized,
     ):
@@ -514,7 +514,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
         os.chdir(self.mock_ref_root)
 
-        mock_state_client_conf_file_data.return_value = {}  # Should be ignored
+        mock_state_client_conf_file_data_loaded.return_value = {}  # Should be ignored
 
         arg_value = "/abs/path/not_a_dir"
         self.fs.create_file(arg_value)
@@ -541,11 +541,11 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.eval_own_state"
     )
     def test_success_when_arg_is_present_and_sub_dir_to_ref_root_but_rel_to_curr_dir(
         self,
-        mock_state_client_conf_file_data,
+        mock_state_client_conf_file_data_loaded,
         mock_state_args_parsed,
         mock_state_primer_ref_root_dir_abs_path_eval_finalized,
     ):
@@ -563,7 +563,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             ConfField.field_client_default_env_dir_rel_path.value: "my_env_dir_from_conf",
         }
         self.fs.create_dir(os.path.join(self.mock_ref_root, "my_env_dir_from_conf"))
-        mock_state_client_conf_file_data.return_value = client_conf_file_data
+        mock_state_client_conf_file_data_loaded.return_value = client_conf_file_data
 
         # This should be used:
         arg_value = "my_env_dir_from_arg"

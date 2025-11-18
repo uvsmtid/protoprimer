@@ -9,7 +9,7 @@ from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     Bootstrapper_state_primer_ref_root_dir_abs_path_eval_finalized,
-    Bootstrapper_state_proto_conf_file_data,
+    Bootstrapper_state_primer_conf_file_data_loaded,
     ConfField,
     EnvContext,
     EnvState,
@@ -36,14 +36,14 @@ def test_relationship():
 
 
 @patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_proto_conf_file_data.__name__}.eval_own_state"
+    f"{primer_kernel.__name__}.{Bootstrapper_state_primer_conf_file_data_loaded.__name__}.eval_own_state"
 )
 @patch(
     f"{primer_kernel.__name__}.{Bootstrapper_state_primer_ref_root_dir_abs_path_eval_finalized.__name__}.eval_own_state"
 )
 def test_success_when_field_present(
     mock_state_primer_ref_root_dir_abs_path_eval_finalized,
-    mock_state_proto_conf_file_data,
+    mock_state_primer_conf_file_data_loaded,
     env_ctx,
     mock_ref_root,
 ):
@@ -60,7 +60,7 @@ def test_success_when_field_present(
     proto_conf_data = {
         ConfField.field_primer_conf_client_file_rel_path.value: client_conf_rel_path
     }
-    mock_state_proto_conf_file_data.return_value = proto_conf_data
+    mock_state_primer_conf_file_data_loaded.return_value = proto_conf_data
 
     # when:
     result = env_ctx.state_graph.eval_state(
@@ -72,14 +72,14 @@ def test_success_when_field_present(
 
 
 @patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_proto_conf_file_data.__name__}.eval_own_state"
+    f"{primer_kernel.__name__}.{Bootstrapper_state_primer_conf_file_data_loaded.__name__}.eval_own_state"
 )
 @patch(
     f"{primer_kernel.__name__}.{Bootstrapper_state_primer_ref_root_dir_abs_path_eval_finalized.__name__}.eval_own_state"
 )
 def test_warning_when_field_missing(
     mock_state_primer_ref_root_dir_abs_path_eval_finalized,
-    mock_state_proto_conf_file_data,
+    mock_state_primer_conf_file_data_loaded,
     env_ctx,
     mock_ref_root,
     caplog,
@@ -90,7 +90,7 @@ def test_warning_when_field_missing(
         EnvState.state_primer_conf_client_file_abs_path_eval_finalized.name,
     )
     mock_state_primer_ref_root_dir_abs_path_eval_finalized.return_value = mock_ref_root
-    mock_state_proto_conf_file_data.return_value = {}
+    mock_state_primer_conf_file_data_loaded.return_value = {}
 
     # when:
     caplog.set_level(WARNING)

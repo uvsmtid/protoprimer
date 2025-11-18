@@ -15,6 +15,7 @@ from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     Bootstrapper_state_args_parsed,
     Bootstrapper_state_default_stderr_log_handler_configured,
+    Bootstrapper_state_merged_conf_data_printed,
     Bootstrapper_state_py_exec_updated_proto_code,
     EnvContext,
     EnvState,
@@ -33,6 +34,9 @@ def test_relationship():
 
 
 @patch(
+    f"{primer_kernel.__name__}.{Bootstrapper_state_merged_conf_data_printed.__name__}.eval_own_state"
+)
+@patch(
     f"{primer_kernel.__name__}.{Bootstrapper_state_default_stderr_log_handler_configured.__name__}.eval_own_state"
 )
 @patch(f"{os.__name__}.execv")
@@ -47,6 +51,7 @@ def test_command_executed(
     mock_state_py_exec_updated_proto_code,
     mock_os_execv,
     mock_state_default_stderr_log_handler_configured,
+    mock_state_merged_conf_data_printed,
     env_ctx,
 ):
     # given:
@@ -80,6 +85,9 @@ def test_command_executed(
 
 
 @patch(
+    f"{primer_kernel.__name__}.{Bootstrapper_state_merged_conf_data_printed.__name__}.eval_own_state"
+)
+@patch(
     f"{primer_kernel.__name__}.{Bootstrapper_state_default_stderr_log_handler_configured.__name__}.eval_own_state"
 )
 @patch(f"{os.__name__}.execv")
@@ -94,6 +102,7 @@ def test_command_not_executed_when_no_command_line_provided(
     mock_state_py_exec_updated_proto_code,
     mock_os_execv,
     mock_state_default_stderr_log_handler_configured,
+    mock_state_merged_conf_data_printed,
     env_ctx,
 ):
     # given:
@@ -120,6 +129,9 @@ def test_command_not_executed_when_no_command_line_provided(
 
 
 @patch(
+    f"{primer_kernel.__name__}.{Bootstrapper_state_merged_conf_data_printed.__name__}.eval_own_state"
+)
+@patch(
     f"{primer_kernel.__name__}.{Bootstrapper_state_default_stderr_log_handler_configured.__name__}.eval_own_state"
 )
 @patch(f"{os.__name__}.execv")
@@ -134,6 +146,7 @@ def test_command_executed_empty(
     mock_state_py_exec_updated_proto_code,
     mock_os_execv,
     mock_state_default_stderr_log_handler_configured,
+    mock_state_merged_conf_data_printed,
     env_ctx,
 ):
     # given:
@@ -167,6 +180,9 @@ def test_command_executed_empty(
 
 
 @patch(
+    f"{primer_kernel.__name__}.{Bootstrapper_state_merged_conf_data_printed.__name__}.eval_own_state"
+)
+@patch(
     f"{primer_kernel.__name__}.{Bootstrapper_state_default_stderr_log_handler_configured.__name__}.eval_own_state"
 )
 @patch(f"{os.__name__}.execv")
@@ -181,6 +197,7 @@ def test_command_executed_with_whitespace(
     mock_state_py_exec_updated_proto_code,
     mock_os_execv,
     mock_state_default_stderr_log_handler_configured,
+    mock_state_merged_conf_data_printed,
     env_ctx,
 ):
     # given:

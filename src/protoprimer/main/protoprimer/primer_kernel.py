@@ -35,7 +35,7 @@ from typing import (
 
 # The release process ensures that content in this file matches the version below while tagging the release commit
 # (otherwise, if the file comes from a different commit, the version is irrelevant):
-__version__ = "0.0.11"
+__version__ = "0.1.0"
 
 logger: logging.Logger = logging.getLogger()
 
@@ -218,6 +218,8 @@ class RunMode(enum.Enum):
 
     mode_prime = "prime"
 
+    mode_config = "config"
+
     # TODO: implement:
     mode_check = "check"
 
@@ -387,6 +389,7 @@ class SyntaxArg:
     arg_reinstall = f"--{CommandAction.action_reinstall.value}"
 
     arg_mode_prime = f"--{RunMode.mode_prime.value}"
+    arg_mode_config = f"--{RunMode.mode_config.value}"
     arg_mode_check = f"--{RunMode.mode_check.value}"
     arg_mode_wizard = f"--{RunMode.mode_wizard.value}"
 
@@ -1403,6 +1406,14 @@ def init_arg_parser():
         help="Prime the environment to be ready to use.",
     )
     mutex_group.add_argument(
+        SyntaxArg.arg_mode_config,
+        action="store_const",
+        const=RunMode.mode_config.value,
+        dest=ParsedArg.name_run_mode.value,
+        metavar=ParsedArg.name_run_mode.value,
+        help="Print effective config.",
+    )
+    mutex_group.add_argument(
         SyntaxArg.arg_mode_check,
         action="store_const",
         const=RunMode.mode_check.value,
@@ -1498,6 +1509,9 @@ class RunStrategy:
 
 
 class ExitCodeReporter(RunStrategy):
+    """
+    This strategy requires state to return `int` value (as exit code).
+    """
 
     def __init__(
         self,
@@ -1643,8 +1657,8 @@ class AbstractMergedFieldCachingStateNode(AbstractCachingStateNode[ValueType]):
         )
         # FT_00_22_19_59.merged_config.md: merges values from both files:
         assert (
-            EnvState.state_client_conf_file_data.name in parent_states
-            and EnvState.state_env_conf_file_data.name in parent_states
+            EnvState.state_client_conf_file_data_loaded.name in parent_states
+            and EnvState.state_env_conf_file_data_loaded.name in parent_states
         )
 
     def _get_merged_value_or_default(
@@ -1652,17 +1666,17 @@ class AbstractMergedFieldCachingStateNode(AbstractCachingStateNode[ValueType]):
         field_name: str,
         default_field_value: ValueType,
     ) -> ValueType | None:
-        state_client_conf_file_data: dict = self.eval_parent_state(
-            EnvState.state_client_conf_file_data.name
+        state_client_conf_file_data_loaded: dict = self.eval_parent_state(
+            EnvState.state_client_conf_file_data_loaded.name
         )
-        state_env_conf_file_data: dict = self.eval_parent_state(
-            EnvState.state_env_conf_file_data.name
+        state_env_conf_file_data_loaded: dict = self.eval_parent_state(
+            EnvState.state_env_conf_file_data_loaded.name
         )
         field_value: ValueType | None
-        if field_name in state_env_conf_file_data:
-            field_value = state_env_conf_file_data[field_name]
+        if field_name in state_env_conf_file_data_loaded:
+            field_value = state_env_conf_file_data_loaded[field_name]
         else:
-            field_value = state_client_conf_file_data.get(
+            field_value = state_client_conf_file_data_loaded.get(
                 field_name,
                 default_field_value,
             )
@@ -2038,6 +2052,11 @@ class Bootstrapper_state_run_mode_executed(AbstractCachingStateNode[bool]):
             raise ValueError(f"run mode is not defined")
         elif state_input_run_mode_arg_loaded == RunMode.mode_prime:
             selected_strategy = ExitCodeReporter(self.env_ctx)
+        elif state_input_run_mode_arg_loaded == RunMode.mode_config:
+            selected_strategy = ExitCodeReporter(self.env_ctx)
+            state_node = self.env_ctx.state_graph.state_nodes[
+                EnvState.state_merged_conf_data_printed.name
+            ]
         elif state_input_run_mode_arg_loaded == RunMode.mode_wizard:
             for wizard_state in WizardState:
                 self.env_ctx.state_graph.register_node(
@@ -2374,7 +2393,7 @@ class Bootstrapper_state_input_proto_conf_primer_file_abs_path_eval_finalized(
 
 
 # noinspection PyPep8Naming
-class Bootstrapper_state_proto_conf_file_data(AbstractCachingStateNode[dict]):
+class Bootstrapper_state_primer_conf_file_data_loaded(AbstractCachingStateNode[dict]):
 
     def __init__(
         self,
@@ -2388,7 +2407,7 @@ class Bootstrapper_state_proto_conf_file_data(AbstractCachingStateNode[dict]):
             ],
             state_name=if_none(
                 state_name,
-                EnvState.state_proto_conf_file_data.name,
+                EnvState.state_primer_conf_file_data_loaded.name,
             ),
         )
 
@@ -2420,7 +2439,7 @@ class Bootstrapper_state_proto_conf_file_data(AbstractCachingStateNode[dict]):
 
 
 # noinspection PyPep8Naming
-class Wizard_state_proto_conf_file_data(AbstractCachingStateNode[dict]):
+class Wizard_state_primer_conf_file_data_loaded(AbstractCachingStateNode[dict]):
 
     def __init__(
         self,
@@ -2428,7 +2447,7 @@ class Wizard_state_proto_conf_file_data(AbstractCachingStateNode[dict]):
         state_name: str | None = None,
     ):
         self.moved_state_name = rename_to_moved_state_name(
-            EnvState.state_proto_conf_file_data.name
+            EnvState.state_primer_conf_file_data_loaded.name
         )
         super().__init__(
             env_ctx=env_ctx,
@@ -2442,7 +2461,7 @@ class Wizard_state_proto_conf_file_data(AbstractCachingStateNode[dict]):
             ],
             state_name=if_none(
                 state_name,
-                EnvState.state_proto_conf_file_data.name,
+                EnvState.state_primer_conf_file_data_loaded.name,
             ),
             # Bootstrap manually to avoid touching `moved_state_node`:
             auto_bootstrap_parents=False,
@@ -2450,7 +2469,7 @@ class Wizard_state_proto_conf_file_data(AbstractCachingStateNode[dict]):
 
         # UC_27_40_17_59.replace_by_new_and_use_old.md:
         # Register the moved state implementation:
-        self.moved_state_node = Bootstrapper_state_proto_conf_file_data(
+        self.moved_state_node = Bootstrapper_state_primer_conf_file_data_loaded(
             env_ctx,
             self.moved_state_name,
         )
@@ -2493,7 +2512,7 @@ class Bootstrapper_state_primer_ref_root_dir_abs_path_eval_finalized(
             env_ctx=env_ctx,
             parent_states=[
                 EnvState.state_input_proto_code_dir_abs_path_eval_finalized.name,
-                EnvState.state_proto_conf_file_data.name,
+                EnvState.state_primer_conf_file_data_loaded.name,
             ],
             state_name=if_none(
                 state_name,
@@ -2504,11 +2523,11 @@ class Bootstrapper_state_primer_ref_root_dir_abs_path_eval_finalized(
     def _eval_state_once(
         self,
     ) -> ValueType:
-        state_proto_conf_file_data: dict = self.eval_parent_state(
-            EnvState.state_proto_conf_file_data.name
+        state_primer_conf_file_data_loaded: dict = self.eval_parent_state(
+            EnvState.state_primer_conf_file_data_loaded.name
         )
 
-        field_client_dir_rel_path: str | None = state_proto_conf_file_data.get(
+        field_client_dir_rel_path: str | None = state_primer_conf_file_data_loaded.get(
             ConfField.field_primer_ref_root_dir_rel_path.value,
             None,
         )
@@ -2554,7 +2573,7 @@ class Bootstrapper_state_primer_conf_client_file_abs_path_eval_finalized(
         super().__init__(
             env_ctx=env_ctx,
             parent_states=[
-                EnvState.state_proto_conf_file_data.name,
+                EnvState.state_primer_conf_file_data_loaded.name,
                 EnvState.state_primer_ref_root_dir_abs_path_eval_finalized.name,
             ],
             state_name=if_none(
@@ -2570,13 +2589,15 @@ class Bootstrapper_state_primer_conf_client_file_abs_path_eval_finalized(
             EnvState.state_primer_ref_root_dir_abs_path_eval_finalized.name
         )
 
-        state_proto_conf_file_data: dict = self.eval_parent_state(
-            EnvState.state_proto_conf_file_data.name
+        state_primer_conf_file_data_loaded: dict = self.eval_parent_state(
+            EnvState.state_primer_conf_file_data_loaded.name
         )
 
-        field_client_config_rel_path: str | None = state_proto_conf_file_data.get(
-            ConfField.field_primer_conf_client_file_rel_path.value,
-            None,
+        field_client_config_rel_path: str | None = (
+            state_primer_conf_file_data_loaded.get(
+                ConfField.field_primer_conf_client_file_rel_path.value,
+                None,
+            )
         )
 
         state_primer_conf_client_file_abs_path_eval_finalized: str | None
@@ -2596,7 +2617,7 @@ class Bootstrapper_state_primer_conf_client_file_abs_path_eval_finalized(
 
 
 # noinspection PyPep8Naming
-class Bootstrapper_state_client_conf_file_data(AbstractCachingStateNode[dict]):
+class Bootstrapper_state_client_conf_file_data_loaded(AbstractCachingStateNode[dict]):
 
     def __init__(
         self,
@@ -2610,7 +2631,7 @@ class Bootstrapper_state_client_conf_file_data(AbstractCachingStateNode[dict]):
             ],
             state_name=if_none(
                 state_name,
-                EnvState.state_client_conf_file_data.name,
+                EnvState.state_client_conf_file_data_loaded.name,
             ),
         )
 
@@ -2646,7 +2667,7 @@ class Bootstrapper_state_client_conf_file_data(AbstractCachingStateNode[dict]):
 
 
 # noinspection PyPep8Naming
-class Wizard_state_client_conf_file_data(AbstractCachingStateNode[dict]):
+class Wizard_state_client_conf_file_data_loaded(AbstractCachingStateNode[dict]):
 
     def __init__(
         self,
@@ -2654,7 +2675,7 @@ class Wizard_state_client_conf_file_data(AbstractCachingStateNode[dict]):
         state_name: str | None = None,
     ):
         self.moved_state_name = rename_to_moved_state_name(
-            EnvState.state_client_conf_file_data.name
+            EnvState.state_client_conf_file_data_loaded.name
         )
         super().__init__(
             env_ctx=env_ctx,
@@ -2667,7 +2688,7 @@ class Wizard_state_client_conf_file_data(AbstractCachingStateNode[dict]):
             ],
             state_name=if_none(
                 state_name,
-                EnvState.state_client_conf_file_data.name,
+                EnvState.state_client_conf_file_data_loaded.name,
             ),
             # Bootstrap manually to avoid touching `moved_state_node`:
             auto_bootstrap_parents=False,
@@ -2675,7 +2696,7 @@ class Wizard_state_client_conf_file_data(AbstractCachingStateNode[dict]):
 
         # UC_27_40_17_59.replace_by_new_and_use_old.md:
         # Register the moved state implementation:
-        self.moved_state_node = Bootstrapper_state_client_conf_file_data(
+        self.moved_state_node = Bootstrapper_state_client_conf_file_data_loaded(
             env_ctx,
             self.moved_state_name,
         )
@@ -2727,7 +2748,7 @@ class Bootstrapper_state_client_local_env_conf_dir_rel_path_eval_finalized(
             parent_states=[
                 EnvState.state_args_parsed.name,
                 EnvState.state_primer_ref_root_dir_abs_path_eval_finalized.name,
-                EnvState.state_client_conf_file_data.name,
+                EnvState.state_client_conf_file_data_loaded.name,
             ],
             state_name=if_none(
                 state_name,
@@ -2793,11 +2814,11 @@ class Bootstrapper_state_client_local_env_conf_dir_rel_path_eval_finalized(
         )
         if env_conf_dir_any_path is None:
             # Use the default env configured:
-            state_client_conf_file_data: dict = self.eval_parent_state(
-                EnvState.state_client_conf_file_data.name
+            state_client_conf_file_data_loaded: dict = self.eval_parent_state(
+                EnvState.state_client_conf_file_data_loaded.name
             )
             field_client_default_env_dir_rel_path: str | None = (
-                state_client_conf_file_data.get(
+                state_client_conf_file_data_loaded.get(
                     ConfField.field_client_default_env_dir_rel_path.value,
                     None,
                 )
@@ -2867,7 +2888,7 @@ class Bootstrapper_state_client_conf_env_dir_abs_path_eval_finalized(
             env_ctx=env_ctx,
             parent_states=[
                 EnvState.state_primer_ref_root_dir_abs_path_eval_finalized.name,
-                EnvState.state_client_conf_file_data.name,
+                EnvState.state_client_conf_file_data_loaded.name,
                 EnvState.state_client_local_env_conf_dir_rel_path_eval_finalized.name,
             ],
             state_name=if_none(
@@ -2895,7 +2916,7 @@ class Bootstrapper_state_client_conf_env_dir_abs_path_eval_finalized(
             return state_primer_ref_root_dir_abs_path_eval_finalized
 
         file_data: dict = self.eval_parent_state(
-            EnvState.state_client_conf_file_data.name
+            EnvState.state_client_conf_file_data_loaded.name
         )
 
         env_conf_dir_rel_path: str = file_data.get(
@@ -2957,7 +2978,7 @@ class Bootstrapper_state_client_link_name_dir_rel_path_eval_finalized(
         super().__init__(
             env_ctx=env_ctx,
             parent_states=[
-                EnvState.state_client_conf_file_data.name,
+                EnvState.state_client_conf_file_data_loaded.name,
             ],
             state_name=if_none(
                 state_name,
@@ -2969,11 +2990,11 @@ class Bootstrapper_state_client_link_name_dir_rel_path_eval_finalized(
         self,
     ) -> ValueType:
 
-        state_client_conf_file_data: dict = self.eval_parent_state(
-            EnvState.state_client_conf_file_data.name
+        state_client_conf_file_data_loaded: dict = self.eval_parent_state(
+            EnvState.state_client_conf_file_data_loaded.name
         )
         state_client_link_name_dir_rel_path_eval_finalized: str | None = (
-            state_client_conf_file_data.get(
+            state_client_conf_file_data_loaded.get(
                 ConfField.field_client_link_name_dir_rel_path.value,
             )
         )
@@ -3052,7 +3073,7 @@ class Bootstrapper_state_client_conf_env_file_abs_path_eval_finalized(
 
 
 # noinspection PyPep8Naming
-class Bootstrapper_state_env_conf_file_data(AbstractCachingStateNode[dict]):
+class Bootstrapper_state_env_conf_file_data_loaded(AbstractCachingStateNode[dict]):
 
     def __init__(
         self,
@@ -3066,7 +3087,7 @@ class Bootstrapper_state_env_conf_file_data(AbstractCachingStateNode[dict]):
             ],
             state_name=if_none(
                 state_name,
-                EnvState.state_env_conf_file_data.name,
+                EnvState.state_env_conf_file_data_loaded.name,
             ),
         )
 
@@ -3103,7 +3124,7 @@ class Bootstrapper_state_env_conf_file_data(AbstractCachingStateNode[dict]):
 
 
 # noinspection PyPep8Naming
-class Wizard_state_env_conf_file_data(AbstractCachingStateNode[dict]):
+class Wizard_state_env_conf_file_data_loaded(AbstractCachingStateNode[dict]):
 
     def __init__(
         self,
@@ -3111,7 +3132,7 @@ class Wizard_state_env_conf_file_data(AbstractCachingStateNode[dict]):
         state_name: str | None = None,
     ):
         self.moved_state_name = rename_to_moved_state_name(
-            EnvState.state_env_conf_file_data.name
+            EnvState.state_env_conf_file_data_loaded.name
         )
         super().__init__(
             env_ctx=env_ctx,
@@ -3124,7 +3145,7 @@ class Wizard_state_env_conf_file_data(AbstractCachingStateNode[dict]):
             ],
             state_name=if_none(
                 state_name,
-                EnvState.state_env_conf_file_data.name,
+                EnvState.state_env_conf_file_data_loaded.name,
             ),
             # Bootstrap manually to avoid touching `moved_state_node`:
             auto_bootstrap_parents=False,
@@ -3132,7 +3153,7 @@ class Wizard_state_env_conf_file_data(AbstractCachingStateNode[dict]):
 
         # UC_27_40_17_59.replace_by_new_and_use_old.md:
         # Register the moved state implementation:
-        self.moved_state_node = Bootstrapper_state_env_conf_file_data(
+        self.moved_state_node = Bootstrapper_state_env_conf_file_data_loaded(
             env_ctx,
             self.moved_state_name,
         )
@@ -3179,8 +3200,8 @@ class Bootstrapper_state_merged_required_python_file_abs_path_eval_finalized(
             env_ctx=env_ctx,
             parent_states=[
                 EnvState.state_primer_ref_root_dir_abs_path_eval_finalized.name,
-                EnvState.state_client_conf_file_data.name,
-                EnvState.state_env_conf_file_data.name,
+                EnvState.state_client_conf_file_data_loaded.name,
+                EnvState.state_env_conf_file_data_loaded.name,
             ],
             state_name=if_none(
                 state_name,
@@ -3227,8 +3248,8 @@ class Bootstrapper_state_merged_local_venv_dir_abs_path_eval_finalized(
             env_ctx=env_ctx,
             parent_states=[
                 EnvState.state_primer_ref_root_dir_abs_path_eval_finalized.name,
-                EnvState.state_client_conf_file_data.name,
-                EnvState.state_env_conf_file_data.name,
+                EnvState.state_client_conf_file_data_loaded.name,
+                EnvState.state_env_conf_file_data_loaded.name,
             ],
             state_name=if_none(
                 state_name,
@@ -3275,8 +3296,8 @@ class Bootstrapper_state_merged_local_log_dir_abs_path_eval_finalized(
             env_ctx=env_ctx,
             parent_states=[
                 EnvState.state_primer_ref_root_dir_abs_path_eval_finalized.name,
-                EnvState.state_client_conf_file_data.name,
-                EnvState.state_env_conf_file_data.name,
+                EnvState.state_client_conf_file_data_loaded.name,
+                EnvState.state_env_conf_file_data_loaded.name,
             ],
             state_name=if_none(
                 state_name,
@@ -3323,8 +3344,8 @@ class Bootstrapper_state_merged_local_tmp_dir_abs_path_eval_finalized(
             env_ctx=env_ctx,
             parent_states=[
                 EnvState.state_primer_ref_root_dir_abs_path_eval_finalized.name,
-                EnvState.state_client_conf_file_data.name,
-                EnvState.state_env_conf_file_data.name,
+                EnvState.state_client_conf_file_data_loaded.name,
+                EnvState.state_env_conf_file_data_loaded.name,
             ],
             state_name=if_none(
                 state_name,
@@ -3371,8 +3392,8 @@ class Bootstrapper_state_merged_local_cache_dir_abs_path_eval_finalized(
             env_ctx=env_ctx,
             parent_states=[
                 EnvState.state_primer_ref_root_dir_abs_path_eval_finalized.name,
-                EnvState.state_client_conf_file_data.name,
-                EnvState.state_env_conf_file_data.name,
+                EnvState.state_client_conf_file_data_loaded.name,
+                EnvState.state_env_conf_file_data_loaded.name,
             ],
             state_name=if_none(
                 state_name,
@@ -3418,8 +3439,8 @@ class Bootstrapper_state_merged_project_descriptors_eval_finalized(
         super().__init__(
             env_ctx=env_ctx,
             parent_states=[
-                EnvState.state_client_conf_file_data.name,
-                EnvState.state_env_conf_file_data.name,
+                EnvState.state_client_conf_file_data_loaded.name,
+                EnvState.state_env_conf_file_data_loaded.name,
             ],
             state_name=if_none(
                 state_name,
@@ -3452,7 +3473,7 @@ class Bootstrapper_state_merged_package_driver_eval_finalized(
         super().__init__(
             env_ctx=env_ctx,
             parent_states=[
-                EnvState.state_env_conf_file_data.name,
+                EnvState.state_env_conf_file_data_loaded.name,
                 EnvState.state_merged_local_cache_dir_abs_path_eval_finalized.name,
             ],
             state_name=if_none(
@@ -3464,15 +3485,15 @@ class Bootstrapper_state_merged_package_driver_eval_finalized(
     def _eval_state_once(
         self,
     ) -> ValueType:
-        state_env_conf_file_data: dict = self.eval_parent_state(
-            EnvState.state_env_conf_file_data.name
+        state_env_conf_file_data_loaded: dict = self.eval_parent_state(
+            EnvState.state_env_conf_file_data_loaded.name
         )
 
         field_package_driver: PackageDriverType
 
         if os.environ.get(EnvVar.var_PROTOPRIMER_PACKAGE_DRIVER.value, None) is None:
             field_package_driver = PackageDriverType[
-                state_env_conf_file_data.get(
+                state_env_conf_file_data_loaded.get(
                     ConfField.field_package_driver.value,
                     ConfConstEnv.default_package_driver,
                 )
@@ -3483,6 +3504,51 @@ class Bootstrapper_state_merged_package_driver_eval_finalized(
             ]
 
         return field_package_driver
+
+
+# noinspection PyPep8Naming
+class Bootstrapper_state_merged_conf_data_printed(AbstractCachingStateNode[int]):
+
+    def __init__(
+        self,
+        env_ctx: EnvContext,
+        state_name: str | None = None,
+    ):
+        super().__init__(
+            env_ctx=env_ctx,
+            parent_states=[
+                EnvState.state_primer_conf_file_data_loaded.name,
+                EnvState.state_client_conf_file_data_loaded.name,
+                EnvState.state_env_conf_file_data_loaded.name,
+            ],
+            state_name=if_none(
+                state_name,
+                EnvState.state_merged_conf_data_printed.name,
+            ),
+            # Load them sequentially (print prev in case the next fails):
+            auto_bootstrap_parents=False,
+        )
+
+    def _eval_state_once(
+        self,
+    ) -> ValueType:
+        # TODO: print annotations:
+        state_primer_conf_file_data_loaded: dict = self.eval_parent_state(
+            EnvState.state_primer_conf_file_data_loaded.name
+        )
+        print(json.dumps(state_primer_conf_file_data_loaded, indent=4))
+
+        state_client_conf_file_data_loaded: dict = self.eval_parent_state(
+            EnvState.state_client_conf_file_data_loaded.name
+        )
+        print(json.dumps(state_client_conf_file_data_loaded, indent=4))
+
+        state_env_conf_file_data_loaded: dict = self.eval_parent_state(
+            EnvState.state_env_conf_file_data_loaded.name
+        )
+        print(json.dumps(state_env_conf_file_data_loaded, indent=4))
+
+        return 0
 
 
 # noinspection PyPep8Naming
@@ -4457,6 +4523,8 @@ class Bootstrapper_state_command_executed(AbstractCachingStateNode[int]):
                 [
                     EnvState.state_default_stderr_log_handler_configured.name,
                     EnvState.state_args_parsed.name,
+                    # TODO: is it needed here?
+                    EnvState.state_merged_conf_data_printed.name,
                     EnvState.state_py_exec_updated_proto_code.name,
                 ],
             ),
@@ -4540,11 +4608,11 @@ class WizardState(enum.Enum):
     These states replace some of the `EnvState` (named the same way) during `RunMode.mode_wizard`.
     """
 
-    state_proto_conf_file_data = Wizard_state_proto_conf_file_data
+    state_primer_conf_file_data_loaded = Wizard_state_primer_conf_file_data_loaded
 
-    state_client_conf_file_data = Wizard_state_client_conf_file_data
+    state_client_conf_file_data_loaded = Wizard_state_client_conf_file_data_loaded
 
-    state_env_conf_file_data = Wizard_state_env_conf_file_data
+    state_env_conf_file_data_loaded = Wizard_state_env_conf_file_data_loaded
 
 
 class EnvState(enum.Enum):
@@ -4611,8 +4679,8 @@ class EnvState(enum.Enum):
         Bootstrapper_state_input_proto_conf_primer_file_abs_path_eval_finalized
     )
 
-    # The state is wizard-able by `Wizard_state_proto_conf_file_data`:
-    state_proto_conf_file_data = Bootstrapper_state_proto_conf_file_data
+    # The state is wizard-able by `Wizard_state_primer_conf_file_data_loaded`:
+    state_primer_conf_file_data_loaded = Bootstrapper_state_primer_conf_file_data_loaded
 
     state_primer_ref_root_dir_abs_path_eval_finalized = (
         Bootstrapper_state_primer_ref_root_dir_abs_path_eval_finalized
@@ -4622,8 +4690,8 @@ class EnvState(enum.Enum):
         Bootstrapper_state_primer_conf_client_file_abs_path_eval_finalized
     )
 
-    # The state is wizard-able by `Wizard_state_client_conf_file_data`:
-    state_client_conf_file_data = Bootstrapper_state_client_conf_file_data
+    # The state is wizard-able by `Wizard_state_client_conf_file_data_loaded`:
+    state_client_conf_file_data_loaded = Bootstrapper_state_client_conf_file_data_loaded
 
     state_client_local_env_conf_dir_rel_path_eval_finalized = (
         Bootstrapper_state_client_local_env_conf_dir_rel_path_eval_finalized
@@ -4641,8 +4709,8 @@ class EnvState(enum.Enum):
         Bootstrapper_state_client_conf_env_file_abs_path_eval_finalized
     )
 
-    # The state is wizard-able by `Wizard_state_env_conf_file_data`:
-    state_env_conf_file_data = Bootstrapper_state_env_conf_file_data
+    # The state is wizard-able by `Wizard_state_env_conf_file_data_loaded`:
+    state_env_conf_file_data_loaded = Bootstrapper_state_env_conf_file_data_loaded
 
     state_merged_required_python_file_abs_path_eval_finalized = (
         Bootstrapper_state_merged_required_python_file_abs_path_eval_finalized
@@ -4675,6 +4743,8 @@ class EnvState(enum.Enum):
     state_merged_package_driver_eval_finalized = (
         Bootstrapper_state_merged_package_driver_eval_finalized
     )
+
+    state_merged_conf_data_printed = Bootstrapper_state_merged_conf_data_printed
 
     state_default_file_log_handler_configured = (
         Bootstrapper_state_default_file_log_handler_configured
