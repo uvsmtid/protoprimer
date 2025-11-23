@@ -26,7 +26,9 @@ class ThisTestClass(BasePyfakefsTestClass):
 
     # noinspection PyMethodMayBeStatic
     def test_relationship(self):
-        assert_test_module_name_embeds_str(EnvState.state_client_conf_file_data.name)
+        assert_test_module_name_embeds_str(
+            EnvState.state_client_conf_file_data_loaded.name
+        )
 
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_primer_conf_client_file_abs_path_eval_finalized.__name__}.eval_own_state"
@@ -40,7 +42,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         assert_parent_states_mocked(
             self.env_ctx,
-            EnvState.state_client_conf_file_data.name,
+            EnvState.state_client_conf_file_data_loaded.name,
         )
 
         mock_client_dir = "/mock_client_dir"
@@ -63,7 +65,9 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.assertTrue(
             os.path.isfile(state_primer_conf_client_file_abs_path_eval_finalized)
         )
-        self.env_ctx.state_graph.eval_state(EnvState.state_client_conf_file_data.name)
+        self.env_ctx.state_graph.eval_state(
+            EnvState.state_client_conf_file_data_loaded.name
+        )
 
         # then:
 
@@ -81,7 +85,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         assert_parent_states_mocked(
             self.env_ctx,
-            EnvState.state_client_conf_file_data.name,
+            EnvState.state_client_conf_file_data_loaded.name,
         )
 
         mock_client_dir = "/mock_client_dir"
@@ -103,7 +107,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         with self.assertLogs(primer_kernel.logger, level=WARNING) as log_dst:
             self.env_ctx.state_graph.eval_state(
-                EnvState.state_client_conf_file_data.name
+                EnvState.state_client_conf_file_data_loaded.name
             )
 
         # then:
@@ -120,13 +124,13 @@ class ThisTestClass(BasePyfakefsTestClass):
         # given:
         assert_parent_states_mocked(
             self.env_ctx,
-            EnvState.state_client_conf_file_data.name,
+            EnvState.state_client_conf_file_data_loaded.name,
         )
         mock_state_primer_conf_client_file_abs_path_eval_finalized.return_value = None
 
         # when:
         result = self.env_ctx.state_graph.eval_state(
-            EnvState.state_client_conf_file_data.name
+            EnvState.state_client_conf_file_data_loaded.name
         )
 
         # then:

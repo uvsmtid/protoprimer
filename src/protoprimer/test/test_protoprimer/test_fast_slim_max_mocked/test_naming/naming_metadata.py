@@ -77,11 +77,19 @@ class NameCategory(enum.Enum):
     Depending on the category, different naming (the component set and the order) should apply.
     """
 
+    # Used for `EnvVar*` and uncategorized cases:
+    category_name_only = CategoryMeta(
+        name_enums=[
+            # just name
+        ],
+    )
+
     # Some loaded data (e.g., command line args, config file, etc.)
     category_loaded_data = CategoryMeta(
         name_enums=[
-            # TODO: Add at least ConfLeap because only conf data is loaded:
-            # ConfLeap,
+            ConfLeap,
+            #
+            CompletedAction,
         ],
     )
 

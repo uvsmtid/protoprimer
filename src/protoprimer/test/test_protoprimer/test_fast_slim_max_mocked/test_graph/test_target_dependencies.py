@@ -48,6 +48,7 @@ class TestTargetDependencies:
         allowed_missing_dependencies = set(
             self.some_state_run_mode_executed_dependencies
         )
+        allowed_missing_dependencies.add(EnvState.state_merged_conf_data_printed.name)
 
         missing_dependencies -= allowed_missing_dependencies
 

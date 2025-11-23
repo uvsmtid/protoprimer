@@ -68,7 +68,10 @@ def init_arg_parser():
         An instance of `argparse.ArgumentParser`.
     """
     arg_parser_instance = argparse.ArgumentParser(
-        description="Generate a new documentation file id based on existing files in a directory.",
+        description=(
+            "Generate a new documentation file id based on existing files in a directory "
+            "using Lexicographical Frequency Minimization with randomization."
+        ),
     )
     arg_parser_instance.add_argument(
         "doc_dir",
@@ -138,95 +141,6 @@ def get_prefix_and_ids(
     return doc_prefix, existing_ids, num_id_parts
 
 
-def _find_best_prefix(
-    joined_num_pairs_set: set[str],
-    num_id_parts: int,
-) -> str | None:
-    """
-    Finds the best prefix for a new id based on existing ones.
-
-    The "best" prefix is determined by finding the shortest prefix length
-    that has the minimum frequency of occurrence among the existing ids.
-
-    Args:
-        joined_num_pairs_set: A set of existing ids, where each id is a string of concatenated number pairs.
-        num_id_parts: The number of parts in the id.
-
-    Returns:
-        A string representing the best prefix, or `None` if no suitable prefix is found.
-    """
-    min_len_found = -1
-    min_freq_val = -1
-    candidate_prefixes: list[str] = []
-
-    max_len_val = num_id_parts * 2
-    for prefix_len_val in range(1, max_len_val + 1):
-        if min_len_found != -1 and prefix_len_val > min_len_found:
-            break
-
-        prefix_freq_dict: dict[str, int] = {
-            str(index_val).zfill(prefix_len_val): 0
-            for index_val in range(10**prefix_len_val)
-        }
-
-        for joined_num_pairs in joined_num_pairs_set:
-            if len(joined_num_pairs) >= prefix_len_val:
-                current_prefix = joined_num_pairs[:prefix_len_val]
-                if current_prefix in prefix_freq_dict:
-                    prefix_freq_dict[current_prefix] += 1
-
-        sorted_prefixes = sorted(prefix_freq_dict.items(), key=lambda item: item[1])
-        current_min_freq = sorted_prefixes[0][1]
-
-        if min_freq_val == -1 or current_min_freq < min_freq_val:
-            min_freq_val = current_min_freq
-            min_len_found = prefix_len_val
-            candidate_prefixes = [
-                prefix_val
-                for prefix_val, freq_val in sorted_prefixes
-                if freq_val == min_freq_val
-            ]
-        elif current_min_freq == min_freq_val and min_len_found == prefix_len_val:
-            candidate_prefixes.extend(
-                [
-                    prefix_val
-                    for prefix_val, freq_val in sorted_prefixes
-                    if freq_val == min_freq_val
-                ]
-            )
-
-    if not candidate_prefixes:
-        return None
-
-    return random.choice(candidate_prefixes)
-
-
-def _construct_id_from_prefix(
-    id_prefix: str,
-    num_id_parts: int,
-) -> tuple[str, ...]:
-    """
-    Constructs a new id by appending random digits to a given prefix.
-
-    Args:
-        id_prefix: The prefix to use for the new id.
-        num_id_parts: The total number of parts the final id should have.
-
-    Returns:
-        A tuple of strings, where each string is a two-digit number part of the new id.
-    """
-    remaining_len_val: int = num_id_parts * 2 - len(id_prefix)
-    random_suffix_str: str = "".join(
-        [str(random.randint(0, 9)) for _ in range(remaining_len_val)],
-    )
-    new_id_str: str = id_prefix + random_suffix_str
-    new_id_parts: list[str] = [
-        new_id_str[index_val : index_val + 2]
-        for index_val in range(0, len(new_id_str), 2)
-    ]
-    return tuple(new_id_parts)
-
-
 def _generate_random_id(
     num_id_parts: int,
 ) -> tuple[str, ...]:
@@ -249,7 +163,7 @@ def generate_next_id(
     num_id_parts: int,
 ) -> tuple[str, ...]:
     """
-    Generates a new random id with a minimal unique prefix of the smallest frequency.
+    Generates a new random id using digit-by-digit Lexicographical Frequency Minimization.
 
     Args:
         existing_ids: A set of existing id tuples.
@@ -258,17 +172,43 @@ def generate_next_id(
     Returns:
         A new id as a tuple of strings (e.g., ("25", "67", "57", "18")).
     """
+    if num_id_parts == 0:
+        return tuple()
+
     if not existing_ids:
         return _generate_random_id(num_id_parts)
 
-    joined_num_pairs_set: set[str] = {
-        "".join(existing_id_num_pairs) for existing_id_num_pairs in existing_ids
-    }
+    existing_id_strings: set[str] = {"".join(id_tuple) for id_tuple in existing_ids}
+    num_digits = num_id_parts * 2
 
-    chosen_prefix_str = _find_best_prefix(joined_num_pairs_set, num_id_parts)
+    max_attempts = 100
+    for _ in range(max_attempts):
+        new_id_digits: list[str] = []
+        candidate_id_strings: list[str] = list(existing_id_strings)
 
-    if chosen_prefix_str is None:
-        # Fallback, though unlikely with the loop limit:
-        return _generate_random_id(num_id_parts)
+        for i in range(num_digits):
+            freq_map: dict[str, int] = {str(j): 0 for j in range(10)}
+            for id_str in candidate_id_strings:
+                digit = id_str[i]
+                freq_map[digit] += 1
 
-    return _construct_id_from_prefix(chosen_prefix_str, num_id_parts)
+            min_freq = min(freq_map.values())
+            least_frequent_digits = [
+                digit for digit, freq in freq_map.items() if freq == min_freq
+            ]
+
+            chosen_digit = random.choice(least_frequent_digits)
+            new_id_digits.append(chosen_digit)
+
+            candidate_id_strings = [
+                id_str for id_str in candidate_id_strings if id_str[i] == chosen_digit
+            ]
+
+        new_id_str = "".join(new_id_digits)
+
+        if new_id_str not in existing_id_strings:
+            new_id_parts = [new_id_str[j : j + 2] for j in range(0, num_digits, 2)]
+            return tuple(new_id_parts)
+
+    logger.warning("Could not generate a unique ID, falling back to random.")
+    return _generate_random_id(num_id_parts)
