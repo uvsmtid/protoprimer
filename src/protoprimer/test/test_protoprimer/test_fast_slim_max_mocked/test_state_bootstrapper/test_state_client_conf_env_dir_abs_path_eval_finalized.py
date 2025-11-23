@@ -10,7 +10,7 @@ from local_test.mock_verifier import (
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
-    Bootstrapper_state_client_conf_file_data,
+    Bootstrapper_state_client_conf_file_data_loaded,
     Bootstrapper_state_client_local_env_conf_dir_rel_path_eval_finalized,
     Bootstrapper_state_primer_ref_root_dir_abs_path_eval_finalized,
     ConfConstClient,
@@ -36,7 +36,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
 
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.eval_own_state"
     )
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_primer_ref_root_dir_abs_path_eval_finalized.__name__}.eval_own_state"
@@ -48,7 +48,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         self,
         mock_state_client_local_env_conf_dir_rel_path_eval_finalized,
         mock_state_primer_ref_root_dir_abs_path_eval_finalized,
-        mock_state_client_conf_file_data,
+        mock_state_client_conf_file_data_loaded,
     ):
 
         # given:
@@ -76,7 +76,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_primer_ref_root_dir_abs_path_eval_finalized.return_value = (
             mock_client_dir
         )
-        mock_state_client_conf_file_data.return_value = {
+        mock_state_client_conf_file_data_loaded.return_value = {
             ConfField.field_client_link_name_dir_rel_path.value: ConfConstClient.default_dir_rel_path_leap_env_link_name
         }
 
@@ -113,7 +113,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         # no exception happens
 
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.eval_own_state"
     )
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_primer_ref_root_dir_abs_path_eval_finalized.__name__}.eval_own_state"
@@ -125,7 +125,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         self,
         mock_state_client_local_env_conf_dir_rel_path_eval_finalized,
         mock_state_primer_ref_root_dir_abs_path_eval_finalized,
-        mock_state_client_conf_file_data,
+        mock_state_client_conf_file_data_loaded,
     ):
 
         # given:
@@ -152,7 +152,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_primer_ref_root_dir_abs_path_eval_finalized.return_value = (
             mock_client_dir
         )
-        mock_state_client_conf_file_data.return_value = {
+        mock_state_client_conf_file_data_loaded.return_value = {
             ConfField.field_client_link_name_dir_rel_path.value: ConfConstClient.default_dir_rel_path_leap_env_link_name
         }
 
@@ -183,7 +183,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         # no exception happens
 
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.eval_own_state"
     )
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_primer_ref_root_dir_abs_path_eval_finalized.__name__}.eval_own_state"
@@ -195,7 +195,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         self,
         mock_state_client_local_env_conf_dir_rel_path_eval_finalized,
         mock_state_primer_ref_root_dir_abs_path_eval_finalized,
-        mock_state_client_conf_file_data,
+        mock_state_client_conf_file_data_loaded,
     ):
 
         # given:
@@ -231,7 +231,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_primer_ref_root_dir_abs_path_eval_finalized.return_value = (
             mock_client_dir
         )
-        mock_state_client_conf_file_data.return_value = {
+        mock_state_client_conf_file_data_loaded.return_value = {
             ConfField.field_client_link_name_dir_rel_path.value: os.path.basename(
                 state_client_conf_env_dir_abs_path_eval_finalized
             )
@@ -259,7 +259,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.assertIn("not the same as the provided target", str(ctx.exception))
 
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.eval_own_state"
     )
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_primer_ref_root_dir_abs_path_eval_finalized.__name__}.eval_own_state"
@@ -271,7 +271,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         self,
         mock_state_client_local_env_conf_dir_rel_path_eval_finalized,
         mock_state_primer_ref_root_dir_abs_path_eval_finalized,
-        mock_state_client_conf_file_data,
+        mock_state_client_conf_file_data_loaded,
     ):
 
         # given:
@@ -301,7 +301,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_primer_ref_root_dir_abs_path_eval_finalized.return_value = (
             mock_client_dir
         )
-        mock_state_client_conf_file_data.return_value = {
+        mock_state_client_conf_file_data_loaded.return_value = {
             ConfField.field_client_link_name_dir_rel_path.value: ConfConstClient.default_dir_rel_path_leap_env_link_name
         }
 
@@ -330,7 +330,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.assertIn("target is not a directory", str(ctx.exception))
 
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.eval_own_state"
     )
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_primer_ref_root_dir_abs_path_eval_finalized.__name__}.eval_own_state"
@@ -342,7 +342,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         self,
         mock_state_client_local_env_conf_dir_rel_path_eval_finalized,
         mock_state_primer_ref_root_dir_abs_path_eval_finalized,
-        mock_state_client_conf_file_data,
+        mock_state_client_conf_file_data_loaded,
     ):
 
         # given:
@@ -370,7 +370,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_primer_ref_root_dir_abs_path_eval_finalized.return_value = (
             mock_client_dir
         )
-        mock_state_client_conf_file_data.return_value = {
+        mock_state_client_conf_file_data_loaded.return_value = {
             ConfField.field_client_link_name_dir_rel_path.value: ConfConstClient.default_dir_rel_path_leap_env_link_name
         }
 
@@ -401,7 +401,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.assertIn("is not a symlink", str(ctx.exception))
 
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.eval_own_state"
     )
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_primer_ref_root_dir_abs_path_eval_finalized.__name__}.eval_own_state"
@@ -413,7 +413,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         self,
         mock_state_client_local_env_conf_dir_rel_path_eval_finalized,
         mock_state_primer_ref_root_dir_abs_path_eval_finalized,
-        mock_state_client_conf_file_data,
+        mock_state_client_conf_file_data_loaded,
     ):
 
         # given:
@@ -443,7 +443,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_primer_ref_root_dir_abs_path_eval_finalized.return_value = (
             mock_client_dir
         )
-        mock_state_client_conf_file_data.return_value = {
+        mock_state_client_conf_file_data_loaded.return_value = {
             ConfField.field_client_link_name_dir_rel_path.value: ConfConstClient.default_dir_rel_path_leap_env_link_name
         }
 
@@ -474,7 +474,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
 
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.eval_own_state"
     )
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_primer_ref_root_dir_abs_path_eval_finalized.__name__}.eval_own_state"
@@ -486,7 +486,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         self,
         mock_state_client_local_env_conf_dir_rel_path_eval_finalized,
         mock_state_primer_ref_root_dir_abs_path_eval_finalized,
-        mock_state_client_conf_file_data,
+        mock_state_client_conf_file_data_loaded,
     ):
 
         # given:
@@ -516,7 +516,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_primer_ref_root_dir_abs_path_eval_finalized.return_value = (
             mock_client_dir
         )
-        mock_state_client_conf_file_data.return_value = {
+        mock_state_client_conf_file_data_loaded.return_value = {
             ConfField.field_client_link_name_dir_rel_path.value: ConfConstClient.default_dir_rel_path_leap_env_link_name
         }
 
@@ -547,7 +547,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
 
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.eval_own_state"
     )
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_primer_ref_root_dir_abs_path_eval_finalized.__name__}.eval_own_state"
@@ -559,7 +559,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         self,
         mock_state_client_local_env_conf_dir_rel_path_eval_finalized,
         mock_state_primer_ref_root_dir_abs_path_eval_finalized,
-        mock_state_client_conf_file_data,
+        mock_state_client_conf_file_data_loaded,
     ):
         # given:
         assert_parent_states_mocked(
@@ -572,7 +572,9 @@ class ThisTestClass(BasePyfakefsTestClass):
             mock_ref_root
         )
         mock_state_client_local_env_conf_dir_rel_path_eval_finalized.return_value = None
-        mock_state_client_conf_file_data.return_value = {}  # Not used in this branch
+        mock_state_client_conf_file_data_loaded.return_value = (
+            {}
+        )  # Not used in this branch
 
         # when:
         result = self.env_ctx.state_graph.eval_state(

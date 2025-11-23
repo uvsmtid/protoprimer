@@ -8,15 +8,15 @@ from local_test.mock_verifier import (
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
-    Bootstrapper_state_input_proto_code_dir_abs_path_eval_finalized,
-    Bootstrapper_state_input_proto_conf_primer_file_abs_path_eval_finalized,
+    Bootstrapper_state_client_conf_env_file_abs_path_eval_finalized,
+    Bootstrapper_state_env_conf_file_data_loaded,
     Bootstrapper_state_input_wizard_stage_arg_loaded,
-    Bootstrapper_state_proto_conf_file_data,
     ConfLeap,
     EnvContext,
     EnvState,
+    StateNode,
     wizard_conf_leap,
-    Wizard_state_proto_conf_file_data,
+    Wizard_state_env_conf_file_data_loaded,
     WizardStage,
     write_json_file,
 )
@@ -30,7 +30,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.env_ctx = EnvContext()
 
         # Replace the original bootstrapper with the wizard one:
-        self.wizard_bootstrapper = Wizard_state_proto_conf_file_data(self.env_ctx)
+        self.wizard_bootstrapper = Wizard_state_env_conf_file_data_loaded(self.env_ctx)
         self.env_ctx.state_graph.register_node(
             self.wizard_bootstrapper,
             replace_existing=True,
@@ -39,37 +39,35 @@ class ThisTestClass(BasePyfakefsTestClass):
     # noinspection PyMethodMayBeStatic
     def test_relationship(self):
         assert_test_module_name_embeds_str(
-            f"wizard_{EnvState.state_proto_conf_file_data.name}"
+            f"wizard_{EnvState.state_env_conf_file_data_loaded.name}"
         )
 
-    @patch(f"{primer_kernel.__name__}.{wizard_conf_leap.__name__}")
-    @patch(f"{primer_kernel.__name__}.{write_json_file.__name__}")
+    @patch(f"{primer_kernel.__name__}.{StateNode.__name__}")
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_input_wizard_stage_arg_loaded.__name__}.eval_own_state"
     )
+    @patch(f"{primer_kernel.__name__}.{write_json_file.__name__}")
+    @patch(f"{primer_kernel.__name__}.{wizard_conf_leap.__name__}")
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_input_proto_code_dir_abs_path_eval_finalized.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_env_file_abs_path_eval_finalized.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_input_proto_conf_primer_file_abs_path_eval_finalized.__name__}.eval_own_state"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_proto_conf_file_data.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_env_conf_file_data_loaded.__name__}.eval_own_state"
     )
     def test_wizard_triggered(
         self,
-        mock_state_proto_conf_file_data,
-        mock_state_input_proto_conf_primer_file_abs_path_eval_finalized,
-        mock_state_input_proto_code_dir_abs_path_eval_finalized,
-        mock_state_input_wizard_stage_arg_loaded,
-        mock_write_json_file,
+        mock_state_env_conf_file_data_loaded,
+        mock_state_client_conf_env_file_abs_path_eval_finalized,
         mock_wizard_conf_leap,
+        mock_write_json_file,
+        mock_state_input_wizard_stage_arg_loaded,
+        mock_state_node,
     ):
         # given:
 
         assert_parent_states_mocked(
             self.env_ctx,
-            EnvState.state_proto_conf_file_data.name,
+            EnvState.state_env_conf_file_data_loaded.name,
             # The wizard replaces the original bootstrapper:
             True,
         )
@@ -80,12 +78,12 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         mock_file_abs_path = "/mock/path/to/file.json"
         self.fs.create_dir(os.path.dirname(mock_file_abs_path))
-        mock_state_input_proto_conf_primer_file_abs_path_eval_finalized.return_value = (
+        mock_state_client_conf_env_file_abs_path_eval_finalized.return_value = (
             mock_file_abs_path
         )
 
         mock_file_data = {"test": "data"}
-        mock_state_proto_conf_file_data.return_value = mock_file_data
+        mock_state_env_conf_file_data_loaded.return_value = mock_file_data
 
         write_json_file(
             mock_file_abs_path,
@@ -95,14 +93,14 @@ class ThisTestClass(BasePyfakefsTestClass):
         # when:
 
         state_value = self.env_ctx.state_graph.eval_state(
-            EnvState.state_proto_conf_file_data.name
+            EnvState.state_env_conf_file_data_loaded.name
         )
 
         # then:
 
         mock_wizard_conf_leap.assert_called_once_with(
             self.wizard_bootstrapper,
-            ConfLeap.leap_primer,
+            ConfLeap.leap_env,
             mock_file_abs_path,
             mock_file_data,
         )
@@ -112,33 +110,31 @@ class ThisTestClass(BasePyfakefsTestClass):
             mock_file_data,
         )
 
-    @patch(f"{primer_kernel.__name__}.{wizard_conf_leap.__name__}")
+    @patch(f"{primer_kernel.__name__}.{StateNode.__name__}")
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_input_wizard_stage_arg_loaded.__name__}.eval_own_state"
     )
+    @patch(f"{primer_kernel.__name__}.{wizard_conf_leap.__name__}")
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_input_proto_code_dir_abs_path_eval_finalized.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_env_file_abs_path_eval_finalized.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_input_proto_conf_primer_file_abs_path_eval_finalized.__name__}.eval_own_state"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_proto_conf_file_data.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_env_conf_file_data_loaded.__name__}.eval_own_state"
     )
     def test_wizard_not_triggered(
         self,
-        mock_state_proto_conf_file_data,
-        mock_state_input_proto_conf_primer_file_abs_path_eval_finalized,
-        mock_state_input_proto_code_dir_abs_path_eval_finalized,
-        mock_state_input_wizard_stage_arg_loaded,
+        mock_state_env_conf_file_data_loaded,
+        mock_state_client_conf_env_file_abs_path_eval_finalized,
         mock_wizard_conf_leap,
+        mock_state_input_wizard_stage_arg_loaded,
+        mock_state_node,
     ):
 
         # given:
 
         assert_parent_states_mocked(
             self.env_ctx,
-            EnvState.state_proto_conf_file_data.name,
+            EnvState.state_env_conf_file_data_loaded.name,
             # The wizard replaces the original bootstrapper:
             True,
         )
@@ -149,12 +145,12 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         mock_file_abs_path = "/mock/path/to/file.json"
         self.fs.create_dir(os.path.dirname(mock_file_abs_path))
-        mock_state_input_proto_conf_primer_file_abs_path_eval_finalized.return_value = (
+        mock_state_client_conf_env_file_abs_path_eval_finalized.return_value = (
             mock_file_abs_path
         )
 
         mock_file_data = {"test": "data"}
-        mock_state_proto_conf_file_data.return_value = mock_file_data
+        mock_state_env_conf_file_data_loaded.return_value = mock_file_data
 
         write_json_file(
             mock_file_abs_path,
@@ -164,7 +160,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         # when:
 
         state_value = self.env_ctx.state_graph.eval_state(
-            EnvState.state_proto_conf_file_data.name
+            EnvState.state_env_conf_file_data_loaded.name
         )
 
         # then:

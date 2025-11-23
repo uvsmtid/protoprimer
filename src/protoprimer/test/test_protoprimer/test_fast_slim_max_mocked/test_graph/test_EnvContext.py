@@ -9,7 +9,7 @@ from local_test.base_test_class import BasePyfakefsTestClass
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
-    Bootstrapper_state_env_conf_file_data,
+    Bootstrapper_state_env_conf_file_data_loaded,
     Bootstrapper_state_merged_local_cache_dir_abs_path_eval_finalized,
     Bootstrapper_state_merged_required_python_file_abs_path_eval_finalized,
     Bootstrapper_state_reinstall_triggered,
@@ -40,7 +40,7 @@ class TestEnvContext(BasePyfakefsTestClass):
         return_value=False,
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_env_conf_file_data.__name__}.eval_own_state",
+        f"{primer_kernel.__name__}.{Bootstrapper_state_env_conf_file_data_loaded.__name__}.eval_own_state",
         return_value={},
     )
     @patch(
@@ -76,7 +76,7 @@ class TestEnvContext(BasePyfakefsTestClass):
         return_value=False,
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_env_conf_file_data.__name__}.eval_own_state",
+        f"{primer_kernel.__name__}.{Bootstrapper_state_env_conf_file_data_loaded.__name__}.eval_own_state",
         return_value={},
     )
     @patch(
@@ -112,7 +112,7 @@ class TestEnvContext(BasePyfakefsTestClass):
         return_value=False,
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_env_conf_file_data.__name__}.eval_own_state",
+        f"{primer_kernel.__name__}.{Bootstrapper_state_env_conf_file_data_loaded.__name__}.eval_own_state",
         return_value={},
     )
     @patch(

@@ -33,7 +33,7 @@ def assert_parent_states_mocked(
 
         # TODO: Maybe Wizard states (where moved states are used) should not rely on them?
         # See: UC_27_40_17_59.replace_by_new_and_use_old.md:
-        # Handle "moved state names" (e.g., `_state_client_conf_file_data`):
+        # Handle "moved state names" (e.g., `_state_client_conf_file_data_loaded`):
         if effective_state_name.startswith("_"):
             original_state_name = effective_state_name[1:]
             # If the original state name is expected to be mocked, then the moved state is also expected:

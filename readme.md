@@ -23,14 +23,14 @@ An app/lib for bootstrapping `python` code into `venv` directly
 
 See [instant_python_bootstrap][instant_python_bootstrap].
 
-The `protoprimer` makes **single-touch** pure `python` commands like this possible (no details confusing users):
+The `protoprimer` makes **single-touch** pure `python` bootstrap possible (no details confusing users):
 
 ```sh
 ./prime
 ```
 
-It switches (repo clones) to required `python` version/config
-optionally targeting different local environments:
+It switches to required `python` version
+(optionally targeting selected repo clone environment):
 *   local/cloud/...
 *   Alice/Bob/...
 
@@ -44,7 +44,7 @@ people dropped `shell` and picked `python` to automate...
 Every time some `repo.git` is cloned,
 it has to be prepared/bootstrapped/primed to make `python` ready.
 
-Because `python` is **not** ready yet, `shell`-scripts are used to fix that.\
+Because `python` is **not** ready yet, `shell`-scripts are used to work around that.\
 Again!
 
 Ultimately, is this the case `python` needs to rely on anything non-`python`?
@@ -99,10 +99,10 @@ flowchart LR;
     style invis_block fill:none,stroke:none;
 ```
 
-### Implemented solution
+### Approach: min outside, max inside
 
-Wrap the details into **single-touch**, self-contained, no-deps, no-args, ...\
-command starting **arbitrary** `python` version to bootstrap the required one:
+Wrap the details into **single-touch**, self-contained, no-deps, no-args, cross-platform, ...\
+command started by an **arbitrary** `python` version to bootstrap the required one:
 
 ```sh
 ./prime

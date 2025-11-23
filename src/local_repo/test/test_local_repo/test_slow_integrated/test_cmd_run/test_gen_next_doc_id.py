@@ -7,7 +7,6 @@ from local_test.repo_tree import change_to_known_repo_path
 file_name = "gen_next_doc_id"
 
 
-# noinspection PyPep8Naming
 def test_relationship():
     assert_test_module_name_embeds_str(file_name)
 

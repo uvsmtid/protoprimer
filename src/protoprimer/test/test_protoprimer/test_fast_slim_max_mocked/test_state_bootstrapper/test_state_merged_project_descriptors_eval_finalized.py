@@ -8,8 +8,8 @@ from local_test.mock_verifier import (
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
-    Bootstrapper_state_client_conf_file_data,
-    Bootstrapper_state_env_conf_file_data,
+    Bootstrapper_state_client_conf_file_data_loaded,
+    Bootstrapper_state_env_conf_file_data_loaded,
     ConfField,
     EnvContext,
     EnvState,
@@ -28,14 +28,14 @@ def test_relationship():
 
 
 @patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data.__name__}.eval_own_state"
+    f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.eval_own_state"
 )
 @patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_env_conf_file_data.__name__}.eval_own_state"
+    f"{primer_kernel.__name__}.{Bootstrapper_state_env_conf_file_data_loaded.__name__}.eval_own_state"
 )
 def test_py_exec_venv(
-    mock_state_env_conf_file_data,
-    mock_state_client_conf_file_data,
+    mock_state_env_conf_file_data_loaded,
+    mock_state_client_conf_file_data_loaded,
     env_ctx,
 ):
     # given:
@@ -56,9 +56,9 @@ def test_py_exec_venv(
         },
     ]
 
-    mock_state_client_conf_file_data.return_value = {}
+    mock_state_client_conf_file_data_loaded.return_value = {}
 
-    mock_state_env_conf_file_data.return_value = {
+    mock_state_env_conf_file_data_loaded.return_value = {
         ConfField.field_project_descriptors.value: project_descriptors,
     }
 

@@ -49,7 +49,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
         # then:
         self.assertEqual(
-            primer_kernel.str2bool(ConfConstInput.default_PROTOPRIMER_DO_INSTALL),
+            primer_kernel.str_to_bool(ConfConstInput.default_PROTOPRIMER_DO_INSTALL),
             state_value,
         )
 

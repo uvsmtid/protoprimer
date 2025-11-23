@@ -70,7 +70,7 @@ class StateName(enum.Enum):
 
     state_args_parsed = StateMeta(
         EnvState.state_args_parsed,
-        NameCategory.category_loaded_data,
+        NameCategory.category_name_only,
     )
 
     state_input_wizard_stage_arg_loaded = StateMeta(
@@ -133,8 +133,8 @@ class StateName(enum.Enum):
         NameCategory.category_path_value,
     )
 
-    state_proto_conf_file_data = StateMeta(
-        EnvState.state_proto_conf_file_data,
+    state_primer_conf_file_data_loaded = StateMeta(
+        EnvState.state_primer_conf_file_data_loaded,
         NameCategory.category_loaded_data,
     )
 
@@ -148,8 +148,8 @@ class StateName(enum.Enum):
         NameCategory.category_path_value,
     )
 
-    state_client_conf_file_data = StateMeta(
-        EnvState.state_client_conf_file_data,
+    state_client_conf_file_data_loaded = StateMeta(
+        EnvState.state_client_conf_file_data_loaded,
         NameCategory.category_loaded_data,
     )
 
@@ -173,8 +173,8 @@ class StateName(enum.Enum):
         NameCategory.category_path_value,
     )
 
-    state_env_conf_file_data = StateMeta(
-        EnvState.state_env_conf_file_data,
+    state_env_conf_file_data_loaded = StateMeta(
+        EnvState.state_env_conf_file_data_loaded,
         NameCategory.category_loaded_data,
     )
 
@@ -210,6 +210,11 @@ class StateName(enum.Enum):
 
     state_merged_package_driver_eval_finalized = StateMeta(
         EnvState.state_merged_package_driver_eval_finalized,
+        NameCategory.category_state_mutation,
+    )
+
+    state_merged_conf_data_printed = StateMeta(
+        EnvState.state_merged_conf_data_printed,
         NameCategory.category_state_mutation,
     )
 
