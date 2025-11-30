@@ -11,12 +11,10 @@ from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     Bootstrapper_state_input_py_exec_var_loaded,
     Bootstrapper_state_input_start_id_var_loaded,
-    Bootstrapper_state_input_wizard_stage_arg_loaded,
     ConfConstInput,
     EnvContext,
     EnvState,
     PythonExecutable,
-    WizardStage,
 )
 
 
@@ -44,14 +42,10 @@ def test_relationship():
     f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.eval_own_state"
 )
 @patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_input_wizard_stage_arg_loaded.__name__}.eval_own_state"
-)
-@patch(
     f"{primer_kernel.__name__}.{Bootstrapper_state_input_py_exec_var_loaded.__name__}.eval_own_state"
 )
 def test_py_exec_unknown_in_venv(
     mock_state_input_py_exec_var_loaded,
-    mock_state_input_wizard_stage_arg_loaded,
     mock_state_input_start_id_var_loaded,
     mock_switch_python,
     mock_get_path_to_base_python,
@@ -66,7 +60,6 @@ def test_py_exec_unknown_in_venv(
     )
 
     mock_state_input_py_exec_var_loaded.return_value = PythonExecutable.py_exec_unknown
-    mock_state_input_wizard_stage_arg_loaded.return_value = WizardStage.wizard_started
     mock_state_input_start_id_var_loaded.return_value = "mock_start_id"
 
     mock_get_path_to_curr_python.return_value = "/path/to/venv/bin/python"
@@ -85,7 +78,6 @@ def test_py_exec_unknown_in_venv(
         next_python_path=mock_get_path_to_base_python.return_value,
         start_id="mock_start_id",
         proto_code_abs_file_path=None,
-        wizard_stage=WizardStage.wizard_started,
         required_environ={"PATH": "/usr/bin"},
     )
 
@@ -96,14 +88,10 @@ def test_py_exec_unknown_in_venv(
     f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.eval_own_state"
 )
 @patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_input_wizard_stage_arg_loaded.__name__}.eval_own_state"
-)
-@patch(
     f"{primer_kernel.__name__}.{Bootstrapper_state_input_py_exec_var_loaded.__name__}.eval_own_state"
 )
 def test_py_exec_unknown_not_in_venv(
     mock_state_input_py_exec_var_loaded,
-    mock_state_input_wizard_stage_arg_loaded,
     mock_state_input_start_id_var_loaded,
     mock_switch_python,
     env_ctx,
@@ -116,7 +104,6 @@ def test_py_exec_unknown_not_in_venv(
     )
 
     mock_state_input_py_exec_var_loaded.return_value = PythonExecutable.py_exec_unknown
-    mock_state_input_wizard_stage_arg_loaded.return_value = WizardStage.wizard_started
     mock_state_input_start_id_var_loaded.return_value = "mock_start_id"
 
     # when:

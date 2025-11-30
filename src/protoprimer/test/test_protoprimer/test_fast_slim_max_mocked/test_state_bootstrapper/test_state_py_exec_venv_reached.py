@@ -17,7 +17,6 @@ from protoprimer.primer_kernel import (
     Bootstrapper_state_input_proto_code_file_abs_path_eval_finalized,
     Bootstrapper_state_input_py_exec_var_loaded,
     Bootstrapper_state_input_start_id_var_loaded,
-    Bootstrapper_state_input_wizard_stage_arg_loaded,
     Bootstrapper_state_package_driver_inited,
     Bootstrapper_state_reinstall_triggered,
     ConfConstEnv,
@@ -28,7 +27,6 @@ from protoprimer.primer_kernel import (
     ParsedArg,
     PythonExecutable,
     SyntaxArg,
-    WizardStage,
 )
 
 mock_client_dir = "/mock_client_dir"
@@ -79,9 +77,6 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_input_wizard_stage_arg_loaded.__name__}.eval_own_state"
-    )
-    @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_input_proto_code_file_abs_path_eval_finalized.__name__}.eval_own_state"
     )
     @patch(
@@ -116,7 +111,6 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_client_conf_env_file_abs_path_eval_finalized,
         mock_state_input_py_exec_var_loaded,
         mock_state_input_proto_code_file_abs_path_eval_finalized,
-        mock_state_input_wizard_stage_arg_loaded,
         mock_state_args_parsed,
         mock_state_reinstall_triggered,
         mock_state_input_start_id_var_loaded,
@@ -136,9 +130,6 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
         mock_state_input_start_id_var_loaded.return_value = "mock_start_id"
         mock_state_reinstall_triggered.return_value = False
-        mock_state_input_wizard_stage_arg_loaded.return_value = (
-            WizardStage.wizard_started
-        )
         mock_state_input_proto_code_file_abs_path_eval_finalized.return_value = (
             state_input_proto_code_file_abs_path_eval_finalized
         )
@@ -200,9 +191,6 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_input_wizard_stage_arg_loaded.__name__}.eval_own_state"
-    )
-    @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_input_proto_code_file_abs_path_eval_finalized.__name__}.eval_own_state"
     )
     @patch(
@@ -237,7 +225,6 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_client_conf_env_file_abs_path_eval_finalized,
         mock_state_input_py_exec_var_loaded,
         mock_state_input_proto_code_file_abs_path_eval_finalized,
-        mock_state_input_wizard_stage_arg_loaded,
         mock_state_args_parsed,
         mock_state_reinstall_triggered,
         mock_state_input_start_id_var_loaded,
@@ -257,9 +244,6 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
         mock_state_input_start_id_var_loaded.return_value = "mock_start_id"
         mock_state_reinstall_triggered.return_value = False
-        mock_state_input_wizard_stage_arg_loaded.return_value = (
-            WizardStage.wizard_started
-        )
         mock_state_input_proto_code_file_abs_path_eval_finalized.return_value = (
             state_input_proto_code_file_abs_path_eval_finalized
         )
@@ -302,9 +286,6 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_input_wizard_stage_arg_loaded.__name__}.eval_own_state"
-    )
-    @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_input_proto_code_file_abs_path_eval_finalized.__name__}.eval_own_state"
     )
     @patch(
@@ -340,7 +321,6 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_client_conf_env_file_abs_path_eval_finalized,
         mock_state_input_py_exec_var_loaded,
         mock_state_input_proto_code_file_abs_path_eval_finalized,
-        mock_state_input_wizard_stage_arg_loaded,
         mock_state_args_parsed,
         mock_state_reinstall_triggered,
         mock_state_input_start_id_var_loaded,
@@ -360,9 +340,6 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
         mock_state_input_start_id_var_loaded.return_value = "mock_start_id"
         mock_state_reinstall_triggered.return_value = False
-        mock_state_input_wizard_stage_arg_loaded.return_value = (
-            WizardStage.wizard_started
-        )
         mock_state_input_proto_code_file_abs_path_eval_finalized.return_value = (
             state_input_proto_code_file_abs_path_eval_finalized
         )
@@ -407,9 +384,6 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_input_wizard_stage_arg_loaded.__name__}.eval_own_state"
-    )
-    @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_input_proto_code_file_abs_path_eval_finalized.__name__}.eval_own_state"
     )
     @patch(
@@ -444,7 +418,6 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_client_conf_env_file_abs_path_eval_finalized,
         mock_state_input_py_exec_var_loaded,
         mock_state_input_proto_code_file_abs_path_eval_finalized,
-        mock_state_input_wizard_stage_arg_loaded,
         mock_state_args_parsed,
         mock_state_reinstall_triggered,
         mock_state_input_start_id_var_loaded,
@@ -464,9 +437,6 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
         mock_state_input_start_id_var_loaded.return_value = "mock_start_id"
         mock_state_reinstall_triggered.return_value = False
-        mock_state_input_wizard_stage_arg_loaded.return_value = (
-            WizardStage.wizard_started
-        )
         mock_state_input_proto_code_file_abs_path_eval_finalized.return_value = (
             state_input_proto_code_file_abs_path_eval_finalized
         )
@@ -511,9 +481,6 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_input_wizard_stage_arg_loaded.__name__}.eval_own_state"
-    )
-    @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_input_proto_code_file_abs_path_eval_finalized.__name__}.eval_own_state"
     )
     @patch(
@@ -548,7 +515,6 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_client_conf_env_file_abs_path_eval_finalized,
         mock_state_input_py_exec_var_loaded,
         mock_state_input_proto_code_file_abs_path_eval_finalized,
-        mock_state_input_wizard_stage_arg_loaded,
         mock_state_args_parsed,
         mock_state_reinstall_triggered,
         mock_state_input_start_id_var_loaded,
@@ -568,9 +534,6 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
         mock_state_input_start_id_var_loaded.return_value = "mock_start_id"
         mock_state_reinstall_triggered.return_value = False
-        mock_state_input_wizard_stage_arg_loaded.return_value = (
-            WizardStage.wizard_started
-        )
         mock_state_input_proto_code_file_abs_path_eval_finalized.return_value = (
             state_input_proto_code_file_abs_path_eval_finalized
         )
@@ -634,9 +597,6 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_input_wizard_stage_arg_loaded.__name__}.eval_own_state"
-    )
-    @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_input_proto_code_file_abs_path_eval_finalized.__name__}.eval_own_state"
     )
     @patch(
@@ -671,7 +631,6 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_client_conf_env_file_abs_path_eval_finalized,
         mock_state_input_py_exec_var_loaded,
         mock_state_input_proto_code_file_abs_path_eval_finalized,
-        mock_state_input_wizard_stage_arg_loaded,
         mock_state_args_parsed,
         mock_state_reinstall_triggered,
         mock_state_input_start_id_var_loaded,
@@ -691,9 +650,6 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
         mock_state_input_start_id_var_loaded.return_value = "mock_start_id"
         mock_state_reinstall_triggered.return_value = False
-        mock_state_input_wizard_stage_arg_loaded.return_value = (
-            WizardStage.wizard_started
-        )
         mock_state_input_proto_code_file_abs_path_eval_finalized.return_value = (
             state_input_proto_code_file_abs_path_eval_finalized
         )
@@ -755,9 +711,6 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_input_wizard_stage_arg_loaded.__name__}.eval_own_state"
-    )
-    @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_input_proto_code_file_abs_path_eval_finalized.__name__}.eval_own_state"
     )
     @patch(
@@ -792,7 +745,6 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_client_conf_env_file_abs_path_eval_finalized,
         mock_state_input_py_exec_var_loaded,
         mock_state_input_proto_code_file_abs_path_eval_finalized,
-        mock_state_input_wizard_stage_arg_loaded,
         mock_state_args_parsed,
         mock_state_reinstall_triggered,
         mock_state_input_start_id_var_loaded,
@@ -812,9 +764,6 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
         mock_state_input_start_id_var_loaded.return_value = "mock_start_id"
         mock_state_reinstall_triggered.return_value = False
-        mock_state_input_wizard_stage_arg_loaded.return_value = (
-            WizardStage.wizard_started
-        )
         mock_state_input_proto_code_file_abs_path_eval_finalized.return_value = (
             "any/path"
         )
@@ -876,9 +825,6 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_input_wizard_stage_arg_loaded.__name__}.eval_own_state"
-    )
-    @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_input_proto_code_file_abs_path_eval_finalized.__name__}.eval_own_state"
     )
     @patch(
@@ -912,7 +858,6 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_client_conf_env_file_abs_path_eval_finalized,
         mock_state_input_py_exec_var_loaded,
         mock_state_input_proto_code_file_abs_path_eval_finalized,
-        mock_state_input_wizard_stage_arg_loaded,
         mock_state_args_parsed,
         mock_state_reinstall_triggered,
         mock_state_input_start_id_var_loaded,
@@ -954,9 +899,6 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_input_wizard_stage_arg_loaded.__name__}.eval_own_state"
-    )
-    @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_input_proto_code_file_abs_path_eval_finalized.__name__}.eval_own_state"
     )
     @patch(
@@ -991,7 +933,6 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_client_conf_env_file_abs_path_eval_finalized,
         mock_state_input_py_exec_var_loaded,
         mock_state_input_proto_code_file_abs_path_eval_finalized,
-        mock_state_input_wizard_stage_arg_loaded,
         mock_state_args_parsed,
         mock_state_reinstall_triggered,
         mock_state_input_start_id_var_loaded,
@@ -1012,9 +953,6 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
         mock_state_input_start_id_var_loaded.return_value = "mock_start_id"
         mock_state_reinstall_triggered.return_value = False
-        mock_state_input_wizard_stage_arg_loaded.return_value = (
-            WizardStage.wizard_started
-        )
         mock_state_input_proto_code_file_abs_path_eval_finalized.return_value = (
             state_input_proto_code_file_abs_path_eval_finalized
         )
@@ -1079,9 +1017,6 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_input_wizard_stage_arg_loaded.__name__}.eval_own_state"
-    )
-    @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_input_proto_code_file_abs_path_eval_finalized.__name__}.eval_own_state"
     )
     @patch(
@@ -1116,7 +1051,6 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_client_conf_env_file_abs_path_eval_finalized,
         mock_state_input_py_exec_var_loaded,
         mock_state_input_proto_code_file_abs_path_eval_finalized,
-        mock_state_input_wizard_stage_arg_loaded,
         mock_state_args_parsed,
         mock_state_reinstall_triggered,
         mock_state_input_start_id_var_loaded,
@@ -1135,9 +1069,6 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
         mock_state_input_start_id_var_loaded.return_value = "mock_start_id"
         mock_state_reinstall_triggered.return_value = False
-        mock_state_input_wizard_stage_arg_loaded.return_value = (
-            WizardStage.wizard_started
-        )
         mock_state_input_proto_code_file_abs_path_eval_finalized.return_value = (
             state_input_proto_code_file_abs_path_eval_finalized
         )

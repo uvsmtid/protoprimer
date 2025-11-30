@@ -363,21 +363,13 @@ However, for brevity, the rest of this doc uses this **entry script** (which inv
 
 ## Initialization: custom config
 
-It is wizard-able (one-time):
+It is possible to generate effective config for data loaded from files and the derived config values:
 
 ```sh
-./prime --wizard
+./prime --config
 ```
 
-**Tip:**
-> *   To accept all the defaults quickly, keep pressing `Enter`.
-> *   `Enter` will be safely ignored if a `y` or `n` answer is required.
-
-The wizard is run once to generate configuration.
-
-The generated configuration is reused in all the repo clones.
-
-At the end, the wizard completes the bootstrap of the `venv` (with all the dependencies).
+The output uses dynamically generated annotations to easily follow the purpose of the config by example.
 
 ## Configuration: global vs local
 

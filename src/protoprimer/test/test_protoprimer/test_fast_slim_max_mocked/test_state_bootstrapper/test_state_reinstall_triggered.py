@@ -17,7 +17,6 @@ from protoprimer.primer_kernel import (
     Bootstrapper_state_derived_local_venv_dir_abs_path_eval_finalized,
     Bootstrapper_state_input_proto_code_file_abs_path_eval_finalized,
     Bootstrapper_state_input_start_id_var_loaded,
-    Bootstrapper_state_input_wizard_stage_arg_loaded,
     Bootstrapper_state_py_exec_required_reached,
     ConfConstEnv,
     EnvContext,
@@ -52,9 +51,6 @@ def test_relationship():
     f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_env_dir_abs_path_eval_finalized.__name__}.eval_own_state"
 )
 @patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_input_wizard_stage_arg_loaded.__name__}.eval_own_state"
-)
-@patch(
     f"{primer_kernel.__name__}.{Bootstrapper_state_derived_local_venv_dir_abs_path_eval_finalized.__name__}.eval_own_state"
 )
 @patch(
@@ -67,7 +63,6 @@ def test_reinstall_true(
     mock_state_input_proto_code_file_abs_path_eval_finalized,
     mock_state_args_parsed,
     mock_state_derived_local_venv_dir_abs_path_eval_finalized,
-    mock_state_input_wizard_stage_arg_loaded,
     mock_state_client_conf_env_dir_abs_path_eval_finalized,
     mock_state_derived_local_tmp_dir_abs_path_eval_finalized,
     mock_state_py_exec_required_reached,
@@ -133,9 +128,6 @@ def test_reinstall_true(
     f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_env_dir_abs_path_eval_finalized.__name__}.eval_own_state"
 )
 @patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_input_wizard_stage_arg_loaded.__name__}.eval_own_state"
-)
-@patch(
     f"{primer_kernel.__name__}.{Bootstrapper_state_derived_local_venv_dir_abs_path_eval_finalized.__name__}.eval_own_state"
 )
 @patch(
@@ -148,7 +140,6 @@ def test_reinstall_false(
     mock_state_input_proto_code_file_abs_path_eval_finalized,
     mock_state_args_parsed,
     mock_state_derived_local_venv_dir_abs_path_eval_finalized,
-    mock_state_input_wizard_stage_arg_loaded,
     mock_state_client_conf_env_dir_abs_path_eval_finalized,
     mock_state_derived_local_tmp_dir_abs_path_eval_finalized,
     mock_state_py_exec_required_reached,
@@ -197,9 +188,6 @@ def test_reinstall_false(
     f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_env_dir_abs_path_eval_finalized.__name__}.eval_own_state"
 )
 @patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_input_wizard_stage_arg_loaded.__name__}.eval_own_state"
-)
-@patch(
     f"{primer_kernel.__name__}.{Bootstrapper_state_derived_local_venv_dir_abs_path_eval_finalized.__name__}.eval_own_state"
 )
 @patch(
@@ -212,7 +200,6 @@ def test_reinstall_true_but_py_exec_not_required(
     mock_state_input_proto_code_file_abs_path_eval_finalized,
     mock_state_args_parsed,
     mock_state_derived_local_venv_dir_abs_path_eval_finalized,
-    mock_state_input_wizard_stage_arg_loaded,
     mock_state_client_conf_env_dir_abs_path_eval_finalized,
     mock_state_derived_local_tmp_dir_abs_path_eval_finalized,
     mock_state_py_exec_required_reached,

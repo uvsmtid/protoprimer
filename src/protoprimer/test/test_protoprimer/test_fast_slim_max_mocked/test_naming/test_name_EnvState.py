@@ -73,11 +73,6 @@ class StateName(enum.Enum):
         NameCategory.category_name_only,
     )
 
-    state_input_wizard_stage_arg_loaded = StateMeta(
-        EnvState.state_input_wizard_stage_arg_loaded,
-        NameCategory.category_named_value,
-    )
-
     state_input_stderr_log_level_eval_finalized = StateMeta(
         EnvState.state_input_stderr_log_level_eval_finalized,
         NameCategory.category_named_value,

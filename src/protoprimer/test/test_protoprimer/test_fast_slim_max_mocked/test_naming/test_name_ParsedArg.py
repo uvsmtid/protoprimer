@@ -63,11 +63,6 @@ class ArgName(enum.Enum):
         NameCategory.category_named_arg_value,
     )
 
-    name_wizard_stage = ArgMeta(
-        ParsedArg.name_wizard_stage,
-        NameCategory.category_named_arg_value,
-    )
-
     name_final_state = ArgMeta(
         ParsedArg.name_final_state,
         NameCategory.category_named_arg_value,
