@@ -12,14 +12,12 @@ from protoprimer.primer_kernel import (
     Bootstrapper_state_input_proto_code_file_abs_path_eval_finalized,
     Bootstrapper_state_input_py_exec_var_loaded,
     Bootstrapper_state_input_start_id_var_loaded,
-    Bootstrapper_state_input_wizard_stage_arg_loaded,
     Bootstrapper_state_proto_code_updated,
     EnvContext,
     EnvState,
     get_path_to_curr_python,
     ParsedArg,
     PythonExecutable,
-    WizardStage,
 )
 
 
@@ -43,9 +41,6 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_input_wizard_stage_arg_loaded.__name__}.eval_own_state"
-    )
-    @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_input_py_exec_var_loaded.__name__}.eval_own_state"
     )
     @patch(
@@ -61,7 +56,6 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_input_proto_code_file_abs_path_eval_finalized,
         mock_state_proto_code_updated,
         mock_state_input_py_exec_var_loaded,
-        mock_state_input_wizard_stage_arg_loaded,
         mock_state_args_parsed,
         mock_state_input_start_id_var_loaded,
     ):
@@ -79,9 +73,6 @@ class ThisTestClass(BasePyfakefsTestClass):
             }
         )
         mock_state_input_start_id_var_loaded.return_value = "mock_start_id"
-        mock_state_input_wizard_stage_arg_loaded.return_value = (
-            WizardStage.wizard_started
-        )
 
         mock_state_input_proto_code_file_abs_path_eval_finalized.return_value = (
             "path/to/whatever"
@@ -108,7 +99,6 @@ class ThisTestClass(BasePyfakefsTestClass):
             next_python_path=get_path_to_curr_python(),
             start_id="mock_start_id",
             proto_code_abs_file_path=mock_state_input_proto_code_file_abs_path_eval_finalized.return_value,
-            wizard_stage=WizardStage.wizard_started,
         )
 
     @patch(
@@ -116,9 +106,6 @@ class ThisTestClass(BasePyfakefsTestClass):
     )
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.eval_own_state"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_input_wizard_stage_arg_loaded.__name__}.eval_own_state"
     )
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_input_py_exec_var_loaded.__name__}.eval_own_state"
@@ -136,7 +123,6 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_input_proto_code_file_abs_path_eval_finalized,
         mock_state_proto_code_updated,
         mock_state_input_py_exec_var_loaded,
-        mock_state_input_wizard_stage_arg_loaded,
         mock_state_args_parsed,
         mock_state_input_start_id_var_loaded,
     ):
@@ -157,9 +143,6 @@ class ThisTestClass(BasePyfakefsTestClass):
             }
         )
         mock_state_input_start_id_var_loaded.return_value = "mock_start_id"
-        mock_state_input_wizard_stage_arg_loaded.return_value = (
-            WizardStage.wizard_started
-        )
 
         mock_state_input_proto_code_file_abs_path_eval_finalized.return_value = (
             "path/to/whatever"

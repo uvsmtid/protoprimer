@@ -18,7 +18,6 @@ from protoprimer.primer_kernel import (
     EnvState,
     ExitCodeReporter,
     RunMode,
-    WizardState,
 )
 
 
@@ -70,56 +69,6 @@ def test_run_mode_prime(
 
     assert state_value is True
     mock_exit_code_reporter_execute_strategy.assert_called_once_with(mock_state_node)
-
-
-# TODO: obsolete: FT_32_54_11_56.wizard_mode.md:
-@pytest.mark.skip(reason="TODO: obsolete: FT_32_54_11_56.wizard_mode.md:")
-@patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_input_final_state_eval_finalized.__name__}.eval_own_state"
-)
-@patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_input_stderr_log_level_eval_finalized.__name__}.eval_own_state"
-)
-@patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
-)
-@patch(f"{primer_kernel.__name__}.{ExitCodeReporter.__name__}.execute_strategy")
-def test_run_mode_wizard(
-    mock_exit_code_reporter_execute_strategy,
-    mock_state_input_run_mode_arg_loaded,
-    mock_state_input_stderr_log_level_eval_finalized,
-    mock_state_input_final_state_eval_finalized,
-    env_ctx,
-):
-    # given:
-
-    assert_parent_states_mocked(
-        env_ctx,
-        EnvState.state_run_mode_executed.name,
-    )
-
-    mock_state_input_run_mode_arg_loaded.return_value = RunMode.mode_wizard
-    mock_state_input_stderr_log_level_eval_finalized.return_value = 0
-    mock_state_input_final_state_eval_finalized.return_value = "mock_final_state"
-
-    mock_state_node = MagicMock()
-    env_ctx.state_graph.state_nodes["mock_final_state"] = mock_state_node
-
-    # when:
-
-    state_value = env_ctx.state_graph.eval_state(EnvState.state_run_mode_executed.name)
-
-    # then:
-
-    assert state_value is True
-    mock_exit_code_reporter_execute_strategy.assert_called_once_with(mock_state_node)
-    # Check that wizard states are registered
-    for wizard_state in WizardState:
-        assert wizard_state.name in env_ctx.state_graph.state_nodes
-        assert isinstance(
-            env_ctx.state_graph.state_nodes[wizard_state.name],
-            wizard_state.value,
-        )
 
 
 @patch(

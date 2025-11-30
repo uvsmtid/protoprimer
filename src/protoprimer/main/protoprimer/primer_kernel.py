@@ -36,7 +36,7 @@ from typing import (
 
 # The release process ensures that content in this file matches the version below while tagging the release commit
 # (otherwise, if the file comes from a different commit, the version is irrelevant):
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 
 logger: logging.Logger = logging.getLogger()
 
@@ -230,9 +230,6 @@ class RunMode(enum.Enum):
     # TODO: implement:
     mode_check = "check"
 
-    # TODO: obsolete: FT_32_54_11_56.wizard_mode.md:
-    # mode_wizard = "wizard"
-
 
 class CommandAction(enum.Enum):
 
@@ -240,14 +237,6 @@ class CommandAction(enum.Enum):
     action_reinstall = "reinstall"
 
     action_command = "command"
-
-
-# TODO: obsolete: FT_32_54_11_56.wizard_mode.md:
-class WizardStage(enum.Enum):
-
-    wizard_started = "wizard_started"
-
-    wizard_finished = "wizard_finished"
 
 
 class FilesystemObject(enum.Enum):
@@ -313,8 +302,6 @@ class ValueName(enum.Enum):
     value_do_install = "do_install"
 
     value_run_mode = "run_mode"
-
-    value_wizard_stage = "wizard_stage"
 
     value_final_state = "final_state"
 
@@ -385,7 +372,6 @@ class ParsedArg(enum.Enum):
 
     name_primer_runtime = str(ValueName.value_primer_runtime.value)
     name_run_mode = str(ValueName.value_run_mode.value)
-    name_wizard_stage = str(ValueName.value_wizard_stage.value)
     name_final_state = str(ValueName.value_final_state.value)
 
 
@@ -402,13 +388,9 @@ class SyntaxArg:
     arg_mode_prime = f"--{RunMode.mode_prime.value}"
     arg_mode_config = f"--{RunMode.mode_config.value}"
     arg_mode_check = f"--{RunMode.mode_check.value}"
-    # TODO: obsolete: FT_32_54_11_56.wizard_mode.md:
-    # arg_mode_wizard = f"--{RunMode.mode_wizard.value}"
 
     arg_primer_runtime = f"--{ParsedArg.name_primer_runtime.value}"
     arg_run_mode = f"--{ParsedArg.name_run_mode.value}"
-    # TODO: obsolete: FT_32_54_11_56.wizard_mode.md:
-    arg_wizard_stage = f"--{ParsedArg.name_wizard_stage.value}"
     arg_final_state = f"--{ParsedArg.name_final_state.value}"
 
     arg_c = f"-{CommandAction.action_command.value[0]}"
@@ -435,22 +417,18 @@ class ConfField(enum.Enum):
     ####################################################################################################################
     # `ConfLeap.leap_primer`-specific
 
-    # wizard-able:
     # state_primer_ref_root_dir_abs_path_eval_finalized:
     field_primer_ref_root_dir_rel_path = f"{ConfLeap.leap_primer.value}_{PathName.path_ref_root.value}_{FilesystemObject.fs_object_dir.value}_{PathType.path_rel.value}"
 
-    # wizard-able:
     # state_primer_conf_client_file_abs_path_eval_finalized:
     field_primer_conf_client_file_rel_path = f"{ConfLeap.leap_primer.value}_{PathName.path_conf_client.value}_{FilesystemObject.fs_object_file.value}_{PathType.path_rel.value}"
 
     ####################################################################################################################
     # `ConfLeap.leap_client`-specific
 
-    # wizard-able:
     # state_client_link_name_dir_rel_path_eval_finalized:
     field_client_link_name_dir_rel_path = f"{ConfLeap.leap_client.value}_{PathName.path_link_name.value}_{FilesystemObject.fs_object_dir.value}_{PathType.path_rel.value}"
 
-    # wizard-able:
     # state_client_local_env_conf_dir_rel_path_eval_finalized:
     field_client_default_env_dir_rel_path = f"{ConfLeap.leap_client.value}_{PathName.path_default_env.value}_{FilesystemObject.fs_object_dir.value}_{PathType.path_rel.value}"
 
@@ -462,51 +440,37 @@ class ConfField(enum.Enum):
     ####################################################################################################################
     # Common overridable `global` and `local` fields: FT_23_37_64_44.conf_dst.md
 
-    # wizard-able:
     # state_derived_required_python_file_abs_path_eval_finalized:
     field_required_python_file_abs_path = f"{PathName.path_required_python.value}_{FilesystemObject.fs_object_file.value}_{PathType.path_abs.value}"
 
-    # wizard-able:
     # state_derived_local_venv_dir_abs_path_eval_finalized:
     field_local_venv_dir_rel_path = f"{PathName.path_local_venv.value}_{FilesystemObject.fs_object_dir.value}_{PathType.path_rel.value}"
 
-    # TODO: make non-wizard-able-default:
     # TODO: combine by parent dir (~ `./var`):
-    # wizard-able:
     # state_derived_local_log_dir_abs_path_eval_finalized:
     field_local_log_dir_rel_path = f"{PathName.path_local_log.value}_{FilesystemObject.fs_object_dir.value}_{PathType.path_rel.value}"
 
-    # TODO: make non-wizard-able-default:
     # TODO: combine by parent dir (~ `./var`):
-    # wizard-able:
     # state_derived_local_tmp_dir_abs_path_eval_finalized:
     field_local_tmp_dir_rel_path = f"{PathName.path_local_tmp.value}_{FilesystemObject.fs_object_dir.value}_{PathType.path_rel.value}"
 
-    # TODO: make non-wizard-able-default:
     # TODO: combine by parent dir (~ `./var`):
-    # NOT wizard-able:
     # state_derived_local_cache_dir_abs_path_eval_finalized:
     field_local_cache_dir_rel_path = f"{PathName.path_local_cache.value}_{FilesystemObject.fs_object_dir.value}_{PathType.path_rel.value}"
 
-    # NOT wizard-able:
     # state_derived_package_driver_eval_finalized:
     field_package_driver = f"{ValueName.value_package_driver.value}"
 
-    # parent of to-be-wizard-able `field_build_root_dir_rel_path` & `field_install_extras`:
+    # parent of `field_build_root_dir_rel_path` & `field_install_extras`:
     # state_derived_project_descriptors_eval_finalized:
     field_project_descriptors = f"{ValueName.value_project_descriptors.value}"
 
     ####################################################################################################################
 
-    # TODO: add to `ConfLeap.leap_client`
-    # wizard-able:
-    # install_dependencies:
+    # child of `field_project_descriptors`:
     field_build_root_dir_rel_path = f"{PathName.path_build_root.value}_{FilesystemObject.fs_object_dir.value}_{PathType.path_rel.value}"
 
-    # TODO: add to `ConfLeap.leap_client`
-    # non-wizard-able-default:
-    # TODO: make wizard-able
-    # install_dependencies:
+    # child of `field_project_descriptors`:
     field_install_extras = f"{ValueName.value_install_extras.value}"
 
 
@@ -896,472 +860,6 @@ class ConfConstEnv:
     constraints_txt_basename = "constraints.txt"
 
 
-class FieldWizardMeta:
-
-    def __init__(
-        self,
-        field_name: str,
-        field_help: typing.Callable[[FieldWizardMeta, StateNode, dict], str],
-        # `ConfLeap`-s where the field can exist:
-        field_possible_leaps: list[ConfLeap],
-        # `ConfLeap`-s where the field is wizarded:
-        field_wizard_leaps: list[ConfLeap],
-        # Field name which contains this field as a nested structure (normally, `None`):
-        root_ancestor_field: str | None,
-        # Warn if the wizard cannot handle the field:
-        warn_if_not_wizard_able: typing.Callable[
-            [FieldWizardMeta, StateNode, dict], str | None
-        ],
-        read_value: typing.Callable[[FieldWizardMeta, StateNode, dict], str],
-        validate_value: typing.Callable[
-            [FieldWizardMeta, StateNode, dict, str], str | None
-        ],
-        review_value: typing.Callable[
-            [FieldWizardMeta, StateNode, dict, str], str | None
-        ],
-        write_value: typing.Callable[[FieldWizardMeta, StateNode, dict, str], None],
-    ):
-        self.field_name: str = field_name
-
-        self.field_help: typing.Callable[[FieldWizardMeta, StateNode, dict], str] = (
-            FieldWizardMeta.get_callable(field_help)
-        )
-
-        self.field_possible_leaps: list[ConfLeap] = field_possible_leaps
-
-        self.field_wizard_leaps: list[ConfLeap] = field_wizard_leaps
-
-        if root_ancestor_field is None:
-            # For simplicity, set to `field_name` if `None`:
-            self.root_ancestor_field: str = field_name
-        else:
-            self.root_ancestor_field: str = root_ancestor_field
-
-        self.warn_if_not_wizard_able: typing.Callable[
-            [FieldWizardMeta, StateNode, dict], str | None
-        ] = FieldWizardMeta.get_callable(warn_if_not_wizard_able)
-
-        self.read_value: typing.Callable[[FieldWizardMeta, StateNode, dict], str] = (
-            FieldWizardMeta.get_callable(read_value)
-        )
-
-        self.validate_value: typing.Callable[
-            [FieldWizardMeta, StateNode, dict, str], str | None
-        ] = FieldWizardMeta.get_callable(validate_value)
-
-        self.review_value: typing.Callable[
-            [FieldWizardMeta, StateNode, dict, str], str | None
-        ] = FieldWizardMeta.get_callable(review_value)
-
-        self.write_value: typing.Callable[
-            [FieldWizardMeta, StateNode, dict, str], None
-        ] = FieldWizardMeta.get_callable(write_value)
-
-    @staticmethod
-    def get_callable(staticmethod_or_callable):
-        """
-        This explicit function is only needed for earlier Python (e.g. 3.8) due to PEP 695 - ask LLM why.
-        """
-        if isinstance(staticmethod_or_callable, staticmethod):
-            return staticmethod_or_callable.__func__
-        else:
-            return staticmethod_or_callable
-
-
-class WizardField(enum.Enum):
-
-    @staticmethod
-    def enumerate_conf_leap_wizardable_fields(
-        conf_leap: ConfLeap,
-    ) -> list[tuple[int, WizardField]]:
-        enumerated_conf_leap_wizardable_fields: list[tuple[int, WizardField]] = []
-        for total_ordinal_i, wizard_field in enumerate(WizardField):
-            if conf_leap in wizard_field.value.field_wizard_leaps:
-                enumerated_conf_leap_wizardable_fields.append(
-                    (total_ordinal_i, wizard_field)
-                )
-        return enumerated_conf_leap_wizardable_fields
-
-    @staticmethod
-    def enumerate_possible_fields() -> list[tuple[int, WizardField]]:
-        enumerated_possible_fields: list[tuple[int, WizardField]] = []
-        for total_ordinal_i, wizard_field in enumerate(WizardField):
-            enumerated_possible_fields.append((total_ordinal_i, wizard_field))
-        return enumerated_possible_fields
-
-    @staticmethod
-    def warn_if_not_wizard_able_field_build_root_dir_rel_path(
-        wizard_meta: FieldWizardMeta,
-        state_node: StateNode,
-        file_data: dict,
-    ) -> str | None:
-        """
-        Wizard is limited to simple field-value pairs only in the root of the conf file.
-        But `ConfField.field_build_root_dir_rel_path` is part of a `list` of nested `dict`-s.
-        Since the wizard is supposed to be used only for initial setup,
-        it only supports updating a path to a lone project.
-        Essentially, the wizard reduces that field to a single field-value pair only.
-        """
-        assert wizard_meta.field_name == ConfField.field_build_root_dir_rel_path.value
-        warn_text = (
-            f"WARNING: Field [{ConfField.field_build_root_dir_rel_path.value}] cannot be updated by the wizard anymore. "
-            f"To use the wizard for this field again, remove the entire [{ConfField.field_project_descriptors.value}] field manually. "
-            f"See in the corresponding [{FieldWizardMeta.__name__}] entry in the code. "
-        )
-        if ConfField.field_project_descriptors.value not in file_data:
-            return None
-        field_project_descriptors = file_data[ConfField.field_project_descriptors.value]
-        assert isinstance(field_project_descriptors, list)
-        if len(field_project_descriptors) > 1:
-            return warn_text
-        if len(field_project_descriptors) < 1:
-            return None
-        single_project_descriptor = field_project_descriptors[0]
-        assert isinstance(single_project_descriptor, dict)
-
-        if ConfField.field_build_root_dir_rel_path.value in single_project_descriptor:
-            build_root = single_project_descriptor[
-                ConfField.field_build_root_dir_rel_path.value
-            ]
-            assert isinstance(build_root, str)
-
-        if ConfField.field_install_extras.value in single_project_descriptor:
-            install_extras = single_project_descriptor[
-                ConfField.field_install_extras.value
-            ]
-            assert isinstance(install_extras, list)
-            if len(install_extras) > 0:
-                return warn_text
-
-        return None
-
-    @staticmethod
-    def read_field_build_root_dir_rel_path(
-        wizard_meta: FieldWizardMeta,
-        state_node: StateNode,
-        file_data: dict,
-    ) -> str:
-        """
-        Reads a single value of `ConfField.field_build_root_dir_rel_path`.
-
-        See `warn_if_not_wizard_able_field_build_root_dir_rel_path`.
-        """
-        single_project = WizardField.get_assumed_single_project_descriptor(file_data)
-
-        field_build_root_dir_rel_path: str
-        if ConfField.field_build_root_dir_rel_path.value in single_project:
-            field_build_root_dir_rel_path = single_project[
-                ConfField.field_build_root_dir_rel_path.value
-            ]
-        else:
-            field_build_root_dir_rel_path = ConfConstGeneral.curr_dir_rel_path
-        assert isinstance(field_build_root_dir_rel_path, str)
-
-        return field_build_root_dir_rel_path
-
-    @staticmethod
-    def write_field_build_root_dir_rel_path(
-        wizard_meta: FieldWizardMeta,
-        state_node: StateNode,
-        file_data: dict,
-        field_value: str,
-    ) -> None:
-        """
-        Writes a single value of `ConfField.field_build_root_dir_rel_path`.
-
-        See `warn_if_not_wizard_able_field_build_root_dir_rel_path`.
-        """
-        single_project = WizardField.get_assumed_single_project_descriptor(file_data)
-        single_project[ConfField.field_build_root_dir_rel_path.value] = field_value
-        file_data[ConfField.field_project_descriptors.value] = [
-            single_project,
-        ]
-
-    @staticmethod
-    def get_assumed_single_project_descriptor(file_data: dict) -> dict:
-        project_descriptors: list[dict]
-        if ConfField.field_project_descriptors.value in file_data:
-            project_descriptors = file_data[ConfField.field_project_descriptors.value]
-        else:
-            project_descriptors = []
-        assert isinstance(project_descriptors, list)
-        if len(project_descriptors) < 1:
-            project_descriptors.append({})
-        assert len(project_descriptors) == 1
-        single_project = project_descriptors[0]
-        return single_project
-
-    @staticmethod
-    def read_value_trivially(
-        wizard_meta: FieldWizardMeta,
-        state_node: StateNode,
-        file_data: dict,
-    ) -> str:
-        return file_data[wizard_meta.field_name]
-
-    @staticmethod
-    def validate_value_trivially(
-        wizard_meta: FieldWizardMeta,
-        state_node: StateNode,
-        file_data: dict,
-        field_value: str,
-    ) -> str | None:
-        return None
-
-    @staticmethod
-    def validate_rel_path_exists(
-        wizard_meta,
-        state_node,
-        file_data,
-        rel_path: str,
-        base_name: str,
-        base_abs_path: str,
-    ) -> str | None:
-        full_abs_path: str = os.path.join(
-            base_abs_path,
-            rel_path,
-        )
-        if os.path.exists(full_abs_path):
-            return None
-        else:
-            return f"The base `{base_name}` [{base_abs_path}] and relative `{wizard_meta.field_name}` [{rel_path}] point to a non-existent path [{full_abs_path}]."
-
-    @staticmethod
-    def write_value_trivially(
-        wizard_meta: FieldWizardMeta,
-        state_node: StateNode,
-        file_data: dict,
-        # TODO: support any type of field values (currently, only `str` exists):
-        field_value: str,
-    ) -> None:
-        file_data[wizard_meta.field_name] = field_value
-
-    @staticmethod
-    def review_value_trivially(
-        wizard_meta: FieldWizardMeta,
-        state_node: StateNode,
-        file_data: dict,
-        field_value: str,
-    ) -> str | None:
-        return None
-
-    field_primer_ref_root_dir_rel_path = FieldWizardMeta(
-        field_name=ConfField.field_primer_ref_root_dir_rel_path.value,
-        field_help=lambda wizard_meta, state_node, file_data: (
-            f"Field `{ConfField.field_primer_ref_root_dir_rel_path.value}` (or `{PathName.path_ref_root.value}` for short) leads to the client reference root "
-            f"from the proto code script dir [{state_node.eval_parent_state(EnvState.state_input_proto_code_dir_abs_path_eval_finalized.name)}]. "
-            f"Subsequently, the client reference root `{PathName.path_ref_root.value}` is used as a base path for the most of the relative paths. "
-        ),
-        field_possible_leaps=[
-            ConfLeap.leap_primer,
-        ],
-        field_wizard_leaps=[
-            ConfLeap.leap_primer,
-        ],
-        root_ancestor_field=None,
-        warn_if_not_wizard_able=lambda wizard_meta, state_node, file_data: None,
-        read_value=read_value_trivially,
-        validate_value=lambda wizard_meta, state_node, file_data, field_value: WizardField.validate_rel_path_exists(
-            wizard_meta,
-            state_node,
-            file_data,
-            field_value,
-            PathName.path_proto_dir.value,
-            state_node.eval_parent_state(
-                EnvState.state_input_proto_code_dir_abs_path_eval_finalized.name
-            ),
-        ),
-        # TODO: consider wrapping it into a function - line is too long:
-        review_value=lambda wizard_meta, state_node, file_data, field_value: (
-            f"The base [{state_node.eval_parent_state(EnvState.state_input_proto_code_dir_abs_path_eval_finalized.name)}] "
-            f"and the relative [{field_value}] paths resolves into absolute "
-            f"[{os.path.normpath(os.path.join(state_node.eval_parent_state(EnvState.state_input_proto_code_dir_abs_path_eval_finalized.name), field_value))}]. "
-        ),
-        write_value=write_value_trivially,
-    )
-
-    field_primer_conf_client_file_rel_path = FieldWizardMeta(
-        field_name=ConfField.field_primer_conf_client_file_rel_path.value,
-        field_help=lambda wizard_meta, state_node, file_data: (
-            f"Field `{ConfField.field_primer_conf_client_file_rel_path.value}` (or `{PathName.path_conf_client.value}` for short) leads to the client global configuration "
-            f"from the client reference root `{PathName.path_ref_root.value}`. "
-            f"Subsequently, the client global configuration `{PathName.path_conf_client.value}` (configuration not specific to the local environment) "
-            f"is used by every deployment. "
-        ),
-        field_possible_leaps=[
-            ConfLeap.leap_primer,
-        ],
-        field_wizard_leaps=[
-            ConfLeap.leap_primer,
-        ],
-        root_ancestor_field=None,
-        warn_if_not_wizard_able=lambda wizard_meta, state_node, file_data: None,
-        read_value=read_value_trivially,
-        # NOTE: The file is allowed not to exist:
-        validate_value=validate_value_trivially,
-        # TODO: consider wrapping it into a function - line is too long:
-        review_value=lambda wizard_meta, state_node, file_data, field_value: (
-            f"The relative path [{field_value}] "
-            f"resolves into absolute path "
-            f"[{os.path.normpath(os.path.join(state_node.eval_parent_state(EnvState.state_input_proto_code_dir_abs_path_eval_finalized.name), WizardField.field_primer_ref_root_dir_rel_path.value.read_value(WizardField.field_primer_ref_root_dir_rel_path.value, state_node, file_data), field_value))}]. "
-        ),
-        write_value=write_value_trivially,
-    )
-
-    field_client_link_name_dir_rel_path = FieldWizardMeta(
-        field_name=ConfField.field_client_link_name_dir_rel_path.value,
-        field_help=lambda wizard_meta, state_node, file_data: (
-            # TODO:
-            f"Field `{ConfField.field_client_link_name_dir_rel_path.value}` TODO"
-        ),
-        field_possible_leaps=[
-            ConfLeap.leap_client,
-        ],
-        field_wizard_leaps=[
-            ConfLeap.leap_client,
-        ],
-        root_ancestor_field=None,
-        warn_if_not_wizard_able=lambda wizard_meta, state_node, file_data: None,
-        read_value=read_value_trivially,
-        # TODO:
-        validate_value=validate_value_trivially,
-        # TODO:
-        review_value=review_value_trivially,
-        write_value=write_value_trivially,
-    )
-
-    field_client_default_env_dir_rel_path = FieldWizardMeta(
-        field_name=ConfField.field_client_default_env_dir_rel_path.value,
-        field_help=lambda wizard_meta, state_node, file_data: (
-            # TODO:
-            f"Field `{ConfField.field_client_default_env_dir_rel_path.value}` TODO"
-        ),
-        field_possible_leaps=[
-            ConfLeap.leap_client,
-        ],
-        field_wizard_leaps=[
-            ConfLeap.leap_client,
-        ],
-        root_ancestor_field=None,
-        warn_if_not_wizard_able=lambda wizard_meta, state_node, file_data: None,
-        read_value=read_value_trivially,
-        # TODO:
-        validate_value=validate_value_trivially,
-        # TODO:
-        review_value=review_value_trivially,
-        write_value=write_value_trivially,
-    )
-
-    field_required_python_file_abs_path = FieldWizardMeta(
-        field_name=ConfField.field_required_python_file_abs_path.value,
-        field_help=lambda wizard_meta, state_node, file_data: (
-            # TODO:
-            f"Field `{ConfField.field_required_python_file_abs_path.value}` TODO"
-        ),
-        field_possible_leaps=[
-            ConfLeap.leap_client,
-            ConfLeap.leap_env,
-        ],
-        field_wizard_leaps=[
-            ConfLeap.leap_client,
-        ],
-        root_ancestor_field=None,
-        warn_if_not_wizard_able=lambda wizard_meta, state_node, file_data: None,
-        read_value=read_value_trivially,
-        # TODO:
-        validate_value=validate_value_trivially,
-        # TODO:
-        review_value=review_value_trivially,
-        write_value=write_value_trivially,
-    )
-
-    field_local_venv_dir_rel_path = FieldWizardMeta(
-        field_name=ConfField.field_local_venv_dir_rel_path.value,
-        field_help=lambda wizard_meta, state_node, file_data: (
-            # TODO:
-            f"Field `{ConfField.field_local_venv_dir_rel_path.value}` TODO"
-        ),
-        field_possible_leaps=[
-            ConfLeap.leap_client,
-            ConfLeap.leap_env,
-        ],
-        field_wizard_leaps=[
-            ConfLeap.leap_client,
-        ],
-        root_ancestor_field=None,
-        warn_if_not_wizard_able=lambda wizard_meta, state_node, file_data: None,
-        read_value=read_value_trivially,
-        # TODO:
-        validate_value=validate_value_trivially,
-        # TODO:
-        review_value=review_value_trivially,
-        write_value=write_value_trivially,
-    )
-
-    field_local_log_dir_rel_path = FieldWizardMeta(
-        field_name=ConfField.field_local_log_dir_rel_path.value,
-        field_help=lambda wizard_meta, state_node, file_data: (
-            f"Field `{ConfField.field_local_log_dir_rel_path.value}` (or `{PathName.path_local_log.value}` for short) leads to the client with log files."
-        ),
-        field_possible_leaps=[
-            ConfLeap.leap_client,
-            ConfLeap.leap_env,
-        ],
-        field_wizard_leaps=[
-            ConfLeap.leap_client,
-        ],
-        root_ancestor_field=None,
-        warn_if_not_wizard_able=lambda wizard_meta, state_node, file_data: None,
-        read_value=read_value_trivially,
-        validate_value=validate_value_trivially,
-        review_value=review_value_trivially,
-        write_value=write_value_trivially,
-    )
-
-    field_local_tmp_dir_rel_path = FieldWizardMeta(
-        field_name=ConfField.field_local_tmp_dir_rel_path.value,
-        field_help=lambda wizard_meta, state_node, file_data: (
-            f"Field `{ConfField.field_local_tmp_dir_rel_path.value}` (or `{PathName.path_local_tmp.value}` for short) leads to the client with temp files."
-        ),
-        field_possible_leaps=[
-            ConfLeap.leap_client,
-            ConfLeap.leap_env,
-        ],
-        field_wizard_leaps=[
-            ConfLeap.leap_client,
-        ],
-        root_ancestor_field=None,
-        warn_if_not_wizard_able=lambda wizard_meta, state_node, file_data: None,
-        read_value=read_value_trivially,
-        validate_value=validate_value_trivially,
-        review_value=review_value_trivially,
-        write_value=write_value_trivially,
-    )
-
-    field_build_root_dir_rel_path = FieldWizardMeta(
-        field_name=ConfField.field_build_root_dir_rel_path.value,
-        field_help=lambda wizard_meta, state_node, file_data: (
-            # TODO:
-            f"Field `{ConfField.field_build_root_dir_rel_path.value}` TODO"
-        ),
-        field_possible_leaps=[
-            ConfLeap.leap_client,
-            ConfLeap.leap_env,
-        ],
-        field_wizard_leaps=[
-            ConfLeap.leap_client,
-        ],
-        root_ancestor_field=ConfField.field_project_descriptors.value,
-        warn_if_not_wizard_able=warn_if_not_wizard_able_field_build_root_dir_rel_path,
-        read_value=read_field_build_root_dir_rel_path,
-        # TODO:
-        validate_value=validate_value_trivially,
-        # TODO:
-        review_value=review_value_trivially,
-        write_value=write_field_build_root_dir_rel_path,
-    )
-
-
 def init_arg_parser():
 
     suppress_internal_args: bool = True
@@ -1426,15 +924,6 @@ def init_arg_parser():
         metavar=ParsedArg.name_run_mode.value,
         help="Check the environment configuration.",
     )
-    # TODO: obsolete: FT_32_54_11_56.wizard_mode.md:
-    # mutex_group.add_argument(
-    #     SyntaxArg.arg_mode_wizard,
-    #     action="store_const",
-    #     const=RunMode.mode_wizard.value,
-    #     dest=ParsedArg.name_run_mode.value,
-    #     metavar=ParsedArg.name_run_mode.value,
-    #     help="Wizard through the environment configuration.",
-    # )
 
     mutex_group.set_defaults(run_mode=RunMode.mode_prime.value)
 
@@ -1461,17 +950,6 @@ def init_arg_parser():
         dest=SyntaxArg.dest_verbose,
         default=0,
         help="Increase log verbosity level.",
-    )
-    arg_parser.add_argument(
-        SyntaxArg.arg_wizard_stage,
-        type=str,
-        choices=[wizard_stage.value for wizard_stage in WizardStage],
-        default=WizardStage.wizard_started.value,
-        help=(
-            argparse.SUPPRESS
-            if suppress_internal_args
-            else f"Used internally: specifies `{WizardStage.__name__}`."
-        ),
     )
     arg_parser.add_argument(
         # TODO: Remove this arg - it does not support any strong use case:
@@ -3027,38 +2505,6 @@ class Bootstrapper_state_args_parsed(AbstractCachingStateNode[argparse.Namespace
 
 
 # noinspection PyPep8Naming
-class Bootstrapper_state_input_wizard_stage_arg_loaded(
-    AbstractCachingStateNode[WizardStage]
-):
-
-    def __init__(
-        self,
-        env_ctx: EnvContext,
-        state_name: str | None = None,
-    ):
-        super().__init__(
-            env_ctx=env_ctx,
-            parent_states=[
-                EnvState.state_args_parsed.name,
-            ],
-            state_name=if_none(
-                state_name,
-                EnvState.state_input_wizard_stage_arg_loaded.name,
-            ),
-        )
-
-    def _eval_state_once(
-        self,
-    ) -> ValueType:
-        return WizardStage[
-            getattr(
-                self.eval_parent_state(EnvState.state_args_parsed.name),
-                ParsedArg.name_wizard_stage.value,
-            )
-        ]
-
-
-# noinspection PyPep8Naming
 class Bootstrapper_state_input_stderr_log_level_eval_finalized(
     AbstractCachingStateNode[int]
 ):
@@ -3271,16 +2717,6 @@ class Bootstrapper_state_run_mode_executed(AbstractCachingStateNode[bool]):
             state_node = self.env_ctx.state_graph.state_nodes[
                 EnvState.state_effective_config_data_printed.name
             ]
-
-        # TODO: obsolete: FT_32_54_11_56.wizard_mode.md:
-        # elif state_input_run_mode_arg_loaded == RunMode.mode_wizard:
-        #     for wizard_state in WizardState:
-        #         self.env_ctx.state_graph.register_node(
-        #             wizard_state.value(self.env_ctx),
-        #             replace_existing=True,
-        #         )
-        #     selected_strategy = ExitCodeReporter(self.env_ctx)
-
         else:
             raise ValueError(
                 f"cannot handle run mode [{state_input_run_mode_arg_loaded}]"
@@ -3403,7 +2839,6 @@ class Bootstrapper_state_py_exec_arbitrary_reached(
         super().__init__(
             env_ctx=env_ctx,
             parent_states=[
-                EnvState.state_input_wizard_stage_arg_loaded.name,
                 EnvState.state_input_py_exec_var_loaded.name,
                 EnvState.state_input_start_id_var_loaded.name,
             ],
@@ -3464,9 +2899,6 @@ class Bootstrapper_state_py_exec_arbitrary_reached(
                 next_python_path=path_to_next_python,
                 start_id=state_input_start_id_var_loaded,
                 proto_code_abs_file_path=None,
-                wizard_stage=self.env_ctx.mutable_state_input_wizard_stage_arg_loaded.get_curr_value(
-                    self,
-                ),
                 required_environ=cleaned_env,
             )
 
@@ -3666,67 +3098,6 @@ class Bootstrapper_state_primer_conf_file_data_loaded(AbstractCachingStateNode[d
 
 
 # noinspection PyPep8Naming
-class Wizard_state_primer_conf_file_data_loaded(AbstractCachingStateNode[dict]):
-
-    def __init__(
-        self,
-        env_ctx: EnvContext,
-        state_name: str | None = None,
-    ):
-        self.moved_state_name = rename_to_moved_state_name(
-            EnvState.state_primer_conf_file_data_loaded.name
-        )
-        super().__init__(
-            env_ctx=env_ctx,
-            parent_states=[
-                EnvState.state_input_wizard_stage_arg_loaded.name,
-                EnvState.state_input_proto_code_dir_abs_path_eval_finalized.name,
-                EnvState.state_input_proto_conf_primer_file_abs_path_eval_finalized.name,
-                # UC_27_40_17_59.replace_by_new_and_use_old.md:
-                # Depend on the moved state:
-                self.moved_state_name,
-            ],
-            state_name=if_none(
-                state_name,
-                EnvState.state_primer_conf_file_data_loaded.name,
-            ),
-            # Bootstrap manually to avoid touching `moved_state_node`:
-            auto_bootstrap_parents=False,
-        )
-
-        # UC_27_40_17_59.replace_by_new_and_use_old.md:
-        # Register the moved state implementation:
-        self.moved_state_node = Bootstrapper_state_primer_conf_file_data_loaded(
-            env_ctx,
-            self.moved_state_name,
-        )
-        self.env_ctx.state_graph.register_node(self.moved_state_node)
-
-    def _eval_state_once(
-        self,
-    ) -> ValueType:
-
-        state_input_proto_conf_primer_file_abs_path_eval_finalized = (
-            self.eval_parent_state(
-                EnvState.state_input_proto_conf_primer_file_abs_path_eval_finalized.name
-            )
-        )
-
-        file_data = wizard_conf_file(
-            self,
-            ConfLeap.leap_primer,
-            state_input_proto_conf_primer_file_abs_path_eval_finalized,
-            # TODO: define defaults somewhere else:
-            default_file_data={
-                ConfField.field_primer_ref_root_dir_rel_path.value: ConfConstGeneral.curr_dir_rel_path,
-                ConfField.field_primer_conf_client_file_rel_path.value: ConfConstPrimer.default_client_conf_file_rel_path,
-            },
-        )
-
-        return file_data
-
-
-# noinspection PyPep8Naming
 class Bootstrapper_state_primer_ref_root_dir_abs_path_eval_finalized(
     AbstractCachingStateNode[str]
 ):
@@ -3900,74 +3271,6 @@ class Bootstrapper_state_client_conf_file_data_loaded(AbstractCachingStateNode[d
                 state_primer_conf_client_file_abs_path_eval_finalized=state_primer_conf_client_file_abs_path_eval_finalized,
             )
             print(RenderConfigVisitor().render_node(conf_client))
-
-        return file_data
-
-
-# noinspection PyPep8Naming
-class Wizard_state_client_conf_file_data_loaded(AbstractCachingStateNode[dict]):
-
-    def __init__(
-        self,
-        env_ctx: EnvContext,
-        state_name: str | None = None,
-    ):
-        self.moved_state_name = rename_to_moved_state_name(
-            EnvState.state_client_conf_file_data_loaded.name
-        )
-        super().__init__(
-            env_ctx=env_ctx,
-            parent_states=[
-                EnvState.state_input_wizard_stage_arg_loaded.name,
-                EnvState.state_primer_conf_client_file_abs_path_eval_finalized.name,
-                # UC_27_40_17_59.replace_by_new_and_use_old.md:
-                # Depend on the moved state:
-                self.moved_state_name,
-            ],
-            state_name=if_none(
-                state_name,
-                EnvState.state_client_conf_file_data_loaded.name,
-            ),
-            # Bootstrap manually to avoid touching `moved_state_node`:
-            auto_bootstrap_parents=False,
-        )
-
-        # UC_27_40_17_59.replace_by_new_and_use_old.md:
-        # Register the moved state implementation:
-        self.moved_state_node = Bootstrapper_state_client_conf_file_data_loaded(
-            env_ctx,
-            self.moved_state_name,
-        )
-        self.env_ctx.state_graph.register_node(self.moved_state_node)
-
-    def _eval_state_once(
-        self,
-    ) -> ValueType:
-
-        state_primer_conf_client_file_abs_path_eval_finalized = self.eval_parent_state(
-            EnvState.state_primer_conf_client_file_abs_path_eval_finalized.name
-        )
-
-        file_data = wizard_conf_file(
-            self,
-            ConfLeap.leap_client,
-            state_primer_conf_client_file_abs_path_eval_finalized,
-            # TODO: define defaults somewhere else:
-            default_file_data={
-                # TODO: Proposing default (when value is missing in data) does not work here.
-                #       What we want to know (before proposing default) is whether env-specific config even needed.
-                ConfField.field_client_link_name_dir_rel_path.value: ConfConstClient.default_dir_rel_path_leap_env_link_name,
-                # TODO: This should not be part of the file - defaults should be configured, not generated (or generated by extensible code):
-                # TODO: Prompt use in wizard and validate the value refers to an existing directory:
-                ConfField.field_client_default_env_dir_rel_path.value: ConfConstClient.default_client_default_env_dir_rel_path,
-                # TODO: Do not use default values directly - resolve it differently at the prev|next step based on the need:
-                ConfField.field_required_python_file_abs_path.value: ConfConstEnv.default_file_abs_path_python,
-                ConfField.field_local_venv_dir_rel_path.value: ConfConstEnv.default_dir_rel_path_venv,
-                ConfField.field_local_log_dir_rel_path.value: ConfConstEnv.default_dir_rel_path_log,
-                ConfField.field_local_tmp_dir_rel_path.value: ConfConstEnv.default_dir_rel_path_tmp,
-                ConfField.field_project_descriptors.value: ConfConstEnv.default_project_descriptors,
-            },
-        )
 
         return file_data
 
@@ -4369,70 +3672,6 @@ class Bootstrapper_state_env_conf_file_data_loaded(AbstractCachingStateNode[dict
                 state_client_conf_env_file_abs_path_eval_finalized=state_client_conf_env_file_abs_path_eval_finalized,
             )
             print(RenderConfigVisitor().render_node(conf_env))
-
-        return file_data
-
-
-# noinspection PyPep8Naming
-class Wizard_state_env_conf_file_data_loaded(AbstractCachingStateNode[dict]):
-
-    def __init__(
-        self,
-        env_ctx: EnvContext,
-        state_name: str | None = None,
-    ):
-        self.moved_state_name = rename_to_moved_state_name(
-            EnvState.state_env_conf_file_data_loaded.name
-        )
-        super().__init__(
-            env_ctx=env_ctx,
-            parent_states=[
-                EnvState.state_input_wizard_stage_arg_loaded.name,
-                EnvState.state_client_conf_env_file_abs_path_eval_finalized.name,
-                # UC_27_40_17_59.replace_by_new_and_use_old.md:
-                # Depend on the moved state:
-                self.moved_state_name,
-            ],
-            state_name=if_none(
-                state_name,
-                EnvState.state_env_conf_file_data_loaded.name,
-            ),
-            # Bootstrap manually to avoid touching `moved_state_node`:
-            auto_bootstrap_parents=False,
-        )
-
-        # UC_27_40_17_59.replace_by_new_and_use_old.md:
-        # Register the moved state implementation:
-        self.moved_state_node = Bootstrapper_state_env_conf_file_data_loaded(
-            env_ctx,
-            self.moved_state_name,
-        )
-        self.env_ctx.state_graph.register_node(self.moved_state_node)
-
-    def _eval_state_once(
-        self,
-    ) -> ValueType:
-
-        state_client_conf_env_file_abs_path_eval_finalized = self.eval_parent_state(
-            EnvState.state_client_conf_env_file_abs_path_eval_finalized.name
-        )
-
-        # TODO: This creates a directory with `ConfConstClient.default_dir_rel_path_leap_env_link_name` instead of symlink.
-        #       But this happens only if dependency
-        #       `state_client_conf_env_file_abs_path_eval_finalized` -> `state_client_conf_env_dir_abs_path_eval_verified`
-        #       was not executed (which is not possible outside of tests).
-        file_data = wizard_conf_file(
-            self,
-            ConfLeap.leap_env,
-            state_client_conf_env_file_abs_path_eval_finalized,
-            # TODO: define defaults somewhere else:
-            default_file_data={},
-        )
-
-        # Finish the wizard because this is the final wizard state:
-        self.env_ctx.mutable_state_input_wizard_stage_arg_loaded.set_curr_value(
-            self, WizardStage.wizard_finished
-        )
 
         return file_data
 
@@ -4933,7 +4172,6 @@ class Bootstrapper_state_py_exec_required_reached(
             env_ctx=env_ctx,
             parent_states=[
                 EnvState.state_args_parsed.name,
-                EnvState.state_input_wizard_stage_arg_loaded.name,
                 EnvState.state_input_py_exec_var_loaded.name,
                 EnvState.state_input_start_id_var_loaded.name,
                 EnvState.state_input_proto_code_file_abs_path_eval_finalized.name,
@@ -5020,9 +4258,6 @@ class Bootstrapper_state_py_exec_required_reached(
                 next_python_path=state_derived_required_python_file_abs_path_eval_finalized,
                 start_id=state_input_start_id_var_loaded,
                 proto_code_abs_file_path=state_input_proto_code_file_abs_path_eval_finalized,
-                wizard_stage=self.env_ctx.mutable_state_input_wizard_stage_arg_loaded.get_curr_value(
-                    self,
-                ),
             )
         else:
             assert state_input_py_exec_var_loaded <= PythonExecutable.py_exec_required
@@ -5046,7 +4281,6 @@ class Bootstrapper_state_reinstall_triggered(AbstractCachingStateNode[bool]):
             env_ctx=env_ctx,
             parent_states=[
                 EnvState.state_args_parsed.name,
-                EnvState.state_input_wizard_stage_arg_loaded.name,
                 EnvState.state_input_start_id_var_loaded.name,
                 EnvState.state_input_proto_code_file_abs_path_eval_finalized.name,
                 EnvState.state_client_conf_env_dir_abs_path_eval_finalized.name,
@@ -5253,7 +4487,6 @@ class Bootstrapper_state_py_exec_venv_reached(
             env_ctx=env_ctx,
             parent_states=[
                 EnvState.state_args_parsed.name,
-                EnvState.state_input_wizard_stage_arg_loaded.name,
                 EnvState.state_input_py_exec_var_loaded.name,
                 EnvState.state_input_start_id_var_loaded.name,
                 EnvState.state_input_proto_code_file_abs_path_eval_finalized.name,
@@ -5361,9 +4594,6 @@ class Bootstrapper_state_py_exec_venv_reached(
             next_python_path=venv_path_to_python,
             start_id=state_input_start_id_var_loaded,
             proto_code_abs_file_path=state_input_proto_code_file_abs_path_eval_finalized,
-            wizard_stage=self.env_ctx.mutable_state_input_wizard_stage_arg_loaded.get_curr_value(
-                self,
-            ),
         )
 
         return state_py_exec_venv_reached
@@ -5533,7 +4763,6 @@ class Bootstrapper_state_py_exec_updated_protoprimer_package_reached(
             env_ctx=env_ctx,
             parent_states=[
                 EnvState.state_args_parsed.name,
-                EnvState.state_input_wizard_stage_arg_loaded.name,
                 EnvState.state_input_py_exec_var_loaded.name,
                 EnvState.state_input_start_id_var_loaded.name,
                 EnvState.state_input_proto_code_file_abs_path_eval_finalized.name,
@@ -5589,9 +4818,6 @@ class Bootstrapper_state_py_exec_updated_protoprimer_package_reached(
                 next_python_path=venv_path_to_python,
                 start_id=state_input_start_id_var_loaded,
                 proto_code_abs_file_path=state_input_proto_code_file_abs_path_eval_finalized,
-                wizard_stage=self.env_ctx.mutable_state_input_wizard_stage_arg_loaded.get_curr_value(
-                    self,
-                ),
             )
         else:
             # Successfully reached the end goal:
@@ -5725,7 +4951,6 @@ class Bootstrapper_state_py_exec_updated_proto_code(
             env_ctx=env_ctx,
             parent_states=[
                 EnvState.state_args_parsed.name,
-                EnvState.state_input_wizard_stage_arg_loaded.name,
                 EnvState.state_input_py_exec_var_loaded.name,
                 EnvState.state_input_start_id_var_loaded.name,
                 EnvState.state_input_proto_code_file_abs_path_eval_finalized.name,
@@ -5788,9 +5013,6 @@ class Bootstrapper_state_py_exec_updated_proto_code(
                 next_python_path=venv_path_to_python,
                 start_id=state_input_start_id_var_loaded,
                 proto_code_abs_file_path=state_input_proto_code_file_abs_path_eval_finalized,
-                wizard_stage=self.env_ctx.mutable_state_input_wizard_stage_arg_loaded.get_curr_value(
-                    self,
-                ),
             )
         else:
             # Successfully reached the end goal:
@@ -5899,19 +5121,6 @@ class Bootstrapper_state_command_executed(AbstractCachingStateNode[int]):
 ########################################################################################################################
 
 
-# TODO: obsolete: FT_32_54_11_56.wizard_mode.md
-class WizardState(enum.Enum):
-    """
-    These states replace some of the `EnvState` (named the same way) during `RunMode.mode_wizard`.
-    """
-
-    state_primer_conf_file_data_loaded = Wizard_state_primer_conf_file_data_loaded
-
-    state_client_conf_file_data_loaded = Wizard_state_client_conf_file_data_loaded
-
-    state_env_conf_file_data_loaded = Wizard_state_env_conf_file_data_loaded
-
-
 class EnvState(enum.Enum):
     """
     Environment states to be reached during the bootstrap process.
@@ -5922,8 +5131,6 @@ class EnvState(enum.Enum):
 
     FT_68_54_41_96.state_dependency.md
     """
-
-    # TODO: Rename Bootstrapper -> Primer or something else (to be different from Wizard):
 
     state_input_stderr_log_level_var_loaded = (
         Bootstrapper_state_input_stderr_log_level_var_loaded
@@ -5936,10 +5143,6 @@ class EnvState(enum.Enum):
     )
 
     state_args_parsed = Bootstrapper_state_args_parsed
-
-    state_input_wizard_stage_arg_loaded = (
-        Bootstrapper_state_input_wizard_stage_arg_loaded
-    )
 
     state_input_stderr_log_level_eval_finalized = (
         Bootstrapper_state_input_stderr_log_level_eval_finalized
@@ -5976,8 +5179,7 @@ class EnvState(enum.Enum):
         Bootstrapper_state_input_proto_conf_primer_file_abs_path_eval_finalized
     )
 
-    # TODO: obsolete: FT_32_54_11_56.wizard_mode.md
-    # The state is wizard-able by `Wizard_state_primer_conf_file_data_loaded`:
+    # `ConfLeap.leap_primer`:
     state_primer_conf_file_data_loaded = Bootstrapper_state_primer_conf_file_data_loaded
 
     state_primer_ref_root_dir_abs_path_eval_finalized = (
@@ -5988,8 +5190,7 @@ class EnvState(enum.Enum):
         Bootstrapper_state_primer_conf_client_file_abs_path_eval_finalized
     )
 
-    # TODO: obsolete: FT_32_54_11_56.wizard_mode.md
-    # The state is wizard-able by `Wizard_state_client_conf_file_data_loaded`:
+    # `ConfLeap.leap_client`:
     state_client_conf_file_data_loaded = Bootstrapper_state_client_conf_file_data_loaded
 
     state_client_local_env_conf_dir_rel_path_eval_finalized = (
@@ -6008,8 +5209,7 @@ class EnvState(enum.Enum):
         Bootstrapper_state_client_conf_env_file_abs_path_eval_finalized
     )
 
-    # TODO: obsolete: FT_32_54_11_56.wizard_mode.md
-    # The state is wizard-able by `Wizard_state_env_conf_file_data_loaded`:
+    # `ConfLeap.leap_env`:
     state_env_conf_file_data_loaded = Bootstrapper_state_env_conf_file_data_loaded
 
     state_derived_required_python_file_abs_path_eval_finalized = (
@@ -6044,6 +5244,7 @@ class EnvState(enum.Enum):
         Bootstrapper_state_derived_project_descriptors_eval_finalized
     )
 
+    # `ConfLeap.leap_env`:
     state_derived_conf_data_loaded = Bootstrapper_state_derived_conf_data_loaded
 
     state_effective_config_data_printed = (
@@ -6223,10 +5424,6 @@ class EnvContext:
         # TODO: Do not set it on Context - use bootstrap-able values:
         # TODO: Find "Universal Sink":
         self.final_state: str = TargetState.target_proto_bootstrap_completed.value.name
-
-        self.mutable_state_input_wizard_stage_arg_loaded = MutableValue(
-            EnvState.state_input_wizard_stage_arg_loaded.name,
-        )
 
         self._build_default_graph()
 
@@ -6411,266 +5608,6 @@ def can_print_effective_config(
     )
 
 
-def wizard_confirm_single_value(
-    state_node: StateNode,
-    conf_leap: ConfLeap,
-    wizard_meta: FieldWizardMeta,
-    file_data: dict,
-    sub_ordinal_n: int,
-    sub_size: int,
-    total_ordinal_n: int,
-    total_size: int,
-) -> None:
-    """
-    Wizard individual field provided by `FieldWizardMeta`.
-    """
-
-    while True:
-        print("---")
-        print(f"Total progress: {total_ordinal_n}/{total_size}")
-        print(f"[{conf_leap.name}] progress: {sub_ordinal_n}/{sub_size}")
-        print(
-            f"{TermColor.field_name.value}Field: {wizard_meta.field_name}{TermColor.reset_style.value}"
-        )
-        print(
-            f"{TermColor.field_description.value}Description: {wizard_meta.field_help(wizard_meta, state_node, file_data)}{TermColor.reset_style.value}"
-        )
-
-        field_warning: str | None = wizard_meta.warn_if_not_wizard_able(
-            wizard_meta,
-            state_node,
-            file_data,
-        )
-        if field_warning is not None:
-            print(field_warning)
-            while True:
-                user_confirmation = input(f"Acknowledge this (a) >").lower().strip()
-
-                if user_confirmation == "a":
-                    print(f"Continuing...")
-                    # break the inner and the outer loops:
-                    return
-                else:
-                    # continue the inner loop
-                    continue
-
-        curr_param_value = wizard_meta.read_value(
-            wizard_meta,
-            state_node,
-            file_data,
-        )
-
-        print(
-            f"Enter blank to keep the current value [{curr_param_value}] or provide a new value:"
-        )
-        new_param_value = input(f"[{curr_param_value}] >").strip()
-
-        if new_param_value == "":
-            # blank keeps the current value:
-            new_param_value = curr_param_value
-
-        review_text: str | None = wizard_meta.review_value(
-            wizard_meta,
-            state_node,
-            file_data,
-            new_param_value,
-        )
-        if review_text is not None:
-            print(
-                f"{TermColor.field_review.value}{review_text}{TermColor.reset_style.value}"
-            )
-
-        validation_error = wizard_meta.validate_value(
-            wizard_meta,
-            state_node,
-            file_data,
-            new_param_value,
-        )
-        if validation_error is not None:
-            print(
-                f"{TermColor.error_text.value}{validation_error}{TermColor.reset_style.value}"
-            )
-            print(f"Failing...")
-            continue
-
-        while True:
-
-            user_confirmation = (
-                input(
-                    f"Confirm the value [{new_param_value}] (enter blank to skip, or y/n) >"
-                )
-                .lower()
-                .strip()
-            )
-
-            if user_confirmation == "y":
-                print(f"Confirming...")
-                curr_param_value = new_param_value
-                # value has been changed - write `new_param_value`:
-                wizard_meta.write_value(
-                    wizard_meta,
-                    state_node,
-                    file_data,
-                    new_param_value,
-                )
-                # break the inner and the outer loops:
-                return
-            elif user_confirmation == "":
-                print(f"Skipping...")
-                # TODO: It is not necessary to write.
-                #       But at the moment, this is a workaround to in case like
-                #       `WizardField.field_build_root_dir_rel_path` when the value read
-                #       might be a synthesized default (and the file still requires to be rendered correctly).
-                # value is not changed - write `curr_param_value`:
-                wizard_meta.write_value(
-                    wizard_meta,
-                    state_node,
-                    file_data,
-                    curr_param_value,
-                )
-                # break the inner and the outer loops:
-                return
-            elif user_confirmation == "n":
-                print(f"Retrying...")
-                # break the inner loop to retry the outer:
-                break
-            else:
-                continue
-
-
-def wizard_conf_file(
-    state_node: StateNode,
-    conf_leap: ConfLeap,
-    conf_abs_path: str,
-    # TODO: Instead of providing entire file, populate `FieldWizardMeta` how to compute default value:
-    default_file_data: dict,
-) -> dict:
-    """
-    A wrapper over `wizard_conf_leap` to persist the file data.
-    """
-
-    file_data: dict
-    if os.path.exists(conf_abs_path):
-        file_data = read_json_file(conf_abs_path)
-    else:
-        file_data = default_file_data
-
-    verify_conf_file_data_contains_known_fields_only(
-        conf_abs_path,
-        file_data,
-    )
-
-    wizard_stage: WizardStage = (
-        state_node.env_ctx.mutable_state_input_wizard_stage_arg_loaded.get_curr_value(
-            state_node,
-        )
-    )
-
-    if wizard_stage == WizardStage.wizard_started:
-        wizard_conf_leap(
-            state_node,
-            conf_leap,
-            conf_abs_path,
-            file_data,
-        )
-        os.makedirs(
-            os.path.dirname(conf_abs_path),
-            exist_ok=True,
-        )
-        write_json_file(
-            conf_abs_path,
-            file_data,
-        )
-
-    return file_data
-
-
-def wizard_conf_leap(
-    state_node: StateNode,
-    conf_leap: ConfLeap,
-    conf_abs_path: str,
-    file_data: dict,
-) -> None:
-    """
-    Wizard through every field for the given `ConfLeap`.
-    """
-
-    enumerated_conf_leap_fields = WizardField.enumerate_conf_leap_wizardable_fields(
-        conf_leap
-    )
-    total_size = len(WizardField)
-    sub_size = len(enumerated_conf_leap_fields)
-
-    while True:
-
-        print("===")
-        print(f"File path: {conf_abs_path}")
-        print(f"[{conf_leap.name}] summary before:")
-        wizard_print_summary(file_data, conf_leap)
-
-        # Wizard fields:
-        for sub_ordinal_i, (total_ordinal_i, wizard_field) in enumerate(
-            enumerated_conf_leap_fields
-        ):
-            wizard_confirm_single_value(
-                state_node,
-                conf_leap,
-                wizard_field.value,
-                file_data,
-                sub_ordinal_i + 1,
-                sub_size,
-                total_ordinal_i + 1,
-                total_size,
-            )
-
-        print("===")
-        print(f"File path: {conf_abs_path}")
-        print(f"[{conf_leap.name}] summary after:")
-        wizard_print_summary(file_data, conf_leap)
-
-        # Confirm fields together:
-        while True:
-            user_confirmation = input(f"Confirm the values (y/n) >").lower().strip()
-
-            if user_confirmation == "y":
-                print(f"Confirming...")
-                # break the inner and the outer loops:
-                return
-            elif user_confirmation == "":
-                # continue the inner loop
-                continue
-            elif user_confirmation == "n":
-                print(f"Retrying...")
-                # break the inner loop to retry the outer:
-                break
-            else:
-                continue
-
-
-def wizard_print_summary(
-    file_data,
-    conf_leap: ConfLeap,
-) -> None:
-
-    enumerated_conf_leap_fields = WizardField.enumerate_conf_leap_wizardable_fields(
-        conf_leap
-    )
-
-    # Construct data for specific `conf_leap` only:
-    summary_data = {}
-    for total_ordinal_i, wizard_field in enumerated_conf_leap_fields:
-        wizard_meta = wizard_field.value
-        if wizard_meta.root_ancestor_field not in file_data:
-            raise AssertionError(
-                f"missing field_name [{wizard_meta.field_name}] in field_data [{file_data}] with root_ancestor_field [{wizard_meta.root_ancestor_field}]"
-            )
-        summary_data[wizard_meta.root_ancestor_field] = file_data[
-            wizard_meta.root_ancestor_field
-        ]
-
-    print(json.dumps(summary_data, indent=4))
-
-
 def verify_conf_file_data_contains_known_fields_only(
     file_path: str,
     file_data: dict,
@@ -6682,16 +5619,8 @@ def verify_conf_file_data_contains_known_fields_only(
 
     See: FT_00_22_19_59.derived_config.md
     """
-    expected_fields = {
-        wizard_field.value.root_ancestor_field
-        for _, wizard_field in WizardField.enumerate_possible_fields()
-    }
-    actual_fields = set(file_data.keys())
-
-    extra_fields = actual_fields - expected_fields
-
-    for field_name in extra_fields:
-        logger.warning(f"extra field [{field_name}] in config file [{file_path}]")
+    # TODO: After removal of `--wizard` is this still needed?
+    #       All unknown fields are reported by `--config`.
 
 
 def switch_python(
@@ -6701,7 +5630,6 @@ def switch_python(
     next_python_path: str,
     start_id: str,
     proto_code_abs_file_path: str | None,
-    wizard_stage: WizardStage,
     required_environ: dict | None = None,
 ):
     logger.info(
@@ -6717,14 +5645,6 @@ def switch_python(
         *sys.argv,
         # ---
     ]
-
-    if wizard_stage != WizardStage.wizard_started:
-        exec_argv.extend(
-            [
-                SyntaxArg.arg_wizard_stage,
-                wizard_stage.value,
-            ]
-        )
 
     if required_environ is None:
         required_environ = os.environ.copy()

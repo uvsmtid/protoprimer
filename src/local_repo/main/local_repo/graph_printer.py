@@ -40,10 +40,6 @@ class StateMeta(enum.Enum):
         env_state=EnvState.state_args_parsed,
         sub_graph=SubGraph.graph_input,
     )
-    state_input_wizard_stage_arg_loaded = StateNodeMeta(
-        env_state=EnvState.state_input_wizard_stage_arg_loaded,
-        sub_graph=SubGraph.graph_input,
-    )
     state_input_stderr_log_level_eval_finalized = StateNodeMeta(
         env_state=EnvState.state_input_stderr_log_level_eval_finalized,
         sub_graph=SubGraph.graph_input,

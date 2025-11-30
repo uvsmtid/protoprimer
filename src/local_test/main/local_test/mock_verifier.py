@@ -19,7 +19,7 @@ def assert_parent_states_mocked(
     expected_mocked_state_names = set(final_state_node.get_parent_states())
 
     # Add the target state itself to the set of expected mocked states
-    # (this is used for wizard implementation as it replaces non-wizard implementation):
+    # (this is used for some state implementations replacing original implementations):
     if is_replaced_impl:
         expected_mocked_state_names.add(state_name)
 
@@ -31,7 +31,6 @@ def assert_parent_states_mocked(
 
         effective_state_name = env_state_item.name
 
-        # TODO: Maybe Wizard states (where moved states are used) should not rely on them?
         # See: UC_27_40_17_59.replace_by_new_and_use_old.md:
         # Handle "moved state names" (e.g., `_state_client_conf_file_data_loaded`):
         if effective_state_name.startswith("_"):

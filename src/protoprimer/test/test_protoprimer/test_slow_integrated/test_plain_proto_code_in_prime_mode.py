@@ -74,9 +74,7 @@ def test_prime(tmp_path: pathlib.Path):
 
     # when:
 
-    # TODO: This is not how it is supposed to work.
-    #       Instead of running bootstrap/prime directly with missing values passed as args,
-    #       create a wizard collecting that info from user and capturing it inside config files.
+    # TODO: Variate prime mode tests for cases when different combinations of fields are missing.
     run_primer_main(
         [
             str(proto_kernel_abs_path),

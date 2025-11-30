@@ -153,7 +153,6 @@ def test_generate_next_id_user_scenario(mock_random: MagicMock) -> None:
         "FT_22_11_94_65.bootstrap_precondition.md",
         "FT_23_37_64_44.conf_dst.md",
         "FT_30_24_95_65.state_idempotency.md",
-        "FT_32_54_11_56.wizard_mode.md",
         "FT_36_27_04_22.use_cases.md",
         "FT_44_72_60_67.python_vs_shell.md",
         "FT_46_37_27_11.editable_install.md",
@@ -191,7 +190,7 @@ def test_generate_next_id_user_scenario(mock_random: MagicMock) -> None:
 
     first_call_args = mock_random.choice.call_args_list[0].args[0]
     # min freq for 1st digit is 2, for digits '1', '2', '4', '5', '8'
-    assert sorted(first_call_args) == ["1", "2", "4", "5", "8"]
+    assert sorted(first_call_args) == ["1", "2", "3", "4", "5", "8"]
 
 
 def test_generate_random_id_zero_parts() -> None:
