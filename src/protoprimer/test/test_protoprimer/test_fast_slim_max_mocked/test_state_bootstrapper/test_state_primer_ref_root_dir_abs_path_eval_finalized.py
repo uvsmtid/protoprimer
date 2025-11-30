@@ -108,6 +108,6 @@ def test_warning_when_field_missing(
     # then:
     assert result == mock_proto_code_dir
     assert (
-        f"Field `{ConfField.field_primer_ref_root_dir_rel_path.value}` is [None] - re-run with [{SyntaxArg.arg_mode_wizard}] to set it."
+        f"Field `{ConfField.field_primer_ref_root_dir_rel_path.value}` is [None] - use [{SyntaxArg.arg_mode_config}] for description."
         in caplog.text
     )

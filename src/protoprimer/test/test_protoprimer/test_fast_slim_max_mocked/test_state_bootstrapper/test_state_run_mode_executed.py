@@ -72,6 +72,8 @@ def test_run_mode_prime(
     mock_exit_code_reporter_execute_strategy.assert_called_once_with(mock_state_node)
 
 
+# TODO: obsolete: FT_32_54_11_56.wizard_mode.md:
+@pytest.mark.skip(reason="TODO: obsolete: FT_32_54_11_56.wizard_mode.md:")
 @patch(
     f"{primer_kernel.__name__}.{Bootstrapper_state_input_final_state_eval_finalized.__name__}.eval_own_state"
 )

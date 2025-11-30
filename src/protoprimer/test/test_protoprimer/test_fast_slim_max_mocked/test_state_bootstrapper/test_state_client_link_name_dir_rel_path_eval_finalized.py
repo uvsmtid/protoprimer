@@ -80,6 +80,6 @@ class ThisTestClass(BasePyfakefsTestClass):
         # then:
 
         self.assertIn(
-            f"Field `{ConfField.field_client_link_name_dir_rel_path.value}` is [None] - re-run with [{SyntaxArg.arg_mode_wizard}] to set it.",
+            f"Field `{ConfField.field_client_link_name_dir_rel_path.value}` is [None] - use [{SyntaxArg.arg_mode_config}] for description.",
             log_dst.output[0],
         )

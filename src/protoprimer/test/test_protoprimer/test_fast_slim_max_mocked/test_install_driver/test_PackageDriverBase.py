@@ -68,8 +68,8 @@ def test_package_driver_base_install_dependencies(mock_check_call, mock_get_cmd_
         constraints_file_abs_path="constraints_path",
         project_descriptors=[
             {
-                ConfField.field_env_build_root_dir_rel_path.value: "proj1",
-                ConfField.field_env_install_extras.value: ["extra1"],
+                ConfField.field_build_root_dir_rel_path.value: "proj1",
+                ConfField.field_install_extras.value: ["extra1"],
             }
         ],
     )
@@ -127,7 +127,7 @@ def test_package_driver_base_install_dependencies_no_extras(
         constraints_file_abs_path="constraints_path",
         project_descriptors=[
             {
-                ConfField.field_env_build_root_dir_rel_path.value: "proj1",
+                ConfField.field_build_root_dir_rel_path.value: "proj1",
             }
         ],
     )

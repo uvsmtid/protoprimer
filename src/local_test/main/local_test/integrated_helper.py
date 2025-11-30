@@ -185,10 +185,10 @@ def create_conf_env_file(
         ConfField.field_package_driver.value: PackageDriverType.driver_pip.name,
         ConfField.field_project_descriptors.value: [
             {
-                ConfField.field_env_build_root_dir_rel_path.value: str(
+                ConfField.field_build_root_dir_rel_path.value: str(
                     project_dir_rel_path
                 ),
-                ConfField.field_env_install_extras.value: [],
+                ConfField.field_install_extras.value: [],
             },
         ],
     }

@@ -23,7 +23,7 @@ def env_ctx():
 
 def test_relationship():
     assert_test_module_name_embeds_str(
-        EnvState.state_merged_project_descriptors_eval_finalized.name
+        EnvState.state_derived_project_descriptors_eval_finalized.name
     )
 
 
@@ -42,17 +42,17 @@ def test_py_exec_venv(
 
     assert_parent_states_mocked(
         env_ctx,
-        EnvState.state_merged_project_descriptors_eval_finalized.name,
+        EnvState.state_derived_project_descriptors_eval_finalized.name,
     )
 
     project_descriptors: list[dict] = [
         {
-            ConfField.field_env_build_root_dir_rel_path.value: "path/to/project/a",
-            ConfField.field_env_install_extras.value: [],
+            ConfField.field_build_root_dir_rel_path.value: "path/to/project/a",
+            ConfField.field_install_extras.value: [],
         },
         {
-            ConfField.field_env_build_root_dir_rel_path.value: "path/to/project/b",
-            ConfField.field_env_install_extras.value: ["test"],
+            ConfField.field_build_root_dir_rel_path.value: "path/to/project/b",
+            ConfField.field_install_extras.value: ["test"],
         },
     ]
 
@@ -65,7 +65,7 @@ def test_py_exec_venv(
     # when:
 
     state_value: str = env_ctx.state_graph.eval_state(
-        EnvState.state_merged_project_descriptors_eval_finalized.name
+        EnvState.state_derived_project_descriptors_eval_finalized.name
     )
 
     # then:

@@ -60,7 +60,7 @@ class ThisTestClass(BaseTestClass):
         test_args = [
             os.path.basename(primer_kernel.__file__),
             SyntaxArg.arg_mode_prime,
-            SyntaxArg.arg_mode_wizard,
+            SyntaxArg.arg_mode_config,
         ]
 
         # when:

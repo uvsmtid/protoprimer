@@ -509,8 +509,8 @@ conf_env = {
     # points to the `python` project path within this repo:
     "project_descriptors": [
         {
-            "env_build_root_dir_rel_path": "src/neoprimer",
-            "env_install_extras": [],
+            "build_root_dir_rel_path": "src/neoprimer",
+            "install_extras": [],
         },
     ],
 }

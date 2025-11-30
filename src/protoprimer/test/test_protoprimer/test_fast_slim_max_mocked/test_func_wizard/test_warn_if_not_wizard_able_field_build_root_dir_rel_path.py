@@ -13,7 +13,7 @@ from protoprimer.primer_kernel import (
 
 def test_relationship():
     assert_test_module_name_embeds_str(
-        WizardField.warn_if_not_wizard_able_field_env_build_root_dir_rel_path.__name__,
+        WizardField.warn_if_not_wizard_able_field_build_root_dir_rel_path.__name__,
     )
 
 
@@ -25,7 +25,7 @@ def test_no_project_descriptors():
     # given:
 
     wizard_meta = FieldWizardMeta(
-        field_name=ConfField.field_env_build_root_dir_rel_path.value,
+        field_name=ConfField.field_build_root_dir_rel_path.value,
         field_help=lambda wizard_meta, state_node, file_data: "dummy help",
         field_possible_leaps=[ConfLeap.leap_env],
         field_wizard_leaps=[ConfLeap.leap_env],
@@ -41,7 +41,7 @@ def test_no_project_descriptors():
 
     # when:
 
-    result = WizardField.warn_if_not_wizard_able_field_env_build_root_dir_rel_path(
+    result = WizardField.warn_if_not_wizard_able_field_build_root_dir_rel_path(
         wizard_meta,
         mock_state_node,
         file_data,
@@ -60,7 +60,7 @@ def test_empty_project_descriptors():
     # given:
 
     wizard_meta = FieldWizardMeta(
-        field_name=ConfField.field_env_build_root_dir_rel_path.value,
+        field_name=ConfField.field_build_root_dir_rel_path.value,
         field_help=lambda wizard_meta, state_node, file_data: "dummy help",
         field_possible_leaps=[ConfLeap.leap_env],
         field_wizard_leaps=[ConfLeap.leap_env],
@@ -76,7 +76,7 @@ def test_empty_project_descriptors():
 
     # when:
 
-    result = WizardField.warn_if_not_wizard_able_field_env_build_root_dir_rel_path(
+    result = WizardField.warn_if_not_wizard_able_field_build_root_dir_rel_path(
         wizard_meta,
         mock_state_node,
         file_data,
@@ -95,7 +95,7 @@ def test_multiple_project_descriptors():
     # given:
 
     wizard_meta = FieldWizardMeta(
-        field_name=ConfField.field_env_build_root_dir_rel_path.value,
+        field_name=ConfField.field_build_root_dir_rel_path.value,
         field_help=lambda wizard_meta, state_node, file_data: "dummy help",
         field_possible_leaps=[ConfLeap.leap_env],
         field_wizard_leaps=[ConfLeap.leap_env],
@@ -111,7 +111,7 @@ def test_multiple_project_descriptors():
 
     # when:
 
-    result = WizardField.warn_if_not_wizard_able_field_env_build_root_dir_rel_path(
+    result = WizardField.warn_if_not_wizard_able_field_build_root_dir_rel_path(
         wizard_meta,
         mock_state_node,
         file_data,
@@ -131,7 +131,7 @@ def test_single_project_with_install_extras():
     # given:
 
     wizard_meta = FieldWizardMeta(
-        field_name=ConfField.field_env_build_root_dir_rel_path.value,
+        field_name=ConfField.field_build_root_dir_rel_path.value,
         field_help=lambda wizard_meta, state_node, file_data: "dummy help",
         field_possible_leaps=[ConfLeap.leap_env],
         field_wizard_leaps=[ConfLeap.leap_env],
@@ -146,15 +146,15 @@ def test_single_project_with_install_extras():
     file_data = {
         ConfField.field_project_descriptors.value: [
             {
-                ConfField.field_env_build_root_dir_rel_path.value: ".",
-                ConfField.field_env_install_extras.value: ["extra1"],
+                ConfField.field_build_root_dir_rel_path.value: ".",
+                ConfField.field_install_extras.value: ["extra1"],
             }
         ]
     }
 
     # when:
 
-    result = WizardField.warn_if_not_wizard_able_field_env_build_root_dir_rel_path(
+    result = WizardField.warn_if_not_wizard_able_field_build_root_dir_rel_path(
         wizard_meta,
         mock_state_node,
         file_data,
@@ -174,7 +174,7 @@ def test_single_project_happy_path():
     # given:
 
     wizard_meta = FieldWizardMeta(
-        field_name=ConfField.field_env_build_root_dir_rel_path.value,
+        field_name=ConfField.field_build_root_dir_rel_path.value,
         field_help=lambda wizard_meta, state_node, file_data: "dummy help",
         field_possible_leaps=[ConfLeap.leap_env],
         field_wizard_leaps=[ConfLeap.leap_env],
@@ -189,15 +189,15 @@ def test_single_project_happy_path():
     file_data = {
         ConfField.field_project_descriptors.value: [
             {
-                ConfField.field_env_build_root_dir_rel_path.value: ".",
-                ConfField.field_env_install_extras.value: [],
+                ConfField.field_build_root_dir_rel_path.value: ".",
+                ConfField.field_install_extras.value: [],
             }
         ]
     }
 
     # when:
 
-    result = WizardField.warn_if_not_wizard_able_field_env_build_root_dir_rel_path(
+    result = WizardField.warn_if_not_wizard_able_field_build_root_dir_rel_path(
         wizard_meta,
         mock_state_node,
         file_data,
@@ -216,7 +216,7 @@ def test_single_project_no_install_extras():
     # given:
 
     wizard_meta = FieldWizardMeta(
-        field_name=ConfField.field_env_build_root_dir_rel_path.value,
+        field_name=ConfField.field_build_root_dir_rel_path.value,
         field_help=lambda wizard_meta, state_node, file_data: "dummy help",
         field_possible_leaps=[ConfLeap.leap_env],
         field_wizard_leaps=[ConfLeap.leap_env],
@@ -231,14 +231,14 @@ def test_single_project_no_install_extras():
     file_data = {
         ConfField.field_project_descriptors.value: [
             {
-                ConfField.field_env_build_root_dir_rel_path.value: ".",
+                ConfField.field_build_root_dir_rel_path.value: ".",
             }
         ]
     }
 
     # when:
 
-    result = WizardField.warn_if_not_wizard_able_field_env_build_root_dir_rel_path(
+    result = WizardField.warn_if_not_wizard_able_field_build_root_dir_rel_path(
         wizard_meta,
         mock_state_node,
         file_data,
@@ -257,7 +257,7 @@ def test_single_project_no_build_root():
     # given:
 
     wizard_meta = FieldWizardMeta(
-        field_name=ConfField.field_env_build_root_dir_rel_path.value,
+        field_name=ConfField.field_build_root_dir_rel_path.value,
         field_help=lambda wizard_meta, state_node, file_data: "dummy help",
         field_possible_leaps=[ConfLeap.leap_env],
         field_wizard_leaps=[ConfLeap.leap_env],
@@ -272,14 +272,14 @@ def test_single_project_no_build_root():
     file_data = {
         ConfField.field_project_descriptors.value: [
             {
-                ConfField.field_env_install_extras.value: [],
+                ConfField.field_install_extras.value: [],
             }
         ]
     }
 
     # when:
 
-    result = WizardField.warn_if_not_wizard_able_field_env_build_root_dir_rel_path(
+    result = WizardField.warn_if_not_wizard_able_field_build_root_dir_rel_path(
         wizard_meta,
         mock_state_node,
         file_data,

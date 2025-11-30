@@ -62,47 +62,47 @@ class FieldName(enum.Enum):
 
     field_required_python_file_abs_path = FieldMeta(
         ConfField.field_required_python_file_abs_path,
-        NameCategory.category_merged_path_field,
+        NameCategory.category_derived_path_field,
     )
 
     field_local_venv_dir_rel_path = FieldMeta(
         ConfField.field_local_venv_dir_rel_path,
-        NameCategory.category_merged_path_field,
+        NameCategory.category_derived_path_field,
     )
 
     field_project_descriptors = FieldMeta(
         ConfField.field_project_descriptors,
-        NameCategory.category_merged_value_field,
+        NameCategory.category_derived_value_field,
     )
 
-    field_env_build_root_dir_rel_path = FieldMeta(
-        ConfField.field_env_build_root_dir_rel_path,
-        NameCategory.category_leap_path_field,
+    field_build_root_dir_rel_path = FieldMeta(
+        ConfField.field_build_root_dir_rel_path,
+        NameCategory.category_path_arg_value,
     )
 
-    field_env_install_extras = FieldMeta(
-        ConfField.field_env_install_extras,
-        NameCategory.category_leap_value_field,
+    field_install_extras = FieldMeta(
+        ConfField.field_install_extras,
+        NameCategory.category_value_field,
     )
 
     field_local_log_dir_rel_path = FieldMeta(
         ConfField.field_local_log_dir_rel_path,
-        NameCategory.category_merged_path_field,
+        NameCategory.category_derived_path_field,
     )
 
     field_local_tmp_dir_rel_path = FieldMeta(
         ConfField.field_local_tmp_dir_rel_path,
-        NameCategory.category_merged_path_field,
+        NameCategory.category_derived_path_field,
     )
 
     field_local_cache_dir_rel_path = FieldMeta(
         ConfField.field_local_cache_dir_rel_path,
-        NameCategory.category_merged_path_field,
+        NameCategory.category_derived_path_field,
     )
 
     field_package_driver = FieldMeta(
         ConfField.field_package_driver,
-        NameCategory.category_merged_value_field,
+        NameCategory.category_derived_value_field,
     )
 
 

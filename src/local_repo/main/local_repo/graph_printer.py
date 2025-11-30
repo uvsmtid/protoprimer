@@ -124,37 +124,41 @@ class StateMeta(enum.Enum):
         env_state=EnvState.state_env_conf_file_data_loaded,
         sub_graph=SubGraph.graph_config,
     )
-    state_merged_required_python_file_abs_path_eval_finalized = StateNodeMeta(
-        env_state=EnvState.state_merged_required_python_file_abs_path_eval_finalized,
+    state_derived_required_python_file_abs_path_eval_finalized = StateNodeMeta(
+        env_state=EnvState.state_derived_required_python_file_abs_path_eval_finalized,
         sub_graph=SubGraph.graph_config,
     )
-    state_merged_local_venv_dir_abs_path_eval_finalized = StateNodeMeta(
-        env_state=EnvState.state_merged_local_venv_dir_abs_path_eval_finalized,
+    state_derived_local_venv_dir_abs_path_eval_finalized = StateNodeMeta(
+        env_state=EnvState.state_derived_local_venv_dir_abs_path_eval_finalized,
         sub_graph=SubGraph.graph_config,
     )
-    state_merged_local_log_dir_abs_path_eval_finalized = StateNodeMeta(
-        env_state=EnvState.state_merged_local_log_dir_abs_path_eval_finalized,
+    state_derived_local_log_dir_abs_path_eval_finalized = StateNodeMeta(
+        env_state=EnvState.state_derived_local_log_dir_abs_path_eval_finalized,
         sub_graph=SubGraph.graph_config,
     )
-    state_merged_local_tmp_dir_abs_path_eval_finalized = StateNodeMeta(
-        env_state=EnvState.state_merged_local_tmp_dir_abs_path_eval_finalized,
+    state_derived_local_tmp_dir_abs_path_eval_finalized = StateNodeMeta(
+        env_state=EnvState.state_derived_local_tmp_dir_abs_path_eval_finalized,
         sub_graph=SubGraph.graph_config,
     )
-    state_merged_local_cache_dir_abs_path_eval_finalized = StateNodeMeta(
-        env_state=EnvState.state_merged_local_cache_dir_abs_path_eval_finalized,
+    state_derived_local_cache_dir_abs_path_eval_finalized = StateNodeMeta(
+        env_state=EnvState.state_derived_local_cache_dir_abs_path_eval_finalized,
         sub_graph=SubGraph.graph_config,
     )
-    state_merged_project_descriptors_eval_finalized = StateNodeMeta(
-        env_state=EnvState.state_merged_project_descriptors_eval_finalized,
+    state_derived_package_driver_eval_finalized = StateNodeMeta(
+        env_state=EnvState.state_derived_package_driver_eval_finalized,
         sub_graph=SubGraph.graph_config,
     )
-    state_merged_package_driver_eval_finalized = StateNodeMeta(
-        env_state=EnvState.state_merged_package_driver_eval_finalized,
+    state_derived_project_descriptors_eval_finalized = StateNodeMeta(
+        env_state=EnvState.state_derived_project_descriptors_eval_finalized,
         sub_graph=SubGraph.graph_config,
     )
-    state_merged_conf_data_printed = StateNodeMeta(
-        env_state=EnvState.state_merged_conf_data_printed,
+    state_derived_conf_data_loaded = StateNodeMeta(
+        env_state=EnvState.state_derived_conf_data_loaded,
         sub_graph=None,
+    )
+    state_effective_config_data_printed = StateNodeMeta(
+        env_state=EnvState.state_effective_config_data_printed,
+        sub_graph=SubGraph.graph_config,
     )
     state_default_file_log_handler_configured = StateNodeMeta(
         env_state=EnvState.state_default_file_log_handler_configured,

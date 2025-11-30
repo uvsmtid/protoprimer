@@ -145,7 +145,7 @@ def test_generate_next_id_digit_by_digit(mock_random: MagicMock) -> None:
 def test_generate_next_id_user_scenario(mock_random: MagicMock) -> None:
     # given:
     file_names_list: list[str] = [
-        "FT_00_22_19_59.merged_config.md",
+        "FT_00_22_19_59.derived_config.md",
         "FT_02_89_37_65.shebang_line.md",
         "FT_08_92_69_92.env_var.md",
         "FT_11_27_29_83.run_mode.md",

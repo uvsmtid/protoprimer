@@ -25,7 +25,7 @@ def env_ctx():
 
 def test_relationship():
     assert_test_module_name_embeds_str(
-        EnvState.state_merged_required_python_file_abs_path_eval_finalized.name
+        EnvState.state_derived_required_python_file_abs_path_eval_finalized.name
     )
 
 
@@ -50,7 +50,7 @@ def test_allow_rel_path_for_required_python_abs_path(
 
     assert_parent_states_mocked(
         env_ctx,
-        EnvState.state_merged_required_python_file_abs_path_eval_finalized.name,
+        EnvState.state_derived_required_python_file_abs_path_eval_finalized.name,
     )
 
     mock_state_primer_ref_root_dir_abs_path_eval_finalized.return_value = (
@@ -67,7 +67,7 @@ def test_allow_rel_path_for_required_python_abs_path(
     # when:
 
     state_value: str = env_ctx.state_graph.eval_state(
-        EnvState.state_merged_required_python_file_abs_path_eval_finalized.name
+        EnvState.state_derived_required_python_file_abs_path_eval_finalized.name
     )
 
     # then:

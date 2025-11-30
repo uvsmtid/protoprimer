@@ -57,12 +57,12 @@ def test_install_dependencies(mock_subprocess_check_call):
     constraints_file_abs_path = "/tmp/constraints.txt"
     project_descriptors = [
         {
-            ConfField.field_env_build_root_dir_rel_path.value: "project1",
-            ConfField.field_env_install_extras.value: ["extra1"],
+            ConfField.field_build_root_dir_rel_path.value: "project1",
+            ConfField.field_install_extras.value: ["extra1"],
         },
         {
-            ConfField.field_env_build_root_dir_rel_path.value: "project2",
-            ConfField.field_env_install_extras.value: [],
+            ConfField.field_build_root_dir_rel_path.value: "project2",
+            ConfField.field_install_extras.value: [],
         },
     ]
 
