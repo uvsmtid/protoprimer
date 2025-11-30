@@ -2,6 +2,8 @@ import os
 import pathlib
 import subprocess
 
+import pytest
+
 from local_test.integrated_helper import (
     create_conf_primer_file,
     create_plain_proto_code,
@@ -21,6 +23,8 @@ from protoprimer.primer_kernel import (
 )
 
 
+# TODO: obsolete: FT_32_54_11_56.wizard_mode.md:
+@pytest.mark.skip(reason="TODO: obsolete: FT_32_54_11_56.wizard_mode.md:")
 def test_wizard_mode_interaction(tmp_path: pathlib.Path):
 
     # given:
@@ -88,9 +92,9 @@ def test_wizard_mode_interaction(tmp_path: pathlib.Path):
         ("", WizardField.field_local_tmp_dir_rel_path),
         (
             test_pyproject_src_dir_rel_path,
-            WizardField.field_env_build_root_dir_rel_path,
+            WizardField.field_build_root_dir_rel_path,
         ),
-        ("y", WizardField.field_env_build_root_dir_rel_path),
+        ("y", WizardField.field_build_root_dir_rel_path),
         # ---
         ("y", ConfLeap.leap_client),
         # ---

@@ -28,7 +28,7 @@ class Bootstrapper_state_activated_venv_shell_started(
                 EnvState.state_args_parsed.name,
                 EnvState.state_default_stderr_log_handler_configured.name,
                 EnvState.state_py_exec_updated_proto_code.name,
-                EnvState.state_merged_local_venv_dir_abs_path_eval_finalized.name,
+                EnvState.state_derived_local_venv_dir_abs_path_eval_finalized.name,
             ],
             state_name=self.state_activated_venv_shell_started,
         )
@@ -37,12 +37,12 @@ class Bootstrapper_state_activated_venv_shell_started(
         self,
     ) -> ValueType:
 
-        state_merged_local_venv_dir_abs_path_eval_finalized = self.eval_parent_state(
-            EnvState.state_merged_local_venv_dir_abs_path_eval_finalized.name
+        state_derived_local_venv_dir_abs_path_eval_finalized = self.eval_parent_state(
+            EnvState.state_derived_local_venv_dir_abs_path_eval_finalized.name
         )
 
         venv_path_to_activate = os.path.join(
-            state_merged_local_venv_dir_abs_path_eval_finalized,
+            state_derived_local_venv_dir_abs_path_eval_finalized,
             ConfConstGeneral.file_rel_path_venv_activate,
         )
 

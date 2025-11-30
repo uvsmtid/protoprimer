@@ -101,6 +101,6 @@ def test_warning_when_field_missing(
     # then:
     assert result is None
     assert (
-        f"Field `{ConfField.field_primer_conf_client_file_rel_path.value}` is [None] - re-run with [{SyntaxArg.arg_mode_wizard}] to set it."
+        f"Field `{ConfField.field_primer_conf_client_file_rel_path.value}` is [None] - use [{SyntaxArg.arg_mode_config}] for description."
         in caplog.text
     )

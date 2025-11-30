@@ -11,7 +11,7 @@ from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     Bootstrapper_state_args_parsed,
     Bootstrapper_state_client_conf_env_dir_abs_path_eval_finalized,
-    Bootstrapper_state_merged_project_descriptors_eval_finalized,
+    Bootstrapper_state_derived_project_descriptors_eval_finalized,
     Bootstrapper_state_input_do_install_var_loaded,
     Bootstrapper_state_package_driver_inited,
     Bootstrapper_state_primer_ref_root_dir_abs_path_eval_finalized,
@@ -48,7 +48,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{Bootstrapper_state_py_exec_venv_reached.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_merged_project_descriptors_eval_finalized.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_derived_project_descriptors_eval_finalized.__name__}.eval_own_state"
     )
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_input_do_install_var_loaded.__name__}.eval_own_state"
@@ -110,10 +110,10 @@ class ThisTestClass(BasePyfakefsTestClass):
             self.fs.create_file(project_toml)
             project_descriptors.append(
                 {
-                    ConfField.field_env_build_root_dir_rel_path.value: str(
+                    ConfField.field_build_root_dir_rel_path.value: str(
                         project_rel_path
                     ),
-                    ConfField.field_env_install_extras.value: [],
+                    ConfField.field_install_extras.value: [],
                 }
             )
         mock_state_env_project_rel_path_to_extras_list_finalized_lconf.return_value = (
@@ -141,7 +141,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{Bootstrapper_state_py_exec_venv_reached.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_merged_project_descriptors_eval_finalized.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_derived_project_descriptors_eval_finalized.__name__}.eval_own_state"
     )
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_input_do_install_var_loaded.__name__}.eval_own_state"
@@ -203,10 +203,10 @@ class ThisTestClass(BasePyfakefsTestClass):
             self.fs.create_file(project_toml)
             project_descriptors.append(
                 {
-                    ConfField.field_env_build_root_dir_rel_path.value: str(
+                    ConfField.field_build_root_dir_rel_path.value: str(
                         project_rel_path
                     ),
-                    ConfField.field_env_install_extras.value: [],
+                    ConfField.field_install_extras.value: [],
                 }
             )
         mock_state_env_project_rel_path_to_extras_list_finalized_lconf.return_value = (
@@ -234,7 +234,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{Bootstrapper_state_py_exec_venv_reached.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_merged_project_descriptors_eval_finalized.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_derived_project_descriptors_eval_finalized.__name__}.eval_own_state"
     )
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_input_do_install_var_loaded.__name__}.eval_own_state"
@@ -296,10 +296,10 @@ class ThisTestClass(BasePyfakefsTestClass):
             self.fs.create_file(project_toml)
             project_descriptors.append(
                 {
-                    ConfField.field_env_build_root_dir_rel_path.value: str(
+                    ConfField.field_build_root_dir_rel_path.value: str(
                         project_rel_path
                     ),
-                    ConfField.field_env_install_extras.value: [],
+                    ConfField.field_install_extras.value: [],
                 }
             )
         mock_state_env_project_rel_path_to_extras_list_finalized_lconf.return_value = (
@@ -327,7 +327,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{Bootstrapper_state_py_exec_venv_reached.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_merged_project_descriptors_eval_finalized.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_derived_project_descriptors_eval_finalized.__name__}.eval_own_state"
     )
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_input_do_install_var_loaded.__name__}.eval_own_state"

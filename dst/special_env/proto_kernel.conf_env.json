@@ -5,20 +5,20 @@
     "local_tmp_dir_rel_path": "tmp",
     "project_descriptors": [
         {
-            "env_build_root_dir_rel_path": "src/local_repo",
-            "env_install_extras": []
+            "build_root_dir_rel_path": "src/local_repo",
+            "install_extras": []
         },
         {
-            "env_build_root_dir_rel_path": "src/local_test",
-            "env_install_extras": []
+            "build_root_dir_rel_path": "src/local_test",
+            "install_extras": []
         },
         {
-            "env_build_root_dir_rel_path": "src/neoprimer",
-            "env_install_extras": []
+            "build_root_dir_rel_path": "src/neoprimer",
+            "install_extras": []
         },
         {
-            "env_build_root_dir_rel_path": "src/protoprimer",
-            "env_install_extras": [
+            "build_root_dir_rel_path": "src/protoprimer",
+            "install_extras": [
                 "test"
             ]
         }

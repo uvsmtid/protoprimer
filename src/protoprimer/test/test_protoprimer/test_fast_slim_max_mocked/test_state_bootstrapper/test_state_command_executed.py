@@ -15,7 +15,7 @@ from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     Bootstrapper_state_args_parsed,
     Bootstrapper_state_default_stderr_log_handler_configured,
-    Bootstrapper_state_merged_conf_data_printed,
+    Bootstrapper_state_derived_conf_data_loaded,
     Bootstrapper_state_py_exec_updated_proto_code,
     EnvContext,
     EnvState,
