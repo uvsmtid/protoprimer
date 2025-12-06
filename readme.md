@@ -469,24 +469,24 @@ graph TD;
 ```
 
 To bootstrap, it employs the concept of "configuration leaps" to find all the config data:
-*   [conf_primer][proto_kernel.conf_primer.json]: allows "proto code" finding client repo "global config"
-*   [conf_client][proto_kernel.conf_client.json]: provides "global config" and allows finding target env "local config"
-*   [conf_env][proto_kernel.conf_env.json]: provides "local config"
+*   [conf_primer][proto_kernel.json]: allows "proto code" finding client repo "global config"
+*   [conf_client][proto_kernel.json]: provides "global config" and allows finding target env "local config"
+*   [conf_env][proto_kernel.json]: provides "local config"
 
 <details>
 <summary>details</summary>
 
 ```python
-# ./cmd/proto_code/proto_kernel.conf_primer.json:
+# ./cmd/proto_code/proto_kernel.json:
 conf_primer = {
     # points to the ref root
     # (subsequently, almost all paths are relative to the dir this field points to):
     "primer_ref_root_dir_rel_path": "../..",
     # points to "global config" (relative to the ref root above):
-    "primer_conf_client_file_rel_path": "gconf/proto_kernel.conf_client.json",
+    "primer_conf_client_file_rel_path": "gconf/proto_kernel.json",
 }
 
-# ./gconf/proto_kernel.conf_client.json:
+# ./gconf/proto_kernel.json:
 conf_client = {
     # names the symlink link which points to the current "local config":
     "client_link_name_dir_rel_path": "lconf",
@@ -494,7 +494,7 @@ conf_client = {
     "client_default_env_dir_rel_path": "dst/default_env",
 }
 
-# ./dst/default_env/proto_kernel.conf_env.json:
+# ./dst/default_env/proto_kernel.json:
 conf_env = {
     # points to the required `python` version `venv` has to be initialized with:
     "required_python_file_abs_path": "/usr/bin/python",
@@ -609,9 +609,9 @@ Each subdirectory of [src][src] directory contains related sub-projects (with `p
 [systemd_wiki]: https://en.wikipedia.org/wiki/Systemd
 [FT_57_87_94_94.bootstrap_process.md]: doc/feature_topic/FT_57_87_94_94.bootstrap_process.md
 
-[proto_kernel.conf_primer.json]: cmd/proto_code/proto_kernel.conf_primer.json
-[proto_kernel.conf_client.json]: gconf/proto_kernel.conf_client.json
-[proto_kernel.conf_env.json]: dst/default_env/proto_kernel.conf_env.json
+[proto_kernel.json]: cmd/proto_code/proto_kernel.json
+[proto_kernel.json]: gconf/proto_kernel.json
+[proto_kernel.json]: dst/default_env/proto_kernel.json
 
 [constraints.txt]: dst/default_env/constraints.txt
 [pyproject.toml]: src/neoprimer/pyproject.toml

@@ -117,7 +117,7 @@ def create_conf_primer_file(
 
     prime_conf_data = {
         ConfField.field_primer_ref_root_dir_rel_path.value: ref_root_dir_rel_path,
-        ConfField.field_primer_conf_client_file_rel_path.value: ConfConstPrimer.default_client_conf_file_rel_path,
+        ConfField.field_primer_conf_client_dir_rel_path.value: ConfConstPrimer.default_client_conf_dir_rel_path,
     }
 
     conf_primer_file_abs_path = (

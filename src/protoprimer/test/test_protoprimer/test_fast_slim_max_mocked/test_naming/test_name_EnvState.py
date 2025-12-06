@@ -118,11 +118,6 @@ class StateName(enum.Enum):
         NameCategory.category_path_value,
     )
 
-    state_input_proto_code_dir_abs_path_eval_finalized = StateMeta(
-        EnvState.state_input_proto_code_dir_abs_path_eval_finalized,
-        NameCategory.category_path_value,
-    )
-
     state_input_proto_conf_primer_file_abs_path_eval_finalized = StateMeta(
         EnvState.state_input_proto_conf_primer_file_abs_path_eval_finalized,
         NameCategory.category_path_value,
@@ -135,6 +130,11 @@ class StateName(enum.Enum):
 
     state_primer_ref_root_dir_abs_path_eval_finalized = StateMeta(
         EnvState.state_primer_ref_root_dir_abs_path_eval_finalized,
+        NameCategory.category_path_value,
+    )
+
+    state_primer_conf_client_dir_abs_path_eval_finalized = StateMeta(
+        EnvState.state_primer_conf_client_dir_abs_path_eval_finalized,
         NameCategory.category_path_value,
     )
 
@@ -155,11 +155,6 @@ class StateName(enum.Enum):
 
     state_client_local_env_conf_dir_rel_path_eval_finalized = StateMeta(
         EnvState.state_client_local_env_conf_dir_rel_path_eval_finalized,
-        NameCategory.category_path_value,
-    )
-
-    state_client_link_name_dir_rel_path_eval_finalized = StateMeta(
-        EnvState.state_client_link_name_dir_rel_path_eval_finalized,
         NameCategory.category_path_value,
     )
 

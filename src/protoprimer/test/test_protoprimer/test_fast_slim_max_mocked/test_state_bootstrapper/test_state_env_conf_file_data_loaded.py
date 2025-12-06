@@ -112,7 +112,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # then:
 
-        self.assertIn("does not exists", log_dst.output[0])
+        self.assertIn("does not exist", log_dst.output[0])
         self.assertEqual(
             {"project_descriptors": [{"build_root_dir_rel_path": "."}]}, state_value
         )

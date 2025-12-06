@@ -45,8 +45,8 @@ class FieldName(enum.Enum):
         NameCategory.category_leap_path_field,
     )
 
-    field_primer_conf_client_file_rel_path = FieldMeta(
-        ConfField.field_primer_conf_client_file_rel_path,
+    field_primer_conf_client_dir_rel_path = FieldMeta(
+        ConfField.field_primer_conf_client_dir_rel_path,
         NameCategory.category_leap_path_field,
     )
 
