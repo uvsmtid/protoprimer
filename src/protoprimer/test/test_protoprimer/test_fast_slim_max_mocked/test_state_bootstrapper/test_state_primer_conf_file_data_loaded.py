@@ -107,7 +107,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # then:
 
-        self.assertIn("does not exists", log_dst.output[0])
+        self.assertIn("does not exist", log_dst.output[0])
         self.assertEqual({}, state_value)
 
     @patch(

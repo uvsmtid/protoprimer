@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer.primer_kernel import (
+    ConfConstPrimer,
     ConfField,
     RenderConfigVisitor,
     RootNode_primer,
@@ -21,7 +22,7 @@ def test_render_primer_config_data_with_unused_fields():
 
     config_data = {
         ConfField.field_primer_ref_root_dir_rel_path.value: "../..",
-        ConfField.field_primer_conf_client_file_rel_path.value: "client.json",
+        ConfField.field_primer_conf_client_dir_rel_path.value: ConfConstPrimer.default_client_conf_dir_rel_path,
         "whatever_test": 5,
     }
 
@@ -37,14 +38,17 @@ leap_primer = (
     \n\
     {{
         \n\
-        {TermColor.config_comment.value}# Field [primer_ref_root_dir_rel_path] (or [ref_root] for short) points to the client reference root dir.{TermColor.reset_style.value}
-        {TermColor.config_comment.value}# Subsequently, the resolved client reference root dir [ref_root] is used as a base path for the most of the configured relative paths.{TermColor.reset_style.value}
-        {TermColor.config_comment.value}# The specified path is relative to dir [/abs/path/to].{TermColor.reset_style.value}
+        {TermColor.config_comment.value}# Field `primer_ref_root_dir_rel_path` points to the dir called `ref_root`.{TermColor.reset_style.value}
+        {TermColor.config_comment.value}# The path is relative to the `proto_code` file [/abs/path/to/file.json].{TermColor.reset_style.value}
+        {TermColor.config_comment.value}# Normally, the `ref_root` dir is the client repo root dir (making ), but can be anything.{TermColor.reset_style.value}
+        {TermColor.config_comment.value}# See `state_primer_ref_root_dir_abs_path_eval_finalized` in `derived` - the derived abs path is the base path for{TermColor.reset_style.value}
+        {TermColor.config_comment.value}# all the configured relative paths (except for this field itself, obviously).{TermColor.reset_style.value}
         "primer_ref_root_dir_rel_path": "../..",
         \n\
-        {TermColor.config_comment.value}# Field [primer_conf_client_file_rel_path] (or [conf_client] for short) leads to the client global config file.{TermColor.reset_style.value}
-        {TermColor.config_comment.value}# The path is relative to the dir specified in the [primer_ref_root_dir_rel_path] field.{TermColor.reset_style.value}
-        "primer_conf_client_file_rel_path": "client.json",
+        {TermColor.config_comment.value}# Field `primer_conf_client_dir_rel_path` points to the global config dir (as opposed to local config dir `client_link_name_dir_rel_path`).{TermColor.reset_style.value}
+        {TermColor.config_comment.value}# The path is relative to the `ref_root` dir specified in the `primer_ref_root_dir_rel_path` field.{TermColor.reset_style.value}
+        {TermColor.config_comment.value}# See `state_primer_conf_client_dir_abs_path_eval_finalized` in `derived` - normally, the resolved global config dir contains all other global client config files.{TermColor.reset_style.value}
+        "primer_conf_client_dir_rel_path": "gconf",
         \n\
         {TermColor.config_unused.value}# This value is not used by the `protoprimer`.{TermColor.reset_style.value}
         "whatever_test": 5,
@@ -73,14 +77,17 @@ leap_primer = (
     \n\
     {{
         \n\
-        {TermColor.config_missing.value}# Field [primer_ref_root_dir_rel_path] (or [ref_root] for short) points to the client reference root dir.{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# Subsequently, the resolved client reference root dir [ref_root] is used as a base path for the most of the configured relative paths.{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# The specified path is relative to dir [/abs/path/to].{TermColor.reset_style.value}
+        {TermColor.config_missing.value}# Field `primer_ref_root_dir_rel_path` points to the dir called `ref_root`.{TermColor.reset_style.value}
+        {TermColor.config_missing.value}# The path is relative to the `proto_code` file [/abs/path/to/empty_file.json].{TermColor.reset_style.value}
+        {TermColor.config_missing.value}# Normally, the `ref_root` dir is the client repo root dir (making ), but can be anything.{TermColor.reset_style.value}
+        {TermColor.config_missing.value}# See `state_primer_ref_root_dir_abs_path_eval_finalized` in `derived` - the derived abs path is the base path for{TermColor.reset_style.value}
+        {TermColor.config_missing.value}# all the configured relative paths (except for this field itself, obviously).{TermColor.reset_style.value}
         {TermColor.config_missing.value}# "primer_ref_root_dir_rel_path": None,{TermColor.reset_style.value}
         \n\
-        {TermColor.config_missing.value}# Field [primer_conf_client_file_rel_path] (or [conf_client] for short) leads to the client global config file.{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# The path is relative to the dir specified in the [primer_ref_root_dir_rel_path] field.{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# "primer_conf_client_file_rel_path": None,{TermColor.reset_style.value}
+        {TermColor.config_missing.value}# Field `primer_conf_client_dir_rel_path` points to the global config dir (as opposed to local config dir `client_link_name_dir_rel_path`).{TermColor.reset_style.value}
+        {TermColor.config_missing.value}# The path is relative to the `ref_root` dir specified in the `primer_ref_root_dir_rel_path` field.{TermColor.reset_style.value}
+        {TermColor.config_missing.value}# See `state_primer_conf_client_dir_abs_path_eval_finalized` in `derived` - normally, the resolved global config dir contains all other global client config files.{TermColor.reset_style.value}
+        {TermColor.config_missing.value}# "primer_conf_client_dir_rel_path": None,{TermColor.reset_style.value}
     }}
 )\
 """
