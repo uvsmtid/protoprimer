@@ -76,10 +76,6 @@ class StateMeta(enum.Enum):
         env_state=EnvState.state_input_proto_code_file_abs_path_eval_finalized,
         sub_graph=SubGraph.graph_config,
     )
-    state_input_proto_code_dir_abs_path_eval_finalized = StateNodeMeta(
-        env_state=EnvState.state_input_proto_code_dir_abs_path_eval_finalized,
-        sub_graph=SubGraph.graph_config,
-    )
     state_input_proto_conf_primer_file_abs_path_eval_finalized = StateNodeMeta(
         env_state=EnvState.state_input_proto_conf_primer_file_abs_path_eval_finalized,
         sub_graph=SubGraph.graph_config,
@@ -90,6 +86,10 @@ class StateMeta(enum.Enum):
     )
     state_primer_ref_root_dir_abs_path_eval_finalized = StateNodeMeta(
         env_state=EnvState.state_primer_ref_root_dir_abs_path_eval_finalized,
+        sub_graph=SubGraph.graph_config,
+    )
+    state_primer_conf_client_dir_abs_path_eval_finalized = StateNodeMeta(
+        env_state=EnvState.state_primer_conf_client_dir_abs_path_eval_finalized,
         sub_graph=SubGraph.graph_config,
     )
     state_primer_conf_client_file_abs_path_eval_finalized = StateNodeMeta(
@@ -106,10 +106,6 @@ class StateMeta(enum.Enum):
     )
     state_client_conf_env_dir_abs_path_eval_finalized = StateNodeMeta(
         env_state=EnvState.state_client_conf_env_dir_abs_path_eval_finalized,
-        sub_graph=SubGraph.graph_config,
-    )
-    state_client_link_name_dir_rel_path_eval_finalized = StateNodeMeta(
-        env_state=EnvState.state_client_link_name_dir_rel_path_eval_finalized,
         sub_graph=SubGraph.graph_config,
     )
     state_client_conf_env_file_abs_path_eval_finalized = StateNodeMeta(

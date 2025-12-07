@@ -11,8 +11,11 @@ from protoprimer.primer_kernel import str_to_bool
 integ_env_var = "CI"
 
 
-# Check if the `CI` environment variable is set to `true`:
 def any_to_bool(v) -> bool:
+    """
+    Checks if integration tests enabled = if the `CI` environment variable is set to `true`.
+    """
+
     if v is None:
         return False
     if isinstance(v, bool):

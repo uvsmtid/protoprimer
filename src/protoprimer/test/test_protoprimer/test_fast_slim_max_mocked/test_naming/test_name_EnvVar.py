@@ -53,6 +53,10 @@ class EnvVarName(enum.Enum):
         EnvVar.var_PROTOPRIMER_PROTO_CODE,
         NameCategory.category_name_only,
     )
+    var_PROTOPRIMER_CONF_BASENAME = EnvVarMeta(
+        EnvVar.var_PROTOPRIMER_CONF_BASENAME,
+        NameCategory.category_name_only,
+    )
     var_PROTOPRIMER_START_ID = EnvVarMeta(
         EnvVar.var_PROTOPRIMER_START_ID,
         NameCategory.category_name_only,

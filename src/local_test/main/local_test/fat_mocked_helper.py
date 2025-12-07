@@ -1,5 +1,6 @@
 import copy
 import os
+import pathlib
 import subprocess
 import sys
 from contextlib import contextmanager
@@ -8,9 +9,14 @@ from unittest.mock import patch
 from pyfakefs.fake_filesystem import FakeFilesystem
 
 import protoprimer
+from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
+    ConfConstGeneral,
     EnvVar,
     main,
+    PackageDriverBase,
+    PackageDriverPip,
+    PackageDriverUv,
 )
 
 
@@ -44,19 +50,64 @@ def fat_mock_wrapper(fs: FakeFilesystem):
         raise _ExecCalled(args, kwargs)
 
     def _mock_create_venv(
+        venv_dir,
+        **kwargs,
+    ):
+        # Create the `venv` directory and the `python` executable within it:
+        fs.create_dir(
+            os.path.join(venv_dir, ConfConstGeneral.file_rel_path_venv_bin),
+        )
+        fs.create_file(
+            os.path.join(venv_dir, ConfConstGeneral.file_rel_path_venv_python),
+            contents="# whatever",
+        )
+
+    def _mock_create_pip_venv(
+        self,
         env_dir,
         **kwargs,
     ):
-        # Create the venv directory and the python executable within it
-        fs.create_dir(f"{env_dir}/bin")
-        fs.create_file(f"{env_dir}/bin/python", contents="# whatever")
+        _mock_create_venv(env_dir, **kwargs)
+
+    def _mock_create_uv_venv(
+        self,
+        env_dir,
+        **kwargs,
+    ):
+        _mock_create_venv(env_dir, **kwargs)
+        # TODO: Make this `venv` pass "Is `uv`-managed `venv`?" check.
+
+    def _mock_install_packages(
+        required_python_file_abs_path: str,
+        given_packages: list[str],
+    ):
+        # Translate: "./venv/bin/python" -> "./venv/"
+        venv_dir_abs_path = os.path.dirname(
+            os.path.dirname(required_python_file_abs_path)
+        )
+        if "uv" in given_packages:
+            fs.create_file(
+                os.path.join(venv_dir_abs_path, ConfConstGeneral.file_rel_path_venv_uv),
+                contents="# whatever",
+            )
 
     with (
         patch("sys.exit", side_effect=_mock_exit),
         patch("os.execv", side_effect=_mock_execv),
         patch("os.execve", side_effect=_mock_execve),
         patch("subprocess.check_call", return_value=0),
-        patch("venv.create", side_effect=_mock_create_venv),
+        patch(
+            f"{primer_kernel.__name__}.{PackageDriverBase.__name__}.install_packages",
+            side_effect=_mock_install_packages,
+        ),
+        patch(
+            f"{protoprimer.primer_kernel.__name__}.{PackageDriverPip.__name__}._create_venv_impl",
+            side_effect=_mock_create_pip_venv,
+        ),
+        patch(
+            f"{protoprimer.primer_kernel.__name__}.{PackageDriverUv.__name__}._create_venv_impl",
+            side_effect=_mock_create_uv_venv,
+        ),
         patch("shutil.move"),
         patch.dict(os.environ, mock_env, clear=False),
     ):
@@ -140,3 +191,15 @@ def _run_primer_main_in_mock_env(
             exec_args, exec_kwargs = e.args
             assert exec_args[0] == 0
             break
+
+
+def assert_editable_install(
+    project_dir_abs_path: pathlib.Path,
+    package_name: str,
+):
+    if os.environ.get(EnvVar.var_PROTOPRIMER_TEST_MODE.value, None) is None:
+        egg_info_dir = project_dir_abs_path / f"{package_name}.egg-info"
+        assert os.path.isdir(egg_info_dir)
+    else:
+        # The "editable install" is not invoked - no "*.egg-info" dirs:
+        pass

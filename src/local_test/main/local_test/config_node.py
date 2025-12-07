@@ -16,28 +16,20 @@ class RequiredAnnotationBuilderVisitor(ConfigBuilderVisitor):
 
     def build_config_node(
         self,
-        node_name: str | None,
-        node_indent: int,
-        orig_data: Any,
+        **kwargs,
     ) -> AbstractConfigNode:
         config_node: AbstractConfigNode = super().build_config_node(
-            node_name=node_name,
-            node_indent=node_indent,
-            orig_data=orig_data,
+            **kwargs,
         )
         self._annotate_node(config_node)
         return config_node
 
     def build_root_node(
         self,
-        node_name: str | None,
-        node_indent: int,
-        orig_data: Any,
+        **kwargs,
     ) -> AbstractRootNode:
         root_node: AbstractRootNode = super().build_root_node(
-            node_name=node_name,
-            node_indent=node_indent,
-            orig_data=orig_data,
+            **kwargs,
         )
         self._annotate_node(root_node)
         return root_node
