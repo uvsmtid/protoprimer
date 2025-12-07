@@ -3,6 +3,7 @@ import os
 import pathlib
 import shutil
 import stat
+from pathlib import Path
 
 import protoprimer
 from local_test.toml_handler import save_toml_data
@@ -13,15 +14,20 @@ from protoprimer.primer_kernel import (
     ConfConstPrimer,
     ConfField,
     PackageDriverType,
+    TopDir,
     write_json_file,
 )
 
 logger = logging.getLogger()
 
 test_pyproject_src_dir_rel_path = "pyproject_src"
+test_package_name = "test_whatever"
 
 
 def switch_to_ref_root_abs_path(tmp_path: pathlib.Path) -> pathlib.Path:
+    """
+    Ensure the current directory is the `PathName.path_ref_root`.
+    """
 
     tmp_dir_abs_path = pathlib.Path(tmp_path)
     assert os.path.isdir(tmp_dir_abs_path)
@@ -43,7 +49,11 @@ def create_plain_proto_code(
 
     # Create a `proto_code` directory:
     proto_code_dir_abs_path = proto_code_dir_abs_path
-    proto_code_dir_abs_path.mkdir(parents=True)
+    proto_code_dir_abs_path.mkdir(
+        parents=True,
+        # It can exists if `proto_code` is placed into `ref_root` dir ~ "instant_scenario":
+        exist_ok=True,
+    )
 
     # Copy `primer_kernel.py` to `proto_code/proto_kernel.py`:
     proto_kernel_abs_path = proto_code_dir_abs_path / "proto_kernel.py"
@@ -83,7 +93,7 @@ def create_test_pyproject_toml(
 
     toml_data = {
         "project": {
-            "name": "whatever",
+            "name": test_package_name,
             "version": "0.0.0.dev0",
             "dependencies": [
                 f"local_doc @ file://{local_doc_project_dir}",
@@ -93,7 +103,18 @@ def create_test_pyproject_toml(
                 f"protoprimer @ file://{protoprimer_project_dir}",
             ]
             + extra_dependencies,
-        }
+        },
+        "tool": {
+            "setuptools": {
+                "packages": {
+                    "find": {
+                        # Unless we create the "src" dir (to make it auto-discover-able "src-layout"),
+                        # we need to exclude top-level dirs (otherwise, auto-discovery fails on multiple candidates):
+                        "exclude": [top_dir.value for top_dir in TopDir],
+                    }
+                }
+            }
+        },
     }
 
     pyproject_dir_abs_path = pyproject_file_abs_path.parent
@@ -117,7 +138,7 @@ def create_conf_primer_file(
 
     prime_conf_data = {
         ConfField.field_primer_ref_root_dir_rel_path.value: ref_root_dir_rel_path,
-        ConfField.field_primer_conf_client_file_rel_path.value: ConfConstPrimer.default_client_conf_file_rel_path,
+        ConfField.field_primer_conf_client_dir_rel_path.value: ConfConstPrimer.default_client_conf_dir_rel_path,
     }
 
     conf_primer_file_abs_path = (
@@ -202,4 +223,90 @@ def create_conf_env_file(
     write_json_file(
         str(conf_env_file_abs_path),
         env_conf_data,
+    )
+
+
+def create_min_layout(tmp_path: Path) -> tuple[Path, Path, Path]:
+    """
+    See "min" layout: FT_59_95_81_63.env_layout.md
+    """
+
+    ref_root_abs_path = switch_to_ref_root_abs_path(tmp_path)
+
+    # === create `pyproject.toml`
+
+    project_dir_abs_path = ref_root_abs_path
+
+    create_test_pyproject_toml(project_dir_abs_path)
+
+    # === no `ConfLeap.leap_primer` config file
+
+    proto_kernel_abs_path: Path = create_plain_proto_code(ref_root_abs_path)
+
+    # === no `ConfLeap.leap_env` config file
+
+    # === no `ConfLeap.leap_client` config file
+
+    # ===
+
+    return (
+        proto_kernel_abs_path,
+        ref_root_abs_path,
+        project_dir_abs_path,
+    )
+
+
+def create_max_layout(tmp_path: Path) -> tuple[Path, Path, Path]:
+    """
+    See "max" layout: FT_59_95_81_63.env_layout.md
+    """
+
+    ref_root_abs_path = switch_to_ref_root_abs_path(tmp_path)
+
+    # === create `ConfLeap.leap_primer`
+
+    proto_code_dir_abs_path = (
+        ref_root_abs_path / ConfConstInput.default_proto_conf_dir_rel_path
+    )
+    proto_kernel_abs_path: Path = create_plain_proto_code(proto_code_dir_abs_path)
+    create_conf_primer_file(
+        ref_root_abs_path,
+        proto_code_dir_abs_path,
+    )
+
+    # === create `pyproject.toml`
+
+    project_dir_abs_path = ref_root_abs_path / test_pyproject_src_dir_rel_path
+    create_test_pyproject_toml(project_dir_abs_path)
+
+    # === create `ConfLeap.leap_env` / `default_env`
+
+    conf_env_dir_abs_path = (
+        ref_root_abs_path / ConfConstClient.default_client_default_env_dir_rel_path
+    )
+
+    create_conf_env_file(
+        ref_root_abs_path,
+        conf_env_dir_abs_path,
+        project_dir_abs_path,
+    )
+
+    # === create `ConfLeap.leap_client`
+
+    conf_client_dir_abs_path = (
+        ref_root_abs_path / ConfConstPrimer.default_client_conf_dir_rel_path
+    )
+
+    create_conf_client_file(
+        ref_root_abs_path,
+        conf_client_dir_abs_path,
+        conf_env_dir_abs_path,
+    )
+
+    # ===
+
+    return (
+        proto_kernel_abs_path,
+        ref_root_abs_path,
+        project_dir_abs_path,
     )

@@ -128,34 +128,4 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # then:
 
-        self.assertIn("does not exists", log_dst.output[0])
-
-    @patch(
-        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_py_exec_var_loaded.__name__}.eval_own_state"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_primer_conf_client_file_abs_path_eval_finalized.__name__}.eval_own_state"
-    )
-    def test_state_primer_conf_client_file_abs_path_is_none(
-        self,
-        mock_state_primer_conf_client_file_abs_path_eval_finalized,
-        mock_state_input_run_mode_arg_loaded,
-        mock_state_input_py_exec_var_loaded,
-    ):
-        # given:
-        assert_parent_states_mocked(
-            self.env_ctx,
-            EnvState.state_client_conf_file_data_loaded.name,
-        )
-        mock_state_primer_conf_client_file_abs_path_eval_finalized.return_value = None
-
-        # when:
-        result = self.env_ctx.state_graph.eval_state(
-            EnvState.state_client_conf_file_data_loaded.name
-        )
-
-        # then:
-        self.assertEqual(result, {})
+        self.assertIn("does not exist", log_dst.output[0])

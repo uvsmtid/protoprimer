@@ -59,7 +59,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             Bootstrapper_state_pre_commit_configured.state_pre_commit_configured,
         )
 
-        mock_client_conf_path = "/gconf/proto_kernel.conf_client.json"
+        mock_client_conf_path = "/gconf/proto_kernel.json"
         self.fs.create_dir("/gconf")
         write_json_file(mock_client_conf_path, {})
         mock_state_primer_conf_client_file_abs_path_eval_finalized.return_value = (
