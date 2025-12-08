@@ -11,8 +11,8 @@ from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     Bootstrapper_state_client_conf_file_data_loaded,
     Bootstrapper_state_env_conf_file_data_loaded,
-    Bootstrapper_state_derived_local_cache_dir_abs_path_eval_finalized,
-    Bootstrapper_state_derived_required_python_file_abs_path_eval_finalized,
+    Bootstrapper_state_local_cache_dir_abs_path_inited,
+    Bootstrapper_state_required_python_file_abs_path_inited,
     Bootstrapper_state_reinstall_triggered,
     EnvContext,
     EnvState,
@@ -33,7 +33,7 @@ class TestEnvContext(BasePyfakefsTestClass):
         assert_test_module_name_embeds_str(EnvContext.__name__)
 
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_derived_required_python_file_abs_path_eval_finalized.__name__}.eval_own_state",
+        f"{primer_kernel.__name__}.{Bootstrapper_state_required_python_file_abs_path_inited.__name__}.eval_own_state",
         return_value="/usr/bin/python",
     )
     @patch(
@@ -49,7 +49,7 @@ class TestEnvContext(BasePyfakefsTestClass):
         return_value={},
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_derived_local_cache_dir_abs_path_eval_finalized.__name__}.eval_own_state",
+        f"{primer_kernel.__name__}.{Bootstrapper_state_local_cache_dir_abs_path_inited.__name__}.eval_own_state",
         return_value="/tmp",
     )
     @patch("subprocess.check_call")
@@ -67,7 +67,7 @@ class TestEnvContext(BasePyfakefsTestClass):
         # when:
         env_ctx = EnvContext()
         package_driver = env_ctx.state_graph.eval_state(
-            EnvState.state_package_driver_inited.name
+            EnvState.state_package_driver_prepared.name
         )
         # then:
         assert isinstance(package_driver, PackageDriverUv)
@@ -79,7 +79,7 @@ class TestEnvContext(BasePyfakefsTestClass):
         },
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_derived_required_python_file_abs_path_eval_finalized.__name__}.eval_own_state",
+        f"{primer_kernel.__name__}.{Bootstrapper_state_required_python_file_abs_path_inited.__name__}.eval_own_state",
         return_value="/usr/bin/python",
     )
     @patch(
@@ -95,7 +95,7 @@ class TestEnvContext(BasePyfakefsTestClass):
         return_value={},
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_derived_local_cache_dir_abs_path_eval_finalized.__name__}.eval_own_state",
+        f"{primer_kernel.__name__}.{Bootstrapper_state_local_cache_dir_abs_path_inited.__name__}.eval_own_state",
         return_value="/tmp",
     )
     @patch("subprocess.check_call")
@@ -113,7 +113,7 @@ class TestEnvContext(BasePyfakefsTestClass):
         # when:
         env_ctx = EnvContext()
         package_driver = env_ctx.state_graph.eval_state(
-            EnvState.state_package_driver_inited.name
+            EnvState.state_package_driver_prepared.name
         )
         # then:
         assert isinstance(package_driver, PackageDriverUv)
@@ -125,7 +125,7 @@ class TestEnvContext(BasePyfakefsTestClass):
         },
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_derived_required_python_file_abs_path_eval_finalized.__name__}.eval_own_state",
+        f"{primer_kernel.__name__}.{Bootstrapper_state_required_python_file_abs_path_inited.__name__}.eval_own_state",
         return_value="/usr/bin/python",
     )
     @patch(
@@ -141,7 +141,7 @@ class TestEnvContext(BasePyfakefsTestClass):
         return_value={},
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_derived_local_cache_dir_abs_path_eval_finalized.__name__}.eval_own_state",
+        f"{primer_kernel.__name__}.{Bootstrapper_state_local_cache_dir_abs_path_inited.__name__}.eval_own_state",
         return_value="/tmp",
     )
     def test_init_without_uv(
@@ -156,7 +156,7 @@ class TestEnvContext(BasePyfakefsTestClass):
         # when:
         env_ctx = EnvContext()
         package_driver = env_ctx.state_graph.eval_state(
-            EnvState.state_package_driver_inited.name
+            EnvState.state_package_driver_prepared.name
         )
         # then:
         assert isinstance(package_driver, PackageDriverPip)

@@ -40,24 +40,24 @@ class FieldMeta(AbstractMeta):
 
 class FieldName(enum.Enum):
 
-    field_primer_ref_root_dir_rel_path = FieldMeta(
-        ConfField.field_primer_ref_root_dir_rel_path,
-        NameCategory.category_leap_path_field,
+    field_ref_root_dir_rel_path = FieldMeta(
+        ConfField.field_ref_root_dir_rel_path,
+        NameCategory.category_path_field,
     )
 
-    field_primer_conf_client_dir_rel_path = FieldMeta(
-        ConfField.field_primer_conf_client_dir_rel_path,
-        NameCategory.category_leap_path_field,
+    field_global_conf_dir_rel_path = FieldMeta(
+        ConfField.field_global_conf_dir_rel_path,
+        NameCategory.category_path_field,
     )
 
-    field_client_link_name_dir_rel_path = FieldMeta(
-        ConfField.field_client_link_name_dir_rel_path,
-        NameCategory.category_leap_path_field,
+    field_local_conf_symlink_rel_path = FieldMeta(
+        ConfField.field_local_conf_symlink_rel_path,
+        NameCategory.category_path_field,
     )
 
-    field_client_default_env_dir_rel_path = FieldMeta(
-        ConfField.field_client_default_env_dir_rel_path,
-        NameCategory.category_leap_path_field,
+    field_default_env_dir_rel_path = FieldMeta(
+        ConfField.field_default_env_dir_rel_path,
+        NameCategory.category_path_field,
     )
 
     field_required_python_file_abs_path = FieldMeta(
@@ -72,7 +72,7 @@ class FieldName(enum.Enum):
 
     field_project_descriptors = FieldMeta(
         ConfField.field_project_descriptors,
-        NameCategory.category_derived_value_field,
+        NameCategory.category_value_field,
     )
 
     field_build_root_dir_rel_path = FieldMeta(
@@ -102,7 +102,7 @@ class FieldName(enum.Enum):
 
     field_package_driver = FieldMeta(
         ConfField.field_package_driver,
-        NameCategory.category_derived_value_field,
+        NameCategory.category_value_field,
     )
 
 

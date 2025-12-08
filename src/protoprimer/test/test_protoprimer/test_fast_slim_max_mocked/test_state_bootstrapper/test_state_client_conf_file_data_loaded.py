@@ -10,7 +10,7 @@ from local_test.mock_verifier import (
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
-    Bootstrapper_state_primer_conf_client_file_abs_path_eval_finalized,
+    Bootstrapper_state_global_conf_file_abs_path_inited,
     ConfConstPrimer,
     EnvContext,
     EnvState,
@@ -37,11 +37,11 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_primer_conf_client_file_abs_path_eval_finalized.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_global_conf_file_abs_path_inited.__name__}.eval_own_state"
     )
-    def test_state_primer_conf_client_file_abs_path_eval_finalized_exists(
+    def test_state_global_conf_file_abs_path_inited_exists(
         self,
-        mock_state_primer_conf_client_file_abs_path_eval_finalized,
+        mock_state_global_conf_file_abs_path_inited,
         mock_state_input_run_mode_arg_loaded,
         mock_state_input_py_exec_var_loaded,
     ):
@@ -56,23 +56,21 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_client_dir = "/mock_client_dir"
         self.fs.create_dir(mock_client_dir)
         os.chdir(mock_client_dir)
-        state_primer_conf_client_file_abs_path_eval_finalized = os.path.join(
+        state_global_conf_file_abs_path_inited = os.path.join(
             mock_client_dir,
             ConfConstPrimer.default_client_conf_file_rel_path,
         )
-        mock_state_primer_conf_client_file_abs_path_eval_finalized.return_value = (
-            state_primer_conf_client_file_abs_path_eval_finalized
+        mock_state_global_conf_file_abs_path_inited.return_value = (
+            state_global_conf_file_abs_path_inited
         )
         self.fs.create_file(
-            state_primer_conf_client_file_abs_path_eval_finalized,
+            state_global_conf_file_abs_path_inited,
             contents=json.dumps({}),
         )
 
         # when:
 
-        self.assertTrue(
-            os.path.isfile(state_primer_conf_client_file_abs_path_eval_finalized)
-        )
+        self.assertTrue(os.path.isfile(state_global_conf_file_abs_path_inited))
         self.env_ctx.state_graph.eval_state(
             EnvState.state_client_conf_file_data_loaded.name
         )
@@ -88,11 +86,11 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_primer_conf_client_file_abs_path_eval_finalized.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_global_conf_file_abs_path_inited.__name__}.eval_own_state"
     )
-    def test_state_primer_conf_client_file_abs_path_eval_finalized_missing(
+    def test_state_global_conf_file_abs_path_inited_missing(
         self,
-        mock_state_primer_conf_client_file_abs_path_eval_finalized,
+        mock_state_global_conf_file_abs_path_inited,
         mock_state_input_run_mode_arg_loaded,
         mock_state_input_py_exec_var_loaded,
     ):
@@ -107,17 +105,15 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_client_dir = "/mock_client_dir"
         self.fs.create_dir(mock_client_dir)
         os.chdir(mock_client_dir)
-        state_primer_conf_client_file_abs_path_eval_finalized = os.path.join(
+        state_global_conf_file_abs_path_inited = os.path.join(
             mock_client_dir,
             ConfConstPrimer.default_client_conf_file_rel_path,
         )
-        mock_state_primer_conf_client_file_abs_path_eval_finalized.return_value = (
-            state_primer_conf_client_file_abs_path_eval_finalized
+        mock_state_global_conf_file_abs_path_inited.return_value = (
+            state_global_conf_file_abs_path_inited
         )
 
-        self.assertFalse(
-            os.path.isfile(state_primer_conf_client_file_abs_path_eval_finalized)
-        )
+        self.assertFalse(os.path.isfile(state_global_conf_file_abs_path_inited))
 
         # when:
 

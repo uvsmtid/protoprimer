@@ -12,10 +12,10 @@ from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     Bootstrapper_state_args_parsed,
-    Bootstrapper_state_client_conf_env_dir_abs_path_eval_finalized,
-    Bootstrapper_state_derived_local_tmp_dir_abs_path_eval_finalized,
-    Bootstrapper_state_derived_local_venv_dir_abs_path_eval_finalized,
-    Bootstrapper_state_input_proto_code_file_abs_path_eval_finalized,
+    Bootstrapper_state_local_conf_symlink_abs_path_inited,
+    Bootstrapper_state_local_tmp_dir_abs_path_inited,
+    Bootstrapper_state_local_venv_dir_abs_path_inited,
+    Bootstrapper_state_proto_code_file_abs_path_inited,
     Bootstrapper_state_input_start_id_var_loaded,
     Bootstrapper_state_py_exec_required_reached,
     ConfConstEnv,
@@ -45,26 +45,26 @@ def test_relationship():
     f"{primer_kernel.__name__}.{Bootstrapper_state_py_exec_required_reached.__name__}.eval_own_state"
 )
 @patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_derived_local_tmp_dir_abs_path_eval_finalized.__name__}.eval_own_state"
+    f"{primer_kernel.__name__}.{Bootstrapper_state_local_tmp_dir_abs_path_inited.__name__}.eval_own_state"
 )
 @patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_env_dir_abs_path_eval_finalized.__name__}.eval_own_state"
+    f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_symlink_abs_path_inited.__name__}.eval_own_state"
 )
 @patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_derived_local_venv_dir_abs_path_eval_finalized.__name__}.eval_own_state"
+    f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.eval_own_state"
 )
 @patch(
     f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.eval_own_state"
 )
 @patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_input_proto_code_file_abs_path_eval_finalized.__name__}.eval_own_state"
+    f"{primer_kernel.__name__}.{Bootstrapper_state_proto_code_file_abs_path_inited.__name__}.eval_own_state"
 )
 def test_reinstall_true(
-    mock_state_input_proto_code_file_abs_path_eval_finalized,
+    mock_state_proto_code_file_abs_path_inited,
     mock_state_args_parsed,
-    mock_state_derived_local_venv_dir_abs_path_eval_finalized,
-    mock_state_client_conf_env_dir_abs_path_eval_finalized,
-    mock_state_derived_local_tmp_dir_abs_path_eval_finalized,
+    mock_state_local_venv_dir_abs_path_inited,
+    mock_state_local_conf_symlink_abs_path_inited,
+    mock_state_local_tmp_dir_abs_path_inited,
     mock_state_py_exec_required_reached,
     mock_shutil_move,
     mock_os_remove,
@@ -86,15 +86,9 @@ def test_reinstall_true(
     )
     mock_state_input_start_id_var_loaded.return_value = "mock_start_id"
     mock_state_py_exec_required_reached.return_value = PythonExecutable.py_exec_required
-    mock_state_derived_local_venv_dir_abs_path_eval_finalized.return_value = (
-        "/path/to/venv"
-    )
-    mock_state_derived_local_tmp_dir_abs_path_eval_finalized.return_value = (
-        "/path/to/tmp"
-    )
-    mock_state_client_conf_env_dir_abs_path_eval_finalized.return_value = (
-        "/path/to/conf"
-    )
+    mock_state_local_venv_dir_abs_path_inited.return_value = "/path/to/venv"
+    mock_state_local_tmp_dir_abs_path_inited.return_value = "/path/to/tmp"
+    mock_state_local_conf_symlink_abs_path_inited.return_value = "/path/to/conf"
     mock_os_path_exists.return_value = True
 
     # when:
@@ -122,26 +116,26 @@ def test_reinstall_true(
     f"{primer_kernel.__name__}.{Bootstrapper_state_py_exec_required_reached.__name__}.eval_own_state"
 )
 @patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_derived_local_tmp_dir_abs_path_eval_finalized.__name__}.eval_own_state"
+    f"{primer_kernel.__name__}.{Bootstrapper_state_local_tmp_dir_abs_path_inited.__name__}.eval_own_state"
 )
 @patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_env_dir_abs_path_eval_finalized.__name__}.eval_own_state"
+    f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_symlink_abs_path_inited.__name__}.eval_own_state"
 )
 @patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_derived_local_venv_dir_abs_path_eval_finalized.__name__}.eval_own_state"
+    f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.eval_own_state"
 )
 @patch(
     f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.eval_own_state"
 )
 @patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_input_proto_code_file_abs_path_eval_finalized.__name__}.eval_own_state"
+    f"{primer_kernel.__name__}.{Bootstrapper_state_proto_code_file_abs_path_inited.__name__}.eval_own_state"
 )
 def test_reinstall_false(
-    mock_state_input_proto_code_file_abs_path_eval_finalized,
+    mock_state_proto_code_file_abs_path_inited,
     mock_state_args_parsed,
-    mock_state_derived_local_venv_dir_abs_path_eval_finalized,
-    mock_state_client_conf_env_dir_abs_path_eval_finalized,
-    mock_state_derived_local_tmp_dir_abs_path_eval_finalized,
+    mock_state_local_venv_dir_abs_path_inited,
+    mock_state_local_conf_symlink_abs_path_inited,
+    mock_state_local_tmp_dir_abs_path_inited,
     mock_state_py_exec_required_reached,
     mock_state_input_start_id_var_loaded,
     mock_shutil_move,
@@ -182,26 +176,26 @@ def test_reinstall_false(
     f"{primer_kernel.__name__}.{Bootstrapper_state_py_exec_required_reached.__name__}.eval_own_state"
 )
 @patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_derived_local_tmp_dir_abs_path_eval_finalized.__name__}.eval_own_state"
+    f"{primer_kernel.__name__}.{Bootstrapper_state_local_tmp_dir_abs_path_inited.__name__}.eval_own_state"
 )
 @patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_env_dir_abs_path_eval_finalized.__name__}.eval_own_state"
+    f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_symlink_abs_path_inited.__name__}.eval_own_state"
 )
 @patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_derived_local_venv_dir_abs_path_eval_finalized.__name__}.eval_own_state"
+    f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.eval_own_state"
 )
 @patch(
     f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.eval_own_state"
 )
 @patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_input_proto_code_file_abs_path_eval_finalized.__name__}.eval_own_state"
+    f"{primer_kernel.__name__}.{Bootstrapper_state_proto_code_file_abs_path_inited.__name__}.eval_own_state"
 )
 def test_reinstall_true_but_py_exec_not_required(
-    mock_state_input_proto_code_file_abs_path_eval_finalized,
+    mock_state_proto_code_file_abs_path_inited,
     mock_state_args_parsed,
-    mock_state_derived_local_venv_dir_abs_path_eval_finalized,
-    mock_state_client_conf_env_dir_abs_path_eval_finalized,
-    mock_state_derived_local_tmp_dir_abs_path_eval_finalized,
+    mock_state_local_venv_dir_abs_path_inited,
+    mock_state_local_conf_symlink_abs_path_inited,
+    mock_state_local_tmp_dir_abs_path_inited,
     mock_state_py_exec_required_reached,
     mock_state_input_start_id_var_loaded,
     mock_shutil_move,

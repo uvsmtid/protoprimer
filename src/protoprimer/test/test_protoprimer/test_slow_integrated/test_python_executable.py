@@ -69,7 +69,7 @@ def test_python_from_arbitrary_venv(
     # === create `ConfLeap.leap_env` / `default_env`
 
     conf_env_dir_abs_path = (
-        ref_root_abs_path / ConfConstClient.default_client_default_env_dir_rel_path
+        ref_root_abs_path / ConfConstClient.default_default_env_dir_rel_path
     )
 
     create_conf_env_file(
@@ -145,7 +145,7 @@ def test_python_from_required_venv(
     # === create `ConfLeap.leap_env` / `default_env`
 
     conf_env_dir_abs_path = (
-        ref_root_abs_path / ConfConstClient.default_client_default_env_dir_rel_path
+        ref_root_abs_path / ConfConstClient.default_default_env_dir_rel_path
     )
 
     create_conf_env_file(

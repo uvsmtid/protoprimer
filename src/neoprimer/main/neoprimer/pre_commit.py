@@ -29,7 +29,7 @@ class Bootstrapper_state_pre_commit_configured(AbstractCachingStateNode[int]):
             env_ctx=env_ctx,
             parent_states=[
                 TargetState.target_proto_bootstrap_completed.value.name,
-                EnvState.state_primer_conf_client_file_abs_path_eval_finalized.name,
+                EnvState.state_global_conf_file_abs_path_inited.name,
             ],
             state_name=self.state_pre_commit_configured,
         )
@@ -38,12 +38,10 @@ class Bootstrapper_state_pre_commit_configured(AbstractCachingStateNode[int]):
         self,
     ) -> ValueType:
 
-        state_primer_conf_client_file_abs_path_eval_finalized = self.eval_parent_state(
-            EnvState.state_primer_conf_client_file_abs_path_eval_finalized.name
+        state_global_conf_file_abs_path_inited = self.eval_parent_state(
+            EnvState.state_global_conf_file_abs_path_inited.name
         )
-        client_conf_dir_path = os.path.dirname(
-            state_primer_conf_client_file_abs_path_eval_finalized
-        )
+        client_conf_dir_path = os.path.dirname(state_global_conf_file_abs_path_inited)
         pre_commit_conf_file_path = os.path.join(
             client_conf_dir_path,
             "pre_commit.yaml",

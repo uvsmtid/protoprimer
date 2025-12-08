@@ -1,4 +1,4 @@
 {
-    "client_link_name_dir_rel_path": "lconf",
-    "client_default_env_dir_rel_path": "dst/default_env"
+    "local_conf_symlink_rel_path": "lconf",
+    "default_env_dir_rel_path": "dst/default_env"
 }

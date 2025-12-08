@@ -9,8 +9,8 @@ from local_test.mock_verifier import (
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
-    Bootstrapper_state_input_proto_code_file_abs_path_eval_finalized,
-    Bootstrapper_state_input_proto_conf_primer_file_abs_path_eval_finalized,
+    Bootstrapper_state_proto_code_file_abs_path_inited,
+    Bootstrapper_state_primer_conf_file_abs_path_inited,
     Bootstrapper_state_input_py_exec_var_loaded,
     Bootstrapper_state_input_run_mode_arg_loaded,
     EnvContext,
@@ -32,7 +32,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
 
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_input_proto_code_file_abs_path_eval_finalized.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_proto_code_file_abs_path_inited.__name__}.eval_own_state"
     )
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
@@ -41,14 +41,14 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{Bootstrapper_state_input_py_exec_var_loaded.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_input_proto_conf_primer_file_abs_path_eval_finalized.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_primer_conf_file_abs_path_inited.__name__}.eval_own_state"
     )
     def test_conf_file_exists(
         self,
-        mock_state_input_proto_conf_primer_file_abs_path_eval_finalized,
+        mock_state_primer_conf_file_abs_path_inited,
         mock_state_input_py_exec_var_loaded,
         mock_state_input_run_mode_arg_loaded,
-        mock_state_input_proto_code_file_abs_path_eval_finalized,
+        mock_state_proto_code_file_abs_path_inited,
     ):
 
         # given:
@@ -59,9 +59,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
 
         mock_file_path = "/mock/path/to/file"
-        mock_state_input_proto_conf_primer_file_abs_path_eval_finalized.return_value = (
-            mock_file_path
-        )
+        mock_state_primer_conf_file_abs_path_inited.return_value = mock_file_path
         self.fs.create_file(mock_file_path, contents=json.dumps({"test": "data"}))
 
         # when:
@@ -75,7 +73,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.assertEqual(state_value, {"test": "data"})
 
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_input_proto_code_file_abs_path_eval_finalized.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_proto_code_file_abs_path_inited.__name__}.eval_own_state"
     )
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
@@ -84,14 +82,14 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{Bootstrapper_state_input_py_exec_var_loaded.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_input_proto_conf_primer_file_abs_path_eval_finalized.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_primer_conf_file_abs_path_inited.__name__}.eval_own_state"
     )
     def test_conf_file_missing(
         self,
-        mock_state_input_proto_conf_primer_file_abs_path_eval_finalized,
+        mock_state_primer_conf_file_abs_path_inited,
         mock_state_input_py_exec_var_loaded,
         mock_state_input_run_mode_arg_loaded,
-        mock_state_input_proto_code_file_abs_path_eval_finalized,
+        mock_state_proto_code_file_abs_path_inited,
     ):
 
         # given:
@@ -103,9 +101,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         mock_file_path = "/mock/path/to/file"
         self.fs.create_dir("/mock/path/to")
-        mock_state_input_proto_conf_primer_file_abs_path_eval_finalized.return_value = (
-            mock_file_path
-        )
+        mock_state_primer_conf_file_abs_path_inited.return_value = mock_file_path
 
         # when:
 
@@ -120,7 +116,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.assertEqual({}, state_value)
 
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_input_proto_code_file_abs_path_eval_finalized.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_proto_code_file_abs_path_inited.__name__}.eval_own_state"
     )
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
@@ -129,14 +125,14 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{Bootstrapper_state_input_py_exec_var_loaded.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_input_proto_conf_primer_file_abs_path_eval_finalized.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_primer_conf_file_abs_path_inited.__name__}.eval_own_state"
     )
     def test_conf_file_malformed(
         self,
-        mock_state_input_proto_conf_primer_file_abs_path_eval_finalized,
+        mock_state_primer_conf_file_abs_path_inited,
         mock_state_input_py_exec_var_loaded,
         mock_state_input_run_mode_arg_loaded,
-        mock_state_input_proto_code_file_abs_path_eval_finalized,
+        mock_state_proto_code_file_abs_path_inited,
     ):
 
         # given:
@@ -147,9 +143,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
 
         mock_file_path = "/mock/path/to/file"
-        mock_state_input_proto_conf_primer_file_abs_path_eval_finalized.return_value = (
-            mock_file_path
-        )
+        mock_state_primer_conf_file_abs_path_inited.return_value = mock_file_path
         self.fs.create_file(mock_file_path, contents="not a valid json")
 
         # when/then:

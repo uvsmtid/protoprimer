@@ -72,76 +72,76 @@ class StateMeta(enum.Enum):
         env_state=EnvState.state_py_exec_arbitrary_reached,
         sub_graph=SubGraph.graph_input,
     )
-    state_input_proto_code_file_abs_path_eval_finalized = StateNodeMeta(
-        env_state=EnvState.state_input_proto_code_file_abs_path_eval_finalized,
+    state_proto_code_file_abs_path_inited = StateNodeMeta(
+        env_state=EnvState.state_proto_code_file_abs_path_inited,
         sub_graph=SubGraph.graph_config,
     )
-    state_input_proto_conf_primer_file_abs_path_eval_finalized = StateNodeMeta(
-        env_state=EnvState.state_input_proto_conf_primer_file_abs_path_eval_finalized,
+    state_primer_conf_file_abs_path_inited = StateNodeMeta(
+        env_state=EnvState.state_primer_conf_file_abs_path_inited,
         sub_graph=SubGraph.graph_config,
     )
     state_primer_conf_file_data_loaded = StateNodeMeta(
         env_state=EnvState.state_primer_conf_file_data_loaded,
         sub_graph=SubGraph.graph_config,
     )
-    state_primer_ref_root_dir_abs_path_eval_finalized = StateNodeMeta(
-        env_state=EnvState.state_primer_ref_root_dir_abs_path_eval_finalized,
+    state_ref_root_dir_abs_path_inited = StateNodeMeta(
+        env_state=EnvState.state_ref_root_dir_abs_path_inited,
         sub_graph=SubGraph.graph_config,
     )
-    state_primer_conf_client_dir_abs_path_eval_finalized = StateNodeMeta(
-        env_state=EnvState.state_primer_conf_client_dir_abs_path_eval_finalized,
+    state_global_conf_dir_abs_path_inited = StateNodeMeta(
+        env_state=EnvState.state_global_conf_dir_abs_path_inited,
         sub_graph=SubGraph.graph_config,
     )
-    state_primer_conf_client_file_abs_path_eval_finalized = StateNodeMeta(
-        env_state=EnvState.state_primer_conf_client_file_abs_path_eval_finalized,
+    state_global_conf_file_abs_path_inited = StateNodeMeta(
+        env_state=EnvState.state_global_conf_file_abs_path_inited,
         sub_graph=SubGraph.graph_config,
     )
     state_client_conf_file_data_loaded = StateNodeMeta(
         env_state=EnvState.state_client_conf_file_data_loaded,
         sub_graph=SubGraph.graph_config,
     )
-    state_client_local_env_conf_dir_rel_path_eval_finalized = StateNodeMeta(
-        env_state=EnvState.state_client_local_env_conf_dir_rel_path_eval_finalized,
+    state_selected_env_dir_rel_path_inited = StateNodeMeta(
+        env_state=EnvState.state_selected_env_dir_rel_path_inited,
         sub_graph=SubGraph.graph_config,
     )
-    state_client_conf_env_dir_abs_path_eval_finalized = StateNodeMeta(
-        env_state=EnvState.state_client_conf_env_dir_abs_path_eval_finalized,
+    state_local_conf_symlink_abs_path_inited = StateNodeMeta(
+        env_state=EnvState.state_local_conf_symlink_abs_path_inited,
         sub_graph=SubGraph.graph_config,
     )
-    state_client_conf_env_file_abs_path_eval_finalized = StateNodeMeta(
-        env_state=EnvState.state_client_conf_env_file_abs_path_eval_finalized,
+    state_local_conf_file_abs_path_inited = StateNodeMeta(
+        env_state=EnvState.state_local_conf_file_abs_path_inited,
         sub_graph=SubGraph.graph_config,
     )
     state_env_conf_file_data_loaded = StateNodeMeta(
         env_state=EnvState.state_env_conf_file_data_loaded,
         sub_graph=SubGraph.graph_config,
     )
-    state_derived_required_python_file_abs_path_eval_finalized = StateNodeMeta(
-        env_state=EnvState.state_derived_required_python_file_abs_path_eval_finalized,
+    state_required_python_file_abs_path_inited = StateNodeMeta(
+        env_state=EnvState.state_required_python_file_abs_path_inited,
         sub_graph=SubGraph.graph_config,
     )
-    state_derived_local_venv_dir_abs_path_eval_finalized = StateNodeMeta(
-        env_state=EnvState.state_derived_local_venv_dir_abs_path_eval_finalized,
+    state_local_venv_dir_abs_path_inited = StateNodeMeta(
+        env_state=EnvState.state_local_venv_dir_abs_path_inited,
         sub_graph=SubGraph.graph_config,
     )
-    state_derived_local_log_dir_abs_path_eval_finalized = StateNodeMeta(
-        env_state=EnvState.state_derived_local_log_dir_abs_path_eval_finalized,
+    state_local_log_dir_abs_path_inited = StateNodeMeta(
+        env_state=EnvState.state_local_log_dir_abs_path_inited,
         sub_graph=SubGraph.graph_config,
     )
-    state_derived_local_tmp_dir_abs_path_eval_finalized = StateNodeMeta(
-        env_state=EnvState.state_derived_local_tmp_dir_abs_path_eval_finalized,
+    state_local_tmp_dir_abs_path_inited = StateNodeMeta(
+        env_state=EnvState.state_local_tmp_dir_abs_path_inited,
         sub_graph=SubGraph.graph_config,
     )
-    state_derived_local_cache_dir_abs_path_eval_finalized = StateNodeMeta(
-        env_state=EnvState.state_derived_local_cache_dir_abs_path_eval_finalized,
+    state_local_cache_dir_abs_path_inited = StateNodeMeta(
+        env_state=EnvState.state_local_cache_dir_abs_path_inited,
         sub_graph=SubGraph.graph_config,
     )
-    state_derived_package_driver_eval_finalized = StateNodeMeta(
-        env_state=EnvState.state_derived_package_driver_eval_finalized,
+    state_package_driver_inited = StateNodeMeta(
+        env_state=EnvState.state_package_driver_inited,
         sub_graph=SubGraph.graph_config,
     )
-    state_derived_project_descriptors_eval_finalized = StateNodeMeta(
-        env_state=EnvState.state_derived_project_descriptors_eval_finalized,
+    state_project_descriptors_inited = StateNodeMeta(
+        env_state=EnvState.state_project_descriptors_inited,
         sub_graph=SubGraph.graph_config,
     )
     state_derived_conf_data_loaded = StateNodeMeta(
@@ -164,8 +164,8 @@ class StateMeta(enum.Enum):
         env_state=EnvState.state_reinstall_triggered,
         sub_graph=SubGraph.graph_runtime,
     )
-    state_package_driver_inited = StateNodeMeta(
-        env_state=EnvState.state_package_driver_inited,
+    state_package_driver_prepared = StateNodeMeta(
+        env_state=EnvState.state_package_driver_prepared,
         sub_graph=SubGraph.graph_runtime,
     )
     state_py_exec_venv_reached = StateNodeMeta(

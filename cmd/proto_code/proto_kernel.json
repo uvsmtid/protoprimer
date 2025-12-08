@@ -1,4 +1,4 @@
 {
-    "primer_ref_root_dir_rel_path": "../..",
-    "primer_conf_client_dir_rel_path": "gconf"
+    "ref_root_dir_rel_path": "../..",
+    "global_conf_dir_rel_path": "gconf"
 }

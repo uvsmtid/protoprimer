@@ -22,9 +22,7 @@ def env_ctx():
 
 
 def test_relationship():
-    assert_test_module_name_embeds_str(
-        EnvState.state_derived_project_descriptors_eval_finalized.name
-    )
+    assert_test_module_name_embeds_str(EnvState.state_project_descriptors_inited.name)
 
 
 @patch(
@@ -42,7 +40,7 @@ def test_py_exec_venv(
 
     assert_parent_states_mocked(
         env_ctx,
-        EnvState.state_derived_project_descriptors_eval_finalized.name,
+        EnvState.state_project_descriptors_inited.name,
     )
 
     project_descriptors: list[dict] = [
@@ -65,7 +63,7 @@ def test_py_exec_venv(
     # when:
 
     state_value: str = env_ctx.state_graph.eval_state(
-        EnvState.state_derived_project_descriptors_eval_finalized.name
+        EnvState.state_project_descriptors_inited.name
     )
 
     # then:

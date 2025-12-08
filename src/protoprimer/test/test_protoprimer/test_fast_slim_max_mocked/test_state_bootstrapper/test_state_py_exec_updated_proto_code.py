@@ -9,7 +9,7 @@ from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     Bootstrapper_state_args_parsed,
-    Bootstrapper_state_input_proto_code_file_abs_path_eval_finalized,
+    Bootstrapper_state_proto_code_file_abs_path_inited,
     Bootstrapper_state_input_py_exec_var_loaded,
     Bootstrapper_state_input_start_id_var_loaded,
     Bootstrapper_state_proto_code_updated,
@@ -47,13 +47,13 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{Bootstrapper_state_proto_code_updated.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_input_proto_code_file_abs_path_eval_finalized.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_proto_code_file_abs_path_inited.__name__}.eval_own_state"
     )
     @patch(f"{primer_kernel.__name__}.switch_python")
     def test_not_yet_at_required_python(
         self,
         mock_switch_python,
-        mock_state_input_proto_code_file_abs_path_eval_finalized,
+        mock_state_proto_code_file_abs_path_inited,
         mock_state_proto_code_updated,
         mock_state_input_py_exec_var_loaded,
         mock_state_args_parsed,
@@ -74,9 +74,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
         mock_state_input_start_id_var_loaded.return_value = "mock_start_id"
 
-        mock_state_input_proto_code_file_abs_path_eval_finalized.return_value = (
-            "path/to/whatever"
-        )
+        mock_state_proto_code_file_abs_path_inited.return_value = "path/to/whatever"
 
         mock_state_proto_code_updated.return_value = True
 
@@ -98,7 +96,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             next_py_exec=PythonExecutable.py_exec_updated_proto_code,
             next_python_path=get_path_to_curr_python(),
             start_id="mock_start_id",
-            proto_code_abs_file_path=mock_state_input_proto_code_file_abs_path_eval_finalized.return_value,
+            proto_code_abs_file_path=mock_state_proto_code_file_abs_path_inited.return_value,
         )
 
     @patch(
@@ -114,13 +112,13 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{Bootstrapper_state_proto_code_updated.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_input_proto_code_file_abs_path_eval_finalized.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_proto_code_file_abs_path_inited.__name__}.eval_own_state"
     )
     @patch(f"{primer_kernel.__name__}.switch_python")
     def test_already_required_python(
         self,
         mock_switch_python,
-        mock_state_input_proto_code_file_abs_path_eval_finalized,
+        mock_state_proto_code_file_abs_path_inited,
         mock_state_proto_code_updated,
         mock_state_input_py_exec_var_loaded,
         mock_state_args_parsed,
@@ -144,9 +142,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
         mock_state_input_start_id_var_loaded.return_value = "mock_start_id"
 
-        mock_state_input_proto_code_file_abs_path_eval_finalized.return_value = (
-            "path/to/whatever"
-        )
+        mock_state_proto_code_file_abs_path_inited.return_value = "path/to/whatever"
 
         mock_state_proto_code_updated.return_value = True
 

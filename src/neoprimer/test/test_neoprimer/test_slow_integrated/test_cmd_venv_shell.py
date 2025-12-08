@@ -54,7 +54,7 @@ def test_venv_shell_no_update(tmp_path: pathlib.Path):
     # ===
 
     conf_env_dir_abs_path = (
-        ref_root_abs_path / ConfConstClient.default_client_default_env_dir_rel_path
+        ref_root_abs_path / ConfConstClient.default_default_env_dir_rel_path
     )
 
     create_conf_env_file(
@@ -154,7 +154,7 @@ def test_venv_shell_command_execution(tmp_path: pathlib.Path):
     # ===
 
     conf_env_dir_abs_path = (
-        ref_root_abs_path / ConfConstClient.default_client_default_env_dir_rel_path
+        ref_root_abs_path / ConfConstClient.default_default_env_dir_rel_path
     )
 
     create_conf_env_file(

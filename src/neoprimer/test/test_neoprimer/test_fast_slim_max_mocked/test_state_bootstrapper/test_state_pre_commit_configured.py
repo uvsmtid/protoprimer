@@ -15,7 +15,7 @@ from neoprimer.pre_commit import (
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     Bootstrapper_state_command_executed,
-    Bootstrapper_state_primer_conf_client_file_abs_path_eval_finalized,
+    Bootstrapper_state_global_conf_file_abs_path_inited,
     write_json_file,
 )
 
@@ -42,11 +42,11 @@ class ThisTestClass(BasePyfakefsTestClass):
         return_value=True,
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_primer_conf_client_file_abs_path_eval_finalized.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_global_conf_file_abs_path_inited.__name__}.eval_own_state"
     )
     def test_state_evaluation(
         self,
-        mock_state_primer_conf_client_file_abs_path_eval_finalized,
+        mock_state_global_conf_file_abs_path_inited,
         mock_command_executed_eval_own_state,
         mock_is_venv,
         mock_execve,
@@ -62,9 +62,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_client_conf_path = "/gconf/proto_kernel.json"
         self.fs.create_dir("/gconf")
         write_json_file(mock_client_conf_path, {})
-        mock_state_primer_conf_client_file_abs_path_eval_finalized.return_value = (
-            mock_client_conf_path
-        )
+        mock_state_global_conf_file_abs_path_inited.return_value = mock_client_conf_path
 
         client_conf_dir_path = "/gconf"
         pre_commit_conf_file_path = os.path.join(

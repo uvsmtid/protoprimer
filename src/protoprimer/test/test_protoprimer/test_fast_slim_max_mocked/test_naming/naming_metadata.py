@@ -32,6 +32,8 @@ class CompletedAction(enum.Enum):
     # Some value applied (become effective for the current runtime):
     action_applied = "applied"
 
+    action_inited = "inited"
+
 
 class ValueSource(enum.Enum):
     """
@@ -104,8 +106,9 @@ class NameCategory(enum.Enum):
         ],
     )
 
+    # TODO: Maybe remove? Use simpler `category_path_value` instead.
     # More specific than `category_named_value`: value representing a filesystem path is read or computed:
-    category_path_value = CategoryMeta(
+    category_path_value_deprecated = CategoryMeta(
         name_enums=[
             # The first sub-list is synced with `category_path_action`:
             ConfLeap,
@@ -114,6 +117,15 @@ class NameCategory(enum.Enum):
             PathType,
             ValueSource,
             #
+            CompletedAction,
+        ],
+    )
+
+    category_path_value = CategoryMeta(
+        name_enums=[
+            PathName,
+            FilesystemObject,
+            PathType,
             CompletedAction,
         ],
     )
@@ -133,7 +145,7 @@ class NameCategory(enum.Enum):
 
     # Similar:
     # to `category_named_arg_value` but for path names
-    # to `category_path_value` but for arg names
+    # to `category_path_value_deprecated` but for arg names
     category_path_arg_value = CategoryMeta(
         name_enums=[
             PathName,
@@ -141,22 +153,25 @@ class NameCategory(enum.Enum):
         ],
     )
 
-    category_value_field = CategoryMeta(
+    category_value_field_action = CategoryMeta(
         name_enums=[
             ValueName,
+            CompletedAction,
         ],
     )
 
-    category_leap_value_field = CategoryMeta(
-        name_enums=[
-            ConfLeap,
-            ValueName,
-        ],
-    )
-
+    # TODO: Remove (use `category_path_field`):
     category_leap_path_field = CategoryMeta(
         name_enums=[
             ConfLeap,
+            PathName,
+            FilesystemObject,
+            PathType,
+        ],
+    )
+
+    category_path_field = CategoryMeta(
+        name_enums=[
             PathName,
             FilesystemObject,
             PathType,
@@ -174,8 +189,8 @@ class NameCategory(enum.Enum):
     )
 
     # FT_00_22_19_59.derived_config.md:
-    # similar to `category_leap_value_field` but without `ConfLeap`:
-    category_derived_value_field = CategoryMeta(
+    # similar to `category_value_field_action` but without `CompletedAction`:
+    category_value_field = CategoryMeta(
         name_enums=[
             ValueName,
         ],

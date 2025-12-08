@@ -23,7 +23,7 @@ def env_ctx():
 
 def test_relationship():
     assert_test_module_name_embeds_str(
-        EnvState.state_input_proto_code_file_abs_path_eval_finalized.name
+        EnvState.state_proto_code_file_abs_path_inited.name
     )
 
 
@@ -44,7 +44,7 @@ def test_py_exec_arbitrary_not_in_venv(
 
     assert_parent_states_mocked(
         env_ctx,
-        EnvState.state_input_proto_code_file_abs_path_eval_finalized.name,
+        EnvState.state_proto_code_file_abs_path_inited.name,
     )
 
     mock_state_py_exec_arbitrary_reached.return_value = (
@@ -56,7 +56,7 @@ def test_py_exec_arbitrary_not_in_venv(
     # when:
 
     state_value: str = env_ctx.state_graph.eval_state(
-        EnvState.state_input_proto_code_file_abs_path_eval_finalized.name
+        EnvState.state_proto_code_file_abs_path_inited.name
     )
 
     # then:
@@ -79,7 +79,7 @@ def test_py_exec_venv(
 
     assert_parent_states_mocked(
         env_ctx,
-        EnvState.state_input_proto_code_file_abs_path_eval_finalized.name,
+        EnvState.state_proto_code_file_abs_path_inited.name,
     )
 
     proto_code_abs_file_path = "/path/to/proto_kernel.py"
@@ -92,7 +92,7 @@ def test_py_exec_venv(
     # when:
 
     state_value: str = env_ctx.state_graph.eval_state(
-        EnvState.state_input_proto_code_file_abs_path_eval_finalized.name
+        EnvState.state_proto_code_file_abs_path_inited.name
     )
 
     # then:
@@ -115,7 +115,7 @@ def test_py_exec_venv_no_arg(
 
     assert_parent_states_mocked(
         env_ctx,
-        EnvState.state_input_proto_code_file_abs_path_eval_finalized.name,
+        EnvState.state_proto_code_file_abs_path_inited.name,
     )
 
     mock_state_input_proto_code_file_abs_path_var_loaded.return_value = None
@@ -125,7 +125,7 @@ def test_py_exec_venv_no_arg(
 
     with pytest.raises(AssertionError) as exc_info:
         env_ctx.state_graph.eval_state(
-            EnvState.state_input_proto_code_file_abs_path_eval_finalized.name
+            EnvState.state_proto_code_file_abs_path_inited.name
         )
 
     assert "is not specified at" in str(exc_info.value)
