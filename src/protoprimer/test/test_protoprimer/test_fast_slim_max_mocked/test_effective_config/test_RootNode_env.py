@@ -36,7 +36,7 @@ def test_render_env_config_data_with_unused_fields():
     root_node = RootNode_env(
         node_indent=0,
         orig_data=config_data,
-        state_client_conf_env_file_abs_path_eval_finalized=state_input_proto_conf_env_file_abs_path_eval_finalized,
+        state_local_conf_file_abs_path_inited=state_input_proto_conf_env_file_abs_path_eval_finalized,
     )
 
     expected_output = f"""
@@ -99,7 +99,7 @@ def test_render_empty_env_config_data():
     root_node = RootNode_env(
         node_indent=0,
         orig_data=config_data,
-        state_client_conf_env_file_abs_path_eval_finalized=state_input_proto_conf_env_file_abs_path_eval_finalized,
+        state_local_conf_file_abs_path_inited=state_input_proto_conf_env_file_abs_path_eval_finalized,
     )
 
     expected_output = f"""

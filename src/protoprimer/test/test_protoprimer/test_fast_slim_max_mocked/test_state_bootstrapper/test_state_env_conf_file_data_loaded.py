@@ -10,7 +10,7 @@ from local_test.mock_verifier import (
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
-    Bootstrapper_state_client_conf_env_file_abs_path_eval_finalized,
+    Bootstrapper_state_local_conf_file_abs_path_inited,
     Bootstrapper_state_input_py_exec_var_loaded,
     Bootstrapper_state_input_run_mode_arg_loaded,
     EnvContext,
@@ -38,11 +38,11 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{Bootstrapper_state_input_py_exec_var_loaded.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_env_file_abs_path_eval_finalized.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_file_abs_path_inited.__name__}.eval_own_state"
     )
     def test_state_env_conf_file_data_loaded_exists(
         self,
-        mock_state_client_conf_env_file_abs_path_eval_finalized,
+        mock_state_local_conf_file_abs_path_inited,
         mock_state_input_py_exec_var_loaded,
         mock_state_input_run_mode_arg_loaded,
     ):
@@ -55,9 +55,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
 
         mock_conf_file = "/mock/path/to/env_conf.json"
-        mock_state_client_conf_env_file_abs_path_eval_finalized.return_value = (
-            mock_conf_file
-        )
+        mock_state_local_conf_file_abs_path_inited.return_value = mock_conf_file
 
         mock_data = {"test": "data"}
         self.fs.create_file(mock_conf_file, contents=json.dumps(mock_data))
@@ -79,11 +77,11 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{Bootstrapper_state_input_py_exec_var_loaded.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_env_file_abs_path_eval_finalized.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_file_abs_path_inited.__name__}.eval_own_state"
     )
     def test_state_env_conf_file_data_loaded_missing(
         self,
-        mock_state_client_conf_env_file_abs_path_eval_finalized,
+        mock_state_local_conf_file_abs_path_inited,
         mock_state_input_py_exec_var_loaded,
         mock_state_input_run_mode_arg_loaded,
     ):
@@ -97,9 +95,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         mock_conf_file = "/mock/path/to/env_conf.json"
         self.fs.create_dir("/mock/path/to")
-        mock_state_client_conf_env_file_abs_path_eval_finalized.return_value = (
-            mock_conf_file
-        )
+        mock_state_local_conf_file_abs_path_inited.return_value = mock_conf_file
 
         self.assertFalse(os.path.exists(mock_conf_file))
 
@@ -124,11 +120,11 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{Bootstrapper_state_input_py_exec_var_loaded.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_env_file_abs_path_eval_finalized.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_file_abs_path_inited.__name__}.eval_own_state"
     )
     def test_state_env_conf_file_data_loaded_malformed(
         self,
-        mock_state_client_conf_env_file_abs_path_eval_finalized,
+        mock_state_local_conf_file_abs_path_inited,
         mock_state_input_py_exec_var_loaded,
         mock_state_input_run_mode_arg_loaded,
     ):
@@ -141,9 +137,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
 
         mock_conf_file = "/mock/path/to/env_conf.json"
-        mock_state_client_conf_env_file_abs_path_eval_finalized.return_value = (
-            mock_conf_file
-        )
+        mock_state_local_conf_file_abs_path_inited.return_value = mock_conf_file
 
         self.fs.create_file(mock_conf_file, contents="not a valid json")
 

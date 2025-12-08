@@ -137,8 +137,8 @@ def create_conf_primer_file(
     )
 
     prime_conf_data = {
-        ConfField.field_primer_ref_root_dir_rel_path.value: ref_root_dir_rel_path,
-        ConfField.field_primer_conf_client_dir_rel_path.value: ConfConstPrimer.default_client_conf_dir_rel_path,
+        ConfField.field_ref_root_dir_rel_path.value: ref_root_dir_rel_path,
+        ConfField.field_global_conf_dir_rel_path.value: ConfConstPrimer.default_client_conf_dir_rel_path,
     }
 
     conf_primer_file_abs_path = (
@@ -163,10 +163,8 @@ def create_conf_client_file(
     )
 
     client_conf_data = {
-        ConfField.field_client_link_name_dir_rel_path.value: ConfConstClient.default_dir_rel_path_leap_env_link_name,
-        ConfField.field_client_default_env_dir_rel_path.value: str(
-            conf_env_dir_rel_path
-        ),
+        ConfField.field_local_conf_symlink_rel_path.value: ConfConstClient.default_dir_rel_path_leap_env_link_name,
+        ConfField.field_default_env_dir_rel_path.value: str(conf_env_dir_rel_path),
     }
 
     conf_client_dir_abs_path.mkdir(parents=True, exist_ok=True)
@@ -282,7 +280,7 @@ def create_max_layout(tmp_path: Path) -> tuple[Path, Path, Path]:
     # === create `ConfLeap.leap_env` / `default_env`
 
     conf_env_dir_abs_path = (
-        ref_root_abs_path / ConfConstClient.default_client_default_env_dir_rel_path
+        ref_root_abs_path / ConfConstClient.default_default_env_dir_rel_path
     )
 
     create_conf_env_file(

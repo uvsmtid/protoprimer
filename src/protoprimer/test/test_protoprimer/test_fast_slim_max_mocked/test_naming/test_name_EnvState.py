@@ -105,7 +105,7 @@ class StateName(enum.Enum):
 
     state_input_proto_code_file_abs_path_var_loaded = StateMeta(
         EnvState.state_input_proto_code_file_abs_path_var_loaded,
-        NameCategory.category_path_value,
+        NameCategory.category_path_value_deprecated,
     )
 
     state_py_exec_arbitrary_reached = StateMeta(
@@ -113,13 +113,13 @@ class StateName(enum.Enum):
         NameCategory.category_python_exec,
     )
 
-    state_input_proto_code_file_abs_path_eval_finalized = StateMeta(
-        EnvState.state_input_proto_code_file_abs_path_eval_finalized,
+    state_proto_code_file_abs_path_inited = StateMeta(
+        EnvState.state_proto_code_file_abs_path_inited,
         NameCategory.category_path_value,
     )
 
-    state_input_proto_conf_primer_file_abs_path_eval_finalized = StateMeta(
-        EnvState.state_input_proto_conf_primer_file_abs_path_eval_finalized,
+    state_primer_conf_file_abs_path_inited = StateMeta(
+        EnvState.state_primer_conf_file_abs_path_inited,
         NameCategory.category_path_value,
     )
 
@@ -128,18 +128,18 @@ class StateName(enum.Enum):
         NameCategory.category_loaded_data,
     )
 
-    state_primer_ref_root_dir_abs_path_eval_finalized = StateMeta(
-        EnvState.state_primer_ref_root_dir_abs_path_eval_finalized,
+    state_ref_root_dir_abs_path_inited = StateMeta(
+        EnvState.state_ref_root_dir_abs_path_inited,
         NameCategory.category_path_value,
     )
 
-    state_primer_conf_client_dir_abs_path_eval_finalized = StateMeta(
-        EnvState.state_primer_conf_client_dir_abs_path_eval_finalized,
+    state_global_conf_dir_abs_path_inited = StateMeta(
+        EnvState.state_global_conf_dir_abs_path_inited,
         NameCategory.category_path_value,
     )
 
-    state_primer_conf_client_file_abs_path_eval_finalized = StateMeta(
-        EnvState.state_primer_conf_client_file_abs_path_eval_finalized,
+    state_global_conf_file_abs_path_inited = StateMeta(
+        EnvState.state_global_conf_file_abs_path_inited,
         NameCategory.category_path_value,
     )
 
@@ -148,18 +148,18 @@ class StateName(enum.Enum):
         NameCategory.category_loaded_data,
     )
 
-    state_client_conf_env_dir_abs_path_eval_finalized = StateMeta(
-        EnvState.state_client_conf_env_dir_abs_path_eval_finalized,
+    state_local_conf_symlink_abs_path_inited = StateMeta(
+        EnvState.state_local_conf_symlink_abs_path_inited,
         NameCategory.category_path_value,
     )
 
-    state_client_local_env_conf_dir_rel_path_eval_finalized = StateMeta(
-        EnvState.state_client_local_env_conf_dir_rel_path_eval_finalized,
+    state_selected_env_dir_rel_path_inited = StateMeta(
+        EnvState.state_selected_env_dir_rel_path_inited,
         NameCategory.category_path_value,
     )
 
-    state_client_conf_env_file_abs_path_eval_finalized = StateMeta(
-        EnvState.state_client_conf_env_file_abs_path_eval_finalized,
+    state_local_conf_file_abs_path_inited = StateMeta(
+        EnvState.state_local_conf_file_abs_path_inited,
         NameCategory.category_path_value,
     )
 
@@ -168,39 +168,39 @@ class StateName(enum.Enum):
         NameCategory.category_loaded_data,
     )
 
-    state_derived_required_python_file_abs_path_eval_finalized = StateMeta(
-        EnvState.state_derived_required_python_file_abs_path_eval_finalized,
+    state_required_python_file_abs_path_inited = StateMeta(
+        EnvState.state_required_python_file_abs_path_inited,
         NameCategory.category_path_value,
     )
 
-    state_derived_local_venv_dir_abs_path_eval_finalized = StateMeta(
-        EnvState.state_derived_local_venv_dir_abs_path_eval_finalized,
+    state_local_venv_dir_abs_path_inited = StateMeta(
+        EnvState.state_local_venv_dir_abs_path_inited,
         NameCategory.category_path_value,
     )
 
-    state_derived_local_log_dir_abs_path_eval_finalized = StateMeta(
-        EnvState.state_derived_local_log_dir_abs_path_eval_finalized,
+    state_local_log_dir_abs_path_inited = StateMeta(
+        EnvState.state_local_log_dir_abs_path_inited,
         NameCategory.category_path_value,
     )
 
-    state_derived_local_tmp_dir_abs_path_eval_finalized = StateMeta(
-        EnvState.state_derived_local_tmp_dir_abs_path_eval_finalized,
+    state_local_tmp_dir_abs_path_inited = StateMeta(
+        EnvState.state_local_tmp_dir_abs_path_inited,
         NameCategory.category_path_value,
     )
 
-    state_derived_local_cache_dir_abs_path_eval_finalized = StateMeta(
-        EnvState.state_derived_local_cache_dir_abs_path_eval_finalized,
+    state_local_cache_dir_abs_path_inited = StateMeta(
+        EnvState.state_local_cache_dir_abs_path_inited,
         NameCategory.category_path_value,
     )
 
-    state_derived_project_descriptors_eval_finalized = StateMeta(
-        EnvState.state_derived_project_descriptors_eval_finalized,
-        NameCategory.category_named_value,
+    state_project_descriptors_inited = StateMeta(
+        EnvState.state_project_descriptors_inited,
+        NameCategory.category_value_field_action,
     )
 
-    state_derived_package_driver_eval_finalized = StateMeta(
-        EnvState.state_derived_package_driver_eval_finalized,
-        NameCategory.category_state_mutation,
+    state_package_driver_inited = StateMeta(
+        EnvState.state_package_driver_inited,
+        NameCategory.category_value_field_action,
     )
 
     state_derived_conf_data_loaded = StateMeta(
@@ -258,8 +258,8 @@ class StateName(enum.Enum):
         NameCategory.category_state_mutation,
     )
 
-    state_package_driver_inited = StateMeta(
-        EnvState.state_package_driver_inited,
+    state_package_driver_prepared = StateMeta(
+        EnvState.state_package_driver_prepared,
         NameCategory.category_state_mutation,
     )
 
@@ -274,17 +274,17 @@ class TestStateName(NamingTestBase):
             self.prod_enum.__name__,
         )
 
-    def test_state_client_local_env_conf_dir_rel_path_eval_finalized(self):
+    def test_state_selected_env_dir_rel_path_inited(self):
         """
         A sample for debugging.
         """
         assert_test_func_name_embeds_str(
-            self.test_enum.state_client_local_env_conf_dir_rel_path_eval_finalized.name,
+            self.test_enum.state_selected_env_dir_rel_path_inited.name,
         )
 
         ret_val: enum.Enum | None = verify_name_enum_order_in_name(
-            self.test_enum.state_client_local_env_conf_dir_rel_path_eval_finalized.value.get_category().value.name_enums,
-            self.test_enum.state_client_local_env_conf_dir_rel_path_eval_finalized.name,
+            self.test_enum.state_selected_env_dir_rel_path_inited.value.get_category().value.name_enums,
+            self.test_enum.state_selected_env_dir_rel_path_inited.name,
         )
 
         assert ret_val is None

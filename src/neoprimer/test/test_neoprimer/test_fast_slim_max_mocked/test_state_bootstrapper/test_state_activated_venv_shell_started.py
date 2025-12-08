@@ -12,7 +12,7 @@ from neoprimer.venv_shell import Bootstrapper_state_activated_venv_shell_started
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     Bootstrapper_state_args_parsed,
-    Bootstrapper_state_derived_local_venv_dir_abs_path_eval_finalized,
+    Bootstrapper_state_local_venv_dir_abs_path_inited,
     Bootstrapper_state_py_exec_updated_proto_code,
     ConfConstGeneral,
     ParsedArg,
@@ -41,19 +41,19 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_default_stderr_log_handler_configured.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_derived_local_venv_dir_abs_path_eval_finalized.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.eval_own_state"
     )
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_py_exec_updated_proto_code.__name__}.eval_own_state"
     )
     @patch(f"{venv_shell.__name__}.create_temp_file")
     @patch(f"{primer_kernel.__name__}.os.execv")
-    def test_state_primer_conf_client_file_abs_path_eval_finalized_exists(
+    def test_state_global_conf_file_abs_path_inited_exists(
         self,
         mock_execv,
         mock_create_temp_file,
         mock_state_py_exec_updated_proto_code,
-        mock_state_derived_local_venv_dir_abs_path_eval_finalized,
+        mock_state_local_venv_dir_abs_path_inited,
         mock_state_default_stderr_log_handler_configured,
         mock_state_args_parsed,
     ):
@@ -91,11 +91,9 @@ class ThisTestClass(BasePyfakefsTestClass):
             PythonExecutable.py_exec_updated_proto_code
         )
 
-        mock_state_derived_local_venv_dir_abs_path_eval_finalized.return_value = (
-            mock_client_dir
-        )
+        mock_state_local_venv_dir_abs_path_inited.return_value = mock_client_dir
         expected_venv_activate_path = os.path.join(
-            mock_state_derived_local_venv_dir_abs_path_eval_finalized.return_value,
+            mock_state_local_venv_dir_abs_path_inited.return_value,
             ConfConstGeneral.file_rel_path_venv_activate,
         )
 
@@ -128,19 +126,19 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_default_stderr_log_handler_configured.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_derived_local_venv_dir_abs_path_eval_finalized.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.eval_own_state"
     )
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_py_exec_updated_proto_code.__name__}.eval_own_state"
     )
     @patch(f"{venv_shell.__name__}.create_temp_file")
     @patch(f"{primer_kernel.__name__}.os.execv")
-    def test_state_primer_conf_client_file_abs_path_eval_finalized_exists_no_install(
+    def test_state_global_conf_file_abs_path_inited_exists_no_install(
         self,
         mock_execv,
         mock_create_temp_file,
         mock_state_py_exec_updated_proto_code,
-        mock_state_derived_local_venv_dir_abs_path_eval_finalized,
+        mock_state_local_venv_dir_abs_path_inited,
         mock_state_default_stderr_log_handler_configured,
         mock_state_args_parsed,
     ):
@@ -178,11 +176,9 @@ class ThisTestClass(BasePyfakefsTestClass):
             PythonExecutable.py_exec_updated_proto_code
         )
 
-        mock_state_derived_local_venv_dir_abs_path_eval_finalized.return_value = (
-            mock_client_dir
-        )
+        mock_state_local_venv_dir_abs_path_inited.return_value = mock_client_dir
         expected_venv_activate_path = os.path.join(
-            mock_state_derived_local_venv_dir_abs_path_eval_finalized.return_value,
+            mock_state_local_venv_dir_abs_path_inited.return_value,
             ConfConstGeneral.file_rel_path_venv_activate,
         )
 

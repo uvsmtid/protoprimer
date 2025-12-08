@@ -38,8 +38,8 @@ class ArgMeta(AbstractMeta):
 
 class ArgName(enum.Enum):
 
-    name_local_env_conf_dir = ArgMeta(
-        ParsedArg.name_local_env_conf_dir,
+    name_selected_env_dir = ArgMeta(
+        ParsedArg.name_selected_env_dir,
         NameCategory.category_path_arg_value,
     )
 

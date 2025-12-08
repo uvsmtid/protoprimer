@@ -48,7 +48,7 @@ class ThisTestClass(BaseTestClass):
         assert (
             getattr(
                 parsed_args,
-                ParsedArg.name_local_env_conf_dir.value,
+                ParsedArg.name_selected_env_dir.value,
             )
             == "third"
         )

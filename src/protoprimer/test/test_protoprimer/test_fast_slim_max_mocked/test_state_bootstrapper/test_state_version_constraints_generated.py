@@ -10,8 +10,8 @@ from local_test.mock_verifier import (
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
-    Bootstrapper_state_client_conf_env_dir_abs_path_eval_finalized,
-    Bootstrapper_state_package_driver_inited,
+    Bootstrapper_state_local_conf_symlink_abs_path_inited,
+    Bootstrapper_state_package_driver_prepared,
     Bootstrapper_state_protoprimer_package_installed,
     ConfConstEnv,
     EnvContext,
@@ -36,15 +36,15 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{Bootstrapper_state_protoprimer_package_installed.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_env_dir_abs_path_eval_finalized.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_symlink_abs_path_inited.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_package_driver_inited.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_package_driver_prepared.__name__}.eval_own_state"
     )
     def test_constraints_generated(
         self,
-        mock_state_package_driver_inited,
-        mock_state_client_conf_env_dir_abs_path_eval_finalized,
+        mock_state_package_driver_prepared,
+        mock_state_local_conf_symlink_abs_path_inited,
         mock_state_protoprimer_package_installed,
     ):
 
@@ -59,7 +59,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_protoprimer_package_installed.return_value = True
         mock_client_conf_env_dir = "/mock_client_conf_env_dir"
         self.fs.create_dir(mock_client_conf_env_dir)
-        mock_state_client_conf_env_dir_abs_path_eval_finalized.return_value = (
+        mock_state_local_conf_symlink_abs_path_inited.return_value = (
             mock_client_conf_env_dir
         )
 
@@ -69,7 +69,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         ):
             self.fs.create_file(constraints_file_abs_path)
 
-        mock_state_package_driver_inited.return_value.pin_versions.side_effect = (
+        mock_state_package_driver_prepared.return_value.pin_versions.side_effect = (
             pin_versions_impl
         )
 
@@ -83,21 +83,21 @@ class ThisTestClass(BasePyfakefsTestClass):
             ConfConstEnv.constraints_txt_basename,
         )
         self.assertTrue(os.path.exists(constraints_txt_path))
-        mock_state_package_driver_inited.return_value.pin_versions.assert_called_once()
+        mock_state_package_driver_prepared.return_value.pin_versions.assert_called_once()
 
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_protoprimer_package_installed.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_env_dir_abs_path_eval_finalized.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_symlink_abs_path_inited.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_package_driver_inited.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_package_driver_prepared.__name__}.eval_own_state"
     )
     def test_generation_skipped(
         self,
-        mock_state_package_driver_inited,
-        mock_state_client_conf_env_dir_abs_path_eval_finalized,
+        mock_state_package_driver_prepared,
+        mock_state_local_conf_symlink_abs_path_inited,
         mock_state_protoprimer_package_installed,
     ):
         # given:
@@ -110,7 +110,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_protoprimer_package_installed.return_value = False
         mock_client_conf_env_dir = "/mock_client_conf_env_dir"
         self.fs.create_dir(mock_client_conf_env_dir)
-        mock_state_client_conf_env_dir_abs_path_eval_finalized.return_value = (
+        mock_state_local_conf_symlink_abs_path_inited.return_value = (
             mock_client_conf_env_dir
         )
         # when:
@@ -123,4 +123,4 @@ class ThisTestClass(BasePyfakefsTestClass):
             ConfConstEnv.constraints_txt_basename,
         )
         self.assertFalse(os.path.exists(constraints_txt_path))
-        mock_state_package_driver_inited.return_value.pin_versions.assert_not_called()
+        mock_state_package_driver_prepared.return_value.pin_versions.assert_not_called()

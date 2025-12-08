@@ -6,7 +6,7 @@ from local_test.base_test_class import BasePyfakefsTestClass
 from local_test.name_assertion import assert_test_func_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
-    Bootstrapper_state_input_proto_code_file_abs_path_eval_finalized,
+    Bootstrapper_state_proto_code_file_abs_path_inited,
     ConfConstClient,
     ConfConstEnv,
     ConfConstGeneral,
@@ -30,13 +30,13 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.get_default_start_id", return_value="mock_start_id"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_input_proto_code_file_abs_path_eval_finalized.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_proto_code_file_abs_path_inited.__name__}.eval_own_state"
     )
     @patch(f"{primer_kernel.__name__}.os.execve")
     def test_prime_switches_from_py_exec_unknown(
         self,
         mock_execve,
-        mock_state_input_proto_code_file_abs_path_eval_finalized,
+        mock_state_proto_code_file_abs_path_inited,
         mock_get_default_start_id,
     ):
         assert_test_func_name_embeds_str(PythonExecutable.py_exec_unknown.name)
@@ -57,8 +57,8 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
 
         primer_conf_data = {
-            ConfField.field_primer_ref_root_dir_rel_path.value: ".",
-            ConfField.field_primer_conf_client_dir_rel_path.value: ConfConstPrimer.default_client_conf_dir_rel_path,
+            ConfField.field_ref_root_dir_rel_path.value: ".",
+            ConfField.field_global_conf_dir_rel_path.value: ConfConstPrimer.default_client_conf_dir_rel_path,
         }
         write_json_file(
             os.path.join(
@@ -69,8 +69,8 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
 
         client_conf_data = {
-            ConfField.field_client_link_name_dir_rel_path.value: ConfConstClient.default_dir_rel_path_leap_env_link_name,
-            ConfField.field_client_default_env_dir_rel_path.value: default_env_dir_rel_path,
+            ConfField.field_local_conf_symlink_rel_path.value: ConfConstClient.default_dir_rel_path_leap_env_link_name,
+            ConfField.field_default_env_dir_rel_path.value: default_env_dir_rel_path,
         }
         write_json_file(
             os.path.join(
@@ -94,13 +94,13 @@ class ThisTestClass(BasePyfakefsTestClass):
             env_conf_data,
         )
 
-        state_input_proto_code_file_abs_path_eval_finalized = os.path.join(
+        state_proto_code_file_abs_path_inited = os.path.join(
             mock_client_dir,
             ConfConstGeneral.default_proto_code_basename,
         )
-        self.fs.create_file(state_input_proto_code_file_abs_path_eval_finalized)
-        mock_state_input_proto_code_file_abs_path_eval_finalized.return_value = (
-            state_input_proto_code_file_abs_path_eval_finalized
+        self.fs.create_file(state_proto_code_file_abs_path_inited)
+        mock_state_proto_code_file_abs_path_inited.return_value = (
+            state_proto_code_file_abs_path_inited
         )
 
         script_basename = os.path.basename(os.path.abspath(__file__))
@@ -140,6 +140,6 @@ class ThisTestClass(BasePyfakefsTestClass):
                 EnvVar.var_PROTOPRIMER_PY_EXEC.value: PythonExecutable.py_exec_required.name,
                 EnvVar.var_PROTOPRIMER_START_ID.value: "mock_start_id",
                 EnvVar.var_PROTOPRIMER_STDERR_LOG_LEVEL.value: "INFO",
-                EnvVar.var_PROTOPRIMER_PROTO_CODE.value: state_input_proto_code_file_abs_path_eval_finalized,
+                EnvVar.var_PROTOPRIMER_PROTO_CODE.value: state_proto_code_file_abs_path_inited,
             },
         )
