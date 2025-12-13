@@ -1,5 +1,4 @@
 
-[![lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-purple.svg?style=flat-square&color=purple)](https://github.com/uvsmtid/protoprimer)
 [![PyPI version](https://img.shields.io/pypi/v/protoprimer.svg?style=flat-square&color=blue&label=package)](https://pypi.org/project/protoprimer)
 [![GitHub test 3.7 job](https://img.shields.io/github/actions/workflow/status/uvsmtid/protoprimer/test_3.7.yaml.svg?style=flat-square&color=palegreen&label=test%203.7)](https://github.com/uvsmtid/protoprimer/actions/workflows/test_3.7.yaml)
 [![GitHub test 3.14 job](https://img.shields.io/github/actions/workflow/status/uvsmtid/protoprimer/test_3.14.yaml.svg?style=flat-square&color=palegreen&label=test%203.14)](https://github.com/uvsmtid/protoprimer/actions/workflows/test_3.14.yaml)
@@ -9,45 +8,44 @@
 <!--
 FT_84_11_73_28: see supported python versions above.
 
-TODO: Update `doc` badge to use the doc job.
-
-TODO: Use links to FC/UC docs under `./doc` (when ready) to navigate to details.
+TODO: Use links to FC/UC docs under `./doc` (when ready) from this readme to navigate to details.
 -->
 
 # `protoprimer`
 
-An app/lib for bootstrapping `python` code into `venv` directly
-(without intermediate `shell` wrappers).
+*   An **app** to bootstrap (not only) `python` projects in a single click (from fresh repo clone).
+*   A **lib** to switch `python` runtime into `venv` directly (avoiding intermediate `shell` wrappers).
 
 ## TL;DR
 
 See [instant_python_bootstrap][instant_python_bootstrap].
 
-The `protoprimer` makes **single-touch** pure `python` bootstrap possible (no details confusing users):
+The `protoprimer` provides a **single-touch** pure `python` bootstrap (without details confusing users):
 
 ```sh
 ./prime
 ```
 
-It switches to required `python` version
-(optionally targeting selected repo clone environment):
-*   local/cloud/...
-*   Alice/Bob/...
+It switches to required `python` version and creates `venv` specific to the environment of that repo clone:
+*   dev or prod
+*   local or cloud
+*   Alice or Bob
+*   ...
 
 ## Intro
 
 Let's say, [forced by the motivation][protoprimer_motivation],
-people dropped `shell` and picked `python` to automate...
+people dropped `shell` and picked `python` to automate, but...
 
 ### Common problem
 
 Every time some `repo.git` is cloned,
 it has to be prepared/bootstrapped/primed to make `python` ready.
 
-Because `python` is **not** ready yet, `shell`-scripts are used to work around that.\
-Again!
+Because `python` is **not** ready yet,\
+`shell`-scripts are used to work around that. Again!
 
-Ultimately, is this the case `python` needs to rely on anything non-`python`?
+Ultimately, can we stick to `python`-only-tools for `python`?
 
 ### General idea
 

@@ -110,3 +110,39 @@ leap_derived = (
 )\
 """
     assert RenderConfigVisitor().render_node(root_node) == expected_output
+
+
+def test_render_derived_config_data_with_unused_fields_quiet():
+    config_data = {
+        EnvState.state_project_descriptors_inited.name: [
+            {
+                ConfField.field_build_root_dir_rel_path.value: "src/test_project",
+                ConfField.field_install_extras.value: [
+                    "test",
+                ],
+            },
+        ],
+        EnvState.state_proto_code_file_abs_path_inited.name: "/abs/path/to/proto.py",
+        "whatever_test": 5,
+    }
+
+    root_node = RootNode_derived(
+        node_indent=0,
+        orig_data=config_data,
+    )
+
+    expected_output = f"""leap_derived = (
+    {{
+        "state_proto_code_file_abs_path_inited": "/abs/path/to/proto.py",
+        "state_project_descriptors_inited": [
+            {{
+                "build_root_dir_rel_path": "src/test_project",
+                "install_extras": [
+                    "test",
+                ],
+            }},
+        ],
+        "whatever_test": 5,
+    }}
+)"""
+    assert RenderConfigVisitor(is_quiet=True).render_node(root_node) == expected_output
