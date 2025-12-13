@@ -1,4 +1,32 @@
 {
     "local_conf_symlink_rel_path": "lconf",
-    "default_env_dir_rel_path": "dst/default_env"
+    "default_env_dir_rel_path": "dst/default_env",
+    "required_python_file_abs_path": "/usr/bin/python",
+    "local_venv_dir_rel_path": "venv",
+    "local_log_dir_rel_path": "log",
+    "local_tmp_dir_rel_path": "tmp",
+    "project_descriptors": [
+        {
+            "build_root_dir_rel_path": "src/local_doc",
+            "install_extras": []
+        },
+        {
+            "build_root_dir_rel_path": "src/local_repo",
+            "install_extras": []
+        },
+        {
+            "build_root_dir_rel_path": "src/local_test",
+            "install_extras": []
+        },
+        {
+            "build_root_dir_rel_path": "src/neoprimer",
+            "install_extras": []
+        },
+        {
+            "build_root_dir_rel_path": "src/protoprimer",
+            "install_extras": [
+                "test"
+            ]
+        }
+    ]
 }

@@ -404,3 +404,38 @@ some_var = (
 )\
 """
     assert RenderConfigVisitor().render_node(root_node) == expected_output
+
+
+def test_render_config_quiet():
+    config_data = copy.deepcopy(common_sample)
+
+    root_node = build_root_node(
+        some_var,
+        config_data,
+    )
+
+    expected_output = f"""some_var = (
+    {{
+        "a": 1,
+        "b": "hello",
+        "c": True,
+        "d": [
+            1,
+            2,
+            3,
+        ],
+        "e": {{
+            "f": "nested",
+        }},
+        "f": [
+            4,
+            5,
+            [
+                6,
+                7,
+            ],
+            8,
+        ],
+    }}
+)"""
+    assert RenderConfigVisitor(is_quiet=True).render_node(root_node) == expected_output

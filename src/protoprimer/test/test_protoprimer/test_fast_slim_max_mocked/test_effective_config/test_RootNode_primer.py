@@ -90,3 +90,28 @@ leap_primer = (
 )\
 """
     assert RenderConfigVisitor().render_node(root_node) == expected_output
+
+
+def test_render_primer_config_data_with_unused_fields_quiet():
+    state_primer_conf_file_abs_path_inited = "/abs/path/to/file.json"
+
+    config_data = {
+        ConfField.field_ref_root_dir_rel_path.value: "../..",
+        ConfField.field_global_conf_dir_rel_path.value: ConfConstPrimer.default_client_conf_dir_rel_path,
+        "whatever_test": 5,
+    }
+
+    root_node = RootNode_primer(
+        node_indent=0,
+        orig_data=config_data,
+        state_primer_conf_file_abs_path_inited=state_primer_conf_file_abs_path_inited,
+    )
+
+    expected_output = f"""leap_primer = (
+    {{
+        "ref_root_dir_rel_path": "../..",
+        "global_conf_dir_rel_path": "gconf",
+        "whatever_test": 5,
+    }}
+)"""
+    assert RenderConfigVisitor(is_quiet=True).render_node(root_node) == expected_output
