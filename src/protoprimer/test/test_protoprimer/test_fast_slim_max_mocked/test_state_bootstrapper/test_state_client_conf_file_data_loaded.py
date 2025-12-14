@@ -31,6 +31,9 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
 
     @patch(
+        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_stderr_log_level_eval_finalized.__name__}.eval_own_state"
+    )
+    @patch(
         f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_py_exec_var_loaded.__name__}.eval_own_state"
     )
     @patch(
@@ -44,6 +47,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_global_conf_file_abs_path_inited,
         mock_state_input_run_mode_arg_loaded,
         mock_state_input_py_exec_var_loaded,
+        mock_state_input_stderr_log_level_eval_finalized,
     ):
 
         # given:
@@ -80,6 +84,9 @@ class ThisTestClass(BasePyfakefsTestClass):
         # no exception happens
 
     @patch(
+        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_stderr_log_level_eval_finalized.__name__}.eval_own_state"
+    )
+    @patch(
         f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_py_exec_var_loaded.__name__}.eval_own_state"
     )
     @patch(
@@ -93,6 +100,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_global_conf_file_abs_path_inited,
         mock_state_input_run_mode_arg_loaded,
         mock_state_input_py_exec_var_loaded,
+        mock_state_input_stderr_log_level_eval_finalized,
     ):
 
         # given:

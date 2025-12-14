@@ -94,3 +94,27 @@ leap_input = (
 )\
 """
     assert RenderConfigVisitor().render_node(root_node) == expected_output
+
+
+def test_render_input_config_data_with_unused_fields_quiet():
+    config_data = {
+        EnvState.state_proto_code_file_abs_path_inited.name: f"/{ConfConstGeneral.default_proto_code_basename}",
+        EnvState.state_primer_conf_file_abs_path_inited.name: f"/{ConfConstGeneral.name_protoprimer_package}.{ConfConstInput.conf_file_ext}",
+        "some_string": "some_value",
+        "some_int": 123,
+    }
+
+    root_node = RootNode_input(
+        node_indent=0,
+        orig_data=config_data,
+    )
+
+    expected_output = f"""leap_input = (
+    {{
+        "state_proto_code_file_abs_path_inited": "/{ConfConstGeneral.default_proto_code_basename}",
+        "state_primer_conf_file_abs_path_inited": "/{ConfConstGeneral.name_protoprimer_package}.{ConfConstInput.conf_file_ext}",
+        "some_string": "some_value",
+        "some_int": 123,
+    }}
+)"""
+    assert RenderConfigVisitor(is_quiet=True).render_node(root_node) == expected_output

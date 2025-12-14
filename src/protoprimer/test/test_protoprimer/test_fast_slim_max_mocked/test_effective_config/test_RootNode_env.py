@@ -133,3 +133,46 @@ leap_env = (
 )\
 """
     assert RenderConfigVisitor().render_node(root_node) == expected_output
+
+
+def test_render_env_config_data_with_unused_fields_quiet():
+    state_input_proto_conf_env_file_abs_path_eval_finalized = "/abs/path/to/file.json"
+
+    config_data = {
+        ConfField.field_project_descriptors.value: [
+            {
+                ConfField.field_build_root_dir_rel_path.value: "src/test_project",
+                ConfField.field_install_extras.value: [
+                    "test",
+                ],
+                "whatever_test": [
+                    7,
+                ],
+            },
+        ],
+        "whatever_test": 5,
+    }
+
+    root_node = RootNode_env(
+        node_indent=0,
+        orig_data=config_data,
+        state_local_conf_file_abs_path_inited=state_input_proto_conf_env_file_abs_path_eval_finalized,
+    )
+
+    expected_output = f"""leap_env = (
+    {{
+        "project_descriptors": [
+            {{
+                "build_root_dir_rel_path": "src/test_project",
+                "install_extras": [
+                    "test",
+                ],
+                "whatever_test": [
+                    7,
+                ],
+            }},
+        ],
+        "whatever_test": 5,
+    }}
+)"""
+    assert RenderConfigVisitor(is_quiet=True).render_node(root_node) == expected_output
