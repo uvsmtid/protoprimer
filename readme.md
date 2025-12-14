@@ -1,5 +1,4 @@
 
-[![lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-purple.svg?style=flat-square&color=purple)](https://github.com/uvsmtid/protoprimer)
 [![PyPI version](https://img.shields.io/pypi/v/protoprimer.svg?style=flat-square&color=blue&label=package)](https://pypi.org/project/protoprimer)
 [![GitHub test 3.7 job](https://img.shields.io/github/actions/workflow/status/uvsmtid/protoprimer/test_3.7.yaml.svg?style=flat-square&color=palegreen&label=test%203.7)](https://github.com/uvsmtid/protoprimer/actions/workflows/test_3.7.yaml)
 [![GitHub test 3.14 job](https://img.shields.io/github/actions/workflow/status/uvsmtid/protoprimer/test_3.14.yaml.svg?style=flat-square&color=palegreen&label=test%203.14)](https://github.com/uvsmtid/protoprimer/actions/workflows/test_3.14.yaml)
@@ -9,51 +8,103 @@
 <!--
 FT_84_11_73_28: see supported python versions above.
 
-TODO: Update `doc` badge to use the doc job.
-
-TODO: Use links to FC/UC docs under `./doc` (when ready) to navigate to details.
+TODO: Use links to FC/UC docs under `./doc` (when ready) from this readme to navigate to details.
 -->
 
 # `protoprimer`
 
-An app/lib for bootstrapping `python` code into `venv` directly
-(without intermediate `shell` wrappers).
+*   An **app** to bootstrap (not only) `python` projects in a single click (from fresh repo clone).
+*   A **lib** to switch `python` runtime into `venv` directly (avoiding intermediate `shell` wrappers).
 
 ## TL;DR
 
-See [instant_python_bootstrap][instant_python_bootstrap].
-
-The `protoprimer` makes **single-touch** pure `python` bootstrap possible (no details confusing users):
+The `protoprimer` provides a **single-touch** pure `python` bootstrap (without details confusing users):
 
 ```sh
 ./prime
 ```
 
-It switches to required `python` version
-(optionally targeting selected repo clone environment):
-*   local/cloud/...
-*   Alice/Bob/...
+It switches to the required `python` version and creates a `venv` specific to the environment of that repo clone:
+*   dev or prod
+*   local or cloud
+*   Alice or Bob
+*   ...
 
-## Intro
+<a id="protoprimer-getting-started"></a>
+
+## Quick start
+
+For the simplest case, see [instant_python_bootstrap][instant_python_bootstrap]:
+
+*   [Copy][initial_copy] (one time):
+
+    ```
+    ./
+    ├── prime            <--- own copy
+    ├── pyproject.toml
+    └── *
+    ```
+
+    Make your **own copy** of [`proto_kernel.py`][local_proto_kernel.py] to install it named as `prime`.
+
+    Later it can be renamed, (with some configuration) moved under any directory, used by other scripts.
+
+    For now, save it as `prime` next to your `pyproject.toml`, commit the copy to be part of the repo.
+
+*   Run (any time):
+
+    ```sh
+    ./prime
+    ```
+
+## Typical usage
+
+Bootstrap (default env):
+
+```sh
+./prime
+```
+
+Bootstrap (special env):
+
+```sh
+./prime --env dst/special_env
+```
+
+Upgrade: re-create venv, re-solve and re-install deps, re-pin versions:
+
+```sh
+./prime --reinstall
+```
+
+Review effective config:
+
+```sh
+./prime --config
+```
+
+## Background
 
 Let's say, [forced by the motivation][protoprimer_motivation],
-people dropped `shell` and picked `python` to automate...
+people dropped `shell` and picked `python` to automate, but...
 
 ### Common problem
 
 Every time some `repo.git` is cloned,
 it has to be prepared/bootstrapped/primed to make `python` ready.
 
-Because `python` is **not** ready yet, `shell`-scripts are used to work around that.\
-Again!
+[![youtube](https://img.youtube.com/vi/gNYgeAxCK3M/0.jpg)](https://www.youtube.com/shorts/gNYgeAxCK3M)
 
-Ultimately, is this the case `python` needs to rely on anything non-`python`?
+Because `python` is **not** ready yet,\
+`shell`-scripts are used to work around that. Again!
+
+Ultimately, can we stick to `python`-only tools for `python`?
 
 ### General idea
 
 Replace the role of the `shell`:\
-➖ instead of relying on the presence of `shell` executable to bootstrap `python`\
-➕ rely on the presence of `python` executable (of any version) to bootstrap required `python` version
+➖ instead of relying on the presence of a `shell` executable to bootstrap `python`\
+➕ rely on a `python` executable (of any version) to bootstrap the required `python` version
 
 ```mermaid
 ---
@@ -101,7 +152,7 @@ flowchart LR;
 
 ### Approach: min outside, max inside
 
-Wrap the details into **single-touch**, self-contained, no-deps, no-args, cross-platform, ...\
+Wrap the details into a **single-touch**, self-contained, no-deps, no-args, cross-platform, ...\
 command started by an **arbitrary** `python` version to bootstrap the required one:
 
 ```sh
@@ -137,47 +188,13 @@ It is **not** ideal to re-invent such wrappers for every project.
 
 </details>
 
-<!--
-TODO: `uv` is still to be fully implemented.
--->
-
 ### Project focus
 
-The `protoprimer` exposes API-s to reuse its internals (e.g. config discovery, DAG, ...)
-and **hides the details** behind these two use cases:
+The `protoprimer` **covers the details** for these two use cases:
 *   **app**: bootstrapping required `python` version and `venv` by arbitrary `python` from the `PATH`
 *   **lib**: executing `python` scripts directly (without explicit `venv` activation and `shell` wrappers)
 
-### Typical usage
-
-Bootstrap (default env):
-
-```sh
-./prime
-```
-
-Bootstrap (special env):
-
-```sh
-./prime --env dst/special_env
-```
-
-Reset: re-create venv, re-install deps, re-pin versions:
-
-```sh
-./prime --reinstall
-```
-
-<a id="protoprimer-getting-started"></a>
-
-## Getting started
-
-Use [instant_python_bootstrap][instant_python_bootstrap] to start immediately.
-
-More detailed instructions:
-*   [Install][initial_copy] your `own_copy`.
-*   [Init][init_config] your (repo) config.
-*   [Evolve][subsequent_update] with your dependencies.
+... and exposes API-s to reuse its internals (e.g. config discovery, DAG, ...).
 
 <a id="protoprimer-motivation"></a>
 
@@ -254,12 +271,13 @@ This mono repo is roughly divided into:
 
 ## The stand-alone copy: proto code
 
-Installing the `protoprimer` via a `pip`-like command on repo clone
-introduces the "chicken & egg" problem because you need the `protoprimer`
-to transition from the arbitrary `python` outside of `venv` to run that `pip`-like command.
+Installing the `protoprimer` as a package would introduce the "chicken & egg" problem
+because that package requires `venv` (which is the very thing the `protoprimer` is supposed to create).
 
-Instead, the (proto code) script is stand-alone (copied from this repo),
-but it auto-updates itself from the `protoprimer` package when `venv` is ready.
+Instead, the (proto code) script is stand-alone (a copy from this repo),
+but it auto-updates itself from the `protoprimer` package when `venv` is ready:
+*   install = 1 x copy
+*   bootstrap = N x update
 
 ```mermaid
 ---
@@ -270,12 +288,12 @@ config:
 graph TD;
 
     copy_link["**1 x copy**"]
-    github_web["github.com"]
-    protoprimer_repo["\`protoprimer\` repo"];
+    github_web["from<br>github.com"]
+    protoprimer_repo["from<br>\`protoprimer\` repo"];
 
     update_link["**N x update**"];
-    pypi_web["pypi.org"]
-    protoprimer_package["\`protoprimer\` package"];
+    pypi_web["from<br>pypi.org"]
+    protoprimer_package["from<br>\`protoprimer\` package"];
 
     client_repo["client repo<br>**own_copy**"];
 
@@ -288,21 +306,39 @@ graph TD;
     protoprimer_package --bootstrap--> client_repo;
 ```
 
-*   [Initial][initial_copy] **1 x copy**: install the stand-alone copy into the target client repo:
+## Distinction: proto code vs entry script
 
-    This is a one-time manual process.
+*   ["proto code"][FT_90_65_67_62.proto_code.md] ~ `./cmd/proto_code/proto_kernel.py`
 
-    The stand-alone copy (once merged) is reused in all the repo clones.
+    A copy of [`proto_kernel.py`][local_proto_kernel.py] stored in the client target repo.
 
-*   [Subsequent][subsequent_update] **N x update**: bootstrap a specific repo clone
+    Only a **single** copy of the proto code script is needed per repo.
 
-    This is an automatic process.
+*   ["entry script"][FT_75_87_82_46.entry_script.md] ~ `./prime`
 
-    The updated stand-alone copy (once merged) is reused in all the repo clones.
+    Any script that relies on the proto code to run.
 
-    The process is triggered via **one-touch** execution of entry scripts like `./prime`.
+    There can be **many** entry scripts per repo.
 
-The subsequent bootstraps is the main purpose of the `protoprimer` as an app.
+    In this repo:
+
+    *   there are scripts like `./prime` using proto code as an **app** (bootstrap).
+
+    *   there are many others in [cmd][cmd] dir using proto code as a **lib**.
+
+### Example (this repo): proto code vs entry script
+
+Instead of the `path/to/own_copy`, this repo uses this specific path for **proto code**:
+
+```sh
+./cmd/proto_code/proto_kernel.py --help
+```
+
+However, for brevity, the rest of this doc uses this **entry script** (which invokes the proto code):
+
+```sh
+./prime --help
+```
 
 <a id="protoprimer-install-copy"></a>
 
@@ -325,57 +361,25 @@ The subsequent bootstraps is the main purpose of the `protoprimer` as an app.
     git commit -m 'Copy `proto_kernel.py` from `protoprimer`'
     ```
 
-### Example from this repo
+<a id="protoprimer-effective-config"></a>
 
-Instead of the `path/to/own_copy`, this repo uses this specific path for **proto code**:
+## Effective configuration
 
-```sh
-./cmd/proto_code/proto_kernel.py --help
-```
-
-However, for brevity, the rest of this doc uses this **entry script** (which invokes the proto code):
-
-```sh
-./prime --help
-```
-
-## Convention: proto code vs entry script
-
-*   ["proto code"][FT_90_65_67_62.proto_code.md] ~ `./cmd/proto_code/proto_kernel.py`
-
-    A copy of [`proto_kernel.py`][local_proto_kernel.py] stored in the client target repo.
-
-    There should be a **single** proto code script per repo.
-
-*   ["entry script"][FT_75_87_82_46.entry_script.md] ~ `./prime`
-
-    Any script that relies on the proto code to run.
-
-    There can be **many** of entry scripts per repo.
-
-    In this repo:
-
-    *   there are scripts like `./prime` using proto code as an **app** (bootstrap).
-
-    *   there are many others in [cmd][cmd] dir using proto code as a **lib**.
-
-<a id="protoprimer-init-config"></a>
-
-## Initialization: custom config
-
-It is possible to generate effective config for data loaded from files and the derived config values:
+It is possible to generate effective config to see:
+*   the data **loaded** from files
+*   the data **derived** from the **loaded** data
 
 ```sh
 ./prime --config
 ```
 
-The output uses dynamically generated annotations to easily follow the purpose of the config by example.
+The output uses dynamically generated annotations to explain the purpose of each field.
 
 ## Configuration: global vs local
 
 The `protoprimer` supports:
-*   global config: shared between all repo clones
-*   local config: private to specific (group of) repo clones
+*   `gconf` ~ global config: shared between all environments (repo clones)
+*   `lconf` ~ local config: private to specific environments (repo clones)
 
 ```mermaid
 ---
@@ -410,13 +414,15 @@ To bootstrap in any other (non-default) env, run:
 ./prime --env dst/special_env
 ```
 
-The existence of `lconf` symlink (and where it points)
+The existence of `lconf` symlink (and where it points to)
 is private to the repo clone (and should be `.gitignore`-ed)
-but all its possible targets in `dst/*` are still versioned.
+but all its possible targets in `dst/*` have to be versioned.
 
 ## Filesystem layout: configuration leaps
 
-The `protoprimer` supports any filesystem layout for client repos - see output:
+The `protoprimer` supports any filesystem layout for client repos.
+
+To discover the config files within the filesystem, it uses the concept of "config leap" - see:
 
 ```
 ./prime --config
@@ -438,7 +444,7 @@ graph TD;
     conf_input -- "`./cmd/proto_code`" --> conf_primer;
     conf_primer -- "`./gconf`" --> conf_client;
     conf_client -- "`./lconf`" --> conf_env;
-    conf_env --- conf_derived;
+    conf_env --> conf_derived;
 
     invis_L1_S2[ ];
     invis_L1_S3[ ];
@@ -458,9 +464,8 @@ graph TD;
     invis_L3_S1 ~~~ invis_L3_S2;
     invis_L3_S2 ~~~ conf_env;
 
-    style conf_input fill:none,stroke:none;
-    style conf_derived fill:none,stroke:none;
-    linkStyle 3 stroke-width:0px
+    style conf_input fill:none;
+    style conf_derived fill:none;
 
     style invis_L1_S2 fill:none,stroke:none;
     style invis_L1_S3 fill:none,stroke:none;
@@ -472,10 +477,11 @@ graph TD;
     style invis_L3_S2 fill:none,stroke:none;
 ```
 
-To bootstrap, it employs the concept of "configuration leaps" to find all the config data:
-*   [leap_primer][proto_kernel.leap_primer.json]: allows "proto code" finding client repo "global config"
-*   [leap_client][proto_kernel.leap_client.json]: provides "global config" and allows finding target env "local config"
-*   [leap_env][proto_kernel.leap_env.json]: provides "local config"
+*   `leap_input`: not a file - represents data available to the process (env vars, CLI args, etc.)
+*   [`leap_primer`][leap_primer]: allows "proto code" to find the client repo "global config"
+*   [`leap_client`][leap_client]: provides "global config" and allows finding the target env "local config"
+*   [`leap_env`][leap_env]: provides "local config"
+*   `leap_derived`: not a file - represents effective config data derived from all the other data
 
 ## Required `python`: switching executables
 
@@ -493,19 +499,23 @@ To achieve this, the `protoprimer` switches `python` executables in a multi-stag
 
 Each executable is replaced with `os.execve` call.
 
+<!--
+TODO: To support Windows, `os.execve` will have to be changed to use `subprocess` with a chain of children.
+-->
+
 ## Reproducible `venv`: version pinning
 
 To make bootstrap reproducible for any target env, the `protoprimer` supports version pinning (locking):
 *   the actual dependencies are specified in the individual [pyproject.toml][pyproject.toml] per project
-*   the versions are constrained by [constraints.txt][constraints.txt] generated per target env (per "local config")
+*   the versions are constrained by [constraints.txt][constraints.txt] managed for selected env (for "local config")
 
 In short:
 *   `pyproject.toml` lists the dependencies (and version ranges)
 *   `constraints.txt` pins the dependencies to specific versions
 
-<a id="protoprimer-evolve-project"></a>
+<a id="protoprimer-upgrade-project"></a>
 
-## Evolution: subsequent N x update
+## Upgrading versions
 
 To re-create `venv`, re-install the deps, and re-pin the versions, run:
 
@@ -576,9 +586,9 @@ Each subdirectory of [src][src] directory contains related sub-projects (with `p
 [systemd_wiki]: https://en.wikipedia.org/wiki/Systemd
 [FT_57_87_94_94.bootstrap_process.md]: doc/feature_topic/FT_57_87_94_94.bootstrap_process.md
 
-[proto_kernel.leap_primer.json]: cmd/proto_code/proto_kernel.json
-[proto_kernel.leap_client.json]: gconf/proto_kernel.json
-[proto_kernel.leap_env.json]: dst/default_env/proto_kernel.json
+[leap_primer]: cmd/proto_code/proto_kernel.json
+[leap_client]: gconf/proto_kernel.json
+[leap_env]: dst/default_env/proto_kernel.json
 
 [constraints.txt]: dst/default_env/constraints.txt
 [pyproject.toml]: src/neoprimer/pyproject.toml
@@ -586,7 +596,7 @@ Each subdirectory of [src][src] directory contains related sub-projects (with `p
 [getting_started]: #protoprimer-getting-started
 [protoprimer_motivation]: #protoprimer-motivation
 [initial_copy]: #protoprimer-install-copy
-[init_config]: #protoprimer-init-config
-[subsequent_update]: #protoprimer-evolve-project
+[effective_config]: #protoprimer-effective-config
+[subsequent_upgrade]: #protoprimer-upgrade-project
 
 [instant_python_bootstrap]: https://github.com/uvsmtid/instant_python_bootstrap

@@ -177,3 +177,36 @@ leap_client = (
 )\
 """
     assert RenderConfigVisitor().render_node(root_node) == expected_output
+
+
+def test_render_client_config_data_with_unused_fields_quiet():
+    state_global_conf_file_abs_path_inited = "/abs/path/to/file.json"
+
+    config_data = {
+        ConfField.field_local_conf_symlink_rel_path.value: "lconf",
+        ConfField.field_default_env_dir_rel_path.value: "dst/default_env",
+        ConfField.field_required_python_file_abs_path.value: "/usr/bin/python3",
+        ConfField.field_local_venv_dir_rel_path.value: "venv",
+        ConfField.field_local_log_dir_rel_path.value: "log",
+        ConfField.field_local_tmp_dir_rel_path.value: "tmp",
+        "whatever_test": 5,
+    }
+
+    root_node = RootNode_client(
+        node_indent=0,
+        orig_data=config_data,
+        state_global_conf_file_abs_path_inited=state_global_conf_file_abs_path_inited,
+    )
+
+    expected_output = f"""leap_client = (
+    {{
+        "local_conf_symlink_rel_path": "lconf",
+        "default_env_dir_rel_path": "dst/default_env",
+        "required_python_file_abs_path": "/usr/bin/python3",
+        "local_venv_dir_rel_path": "venv",
+        "local_log_dir_rel_path": "log",
+        "local_tmp_dir_rel_path": "tmp",
+        "whatever_test": 5,
+    }}
+)"""
+    assert RenderConfigVisitor(is_quiet=True).render_node(root_node) == expected_output
