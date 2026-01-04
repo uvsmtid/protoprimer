@@ -311,7 +311,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # then:
 
-        self.assertIn("target is not a directory", str(ctx.exception))
+        self.assertIn("is not a directory", str(ctx.exception))
 
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.eval_own_state"

@@ -15,15 +15,17 @@ from local_test.integrated_helper import (
 )
 from local_test.package_version_verifier import extract_package_version
 from protoprimer.primer_kernel import (
+    CommandAction,
     ConfConstClient,
     ConfConstEnv,
     ConfConstInput,
     ConfConstPrimer,
+    RunMode,
     SyntaxArg,
 )
 
 
-def test_reinstall(tmp_path: pathlib.Path):
+def test_upgrade(tmp_path: pathlib.Path):
 
     # given:
 
@@ -82,6 +84,7 @@ def test_reinstall(tmp_path: pathlib.Path):
     run_primer_main(
         [
             str(proto_kernel_abs_path),
+            "prime",
             SyntaxArg.arg_v,
         ]
     )
@@ -102,8 +105,8 @@ def test_reinstall(tmp_path: pathlib.Path):
     run_primer_main(
         [
             str(proto_kernel_abs_path),
+            RunMode.mode_upgrade.value,
             SyntaxArg.arg_v,
-            SyntaxArg.arg_reinstall,
         ]
     )
 

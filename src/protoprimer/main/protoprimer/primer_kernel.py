@@ -36,7 +36,7 @@ from typing import (
 
 # The release process ensures that content in this file matches the version below while tagging the release commit
 # (otherwise, if the file comes from a different commit, the version is irrelevant):
-__version__ = "0.3.0"
+__version__ = "0.4.0"
 
 logger: logging.Logger = logging.getLogger()
 
@@ -250,6 +250,9 @@ class RunMode(enum.Enum):
 
     mode_prime = "prime"
 
+    # See UC_61_12_90_59.upgrade_venv.md
+    mode_upgrade = "upgrade"
+
     # TODO: rename to "conf"?
     mode_config = "config"
 
@@ -259,7 +262,6 @@ class RunMode(enum.Enum):
 
 class CommandAction(enum.Enum):
 
-    # See UC_61_12_90_59.reinstall_venv.md
     action_reinstall = "reinstall"
 
     action_command = "command"
@@ -402,7 +404,6 @@ class ParsedArg(enum.Enum):
 
     name_command = f"run_{CommandAction.action_command.value}"
 
-    name_primer_runtime = str(ValueName.value_primer_runtime.value)
     name_run_mode = str(ValueName.value_run_mode.value)
     name_final_state = str(ValueName.value_final_state.value)
 
@@ -415,14 +416,6 @@ class LogLevel(enum.Enum):
 
 class SyntaxArg:
 
-    arg_reinstall = f"--{CommandAction.action_reinstall.value}"
-
-    arg_mode_prime = f"--{RunMode.mode_prime.value}"
-    arg_mode_config = f"--{RunMode.mode_config.value}"
-    arg_mode_check = f"--{RunMode.mode_check.value}"
-
-    arg_primer_runtime = f"--{ParsedArg.name_primer_runtime.value}"
-    arg_run_mode = f"--{ParsedArg.name_run_mode.value}"
     arg_final_state = f"--{ParsedArg.name_final_state.value}"
 
     arg_c = f"-{CommandAction.action_command.value[0]}"
@@ -430,15 +423,19 @@ class SyntaxArg:
 
     arg_s = f"-{LogLevel.name_silent.value[0]}"
     arg_silent = f"--{LogLevel.name_silent.value}"
-    dest_silent = f"{ValueName.value_stderr_log_level}_{LogLevel.name_silent.value}"
+    dest_silent = (
+        f"{ValueName.value_stderr_log_level.value}_{LogLevel.name_silent.value}"
+    )
 
     arg_q = f"-{LogLevel.name_quiet.value[0]}"
     arg_quiet = f"--{LogLevel.name_quiet.value}"
-    dest_quiet = f"{ValueName.value_stderr_log_level}_{LogLevel.name_quiet.value}"
+    dest_quiet = f"{ValueName.value_stderr_log_level.value}_{LogLevel.name_quiet.value}"
 
     arg_v = f"-{LogLevel.name_verbose.value[0]}"
     arg_verbose = f"--{LogLevel.name_verbose.value}"
-    dest_verbose = f"{ValueName.value_stderr_log_level}_{LogLevel.name_verbose.value}"
+    dest_verbose = (
+        f"{ValueName.value_stderr_log_level.value}_{LogLevel.name_verbose.value}"
+    )
 
     arg_e = f"-{KeyWord.key_env.value[0]}"
     arg_env = f"--{KeyWord.key_env.value}"
@@ -933,111 +930,219 @@ class ConfConstEnv:
     constraints_txt_basename = "constraints.txt"
 
 
-def init_arg_parser():
+class CustomArgumentParser(argparse.ArgumentParser):
+    def error(self, message):
+        raise ValueError(message)
 
-    suppress_internal_args: bool = True
 
-    arg_parser = argparse.ArgumentParser(
-        description="Prime the environment based on existing configuration.",
-        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
-    )
-
-    arg_parser.add_argument(
-        SyntaxArg.arg_reinstall,
-        type=str_to_bool,
-        nargs="?",
-        const=True,
-        default=False,
-        dest=ParsedArg.name_reinstall.value,
-        metavar=ParsedArg.name_reinstall.value,
-        help="Re-create `venv`, re-install dependencies, and re-pin versions.",
-    )
-
-    arg_parser.add_argument(
-        SyntaxArg.arg_c,
-        SyntaxArg.arg_command,
-        type=str,
-        dest=ParsedArg.name_command.value,
-        metavar=ParsedArg.name_command.value,
-        help="Command to execute after the bootstrap.",
-    )
-
-    arg_parser.add_argument(
-        SyntaxArg.arg_env,
-        type=str,
-        default=None,
-        dest=ParsedArg.name_selected_env_dir.value,
-        metavar=ParsedArg.name_selected_env_dir.value,
-        help="Path to the env-specific config dir.",
-    )
-
-    mutex_group = arg_parser.add_mutually_exclusive_group()
-
-    mutex_group.add_argument(
-        SyntaxArg.arg_mode_prime,
-        action="store_const",
-        const=RunMode.mode_prime.value,
-        dest=ParsedArg.name_run_mode.value,
-        metavar=ParsedArg.name_run_mode.value,
-        help="Prime the environment to be ready to use.",
-    )
-    mutex_group.add_argument(
-        SyntaxArg.arg_mode_config,
-        action="store_const",
-        const=RunMode.mode_config.value,
-        dest=ParsedArg.name_run_mode.value,
-        metavar=ParsedArg.name_run_mode.value,
-        help="Print effective config.",
-    )
-    mutex_group.add_argument(
-        SyntaxArg.arg_mode_check,
-        action="store_const",
-        const=RunMode.mode_check.value,
-        dest=ParsedArg.name_run_mode.value,
-        metavar=ParsedArg.name_run_mode.value,
-        help="Check the environment configuration.",
-    )
-
-    mutex_group.set_defaults(run_mode=RunMode.mode_prime.value)
-
+def _create_parent_argparser():
+    parent_argparser = CustomArgumentParser(add_help=False)
     # TODO: Use only -q and -v options in a simpler way:
-    arg_parser.add_argument(
+    parent_argparser.add_argument(
         SyntaxArg.arg_s,
         SyntaxArg.arg_silent,
         action="store_true",
         dest=SyntaxArg.dest_silent,
         # In the case of exceptions, stack traces are still printed:
-        help="Do not log (set only non-zero exit code on error).",
+        help="do not log, set only non-zero exit code on error)",
     )
-    arg_parser.add_argument(
+    parent_argparser.add_argument(
         SyntaxArg.arg_q,
         SyntaxArg.arg_quiet,
         action="store_true",
         dest=SyntaxArg.dest_quiet,
-        help="Log errors messages only.",
+        help="log errors messages only",
     )
-    arg_parser.add_argument(
+    parent_argparser.add_argument(
         SyntaxArg.arg_v,
         SyntaxArg.arg_verbose,
         action="count",
         dest=SyntaxArg.dest_verbose,
         default=0,
-        help="Increase log verbosity level.",
+        help="increase log verbosity level",
     )
-    arg_parser.add_argument(
-        # TODO: Remove this arg - it does not support any strong use case:
-        SyntaxArg.arg_final_state,
-        type=str,
-        # TODO: Decide to print choices or not (they look too excessive). Maybe print those in `TargetState` only?
-        # choices=[state_name.name for state_name in EnvState],
-        # Keep default `None` to indicate there was no user override (and select the actual default conditionally):
-        default=None,
-        dest=ParsedArg.name_final_state.value,
-        metavar=ParsedArg.name_final_state.value,
-        # TODO: Compute universal sink:
-        help=f"Select final `{EnvState.__name__}` name.",
+    return parent_argparser
+
+
+def _create_child_argparser(
+    parent_argparsers=None,
+):
+    def create_prime_parser(sub_command_parsers):
+        sub_command_desc = "Prime the environment to make it ready to use."
+        parser_prime = sub_command_parsers.add_parser(
+            RunMode.mode_prime.value,
+            help=sub_command_desc,
+            description=sub_command_desc,
+        )
+        parser_prime.set_defaults(
+            run_mode=RunMode.mode_prime.value,
+        )
+        parser_prime.add_argument(
+            SyntaxArg.arg_e,
+            "--env",
+            type=str,
+            default=None,
+            dest=ParsedArg.name_selected_env_dir.value,
+            metavar=ParsedArg.name_selected_env_dir.value,
+            help=(
+                f"Path to the env-specific config dir. "
+                f"If specified, `{RunMode.mode_prime.value}` run mode creates the symlink to that dir. "
+                f"If not specified, the existing symlink is reused. "
+            ),
+        )
+        parser_prime.add_argument(
+            SyntaxArg.arg_c,
+            SyntaxArg.arg_command,
+            type=str,
+            dest=ParsedArg.name_command.value,
+            metavar=ParsedArg.name_command.value,
+            help="Command to execute after the bootstrap.",
+        )
+        parser_prime.add_argument(
+            # TODO: Remove this arg - it does not support any strong use case:
+            # TODO: Use "env_state" as `dest` and `metavar`, but `--state` as option name:
+            SyntaxArg.arg_final_state,
+            type=str,
+            # TODO: Decide to print choices or not (they look too excessive). Maybe print those in `TargetState` only?
+            # choices=[state_name.name for state_name in EnvState],
+            # Keep the default `None` to indicate there was no user override
+            # (and select the actual default in code):
+            default=None,
+            # TODO: Use "env_state" as `dest` and `metavar`, but `--state` as option name:
+            dest=ParsedArg.name_final_state.value,
+            metavar=ParsedArg.name_final_state.value,
+            help=f"Select final `{EnvState.__name__}` name.",
+        )
+
+    def create_upgrade_parser(sub_command_parsers):
+        sub_command_desc = (
+            "Re-create `venv`, re-install dependencies, and re-pin versions."
+        )
+        parser_upgrade = sub_command_parsers.add_parser(
+            RunMode.mode_upgrade.value,
+            help=sub_command_desc,
+            description=sub_command_desc,
+        )
+        parser_upgrade.set_defaults(
+            run_mode=RunMode.mode_upgrade.value,
+        )
+
+    def create_config_parser(sub_command_parsers):
+        sub_command_desc = "Print effective config."
+        parser_config = sub_command_parsers.add_parser(
+            RunMode.mode_config.value,
+            help=sub_command_desc,
+            description=sub_command_desc,
+        )
+        parser_config.set_defaults(
+            run_mode=RunMode.mode_config.value,
+        )
+
+    def create_check_parser(sub_command_parsers):
+        sub_command_desc = "Check the environment configuration."
+        parser_check = sub_command_parsers.add_parser(
+            RunMode.mode_check.value,
+            help=sub_command_desc,
+            description=sub_command_desc,
+        )
+        parser_check.set_defaults(
+            run_mode=RunMode.mode_check.value,
+        )
+
+    if parent_argparsers is None:
+        parent_argparsers = []
+
+    child_argparser = CustomArgumentParser(
+        description=(
+            f"Bootstrap the environment (see default `{RunMode.mode_prime.value}` mode) "
+            f"according to the configuration (see `{RunMode.mode_config.value}` mode)."
+        ),
+        parents=parent_argparsers,
     )
-    return arg_parser
+
+    child_argparsers = child_argparser.add_subparsers(
+        dest=ParsedArg.name_run_mode.value,
+        title="Run modes",
+        description=f"Select one of the following sub-commands as a run mode (default: `{RunMode.mode_prime.value}`).",
+        metavar="run_mode",
+    )
+    child_argparsers.required = False
+
+    create_prime_parser(child_argparsers)
+    create_upgrade_parser(child_argparsers)
+    create_config_parser(child_argparsers)
+    create_check_parser(child_argparsers)
+
+    return child_argparser
+
+
+def parse_args(remaining_argv=None):
+    """
+    Parse CLI args by creating parent and child (sub-command) parsers.
+
+    This function uses a two-phase parsing to allow common options
+    which can be placed anywhere:
+    * ... -q prime (option before sub-command)
+    * ... prime -q (option after sub-command)
+    """
+
+    if remaining_argv is None:
+        remaining_argv = sys.argv[1:]
+
+    # Phase 1: parse common args:
+    parent_argparser = _create_parent_argparser()
+    (
+        parsed_args,
+        remaining_argv,
+    ) = parent_argparser.parse_known_args(remaining_argv)
+
+    # Phase 2: parse sub-command args:
+    child_argparser = _create_child_argparser(
+        parent_argparsers=[
+            parent_argparser,
+        ],
+    )
+    if "-h" not in remaining_argv and "--help" not in remaining_argv:
+        try:
+            # Try to parse with `prime` as the default sub-command:
+            parsed_args = child_argparser.parse_args(
+                [RunMode.mode_prime.value] + remaining_argv,
+                namespace=argparse.Namespace(**vars(parsed_args)),
+            )
+        except ValueError:
+            # If that fails, it might be because another sub-command was specified.
+            # In that case, parse without any default sub-command.
+            try:
+                parsed_args = child_argparser.parse_args(
+                    remaining_argv,
+                    namespace=parsed_args,
+                )
+            except ValueError as e:
+                # It is the real error now:
+                logger.error(e)
+                # Use code 2 for a syntax error (as `argparse` does):
+                exit(2)
+    else:
+        parsed_args = child_argparser.parse_args(
+            remaining_argv,
+            namespace=parsed_args,
+        )
+
+    # Apply defaults for the case where no sub-command was specified:
+    if not getattr(
+        parsed_args,
+        ParsedArg.name_run_mode.value,
+    ):
+        parsed_args.run_mode = RunMode.mode_prime.value
+        # The defaults for the `RunMode.mode_prime`:
+        if not hasattr(parsed_args, ParsedArg.name_final_state.value):
+            setattr(parsed_args, ParsedArg.name_final_state.value, None)
+        if not hasattr(parsed_args, ParsedArg.name_selected_env_dir.value):
+            setattr(parsed_args, ParsedArg.name_selected_env_dir.value, None)
+        if not hasattr(parsed_args, ParsedArg.name_command.value):
+            setattr(parsed_args, ParsedArg.name_command.value, None)
+
+    return parsed_args
 
 
 def str_to_bool(v: str) -> bool:
@@ -2897,7 +3002,7 @@ class Bootstrapper_state_args_parsed(AbstractCachingStateNode[argparse.Namespace
     def _eval_state_once(
         self,
     ) -> ValueType:
-        state_args_parsed: argparse.Namespace = init_arg_parser().parse_args()
+        state_args_parsed: argparse.Namespace = parse_args()
         return state_args_parsed
 
 
@@ -3041,9 +3146,11 @@ class Bootstrapper_state_input_final_state_eval_finalized(
         self,
     ) -> ValueType:
         state_args_parsed = self.eval_parent_state(EnvState.state_args_parsed.name)
-        state_input_final_state_eval_finalized = getattr(
+        state_input_final_state_eval_finalized: str | None = getattr(
             state_args_parsed,
             ParsedArg.name_final_state.value,
+            # NOTE: The value is only set for `RunMode.mode_prime`, otherwise, this default is used:
+            None,
         )
 
         if state_input_final_state_eval_finalized is None:
@@ -3108,6 +3215,8 @@ class Bootstrapper_state_run_mode_executed(AbstractCachingStateNode[bool]):
         if state_input_run_mode_arg_loaded is None:
             raise ValueError(f"run mode is not defined")
         elif state_input_run_mode_arg_loaded == RunMode.mode_prime:
+            selected_strategy = ExitCodeReporter(self.env_ctx)
+        elif state_input_run_mode_arg_loaded == RunMode.mode_upgrade:
             selected_strategy = ExitCodeReporter(self.env_ctx)
         elif state_input_run_mode_arg_loaded == RunMode.mode_config:
             selected_strategy = ExitCodeReporter(self.env_ctx)
@@ -3546,7 +3655,7 @@ class Bootstrapper_state_ref_root_dir_abs_path_inited(AbstractCachingStateNode[s
         state_ref_root_dir_abs_path_inited: str
         if field_client_dir_rel_path is None:
             logger.warning(
-                f"Field `{ConfField.field_ref_root_dir_rel_path.value}` is [{field_client_dir_rel_path}] - use [{SyntaxArg.arg_mode_config}] for description."
+                f"Field `{ConfField.field_ref_root_dir_rel_path.value}` is [{field_client_dir_rel_path}] - use [{RunMode.mode_config.value}] for description."
             )
             state_ref_root_dir_abs_path_inited = proto_code_dir_abs_path
         else:
@@ -3790,6 +3899,8 @@ class Bootstrapper_state_selected_env_dir_rel_path_inited(
         env_conf_dir_any_path: str | None = getattr(
             state_args_parsed,
             ParsedArg.name_selected_env_dir.value,
+            # NOTE: The value is only set for `RunMode.mode_prime`, otherwise, this default is used:
+            None,
         )
         if env_conf_dir_any_path is None:
             # Use the default env configured:
@@ -3804,7 +3915,7 @@ class Bootstrapper_state_selected_env_dir_rel_path_inited(
             )
             if field_default_env_dir_rel_path is None:
                 logger.warning(
-                    f"Field `{ConfField.field_default_env_dir_rel_path.value}` is [{field_default_env_dir_rel_path}] - use [{SyntaxArg.arg_mode_config}] for description."
+                    f"Field `{ConfField.field_default_env_dir_rel_path.value}` is [{field_default_env_dir_rel_path}] - use [{RunMode.mode_config.value}] for description."
                 )
                 return None
             if os.path.isabs(field_default_env_dir_rel_path):
@@ -3925,15 +4036,15 @@ class Bootstrapper_state_local_conf_symlink_abs_path_inited(
                     )
                     if state_selected_env_dir_rel_path_inited != conf_dir_path:
                         raise AssertionError(
-                            f"The `@/conf/` target [{conf_dir_path}] is not the same as the provided target [{state_selected_env_dir_rel_path_inited}]."
+                            f"The symlink [{state_local_conf_symlink_abs_path_inited}] target [{conf_dir_path}] is not the same as the provided target [{state_selected_env_dir_rel_path_inited}]."
                         )
                 else:
                     raise AssertionError(
-                        f"The `@/conf/` [{state_local_conf_symlink_abs_path_inited}] target is not a directory.",
+                        f"The symlink [{state_local_conf_symlink_abs_path_inited}] target [{state_local_conf_symlink_abs_path_inited}] is not a directory.",
                     )
             else:
                 raise AssertionError(
-                    f"The `@/conf/` [{state_local_conf_symlink_abs_path_inited}] is not a symlink.",
+                    f"The entry [{state_local_conf_symlink_abs_path_inited}] is not a symlink.",
                 )
         else:
             os.symlink(
@@ -4703,10 +4814,11 @@ class Bootstrapper_state_reinstall_triggered(AbstractCachingStateNode[bool]):
             EnvState.state_args_parsed.name
         )
 
-        do_reinstall: bool = getattr(
-            state_args_parsed,
-            ParsedArg.name_reinstall.value,
+        state_args_parsed: argparse.Namespace = self.eval_parent_state(
+            EnvState.state_args_parsed.name
         )
+
+        do_reinstall: bool = state_args_parsed.run_mode == RunMode.mode_upgrade.value
 
         state_py_exec_required_reached = self.eval_parent_state(
             EnvState.state_py_exec_required_reached.name
@@ -4957,7 +5069,7 @@ class Bootstrapper_state_py_exec_venv_reached(
                 state_local_venv_dir_abs_path_inited,
             ):
                 raise AssertionError(
-                    f"`venv` [{state_local_venv_dir_abs_path_inited}] was not created by this driver [{state_package_driver_prepared.get_type().name}] retry with [{SyntaxArg.arg_reinstall}]"
+                    f"`venv` [{state_local_venv_dir_abs_path_inited}] was not created by this driver [{state_package_driver_prepared.get_type().name}] retry with [{CommandAction.action_reinstall.value}]"
                 )
 
         switch_python(
@@ -5030,9 +5142,8 @@ class Bootstrapper_state_protoprimer_package_installed(AbstractCachingStateNode[
             EnvState.state_package_driver_prepared.name
         )
 
-        do_reinstall: bool = getattr(
-            state_args_parsed,
-            ParsedArg.name_reinstall.value,
+        do_reinstall: bool = (
+            state_args_parsed.run_mode == CommandAction.action_reinstall.value
         )
 
         do_install: bool = (
@@ -5444,9 +5555,10 @@ class Bootstrapper_state_command_executed(AbstractCachingStateNode[int]):
 
         self._clean_env_vars()
 
-        command_line: str = getattr(
+        command_line: str | None = getattr(
             state_args_parsed,
             ParsedArg.name_command.value,
+            None,
         )
 
         self._prepare_shell_env()
@@ -5779,8 +5891,7 @@ class EnvContext:
     ):
         self.state_graph: StateGraph = StateGraph()
 
-        # TODO: Do not set it on Context - use bootstrap-able values:
-        # TODO: Find "Universal Sink":
+        # TODO: Do not set it on `EnvContext` - use bootstrap-able values:
         self.final_state: str = TargetState.target_proto_bootstrap_completed.value.name
 
         self._build_default_graph()
@@ -5939,7 +6050,7 @@ def warn_on_missing_conf_file(
     file_abs_path: str,
 ) -> None:
     logger.warning(
-        f"File [{file_abs_path}] does not exist - use [{SyntaxArg.arg_mode_config}] for description."
+        f"File [{file_abs_path}] does not exist - use [{RunMode.mode_config.value}] for description."
     )
 
 
@@ -5978,7 +6089,7 @@ def verify_conf_file_data_contains_known_fields_only(
     See: FT_00_22_19_59.derived_config.md
     """
     # TODO: After removal of `--wizard` is this still needed?
-    #       All unknown fields are reported by `--config`.
+    #       All unknown fields are reported by `config`.
 
 
 def switch_python(

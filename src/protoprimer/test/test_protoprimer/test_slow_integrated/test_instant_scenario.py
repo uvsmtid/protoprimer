@@ -11,6 +11,7 @@ from local_test.integrated_helper import (
 )
 from protoprimer.primer_kernel import (
     ConfDst,
+    RunMode,
     SyntaxArg,
     TopDir,
 )
@@ -54,6 +55,6 @@ def test_instant_scenario(tmp_path: Path):
     run_primer_main(
         [
             str(proto_kernel_abs_path),
-            SyntaxArg.arg_mode_config,
+            RunMode.mode_config.value,
         ]
     )
