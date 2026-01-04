@@ -22,6 +22,8 @@ from protoprimer.primer_kernel import (
     EnvState,
     ParsedArg,
     PythonExecutable,
+    RunMode,
+    CommandAction,
 )
 
 
@@ -119,7 +121,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
         mock_state_input_do_install_var_loaded.return_value = True
         parsed_args = argparse.Namespace(
-            **{ParsedArg.name_reinstall.value: False},
+            **{ParsedArg.name_run_mode.value: RunMode.mode_prime.value},
         )
         mock_state_args_parsed.return_value = parsed_args
         # when:
@@ -210,7 +212,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
         mock_state_input_do_install_var_loaded.return_value = True
         parsed_args = argparse.Namespace(
-            **{ParsedArg.name_reinstall.value: True},
+            **{ParsedArg.name_run_mode.value: CommandAction.action_reinstall.value},
         )
         mock_state_args_parsed.return_value = parsed_args
         # when:
@@ -301,7 +303,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
         mock_state_input_do_install_var_loaded.return_value = False
         parsed_args = argparse.Namespace(
-            **{ParsedArg.name_reinstall.value: False},
+            **{ParsedArg.name_run_mode.value: RunMode.mode_prime.value},
         )
         mock_state_args_parsed.return_value = parsed_args
         # when:
@@ -373,7 +375,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_input_do_install_var_loaded.return_value = True
 
         parsed_args = argparse.Namespace(
-            **{ParsedArg.name_reinstall.value: False},
+            **{ParsedArg.name_run_mode.value: RunMode.mode_prime.value},
         )
         mock_state_args_parsed.return_value = parsed_args
 
