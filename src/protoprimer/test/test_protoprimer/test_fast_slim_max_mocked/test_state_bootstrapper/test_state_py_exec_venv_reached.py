@@ -19,6 +19,7 @@ from protoprimer.primer_kernel import (
     Bootstrapper_state_input_start_id_var_loaded,
     Bootstrapper_state_package_driver_prepared,
     Bootstrapper_state_reinstall_triggered,
+    CommandAction,
     ConfConstEnv,
     ConfConstGeneral,
     EnvContext,
@@ -999,8 +1000,6 @@ class ThisTestClass(BasePyfakefsTestClass):
 
     ####################################################################################################################
     @patch.dict(f"{os.__name__}.environ", {}, clear=True)
-    @patch.object(sys, "argv", ["/path/to/script.py", f"--{SyntaxArg.arg_reinstall}"])
-    @patch(f"{primer_kernel.__name__}.logger.info")
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.eval_own_state"
     )
@@ -1048,7 +1047,6 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_args_parsed,
         mock_state_reinstall_triggered,
         mock_state_input_start_id_var_loaded,
-        mock_logger_info,
     ):
         # given:
         assert_parent_states_mocked(
@@ -1080,7 +1078,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             "fake: " + EnvState.state_local_conf_file_abs_path_inited.name
         )
 
-        # Create a uv-style venv
+        # Create an uv-style `venv`:
         self.fs.create_dir(path_to_venv)
         self.fs.create_file(
             os.path.join(path_to_venv, "pyvenv.cfg"), contents="uv = 1.2.3"

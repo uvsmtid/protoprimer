@@ -74,16 +74,16 @@ Bootstrap (special env):
 Upgrade: re-create venv, re-solve and re-install deps, re-pin versions:
 
 ```sh
-./prime --reinstall
+./prime upgrade
 ```
 
 Review effective config:
 
 ```sh
-./prime --config
+./prime config
 ```
 
-## Background
+## Intro
 
 Let's say, [forced by the motivation][protoprimer_motivation],
 people dropped `shell` and picked `python` to automate, but...
@@ -198,7 +198,7 @@ The `protoprimer` **covers the details** for these two use cases:
 
 <a id="protoprimer-motivation"></a>
 
-## Motivation: single-touch `python` code launch (avoiding `shell`)
+## Motivation: avoiding `shell` scripts
 
 In short, `shell` is a **deceptive trap**:
 1.  it makes interactive typing concise and ubiquitous for CLI (everyone knows it)
@@ -370,7 +370,7 @@ It is possible to generate effective config to see:
 *   the data **derived** from the **loaded** data
 
 ```sh
-./prime --config
+./prime config
 ```
 
 The output uses dynamically generated annotations to explain the purpose of each field.
@@ -425,7 +425,7 @@ The `protoprimer` supports any filesystem layout for client repos.
 To discover the config files within the filesystem, it uses the concept of "config leap" - see:
 
 ```
-./prime --config
+./prime config
 ```
 
 ```mermaid
@@ -520,14 +520,13 @@ In short:
 To re-create `venv`, re-install the deps, and re-pin the versions, run:
 
 ```sh
-./prime --reinstall
+./prime upgrade
 ```
 
 To control the dependency versions, spec them inside the [pyproject.toml][pyproject.toml] files.
 
 <!--
 TODO: UC_52_87_82_92.conditional_auto_update.md: update when disabling auto-update is possible.
-TODO: UC_61_12_90_59.reinstall_venv.md: update for use cases with --reinstall vs some sort of update.
 -->
 
 ## Delegation to client code

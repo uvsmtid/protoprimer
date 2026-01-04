@@ -53,11 +53,6 @@ class ArgName(enum.Enum):
         NameCategory.category_named_arg_action,
     )
 
-    name_primer_runtime = ArgMeta(
-        ParsedArg.name_primer_runtime,
-        NameCategory.category_named_arg_value,
-    )
-
     name_run_mode = ArgMeta(
         ParsedArg.name_run_mode,
         NameCategory.category_named_arg_value,

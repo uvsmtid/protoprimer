@@ -18,11 +18,13 @@ from protoprimer.primer_kernel import (
     Bootstrapper_state_proto_code_file_abs_path_inited,
     Bootstrapper_state_input_start_id_var_loaded,
     Bootstrapper_state_py_exec_required_reached,
+    CommandAction,
     ConfConstEnv,
     EnvContext,
     EnvState,
     ParsedArg,
     PythonExecutable,
+    RunMode,
 )
 
 
@@ -81,7 +83,7 @@ def test_reinstall_true(
     )
     mock_state_args_parsed.return_value = argparse.Namespace(
         **{
-            ParsedArg.name_reinstall.value: True,
+            ParsedArg.name_run_mode.value: RunMode.mode_upgrade.value,
         }
     )
     mock_state_input_start_id_var_loaded.return_value = "mock_start_id"
@@ -150,7 +152,7 @@ def test_reinstall_false(
     )
     mock_state_args_parsed.return_value = argparse.Namespace(
         **{
-            ParsedArg.name_reinstall.value: False,
+            ParsedArg.name_run_mode.value: RunMode.mode_prime.value,
         }
     )
     mock_state_py_exec_required_reached.return_value = PythonExecutable.py_exec_required
@@ -210,7 +212,7 @@ def test_reinstall_true_but_py_exec_not_required(
     )
     mock_state_args_parsed.return_value = argparse.Namespace(
         **{
-            ParsedArg.name_reinstall.value: True,
+            ParsedArg.name_run_mode.value: CommandAction.action_reinstall.value,
         }
     )
     mock_state_input_start_id_var_loaded.return_value = "mock_start_id"

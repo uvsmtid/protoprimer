@@ -24,6 +24,7 @@ from protoprimer.primer_kernel import (
     ConfConstInput,
     ConfConstPrimer,
     EnvVar,
+    RunMode,
     SyntaxArg,
 )
 from protoprimer.proto_generator import generate_entry_script_content
@@ -197,7 +198,9 @@ def test_venv_shell_command_execution(tmp_path: pathlib.Path):
     assert not output_file.exists()
 
     # when:
-    get_command_code(f'./venv_shell {SyntaxArg.arg_command} "touch {output_file}"')
+    get_command_code(
+        f'./venv_shell {RunMode.mode_prime.value} {SyntaxArg.arg_command} "touch {output_file}"'
+    )
 
     # then:
     assert output_file.exists()
