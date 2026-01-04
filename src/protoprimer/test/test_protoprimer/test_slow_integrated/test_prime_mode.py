@@ -81,6 +81,6 @@ def test_prime_mode(tmp_path: Path):
     run_primer_main(
         [
             str(proto_kernel_abs_path),
-            SyntaxArg.arg_mode_config,
+            RunMode.mode_config.value,
         ]
     )

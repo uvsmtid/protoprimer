@@ -83,7 +83,7 @@ Review effective config:
 ./prime --config
 ```
 
-## Background
+## Intro
 
 Let's say, [forced by the motivation][protoprimer_motivation],
 people dropped `shell` and picked `python` to automate, but...
@@ -198,7 +198,7 @@ The `protoprimer` **covers the details** for these two use cases:
 
 <a id="protoprimer-motivation"></a>
 
-## Motivation: single-touch `python` code launch (avoiding `shell`)
+## Motivation: avoiding `shell` scripts
 
 In short, `shell` is a **deceptive trap**:
 1.  it makes interactive typing concise and ubiquitous for CLI (everyone knows it)

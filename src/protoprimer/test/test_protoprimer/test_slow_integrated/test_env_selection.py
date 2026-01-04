@@ -16,6 +16,7 @@ from protoprimer.primer_kernel import (
     ConfConstClient,
     ConfConstInput,
     ConfConstPrimer,
+    RunMode,
     SyntaxArg,
 )
 
@@ -113,6 +114,7 @@ def test_env_selection(tmp_path: pathlib.Path):
         [
             str(proto_kernel_abs_path),
             SyntaxArg.arg_v,
+            RunMode.mode_prime.value,
             SyntaxArg.arg_env,
             special_env_dir_name,
         ]

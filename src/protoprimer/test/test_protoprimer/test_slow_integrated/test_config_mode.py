@@ -47,7 +47,7 @@ def test_config_mode_with_min_layout(tmp_path: Path):
     run_primer_main(
         [
             str(proto_kernel_abs_path),
-            SyntaxArg.arg_mode_config,
+            RunMode.mode_config.value,
         ]
     )
 
@@ -76,7 +76,7 @@ def test_config_mode_with_max_layout(tmp_path: Path):
     run_primer_main(
         [
             str(proto_kernel_abs_path),
-            SyntaxArg.arg_mode_config,
+            RunMode.mode_config.value,
         ]
     )
 
