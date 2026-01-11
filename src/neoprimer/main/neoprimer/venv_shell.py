@@ -1,12 +1,9 @@
-import os
+import tempfile
 
 from protoprimer.primer_kernel import (
     Bootstrapper_state_command_executed,
-    ConfConstGeneral,
-    create_temp_file,
     EnvContext,
     EnvState,
-    logger,
     ValueType,
 )
 
@@ -29,39 +26,16 @@ class Bootstrapper_state_activated_venv_shell_started(
                 EnvState.state_default_stderr_log_handler_configured.name,
                 EnvState.state_py_exec_updated_proto_code.name,
                 EnvState.state_local_venv_dir_abs_path_inited.name,
+                EnvState.state_local_cache_dir_abs_path_inited.name,
             ],
             state_name=self.state_activated_venv_shell_started,
         )
 
-    def _prepare_shell_env(
+    def _eval_state_once(
         self,
     ) -> ValueType:
 
-        state_local_venv_dir_abs_path_inited = self.eval_parent_state(
-            EnvState.state_local_venv_dir_abs_path_inited.name
-        )
+        # Start the shell regardless of `ParsedArg.name_command`:
+        self.start_interactive_shell = True
 
-        venv_path_to_activate = os.path.join(
-            state_local_venv_dir_abs_path_inited,
-            ConfConstGeneral.file_rel_path_venv_activate,
-        )
-
-        # TODO: Move file under configured tmp dir:
-        temp_file = create_temp_file()
-        temp_file.write(f"source ~/.bashrc && source {venv_path_to_activate}")
-        temp_file.flush()
-        file_path = temp_file.name
-        logger.debug(f"file_path: {file_path}")
-
-        shell_basename: str = os.path.basename(self.shell_abs_path)
-        # TODO: To support other shells, need to prepare their equivalents of `--init-file` arg:
-        assert shell_basename in ["bash"]
-
-        self.shell_args: list[str] = [
-            shell_basename,
-            "--init-file",
-            file_path,
-        ]
-
-        # Start shell regardless of `ParsedArg.name_command`:
-        self.start_shell = True
+        return super()._eval_state_once()

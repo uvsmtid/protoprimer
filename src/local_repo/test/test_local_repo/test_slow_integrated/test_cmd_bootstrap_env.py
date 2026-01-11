@@ -67,6 +67,7 @@ def test_bootstrap_env(tmp_path: pathlib.Path):
         ref_root_abs_path,
         conf_client_dir_abs_path,
         conf_env_dir_abs_path,
+        project_dir_abs_path,
     )
 
     # ===

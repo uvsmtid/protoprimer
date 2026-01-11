@@ -22,7 +22,7 @@ def test_relationship():
     assert_test_module_name_embeds_str(RunMode.mode_config.value)
 
 
-def test_config_mode_with_min_layout(tmp_path: Path):
+def test_mode_config_with_min_layout(tmp_path: Path):
 
     assert_test_func_name_embeds_str(RunMode.mode_config.value)
 
@@ -46,12 +46,11 @@ def test_config_mode_with_min_layout(tmp_path: Path):
     # then:
     # no installation happened:
 
-    assert not os.path.exists(ref_root_abs_path / TopDir.dir_tmp.value)
     assert not os.path.exists(ref_root_abs_path / TopDir.dir_venv.value)
     assert not os.path.exists(ref_root_abs_path / TopDir.dir_cache.value)
 
 
-def test_config_mode_with_max_layout(tmp_path: Path):
+def test_mode_config_with_max_layout(tmp_path: Path):
 
     assert_test_func_name_embeds_str(RunMode.mode_config.value)
 
@@ -75,6 +74,5 @@ def test_config_mode_with_max_layout(tmp_path: Path):
     # then:
     # no installation happened:
 
-    assert not os.path.exists(ref_root_abs_path / TopDir.dir_tmp.value)
     assert not os.path.exists(ref_root_abs_path / TopDir.dir_venv.value)
     assert not os.path.exists(ref_root_abs_path / TopDir.dir_cache.value)

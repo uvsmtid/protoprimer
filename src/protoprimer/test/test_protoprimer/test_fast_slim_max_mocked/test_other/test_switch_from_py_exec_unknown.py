@@ -139,7 +139,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             env={
                 EnvVar.var_PROTOPRIMER_PY_EXEC.value: PythonExecutable.py_exec_required.name,
                 EnvVar.var_PROTOPRIMER_START_ID.value: "mock_start_id",
-                EnvVar.var_PROTOPRIMER_STDERR_LOG_LEVEL.value: "INFO",
+                EnvVar.var_PROTOPRIMER_STDERR_LOG_LEVEL.value: "WARNING",
                 EnvVar.var_PROTOPRIMER_PROTO_CODE.value: state_proto_code_file_abs_path_inited,
             },
         )

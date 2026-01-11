@@ -19,7 +19,7 @@ def test_min_layout(fs: FakeFilesystem):
     mock_test_dir = fs.create_dir("/mock_test_dir")
 
     with fat_mock_wrapper(fs):
-        test_mode_config.test_config_mode_with_min_layout(
+        test_mode_config.test_mode_config_with_min_layout(
             pathlib.Path(mock_test_dir.path)
         )
 
@@ -28,6 +28,6 @@ def test_max_layout(fs: FakeFilesystem):
     mock_test_dir = fs.create_dir("/mock_test_dir")
 
     with fat_mock_wrapper(fs):
-        test_mode_config.test_config_mode_with_max_layout(
+        test_mode_config.test_mode_config_with_max_layout(
             pathlib.Path(mock_test_dir.path)
         )

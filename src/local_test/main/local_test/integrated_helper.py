@@ -155,7 +155,13 @@ def create_conf_client_file(
     ref_root_abs_path: pathlib.Path,
     conf_client_dir_abs_path: pathlib.Path,
     conf_env_dir_abs_path: pathlib.Path,
+    project_dir_abs_path: pathlib.Path,
 ) -> None:
+
+    project_dir_rel_path: str = os.path.relpath(
+        project_dir_abs_path,
+        ref_root_abs_path,
+    )
 
     conf_env_dir_rel_path: str = os.path.relpath(
         conf_env_dir_abs_path,
@@ -165,6 +171,14 @@ def create_conf_client_file(
     client_conf_data = {
         ConfField.field_local_conf_symlink_rel_path.value: ConfConstClient.default_dir_rel_path_leap_env_link_name,
         ConfField.field_default_env_dir_rel_path.value: str(conf_env_dir_rel_path),
+        ConfField.field_project_descriptors.value: [
+            {
+                ConfField.field_build_root_dir_rel_path.value: str(
+                    project_dir_rel_path
+                ),
+                ConfField.field_install_extras.value: [],
+            },
+        ],
     }
 
     conf_client_dir_abs_path.mkdir(parents=True, exist_ok=True)
@@ -299,6 +313,7 @@ def create_max_layout(tmp_path: Path) -> tuple[Path, Path, Path]:
         ref_root_abs_path,
         conf_client_dir_abs_path,
         conf_env_dir_abs_path,
+        project_dir_abs_path,
     )
 
     # ===

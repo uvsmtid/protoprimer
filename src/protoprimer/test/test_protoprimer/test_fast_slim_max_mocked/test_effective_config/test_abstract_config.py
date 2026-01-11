@@ -439,3 +439,27 @@ def test_render_config_quiet():
     }}
 )"""
     assert RenderConfigVisitor(is_quiet=True).render_node(root_node) == expected_output
+
+
+def test_abstract_config_visitor():
+    # Create an instance of the visitor
+    visitor = primer_kernel.AbstractConfigVisitor()
+
+    # Create a sample config structure
+    config_data = copy.deepcopy(common_sample)
+    root_node = build_root_node(some_var, config_data)
+
+    # Test visit_root
+    assert visitor.visit_root(root_node) is None
+
+    dict_node = root_node.child_node
+    # Test visit_dict
+    assert visitor.visit_dict(dict_node) is None
+
+    value_node = dict_node.child_nodes["a"]
+    # Test visit_value
+    assert visitor.visit_value(value_node) is None
+
+    list_node = dict_node.child_nodes["d"]
+    # Test visit_list
+    assert visitor.visit_list(list_node) is None

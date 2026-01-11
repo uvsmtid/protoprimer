@@ -15,7 +15,6 @@ from local_test.integrated_helper import (
 )
 from local_test.package_version_verifier import extract_package_version
 from protoprimer.primer_kernel import (
-    CommandAction,
     ConfConstClient,
     ConfConstEnv,
     ConfConstInput,
@@ -71,6 +70,7 @@ def test_upgrade(tmp_path: pathlib.Path):
         ref_root_abs_path,
         conf_client_dir_abs_path,
         conf_env_dir_abs_path,
+        project_dir_abs_path,
     )
 
     # ===
@@ -86,6 +86,7 @@ def test_upgrade(tmp_path: pathlib.Path):
             str(proto_kernel_abs_path),
             "prime",
             SyntaxArg.arg_v,
+            SyntaxArg.arg_v,
         ]
     )
 
@@ -96,7 +97,8 @@ def test_upgrade(tmp_path: pathlib.Path):
     )
     pip_freeze_output_install = get_command_output(f"{venv_pip} freeze")
     package_version_install = extract_package_version(
-        pip_freeze_output_install, package_name
+        pip_freeze_output_install,
+        package_name,
     )
     assert f"{package_name}==5.7.4" in pip_freeze_output_install
 
@@ -107,6 +109,7 @@ def test_upgrade(tmp_path: pathlib.Path):
             str(proto_kernel_abs_path),
             RunMode.mode_upgrade.value,
             SyntaxArg.arg_v,
+            SyntaxArg.arg_v,
         ]
     )
 
@@ -115,6 +118,7 @@ def test_upgrade(tmp_path: pathlib.Path):
     pip_freeze_output_reinstall = get_command_output(f"{venv_pip} freeze")
 
     package_version_reinstall = extract_package_version(
-        pip_freeze_output_reinstall, package_name
+        pip_freeze_output_reinstall,
+        package_name,
     )
     assert package_version_install < package_version_reinstall

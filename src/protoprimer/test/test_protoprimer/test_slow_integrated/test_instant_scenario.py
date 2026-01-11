@@ -33,6 +33,7 @@ def test_instant_scenario(tmp_path: Path):
         [
             str(proto_kernel_abs_path),
             SyntaxArg.arg_v,
+            SyntaxArg.arg_v,
         ]
     )
 

@@ -74,6 +74,7 @@ def test_venv_shell_no_update(tmp_path: pathlib.Path):
         ref_root_abs_path,
         conf_client_dir_abs_path,
         conf_env_dir_abs_path,
+        project_dir_abs_path,
     )
 
     # ===
@@ -103,7 +104,9 @@ def test_venv_shell_no_update(tmp_path: pathlib.Path):
     venv_shell_script_content = generate_entry_script_content(
         "neoprimer.cmd_venv_shell",
         "custom_main",
-        {"PROTOPRIMER_DO_INSTALL": "False"},
+        {
+            "PROTOPRIMER_DO_INSTALL": "False",
+        },
     )
     venv_shell_script_path = ref_root_abs_path / "venv_shell"
     with open(venv_shell_script_path, "w") as f:
@@ -111,9 +114,9 @@ def test_venv_shell_no_update(tmp_path: pathlib.Path):
     venv_shell_script_path.chmod(venv_shell_script_path.stat().st_mode | stat.S_IEXEC)
 
     # when:
-    # Run the interactive shell and pipe "exit 42" to its stdin to make it terminate with a specific exit code.
+    # Run the interactive shell and pipe "exit 42" to its `stdin` to make it terminate with a specific exit code.
     sub_proc = subprocess.run(
-        "./venv_shell -v",
+        "./venv_shell -vv",
         shell=True,
         input="exit 42\n",
         text=True,
@@ -125,7 +128,8 @@ def test_venv_shell_no_update(tmp_path: pathlib.Path):
 
     pip_freeze_output_after_shell = get_command_output(f"{venv_pip} freeze")
     package_version_after_shell = extract_package_version(
-        pip_freeze_output_after_shell, package_name
+        pip_freeze_output_after_shell,
+        package_name,
     )
     assert package_version_install == package_version_after_shell
 
@@ -174,6 +178,7 @@ def test_venv_shell_command_execution(tmp_path: pathlib.Path):
         ref_root_abs_path,
         conf_client_dir_abs_path,
         conf_env_dir_abs_path,
+        project_dir_abs_path,
     )
 
     # ===

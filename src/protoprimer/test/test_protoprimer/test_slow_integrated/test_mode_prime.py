@@ -28,7 +28,7 @@ def test_relationship():
     assert_test_module_name_embeds_str(RunMode.mode_prime.value)
 
 
-def test_prime_mode(tmp_path: Path):
+def test_mode_prime(tmp_path: Path):
 
     assert_test_func_name_embeds_str(RunMode.mode_prime.value)
 
@@ -46,6 +46,7 @@ def test_prime_mode(tmp_path: Path):
     run_primer_main(
         [
             str(proto_kernel_abs_path),
+            SyntaxArg.arg_v,
             SyntaxArg.arg_v,
         ]
     )

@@ -79,6 +79,7 @@ def test_env_selection(tmp_path: pathlib.Path):
         ref_root_abs_path,
         conf_client_dir_abs_path,
         default_env_dir_abs_path,
+        project_dir_abs_path,
     )
 
     # when:
@@ -87,6 +88,7 @@ def test_env_selection(tmp_path: pathlib.Path):
     run_primer_main(
         [
             str(proto_kernel_abs_path),
+            SyntaxArg.arg_v,
             SyntaxArg.arg_v,
         ]
     )
@@ -113,6 +115,7 @@ def test_env_selection(tmp_path: pathlib.Path):
     run_primer_main(
         [
             str(proto_kernel_abs_path),
+            SyntaxArg.arg_v,
             SyntaxArg.arg_v,
             RunMode.mode_prime.value,
             SyntaxArg.arg_env,

@@ -36,7 +36,7 @@ from typing import (
 
 # The release process ensures that content in this file matches the version below while tagging the release commit
 # (otherwise, if the file comes from a different commit, the version is irrelevant):
-__version__ = "0.4.0"
+__version__ = "0.5.0"
 
 logger: logging.Logger = logging.getLogger()
 
@@ -307,6 +307,8 @@ class EnvVar(enum.Enum):
 
     var_PROTOPRIMER_PACKAGE_DRIVER = "PROTOPRIMER_PACKAGE_DRIVER"
 
+    # TODO: Consider splitting `is_test_run()` and `*_TEST_MODE` into different `feature_story`-ies.
+    # TODO: Consider renaming `*_TEST_MODE` into something like `*_TEST_RESTART` (to emphasise what it actually indicates).
     var_PROTOPRIMER_TEST_MODE = "PROTOPRIMER_TEST_MODE"
     """
     See: FT_83_60_72_19.test_perimeter.md / test_fast_fat_min_mocked
@@ -409,7 +411,6 @@ class ParsedArg(enum.Enum):
 
 
 class LogLevel(enum.Enum):
-    name_silent = "silent"
     name_quiet = "quiet"
     name_verbose = "verbose"
 
@@ -420,12 +421,6 @@ class SyntaxArg:
 
     arg_c = f"-{CommandAction.action_command.value[0]}"
     arg_command = f"--{CommandAction.action_command.value}"
-
-    arg_s = f"-{LogLevel.name_silent.value[0]}"
-    arg_silent = f"--{LogLevel.name_silent.value}"
-    dest_silent = (
-        f"{ValueName.value_stderr_log_level.value}_{LogLevel.name_silent.value}"
-    )
 
     arg_q = f"-{LogLevel.name_quiet.value[0]}"
     arg_quiet = f"--{LogLevel.name_quiet.value}"
@@ -738,6 +733,190 @@ class PackageDriverUv(PackageDriverBase):
         ]
 
 
+class ShellType(enum.Enum):
+
+    shell_bash = "bash"
+
+    shell_zsh = "zsh"
+
+
+def remove_protoprimer_env_vars(env_vars: dict[str, str]) -> dict[str, str]:
+    for env_var in EnvVar:
+        env_vars.pop(env_var.value, None)
+    return env_vars
+
+
+class ShellDriverBase:
+
+    def __init__(
+        self,
+        shell_abs_path: str,
+        shell_env_vars: dict[str, str],
+        cache_dir_abs_path: str,
+    ):
+        self.shell_abs_path: str = shell_abs_path
+        self.shell_args: list[str] = [
+            self.shell_abs_path,
+        ]
+        self.shell_env_vars: dict[str, str] = shell_env_vars
+        self.cache_dir_abs_path: str = cache_dir_abs_path
+
+    def get_type(self) -> ShellType:
+        raise NotImplementedError()
+
+    def get_init_file_basename(self):
+        raise NotImplementedError()
+
+    def get_init_file_abs_path(self):
+        return os.path.join(
+            os.path.join(
+                self.cache_dir_abs_path,
+                self.get_type().value,
+            ),
+            self.get_init_file_basename(),
+        )
+
+    @staticmethod
+    def get_venv_activate_script_abs_path(
+        venv_abs_path: str,
+    ) -> str:
+        return os.path.join(
+            venv_abs_path,
+            ConfConstGeneral.file_rel_path_venv_activate,
+        )
+
+    def write_init_file(
+        self,
+        venv_abs_path: str,
+    ):
+        pathlib.Path(os.path.dirname(self.get_init_file_abs_path())).mkdir(
+            parents=True,
+            exist_ok=True,
+        )
+        write_text_file(
+            self.get_init_file_abs_path(),
+            f"""
+# Load user settings if available:
+test -f ~/{self.get_init_file_basename()} && source ~/{self.get_init_file_basename()} || true
+# Activate `venv`:
+source {self.get_venv_activate_script_abs_path(venv_abs_path)}
+""",
+        )
+
+    def configure_interactive_shell(self, has_command: bool) -> None:
+        """
+        Implements: UC_36_72_11_12.pipe_to_execute_with_activated_venv.md
+        """
+        raise NotImplementedError()
+
+    def run_shell(
+        self,
+        command_line: str | None,
+        stderr_log_handler: logging.Handler,
+        venv_abs_path: str,
+    ) -> int:
+
+        self.write_init_file(venv_abs_path)
+
+        self.configure_interactive_shell(command_line is not None)
+
+        self.shell_args.extend(
+            [
+                # Always start interactive `shell` (even if it exits immediately in case of `-c`)
+                # because we need to override `*rc`-files which activate `venv`:
+                "-i",
+            ]
+        )
+
+        if command_line is not None:
+            self.shell_args.extend(
+                [
+                    "-c",
+                    command_line,
+                ]
+            )
+
+        print_delegate_line(
+            self.shell_args,
+            stderr_log_handler,
+        )
+
+        os.execve(
+            self.shell_abs_path,
+            self.shell_args,
+            self.shell_env_vars,
+        )
+
+        return 0
+
+
+class ShellDriverBash(ShellDriverBase):
+
+    def get_type(
+        self,
+    ) -> ShellType:
+        return ShellType.shell_bash
+
+    def get_init_file_basename(self):
+        return ".bashrc"
+
+    def configure_interactive_shell(self, has_command: bool) -> None:
+        self.shell_args.extend(
+            [
+                # `bash` uses explicit override for `.bashrc`:
+                "--init-file",
+                self.get_init_file_abs_path(),
+            ]
+        )
+
+
+class ShellDriverZsh(ShellDriverBase):
+
+    def get_type(
+        self,
+    ) -> ShellType:
+        return ShellType.shell_zsh
+
+    def get_init_file_basename(self):
+        return ".zshrc"
+
+    def configure_interactive_shell(self, has_command: bool) -> None:
+        if not sys.stdin.closed and not sys.stdin.isatty() and not has_command:
+            # Unlike `bash`, `zsh` reads `tty` instead of `stdin` (for UI control) unless `-s` is specified:
+            self.shell_args.extend(
+                [
+                    "-s",
+                ]
+            )
+        # `zsh` takes "dot dir" path to find overridden `.zshrc`:
+        self.shell_env_vars["ZDOTDIR"] = os.path.dirname(self.get_init_file_abs_path())
+
+
+def _get_shell_driver(cache_dir_abs_path: str) -> ShellDriverBase:
+
+    var_shell = "SHELL"
+    shell_abs_path: str | None = os.environ.get(var_shell, None)
+    shell_driver_type: type[ShellDriverBase]
+
+    if shell_abs_path is None:
+        # TODO: Implement `ShellDriverSh` using `/bin/sh` instead:
+        logger.warning(f"env var `{var_shell}` is not set - assuming `bash` as default")
+        shell_abs_path = shutil.which("bash")
+        shell_driver_type = ShellDriverBash
+    elif os.path.basename(shell_abs_path) == ShellType.shell_bash.value:
+        shell_driver_type = ShellDriverBash
+    elif os.path.basename(shell_abs_path) == ShellType.shell_zsh.value:
+        shell_driver_type = ShellDriverZsh
+    else:
+        raise ValueError(f"env var `{var_shell}` has unknown value [{shell_abs_path}]")
+
+    return shell_driver_type(
+        shell_abs_path=shell_abs_path,
+        shell_env_vars=remove_protoprimer_env_vars(os.environ.copy()),
+        cache_dir_abs_path=cache_dir_abs_path,
+    )
+
+
 class PackageDriverType(enum.Enum):
     """
     See UC_09_61_98_94.installer_pip_vs_uv.md
@@ -791,7 +970,7 @@ class ConfConstGeneral:
 
     file_rel_path_venv_uv = os.path.join(
         file_rel_path_venv_bin,
-        "uv",
+        name_uv_package,
     )
 
     func_get_proto_code_generated_boilerplate_single_header = lambda module_obj: (
@@ -852,7 +1031,7 @@ class ConfConstInput:
     ext_env_var_PATH: str = "PATH"
     ext_env_var_PYTHONPATH: str = "PYTHONPATH"
 
-    default_PROTOPRIMER_STDERR_LOG_LEVEL: str = "INFO"
+    default_PROTOPRIMER_STDERR_LOG_LEVEL: str = "WARNING"
 
     default_PROTOPRIMER_PY_EXEC: str = PythonExecutable.py_exec_unknown.name
 
@@ -925,7 +1104,12 @@ class ConfConstEnv:
 
     default_package_driver = PackageDriverType.driver_uv.name
 
-    default_project_descriptors = []
+    default_project_descriptors = [
+        {
+            ConfField.field_build_root_dir_rel_path.value: ".",
+            ConfField.field_install_extras.value: [],
+        },
+    ]
 
     constraints_txt_basename = "constraints.txt"
 
@@ -937,23 +1121,17 @@ class CustomArgumentParser(argparse.ArgumentParser):
 
 def _create_parent_argparser():
     parent_argparser = CustomArgumentParser(add_help=False)
-    # TODO: Use only -q and -v options in a simpler way:
     parent_argparser.add_argument(
-        SyntaxArg.arg_s,
-        SyntaxArg.arg_silent,
-        action="store_true",
-        dest=SyntaxArg.dest_silent,
-        # In the case of exceptions, stack traces are still printed:
-        help="do not log, set only non-zero exit code on error)",
-    )
-    parent_argparser.add_argument(
+        # See: FT_38_73_38_52.log_verbosity.md
         SyntaxArg.arg_q,
         SyntaxArg.arg_quiet,
-        action="store_true",
+        action="count",
         dest=SyntaxArg.dest_quiet,
-        help="log errors messages only",
+        default=0,
+        help="decrease log verbosity level",
     )
     parent_argparser.add_argument(
+        # See: FT_38_73_38_52.log_verbosity.md
         SyntaxArg.arg_v,
         SyntaxArg.arg_verbose,
         action="count",
@@ -965,7 +1143,7 @@ def _create_parent_argparser():
 
 
 def _create_child_argparser(
-    parent_argparsers=None,
+    parent_argparsers,
 ):
     def create_prime_parser(sub_command_parsers):
         sub_command_desc = "Prime the environment to make it ready to use."
@@ -1049,9 +1227,6 @@ def _create_child_argparser(
             run_mode=RunMode.mode_check.value,
         )
 
-    if parent_argparsers is None:
-        parent_argparsers = []
-
     child_argparser = CustomArgumentParser(
         description=(
             f"Bootstrap the environment (see default `{RunMode.mode_prime.value}` mode) "
@@ -1102,6 +1277,7 @@ def parse_args(remaining_argv=None):
             parent_argparser,
         ],
     )
+    # TODO: use constants:
     if "-h" not in remaining_argv and "--help" not in remaining_argv:
         try:
             # Try to parse with `prime` as the default sub-command:
@@ -1127,20 +1303,6 @@ def parse_args(remaining_argv=None):
             remaining_argv,
             namespace=parsed_args,
         )
-
-    # Apply defaults for the case where no sub-command was specified:
-    if not getattr(
-        parsed_args,
-        ParsedArg.name_run_mode.value,
-    ):
-        parsed_args.run_mode = RunMode.mode_prime.value
-        # The defaults for the `RunMode.mode_prime`:
-        if not hasattr(parsed_args, ParsedArg.name_final_state.value):
-            setattr(parsed_args, ParsedArg.name_final_state.value, None)
-        if not hasattr(parsed_args, ParsedArg.name_selected_env_dir.value):
-            setattr(parsed_args, ParsedArg.name_selected_env_dir.value, None)
-        if not hasattr(parsed_args, ParsedArg.name_command.value):
-            setattr(parsed_args, ParsedArg.name_command.value, None)
 
     return parsed_args
 
@@ -2975,7 +3137,7 @@ class Bootstrapper_state_default_stderr_log_handler_configured(
         )
         assert state_input_stderr_log_level_var_loaded >= 0
 
-        stderr_handler: logging.Handler = configure_stderr_logger(
+        stderr_handler: logging.Handler = configure_stderr_log_handler(
             state_input_stderr_log_level_var_loaded
         )
 
@@ -3048,41 +3210,51 @@ class Bootstrapper_state_input_stderr_log_level_eval_finalized(
         )
 
         parsed_args = self.eval_parent_state(EnvState.state_args_parsed.name)
-        stderr_log_level_silent = getattr(
-            parsed_args,
-            SyntaxArg.dest_silent,
-        )
-        stderr_log_level_quiet = getattr(
+        stderr_log_level_quiet_count: int = getattr(
             parsed_args,
             SyntaxArg.dest_quiet,
         )
-        stderr_log_level_verbose = getattr(
+        stderr_log_level_verbose_count: int = getattr(
             parsed_args,
             SyntaxArg.dest_verbose,
         )
 
-        stderr_log_level_eval_finalized: int = state_input_stderr_log_level_var_loaded
-        if stderr_log_level_silent:
-            # almost disable logs:
-            stderr_log_level_eval_finalized = logging.CRITICAL + 1
-        elif stderr_log_level_quiet:
-            stderr_log_level_eval_finalized = logging.ERROR
-        elif stderr_log_level_verbose:
-            if stderr_log_level_verbose >= 2:
+        stderr_log_level_eval_finalized: int
+        if stderr_log_level_quiet_count == 0 and stderr_log_level_verbose_count == 0:
+            stderr_log_level_eval_finalized = state_input_stderr_log_level_var_loaded
+        else:
+            # FT_38_73_38_52.log_verbosity.md
+            # The base is the numeric value of `ConfConstInput.default_PROTOPRIMER_STDERR_LOG_LEVEL`.
+            base_log_level: int = getattr(
+                logging,
+                ConfConstInput.default_PROTOPRIMER_STDERR_LOG_LEVEL,
+            )
+
+            relative_log_level = 10 * (
+                stderr_log_level_quiet_count - stderr_log_level_verbose_count
+            )
+
+            stderr_log_level_eval_finalized = base_log_level + relative_log_level
+
+            if stderr_log_level_eval_finalized < logging.NOTSET:
                 stderr_log_level_eval_finalized = logging.NOTSET
-            elif stderr_log_level_verbose == 1:
-                stderr_log_level_eval_finalized = logging.DEBUG
 
         state_default_stderr_logger_configured.setLevel(stderr_log_level_eval_finalized)
 
         # Set default log level for subsequent invocations:
-        level_var_value = logging.getLevelName(stderr_log_level_eval_finalized)
-        if isinstance(level_var_value, str):
-            if " " in level_var_value:
-                # Due to some hacks in the `python` `logging` library,
-                # it may return non-existing level names - use number instead:
-                level_var_value = str(stderr_log_level_eval_finalized)
+        level_var_value: str = logging.getLevelName(stderr_log_level_eval_finalized)
+        assert isinstance(level_var_value, str)
+        if " " in level_var_value:
+            # Due to some hacks in the `python` `logging` library,
+            # it may return non-existing level names - use number instead:
+            level_var_value = str(stderr_log_level_eval_finalized)
         os.environ[EnvVar.var_PROTOPRIMER_STDERR_LOG_LEVEL.value] = level_var_value
+
+        # Remove stack trace for levels >= WARNING (it will only print the exception itself):
+        if stderr_log_level_eval_finalized >= logging.WARNING:
+            # Avoid changing that in tests - it changes the global state and causes many tests to fail unexpectedly:
+            if not is_test_run():
+                sys.tracebacklimit = 0
 
         return stderr_log_level_eval_finalized
 
@@ -3588,6 +3760,12 @@ class Bootstrapper_state_primer_conf_file_data_loaded(AbstractCachingStateNode[d
             )
             is_quiet: bool = state_input_stderr_log_level_eval_finalized > logging.INFO
 
+            if is_quiet:
+                # Print this note early
+                logging.warning(
+                    f"Showing plain config data - use option `-v` (`--verbose`) to annotate it with descriptions."
+                )
+
             # Print `ConfLeap.leap_input` data together:
             # ===
             # `ConfLeap.leap_input`:
@@ -3601,7 +3779,7 @@ class Bootstrapper_state_primer_conf_file_data_loaded(AbstractCachingStateNode[d
             print(RenderConfigVisitor(is_quiet=is_quiet).render_node(conf_input))
 
             # ===
-            # `ConfLeap.leap_input`:
+            # `ConfLeap.leap_primer`:
             conf_primer = RootNode_primer(
                 node_indent=0,
                 orig_data=file_data,
@@ -4134,15 +4312,7 @@ class Bootstrapper_state_env_conf_file_data_loaded(AbstractCachingStateNode[dict
             )
         else:
             warn_on_missing_conf_file(state_local_conf_file_abs_path_inited)
-            # TODO: If `pyproject.toml` exists, use `.`, if not, use empty list:
-            file_data = {
-                # TODO: `ConfConstEnv.default_project_descriptors` is not suitable for `instant` condition:
-                ConfField.field_project_descriptors.value: [
-                    {
-                        ConfField.field_build_root_dir_rel_path.value: ConfConstGeneral.curr_dir_rel_path,
-                    },
-                ],
-            }
+            file_data = {}
 
         if can_print_effective_config(self):
             state_input_stderr_log_level_eval_finalized: int = self.eval_parent_state(
@@ -4643,29 +4813,12 @@ class Bootstrapper_state_default_file_log_handler_configured(
         script_path = sys.argv[0]
         script_name = os.path.basename(script_path)
 
-        file_log_name = f"{script_name}.{state_input_start_id_var_loaded}.log"
-        # TODO: Configure MAX file log level in the config file (NOTE: the higher the level the fewer the log entries):
-        file_log_level: int = logging.INFO
-        # Increase the log level at most to what is used by stderr:
-        if state_input_stderr_log_level_eval_finalized < file_log_level:
-            file_log_level = state_input_stderr_log_level_eval_finalized
-
-        log_file_abs_path = os.path.join(
+        file_handler = configure_file_log_handler(
+            script_name,
+            state_input_start_id_var_loaded,
+            state_input_stderr_log_level_eval_finalized,
             state_local_log_dir_abs_path_inited,
-            file_log_name,
         )
-
-        os.makedirs(state_local_log_dir_abs_path_inited, exist_ok=True)
-
-        file_handler: logging.Handler = logging.FileHandler(log_file_abs_path)
-        file_handler.addFilter(PythonExecutableFilter())
-
-        file_formatter = RegularFormatter()
-
-        file_handler.setLevel(file_log_level)
-        file_handler.setFormatter(file_formatter)
-
-        logger.addHandler(file_handler)
 
         return file_handler
 
@@ -5518,6 +5671,8 @@ class Bootstrapper_state_command_executed(AbstractCachingStateNode[int]):
                 [
                     EnvState.state_default_stderr_log_handler_configured.name,
                     EnvState.state_args_parsed.name,
+                    EnvState.state_local_venv_dir_abs_path_inited.name,
+                    EnvState.state_local_cache_dir_abs_path_inited.name,
                     EnvState.state_py_exec_updated_proto_code.name,
                 ],
             ),
@@ -5526,10 +5681,8 @@ class Bootstrapper_state_command_executed(AbstractCachingStateNode[int]):
                 EnvState.state_command_executed.name,
             ),
         )
-        self.shell_args: list[str] = []
-        # TODO: get path automatically (or by config) - this will not work for everyone:
-        self.shell_abs_path: str = "/usr/bin/bash"
-        self.start_shell: bool = False
+
+        self.start_interactive_shell: bool = False
 
     def _eval_state_once(
         self,
@@ -5553,7 +5706,17 @@ class Bootstrapper_state_command_executed(AbstractCachingStateNode[int]):
             EnvState.state_args_parsed.name
         )
 
-        self._clean_env_vars()
+        state_local_venv_dir_abs_path_inited: str = self.eval_parent_state(
+            EnvState.state_local_venv_dir_abs_path_inited.name
+        )
+
+        state_local_cache_dir_abs_path_inited: str = self.eval_parent_state(
+            EnvState.state_local_cache_dir_abs_path_inited.name,
+        )
+
+        shell_driver: ShellDriverBase = _get_shell_driver(
+            state_local_cache_dir_abs_path_inited
+        )
 
         command_line: str | None = getattr(
             state_args_parsed,
@@ -5561,40 +5724,15 @@ class Bootstrapper_state_command_executed(AbstractCachingStateNode[int]):
             None,
         )
 
-        self._prepare_shell_env()
-
-        if command_line is not None:
-            self.shell_args.extend(
-                [
-                    "-c",
-                    command_line,
-                ]
-            )
-            self.start_shell = True
-
-        if self.start_shell:
-            print_delegate_line(
-                self.shell_args,
+        if command_line is not None or self.start_interactive_shell:
+            return shell_driver.run_shell(
+                command_line,
                 state_default_stderr_log_handler_configured,
-            )
-
-            os.execv(
-                self.shell_abs_path,
-                self.shell_args,
+                state_local_venv_dir_abs_path_inited,
             )
         else:
             # Otherwise, exit_code is 0:
             return 0
-
-    def _clean_env_vars(self):
-        for env_var in EnvVar:
-            os.environ.pop(env_var.value, None)
-
-    def _prepare_shell_env(self):
-        shell_basename: str = os.path.basename(self.shell_abs_path)
-        self.shell_args: list[str] = [
-            shell_basename,
-        ]
 
 
 ########################################################################################################################
@@ -5906,19 +6044,12 @@ class EnvContext:
     def print_exit_line(
         self,
         exit_code: int,
+        test_failure: bool = False,
     ) -> None:
         """
         Print a color-coded status message to stderr.
         """
         assert type(exit_code) is int, "`exit_code` must be an `int`"
-
-        color_success = (
-            f"{TermColor.back_dark_green.value}{TermColor.fore_dark_black.value}"
-        )
-        color_failure = (
-            f"{TermColor.back_dark_red.value}{TermColor.fore_bright_white.value}"
-        )
-        color_reset = TermColor.reset_style.value
 
         state_default_stderr_log_handler_configured: logging.Handler = (
             self.state_graph.eval_state(
@@ -5926,23 +6057,32 @@ class EnvContext:
             )
         )
 
+        status_name: str
         is_reportable: bool
         if exit_code == 0:
-            color_status = color_success
+            color_status = (
+                f"{TermColor.back_dark_green.value}{TermColor.fore_dark_black.value}"
+            )
             status_name = "SUCCESS"
             is_reportable = (
                 state_default_stderr_log_handler_configured.level <= logging.INFO
             )
         else:
-            color_status = color_failure
-            status_name = "FAILURE"
+            if not test_failure and is_test_run():
+                # Avoid confusing output with "FAILURE" in tests:
+                status_name = "TEST_EXIT"
+                color_status = f"{TermColor.back_dark_yellow.value}{TermColor.fore_dark_black.value}"
+            else:
+                status_name = "FAILURE"
+                color_status = f"{TermColor.back_dark_red.value}{TermColor.fore_bright_white.value}"
+
             is_reportable = (
                 state_default_stderr_log_handler_configured.level <= logging.CRITICAL
             )
 
         if is_reportable:
             print(
-                f"{color_status}{status_name}{color_reset} [{exit_code}]: {get_path_to_curr_python()} {get_script_command_line()}",
+                f"{color_status}{status_name}{TermColor.reset_style.value} [{exit_code}]: {get_path_to_curr_python()} {get_script_command_line()}",
                 file=sys.stderr,
                 flush=True,
             )
@@ -5961,7 +6101,7 @@ class PythonExecutableFilter(logging.Filter):
         return True
 
 
-class RegularFormatter(logging.Formatter):
+class FileLogFormatter(logging.Formatter):
     """
     Custom formatter with the proper timestamp.
     """
@@ -5989,29 +6129,61 @@ class RegularFormatter(logging.Formatter):
         return f"{formatted_timestamp}.{int(log_record.msecs):03d}"
 
 
-class ColorFormatter(RegularFormatter):
+class StderrLogFormatter(logging.Formatter):
     """
-    Custom formatter with color based on log level.
+    Custom formatter with color and format based on log level for stderr.
     """
 
     color_reset = TermColor.reset_style.value
     color_set = {
-        "DEBUG": TermColor.fore_dark_cyan.value,
-        "INFO": TermColor.fore_dark_green.value,
-        "WARNING": TermColor.fore_dark_yellow.value,
-        "ERROR": TermColor.fore_dark_red.value,
         "CRITICAL": TermColor.fore_bold_dark_red.value,
+        "ERROR": TermColor.fore_dark_red.value,
+        # The default is "WARNING" - see: FT_38_73_38_52.log_verbosity.md
+        "WARNING": TermColor.fore_dark_yellow.value,
+        "INFO": TermColor.fore_dark_green.value,
+        "DEBUG": TermColor.fore_dark_cyan.value,
+        # NOTE: Level `logging.NOTSET` (below `logging.DEBUG`) is not printed.
+        #       And numerical levels like 5 have no given names (making `logging.DEBUG` practically the lowest).
     }
 
-    def format(self, log_record):
-        log_color = self.color_set.get(log_record.levelname, self.color_reset)
-        log_msg = super().format(log_record)
+    def __init__(self):
+        super().__init__(
+            # Default: least verbose:
+            fmt="%(levelname)s %(message)s",
+            datefmt="%H:%M:%S",
+        )
+        self.level_fmts = {
+            # Anything above `logging.INFO` use default (least verbose):
+            logging.INFO: logging.Formatter(
+                fmt="%(asctime)s %(process)d %(levelname)s %(py_exec_name)s %(message)s",
+                datefmt="%H:%M:%S",
+            ),
+            # Most verbose:
+            logging.DEBUG: logging.Formatter(
+                fmt="%(asctime)s %(process)d %(levelname)s %(py_exec_name)s %(filename)s:%(lineno)d %(message)s",
+                datefmt="%Y-%m-%d %H:%M:%S",
+            ),
+        }
+
+    def format(
+        self,
+        record,
+    ):
+        log_formatter = self.level_fmts.get(record.levelno, None)
+        if log_formatter is None:
+            log_msg = super().format(record)
+        else:
+            log_msg = log_formatter.format(record)
+        log_color = self.color_set.get(record.levelname, self.color_reset)
         return f"{log_color}{log_msg}{self.color_reset}"
 
 
-def configure_stderr_logger(
+def configure_stderr_log_handler(
     state_input_stderr_log_level_var_loaded: int,
 ) -> logging.Handler:
+    """
+    Implements for `stderr` log: FT_38_73_38_52.log_verbosity.md
+    """
 
     # Log everything (the filters are supposed to be set on output handlers instead):
     logger.setLevel(logging.NOTSET)
@@ -6031,12 +6203,48 @@ def configure_stderr_logger(
         stderr_handler: logging.Handler = handler_class(sys.stderr)
 
         stderr_handler.addFilter(PythonExecutableFilter())
-        stderr_handler.setFormatter(ColorFormatter())
+        stderr_handler.setFormatter(StderrLogFormatter())
 
         logger.addHandler(stderr_handler)
 
     stderr_handler.setLevel(state_input_stderr_log_level_var_loaded)
     return stderr_handler
+
+
+def configure_file_log_handler(
+    script_name: str,
+    state_input_start_id_var_loaded: str,
+    state_input_stderr_log_level_eval_finalized: int,
+    state_local_log_dir_abs_path_inited: str,
+) -> logging.Handler:
+    """
+    Implements for log file: FT_38_73_38_52.log_verbosity.md
+    """
+
+    log_file_basename = f"{script_name}.{state_input_start_id_var_loaded}.log"
+    log_file_abs_path = os.path.join(
+        state_local_log_dir_abs_path_inited,
+        log_file_basename,
+    )
+
+    # TODO: Configure MAX file log level in the config file (NOTE: the higher the level the fewer the log entries):
+    file_log_level: int = logging.INFO
+    # Increase the log level at most to what is used by stderr:
+    if state_input_stderr_log_level_eval_finalized < file_log_level:
+        file_log_level = state_input_stderr_log_level_eval_finalized
+
+    os.makedirs(state_local_log_dir_abs_path_inited, exist_ok=True)
+
+    file_handler: logging.Handler = logging.FileHandler(log_file_abs_path)
+    file_handler.addFilter(PythonExecutableFilter())
+
+    file_formatter = FileLogFormatter()
+
+    file_handler.setLevel(file_log_level)
+    file_handler.setFormatter(file_formatter)
+
+    logger.addHandler(file_handler)
+    return file_handler
 
 
 def rename_to_moved_state_name(state_name: str) -> str:
@@ -6166,16 +6374,6 @@ def get_file_name_timestamp():
 
 def get_default_start_id():
     return f"{get_file_name_timestamp()}.{os.getpid()}"
-
-
-def create_temp_file():
-    # TODO: avoid generating new temp file (use configured location):
-    temp_file = tempfile.NamedTemporaryFile(
-        mode="w+t",
-        encoding="utf-8",
-        delete=False,
-    )
-    return temp_file
 
 
 def is_sub_path(
@@ -6310,7 +6508,7 @@ def is_uv_venv(
 ) -> bool:
     with open(venv_cfg_file_abs_path, "r") as cfg_file:
         for file_line in cfg_file:
-            if file_line.strip().startswith("uv ="):
+            if file_line.strip().startswith(f"{ConfConstGeneral.name_uv_package} ="):
                 return True
     return False
 
@@ -6322,6 +6520,14 @@ def is_pip_venv(
     return not is_uv_venv(
         venv_cfg_file_abs_path,
     )
+
+
+def is_test_run() -> bool:
+    """
+    See: FT_83_60_72_19.test_perimeter.md
+    """
+    # TODO: use constant:
+    return "pytest" in sys.modules
 
 
 def get_venv_type(
