@@ -88,6 +88,7 @@ def test_python_from_arbitrary_venv(
         ref_root_abs_path,
         conf_client_dir_abs_path,
         conf_env_dir_abs_path,
+        project_dir_abs_path,
     )
 
     command_args = [
@@ -166,6 +167,7 @@ def test_python_from_required_venv(
         ref_root_abs_path,
         conf_client_dir_abs_path,
         conf_env_dir_abs_path,
+        project_dir_abs_path,
     )
 
     # ===

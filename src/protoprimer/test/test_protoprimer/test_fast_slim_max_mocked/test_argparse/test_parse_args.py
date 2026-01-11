@@ -20,8 +20,7 @@ def test_parse_args_defaults():
     # then:
     assert getattr(args, ParsedArg.name_run_mode.value) == RunMode.mode_prime.value
     assert getattr(args, ParsedArg.name_final_state.value) is None
-    assert getattr(args, SyntaxArg.dest_silent) is False
-    assert getattr(args, SyntaxArg.dest_quiet) is False
+    assert getattr(args, SyntaxArg.dest_quiet) == 0
     assert getattr(args, SyntaxArg.dest_verbose) == 0
 
 
@@ -92,29 +91,17 @@ def test_parse_args_run_mode():
 
 
 def test_parse_args_log_level():
-    # when: silent long arg
-    args_silent = parse_args([SyntaxArg.arg_silent])
-
-    # then: silent long arg
-    assert getattr(args_silent, SyntaxArg.dest_silent) is True
-
-    # when: silent short arg
-    args_s = parse_args([SyntaxArg.arg_s])
-
-    # then: silent short arg
-    assert getattr(args_s, SyntaxArg.dest_silent) is True
-
     # when: quiet long arg
     args_quiet = parse_args([SyntaxArg.arg_quiet])
 
     # then: quiet long arg
-    assert getattr(args_quiet, SyntaxArg.dest_quiet) is True
+    assert getattr(args_quiet, SyntaxArg.dest_quiet) == 1
 
     # when: quiet short arg
     args_q = parse_args([SyntaxArg.arg_q])
 
     # then: quiet short arg
-    assert getattr(args_q, SyntaxArg.dest_quiet) is True
+    assert getattr(args_q, SyntaxArg.dest_quiet) == 1
 
     # when: verbose once
     args_verbose_1 = parse_args([SyntaxArg.arg_verbose])
@@ -154,8 +141,7 @@ def test_parse_args_final_state():
             {
                 ParsedArg.name_run_mode.value: RunMode.mode_prime.value,
                 ParsedArg.name_selected_env_dir.value: None,
-                SyntaxArg.dest_silent: False,
-                SyntaxArg.dest_quiet: False,
+                SyntaxArg.dest_quiet: 0,
                 SyntaxArg.dest_verbose: 0,
                 ParsedArg.name_final_state.value: None,
                 ParsedArg.name_command.value: None,
@@ -167,8 +153,7 @@ def test_parse_args_final_state():
                 ParsedArg.name_run_mode.value: RunMode.mode_prime.value,
                 ParsedArg.name_selected_env_dir.value: None,
                 ParsedArg.name_final_state.value: None,
-                SyntaxArg.dest_silent: False,
-                SyntaxArg.dest_quiet: False,
+                SyntaxArg.dest_quiet: 0,
                 SyntaxArg.dest_verbose: 0,
                 ParsedArg.name_command.value: None,
             },
@@ -179,8 +164,7 @@ def test_parse_args_final_state():
                 ParsedArg.name_run_mode.value: RunMode.mode_prime.value,
                 ParsedArg.name_selected_env_dir.value: None,
                 ParsedArg.name_final_state.value: "some_state",
-                SyntaxArg.dest_silent: False,
-                SyntaxArg.dest_quiet: False,
+                SyntaxArg.dest_quiet: 0,
                 SyntaxArg.dest_verbose: 0,
                 ParsedArg.name_command.value: None,
             },
@@ -189,8 +173,7 @@ def test_parse_args_final_state():
             ["upgrade"],
             {
                 ParsedArg.name_run_mode.value: "upgrade",
-                SyntaxArg.dest_silent: False,
-                SyntaxArg.dest_quiet: False,
+                SyntaxArg.dest_quiet: 0,
                 SyntaxArg.dest_verbose: 0,
             },
         ),
@@ -198,8 +181,7 @@ def test_parse_args_final_state():
             ["config"],
             {
                 ParsedArg.name_run_mode.value: "config",
-                SyntaxArg.dest_silent: False,
-                SyntaxArg.dest_quiet: False,
+                SyntaxArg.dest_quiet: 0,
                 SyntaxArg.dest_verbose: 0,
             },
         ),
@@ -207,8 +189,7 @@ def test_parse_args_final_state():
             ["check"],
             {
                 ParsedArg.name_run_mode.value: "check",
-                SyntaxArg.dest_silent: False,
-                SyntaxArg.dest_quiet: False,
+                SyntaxArg.dest_quiet: 0,
                 SyntaxArg.dest_verbose: 0,
             },
         ),
@@ -218,8 +199,7 @@ def test_parse_args_final_state():
                 ParsedArg.name_run_mode.value: RunMode.mode_prime.value,
                 ParsedArg.name_selected_env_dir.value: None,
                 ParsedArg.name_final_state.value: None,
-                SyntaxArg.dest_silent: False,
-                SyntaxArg.dest_quiet: True,
+                SyntaxArg.dest_quiet: 1,
                 SyntaxArg.dest_verbose: 0,
                 ParsedArg.name_command.value: None,
             },
@@ -230,21 +210,8 @@ def test_parse_args_final_state():
                 ParsedArg.name_run_mode.value: RunMode.mode_prime.value,
                 ParsedArg.name_selected_env_dir.value: None,
                 ParsedArg.name_final_state.value: None,
-                SyntaxArg.dest_silent: False,
-                SyntaxArg.dest_quiet: False,
+                SyntaxArg.dest_quiet: 0,
                 SyntaxArg.dest_verbose: 1,
-                ParsedArg.name_command.value: None,
-            },
-        ),
-        (
-            ["prime", "-s"],
-            {
-                ParsedArg.name_run_mode.value: RunMode.mode_prime.value,
-                ParsedArg.name_selected_env_dir.value: None,
-                ParsedArg.name_final_state.value: None,
-                SyntaxArg.dest_silent: True,
-                SyntaxArg.dest_quiet: False,
-                SyntaxArg.dest_verbose: 0,
                 ParsedArg.name_command.value: None,
             },
         ),
@@ -254,8 +221,7 @@ def test_parse_args_final_state():
                 ParsedArg.name_run_mode.value: RunMode.mode_prime.value,
                 ParsedArg.name_selected_env_dir.value: None,
                 ParsedArg.name_final_state.value: None,
-                SyntaxArg.dest_silent: False,
-                SyntaxArg.dest_quiet: True,
+                SyntaxArg.dest_quiet: 1,
                 SyntaxArg.dest_verbose: 0,
                 ParsedArg.name_command.value: None,
             },
@@ -266,8 +232,7 @@ def test_parse_args_final_state():
                 ParsedArg.name_run_mode.value: RunMode.mode_prime.value,
                 ParsedArg.name_selected_env_dir.value: None,
                 ParsedArg.name_final_state.value: None,
-                SyntaxArg.dest_silent: False,
-                SyntaxArg.dest_quiet: False,
+                SyntaxArg.dest_quiet: 0,
                 SyntaxArg.dest_verbose: 3,
                 ParsedArg.name_command.value: None,
             },
@@ -278,8 +243,7 @@ def test_parse_args_final_state():
                 ParsedArg.name_run_mode.value: RunMode.mode_prime.value,
                 ParsedArg.name_selected_env_dir.value: "some/path",
                 ParsedArg.name_final_state.value: None,
-                SyntaxArg.dest_silent: False,
-                SyntaxArg.dest_quiet: False,
+                SyntaxArg.dest_quiet: 0,
                 SyntaxArg.dest_verbose: 0,
                 ParsedArg.name_command.value: None,
             },
@@ -290,8 +254,7 @@ def test_parse_args_final_state():
                 ParsedArg.name_run_mode.value: RunMode.mode_prime.value,
                 ParsedArg.name_selected_env_dir.value: "some/path",
                 ParsedArg.name_final_state.value: None,
-                SyntaxArg.dest_silent: False,
-                SyntaxArg.dest_quiet: False,
+                SyntaxArg.dest_quiet: 0,
                 SyntaxArg.dest_verbose: 0,
                 ParsedArg.name_command.value: None,
             },
@@ -302,8 +265,7 @@ def test_parse_args_final_state():
                 ParsedArg.name_run_mode.value: RunMode.mode_prime.value,
                 ParsedArg.name_selected_env_dir.value: "default_env",
                 ParsedArg.name_final_state.value: None,
-                SyntaxArg.dest_silent: False,
-                SyntaxArg.dest_quiet: False,
+                SyntaxArg.dest_quiet: 0,
                 SyntaxArg.dest_verbose: 0,
                 ParsedArg.name_command.value: None,
             },

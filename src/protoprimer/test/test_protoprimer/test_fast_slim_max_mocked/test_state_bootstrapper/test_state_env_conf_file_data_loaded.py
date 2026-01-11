@@ -117,9 +117,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         # then:
 
         self.assertIn("does not exist", log_dst.output[0])
-        self.assertEqual(
-            {"project_descriptors": [{"build_root_dir_rel_path": "."}]}, state_value
-        )
+        self.assertEqual({}, state_value)
 
     @patch(
         f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_stderr_log_level_eval_finalized.__name__}.eval_own_state"

@@ -14,7 +14,7 @@ from protoprimer.primer_kernel import (
     EnvContext,
     EnvState,
     PythonExecutableFilter,
-    RegularFormatter,
+    FileLogFormatter,
 )
 
 
@@ -79,7 +79,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.assertTrue(self.fs.exists(expected_log_file))
 
         self.assertEqual(file_handler.level, logging.INFO)
-        self.assertIsInstance(file_handler.formatter, RegularFormatter)
+        self.assertIsInstance(file_handler.formatter, FileLogFormatter)
 
         self.assertTrue(
             any(isinstance(f, PythonExecutableFilter) for f in file_handler.filters)

@@ -1,9 +1,7 @@
 import argparse
 import logging
 import os
-from unittest.mock import (
-    patch,
-)
+from unittest.mock import patch, ANY
 
 import pytest
 
@@ -15,12 +13,13 @@ from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     Bootstrapper_state_args_parsed,
     Bootstrapper_state_default_stderr_log_handler_configured,
-    Bootstrapper_state_derived_conf_data_loaded,
     Bootstrapper_state_py_exec_updated_proto_code,
     EnvContext,
     EnvState,
     ParsedArg,
     PythonExecutable,
+    Bootstrapper_state_local_venv_dir_abs_path_inited,
+    Bootstrapper_state_local_cache_dir_abs_path_inited,
 )
 
 
@@ -36,21 +35,38 @@ def test_relationship():
 @patch(
     f"{primer_kernel.__name__}.{Bootstrapper_state_default_stderr_log_handler_configured.__name__}.eval_own_state"
 )
-@patch(f"{os.__name__}.execv")
+@patch(f"{primer_kernel.__name__}.os.execve")
 @patch(
     f"{primer_kernel.__name__}.{Bootstrapper_state_py_exec_updated_proto_code.__name__}.eval_own_state"
 )
 @patch(
     f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.eval_own_state"
 )
-def test_command_executed(
+@patch(
+    f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.eval_own_state"
+)
+@patch(
+    f"{primer_kernel.__name__}.{Bootstrapper_state_local_cache_dir_abs_path_inited.__name__}.eval_own_state"
+)
+@patch.dict(
+    os.environ,
+    {
+        "SHELL": "/bin/bash",
+    },
+    clear=True,
+)
+def test_command_executed_in_bash(
+    mock_state_local_cache_dir_abs_path_inited,
+    mock_state_local_venv_dir_abs_path_inited,
     mock_state_args_parsed,
     mock_state_py_exec_updated_proto_code,
-    mock_os_execv,
+    mock_os_execve,
     mock_state_default_stderr_log_handler_configured,
     env_ctx,
+    fs,
 ):
     # given:
+    fs.create_dir("/fake")
     assert_parent_states_mocked(
         env_ctx,
         EnvState.state_command_executed.name,
@@ -64,36 +80,129 @@ def test_command_executed(
         PythonExecutable.py_exec_updated_proto_code
     )
     mock_state_default_stderr_log_handler_configured.return_value.level = logging.INFO
+    mock_state_local_venv_dir_abs_path_inited.return_value = "/fake/venv"
+    mock_state_local_cache_dir_abs_path_inited.return_value = "/fake/cache"
 
     # when:
-    state_value = env_ctx.state_graph.eval_state(EnvState.state_command_executed.name)
+    env_ctx.state_graph.eval_state(EnvState.state_command_executed.name)
 
     # then:
-    assert state_value is None
-    mock_os_execv.assert_called_once_with(
-        "/usr/bin/bash",
+    mock_os_execve.assert_called_once_with(
+        "/bin/bash",
         [
-            "bash",
+            "/bin/bash",
+            "--init-file",
+            "/fake/cache/bash/.bashrc",
+            "-i",
             "-c",
             "echo hello",
         ],
+        {
+            "SHELL": "/bin/bash",
+        },
     )
 
 
 @patch(
     f"{primer_kernel.__name__}.{Bootstrapper_state_default_stderr_log_handler_configured.__name__}.eval_own_state"
 )
-@patch(f"{os.__name__}.execv")
+@patch(f"{primer_kernel.__name__}.os.execve")
 @patch(
     f"{primer_kernel.__name__}.{Bootstrapper_state_py_exec_updated_proto_code.__name__}.eval_own_state"
 )
 @patch(
     f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.eval_own_state"
 )
-def test_command_not_executed_when_no_command_line_provided(
+@patch(
+    f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.eval_own_state"
+)
+@patch(
+    f"{primer_kernel.__name__}.{Bootstrapper_state_local_cache_dir_abs_path_inited.__name__}.eval_own_state"
+)
+@patch.dict(
+    os.environ,
+    {
+        "SHELL": "/bin/zsh",
+    },
+    clear=True,
+)
+def test_command_executed_in_zsh(
+    mock_state_local_cache_dir_abs_path_inited,
+    mock_state_local_venv_dir_abs_path_inited,
     mock_state_args_parsed,
     mock_state_py_exec_updated_proto_code,
-    mock_os_execv,
+    mock_os_execve,
+    mock_state_default_stderr_log_handler_configured,
+    env_ctx,
+    fs,
+):
+    # given:
+    fs.create_dir("/fake")
+    assert_parent_states_mocked(
+        env_ctx,
+        EnvState.state_command_executed.name,
+    )
+    mock_state_args_parsed.return_value = argparse.Namespace(
+        **{
+            ParsedArg.name_command.value: "echo hello",
+        }
+    )
+    mock_state_py_exec_updated_proto_code.return_value = (
+        PythonExecutable.py_exec_updated_proto_code
+    )
+    mock_state_default_stderr_log_handler_configured.return_value.level = logging.INFO
+    mock_state_local_venv_dir_abs_path_inited.return_value = "/fake/venv"
+    mock_state_local_cache_dir_abs_path_inited.return_value = "/fake/cache"
+
+    # when:
+    env_ctx.state_graph.eval_state(EnvState.state_command_executed.name)
+
+    # then:
+    # In ShellDriverZsh, there are no extra shell_args, just an env var `ZDOTDIR`.
+    mock_os_execve.assert_called_once_with(
+        "/bin/zsh",
+        [
+            "/bin/zsh",
+            "-i",
+            "-c",
+            "echo hello",
+        ],
+        {
+            "SHELL": "/bin/zsh",
+            "ZDOTDIR": "/fake/cache/zsh",
+        },
+    )
+
+
+@patch(
+    f"{primer_kernel.__name__}.{Bootstrapper_state_default_stderr_log_handler_configured.__name__}.eval_own_state"
+)
+@patch(f"{primer_kernel.__name__}.os.execve")
+@patch(
+    f"{primer_kernel.__name__}.{Bootstrapper_state_py_exec_updated_proto_code.__name__}.eval_own_state"
+)
+@patch(
+    f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.eval_own_state"
+)
+@patch(
+    f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.eval_own_state"
+)
+@patch(
+    f"{primer_kernel.__name__}.{Bootstrapper_state_local_cache_dir_abs_path_inited.__name__}.eval_own_state"
+)
+@patch.dict(
+    os.environ,
+    {
+        "SHELL": "/bin/bash",
+    },
+    clear=True,
+)
+def test_command_not_executed_when_no_command_line_provided(
+    mock_state_local_cache_dir_abs_path_inited,
+    mock_state_local_venv_dir_abs_path_inited,
+    mock_state_args_parsed,
+    mock_state_py_exec_updated_proto_code,
+    mock_os_execve,
     mock_state_default_stderr_log_handler_configured,
     env_ctx,
 ):
@@ -117,27 +226,44 @@ def test_command_not_executed_when_no_command_line_provided(
 
     # then:
     assert state_value == 0
-    mock_os_execv.assert_not_called()
+    mock_os_execve.assert_not_called()
 
 
 @patch(
     f"{primer_kernel.__name__}.{Bootstrapper_state_default_stderr_log_handler_configured.__name__}.eval_own_state"
 )
-@patch(f"{os.__name__}.execv")
+@patch(f"{primer_kernel.__name__}.os.execve")
 @patch(
     f"{primer_kernel.__name__}.{Bootstrapper_state_py_exec_updated_proto_code.__name__}.eval_own_state"
 )
 @patch(
     f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.eval_own_state"
 )
+@patch(
+    f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.eval_own_state"
+)
+@patch(
+    f"{primer_kernel.__name__}.{Bootstrapper_state_local_cache_dir_abs_path_inited.__name__}.eval_own_state"
+)
+@patch.dict(
+    os.environ,
+    {
+        "SHELL": "/bin/bash",
+    },
+    clear=True,
+)
 def test_command_executed_empty(
+    mock_state_local_cache_dir_abs_path_inited,
+    mock_state_local_venv_dir_abs_path_inited,
     mock_state_args_parsed,
     mock_state_py_exec_updated_proto_code,
-    mock_os_execv,
+    mock_os_execve,
     mock_state_default_stderr_log_handler_configured,
     env_ctx,
+    fs,
 ):
     # given:
+    fs.create_dir("/fake")
     assert_parent_states_mocked(
         env_ctx,
         EnvState.state_command_executed.name,
@@ -151,40 +277,64 @@ def test_command_executed_empty(
         PythonExecutable.py_exec_updated_proto_code
     )
     mock_state_default_stderr_log_handler_configured.return_value.level = logging.INFO
+    mock_state_local_venv_dir_abs_path_inited.return_value = "/fake/venv"
+    mock_state_local_cache_dir_abs_path_inited.return_value = "/fake/cache"
 
     # when:
-    state_value = env_ctx.state_graph.eval_state(EnvState.state_command_executed.name)
+    env_ctx.state_graph.eval_state(EnvState.state_command_executed.name)
 
     # then:
-    assert state_value is None
-    mock_os_execv.assert_called_once_with(
-        "/usr/bin/bash",
+    mock_os_execve.assert_called_once_with(
+        "/bin/bash",
         [
-            "bash",
+            "/bin/bash",
+            "--init-file",
+            "/fake/cache/bash/.bashrc",
+            "-i",
             "-c",
             "",
         ],
+        {
+            "SHELL": "/bin/bash",
+        },
     )
 
 
 @patch(
     f"{primer_kernel.__name__}.{Bootstrapper_state_default_stderr_log_handler_configured.__name__}.eval_own_state"
 )
-@patch(f"{os.__name__}.execv")
+@patch(f"{primer_kernel.__name__}.os.execve")
 @patch(
     f"{primer_kernel.__name__}.{Bootstrapper_state_py_exec_updated_proto_code.__name__}.eval_own_state"
 )
 @patch(
     f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.eval_own_state"
 )
+@patch(
+    f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.eval_own_state"
+)
+@patch(
+    f"{primer_kernel.__name__}.{Bootstrapper_state_local_cache_dir_abs_path_inited.__name__}.eval_own_state"
+)
+@patch.dict(
+    os.environ,
+    {
+        "SHELL": "/bin/bash",
+    },
+    clear=True,
+)
 def test_command_executed_with_whitespace(
+    mock_state_local_cache_dir_abs_path_inited,
+    mock_state_local_venv_dir_abs_path_inited,
     mock_state_args_parsed,
     mock_state_py_exec_updated_proto_code,
-    mock_os_execv,
+    mock_os_execve,
     mock_state_default_stderr_log_handler_configured,
     env_ctx,
+    fs,
 ):
     # given:
+    fs.create_dir("/fake")
     assert_parent_states_mocked(
         env_ctx,
         EnvState.state_command_executed.name,
@@ -198,17 +348,24 @@ def test_command_executed_with_whitespace(
         PythonExecutable.py_exec_updated_proto_code
     )
     mock_state_default_stderr_log_handler_configured.return_value.level = logging.INFO
+    mock_state_local_venv_dir_abs_path_inited.return_value = "/fake/venv"
+    mock_state_local_cache_dir_abs_path_inited.return_value = "/fake/cache"
 
     # when:
-    state_value = env_ctx.state_graph.eval_state(EnvState.state_command_executed.name)
+    env_ctx.state_graph.eval_state(EnvState.state_command_executed.name)
 
     # then:
-    assert state_value is None
-    mock_os_execv.assert_called_once_with(
-        "/usr/bin/bash",
+    mock_os_execve.assert_called_once_with(
+        "/bin/bash",
         [
-            "bash",
+            "/bin/bash",
+            "--init-file",
+            "/fake/cache/bash/.bashrc",
+            "-i",
             "-c",
             "  echo hello  ",
         ],
+        {
+            "SHELL": "/bin/bash",
+        },
     )
