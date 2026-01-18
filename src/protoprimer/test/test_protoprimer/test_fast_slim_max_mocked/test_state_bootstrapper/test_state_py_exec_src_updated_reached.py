@@ -31,7 +31,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     # noinspection PyMethodMayBeStatic
     def test_relationship(self):
         assert_test_module_name_embeds_str(
-            EnvState.state_py_exec_updated_proto_code.name
+            EnvState.state_py_exec_src_updated_reached.name
         )
 
     @patch(
@@ -64,7 +64,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         assert_parent_states_mocked(
             self.env_ctx,
-            EnvState.state_py_exec_updated_proto_code.name,
+            EnvState.state_py_exec_src_updated_reached.name,
         )
 
         mock_state_args_parsed.return_value = argparse.Namespace(
@@ -85,7 +85,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         # when:
 
         self.env_ctx.state_graph.eval_state(
-            EnvState.state_py_exec_updated_proto_code.name
+            EnvState.state_py_exec_src_updated_reached.name
         )
 
         # then:
@@ -93,7 +93,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_switch_python.assert_called_once_with(
             curr_py_exec=PythonExecutable.py_exec_unknown,
             curr_python_path=get_path_to_curr_python(),
-            next_py_exec=PythonExecutable.py_exec_updated_proto_code,
+            next_py_exec=PythonExecutable.py_exec_src_updated,
             next_python_path=get_path_to_curr_python(),
             start_id="mock_start_id",
             proto_code_abs_file_path=mock_state_proto_code_file_abs_path_inited.return_value,
@@ -132,7 +132,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         assert_parent_states_mocked(
             self.env_ctx,
-            EnvState.state_py_exec_updated_proto_code.name,
+            EnvState.state_py_exec_src_updated_reached.name,
         )
 
         mock_state_args_parsed.return_value = argparse.Namespace(
@@ -147,13 +147,13 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_proto_code_updated.return_value = True
 
         mock_state_input_py_exec_var_loaded.return_value = (
-            PythonExecutable.py_exec_updated_proto_code
+            PythonExecutable.py_exec_src_updated
         )
 
         # when:
 
         self.env_ctx.state_graph.eval_state(
-            EnvState.state_py_exec_updated_proto_code.name
+            EnvState.state_py_exec_src_updated_reached.name
         )
 
         # then:

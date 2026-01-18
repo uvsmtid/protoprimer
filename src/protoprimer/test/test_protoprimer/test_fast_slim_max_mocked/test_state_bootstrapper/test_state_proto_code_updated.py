@@ -10,7 +10,7 @@ from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     Bootstrapper_state_proto_code_file_abs_path_inited,
-    Bootstrapper_state_py_exec_updated_protoprimer_package_reached,
+    Bootstrapper_state_py_exec_deps_updated_reached,
     ConfConstGeneral,
     EnvContext,
     EnvState,
@@ -33,13 +33,13 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{Bootstrapper_state_proto_code_file_abs_path_inited.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_py_exec_updated_protoprimer_package_reached.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_py_exec_deps_updated_reached.__name__}.eval_own_state"
     )
     @patch(f"{primer_kernel.__name__}.os.execv")
     def test_state_proto_code_updated(
         self,
         mock_execv,
-        mock_state_py_exec_updated_protoprimer_package_reached,
+        mock_state_py_exec_deps_updated_reached,
         mock_state_proto_code_file_abs_path_inited,
     ):
 
@@ -68,8 +68,8 @@ class ThisTestClass(BasePyfakefsTestClass):
             contents="\n" * 1000,
         )
 
-        mock_state_py_exec_updated_protoprimer_package_reached.return_value = (
-            PythonExecutable.py_exec_updated_protoprimer_package
+        mock_state_py_exec_deps_updated_reached.return_value = (
+            PythonExecutable.py_exec_deps_updated
         )
 
         mock_state_proto_code_file_abs_path_inited.return_value = (
@@ -104,11 +104,11 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{Bootstrapper_state_proto_code_file_abs_path_inited.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_py_exec_updated_protoprimer_package_reached.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_py_exec_deps_updated_reached.__name__}.eval_own_state"
     )
     def test_importerror_when_protoprimer_is_missing(
         self,
-        mock_state_py_exec_updated_protoprimer_package_reached,
+        mock_state_py_exec_deps_updated_reached,
         mock_state_proto_code_file_abs_path_inited,
         mock_is_venv,
     ):
@@ -117,8 +117,8 @@ class ThisTestClass(BasePyfakefsTestClass):
             self.env_ctx,
             EnvState.state_proto_code_updated.name,
         )
-        mock_state_py_exec_updated_protoprimer_package_reached.return_value = (
-            PythonExecutable.py_exec_updated_protoprimer_package
+        mock_state_py_exec_deps_updated_reached.return_value = (
+            PythonExecutable.py_exec_deps_updated
         )
 
         fake_path = "/fake/path"

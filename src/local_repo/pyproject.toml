@@ -18,6 +18,9 @@ requires-python = ">=3.7"
 dependencies = [
     "setuptools",
     "pre-commit",
+    "requests",
+    "tomli",
+    "beautifulsoup4",
 ]
 
 [tool.setuptools.packages.find]

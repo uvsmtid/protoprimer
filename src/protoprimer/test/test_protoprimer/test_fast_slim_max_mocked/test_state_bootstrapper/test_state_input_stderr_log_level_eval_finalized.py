@@ -19,6 +19,7 @@ from protoprimer.primer_kernel import (
     EnvContext,
     EnvState,
     EnvVar,
+    StderrLogFormatter,
     SyntaxArg,
     ConfConstInput,
 )
@@ -31,6 +32,11 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.setUpPyfakefs()
         self.env_ctx = EnvContext()
         self.stderr_handler = logging.StreamHandler(sys.stderr)
+        self.stderr_handler.setFormatter(
+            StderrLogFormatter(
+                verbosity_level=logging.WARNING,
+            )
+        )
 
     # noinspection PyMethodMayBeStatic
     def test_relationship(self):

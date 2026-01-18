@@ -111,6 +111,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         execv_args = [
             ConfConstEnv.default_file_abs_path_python,
+            "-I",
             *test_args,
         ]
 

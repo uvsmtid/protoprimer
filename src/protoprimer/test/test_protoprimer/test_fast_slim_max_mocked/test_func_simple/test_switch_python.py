@@ -47,6 +47,7 @@ def test_switch_python(
     # then:
     expected_argv = [
         next_python_path,
+        "-I",
         "/path/to/script.py",
         "--some-arg",
     ]
@@ -88,6 +89,7 @@ def test_switch_python_no_proto_code(
     # then:
     expected_argv = [
         next_python_path,
+        "-I",
         "/path/to/script.py",
         "--some-arg",
     ]

@@ -167,6 +167,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
         expected_argv = [
             path_to_required_python,
+            "-I",
             "/path/to/script.py",
             "--some-arg",
         ]
@@ -571,6 +572,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
         expected_argv = [
             path_to_venv_python,
+            "-I",
             "/path/to/script.py",
             "--some-arg",
         ]
@@ -684,6 +686,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
         expected_argv = [
             path_to_venv_python,
+            "-I",
             "/path/to/script.py",
             "--some-arg",
         ]
@@ -794,6 +797,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
         expected_argv = [
             path_to_venv_python,
+            "-I",
             "/path/to/script.py",
             "--some-arg",
         ]
@@ -984,6 +988,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
         expected_argv = [
             path_to_venv_python,
+            "-I",
             "/path/to/script.py",
             "--some-arg",
         ]

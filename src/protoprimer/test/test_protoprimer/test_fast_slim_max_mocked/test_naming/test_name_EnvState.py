@@ -238,8 +238,8 @@ class StateName(enum.Enum):
         NameCategory.category_state_mutation,
     )
 
-    state_py_exec_updated_protoprimer_package_reached = StateMeta(
-        EnvState.state_py_exec_updated_protoprimer_package_reached,
+    state_py_exec_deps_updated_reached = StateMeta(
+        EnvState.state_py_exec_deps_updated_reached,
         NameCategory.category_python_exec,
     )
 
@@ -248,8 +248,8 @@ class StateName(enum.Enum):
         NameCategory.category_state_mutation,
     )
 
-    state_py_exec_updated_proto_code = StateMeta(
-        EnvState.state_py_exec_updated_proto_code,
+    state_py_exec_src_updated_reached = StateMeta(
+        EnvState.state_py_exec_src_updated_reached,
         NameCategory.category_python_exec,
     )
 
