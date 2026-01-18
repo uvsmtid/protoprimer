@@ -24,7 +24,6 @@ import shlex
 import shutil
 import subprocess
 import sys
-import tempfile
 import typing
 import venv
 from types import CodeType
@@ -36,7 +35,7 @@ from typing import (
 
 # The release process ensures that content in this file matches the version below while tagging the release commit
 # (otherwise, if the file comes from a different commit, the version is irrelevant):
-__version__ = "0.5.0"
+__version__ = "0.5.1"
 
 logger: logging.Logger = logging.getLogger()
 
@@ -111,11 +110,11 @@ class PythonExecutable(enum.IntEnum):
     # To use `venv` (to install packages):
     py_exec_venv = 3
 
-    # After making the latest `protoprimer` effective:
-    py_exec_updated_protoprimer_package = 4
+    # To use the latest `protoprimer` package:
+    py_exec_deps_updated = 4
 
-    # After making the updated `proto_code` effective:
-    py_exec_updated_proto_code = 5
+    # To use the latest `proto_code` source:
+    py_exec_src_updated = 5
 
     def __str__(self):
         return f"{self.name}[{self.value}]"
@@ -972,6 +971,8 @@ class ConfConstGeneral:
         file_rel_path_venv_bin,
         name_uv_package,
     )
+
+    log_section_delimiter = "=" * 5
 
     func_get_proto_code_generated_boilerplate_single_header = lambda module_obj: (
         f"""
@@ -3138,7 +3139,7 @@ class Bootstrapper_state_default_stderr_log_handler_configured(
         assert state_input_stderr_log_level_var_loaded >= 0
 
         stderr_handler: logging.Handler = configure_stderr_log_handler(
-            state_input_stderr_log_level_var_loaded
+            state_input_stderr_log_level_var_loaded,
         )
 
         return stderr_handler
@@ -3240,6 +3241,13 @@ class Bootstrapper_state_input_stderr_log_level_eval_finalized(
                 stderr_log_level_eval_finalized = logging.NOTSET
 
         state_default_stderr_logger_configured.setLevel(stderr_log_level_eval_finalized)
+        assert isinstance(
+            state_default_stderr_logger_configured.formatter,
+            StderrLogFormatter,
+        )
+        state_default_stderr_logger_configured.formatter.set_verbosity_level(
+            stderr_log_level_eval_finalized
+        )
 
         # Set default log level for subsequent invocations:
         level_var_value: str = logging.getLevelName(stderr_log_level_eval_finalized)
@@ -3833,7 +3841,7 @@ class Bootstrapper_state_ref_root_dir_abs_path_inited(AbstractCachingStateNode[s
         state_ref_root_dir_abs_path_inited: str
         if field_client_dir_rel_path is None:
             logger.warning(
-                f"Field `{ConfField.field_ref_root_dir_rel_path.value}` is [{field_client_dir_rel_path}] - use [{RunMode.mode_config.value}] for description."
+                f"Field `{ConfField.field_ref_root_dir_rel_path.value}` is [{field_client_dir_rel_path}] - use [{RunMode.mode_config.value}] sub-command for description."
             )
             state_ref_root_dir_abs_path_inited = proto_code_dir_abs_path
         else:
@@ -4093,7 +4101,7 @@ class Bootstrapper_state_selected_env_dir_rel_path_inited(
             )
             if field_default_env_dir_rel_path is None:
                 logger.warning(
-                    f"Field `{ConfField.field_default_env_dir_rel_path.value}` is [{field_default_env_dir_rel_path}] - use [{RunMode.mode_config.value}] for description."
+                    f"Field `{ConfField.field_default_env_dir_rel_path.value}` is [{field_default_env_dir_rel_path}] - use [{RunMode.mode_config.value}] sub-command for description."
                 )
                 return None
             if os.path.isabs(field_default_env_dir_rel_path):
@@ -5385,7 +5393,7 @@ class Bootstrapper_state_version_constraints_generated(AbstractCachingStateNode[
 
 
 # noinspection PyPep8Naming
-class Bootstrapper_state_py_exec_updated_protoprimer_package_reached(
+class Bootstrapper_state_py_exec_deps_updated_reached(
     AbstractCachingStateNode[PythonExecutable]
 ):
 
@@ -5405,7 +5413,7 @@ class Bootstrapper_state_py_exec_updated_protoprimer_package_reached(
             ],
             state_name=if_none(
                 state_name,
-                EnvState.state_py_exec_updated_protoprimer_package_reached.name,
+                EnvState.state_py_exec_deps_updated_reached.name,
             ),
         )
 
@@ -5413,7 +5421,7 @@ class Bootstrapper_state_py_exec_updated_protoprimer_package_reached(
         self,
     ) -> ValueType:
 
-        state_py_exec_updated_protoprimer_package_reached: PythonExecutable
+        state_py_exec_deps_updated_reached: PythonExecutable
 
         state_input_py_exec_var_loaded: PythonExecutable = self.eval_parent_state(
             EnvState.state_input_py_exec_var_loaded.name
@@ -5429,7 +5437,7 @@ class Bootstrapper_state_py_exec_updated_protoprimer_package_reached(
 
         if (
             state_input_py_exec_var_loaded.value
-            < PythonExecutable.py_exec_updated_protoprimer_package.value
+            < PythonExecutable.py_exec_deps_updated.value
         ):
             venv_path_to_python = get_path_to_curr_python()
 
@@ -5437,9 +5445,7 @@ class Bootstrapper_state_py_exec_updated_protoprimer_package_reached(
                 EnvState.state_input_start_id_var_loaded.name
             )
 
-            state_py_exec_updated_protoprimer_package_reached = (
-                PythonExecutable.py_exec_updated_protoprimer_package
-            )
+            state_py_exec_deps_updated_reached = PythonExecutable.py_exec_deps_updated
             # TODO: maybe add this reason to `switch_python` as an arg?
             logger.debug(
                 f"restarting current `python` interpreter [{venv_path_to_python}] to make [{EnvState.state_protoprimer_package_installed.name}] effective"
@@ -5447,18 +5453,16 @@ class Bootstrapper_state_py_exec_updated_protoprimer_package_reached(
             switch_python(
                 curr_py_exec=state_input_py_exec_var_loaded,
                 curr_python_path=venv_path_to_python,
-                next_py_exec=PythonExecutable.py_exec_updated_protoprimer_package,
+                next_py_exec=PythonExecutable.py_exec_deps_updated,
                 next_python_path=venv_path_to_python,
                 start_id=state_input_start_id_var_loaded,
                 proto_code_abs_file_path=state_proto_code_file_abs_path_inited,
             )
         else:
             # Successfully reached the end goal:
-            state_py_exec_updated_protoprimer_package_reached = (
-                state_input_py_exec_var_loaded
-            )
+            state_py_exec_deps_updated_reached = state_input_py_exec_var_loaded
 
-        return state_py_exec_updated_protoprimer_package_reached
+        return state_py_exec_deps_updated_reached
 
 
 # noinspection PyPep8Naming
@@ -5478,7 +5482,7 @@ class Bootstrapper_state_proto_code_updated(AbstractCachingStateNode[bool]):
             env_ctx=env_ctx,
             parent_states=[
                 EnvState.state_proto_code_file_abs_path_inited.name,
-                EnvState.state_py_exec_updated_protoprimer_package_reached.name,
+                EnvState.state_py_exec_deps_updated_reached.name,
             ],
             state_name=if_none(
                 state_name,
@@ -5490,20 +5494,14 @@ class Bootstrapper_state_proto_code_updated(AbstractCachingStateNode[bool]):
         self,
     ) -> ValueType:
 
-        state_py_exec_updated_protoprimer_package_reached: PythonExecutable = (
-            self.eval_parent_state(
-                EnvState.state_py_exec_updated_protoprimer_package_reached.name
-            )
+        state_py_exec_deps_updated_reached: PythonExecutable = self.eval_parent_state(
+            EnvState.state_py_exec_deps_updated_reached.name
         )
         assert (
-            state_py_exec_updated_protoprimer_package_reached
-            >= PythonExecutable.py_exec_updated_protoprimer_package
+            state_py_exec_deps_updated_reached >= PythonExecutable.py_exec_deps_updated
         )
 
-        if (
-            state_py_exec_updated_protoprimer_package_reached
-            != PythonExecutable.py_exec_updated_protoprimer_package
-        ):
+        if state_py_exec_deps_updated_reached != PythonExecutable.py_exec_deps_updated:
             # Update only after package installation, otherwise, nothing to do:
             return False
 
@@ -5540,6 +5538,7 @@ class Bootstrapper_state_proto_code_updated(AbstractCachingStateNode[bool]):
             )
         )
 
+        # Use `primer_kernel` from installed package as the source for `proto_code` update:
         primer_kernel_abs_path = os.path.abspath(protoprimer.primer_kernel.__file__)
         primer_kernel_text: str = read_text_file(primer_kernel_abs_path)
         proto_code_text_old: str = read_text_file(
@@ -5571,7 +5570,7 @@ class Bootstrapper_state_proto_code_updated(AbstractCachingStateNode[bool]):
 
 
 # noinspection PyPep8Naming
-class Bootstrapper_state_py_exec_updated_proto_code(
+class Bootstrapper_state_py_exec_src_updated_reached(
     AbstractCachingStateNode[PythonExecutable]
 ):
 
@@ -5591,7 +5590,7 @@ class Bootstrapper_state_py_exec_updated_proto_code(
             ],
             state_name=if_none(
                 state_name,
-                EnvState.state_py_exec_updated_proto_code.name,
+                EnvState.state_py_exec_src_updated_reached.name,
             ),
         )
 
@@ -5599,7 +5598,7 @@ class Bootstrapper_state_py_exec_updated_proto_code(
         self,
     ) -> ValueType:
 
-        state_py_exec_updated_proto_code: PythonExecutable
+        state_py_exec_src_updated_reached: PythonExecutable
 
         state_input_py_exec_var_loaded: PythonExecutable = self.eval_parent_state(
             EnvState.state_input_py_exec_var_loaded.name
@@ -5614,25 +5613,21 @@ class Bootstrapper_state_py_exec_updated_proto_code(
         )
         if not state_proto_code_updated:
             # If not updated, no point to restart:
-            state_py_exec_updated_proto_code = (
-                PythonExecutable.py_exec_updated_proto_code
-            )
-            return state_py_exec_updated_proto_code
+            state_py_exec_src_updated_reached = PythonExecutable.py_exec_src_updated
+            return state_py_exec_src_updated_reached
 
         venv_path_to_python = get_path_to_curr_python()
 
         if (
             state_input_py_exec_var_loaded.value
-            < PythonExecutable.py_exec_updated_proto_code.value
+            < PythonExecutable.py_exec_src_updated.value
         ):
 
             state_input_start_id_var_loaded: str = self.eval_parent_state(
                 EnvState.state_input_start_id_var_loaded.name
             )
 
-            state_py_exec_updated_proto_code = (
-                PythonExecutable.py_exec_updated_proto_code
-            )
+            state_py_exec_src_updated_reached = PythonExecutable.py_exec_src_updated
             # TODO: maybe add this reason to `switch_python` as an arg?
             logger.debug(
                 f"restarting current `python` interpreter [{venv_path_to_python}] to make [{EnvState.state_proto_code_updated.name}] effective"
@@ -5640,16 +5635,16 @@ class Bootstrapper_state_py_exec_updated_proto_code(
             switch_python(
                 curr_py_exec=state_input_py_exec_var_loaded,
                 curr_python_path=venv_path_to_python,
-                next_py_exec=PythonExecutable.py_exec_updated_proto_code,
+                next_py_exec=PythonExecutable.py_exec_src_updated,
                 next_python_path=venv_path_to_python,
                 start_id=state_input_start_id_var_loaded,
                 proto_code_abs_file_path=state_proto_code_file_abs_path_inited,
             )
         else:
             # Successfully reached the end goal:
-            state_py_exec_updated_proto_code = state_input_py_exec_var_loaded
+            state_py_exec_src_updated_reached = state_input_py_exec_var_loaded
 
-        return state_py_exec_updated_proto_code
+        return state_py_exec_src_updated_reached
 
 
 # noinspection PyPep8Naming
@@ -5673,7 +5668,7 @@ class Bootstrapper_state_command_executed(AbstractCachingStateNode[int]):
                     EnvState.state_args_parsed.name,
                     EnvState.state_local_venv_dir_abs_path_inited.name,
                     EnvState.state_local_cache_dir_abs_path_inited.name,
-                    EnvState.state_py_exec_updated_proto_code.name,
+                    EnvState.state_py_exec_src_updated_reached.name,
                 ],
             ),
             state_name=if_none(
@@ -5694,13 +5689,10 @@ class Bootstrapper_state_command_executed(AbstractCachingStateNode[int]):
             )
         )
 
-        state_py_exec_updated_proto_code: PythonExecutable = self.eval_parent_state(
-            EnvState.state_py_exec_updated_proto_code.name
+        state_py_exec_src_updated_reached: PythonExecutable = self.eval_parent_state(
+            EnvState.state_py_exec_src_updated_reached.name
         )
-        assert (
-            state_py_exec_updated_proto_code
-            >= PythonExecutable.py_exec_updated_proto_code
-        )
+        assert state_py_exec_src_updated_reached >= PythonExecutable.py_exec_src_updated
 
         state_args_parsed: argparse.Namespace = self.eval_parent_state(
             EnvState.state_args_parsed.name
@@ -5880,14 +5872,12 @@ class EnvState(enum.Enum):
     )
 
     # TODO: rename - "reached" sounds weird (and makes no sense):
-    state_py_exec_updated_protoprimer_package_reached = (
-        Bootstrapper_state_py_exec_updated_protoprimer_package_reached
-    )
+    state_py_exec_deps_updated_reached = Bootstrapper_state_py_exec_deps_updated_reached
 
     # TODO: rename according to the final name:
     state_proto_code_updated = Bootstrapper_state_proto_code_updated
 
-    state_py_exec_updated_proto_code = Bootstrapper_state_py_exec_updated_proto_code
+    state_py_exec_src_updated_reached = Bootstrapper_state_py_exec_src_updated_reached
 
     state_command_executed = Bootstrapper_state_command_executed
 
@@ -6090,46 +6080,77 @@ class EnvContext:
 
 class PythonExecutableFilter(logging.Filter):
     """
-    This filter sets the value of `EnvVar.var_PROTOPRIMER_PY_EXEC` for each log entry.
+    This filter sets the value of `py_exec_name` for each log entry without filtering any record.
     """
 
-    def filter(self, record):
+    def filter(
+        self,
+        record,
+    ):
         record.py_exec_name = os.getenv(
             EnvVar.var_PROTOPRIMER_PY_EXEC.value,
-            None,
+            PythonExecutable.py_exec_unknown.name,
         )
+        # Do not filter:
         return True
 
 
-class FileLogFormatter(logging.Formatter):
+class UtcTimeFormatter(logging.Formatter):
     """
     Custom formatter with the proper timestamp.
     """
 
     def __init__(
         self,
+        print_date: bool,
+        print_time: bool,
+        *args,
+        **kwargs,
+    ):
+        super().__init__(*args, **kwargs)
+        self.print_date = print_date
+        self.print_time = print_time
+
+    def formatTime(
+        self,
+        record,
+        datefmt=None,
+    ):
+        if not self.print_date and not self.print_time:
+            return ""
+
+        log_timestamp = datetime.datetime.fromtimestamp(
+            record.created, datetime.timezone.utc
+        )
+        iso_str = log_timestamp.isoformat(timespec="milliseconds").replace(
+            "+00:00", "Z"
+        )
+
+        if self.print_date and self.print_time:
+            return iso_str
+
+        date_part, time_part = iso_str.split("T")
+
+        if self.print_date:
+            return date_part
+        else:
+            return time_part
+
+
+class FileLogFormatter(UtcTimeFormatter):
+
+    def __init__(
+        self,
     ):
         # noinspection SpellCheckingInspection
         super().__init__(
-            fmt="%(asctime)s %(process)d %(levelname)s %(py_exec_name)s %(filename)s:%(lineno)d %(message)s",
+            print_date=True,
+            print_time=True,
+            fmt="%(asctime)s pid:%(process)d %(levelname)s py:%(py_exec_name)s %(filename)s:%(lineno)d %(message)s",
         )
 
-    # noinspection SpellCheckingInspection
-    def formatTime(
-        self,
-        log_record,
-        datefmt=None,
-    ):
-        # Format date without millis:
-        formatted_timestamp = datetime.datetime.fromtimestamp(
-            log_record.created
-        ).strftime("%Y-%m-%d %H:%M:%S")
 
-        # Append millis with dot `.` as a separator:
-        return f"{formatted_timestamp}.{int(log_record.msecs):03d}"
-
-
-class StderrLogFormatter(logging.Formatter):
+class StderrLogFormatter(UtcTimeFormatter):
     """
     Custom formatter with color and format based on log level for stderr.
     """
@@ -6142,38 +6163,58 @@ class StderrLogFormatter(logging.Formatter):
         "WARNING": TermColor.fore_dark_yellow.value,
         "INFO": TermColor.fore_dark_green.value,
         "DEBUG": TermColor.fore_dark_cyan.value,
+        # TODO: Is this true?
         # NOTE: Level `logging.NOTSET` (below `logging.DEBUG`) is not printed.
         #       And numerical levels like 5 have no given names (making `logging.DEBUG` practically the lowest).
     }
 
-    def __init__(self):
+    def __init__(
+        self,
+        verbosity_level: int,
+    ):
         super().__init__(
             # Default: least verbose:
+            print_date=False,
+            print_time=False,
             fmt="%(levelname)s %(message)s",
-            datefmt="%H:%M:%S",
         )
-        self.level_fmts = {
+        info_formatter = UtcTimeFormatter(
+            print_date=False,
+            print_time=True,
+            fmt="%(asctime)s pid:%(process)d %(levelname)s py:%(py_exec_name)s %(message)s",
+        )
+        debug_formatter = UtcTimeFormatter(
+            print_date=True,
+            print_time=True,
+            fmt="%(asctime)s pid:%(process)d %(levelname)s py:%(py_exec_name)s %(filename)s:%(lineno)d %(message)s",
+        )
+        self.verbose_formatters = {
             # Anything above `logging.INFO` use default (least verbose):
-            logging.INFO: logging.Formatter(
-                fmt="%(asctime)s %(process)d %(levelname)s %(py_exec_name)s %(message)s",
-                datefmt="%H:%M:%S",
-            ),
+            logging.INFO: info_formatter,
             # Most verbose:
-            logging.DEBUG: logging.Formatter(
-                fmt="%(asctime)s %(process)d %(levelname)s %(py_exec_name)s %(filename)s:%(lineno)d %(message)s",
-                datefmt="%Y-%m-%d %H:%M:%S",
-            ),
+            logging.DEBUG: debug_formatter,
+            logging.NOTSET: debug_formatter,
         }
+        self.verbosity_level = verbosity_level
+
+    def set_verbosity_level(
+        self,
+        verbosity_level: int,
+    ):
+        self.verbosity_level = verbosity_level
 
     def format(
         self,
         record,
     ):
-        log_formatter = self.level_fmts.get(record.levelno, None)
+        # Format the output:
+        log_formatter = self.verbose_formatters.get(self.verbosity_level, None)
         if log_formatter is None:
             log_msg = super().format(record)
         else:
             log_msg = log_formatter.format(record)
+
+        # Color the output:
         log_color = self.color_set.get(record.levelname, self.color_reset)
         return f"{log_color}{log_msg}{self.color_reset}"
 
@@ -6203,7 +6244,9 @@ def configure_stderr_log_handler(
         stderr_handler: logging.Handler = handler_class(sys.stderr)
 
         stderr_handler.addFilter(PythonExecutableFilter())
-        stderr_handler.setFormatter(StderrLogFormatter())
+        stderr_handler.setFormatter(
+            StderrLogFormatter(state_input_stderr_log_level_var_loaded)
+        )
 
         logger.addHandler(stderr_handler)
 
@@ -6235,6 +6278,16 @@ def configure_file_log_handler(
 
     os.makedirs(state_local_log_dir_abs_path_inited, exist_ok=True)
 
+    if not os.path.exists(log_file_abs_path):
+        # Explain missing logs to avoid confusion:
+        write_text_file(
+            log_file_abs_path,
+            f"""
+{ConfConstGeneral.log_section_delimiter} file log starts at [{PythonExecutable.py_exec_arbitrary.name}] after its config is resolved {ConfConstGeneral.log_section_delimiter}
+
+""",
+        )
+
     file_handler: logging.Handler = logging.FileHandler(log_file_abs_path)
     file_handler.addFilter(PythonExecutableFilter())
 
@@ -6258,7 +6311,7 @@ def warn_on_missing_conf_file(
     file_abs_path: str,
 ) -> None:
     logger.warning(
-        f"File [{file_abs_path}] does not exist - use [{RunMode.mode_config.value}] for description."
+        f"File [{file_abs_path}] does not exist - use [{RunMode.mode_config.value}] sub-command for description."
     )
 
 
@@ -6311,17 +6364,16 @@ def switch_python(
 ):
     logger.info(
         f"switching from current `python` interpreter [{curr_python_path}][{curr_py_exec.name}] to [{next_python_path}][{next_py_exec.name}] with `{EnvVar.var_PROTOPRIMER_PROTO_CODE.value}`[{proto_code_abs_file_path}]"
-        "\n"
-        "\n"
-        f"{'=' * 40}"
-        "\n"
     )
     # TODO: Do not add args if they have been parsed and already have the same value:
     exec_argv: list[str] = [
         next_python_path,
-        *sys.argv,
-        # ---
+        # FT_28_25_63_06.isolated_python.md:
+        # This CLI arg is not added to `sys.argv` of the next `python` process
+        # (instead, it simply sets `sys.flags.isolated`):
+        "-I",
     ]
+    exec_argv.extend(sys.argv)
 
     if required_environ is None:
         required_environ = os.environ.copy()
@@ -6333,7 +6385,13 @@ def switch_python(
             proto_code_abs_file_path
         )
 
-    logger.info(f"exec_argv: {exec_argv}")
+    logger.info(
+        f"exec_argv: {exec_argv}"
+        "\n"
+        "\n"
+        f"{ConfConstGeneral.log_section_delimiter} <<<[{curr_py_exec.name}]<<< {ConfConstGeneral.log_section_delimiter} >>>[{next_py_exec.name}]>>> {ConfConstGeneral.log_section_delimiter}"
+        "\n"
+    )
     os.execve(
         path=next_python_path,
         argv=exec_argv,
@@ -6367,8 +6425,8 @@ def get_file_name_timestamp():
     """
 
     now_utc = datetime.datetime.now(datetime.timezone.utc)
-    # Format: "YYYY_MM_DD_HH_MM_SSZ"
-    file_timestamp = now_utc.strftime("%Y_%m_%d_%H_%M_%S") + "Z"
+    # Format: "YYYYMMDDTHHMMSSZ"
+    file_timestamp = now_utc.strftime("%Y%m%dT%H%M%S") + "Z"
     return file_timestamp
 
 
@@ -6615,13 +6673,13 @@ def switch_to_venv(
 
         venv_bin = os.path.join(
             ref_root_dir_abs_path,
-            # TODO: This might be passed as arg to the func (that being a default):
+            # TODO: UC_54_26_66_63: This might be extracted from config:
             ConfConstEnv.default_dir_rel_path_venv,
             ConfConstGeneral.file_rel_path_venv_bin,
         )
         venv_python = os.path.join(
             ref_root_dir_abs_path,
-            # TODO: This might be passed as arg to the func (that being a default):
+            # TODO: UC_54_26_66_63: This might be extracted from config:
             ConfConstEnv.default_dir_rel_path_venv,
             ConfConstGeneral.file_rel_path_venv_python,
         )
@@ -6669,7 +6727,7 @@ def run_main(
                 ConfConstInput.default_PROTOPRIMER_PY_EXEC,
             )
         ]
-        if py_exec.value >= PythonExecutable.py_exec_updated_proto_code.value:
+        if py_exec.value >= PythonExecutable.py_exec_src_updated.value:
             raise AssertionError(
                 f"Failed to import `{neo_main_module}` with `{EnvVar.var_PROTOPRIMER_PY_EXEC.value}` [{py_exec.name}]. "
                 f"{get_import_error_hint(neo_main_module)} "

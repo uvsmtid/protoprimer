@@ -62,7 +62,7 @@ def test_run_main_proto_runtime(mock_main, mock_import_module):
 def test_run_main_raises_assertion_error(mock_getenv, mock_import_module):
     # given:
     mock_import_module.side_effect = ImportError
-    mock_getenv.return_value = PythonExecutable.py_exec_updated_proto_code.name
+    mock_getenv.return_value = PythonExecutable.py_exec_src_updated.name
 
     # when/then:
     with pytest.raises(AssertionError):

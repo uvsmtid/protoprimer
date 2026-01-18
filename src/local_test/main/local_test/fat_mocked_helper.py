@@ -177,16 +177,23 @@ def _run_primer_main_in_mock_env(
             break
         except _ExecCalled as e:
             exec_args, exec_kwargs = e.args
+
             if "argv" in exec_kwargs:
                 cli_args = exec_kwargs["argv"]
             else:
+                # `argv` is the next arg to `exec*` function after the path to the executable:
                 cli_args = exec_args[1]
+
             if "env" in exec_kwargs:
                 mocked_env = exec_kwargs["env"]
 
-            # As long as `python` is invoked, remove 0-indexed arg:
+            # As long as `python` is invoked:
+            # * remove 0-indexed arg (path to the `python` executable)
+            # * remove 1-indexed arg (option `-I`) - see FT_28_25_63_06.isolated_python.md
             assert "python" in cli_args[0]
-            cli_args = cli_args[1:]
+            assert "-I" == cli_args[1]
+            cli_args = cli_args[2:]
+
         except _ExitCalled as e:
             exec_args, exec_kwargs = e.args
             assert exec_args[0] == 0

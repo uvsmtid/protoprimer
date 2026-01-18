@@ -180,16 +180,16 @@ class StateMeta(enum.Enum):
         env_state=EnvState.state_version_constraints_generated,
         sub_graph=SubGraph.graph_runtime,
     )
-    state_py_exec_updated_protoprimer_package_reached = StateNodeMeta(
-        env_state=EnvState.state_py_exec_updated_protoprimer_package_reached,
+    state_py_exec_deps_updated_reached = StateNodeMeta(
+        env_state=EnvState.state_py_exec_deps_updated_reached,
         sub_graph=SubGraph.graph_runtime,
     )
     state_proto_code_updated = StateNodeMeta(
         env_state=EnvState.state_proto_code_updated,
         sub_graph=SubGraph.graph_runtime,
     )
-    state_py_exec_updated_proto_code = StateNodeMeta(
-        env_state=EnvState.state_py_exec_updated_proto_code,
+    state_py_exec_src_updated_reached = StateNodeMeta(
+        env_state=EnvState.state_py_exec_src_updated_reached,
         sub_graph=SubGraph.graph_runtime,
     )
     state_command_executed = StateNodeMeta(

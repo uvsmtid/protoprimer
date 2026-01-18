@@ -27,9 +27,7 @@ def env_ctx():
 
 
 def test_relationship():
-    assert_test_module_name_embeds_str(
-        EnvState.state_py_exec_updated_protoprimer_package_reached.name
-    )
+    assert_test_module_name_embeds_str(EnvState.state_py_exec_deps_updated_reached.name)
 
 
 @patch(
@@ -64,7 +62,7 @@ def test_py_exec_required(
 
     assert_parent_states_mocked(
         env_ctx,
-        EnvState.state_py_exec_updated_protoprimer_package_reached.name,
+        EnvState.state_py_exec_deps_updated_reached.name,
     )
 
     mock_state_args_parsed.return_value = argparse.Namespace(
@@ -85,7 +83,7 @@ def test_py_exec_required(
     # when:
 
     state_value = env_ctx.state_graph.eval_state(
-        EnvState.state_py_exec_updated_protoprimer_package_reached.name
+        EnvState.state_py_exec_deps_updated_reached.name
     )
 
     # then:
@@ -93,13 +91,13 @@ def test_py_exec_required(
     mock_switch_python.assert_called_once_with(
         curr_py_exec=PythonExecutable.py_exec_required,
         curr_python_path=mock_get_path_to_curr_python.return_value,
-        next_py_exec=PythonExecutable.py_exec_updated_protoprimer_package,
+        next_py_exec=PythonExecutable.py_exec_deps_updated,
         next_python_path=mock_get_path_to_curr_python.return_value,
         start_id="mock_start_id",
         proto_code_abs_file_path=mock_state_proto_code_file_abs_path_inited.return_value,
     )
 
-    assert state_value == PythonExecutable.py_exec_updated_protoprimer_package
+    assert state_value == PythonExecutable.py_exec_deps_updated
 
 
 @patch(
@@ -117,7 +115,7 @@ def test_py_exec_required(
 @patch(
     f"{primer_kernel.__name__}.{Bootstrapper_state_version_constraints_generated.__name__}.eval_own_state"
 )
-def test_py_exec_updated_protoprimer_package(
+def test_py_exec_deps_updated(
     mock_state_version_constraints_generated,
     mock_state_input_py_exec_var_loaded,
     mock_state_proto_code_file_abs_path_inited,
@@ -130,7 +128,7 @@ def test_py_exec_updated_protoprimer_package(
 
     assert_parent_states_mocked(
         env_ctx,
-        EnvState.state_py_exec_updated_protoprimer_package_reached.name,
+        EnvState.state_py_exec_deps_updated_reached.name,
     )
 
     mock_state_args_parsed.return_value = argparse.Namespace(
@@ -142,7 +140,7 @@ def test_py_exec_updated_protoprimer_package(
     mock_state_version_constraints_generated.return_value = True
 
     mock_state_input_py_exec_var_loaded.return_value = (
-        PythonExecutable.py_exec_updated_protoprimer_package
+        PythonExecutable.py_exec_deps_updated
     )
 
     mock_state_proto_code_file_abs_path_inited.return_value = "path/to/whatever"
@@ -150,9 +148,9 @@ def test_py_exec_updated_protoprimer_package(
     # when:
 
     state_value = env_ctx.state_graph.eval_state(
-        EnvState.state_py_exec_updated_protoprimer_package_reached.name
+        EnvState.state_py_exec_deps_updated_reached.name
     )
 
     # then:
 
-    assert state_value == PythonExecutable.py_exec_updated_protoprimer_package
+    assert state_value == PythonExecutable.py_exec_deps_updated

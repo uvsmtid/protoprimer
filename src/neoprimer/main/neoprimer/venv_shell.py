@@ -24,7 +24,7 @@ class Bootstrapper_state_activated_venv_shell_started(
             parent_states=[
                 EnvState.state_args_parsed.name,
                 EnvState.state_default_stderr_log_handler_configured.name,
-                EnvState.state_py_exec_updated_proto_code.name,
+                EnvState.state_py_exec_src_updated_reached.name,
                 EnvState.state_local_venv_dir_abs_path_inited.name,
                 EnvState.state_local_cache_dir_abs_path_inited.name,
             ],
