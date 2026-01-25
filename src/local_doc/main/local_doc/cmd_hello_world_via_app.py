@@ -7,7 +7,7 @@ import logging
 from protoprimer.primer_kernel import (
     AbstractCachingStateNode,
     EnvContext,
-    main,
+    app_main,
     TargetState,
     ValueType,
 )
@@ -16,7 +16,7 @@ logger = logging.getLogger()
 
 
 def custom_main():
-    main(customize_env_context)
+    app_main(customize_env_context)
 
 
 # noinspection PyPep8Naming

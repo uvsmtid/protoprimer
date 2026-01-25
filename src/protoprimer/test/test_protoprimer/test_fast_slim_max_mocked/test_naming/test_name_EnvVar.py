@@ -37,6 +37,14 @@ class EnvVarMeta(AbstractMeta):
 
 
 class EnvVarName(enum.Enum):
+    var_PROTOPRIMER_RUN_MODE = EnvVarMeta(
+        EnvVar.var_PROTOPRIMER_RUN_MODE,
+        NameCategory.category_name_only,
+    )
+    var_PROTOPRIMER_MAIN_FUNC = EnvVarMeta(
+        EnvVar.var_PROTOPRIMER_MAIN_FUNC,
+        NameCategory.category_name_only,
+    )
     var_PROTOPRIMER_STDERR_LOG_LEVEL = EnvVarMeta(
         EnvVar.var_PROTOPRIMER_STDERR_LOG_LEVEL,
         NameCategory.category_name_only,

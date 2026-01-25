@@ -36,7 +36,6 @@ def test_switch_python(
 
     # when:
     switch_python(
-        curr_py_exec,
         curr_python_path,
         next_py_exec,
         next_python_path,
@@ -78,7 +77,6 @@ def test_switch_python_no_proto_code(
 
     # when:
     switch_python(
-        curr_py_exec,
         curr_python_path,
         next_py_exec,
         next_python_path,

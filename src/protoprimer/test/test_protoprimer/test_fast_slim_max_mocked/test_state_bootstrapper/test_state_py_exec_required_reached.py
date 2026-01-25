@@ -62,6 +62,13 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
 
     ####################################################################################################################
+    @patch.dict(
+        os.environ,
+        {
+            primer_kernel.EnvVar.var_PROTOPRIMER_PY_EXEC.value: PythonExecutable.py_exec_arbitrary.name
+        },
+        clear=True,
+    )
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.eval_own_state"
     )
@@ -95,8 +102,12 @@ class ThisTestClass(BasePyfakefsTestClass):
     )
     @patch(f"{primer_kernel.__name__}.os.execve")
     @patch(f"{primer_kernel.__name__}.venv.create")
+    @patch(
+        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
+    )
     def test_success_on_arbitrary_py_exec_outside_venv(
         self,
+        mock_input_run_mode_arg_loaded,
         mock_venv_create,
         mock_execve,
         mock_get_path_to_curr_python,
@@ -126,11 +137,6 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_input_start_id_var_loaded.return_value = "mock_start_id"
         mock_state_proto_code_file_abs_path_inited.return_value = "any/path"
 
-        # Important: it should be `py_exec_arbitrary` for this test case:
-        mock_state_input_py_exec_var_loaded.return_value = (
-            PythonExecutable.py_exec_arbitrary
-        )
-
         # Make sure `path_to_curr_python` != `configured python`:
         mock_state_required_python_file_abs_path_inited.return_value = (
             "/a/different/python"
@@ -156,6 +162,13 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_venv_create.assert_not_called()
         mock_get_path_to_curr_python.assert_called_once()
 
+    @patch.dict(
+        os.environ,
+        {
+            primer_kernel.EnvVar.var_PROTOPRIMER_PY_EXEC.value: PythonExecutable.py_exec_required.name
+        },
+        clear=True,
+    )
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.eval_own_state"
     )
@@ -189,8 +202,12 @@ class ThisTestClass(BasePyfakefsTestClass):
     )
     @patch(f"{primer_kernel.__name__}.os.execve")
     @patch(f"{primer_kernel.__name__}.venv.create")
+    @patch(
+        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
+    )
     def test_skip_if_py_exec_is_already_required(
         self,
+        mock_input_run_mode_arg_loaded,
         mock_venv_create,
         mock_execve,
         mock_get_path_to_curr_python,
@@ -205,9 +222,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_input_start_id_var_loaded,
     ):
         # given:
-        mock_state_input_py_exec_var_loaded.return_value = (
-            PythonExecutable.py_exec_required
-        )
+        self.env_ctx.state_stride = PythonExecutable.py_exec_required
 
         # when:
         actual_result = self.env_ctx.state_graph.eval_state(
@@ -221,8 +236,15 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
         mock_execve.assert_not_called()
         mock_venv_create.assert_not_called()
-        mock_get_path_to_curr_python.assert_called_once()
+        mock_get_path_to_curr_python.assert_not_called()
 
+    @patch.dict(
+        os.environ,
+        {
+            primer_kernel.EnvVar.var_PROTOPRIMER_PY_EXEC.value: PythonExecutable.py_exec_arbitrary.name
+        },
+        clear=True,
+    )
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.eval_own_state"
     )
@@ -256,8 +278,12 @@ class ThisTestClass(BasePyfakefsTestClass):
     )
     @patch(f"{primer_kernel.__name__}.os.execve")
     @patch(f"{primer_kernel.__name__}.venv.create")
+    @patch(
+        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
+    )
     def test_success_if_correct_python_is_already_used(
         self,
+        mock_input_run_mode_arg_loaded,
         mock_venv_create,
         mock_execve,
         mock_get_path_to_curr_python,
@@ -272,9 +298,6 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_input_start_id_var_loaded,
     ):
         # given:
-        mock_state_input_py_exec_var_loaded.return_value = (
-            PythonExecutable.py_exec_arbitrary
-        )
         mock_state_required_python_file_abs_path_inited.return_value = (
             non_default_file_abs_path_python
         )

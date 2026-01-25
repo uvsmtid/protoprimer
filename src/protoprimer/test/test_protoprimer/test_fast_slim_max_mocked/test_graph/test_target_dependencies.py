@@ -52,6 +52,7 @@ class TestTargetDependencies:
         allowed_missing_dependencies.add(
             EnvState.state_effective_config_data_printed.name
         )
+        allowed_missing_dependencies.add(EnvState.state_app_starter_invoked.name)
 
         missing_dependencies -= allowed_missing_dependencies
 

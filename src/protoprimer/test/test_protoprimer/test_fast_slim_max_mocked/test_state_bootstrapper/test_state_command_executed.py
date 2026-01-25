@@ -35,6 +35,7 @@ def test_relationship():
 @patch(
     f"{primer_kernel.__name__}.{Bootstrapper_state_default_stderr_log_handler_configured.__name__}.eval_own_state"
 )
+@patch(f"{primer_kernel.__name__}.EnvContext.get_curr_py_exec")
 @patch(f"{primer_kernel.__name__}.os.execve")
 @patch(
     f"{primer_kernel.__name__}.{Bootstrapper_state_py_exec_src_updated_reached.__name__}.eval_own_state"
@@ -61,6 +62,7 @@ def test_command_executed_in_bash(
     mock_state_args_parsed,
     mock_state_py_exec_src_updated_reached,
     mock_os_execve,
+    mock_get_curr_py_exec,
     mock_state_default_stderr_log_handler_configured,
     env_ctx,
     fs,
@@ -76,6 +78,7 @@ def test_command_executed_in_bash(
             ParsedArg.name_command.value: "echo hello",
         }
     )
+    mock_get_curr_py_exec.return_value = PythonExecutable.py_exec_src_updated
     mock_state_py_exec_src_updated_reached.return_value = (
         PythonExecutable.py_exec_src_updated
     )
@@ -106,6 +109,7 @@ def test_command_executed_in_bash(
 @patch(
     f"{primer_kernel.__name__}.{Bootstrapper_state_default_stderr_log_handler_configured.__name__}.eval_own_state"
 )
+@patch(f"{primer_kernel.__name__}.EnvContext.get_curr_py_exec")
 @patch(f"{primer_kernel.__name__}.os.execve")
 @patch(
     f"{primer_kernel.__name__}.{Bootstrapper_state_py_exec_src_updated_reached.__name__}.eval_own_state"
@@ -132,6 +136,7 @@ def test_command_executed_in_zsh(
     mock_state_args_parsed,
     mock_state_py_exec_src_updated_reached,
     mock_os_execve,
+    mock_get_curr_py_exec,
     mock_state_default_stderr_log_handler_configured,
     env_ctx,
     fs,
@@ -147,6 +152,7 @@ def test_command_executed_in_zsh(
             ParsedArg.name_command.value: "echo hello",
         }
     )
+    mock_get_curr_py_exec.return_value = PythonExecutable.py_exec_src_updated
     mock_state_py_exec_src_updated_reached.return_value = (
         PythonExecutable.py_exec_src_updated
     )
@@ -177,6 +183,7 @@ def test_command_executed_in_zsh(
 @patch(
     f"{primer_kernel.__name__}.{Bootstrapper_state_default_stderr_log_handler_configured.__name__}.eval_own_state"
 )
+@patch(f"{primer_kernel.__name__}.EnvContext.get_curr_py_exec")
 @patch(f"{primer_kernel.__name__}.os.execve")
 @patch(
     f"{primer_kernel.__name__}.{Bootstrapper_state_py_exec_src_updated_reached.__name__}.eval_own_state"
@@ -203,6 +210,7 @@ def test_command_not_executed_when_no_command_line_provided(
     mock_state_args_parsed,
     mock_state_py_exec_src_updated_reached,
     mock_os_execve,
+    mock_get_curr_py_exec,
     mock_state_default_stderr_log_handler_configured,
     env_ctx,
 ):
@@ -216,6 +224,7 @@ def test_command_not_executed_when_no_command_line_provided(
             ParsedArg.name_command.value: None,
         }
     )
+    mock_get_curr_py_exec.return_value = PythonExecutable.py_exec_src_updated
     mock_state_py_exec_src_updated_reached.return_value = (
         PythonExecutable.py_exec_src_updated
     )
@@ -232,6 +241,7 @@ def test_command_not_executed_when_no_command_line_provided(
 @patch(
     f"{primer_kernel.__name__}.{Bootstrapper_state_default_stderr_log_handler_configured.__name__}.eval_own_state"
 )
+@patch(f"{primer_kernel.__name__}.EnvContext.get_curr_py_exec")
 @patch(f"{primer_kernel.__name__}.os.execve")
 @patch(
     f"{primer_kernel.__name__}.{Bootstrapper_state_py_exec_src_updated_reached.__name__}.eval_own_state"
@@ -258,6 +268,7 @@ def test_command_executed_empty(
     mock_state_args_parsed,
     mock_state_py_exec_src_updated_reached,
     mock_os_execve,
+    mock_get_curr_py_exec,
     mock_state_default_stderr_log_handler_configured,
     env_ctx,
     fs,
@@ -273,6 +284,7 @@ def test_command_executed_empty(
             ParsedArg.name_command.value: "",
         }
     )
+    mock_get_curr_py_exec.return_value = PythonExecutable.py_exec_src_updated
     mock_state_py_exec_src_updated_reached.return_value = (
         PythonExecutable.py_exec_src_updated
     )
@@ -303,6 +315,7 @@ def test_command_executed_empty(
 @patch(
     f"{primer_kernel.__name__}.{Bootstrapper_state_default_stderr_log_handler_configured.__name__}.eval_own_state"
 )
+@patch(f"{primer_kernel.__name__}.EnvContext.get_curr_py_exec")
 @patch(f"{primer_kernel.__name__}.os.execve")
 @patch(
     f"{primer_kernel.__name__}.{Bootstrapper_state_py_exec_src_updated_reached.__name__}.eval_own_state"
@@ -329,6 +342,7 @@ def test_command_executed_with_whitespace(
     mock_state_args_parsed,
     mock_state_py_exec_src_updated_reached,
     mock_os_execve,
+    mock_get_curr_py_exec,
     mock_state_default_stderr_log_handler_configured,
     env_ctx,
     fs,
@@ -344,6 +358,7 @@ def test_command_executed_with_whitespace(
             ParsedArg.name_command.value: "  echo hello  ",
         }
     )
+    mock_get_curr_py_exec.return_value = PythonExecutable.py_exec_src_updated
     mock_state_py_exec_src_updated_reached.return_value = (
         PythonExecutable.py_exec_src_updated
     )

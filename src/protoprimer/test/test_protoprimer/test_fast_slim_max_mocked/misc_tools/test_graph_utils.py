@@ -203,7 +203,7 @@ class TestTopologicalSort:
 
         # when:
         # then:
-        with pytest.raises(ValueError, match="`StateNode` \[B\] not found in graph"):
+        with pytest.raises(ValueError, match=r"`StateNode` \[B\] not found in graph"):
             topological_sort(state_graph_instance)
 
 

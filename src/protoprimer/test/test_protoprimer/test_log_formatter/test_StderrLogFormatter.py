@@ -27,6 +27,7 @@ def _create_log_record(level, msg):
     record.created = datetime.datetime.now(datetime.timezone.utc).timestamp()
     record.process = 12345
     record.py_exec_name = "test_exec"
+    record.state_stride = "test_stride"
     return record
 
 
@@ -57,7 +58,9 @@ def test_format_stderr_info_verbosity():
     formatted_log = formatter.format(record)
 
     # then
-    expected_msg = "12:00:00.000Z pid:12345 INFO py:test_exec Test message"
+    expected_msg = (
+        "12:00:00.000Z pid:12345 INFO py:test_exec s:test_stride Test message"
+    )
     expected_color = StderrLogFormatter.color_set.get("INFO")
     expected = f"{expected_color}{expected_msg}{TermColor.reset_style.value}"
     assert formatted_log == expected
@@ -74,9 +77,7 @@ def test_format_stderr_debug_verbosity():
     formatted_log = formatter.format(record)
 
     # then
-    expected_msg = (
-        "2025-01-18T12:00:00.000Z pid:12345 DEBUG py:test_exec test.py:123 Test message"
-    )
+    expected_msg = "2025-01-18T12:00:00.000Z pid:12345 DEBUG py:test_exec s:test_stride test.py:123 Test message"
     expected_color = StderrLogFormatter.color_set.get("DEBUG")
     expected = f"{expected_color}{expected_msg}{TermColor.reset_style.value}"
     assert formatted_log == expected

@@ -41,7 +41,7 @@ def test_venv_shell_no_update(tmp_path: pathlib.Path):
     proto_code_dir_abs_path = (
         ref_root_abs_path / ConfConstInput.default_proto_conf_dir_rel_path
     )
-    create_plain_proto_code(proto_code_dir_abs_path)
+    proto_kernel_abs_path = create_plain_proto_code(proto_code_dir_abs_path)
     create_conf_primer_file(
         ref_root_abs_path,
         proto_code_dir_abs_path,
@@ -101,17 +101,22 @@ def test_venv_shell_no_update(tmp_path: pathlib.Path):
 
     # given:
 
+    venv_shell_script_abs_path = ref_root_abs_path / "venv_shell"
     venv_shell_script_content = generate_entry_script_content(
-        "neoprimer.cmd_venv_shell",
-        "custom_main",
+        RunMode.mode_prime.value,
+        str(proto_kernel_abs_path),
+        str(venv_shell_script_abs_path),
+        f"{cmd_venv_shell.__name__}",
+        f"{custom_main.__name__}",
         {
-            "PROTOPRIMER_DO_INSTALL": "False",
+            EnvVar.var_PROTOPRIMER_DO_INSTALL.value: str(False),
         },
     )
-    venv_shell_script_path = ref_root_abs_path / "venv_shell"
-    with open(venv_shell_script_path, "w") as f:
+    with open(venv_shell_script_abs_path, "w") as f:
         f.write(venv_shell_script_content)
-    venv_shell_script_path.chmod(venv_shell_script_path.stat().st_mode | stat.S_IEXEC)
+    venv_shell_script_abs_path.chmod(
+        venv_shell_script_abs_path.stat().st_mode | stat.S_IEXEC
+    )
 
     # when:
     # Run the interactive shell and pipe "exit 42" to its `stdin` to make it terminate with a specific exit code.
@@ -145,7 +150,7 @@ def test_venv_shell_command_execution(tmp_path: pathlib.Path):
     proto_code_dir_abs_path = (
         ref_root_abs_path / ConfConstInput.default_proto_conf_dir_rel_path
     )
-    create_plain_proto_code(proto_code_dir_abs_path)
+    proto_kernel_abs_path = create_plain_proto_code(proto_code_dir_abs_path)
     create_conf_primer_file(
         ref_root_abs_path,
         proto_code_dir_abs_path,
@@ -188,17 +193,22 @@ def test_venv_shell_command_execution(tmp_path: pathlib.Path):
 
     # ===
 
+    venv_shell_script_abs_path = ref_root_abs_path / "venv_shell"
     venv_shell_script_content = generate_entry_script_content(
+        RunMode.mode_prime.value,
+        str(proto_kernel_abs_path),
+        str(venv_shell_script_abs_path),
         f"{cmd_venv_shell.__name__}",
         f"{custom_main.__name__}",
         {
-            f"{EnvVar.var_PROTOPRIMER_DO_INSTALL.value}": str(False),
+            EnvVar.var_PROTOPRIMER_DO_INSTALL.value: str(False),
         },
     )
-    venv_shell_script_path = ref_root_abs_path / "venv_shell"
-    with open(venv_shell_script_path, "w") as f:
+    with open(venv_shell_script_abs_path, "w") as f:
         f.write(venv_shell_script_content)
-    venv_shell_script_path.chmod(venv_shell_script_path.stat().st_mode | stat.S_IEXEC)
+    venv_shell_script_abs_path.chmod(
+        venv_shell_script_abs_path.stat().st_mode | stat.S_IEXEC
+    )
     output_file = ref_root_abs_path / "test_file.txt"
     assert not output_file.exists()
 

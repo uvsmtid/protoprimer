@@ -20,6 +20,7 @@ from protoprimer.primer_kernel import (
     ConfField,
     EnvContext,
     EnvState,
+    EnvVar,
     ParsedArg,
     PythonExecutable,
     RunMode,
@@ -58,12 +59,22 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.eval_own_state"
     )
+    @patch.dict(
+        os.environ,
+        {EnvVar.var_PROTOPRIMER_PY_EXEC.value: PythonExecutable.py_exec_venv.name},
+    )
+    @patch(
+        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
+    )
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_package_driver_prepared.__name__}.eval_own_state"
     )
+    @patch(f"{primer_kernel.__name__}.EnvContext.get_curr_py_exec")
     def test_default_install(
         self,
+        mock_get_curr_py_exec,
         mock_state_package_driver_prepared,
+        mock_state_input_run_mode_arg_loaded,
         mock_state_args_parsed,
         mock_state_input_do_install_var_loaded,
         mock_state_env_project_rel_path_to_extras_list_finalized_lconf,
@@ -76,8 +87,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             self.env_ctx,
             EnvState.state_protoprimer_package_installed.name,
         )
-        self.fs.reset()
-        self.env_ctx = EnvContext()
+        mock_get_curr_py_exec.return_value = PythonExecutable.py_exec_venv
         mock_client_ref_root_dir = "/mock_client_ref_root_dir"
         self.fs.create_dir(mock_client_ref_root_dir)
         os.chdir(mock_client_ref_root_dir)
@@ -124,6 +134,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             **{ParsedArg.name_run_mode.value: RunMode.mode_prime.value},
         )
         mock_state_args_parsed.return_value = parsed_args
+        mock_state_input_run_mode_arg_loaded.return_value = RunMode.mode_prime
         # when:
         self.env_ctx.state_graph.eval_state(
             EnvState.state_protoprimer_package_installed.name
@@ -149,12 +160,22 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.eval_own_state"
     )
+    @patch.dict(
+        os.environ,
+        {EnvVar.var_PROTOPRIMER_PY_EXEC.value: PythonExecutable.py_exec_venv.name},
+    )
+    @patch(
+        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
+    )
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_package_driver_prepared.__name__}.eval_own_state"
     )
+    @patch(f"{primer_kernel.__name__}.EnvContext.get_curr_py_exec")
     def test_reinstall(
         self,
+        mock_get_curr_py_exec,
         mock_state_package_driver_prepared,
+        mock_state_input_run_mode_arg_loaded,
         mock_state_args_parsed,
         mock_state_input_do_install_var_loaded,
         mock_state_env_project_rel_path_to_extras_list_finalized_lconf,
@@ -167,8 +188,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             self.env_ctx,
             EnvState.state_protoprimer_package_installed.name,
         )
-        self.fs.reset()
-        self.env_ctx = EnvContext()
+        mock_get_curr_py_exec.return_value = PythonExecutable.py_exec_venv
         mock_client_ref_root_dir = "/mock_client_ref_root_dir"
         self.fs.create_dir(mock_client_ref_root_dir)
         os.chdir(mock_client_ref_root_dir)
@@ -215,6 +235,9 @@ class ThisTestClass(BasePyfakefsTestClass):
             **{ParsedArg.name_run_mode.value: CommandAction.action_reinstall.value},
         )
         mock_state_args_parsed.return_value = parsed_args
+        mock_state_input_run_mode_arg_loaded.return_value = (
+            CommandAction.action_reinstall
+        )
         # when:
         self.env_ctx.state_graph.eval_state(
             EnvState.state_protoprimer_package_installed.name
@@ -240,12 +263,22 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.eval_own_state"
     )
+    @patch.dict(
+        os.environ,
+        {EnvVar.var_PROTOPRIMER_PY_EXEC.value: PythonExecutable.py_exec_venv.name},
+    )
+    @patch(
+        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
+    )
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_package_driver_prepared.__name__}.eval_own_state"
     )
+    @patch(f"{primer_kernel.__name__}.EnvContext.get_curr_py_exec")
     def test_no_install_triggered(
         self,
+        mock_get_curr_py_exec,
         mock_state_package_driver_prepared,
+        mock_state_input_run_mode_arg_loaded,
         mock_state_args_parsed,
         mock_state_input_do_install_var_loaded,
         mock_state_env_project_rel_path_to_extras_list_finalized_lconf,
@@ -258,8 +291,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             self.env_ctx,
             EnvState.state_protoprimer_package_installed.name,
         )
-        self.fs.reset()
-        self.env_ctx = EnvContext()
+        mock_get_curr_py_exec.return_value = PythonExecutable.py_exec_venv
         mock_client_ref_root_dir = "/mock_client_ref_root_dir"
         self.fs.create_dir(mock_client_ref_root_dir)
         os.chdir(mock_client_ref_root_dir)
@@ -306,6 +338,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             **{ParsedArg.name_run_mode.value: RunMode.mode_prime.value},
         )
         mock_state_args_parsed.return_value = parsed_args
+        mock_state_input_run_mode_arg_loaded.return_value = RunMode.mode_prime
         # when:
         self.env_ctx.state_graph.eval_state(
             EnvState.state_protoprimer_package_installed.name
@@ -331,12 +364,22 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.eval_own_state"
     )
+    @patch.dict(
+        os.environ,
+        {EnvVar.var_PROTOPRIMER_PY_EXEC.value: PythonExecutable.py_exec_venv.name},
+    )
+    @patch(
+        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
+    )
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_package_driver_prepared.__name__}.eval_own_state"
     )
+    @patch(f"{primer_kernel.__name__}.EnvContext.get_curr_py_exec")
     def test_nothing_to_install(
         self,
+        mock_get_curr_py_exec,
         mock_state_package_driver_prepared,
+        mock_state_input_run_mode_arg_loaded,
         mock_state_args_parsed,
         mock_state_input_do_install_var_loaded,
         mock_state_env_project_rel_path_to_extras_list_finalized_lconf,
@@ -351,7 +394,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             self.env_ctx,
             EnvState.state_protoprimer_package_installed.name,
         )
-
+        mock_get_curr_py_exec.return_value = PythonExecutable.py_exec_venv
         mock_client_dir = "/mock_client_dir"
         self.fs.create_dir(mock_client_dir)
         os.chdir(mock_client_dir)
@@ -378,6 +421,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             **{ParsedArg.name_run_mode.value: RunMode.mode_prime.value},
         )
         mock_state_args_parsed.return_value = parsed_args
+        mock_state_input_run_mode_arg_loaded.return_value = RunMode.mode_prime
 
         # when:
 

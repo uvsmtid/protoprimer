@@ -18,6 +18,7 @@ from protoprimer.primer_kernel import (
     get_path_to_curr_python,
     ParsedArg,
     PythonExecutable,
+    RunMode,
 )
 
 
@@ -49,10 +50,18 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_proto_code_file_abs_path_inited.__name__}.eval_own_state"
     )
+    @patch(
+        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.eval_own_state"
+    )
+    @patch(
+        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
+    )
     @patch(f"{primer_kernel.__name__}.switch_python")
     def test_not_yet_at_required_python(
         self,
         mock_switch_python,
+        mock_state_input_run_mode_arg_loaded,
+        mock_state_local_venv_dir_abs_path_inited,
         mock_state_proto_code_file_abs_path_inited,
         mock_state_proto_code_updated,
         mock_state_input_py_exec_var_loaded,
@@ -78,9 +87,13 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         mock_state_proto_code_updated.return_value = True
 
-        mock_state_input_py_exec_var_loaded.return_value = (
-            PythonExecutable.py_exec_unknown
-        )
+        py_exec = PythonExecutable.py_exec_unknown
+        mock_state_input_py_exec_var_loaded.return_value = py_exec
+        self.env_ctx.state_stride = py_exec
+
+        mock_state_input_run_mode_arg_loaded.return_value = RunMode.mode_prime
+        mock_state_local_venv_dir_abs_path_inited.return_value = "/path/to/venv"
+        self.fs.create_file("/path/to/venv/bin/python")
 
         # when:
 
@@ -91,10 +104,9 @@ class ThisTestClass(BasePyfakefsTestClass):
         # then:
 
         mock_switch_python.assert_called_once_with(
-            curr_py_exec=PythonExecutable.py_exec_unknown,
-            curr_python_path=get_path_to_curr_python(),
+            curr_python_path="/path/to/venv/bin/python",
             next_py_exec=PythonExecutable.py_exec_src_updated,
-            next_python_path=get_path_to_curr_python(),
+            next_python_path="/path/to/venv/bin/python",
             start_id="mock_start_id",
             proto_code_abs_file_path=mock_state_proto_code_file_abs_path_inited.return_value,
         )
@@ -114,10 +126,18 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_proto_code_file_abs_path_inited.__name__}.eval_own_state"
     )
+    @patch(
+        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.eval_own_state"
+    )
+    @patch(
+        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
+    )
     @patch(f"{primer_kernel.__name__}.switch_python")
     def test_already_required_python(
         self,
         mock_switch_python,
+        mock_state_input_run_mode_arg_loaded,
+        mock_state_local_venv_dir_abs_path_inited,
         mock_state_proto_code_file_abs_path_inited,
         mock_state_proto_code_updated,
         mock_state_input_py_exec_var_loaded,
@@ -144,11 +164,14 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         mock_state_proto_code_file_abs_path_inited.return_value = "path/to/whatever"
 
-        mock_state_proto_code_updated.return_value = True
+        mock_state_proto_code_updated.return_value = False
 
-        mock_state_input_py_exec_var_loaded.return_value = (
-            PythonExecutable.py_exec_src_updated
-        )
+        py_exec = PythonExecutable.py_exec_src_updated
+        mock_state_input_py_exec_var_loaded.return_value = py_exec
+        self.env_ctx.state_stride = py_exec
+
+        mock_state_input_run_mode_arg_loaded.return_value = RunMode.mode_prime
+        mock_state_local_venv_dir_abs_path_inited.return_value = "/path/to/venv"
 
         # when:
 

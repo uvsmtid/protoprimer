@@ -14,7 +14,7 @@ from protoprimer.primer_kernel import (
     ConfConstPrimer,
     ConfField,
     EnvVar,
-    main,
+    app_main,
     PythonExecutable,
     write_json_file,
 )
@@ -129,7 +129,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         with patch.object(sys, "argv", test_args):
             # this assertion comes from `mock_execve`:
             with self.assertRaises(AssertionError) as cm:
-                main()
+                app_main()
             self.assertEqual(execv_args, cm.exception.args[0])
 
         # then:
@@ -140,7 +140,6 @@ class ThisTestClass(BasePyfakefsTestClass):
             env={
                 EnvVar.var_PROTOPRIMER_PY_EXEC.value: PythonExecutable.py_exec_required.name,
                 EnvVar.var_PROTOPRIMER_START_ID.value: "mock_start_id",
-                EnvVar.var_PROTOPRIMER_STDERR_LOG_LEVEL.value: "WARNING",
                 EnvVar.var_PROTOPRIMER_PROTO_CODE.value: state_proto_code_file_abs_path_inited,
             },
         )

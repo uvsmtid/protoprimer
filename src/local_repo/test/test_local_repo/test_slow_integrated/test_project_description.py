@@ -51,7 +51,19 @@ class ThisTestClass(TestCase):
 
         assert github_description is not None
 
+        emoji_map = {
+            ":sparkles:": "✨",
+            ":boot:": "👢",
+            ":bomb:": "💣",
+            ":shield:": "🛡️",
+            ":rocket:": "🚀",
+        }
+
+        translated_description = project_description
+        for shortcode, emoji in emoji_map.items():
+            translated_description = translated_description.replace(shortcode, emoji)
+
         self.assertEqual(
-            project_description,
+            translated_description,
             github_description,
         )

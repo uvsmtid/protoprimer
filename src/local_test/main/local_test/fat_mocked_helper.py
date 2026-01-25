@@ -13,7 +13,7 @@ from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     ConfConstGeneral,
     EnvVar,
-    main,
+    app_main,
     PackageDriverBase,
     PackageDriverPip,
     PackageDriverUv,
@@ -173,7 +173,7 @@ def _run_primer_main_in_mock_env(
                     "argv",
                     cli_args,
                 ):
-                    main()
+                    app_main()
             break
         except _ExecCalled as e:
             exec_args, exec_kwargs = e.args

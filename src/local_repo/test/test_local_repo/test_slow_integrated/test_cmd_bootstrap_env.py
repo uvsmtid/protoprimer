@@ -19,6 +19,7 @@ from protoprimer.primer_kernel import (
     ConfConstEnv,
     ConfConstInput,
     ConfConstPrimer,
+    RunMode,
 )
 from protoprimer.proto_generator import generate_entry_script_content
 
@@ -34,7 +35,7 @@ def test_bootstrap_env(tmp_path: pathlib.Path):
     proto_code_dir_abs_path = (
         ref_root_abs_path / ConfConstInput.default_proto_conf_dir_rel_path
     )
-    create_plain_proto_code(proto_code_dir_abs_path)
+    proto_kernel_abs_path = create_plain_proto_code(proto_code_dir_abs_path)
     create_conf_primer_file(
         ref_root_abs_path,
         proto_code_dir_abs_path,
@@ -72,15 +73,18 @@ def test_bootstrap_env(tmp_path: pathlib.Path):
 
     # ===
 
+    bootstrap_env_script_abs_path = ref_root_abs_path / "bootstrap_env"
     bootstrap_env_script_content = generate_entry_script_content(
+        RunMode.mode_prime.value,
+        str(proto_kernel_abs_path),
+        str(bootstrap_env_script_abs_path),
         f"{cmd_bootstrap_env.__name__}",
         f"{custom_main.__name__}",
     )
-    bootstrap_env_script_path = ref_root_abs_path / "bootstrap_env"
-    with open(bootstrap_env_script_path, "w") as f:
+    with open(bootstrap_env_script_abs_path, "w") as f:
         f.write(bootstrap_env_script_content)
-    bootstrap_env_script_path.chmod(
-        bootstrap_env_script_path.stat().st_mode | stat.S_IEXEC
+    bootstrap_env_script_abs_path.chmod(
+        bootstrap_env_script_abs_path.stat().st_mode | stat.S_IEXEC
     )
 
     # ===

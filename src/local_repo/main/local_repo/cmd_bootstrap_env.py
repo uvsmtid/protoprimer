@@ -8,14 +8,14 @@ from neoprimer.pre_commit import (
 )
 from protoprimer.primer_kernel import (
     EnvContext,
-    main,
+    app_main,
 )
 
 logger = logging.getLogger()
 
 
 def custom_main():
-    main(customize_env_context)
+    app_main(customize_env_context)
 
 
 class CustomEnvState(enum.Enum):

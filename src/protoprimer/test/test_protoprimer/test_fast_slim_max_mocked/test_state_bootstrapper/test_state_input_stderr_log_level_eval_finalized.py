@@ -441,13 +441,15 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{Bootstrapper_state_input_stderr_log_level_var_loaded.__name__}.eval_own_state"
     )
     @patch.dict(f"{os.__name__}.environ", {}, clear=True)
-    def test_env_var_updated_after_eval(
+    def test_env_var_not_updated_read_only(
         self,
         mock_state_input_stderr_log_level_var_loaded,
         mock_state_args_parsed,
         mock_state_default_stderr_logger_configured,
     ):
+
         # given:
+
         assert_parent_states_mocked(
             self.env_ctx,
             EnvState.state_input_stderr_log_level_eval_finalized.name,
@@ -464,13 +466,16 @@ class ThisTestClass(BasePyfakefsTestClass):
             **{SyntaxArg.dest_verbose: 0},
         )
         mock_state_args_parsed.return_value = parsed_args
+
         # when:
+
         state_value = self.env_ctx.state_graph.eval_state(
             EnvState.state_input_stderr_log_level_eval_finalized.name
         )
+
         # then:
+
         self.assertEqual(logging.ERROR, state_value)
-        self.assertEqual(
-            os.environ[EnvVar.var_PROTOPRIMER_STDERR_LOG_LEVEL.value],
-            logging.getLevelName(logging.ERROR),
+        self.assertIsNone(
+            os.environ.get(EnvVar.var_PROTOPRIMER_STDERR_LOG_LEVEL.value, None)
         )

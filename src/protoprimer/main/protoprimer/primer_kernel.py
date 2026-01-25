@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import argparse
 import atexit
+import contextvars
 import datetime
 import enum
 import importlib
@@ -35,15 +36,17 @@ from typing import (
 
 # The release process ensures that content in this file matches the version below while tagging the release commit
 # (otherwise, if the file comes from a different commit, the version is irrelevant):
-__version__ = "0.5.1"
+__version__ = "0.6.0"
 
 logger: logging.Logger = logging.getLogger()
+
+log_stride = contextvars.ContextVar("state_stride")
 
 ValueType = TypeVar("ValueType")
 DataValueType = TypeVar("DataValueType")
 
 
-def main(
+def app_main(
     configure_env_context: typing.Callable[[], EnvContext] | None = None,
 ):
 
@@ -56,7 +59,8 @@ def main(
             # See UC_10_80_27_57.extend_DAG.md:
             env_ctx = configure_env_context()
 
-        # TODO: Do not call `state_graph.eval_state` directly - evaluate state via child state (to check that this is eligible).
+        # TODO: Do not call `state_graph.eval_state` directly.
+        #       Evaluate state via child state (to check that this is eligible).
         #       But... What is the child state here?
         state_run_mode_executed: bool = env_ctx.state_graph.eval_state(
             TargetState.target_run_mode_executed.value.name
@@ -91,6 +95,8 @@ def ensure_min_python_version():
         )
 
 
+# TODO: Rename to StateStride and use it for both
+#       (actual `python` executable instance and state_stride).
 class PythonExecutable(enum.IntEnum):
     """
     Python executables started during the bootstrap process - each replaces the executable program (via `os.execv`).
@@ -247,7 +253,11 @@ class RunMode(enum.Enum):
     See FT_11_27_29_83.run_mode.md
     """
 
+    # FT_58_74_37_70.starter_vs_bootstrapper.md / "env bootstrapper"
     mode_prime = "prime"
+
+    # FT_58_74_37_70.starter_vs_bootstrapper.md / "app starter"
+    mode_start = "start"
 
     # See UC_61_12_90_59.upgrade_venv.md
     mode_upgrade = "upgrade"
@@ -291,6 +301,15 @@ class EnvVar(enum.Enum):
     """
     See FT_08_92_69_92.env_var.md
     """
+
+    # FT_11_27_29_83.run_mode.md
+    var_PROTOPRIMER_RUN_MODE = "PROTOPRIMER_RUN_MODE"
+
+    # TODO: Remove: handled by `_start_main` by restarting the same script
+    #       (unless we want to start it via `proto_code`):
+    # FT_58_74_37_70.starter_vs_bootstrapper.md
+    # Selects the main function to run, for example, "sup_module.sub_module:some_main".
+    var_PROTOPRIMER_MAIN_FUNC = "PROTOPRIMER_MAIN_FUNC"
 
     var_PROTOPRIMER_STDERR_LOG_LEVEL = "PROTOPRIMER_STDERR_LOG_LEVEL"
 
@@ -3062,18 +3081,39 @@ class Bootstrapper_state_input_stderr_log_level_var_loaded(
     def _eval_state_once(
         self,
     ) -> ValueType:
-        default_stderr_level: str = os.getenv(
+
+        loaded_stderr_level: str = os.getenv(
             EnvVar.var_PROTOPRIMER_STDERR_LOG_LEVEL.value,
             ConfConstInput.default_PROTOPRIMER_STDERR_LOG_LEVEL,
         )
-        if str.isdigit(default_stderr_level):
-            state_input_stderr_log_level_var_loaded: int = int(default_stderr_level)
-            assert state_input_stderr_log_level_var_loaded >= 0
-        else:
-            state_input_stderr_log_level_var_loaded: int = getattr(
+        default_stderr_log_level = getattr(
+            logging,
+            ConfConstInput.default_PROTOPRIMER_STDERR_LOG_LEVEL,
+        )
+
+        state_input_stderr_log_level_var_loaded: int
+        try:
+            state_input_stderr_log_level_var_loaded = int(loaded_stderr_level)
+            if state_input_stderr_log_level_var_loaded < 0:
+                logger.warning(
+                    f"Unsupported log level value [{loaded_stderr_level}] for `{EnvVar.var_PROTOPRIMER_STDERR_LOG_LEVEL.value}`"
+                )
+                state_input_stderr_log_level_var_loaded = default_stderr_log_level
+        except ValueError:
+            loaded_stderr_level = loaded_stderr_level.upper()
+            defined_value: int | None = getattr(
                 logging,
-                default_stderr_level,
+                loaded_stderr_level,
+                None,
             )
+            if defined_value is None:
+                logger.warning(
+                    f"Unrecognized log level value [{loaded_stderr_level}] for `{EnvVar.var_PROTOPRIMER_STDERR_LOG_LEVEL.value}`"
+                )
+                defined_value = default_stderr_log_level
+
+            state_input_stderr_log_level_var_loaded = defined_value
+
         return state_input_stderr_log_level_var_loaded
 
 
@@ -3165,7 +3205,23 @@ class Bootstrapper_state_args_parsed(AbstractCachingStateNode[argparse.Namespace
     def _eval_state_once(
         self,
     ) -> ValueType:
-        state_args_parsed: argparse.Namespace = parse_args()
+        """
+        Parse the args. In case of `EnvVar.var_PROTOPRIMER_RUN_MODE` == `RunMode.mode_start`, skip parsing.
+        """
+        state_args_parsed: argparse.Namespace
+        if (
+            os.environ.get(EnvVar.var_PROTOPRIMER_RUN_MODE.value, None)
+            == RunMode.mode_start.value
+        ):
+            # Pretend there is no args except `RunMode.mode_start`:
+            state_args_parsed = parse_args([])
+            setattr(
+                state_args_parsed,
+                ParsedArg.name_run_mode.value,
+                RunMode.mode_start.value,
+            )
+        else:
+            state_args_parsed = parse_args()
         return state_args_parsed
 
 
@@ -3256,7 +3312,6 @@ class Bootstrapper_state_input_stderr_log_level_eval_finalized(
             # Due to some hacks in the `python` `logging` library,
             # it may return non-existing level names - use number instead:
             level_var_value = str(stderr_log_level_eval_finalized)
-        os.environ[EnvVar.var_PROTOPRIMER_STDERR_LOG_LEVEL.value] = level_var_value
 
         # Remove stack trace for levels >= WARNING (it will only print the exception itself):
         if stderr_log_level_eval_finalized >= logging.WARNING:
@@ -3315,6 +3370,7 @@ class Bootstrapper_state_input_final_state_eval_finalized(
             env_ctx=env_ctx,
             parent_states=[
                 EnvState.state_args_parsed.name,
+                EnvState.state_input_run_mode_arg_loaded.name,
             ],
             state_name=if_none(
                 state_name,
@@ -3325,13 +3381,28 @@ class Bootstrapper_state_input_final_state_eval_finalized(
     def _eval_state_once(
         self,
     ) -> ValueType:
-        state_args_parsed = self.eval_parent_state(EnvState.state_args_parsed.name)
-        state_input_final_state_eval_finalized: str | None = getattr(
-            state_args_parsed,
-            ParsedArg.name_final_state.value,
-            # NOTE: The value is only set for `RunMode.mode_prime`, otherwise, this default is used:
-            None,
+        state_args_parsed: argparse.Namespace = self.eval_parent_state(
+            EnvState.state_args_parsed.name
         )
+
+        state_input_run_mode_arg_loaded: RunMode = self.eval_parent_state(
+            EnvState.state_input_run_mode_arg_loaded.name
+        )
+
+        state_input_final_state_eval_finalized: str | None
+        # TODO: clean-up branching:
+        # if state_input_run_mode_arg_loaded == RunMode.mode_start:
+        if False:
+            state_input_final_state_eval_finalized = (
+                TargetState.target_app_started.value.name
+            )
+        else:
+            state_input_final_state_eval_finalized = getattr(
+                state_args_parsed,
+                ParsedArg.name_final_state.value,
+                # NOTE: The value is only set for `RunMode.mode_prime`, otherwise, this default is used:
+                None,
+            )
 
         if state_input_final_state_eval_finalized is None:
             # TODO: Fix duplicated logs: try default bootstrap - this line is printed repeatedly.
@@ -3396,6 +3467,8 @@ class Bootstrapper_state_run_mode_executed(AbstractCachingStateNode[bool]):
             raise ValueError(f"run mode is not defined")
         elif state_input_run_mode_arg_loaded == RunMode.mode_prime:
             selected_strategy = ExitCodeReporter(self.env_ctx)
+        elif state_input_run_mode_arg_loaded == RunMode.mode_start:
+            selected_strategy = ExitCodeReporter(self.env_ctx)
         elif state_input_run_mode_arg_loaded == RunMode.mode_upgrade:
             selected_strategy = ExitCodeReporter(self.env_ctx)
         elif state_input_run_mode_arg_loaded == RunMode.mode_config:
@@ -3413,6 +3486,8 @@ class Bootstrapper_state_run_mode_executed(AbstractCachingStateNode[bool]):
         return True
 
 
+# TODO: Clean-up: using `EnvVar.var_PROTOPRIMER_PY_EXEC` directly (and setting it).
+#       That way logs automatically reflect the env var value.
 # noinspection PyPep8Naming
 class Bootstrapper_state_input_py_exec_var_loaded(
     AbstractCachingStateNode[PythonExecutable]
@@ -3437,12 +3512,16 @@ class Bootstrapper_state_input_py_exec_var_loaded(
     def _eval_state_once(
         self,
     ) -> ValueType:
-        return PythonExecutable[
+        py_exec = PythonExecutable[
             os.getenv(
                 EnvVar.var_PROTOPRIMER_PY_EXEC.value,
                 ConfConstInput.default_PROTOPRIMER_PY_EXEC,
             )
         ]
+
+        self.env_ctx.set_curr_py_exec(py_exec)
+
+        return py_exec
 
 
 # noinspection PyPep8Naming
@@ -3537,58 +3616,70 @@ class Bootstrapper_state_py_exec_arbitrary_reached(
     def _eval_state_once(
         self,
     ) -> ValueType:
+
+        state_py_exec_arbitrary_reached: PythonExecutable = (
+            PythonExecutable.py_exec_arbitrary
+        )
+
         state_input_py_exec_var_loaded: PythonExecutable = self.eval_parent_state(
             EnvState.state_input_py_exec_var_loaded.name
         )
+
+        if self.env_ctx.has_py_exec_reached(
+            next_py_exec=state_py_exec_arbitrary_reached,
+        ):
+            return self.env_ctx.set_curr_py_exec(state_py_exec_arbitrary_reached)
+
+        if os.environ.get(EnvVar.var_PROTOPRIMER_PROTO_CODE.value, None) is not None:
+            # The only reason for `EnvState.state_py_exec_arbitrary_reached`
+            # is to obtain `proto_code` abs path in `EnvState.state_proto_code_file_abs_path_inited`.
+            # Skip `python` switching as the env var already set:
+            return self.env_ctx.set_curr_py_exec(state_py_exec_arbitrary_reached)
 
         state_input_start_id_var_loaded: str = self.eval_parent_state(
             EnvState.state_input_start_id_var_loaded.name
         )
 
-        if (
-            state_input_py_exec_var_loaded.value
-            == PythonExecutable.py_exec_unknown.value
-        ):
-            log_python_context(logging.DEBUG)
+        log_python_context(logging.DEBUG)
 
-            # UC_90_98_17_93.run_under_venv.md
-            # Switch out of the current `venv` -
-            # it might be a wrong one,
-            # and even if it is the right one,
-            # child states require out of `venv` execution.
+        # UC_90_98_17_93.run_under_venv.md
+        # Switch out of the current `venv` -
+        # it might be a wrong one,
+        # and even if it is the right one,
+        # child states require out of `venv` execution.
 
-            cleaned_env = os.environ.copy()
+        cleaned_env = os.environ.copy()
 
-            orig_venv_abs_path = cleaned_env.pop(
-                ConfConstInput.ext_env_var_VIRTUAL_ENV, None
-            )
-            orig_PYTHONPATH_value = cleaned_env.pop(
-                ConfConstInput.ext_env_var_PYTHONPATH, None
-            )
-            orig_PATH_value: str = cleaned_env.get(ConfConstInput.ext_env_var_PATH, "")
+        orig_venv_abs_path = cleaned_env.pop(
+            ConfConstInput.ext_env_var_VIRTUAL_ENV, None
+        )
+        orig_PYTHONPATH_value = cleaned_env.pop(
+            ConfConstInput.ext_env_var_PYTHONPATH, None
+        )
+        orig_PATH_value: str = cleaned_env.get(ConfConstInput.ext_env_var_PATH, "")
 
-            if orig_venv_abs_path is not None:
-                # Remove `venv/bin` dir from the `PATH` env var:
-                venv_bin_abs_path: str = os.path.join(orig_venv_abs_path, "bin")
-                PATH_parts: list[str] = orig_PATH_value.split(os.pathsep)
-                cleaned_path_parts = [p for p in PATH_parts if p != venv_bin_abs_path]
-                cleaned_env[ConfConstInput.ext_env_var_PATH] = os.pathsep.join(
-                    cleaned_path_parts
-                )
-
-            path_to_curr_python = get_path_to_curr_python()
-            path_to_next_python = get_path_to_base_python()
-            switch_python(
-                curr_py_exec=state_input_py_exec_var_loaded,
-                curr_python_path=path_to_curr_python,
-                next_py_exec=PythonExecutable.py_exec_arbitrary,
-                next_python_path=path_to_next_python,
-                start_id=state_input_start_id_var_loaded,
-                proto_code_abs_file_path=None,
-                required_environ=cleaned_env,
+        # TODO: Is this (above and below) manual clean-up necessary after we switched to isolated `-I` `python` mode?
+        if orig_venv_abs_path is not None:
+            # Remove `venv/bin` dir from the `PATH` env var:
+            venv_bin_abs_path: str = os.path.join(orig_venv_abs_path, "bin")
+            PATH_parts: list[str] = orig_PATH_value.split(os.pathsep)
+            cleaned_path_parts = [p for p in PATH_parts if p != venv_bin_abs_path]
+            cleaned_env[ConfConstInput.ext_env_var_PATH] = os.pathsep.join(
+                cleaned_path_parts
             )
 
-        return state_input_py_exec_var_loaded
+        path_to_curr_python = get_path_to_curr_python()
+        path_to_next_python = get_path_to_base_python()
+        switch_python(
+            curr_python_path=path_to_curr_python,
+            next_py_exec=self.env_ctx.set_curr_py_exec(state_py_exec_arbitrary_reached),
+            next_python_path=path_to_next_python,
+            start_id=state_input_start_id_var_loaded,
+            proto_code_abs_file_path=None,
+            required_environ=cleaned_env,
+        )
+
+        return self.env_ctx.set_curr_py_exec(state_py_exec_arbitrary_reached)
 
 
 # noinspection PyPep8Naming
@@ -3625,10 +3716,10 @@ class Bootstrapper_state_proto_code_file_abs_path_inited(AbstractCachingStateNod
         )
 
         state_proto_code_file_abs_path_inited: str
-        if state_py_exec_arbitrary_reached.value >= PythonExecutable.py_exec_venv.value:
+        if self.env_ctx.get_curr_py_exec().value >= PythonExecutable.py_exec_venv.value:
             if state_input_proto_code_file_abs_path_var_loaded is None:
                 raise AssertionError(
-                    f"`{EnvVar.var_PROTOPRIMER_PROTO_CODE.value}` is not specified at `{EnvState.state_py_exec_arbitrary_reached.name}` [{state_py_exec_arbitrary_reached}]"
+                    f"`{EnvVar.var_PROTOPRIMER_PROTO_CODE.value}` is not specified at `{self.env_ctx.get_curr_py_exec().name}` [{self.env_ctx.get_curr_py_exec()}]"
                 )
             # rely on the path given in env var:
             state_proto_code_file_abs_path_inited = (
@@ -4850,6 +4941,7 @@ class Bootstrapper_state_py_exec_required_reached(
             env_ctx=env_ctx,
             parent_states=[
                 EnvState.state_args_parsed.name,
+                EnvState.state_input_run_mode_arg_loaded.name,
                 EnvState.state_input_py_exec_var_loaded.name,
                 EnvState.state_input_start_id_var_loaded.name,
                 EnvState.state_proto_code_file_abs_path_inited.name,
@@ -4869,7 +4961,28 @@ class Bootstrapper_state_py_exec_required_reached(
         self,
     ) -> ValueType:
 
-        state_py_exec_required_reached: PythonExecutable
+        state_py_exec_required_reached: PythonExecutable = (
+            PythonExecutable.py_exec_required
+        )
+
+        state_input_py_exec_var_loaded: PythonExecutable = self.eval_parent_state(
+            EnvState.state_input_py_exec_var_loaded.name
+        )
+
+        if self.env_ctx.has_py_exec_reached(
+            next_py_exec=state_py_exec_required_reached,
+        ):
+            return self.env_ctx.set_curr_py_exec(state_py_exec_required_reached)
+
+        state_input_run_mode_arg_loaded: RunMode = self.eval_parent_state(
+            EnvState.state_input_run_mode_arg_loaded.name
+        )
+
+        if state_input_run_mode_arg_loaded == RunMode.mode_start:
+            # The only reason for `EnvState.state_py_exec_required_reached`
+            # is to use the required `python` to create a `venv`.
+            # Skip it as `venv` is supposed to be ready in `RunMode.mode_start`:
+            return self.env_ctx.set_curr_py_exec(state_py_exec_required_reached)
 
         # TODO: Unused, but plugged in to form complete DAG: consider adding intermediate state to plug it in:
         state_default_file_log_handler_configured = self.eval_parent_state(
@@ -4883,10 +4996,6 @@ class Bootstrapper_state_py_exec_required_reached(
 
         state_input_start_id_var_loaded: str = self.eval_parent_state(
             EnvState.state_input_start_id_var_loaded.name
-        )
-
-        state_input_py_exec_var_loaded: PythonExecutable = self.eval_parent_state(
-            EnvState.state_input_py_exec_var_loaded.name
         )
 
         state_proto_code_file_abs_path_inited: str = self.eval_parent_state(
@@ -4908,31 +5017,39 @@ class Bootstrapper_state_py_exec_required_reached(
         path_to_curr_python = get_path_to_curr_python()
         logger.debug(f"path_to_curr_python: {path_to_curr_python}")
 
-        # Do not do anything if beyond `PythonExecutable.py_exec_required`:
-        if state_input_py_exec_var_loaded >= PythonExecutable.py_exec_required:
-            return state_input_py_exec_var_loaded
-
         assert not is_sub_path(
             path_to_curr_python,
             state_local_venv_dir_abs_path_inited,
         ), f"Current `python` [{path_to_curr_python}] must be outside of the `venv` [{state_local_venv_dir_abs_path_inited}]."
 
         if path_to_curr_python != state_required_python_file_abs_path_inited:
-            assert state_input_py_exec_var_loaded <= PythonExecutable.py_exec_arbitrary
-            state_py_exec_required_reached = PythonExecutable.py_exec_arbitrary
+            assert (
+                self.env_ctx.get_curr_py_exec().value
+                <= PythonExecutable.py_exec_arbitrary.value
+            )
             switch_python(
-                curr_py_exec=state_input_py_exec_var_loaded,
                 curr_python_path=path_to_curr_python,
-                next_py_exec=PythonExecutable.py_exec_required,
+                next_py_exec=self.env_ctx.set_curr_py_exec(
+                    state_py_exec_required_reached
+                ),
                 next_python_path=state_required_python_file_abs_path_inited,
                 start_id=state_input_start_id_var_loaded,
                 proto_code_abs_file_path=state_proto_code_file_abs_path_inited,
             )
         else:
-            assert state_input_py_exec_var_loaded <= PythonExecutable.py_exec_required
-            state_py_exec_required_reached = PythonExecutable.py_exec_required
+            assert (
+                self.env_ctx.get_curr_py_exec().value
+                <= PythonExecutable.py_exec_required.value
+            )
+            skip_python(
+                "already required `python` path",
+                curr_py_exec=self.env_ctx.get_curr_py_exec(),
+                next_py_exec=self.env_ctx.set_curr_py_exec(
+                    state_py_exec_required_reached
+                ),
+            )
 
-        return state_py_exec_required_reached
+        return self.env_ctx.set_curr_py_exec(state_py_exec_required_reached)
 
 
 # noinspection PyPep8Naming
@@ -4950,6 +5067,7 @@ class Bootstrapper_state_reinstall_triggered(AbstractCachingStateNode[bool]):
             env_ctx=env_ctx,
             parent_states=[
                 EnvState.state_args_parsed.name,
+                EnvState.state_input_run_mode_arg_loaded.name,
                 EnvState.state_input_start_id_var_loaded.name,
                 EnvState.state_proto_code_file_abs_path_inited.name,
                 EnvState.state_local_conf_symlink_abs_path_inited.name,
@@ -4967,6 +5085,20 @@ class Bootstrapper_state_reinstall_triggered(AbstractCachingStateNode[bool]):
         self,
     ) -> ValueType:
 
+        state_args_parsed: argparse.Namespace = self.eval_parent_state(
+            EnvState.state_args_parsed.name
+        )
+
+        state_input_run_mode_arg_loaded: RunMode = self.eval_parent_state(
+            EnvState.state_input_run_mode_arg_loaded.name
+        )
+
+        if state_input_run_mode_arg_loaded == RunMode.mode_start:
+            # The only reason for `EnvState.state_reinstall_triggered`
+            # is to destroy `venv` to recreate it later.
+            # Skip it as `venv` is supposed to be ready in `RunMode.mode_start`:
+            return False
+
         state_input_start_id_var_loaded: str = self.eval_parent_state(
             EnvState.state_input_start_id_var_loaded.name
         )
@@ -4975,16 +5107,15 @@ class Bootstrapper_state_reinstall_triggered(AbstractCachingStateNode[bool]):
             EnvState.state_args_parsed.name
         )
 
-        state_args_parsed: argparse.Namespace = self.eval_parent_state(
-            EnvState.state_args_parsed.name
-        )
-
         do_reinstall: bool = state_args_parsed.run_mode == RunMode.mode_upgrade.value
 
-        state_py_exec_required_reached = self.eval_parent_state(
+        state_py_exec_required_reached: PythonExecutable = self.eval_parent_state(
             EnvState.state_py_exec_required_reached.name
         )
-        assert state_py_exec_required_reached >= PythonExecutable.py_exec_required
+        assert (
+            self.env_ctx.get_curr_py_exec().value
+            >= PythonExecutable.py_exec_required.value
+        )
 
         state_proto_code_file_abs_path_inited: str = self.eval_parent_state(
             EnvState.state_proto_code_file_abs_path_inited.name
@@ -5045,6 +5176,7 @@ class Bootstrapper_state_package_driver_prepared(
         super().__init__(
             env_ctx=env_ctx,
             parent_states=[
+                EnvState.state_input_run_mode_arg_loaded.name,
                 EnvState.state_required_python_file_abs_path_inited.name,
                 EnvState.state_local_cache_dir_abs_path_inited.name,
                 EnvState.state_package_driver_inited.name,
@@ -5059,6 +5191,16 @@ class Bootstrapper_state_package_driver_prepared(
     def _eval_state_once(
         self,
     ) -> ValueType:
+
+        state_input_run_mode_arg_loaded: RunMode = self.eval_parent_state(
+            EnvState.state_input_run_mode_arg_loaded.name
+        )
+
+        if state_input_run_mode_arg_loaded == RunMode.mode_start:
+            # The only reason for `EnvState.state_package_driver_prepared`
+            # is to prepare `PackageDriverBase` to create `venv`.
+            # Skip it as `venv` is supposed to be ready in `RunMode.mode_start`:
+            return PackageDriverBase()
 
         state_required_python_file_abs_path_inited: str = self.eval_parent_state(
             EnvState.state_required_python_file_abs_path_inited.name
@@ -5142,6 +5284,7 @@ class Bootstrapper_state_py_exec_venv_reached(
             env_ctx=env_ctx,
             parent_states=[
                 EnvState.state_args_parsed.name,
+                EnvState.state_input_run_mode_arg_loaded.name,
                 EnvState.state_input_py_exec_var_loaded.name,
                 EnvState.state_input_start_id_var_loaded.name,
                 EnvState.state_proto_code_file_abs_path_inited.name,
@@ -5161,7 +5304,26 @@ class Bootstrapper_state_py_exec_venv_reached(
         self,
     ) -> ValueType:
 
-        state_py_exec_venv_reached: PythonExecutable
+        state_py_exec_venv_reached: PythonExecutable = PythonExecutable.py_exec_venv
+
+        state_input_py_exec_var_loaded: PythonExecutable = self.eval_parent_state(
+            EnvState.state_input_py_exec_var_loaded.name
+        )
+
+        if self.env_ctx.has_py_exec_reached(
+            next_py_exec=state_py_exec_venv_reached,
+        ):
+            return self.env_ctx.set_curr_py_exec(state_py_exec_venv_reached)
+
+        state_input_run_mode_arg_loaded: RunMode = self.eval_parent_state(
+            EnvState.state_input_run_mode_arg_loaded.name
+        )
+
+        if state_input_run_mode_arg_loaded == RunMode.mode_start:
+            # The only reason for `EnvState.state_py_exec_venv_reached`
+            # is to create a `venv`.
+            # Skip it as `venv` is supposed to be ready in `RunMode.mode_start`:
+            return self.env_ctx.set_curr_py_exec(state_py_exec_venv_reached)
 
         state_input_start_id_var_loaded: str = self.eval_parent_state(
             EnvState.state_input_start_id_var_loaded.name
@@ -5169,10 +5331,6 @@ class Bootstrapper_state_py_exec_venv_reached(
 
         state_reinstall_triggered: bool = self.eval_parent_state(
             EnvState.state_reinstall_triggered.name
-        )
-
-        state_input_py_exec_var_loaded: PythonExecutable = self.eval_parent_state(
-            EnvState.state_input_py_exec_var_loaded.name
         )
 
         state_proto_code_file_abs_path_inited: str = self.eval_parent_state(
@@ -5197,52 +5355,128 @@ class Bootstrapper_state_py_exec_venv_reached(
         path_to_curr_python: str = get_path_to_curr_python()
         logger.debug(f"path_to_curr_python: {path_to_curr_python}")
 
-        # Do not do anything if beyond `PythonExecutable.py_exec_venv`:
-        if state_input_py_exec_var_loaded >= PythonExecutable.py_exec_venv:
-            return state_input_py_exec_var_loaded
-
         if is_sub_path(
             path_to_curr_python,
             state_local_venv_dir_abs_path_inited,
         ):
             raise AssertionError(
-                f"Current `python` [{path_to_curr_python}] must be outside of `venv` [{state_local_venv_dir_abs_path_inited}]."
+                f"Current `python` [{path_to_curr_python}] must be outside of the `venv` [{state_local_venv_dir_abs_path_inited}]."
             )
 
         if os.environ.get(EnvVar.var_PROTOPRIMER_TEST_MODE.value, None) is None:
-            if path_to_curr_python != state_required_python_file_abs_path_inited:
-                raise AssertionError(
-                    f"Current `python` [{path_to_curr_python}] must match the required one [{state_required_python_file_abs_path_inited}]."
-                )
+            if state_input_run_mode_arg_loaded == RunMode.mode_start:
+                # Skip required `python` validation because we do not need it to create `venv`:
+                pass
+            else:
+                if path_to_curr_python != state_required_python_file_abs_path_inited:
+                    raise AssertionError(
+                        f"Current `python` [{path_to_curr_python}] must match the required one [{state_required_python_file_abs_path_inited}]."
+                    )
 
-        assert state_input_py_exec_var_loaded <= PythonExecutable.py_exec_required
-        state_py_exec_venv_reached = PythonExecutable.py_exec_required
+        assert (
+            self.env_ctx.get_curr_py_exec().value
+            <= PythonExecutable.py_exec_required.value
+        )
         if not os.path.exists(state_local_venv_dir_abs_path_inited):
-            state_package_driver_prepared.create_venv(
-                state_required_python_file_abs_path_inited,
-                state_local_venv_dir_abs_path_inited,
-            )
+            if state_input_run_mode_arg_loaded == RunMode.mode_start:
+                # The `venv` is supposed to be ready in `RunMode.mode_start`:
+                raise AssertionError(
+                    f"`venv` [{state_local_venv_dir_abs_path_inited}] is supposed to be ready in `RunMode` [{state_input_run_mode_arg_loaded.name}] execute `RunMode` [{RunMode.mode_prime.name}] to prepare it."
+                )
+            else:
+                state_package_driver_prepared.create_venv(
+                    state_required_python_file_abs_path_inited,
+                    state_local_venv_dir_abs_path_inited,
+                )
         else:
             logger.info(
                 f"reusing existing `venv` [{state_local_venv_dir_abs_path_inited}]"
             )
-            if not state_package_driver_prepared.is_mine_venv(
-                state_local_venv_dir_abs_path_inited,
-            ):
-                raise AssertionError(
-                    f"`venv` [{state_local_venv_dir_abs_path_inited}] was not created by this driver [{state_package_driver_prepared.get_type().name}] retry with [{CommandAction.action_reinstall.value}]"
-                )
+            if state_input_run_mode_arg_loaded == RunMode.mode_start:
+                # Skip `venv` type validation:
+                pass
+            else:
+                if not state_package_driver_prepared.is_mine_venv(
+                    state_local_venv_dir_abs_path_inited,
+                ):
+                    raise AssertionError(
+                        f"`venv` [{state_local_venv_dir_abs_path_inited}] was not created by this driver [{state_package_driver_prepared.get_type().name}] retry with [{CommandAction.action_reinstall.value}]"
+                    )
 
         switch_python(
-            curr_py_exec=state_input_py_exec_var_loaded,
             curr_python_path=state_required_python_file_abs_path_inited,
-            next_py_exec=PythonExecutable.py_exec_venv,
+            next_py_exec=self.env_ctx.set_curr_py_exec(state_py_exec_venv_reached),
             next_python_path=venv_path_to_python,
             start_id=state_input_start_id_var_loaded,
             proto_code_abs_file_path=state_proto_code_file_abs_path_inited,
         )
 
-        return state_py_exec_venv_reached
+        return self.env_ctx.set_curr_py_exec(state_py_exec_venv_reached)
+
+
+# TODO: remove: handled by `_start_main`:
+# noinspection PyPep8Naming
+class Bootstrapper_state_app_starter_invoked(AbstractCachingStateNode[int]):
+    """
+    Implements FT_58_74_37_70.starter_vs_bootstrapper.md / app starter
+    """
+
+    def __init__(
+        self,
+        env_ctx: EnvContext,
+        parent_states: list[str] | None = None,
+        state_name: str | None = None,
+    ):
+        super().__init__(
+            env_ctx=env_ctx,
+            parent_states=if_none(
+                parent_states,
+                [
+                    EnvState.state_py_exec_venv_reached.name,
+                ],
+            ),
+            state_name=if_none(
+                state_name,
+                EnvState.state_app_starter_invoked.name,
+            ),
+        )
+
+        self.start_interactive_shell: bool = False
+
+    def _eval_state_once(
+        self,
+    ) -> ValueType:
+
+        state_py_exec_venv_reached: PythonExecutable = self.eval_parent_state(
+            EnvState.state_py_exec_venv_reached.name
+        )
+        assert (
+            self.env_ctx.get_curr_py_exec().value >= PythonExecutable.py_exec_venv.value
+        )
+
+        state_args_parsed: argparse.Namespace
+        if os.environ.get(EnvVar.var_PROTOPRIMER_MAIN_FUNC.value, None) is None:
+            raise ValueError(
+                f"env var `{EnvVar.var_PROTOPRIMER_MAIN_FUNC.value}` is not set)"
+            )
+
+        main_func: str = os.environ[EnvVar.var_PROTOPRIMER_MAIN_FUNC.value]
+        module_name: str
+        func_name: str
+        if ":" in main_func:
+            (
+                module_name,
+                func_name,
+            ) = main_func.split(":", 1)
+        else:
+            raise ValueError(
+                f"The specified main function [{main_func}] does not match expected format `module_name:function_name`."
+            )
+
+        custom_module = importlib.import_module(module_name)
+        custom_main = getattr(custom_module, func_name)
+        custom_main()
+        return 0
 
 
 # noinspection PyPep8Naming
@@ -5258,6 +5492,7 @@ class Bootstrapper_state_protoprimer_package_installed(AbstractCachingStateNode[
             parent_states=[
                 EnvState.state_input_do_install_var_loaded.name,
                 EnvState.state_args_parsed.name,
+                EnvState.state_input_run_mode_arg_loaded.name,
                 EnvState.state_ref_root_dir_abs_path_inited.name,
                 EnvState.state_local_conf_symlink_abs_path_inited.name,
                 EnvState.state_project_descriptors_inited.name,
@@ -5274,18 +5509,30 @@ class Bootstrapper_state_protoprimer_package_installed(AbstractCachingStateNode[
         self,
     ) -> ValueType:
 
-        state_input_do_install_var_loaded: bool = self.eval_parent_state(
-            EnvState.state_input_do_install_var_loaded.name
-        )
-
         state_args_parsed: argparse.Namespace = self.eval_parent_state(
             EnvState.state_args_parsed.name
+        )
+
+        state_input_run_mode_arg_loaded: RunMode = self.eval_parent_state(
+            EnvState.state_input_run_mode_arg_loaded.name
+        )
+
+        if state_input_run_mode_arg_loaded == RunMode.mode_start:
+            # The only reason for `EnvState.state_protoprimer_package_installed`
+            # is to install dependencies into `venv`.
+            # Skip it as `venv` is supposed to be ready in `RunMode.mode_start`:
+            return False
+
+        state_input_do_install_var_loaded: bool = self.eval_parent_state(
+            EnvState.state_input_do_install_var_loaded.name
         )
 
         state_py_exec_venv_reached: PythonExecutable = self.eval_parent_state(
             EnvState.state_py_exec_venv_reached.name
         )
-        assert state_py_exec_venv_reached >= PythonExecutable.py_exec_venv
+        assert (
+            self.env_ctx.get_curr_py_exec().value >= PythonExecutable.py_exec_venv.value
+        )
 
         state_ref_root_dir_abs_path_inited: str = self.eval_parent_state(
             EnvState.state_ref_root_dir_abs_path_inited.name
@@ -5308,7 +5555,7 @@ class Bootstrapper_state_protoprimer_package_installed(AbstractCachingStateNode[
         )
 
         do_install: bool = (
-            state_py_exec_venv_reached == PythonExecutable.py_exec_venv
+            state_py_exec_venv_reached.value == PythonExecutable.py_exec_venv.value
             and (do_reinstall or state_input_do_install_var_loaded)
         )
 
@@ -5353,6 +5600,7 @@ class Bootstrapper_state_version_constraints_generated(AbstractCachingStateNode[
         super().__init__(
             env_ctx=env_ctx,
             parent_states=[
+                EnvState.state_input_run_mode_arg_loaded.name,
                 EnvState.state_local_conf_symlink_abs_path_inited.name,
                 EnvState.state_package_driver_prepared.name,
                 EnvState.state_protoprimer_package_installed.name,
@@ -5366,6 +5614,17 @@ class Bootstrapper_state_version_constraints_generated(AbstractCachingStateNode[
     def _eval_state_once(
         self,
     ) -> ValueType:
+
+        state_input_run_mode_arg_loaded: RunMode = self.eval_parent_state(
+            EnvState.state_input_run_mode_arg_loaded.name
+        )
+
+        if state_input_run_mode_arg_loaded == RunMode.mode_start:
+            # The only reason for `EnvState.state_version_constraints_generated`
+            # is to re-generate the `constraints.txt` file based on `venv`.
+            # Skip it as `venv` is supposed to be ready in `RunMode.mode_start`:
+            return False
+
         state_protoprimer_package_installed: bool = self.eval_parent_state(
             EnvState.state_protoprimer_package_installed.name
         )
@@ -5406,9 +5665,11 @@ class Bootstrapper_state_py_exec_deps_updated_reached(
             env_ctx=env_ctx,
             parent_states=[
                 EnvState.state_args_parsed.name,
+                EnvState.state_input_run_mode_arg_loaded.name,
                 EnvState.state_input_py_exec_var_loaded.name,
                 EnvState.state_input_start_id_var_loaded.name,
                 EnvState.state_proto_code_file_abs_path_inited.name,
+                EnvState.state_local_venv_dir_abs_path_inited.name,
                 EnvState.state_version_constraints_generated.name,
             ],
             state_name=if_none(
@@ -5421,11 +5682,28 @@ class Bootstrapper_state_py_exec_deps_updated_reached(
         self,
     ) -> ValueType:
 
-        state_py_exec_deps_updated_reached: PythonExecutable
+        state_py_exec_deps_updated_reached: PythonExecutable = (
+            PythonExecutable.py_exec_deps_updated
+        )
 
         state_input_py_exec_var_loaded: PythonExecutable = self.eval_parent_state(
             EnvState.state_input_py_exec_var_loaded.name
         )
+
+        if self.env_ctx.has_py_exec_reached(
+            next_py_exec=state_py_exec_deps_updated_reached,
+        ):
+            return self.env_ctx.set_curr_py_exec(state_py_exec_deps_updated_reached)
+
+        state_input_run_mode_arg_loaded: RunMode = self.eval_parent_state(
+            EnvState.state_input_run_mode_arg_loaded.name
+        )
+
+        if state_input_run_mode_arg_loaded == RunMode.mode_start:
+            # The only reason for `EnvState.state_py_exec_deps_updated_reached`
+            # is to make `venv` dependencies effective.
+            # Skip it as `venv` is supposed to be ready in `RunMode.mode_start`:
+            return self.env_ctx.set_curr_py_exec(state_py_exec_deps_updated_reached)
 
         state_proto_code_file_abs_path_inited: str = self.eval_parent_state(
             EnvState.state_proto_code_file_abs_path_inited.name
@@ -5435,34 +5713,34 @@ class Bootstrapper_state_py_exec_deps_updated_reached(
             EnvState.state_version_constraints_generated.name
         )
 
-        if (
-            state_input_py_exec_var_loaded.value
-            < PythonExecutable.py_exec_deps_updated.value
-        ):
-            venv_path_to_python = get_path_to_curr_python()
+        state_local_venv_dir_abs_path_inited: str = self.eval_parent_state(
+            EnvState.state_local_venv_dir_abs_path_inited.name
+        )
 
-            state_input_start_id_var_loaded: str = self.eval_parent_state(
-                EnvState.state_input_start_id_var_loaded.name
-            )
+        venv_path_to_python: str = os.path.join(
+            state_local_venv_dir_abs_path_inited,
+            ConfConstGeneral.file_rel_path_venv_python,
+        )
 
-            state_py_exec_deps_updated_reached = PythonExecutable.py_exec_deps_updated
-            # TODO: maybe add this reason to `switch_python` as an arg?
-            logger.debug(
-                f"restarting current `python` interpreter [{venv_path_to_python}] to make [{EnvState.state_protoprimer_package_installed.name}] effective"
-            )
-            switch_python(
-                curr_py_exec=state_input_py_exec_var_loaded,
-                curr_python_path=venv_path_to_python,
-                next_py_exec=PythonExecutable.py_exec_deps_updated,
-                next_python_path=venv_path_to_python,
-                start_id=state_input_start_id_var_loaded,
-                proto_code_abs_file_path=state_proto_code_file_abs_path_inited,
-            )
-        else:
-            # Successfully reached the end goal:
-            state_py_exec_deps_updated_reached = state_input_py_exec_var_loaded
+        state_input_start_id_var_loaded: str = self.eval_parent_state(
+            EnvState.state_input_start_id_var_loaded.name
+        )
 
-        return state_py_exec_deps_updated_reached
+        # TODO: maybe add this reason to `switch_python` as an arg?
+        logger.debug(
+            f"restarting current `python` interpreter [{venv_path_to_python}] to make [{EnvState.state_protoprimer_package_installed.name}] effective"
+        )
+        switch_python(
+            curr_python_path=venv_path_to_python,
+            next_py_exec=self.env_ctx.set_curr_py_exec(
+                state_py_exec_deps_updated_reached
+            ),
+            next_python_path=venv_path_to_python,
+            start_id=state_input_start_id_var_loaded,
+            proto_code_abs_file_path=state_proto_code_file_abs_path_inited,
+        )
+
+        return self.env_ctx.set_curr_py_exec(state_py_exec_deps_updated_reached)
 
 
 # noinspection PyPep8Naming
@@ -5481,6 +5759,7 @@ class Bootstrapper_state_proto_code_updated(AbstractCachingStateNode[bool]):
         super().__init__(
             env_ctx=env_ctx,
             parent_states=[
+                EnvState.state_input_run_mode_arg_loaded.name,
                 EnvState.state_proto_code_file_abs_path_inited.name,
                 EnvState.state_py_exec_deps_updated_reached.name,
             ],
@@ -5498,11 +5777,25 @@ class Bootstrapper_state_proto_code_updated(AbstractCachingStateNode[bool]):
             EnvState.state_py_exec_deps_updated_reached.name
         )
         assert (
-            state_py_exec_deps_updated_reached >= PythonExecutable.py_exec_deps_updated
+            self.env_ctx.get_curr_py_exec().value
+            >= PythonExecutable.py_exec_deps_updated.value
         )
 
-        if state_py_exec_deps_updated_reached != PythonExecutable.py_exec_deps_updated:
+        if (
+            self.env_ctx.get_curr_py_exec().value
+            != PythonExecutable.py_exec_deps_updated.value
+        ):
             # Update only after package installation, otherwise, nothing to do:
+            return False
+
+        state_input_run_mode_arg_loaded: RunMode = self.eval_parent_state(
+            EnvState.state_input_run_mode_arg_loaded.name
+        )
+
+        if state_input_run_mode_arg_loaded == RunMode.mode_start:
+            # The only reason for `EnvState.state_proto_code_updated`
+            # is to update sources, but that has to be done in `RunMode.mode_prime`.
+            # Skip:
             return False
 
         state_proto_code_file_abs_path_inited = self.eval_parent_state(
@@ -5583,9 +5876,11 @@ class Bootstrapper_state_py_exec_src_updated_reached(
             env_ctx=env_ctx,
             parent_states=[
                 EnvState.state_args_parsed.name,
+                EnvState.state_input_run_mode_arg_loaded.name,
                 EnvState.state_input_py_exec_var_loaded.name,
                 EnvState.state_input_start_id_var_loaded.name,
                 EnvState.state_proto_code_file_abs_path_inited.name,
+                EnvState.state_local_venv_dir_abs_path_inited.name,
                 EnvState.state_proto_code_updated.name,
             ],
             state_name=if_none(
@@ -5598,11 +5893,22 @@ class Bootstrapper_state_py_exec_src_updated_reached(
         self,
     ) -> ValueType:
 
-        state_py_exec_src_updated_reached: PythonExecutable
+        state_py_exec_src_updated_reached: PythonExecutable = (
+            PythonExecutable.py_exec_src_updated
+        )
+
+        state_input_run_mode_arg_loaded: RunMode = self.eval_parent_state(
+            EnvState.state_input_run_mode_arg_loaded.name
+        )
 
         state_input_py_exec_var_loaded: PythonExecutable = self.eval_parent_state(
             EnvState.state_input_py_exec_var_loaded.name
         )
+
+        if self.env_ctx.has_py_exec_reached(
+            next_py_exec=state_py_exec_src_updated_reached,
+        ):
+            return self.env_ctx.set_curr_py_exec(state_py_exec_src_updated_reached)
 
         state_proto_code_file_abs_path_inited: str = self.eval_parent_state(
             EnvState.state_proto_code_file_abs_path_inited.name
@@ -5611,40 +5917,50 @@ class Bootstrapper_state_py_exec_src_updated_reached(
         state_proto_code_updated: bool = self.eval_parent_state(
             EnvState.state_proto_code_updated.name
         )
-        if not state_proto_code_updated:
+
+        if True:
+            # Force restart (to re-run with custom main):
+            pass
+        # TODO: Remove this branch (below) - we need to executed the first (above) unconditionally:
+        elif not state_proto_code_updated:
             # If not updated, no point to restart:
-            state_py_exec_src_updated_reached = PythonExecutable.py_exec_src_updated
-            return state_py_exec_src_updated_reached
-
-        venv_path_to_python = get_path_to_curr_python()
-
-        if (
-            state_input_py_exec_var_loaded.value
-            < PythonExecutable.py_exec_src_updated.value
-        ):
-
-            state_input_start_id_var_loaded: str = self.eval_parent_state(
-                EnvState.state_input_start_id_var_loaded.name
+            skip_python(
+                f"no changes to [{ConfConstGeneral.name_proto_code}] required",
+                curr_py_exec=self.env_ctx.get_curr_py_exec(),
+                next_py_exec=self.env_ctx.set_curr_py_exec(
+                    state_py_exec_src_updated_reached
+                ),
             )
+            return self.env_ctx.set_curr_py_exec(state_py_exec_src_updated_reached)
 
-            state_py_exec_src_updated_reached = PythonExecutable.py_exec_src_updated
-            # TODO: maybe add this reason to `switch_python` as an arg?
-            logger.debug(
-                f"restarting current `python` interpreter [{venv_path_to_python}] to make [{EnvState.state_proto_code_updated.name}] effective"
-            )
-            switch_python(
-                curr_py_exec=state_input_py_exec_var_loaded,
-                curr_python_path=venv_path_to_python,
-                next_py_exec=PythonExecutable.py_exec_src_updated,
-                next_python_path=venv_path_to_python,
-                start_id=state_input_start_id_var_loaded,
-                proto_code_abs_file_path=state_proto_code_file_abs_path_inited,
-            )
-        else:
-            # Successfully reached the end goal:
-            state_py_exec_src_updated_reached = state_input_py_exec_var_loaded
+        state_local_venv_dir_abs_path_inited: str = self.eval_parent_state(
+            EnvState.state_local_venv_dir_abs_path_inited.name
+        )
 
-        return state_py_exec_src_updated_reached
+        venv_path_to_python: str = os.path.join(
+            state_local_venv_dir_abs_path_inited,
+            ConfConstGeneral.file_rel_path_venv_python,
+        )
+
+        state_input_start_id_var_loaded: str = self.eval_parent_state(
+            EnvState.state_input_start_id_var_loaded.name
+        )
+
+        # TODO: maybe add this reason to `switch_python` as an arg?
+        logger.debug(
+            f"restarting current `python` interpreter [{venv_path_to_python}] to make [{EnvState.state_proto_code_updated.name}] effective"
+        )
+        switch_python(
+            curr_python_path=venv_path_to_python,
+            next_py_exec=self.env_ctx.set_curr_py_exec(
+                state_py_exec_src_updated_reached
+            ),
+            next_python_path=venv_path_to_python,
+            start_id=state_input_start_id_var_loaded,
+            proto_code_abs_file_path=state_proto_code_file_abs_path_inited,
+        )
+
+        return self.env_ctx.set_curr_py_exec(state_py_exec_src_updated_reached)
 
 
 # noinspection PyPep8Naming
@@ -5692,7 +6008,10 @@ class Bootstrapper_state_command_executed(AbstractCachingStateNode[int]):
         state_py_exec_src_updated_reached: PythonExecutable = self.eval_parent_state(
             EnvState.state_py_exec_src_updated_reached.name
         )
-        assert state_py_exec_src_updated_reached >= PythonExecutable.py_exec_src_updated
+        assert (
+            self.env_ctx.get_curr_py_exec().value
+            >= PythonExecutable.py_exec_src_updated.value
+        )
 
         state_args_parsed: argparse.Namespace = self.eval_parent_state(
             EnvState.state_args_parsed.name
@@ -5862,6 +6181,9 @@ class EnvState(enum.Enum):
 
     state_py_exec_venv_reached = Bootstrapper_state_py_exec_venv_reached
 
+    # FT_58_74_37_70.starter_vs_bootstrapper.md / app starter:
+    state_app_starter_invoked = Bootstrapper_state_app_starter_invoked
+
     # TODO: rename to "client" (or "ref"?): `client_project_descriptors_installed`:
     state_protoprimer_package_installed = (
         Bootstrapper_state_protoprimer_package_installed
@@ -5896,6 +6218,10 @@ class TargetState(enum.Enum):
     # TODO: This should be `state_derived_conf_data_loaded`:
     # When all config files loaded:
     target_config_loaded = EnvState.state_package_driver_inited
+
+    # TODO: Clean up:
+    # FT_58_74_37_70.starter_vs_bootstrapper.md / app starter
+    target_app_started = EnvState.state_app_starter_invoked
 
     # The final state before switching to `PrimerRuntime.runtime_neo`:
     target_proto_bootstrap_completed = EnvState.state_command_executed
@@ -6019,6 +6345,8 @@ class EnvContext:
     ):
         self.state_graph: StateGraph = StateGraph()
 
+        self.state_stride: PythonExecutable = PythonExecutable.py_exec_unknown
+
         # TODO: Do not set it on `EnvContext` - use bootstrap-able values:
         self.final_state: str = TargetState.target_proto_bootstrap_completed.value.name
 
@@ -6030,6 +6358,40 @@ class EnvContext:
         """
         for env_state in EnvState:
             self.state_graph.register_node(env_state.value(self))
+
+    # TODO: rename to `get_state_stride`
+    def get_curr_py_exec(self) -> PythonExecutable:
+        return self.state_stride
+
+    # TODO: rename to `set_max_stride`
+    def set_curr_py_exec(
+        self,
+        next_py_exec: PythonExecutable,
+    ) -> PythonExecutable:
+        self.state_stride = self.max_py_exec(next_py_exec)
+        log_stride.set(self.state_stride)
+        return self.state_stride
+
+    # TODO: embedd into `set_max_stride` (as it is not used outside):
+    def max_py_exec(
+        self,
+        next_py_exec: PythonExecutable,
+    ) -> PythonExecutable:
+        if self.has_py_exec_reached(next_py_exec):
+            return self.get_curr_py_exec()
+        else:
+            return next_py_exec
+
+    # TODO: rename to `has_stride_reached`
+    def has_py_exec_reached(
+        self,
+        next_py_exec: PythonExecutable,
+    ) -> bool:
+        """
+        `PythonExecutable.value` is monotonically increasing.
+        At most one call to `switch_python` is required at each value.
+        """
+        return self.get_curr_py_exec().value >= next_py_exec.value
 
     def print_exit_line(
         self,
@@ -6087,10 +6449,13 @@ class PythonExecutableFilter(logging.Filter):
         self,
         record,
     ):
-        record.py_exec_name = os.getenv(
-            EnvVar.var_PROTOPRIMER_PY_EXEC.value,
-            PythonExecutable.py_exec_unknown.name,
-        )
+        record.py_exec_name = PythonExecutable[
+            os.getenv(
+                EnvVar.var_PROTOPRIMER_PY_EXEC.value,
+                ConfConstInput.default_PROTOPRIMER_PY_EXEC,
+            )
+        ]
+        record.state_stride = log_stride.get(PythonExecutable.py_exec_unknown)
         # Do not filter:
         return True
 
@@ -6146,7 +6511,7 @@ class FileLogFormatter(UtcTimeFormatter):
         super().__init__(
             print_date=True,
             print_time=True,
-            fmt="%(asctime)s pid:%(process)d %(levelname)s py:%(py_exec_name)s %(filename)s:%(lineno)d %(message)s",
+            fmt="%(asctime)s pid:%(process)d %(levelname)s py:%(py_exec_name)s s:%(state_stride)s %(filename)s:%(lineno)d %(message)s",
         )
 
 
@@ -6181,12 +6546,12 @@ class StderrLogFormatter(UtcTimeFormatter):
         info_formatter = UtcTimeFormatter(
             print_date=False,
             print_time=True,
-            fmt="%(asctime)s pid:%(process)d %(levelname)s py:%(py_exec_name)s %(message)s",
+            fmt="%(asctime)s pid:%(process)d %(levelname)s py:%(py_exec_name)s s:%(state_stride)s %(message)s",
         )
         debug_formatter = UtcTimeFormatter(
             print_date=True,
             print_time=True,
-            fmt="%(asctime)s pid:%(process)d %(levelname)s py:%(py_exec_name)s %(filename)s:%(lineno)d %(message)s",
+            fmt="%(asctime)s pid:%(process)d %(levelname)s py:%(py_exec_name)s s:%(state_stride)s %(filename)s:%(lineno)d %(message)s",
         )
         self.verbose_formatters = {
             # Anything above `logging.INFO` use default (least verbose):
@@ -6354,7 +6719,6 @@ def verify_conf_file_data_contains_known_fields_only(
 
 
 def switch_python(
-    curr_py_exec: PythonExecutable,
     curr_python_path: str,
     next_py_exec: PythonExecutable,
     next_python_path: str,
@@ -6362,9 +6726,13 @@ def switch_python(
     proto_code_abs_file_path: str | None,
     required_environ: dict | None = None,
 ):
-    logger.info(
-        f"switching from current `python` interpreter [{curr_python_path}][{curr_py_exec.name}] to [{next_python_path}][{next_py_exec.name}] with `{EnvVar.var_PROTOPRIMER_PROTO_CODE.value}`[{proto_code_abs_file_path}]"
-    )
+    curr_py_exec: PythonExecutable = PythonExecutable[
+        os.getenv(
+            EnvVar.var_PROTOPRIMER_PY_EXEC.value,
+            ConfConstInput.default_PROTOPRIMER_PY_EXEC,
+        )
+    ]
+
     # TODO: Do not add args if they have been parsed and already have the same value:
     exec_argv: list[str] = [
         next_python_path,
@@ -6386,16 +6754,27 @@ def switch_python(
         )
 
     logger.info(
-        f"exec_argv: {exec_argv}"
+        f"switching from current `python` executable [{curr_python_path}][{curr_py_exec.name}] to [{next_python_path}][{next_py_exec.name}] with `{EnvVar.var_PROTOPRIMER_PROTO_CODE.value}`[{proto_code_abs_file_path}] exec_argv: {exec_argv}"
         "\n"
         "\n"
         f"{ConfConstGeneral.log_section_delimiter} <<<[{curr_py_exec.name}]<<< {ConfConstGeneral.log_section_delimiter} >>>[{next_py_exec.name}]>>> {ConfConstGeneral.log_section_delimiter}"
         "\n"
     )
+
     os.execve(
         path=next_python_path,
         argv=exec_argv,
         env=required_environ,
+    )
+
+
+def skip_python(
+    log_message: str,
+    curr_py_exec: PythonExecutable,
+    next_py_exec: PythonExecutable,
+):
+    logger.info(
+        f"{log_message}: skip `python` executable switch from [{curr_py_exec.name}] to [{next_py_exec.name}]"
     )
 
 
@@ -6425,7 +6804,6 @@ def get_file_name_timestamp():
     """
 
     now_utc = datetime.datetime.now(datetime.timezone.utc)
-    # Format: "YYYYMMDDTHHMMSSZ"
     file_timestamp = now_utc.strftime("%Y%m%dT%H%M%S") + "Z"
     return file_timestamp
 
@@ -6653,6 +7031,7 @@ def get_import_error_hint(
     return f"Is `{neo_main_module}` a (transitive) dependency of any `{ConfConstClient.default_pyproject_toml_basename}` being installed?"
 
 
+# TODO: Convert/migrate to `app_starter` (see FT_58_74_37_70.starter_vs_bootstrapper.md):
 def switch_to_venv(
     # TODO: TODO_28_48_19_20.api_to_traverse_config_when_primed.md:
     #       See usage - find a way to automatically provide it given the path to the `proto_kernel`.
@@ -6690,6 +7069,7 @@ def switch_to_venv(
             )
 
         # Equivalent of `./venv/bin/activate` to configure `PATH` env var:
+        # TODO: CANCELLED (function deprecated): avoid os.environ changes:
         os.environ[ConfConstInput.ext_env_var_PATH] = (
             venv_bin + os.pathsep + os.environ.get(ConfConstInput.ext_env_var_PATH, "")
         )
@@ -6707,6 +7087,7 @@ def switch_to_venv(
         return True
 
 
+# TODO: Convert/migrate to `env_bootstrapper` (see FT_58_74_37_70.starter_vs_bootstrapper.md):
 def run_main(
     neo_main_module: str,
     neo_main_function: str,
@@ -6717,26 +7098,107 @@ def run_main(
     If `ImportError` occurs (when `venv` is not ready), it falls back to running `main` from `proto_kernel`.
     """
     try:
+        # TODO: The issue with this function:
+        #       it succeeds to import even if it is not required `venv`
+        #       (it maybe different `venv`, user or global with package of different version):
         # `PrimerRuntime.runtime_neo`:
         custom_module = importlib.import_module(neo_main_module)
         selected_main = getattr(custom_module, neo_main_function)
     except ImportError:
-        py_exec = PythonExecutable[
+        curr_py_exec = PythonExecutable[
             os.getenv(
                 EnvVar.var_PROTOPRIMER_PY_EXEC.value,
                 ConfConstInput.default_PROTOPRIMER_PY_EXEC,
             )
         ]
-        if py_exec.value >= PythonExecutable.py_exec_src_updated.value:
+        if curr_py_exec.value >= PythonExecutable.py_exec_src_updated.value:
             raise AssertionError(
-                f"Failed to import `{neo_main_module}` with `{EnvVar.var_PROTOPRIMER_PY_EXEC.value}` [{py_exec.name}]. "
+                f"Failed to import `{neo_main_module}` with `{EnvVar.var_PROTOPRIMER_PY_EXEC.value}` [{curr_py_exec.name}]. "
                 f"{get_import_error_hint(neo_main_module)} "
             )
         # `PrimerRuntime.runtime_proto`:
-        selected_main = main
+        selected_main = app_main
+
+    selected_main()
+
+
+def env_bootstrapper(
+    venv_main_func: str,
+):
+    """
+    Implements FT_58_74_37_70.starter_vs_bootstrapper.md / env bootstrapper
+    """
+    _start_main(
+        RunMode.mode_prime,
+        venv_main_func,
+    )
+
+
+def app_starter(
+    venv_main_func: str,
+):
+    """
+    Implements FT_58_74_37_70.starter_vs_bootstrapper.md / app starter
+    """
+    _start_main(
+        RunMode.mode_start,
+        venv_main_func,
+    )
+
+
+def _start_main(
+    run_mode: RunMode,
+    # Same format as in `EnvVar.var_PROTOPRIMER_MAIN_FUNC`:
+    venv_main_func: str,
+) -> None:
+
+    # NOTE: Assume (no verification) the module is loaded from outside venv and local or global packages:
+    # TODO: CANCELLED (required in principle for entry script, not used in most of the unit tests): avoid os.environ changes:
+    os.environ[EnvVar.var_PROTOPRIMER_PROTO_CODE.value] = os.path.abspath(__file__)
+
+    # TODO: CANCELLED (required in principle for entry script, not used in most of the unit tests): avoid os.environ changes:
+    os.environ[EnvVar.var_PROTOPRIMER_RUN_MODE.value] = run_mode.value
+    # TODO: CANCELLED (required in principle for entry script, not used in most of the unit tests): avoid os.environ changes:
+    os.environ[EnvVar.var_PROTOPRIMER_MAIN_FUNC.value] = venv_main_func
+
+    module_name: str
+    func_name: str
+    if ":" in venv_main_func:
+        (
+            module_name,
+            func_name,
+        ) = venv_main_func.split(":", 1)
+    else:
+        raise ValueError(
+            f"The specified main function [{venv_main_func}] does not match expected format `module_name:function_name`."
+        )
+
+    curr_py_exec = PythonExecutable[
+        os.getenv(
+            EnvVar.var_PROTOPRIMER_PY_EXEC.value,
+            ConfConstInput.default_PROTOPRIMER_PY_EXEC,
+        )
+    ]
+
+    selected_main = app_main
+    try:
+        # NOTE: `state_py_exec_src_updated_reached` forces restart with this `PythonExecutable`:
+        if curr_py_exec.value >= PythonExecutable.py_exec_src_updated.value:
+            venv_module = importlib.import_module(module_name)
+            selected_main = getattr(venv_module, func_name)
+        elif curr_py_exec.value >= PythonExecutable.py_exec_deps_updated.value:
+            # Switch from running `proto_code` to installed `venv` code:
+            venv_module = importlib.import_module("protoprimer.primer_kernel")
+            selected_main = getattr(venv_module, "app_main")
+    except ImportError:
+        if curr_py_exec.value >= PythonExecutable.py_exec_src_updated.value:
+            raise AssertionError(
+                f"Failed to import `{module_name}` with `{EnvVar.var_PROTOPRIMER_PY_EXEC.value}` [{curr_py_exec.name}]. "
+                f"{get_import_error_hint(module_name)} "
+            )
 
     selected_main()
 
 
 if __name__ == "__main__":
-    main()
+    app_main()
