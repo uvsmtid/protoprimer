@@ -64,6 +64,7 @@ def test_py_exec_arbitrary_not_in_venv(
     assert state_value == primer_kernel.__file__
 
 
+@patch(f"{primer_kernel.__name__}.EnvContext.get_curr_py_exec")
 @patch(
     f"{primer_kernel.__name__}.{Bootstrapper_state_py_exec_arbitrary_reached.__name__}.eval_own_state"
 )
@@ -73,6 +74,7 @@ def test_py_exec_arbitrary_not_in_venv(
 def test_py_exec_venv(
     mock_state_input_proto_code_file_abs_path_var_loaded,
     mock_state_py_exec_arbitrary_reached,
+    mock_get_curr_py_exec,
     env_ctx,
 ):
     # given:
@@ -87,7 +89,7 @@ def test_py_exec_venv(
     mock_state_input_proto_code_file_abs_path_var_loaded.return_value = (
         proto_code_abs_file_path
     )
-    mock_state_py_exec_arbitrary_reached.return_value = PythonExecutable.py_exec_venv
+    mock_get_curr_py_exec.return_value = PythonExecutable.py_exec_venv
 
     # when:
 
@@ -100,6 +102,7 @@ def test_py_exec_venv(
     assert state_value == proto_code_abs_file_path
 
 
+@patch(f"{primer_kernel.__name__}.EnvContext.get_curr_py_exec")
 @patch(
     f"{primer_kernel.__name__}.{Bootstrapper_state_input_proto_code_file_abs_path_var_loaded.__name__}.eval_own_state"
 )
@@ -109,6 +112,7 @@ def test_py_exec_venv(
 def test_py_exec_venv_no_arg(
     mock_state_py_exec_arbitrary_reached,
     mock_state_input_proto_code_file_abs_path_var_loaded,
+    mock_get_curr_py_exec,
     env_ctx,
 ):
     # given:
@@ -119,7 +123,7 @@ def test_py_exec_venv_no_arg(
     )
 
     mock_state_input_proto_code_file_abs_path_var_loaded.return_value = None
-    mock_state_py_exec_arbitrary_reached.return_value = PythonExecutable.py_exec_venv
+    mock_get_curr_py_exec.return_value = PythonExecutable.py_exec_venv
 
     # when/then:
 

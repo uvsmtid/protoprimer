@@ -41,7 +41,9 @@ def test_run_main_neo_runtime(mock_import_module):
 
 
 @patch(f"{importlib.__name__}.import_module")
-@patch(f"{protoprimer.primer_kernel.__name__}.main")
+@patch(
+    f"{protoprimer.primer_kernel.__name__}.{protoprimer.primer_kernel.app_main.__name__}"
+)
 def test_run_main_proto_runtime(mock_main, mock_import_module):
     # given:
     mock_import_module.side_effect = ImportError
@@ -70,7 +72,3 @@ def test_run_main_raises_assertion_error(mock_getenv, mock_import_module):
             "neo_main_module",
             "neo_main_function",
         )
-    mock_getenv.assert_called_once_with(
-        EnvVar.var_PROTOPRIMER_PY_EXEC.value,
-        ConfConstInput.default_PROTOPRIMER_PY_EXEC,
-    )

@@ -5,14 +5,14 @@ import logging
 from neoprimer.venv_shell import Bootstrapper_state_activated_venv_shell_started
 from protoprimer.primer_kernel import (
     EnvContext,
-    main,
+    app_main,
 )
 
 logger = logging.getLogger()
 
 
 def custom_main():
-    main(customize_env_context)
+    app_main(customize_env_context)
 
 
 def customize_env_context():

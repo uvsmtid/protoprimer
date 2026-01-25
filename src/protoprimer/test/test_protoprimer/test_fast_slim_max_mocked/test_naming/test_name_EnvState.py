@@ -228,13 +228,18 @@ class StateName(enum.Enum):
         NameCategory.category_python_exec,
     )
 
-    state_version_constraints_generated = StateMeta(
-        EnvState.state_version_constraints_generated,
+    state_app_starter_invoked = StateMeta(
+        EnvState.state_app_starter_invoked,
         NameCategory.category_state_mutation,
     )
 
     state_protoprimer_package_installed = StateMeta(
         EnvState.state_protoprimer_package_installed,
+        NameCategory.category_state_mutation,
+    )
+
+    state_version_constraints_generated = StateMeta(
+        EnvState.state_version_constraints_generated,
         NameCategory.category_state_mutation,
     )
 

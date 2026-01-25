@@ -1,5 +1,6 @@
 import os
 import sys
+from unittest.mock import patch
 
 import pytest
 
@@ -32,12 +33,9 @@ class TestSuite:
         self.mock_path_exists = mocker.patch("os.path.exists")
         self.mock_is_venv = mocker.patch(f"{primer_kernel.__name__}.is_venv")
 
-    def setup_method(self):
-        self.original_path = os.environ.get(ConfConstInput.ext_env_var_PATH, "")
-
-    def teardown_method(self):
-        os.environ[ConfConstInput.ext_env_var_PATH] = self.original_path
-
+    @patch.dict(
+        os.environ, {ConfConstInput.ext_env_var_PATH: "/some/original/path"}, clear=True
+    )
     def test_in_venv(self):
 
         # given:
@@ -53,8 +51,11 @@ class TestSuite:
         assert ret_val is True
         self.mock_execv.assert_not_called()
         self.mock_path_exists.assert_not_called()
-        assert os.environ.get("PATH", "") == self.original_path
+        assert os.environ.get("PATH", "") == "/some/original/path"
 
+    @patch.dict(
+        os.environ, {ConfConstInput.ext_env_var_PATH: "/some/original/path"}, clear=True
+    )
     def test_not_in_venv(self):
 
         # given:
@@ -94,7 +95,9 @@ class TestSuite:
         assert os.environ[ConfConstInput.ext_env_var_PATH].startswith(
             expected_venv_bin + os.pathsep
         )
-        assert os.environ[ConfConstInput.ext_env_var_PATH].endswith(self.original_path)
+        assert os.environ[ConfConstInput.ext_env_var_PATH].endswith(
+            "/some/original/path"
+        )
 
         self.mock_path_exists.assert_called_once_with(expected_venv_python)
 

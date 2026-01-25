@@ -11,15 +11,14 @@ from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     Bootstrapper_state_args_parsed,
-    Bootstrapper_state_local_conf_file_abs_path_inited,
-    Bootstrapper_state_required_python_file_abs_path_inited,
-    Bootstrapper_state_local_venv_dir_abs_path_inited,
-    Bootstrapper_state_proto_code_file_abs_path_inited,
     Bootstrapper_state_input_py_exec_var_loaded,
     Bootstrapper_state_input_start_id_var_loaded,
+    Bootstrapper_state_local_conf_file_abs_path_inited,
+    Bootstrapper_state_local_venv_dir_abs_path_inited,
     Bootstrapper_state_package_driver_prepared,
+    Bootstrapper_state_proto_code_file_abs_path_inited,
     Bootstrapper_state_reinstall_triggered,
-    CommandAction,
+    Bootstrapper_state_required_python_file_abs_path_inited,
     ConfConstEnv,
     ConfConstGeneral,
     EnvContext,
@@ -27,7 +26,6 @@ from protoprimer.primer_kernel import (
     EnvVar,
     ParsedArg,
     PythonExecutable,
-    SyntaxArg,
 )
 
 mock_client_dir = "/mock_client_dir"
@@ -101,8 +99,12 @@ class ThisTestClass(BasePyfakefsTestClass):
     )
     @patch(f"{primer_kernel.__name__}.os.execve")
     @patch(f"{primer_kernel.__name__}.venv.create")
+    @patch(
+        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
+    )
     def test_success_on_path_to_curr_python_is_outside_of_path_to_venv_when_venv_is_created(
         self,
+        mock_state_input_run_mode_arg_loaded,
         mock_venv_create,
         mock_execve,
         mock_get_path_to_curr_python,
@@ -183,6 +185,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_get_path_to_curr_python.assert_called_once()
 
     ####################################################################################################################
+    @patch.dict(f"{os.__name__}.environ", {}, clear=True)
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.eval_own_state"
     )
@@ -216,8 +219,12 @@ class ThisTestClass(BasePyfakefsTestClass):
     )
     @patch(f"{primer_kernel.__name__}.os.execve")
     @patch(f"{primer_kernel.__name__}.venv.create")
+    @patch(
+        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
+    )
     def test_failure_when_path_to_curr_python_is_inside_venv(
         self,
+        mock_state_input_run_mode_arg_loaded,
         mock_venv_create,
         mock_execve,
         mock_get_path_to_curr_python,
@@ -270,7 +277,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # then:
         self.assertIn(
-            "must be outside of `venv`",
+            "must be outside of the `venv`",
             str(cm.exception),
         )
         mock_venv_create.assert_not_called()
@@ -278,6 +285,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_get_path_to_curr_python.assert_called_once()
 
     ####################################################################################################################
+    @patch.dict(f"{os.__name__}.environ", {}, clear=True)
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.eval_own_state"
     )
@@ -312,8 +320,12 @@ class ThisTestClass(BasePyfakefsTestClass):
     )
     @patch(f"{primer_kernel.__name__}.os.execve")
     @patch(f"{primer_kernel.__name__}.venv.create")
+    @patch(
+        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
+    )
     def test_failure_when_path_to_curr_python_is_inside_venv_initially_and_expected(
         self,
+        mock_state_input_run_mode_arg_loaded,
         mock_venv_create,
         mock_execve,
         mock_get_path_to_curr_python,
@@ -366,7 +378,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # then:
         self.assertIn(
-            "must be outside of `venv`",
+            "must be outside of the `venv`",
             str(cm.exception),
         )
         mock_venv_create.assert_not_called()
@@ -409,8 +421,12 @@ class ThisTestClass(BasePyfakefsTestClass):
     )
     @patch(f"{primer_kernel.__name__}.os.execve")
     @patch(f"{primer_kernel.__name__}.venv.create")
+    @patch(
+        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
+    )
     def test_failure_when_path_to_python_differs_from_path_to_curr_python(
         self,
+        mock_state_input_run_mode_arg_loaded,
         mock_venv_create,
         mock_execve,
         mock_get_path_to_curr_python,
@@ -506,8 +522,12 @@ class ThisTestClass(BasePyfakefsTestClass):
     )
     @patch(f"{primer_kernel.__name__}.os.execve")
     @patch(f"{primer_kernel.__name__}.venv.create")
+    @patch(
+        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
+    )
     def test_success_when_path_to_python_matches_path_to_curr_python_and_execv_is_called_for_venv_python(
         self,
+        mock_state_input_run_mode_arg_loaded,
         mock_venv_create,
         mock_execve,
         mock_get_path_to_curr_python,
@@ -623,8 +643,12 @@ class ThisTestClass(BasePyfakefsTestClass):
     )
     @patch(f"{primer_kernel.__name__}.os.execve")
     @patch(f"{primer_kernel.__name__}.venv.create")
+    @patch(
+        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
+    )
     def test_success_when_path_to_python_is_not_inside_existing_venv(
         self,
+        mock_state_input_run_mode_arg_loaded,
         mock_venv_create,
         mock_execve,
         mock_get_path_to_curr_python,
@@ -738,8 +762,12 @@ class ThisTestClass(BasePyfakefsTestClass):
     )
     @patch(f"{primer_kernel.__name__}.os.execve")
     @patch(f"{primer_kernel.__name__}.venv.create")
+    @patch(
+        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
+    )
     def test_success_on_arbitrary_py_exec_outside_venv(
         self,
+        mock_state_input_run_mode_arg_loaded,
         mock_venv_create,
         mock_execve,
         mock_get_path_to_curr_python,
@@ -814,7 +842,13 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_get_path_to_curr_python.assert_called_once()
 
     ####################################################################################################################
-    @patch.dict(f"{os.__name__}.environ", {}, clear=True)
+    @patch.dict(
+        f"{os.__name__}.environ",
+        {
+            primer_kernel.EnvVar.var_PROTOPRIMER_PY_EXEC.value: PythonExecutable.py_exec_venv.name
+        },
+        clear=True,
+    )
     @patch.object(sys, "argv", ["/path/to/script.py", "--some-arg"])
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.eval_own_state"
@@ -848,8 +882,12 @@ class ThisTestClass(BasePyfakefsTestClass):
     )
     @patch(f"{primer_kernel.__name__}.os.execve")
     @patch(f"{primer_kernel.__name__}.venv.create")
+    @patch(
+        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
+    )
     def test_success_when_py_exec_is_already_venv(
         self,
+        mock_state_input_run_mode_arg_loaded,
         mock_venv_create,
         mock_execve,
         mock_get_path_to_curr_python,
@@ -871,7 +909,9 @@ class ThisTestClass(BasePyfakefsTestClass):
             EnvState.state_py_exec_venv_reached.name,
         )
 
-        mock_state_input_py_exec_var_loaded.return_value = PythonExecutable.py_exec_venv
+        py_exec = PythonExecutable.py_exec_venv
+        mock_state_input_py_exec_var_loaded.return_value = py_exec
+        self.env_ctx.state_stride = py_exec
 
         # when:
 
@@ -923,8 +963,12 @@ class ThisTestClass(BasePyfakefsTestClass):
     )
     @patch(f"{primer_kernel.__name__}.os.execve")
     @patch(f"{primer_kernel.__name__}.venv.create")
+    @patch(
+        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
+    )
     def test_success_when_reusing_existing_venv(
         self,
+        mock_state_input_run_mode_arg_loaded,
         mock_venv_create,
         mock_execve,
         mock_get_path_to_curr_python,
@@ -1038,8 +1082,12 @@ class ThisTestClass(BasePyfakefsTestClass):
     )
     @patch(f"{primer_kernel.__name__}.os.execve")
     @patch(f"{primer_kernel.__name__}.venv.create")
+    @patch(
+        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
+    )
     def test_failure_when_reusing_existing_venv_of_wrong_type(
         self,
+        mock_state_input_run_mode_arg_loaded,
         mock_venv_create,
         mock_execve,
         mock_get_path_to_curr_python,

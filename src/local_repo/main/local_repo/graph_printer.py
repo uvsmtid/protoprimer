@@ -172,6 +172,10 @@ class StateMeta(enum.Enum):
         env_state=EnvState.state_py_exec_venv_reached,
         sub_graph=SubGraph.graph_runtime,
     )
+    state_app_starter_invoked = StateNodeMeta(
+        env_state=EnvState.state_app_starter_invoked,
+        sub_graph=SubGraph.graph_runtime,
+    )
     state_protoprimer_package_installed = StateNodeMeta(
         env_state=EnvState.state_protoprimer_package_installed,
         sub_graph=SubGraph.graph_runtime,

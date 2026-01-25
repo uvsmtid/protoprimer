@@ -17,6 +17,11 @@ from protoprimer.primer_kernel import (
     EnvVar,
 )
 
+default_stderr_log_level = getattr(
+    logging,
+    ConfConstInput.default_PROTOPRIMER_STDERR_LOG_LEVEL,
+)
+
 
 @pytest.fixture
 def env_ctx():
@@ -98,12 +103,11 @@ def test_env_var_set_to_negative_1(env_ctx):
         EnvState.state_input_stderr_log_level_var_loaded.name,
     )
     # when:
-    with pytest.raises(AttributeError) as cm:
-        env_ctx.state_graph.eval_state(
-            EnvState.state_input_stderr_log_level_var_loaded.name
-        )
+    state_value = env_ctx.state_graph.eval_state(
+        EnvState.state_input_stderr_log_level_var_loaded.name
+    )
     # then:
-    assert "'-1'" in str(cm.value)
+    assert default_stderr_log_level == state_value
 
 
 @patch.dict(
@@ -137,9 +141,8 @@ def test_env_var_set_to_invalid_string(env_ctx):
         EnvState.state_input_stderr_log_level_var_loaded.name,
     )
     # when:
-    with pytest.raises(AttributeError) as cm:
-        env_ctx.state_graph.eval_state(
-            EnvState.state_input_stderr_log_level_var_loaded.name
-        )
+    state_value = env_ctx.state_graph.eval_state(
+        EnvState.state_input_stderr_log_level_var_loaded.name
+    )
     # then:
-    assert "NOT_A_LOG_LEVEL" in str(cm.value)
+    assert default_stderr_log_level == state_value

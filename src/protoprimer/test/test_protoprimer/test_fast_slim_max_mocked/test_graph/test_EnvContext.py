@@ -32,6 +32,7 @@ class TestEnvContext(BasePyfakefsTestClass):
     def test_relationship(self):
         assert_test_module_name_embeds_str(EnvContext.__name__)
 
+    @patch("sys.argv", ["script_name"])
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_required_python_file_abs_path_inited.__name__}.eval_own_state",
         return_value="/usr/bin/python",
@@ -72,6 +73,7 @@ class TestEnvContext(BasePyfakefsTestClass):
         # then:
         assert isinstance(package_driver, PackageDriverUv)
 
+    @patch("sys.argv", ["script_name"])
     @patch.dict(
         os.environ,
         {
@@ -118,6 +120,7 @@ class TestEnvContext(BasePyfakefsTestClass):
         # then:
         assert isinstance(package_driver, PackageDriverUv)
 
+    @patch("sys.argv", ["script_name"])
     @patch.dict(
         os.environ,
         {

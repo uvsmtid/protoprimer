@@ -31,12 +31,11 @@ def test_format_file_log():
     record.process = 12345
     # This attribute is added by the PythonExecutableFilter
     record.py_exec_name = "test_exec"
+    record.state_stride = "test_stride"
 
     # when
     formatted_log = formatter.format(record)
 
     # then
-    expected = (
-        "2025-01-18T12:00:00.000Z pid:12345 INFO py:test_exec test.py:123 Test message"
-    )
+    expected = "2025-01-18T12:00:00.000Z pid:12345 INFO py:test_exec s:test_stride test.py:123 Test message"
     assert formatted_log == expected

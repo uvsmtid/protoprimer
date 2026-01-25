@@ -44,7 +44,11 @@ def test_relationship():
 @patch(
     f"{primer_kernel.__name__}.{Bootstrapper_state_required_python_file_abs_path_inited.__name__}.eval_own_state"
 )
+@patch(
+    f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
+)
 def test_pip_driver_inited(
+    mock_input_run_mode_arg_loaded,
     mock_state_required_python_file_abs_path_inited,
     mock_state_local_cache_dir_abs_path_inited,
     mock_state_reinstall_triggered,
@@ -86,7 +90,11 @@ def test_pip_driver_inited(
 @patch(
     f"{primer_kernel.__name__}.{Bootstrapper_state_required_python_file_abs_path_inited.__name__}.eval_own_state"
 )
+@patch(
+    f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
+)
 def test_uv_driver_inited_when_not_installed(
+    mock_input_run_mode_arg_loaded,
     mock_state_required_python_file_abs_path_inited,
     mock_state_local_cache_dir_abs_path_inited,
     mock_state_reinstall_triggered,
@@ -144,7 +152,11 @@ def test_uv_driver_inited_when_not_installed(
 @patch(
     f"{primer_kernel.__name__}.{Bootstrapper_state_required_python_file_abs_path_inited.__name__}.eval_own_state"
 )
+@patch(
+    f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
+)
 def test_uv_driver_inited_when_already_installed(
+    mock_input_run_mode_arg_loaded,
     mock_state_required_python_file_abs_path_inited,
     mock_state_local_cache_dir_abs_path_inited,
     mock_state_reinstall_triggered,
@@ -191,7 +203,11 @@ def test_uv_driver_inited_when_already_installed(
 @patch(
     f"{primer_kernel.__name__}.{Bootstrapper_state_required_python_file_abs_path_inited.__name__}.eval_own_state"
 )
+@patch(
+    f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
+)
 def test_unsupported_driver(
+    mock_input_run_mode_arg_loaded,
     mock_state_required_python_file_abs_path_inited,
     mock_state_local_cache_dir_abs_path_inited,
     mock_state_reinstall_triggered,

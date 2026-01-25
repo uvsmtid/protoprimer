@@ -61,7 +61,11 @@ def test_relationship():
 @patch(
     f"{primer_kernel.__name__}.{Bootstrapper_state_proto_code_file_abs_path_inited.__name__}.eval_own_state"
 )
+@patch(
+    f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
+)
 def test_reinstall_true(
+    mock_state_input_run_mode_arg_loaded,
     mock_state_proto_code_file_abs_path_inited,
     mock_state_args_parsed,
     mock_state_local_venv_dir_abs_path_inited,
@@ -87,7 +91,11 @@ def test_reinstall_true(
         }
     )
     mock_state_input_start_id_var_loaded.return_value = "mock_start_id"
-    mock_state_py_exec_required_reached.return_value = PythonExecutable.py_exec_required
+
+    py_exec = PythonExecutable.py_exec_required
+    mock_state_py_exec_required_reached.return_value = py_exec
+    env_ctx.state_stride = py_exec
+
     mock_state_local_venv_dir_abs_path_inited.return_value = "/path/to/venv"
     mock_state_local_tmp_dir_abs_path_inited.return_value = "/path/to/tmp"
     mock_state_local_conf_symlink_abs_path_inited.return_value = "/path/to/conf"
@@ -132,7 +140,11 @@ def test_reinstall_true(
 @patch(
     f"{primer_kernel.__name__}.{Bootstrapper_state_proto_code_file_abs_path_inited.__name__}.eval_own_state"
 )
+@patch(
+    f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
+)
 def test_reinstall_false(
+    mock_state_input_run_mode_arg_loaded,
     mock_state_proto_code_file_abs_path_inited,
     mock_state_args_parsed,
     mock_state_local_venv_dir_abs_path_inited,
@@ -155,7 +167,10 @@ def test_reinstall_false(
             ParsedArg.name_run_mode.value: RunMode.mode_prime.value,
         }
     )
-    mock_state_py_exec_required_reached.return_value = PythonExecutable.py_exec_required
+
+    py_exec = PythonExecutable.py_exec_required
+    mock_state_py_exec_required_reached.return_value = py_exec
+    env_ctx.state_stride = py_exec
 
     # when:
     state_value = env_ctx.state_graph.eval_state(
@@ -192,7 +207,11 @@ def test_reinstall_false(
 @patch(
     f"{primer_kernel.__name__}.{Bootstrapper_state_proto_code_file_abs_path_inited.__name__}.eval_own_state"
 )
+@patch(
+    f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
+)
 def test_reinstall_true_but_py_exec_not_required(
+    mock_state_input_run_mode_arg_loaded,
     mock_state_proto_code_file_abs_path_inited,
     mock_state_args_parsed,
     mock_state_local_venv_dir_abs_path_inited,
@@ -216,7 +235,10 @@ def test_reinstall_true_but_py_exec_not_required(
         }
     )
     mock_state_input_start_id_var_loaded.return_value = "mock_start_id"
-    mock_state_py_exec_required_reached.return_value = PythonExecutable.py_exec_venv
+
+    py_exec = PythonExecutable.py_exec_venv
+    mock_state_py_exec_required_reached.return_value = py_exec
+    env_ctx.state_stride = py_exec
 
     # when:
     state_value = env_ctx.state_graph.eval_state(

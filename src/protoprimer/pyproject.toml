@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "protoprimer"
-version = "0.5.1"
+version = "0.6.0"
 
 authors = [
     { name = "uvsmtid", email = "uvsmtid@gmail.com" },
@@ -13,7 +13,7 @@ authors = [
 
 # This is supposed to be synced with the `About` section on the `github.com` page:
 # https://github.com/uvsmtid/protoprimer
-description = "Easy-to-use [single-touch, zero-args, self-contained, no-deps, cross-platform] bootstrap app & lib that escapes from pre-venv shell scripts to testable pure Python early-init logic, where an extensible DAG provisions a fully configured, isolated, per-repository environment"
+description = ":sparkles: Easy-to-use, single-touch, zero-args, self-contained, no-deps, cross-platform :boot: bootstrap app & lib that escapes from :bomb: fragile shell-script wrappers outside a venv to pure Python early-init :shield: testable & extensible logic using standard tools to provision a fully configured, isolated, per-repository environment :rocket:"
 
 readme = "readme.md"
 
