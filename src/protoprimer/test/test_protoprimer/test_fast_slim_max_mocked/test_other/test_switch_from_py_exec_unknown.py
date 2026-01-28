@@ -6,6 +6,7 @@ from local_test.base_test_class import BasePyfakefsTestClass
 from local_test.name_assertion import assert_test_func_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
+    app_main,
     Bootstrapper_state_proto_code_file_abs_path_inited,
     ConfConstClient,
     ConfConstEnv,
@@ -14,8 +15,7 @@ from protoprimer.primer_kernel import (
     ConfConstPrimer,
     ConfField,
     EnvVar,
-    app_main,
-    PythonExecutable,
+    StateStride,
     write_json_file,
 )
 
@@ -33,13 +33,13 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{Bootstrapper_state_proto_code_file_abs_path_inited.__name__}.eval_own_state"
     )
     @patch(f"{primer_kernel.__name__}.os.execve")
-    def test_prime_switches_from_py_exec_unknown(
+    def test_prime_switches_from_py_exec_stride_py_unknown(
         self,
         mock_execve,
         mock_state_proto_code_file_abs_path_inited,
         mock_get_default_start_id,
     ):
-        assert_test_func_name_embeds_str(PythonExecutable.py_exec_unknown.name)
+        assert_test_func_name_embeds_str(StateStride.stride_py_unknown.name)
 
         # given:
 
@@ -138,7 +138,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             path=ConfConstEnv.default_file_abs_path_python,
             argv=execv_args,
             env={
-                EnvVar.var_PROTOPRIMER_PY_EXEC.value: PythonExecutable.py_exec_required.name,
+                EnvVar.var_PROTOPRIMER_PY_EXEC.value: StateStride.stride_py_required.name,
                 EnvVar.var_PROTOPRIMER_START_ID.value: "mock_start_id",
                 EnvVar.var_PROTOPRIMER_PROTO_CODE.value: state_proto_code_file_abs_path_inited,
             },

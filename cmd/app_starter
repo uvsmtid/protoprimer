@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# FT_93_57_03_75.app_vs_lib.md: see also `./cmd/hello_world_via_lib`
+# FT_93_57_03_75.app_vs_lib.md: see also `./cmd/env_bootstrapper`
 
 if __name__ == "__main__":
 
@@ -18,7 +18,4 @@ if __name__ == "__main__":
     spec.loader.exec_module(proto_kernel)
     # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-    proto_kernel.run_main(
-        "local_doc.cmd_hello_world_via_app",
-        "custom_main",
-    )
+    proto_kernel.app_starter("local_doc.cmd_app_starter:custom_main")

@@ -13,7 +13,7 @@ authors = [
 
 # This is supposed to be synced with the `About` section on the `github.com` page:
 # https://github.com/uvsmtid/protoprimer
-description = ":sparkles: Easy-to-use, single-touch, zero-args, self-contained, no-deps, cross-platform :boot: bootstrap app & lib that escapes from :bomb: fragile shell-script wrappers outside a venv to pure Python early-init :shield: testable & extensible logic using standard tools to provision a fully configured, isolated, per-repository environment :rocket:"
+description = "Escape the fragile mess of pre-venv shell scripts with a pure Python bootstrap wrapper: 🚀 ⏩ single-touch, zero-args, self-contained, no-deps, cross-platform, testable init logic using standard tools to run apps in a custom environment isolated per repository"
 
 readme = "readme.md"
 

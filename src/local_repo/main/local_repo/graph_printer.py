@@ -24,6 +24,10 @@ class StateNodeMeta:
 
 
 class StateMeta(enum.Enum):
+    state_input_py_exec_var_loaded = StateNodeMeta(
+        env_state=EnvState.state_input_py_exec_var_loaded,
+        sub_graph=SubGraph.graph_input,
+    )
     state_input_stderr_log_level_var_loaded = StateNodeMeta(
         env_state=EnvState.state_input_stderr_log_level_var_loaded,
         sub_graph=SubGraph.graph_input,
@@ -56,10 +60,6 @@ class StateMeta(enum.Enum):
         env_state=EnvState.state_run_mode_executed,
         sub_graph=None,
     )
-    state_input_py_exec_var_loaded = StateNodeMeta(
-        env_state=EnvState.state_input_py_exec_var_loaded,
-        sub_graph=SubGraph.graph_input,
-    )
     state_input_start_id_var_loaded = StateNodeMeta(
         env_state=EnvState.state_input_start_id_var_loaded,
         sub_graph=SubGraph.graph_input,
@@ -68,8 +68,8 @@ class StateMeta(enum.Enum):
         env_state=EnvState.state_input_proto_code_file_abs_path_var_loaded,
         sub_graph=SubGraph.graph_input,
     )
-    state_py_exec_arbitrary_reached = StateNodeMeta(
-        env_state=EnvState.state_py_exec_arbitrary_reached,
+    state_stride_py_arbitrary_reached = StateNodeMeta(
+        env_state=EnvState.state_stride_py_arbitrary_reached,
         sub_graph=SubGraph.graph_input,
     )
     state_proto_code_file_abs_path_inited = StateNodeMeta(
@@ -156,8 +156,8 @@ class StateMeta(enum.Enum):
         env_state=EnvState.state_default_file_log_handler_configured,
         sub_graph=SubGraph.graph_runtime,
     )
-    state_py_exec_required_reached = StateNodeMeta(
-        env_state=EnvState.state_py_exec_required_reached,
+    state_stride_py_required_reached = StateNodeMeta(
+        env_state=EnvState.state_stride_py_required_reached,
         sub_graph=SubGraph.graph_runtime,
     )
     state_reinstall_triggered = StateNodeMeta(
@@ -168,12 +168,8 @@ class StateMeta(enum.Enum):
         env_state=EnvState.state_package_driver_prepared,
         sub_graph=SubGraph.graph_runtime,
     )
-    state_py_exec_venv_reached = StateNodeMeta(
-        env_state=EnvState.state_py_exec_venv_reached,
-        sub_graph=SubGraph.graph_runtime,
-    )
-    state_app_starter_invoked = StateNodeMeta(
-        env_state=EnvState.state_app_starter_invoked,
+    state_stride_py_venv_reached = StateNodeMeta(
+        env_state=EnvState.state_stride_py_venv_reached,
         sub_graph=SubGraph.graph_runtime,
     )
     state_protoprimer_package_installed = StateNodeMeta(
@@ -184,16 +180,16 @@ class StateMeta(enum.Enum):
         env_state=EnvState.state_version_constraints_generated,
         sub_graph=SubGraph.graph_runtime,
     )
-    state_py_exec_deps_updated_reached = StateNodeMeta(
-        env_state=EnvState.state_py_exec_deps_updated_reached,
+    state_stride_deps_updated_reached = StateNodeMeta(
+        env_state=EnvState.state_stride_deps_updated_reached,
         sub_graph=SubGraph.graph_runtime,
     )
     state_proto_code_updated = StateNodeMeta(
         env_state=EnvState.state_proto_code_updated,
         sub_graph=SubGraph.graph_runtime,
     )
-    state_py_exec_src_updated_reached = StateNodeMeta(
-        env_state=EnvState.state_py_exec_src_updated_reached,
+    state_stride_src_updated_reached = StateNodeMeta(
+        env_state=EnvState.state_stride_src_updated_reached,
         sub_graph=SubGraph.graph_runtime,
     )
     state_command_executed = StateNodeMeta(

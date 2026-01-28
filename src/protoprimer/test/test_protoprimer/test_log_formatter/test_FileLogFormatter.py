@@ -1,6 +1,5 @@
 import datetime
 import logging
-from unittest.mock import Mock
 
 from freezegun import freeze_time
 
@@ -29,7 +28,7 @@ def test_format_file_log():
     )
     record.created = datetime.datetime.now(datetime.timezone.utc).timestamp()
     record.process = 12345
-    # This attribute is added by the PythonExecutableFilter
+    # This attribute is added by the StateStrideFilter
     record.py_exec_name = "test_exec"
     record.state_stride = "test_stride"
 

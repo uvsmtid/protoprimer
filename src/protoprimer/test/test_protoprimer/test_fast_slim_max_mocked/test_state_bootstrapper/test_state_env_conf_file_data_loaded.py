@@ -10,9 +10,9 @@ from local_test.mock_verifier import (
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
-    Bootstrapper_state_local_conf_file_abs_path_inited,
     Bootstrapper_state_input_py_exec_var_loaded,
     Bootstrapper_state_input_run_mode_arg_loaded,
+    Bootstrapper_state_local_conf_file_abs_path_inited,
     EnvContext,
     EnvState,
 )
@@ -38,15 +38,11 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_input_py_exec_var_loaded.__name__}.eval_own_state"
-    )
-    @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_file_abs_path_inited.__name__}.eval_own_state"
     )
     def test_state_env_conf_file_data_loaded_exists(
         self,
         mock_state_local_conf_file_abs_path_inited,
-        mock_state_input_py_exec_var_loaded,
         mock_state_input_run_mode_arg_loaded,
         mock_state_input_stderr_log_level_eval_finalized,
     ):
@@ -81,15 +77,11 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_input_py_exec_var_loaded.__name__}.eval_own_state"
-    )
-    @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_file_abs_path_inited.__name__}.eval_own_state"
     )
     def test_state_env_conf_file_data_loaded_missing(
         self,
         mock_state_local_conf_file_abs_path_inited,
-        mock_state_input_py_exec_var_loaded,
         mock_state_input_run_mode_arg_loaded,
         mock_state_input_stderr_log_level_eval_finalized,
     ):
@@ -126,15 +118,11 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_input_py_exec_var_loaded.__name__}.eval_own_state"
-    )
-    @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_file_abs_path_inited.__name__}.eval_own_state"
     )
     def test_state_env_conf_file_data_loaded_malformed(
         self,
         mock_state_local_conf_file_abs_path_inited,
-        mock_state_input_py_exec_var_loaded,
         mock_state_input_run_mode_arg_loaded,
         mock_state_input_stderr_log_level_eval_finalized,
     ):
