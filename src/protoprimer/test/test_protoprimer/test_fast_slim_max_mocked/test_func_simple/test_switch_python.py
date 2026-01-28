@@ -8,9 +8,8 @@ from unittest.mock import (
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer.primer_kernel import (
     EnvVar,
-    PythonExecutable,
+    StateStride,
     switch_python,
-    SyntaxArg,
 )
 
 
@@ -27,9 +26,9 @@ def test_switch_python(
     mock_execve: MagicMock,
 ):
     # given:
-    curr_py_exec = PythonExecutable.py_exec_arbitrary
+    curr_py_exec = StateStride.stride_py_arbitrary
     curr_python_path = "/usr/bin/python"
-    next_py_exec = PythonExecutable.py_exec_required
+    next_py_exec = StateStride.stride_py_required
     next_python_path = "/usr/bin/python3.9"
     start_id = "test_start_id"
     proto_code_abs_file_path = "/path/to/proto_kernel.py"
@@ -54,7 +53,7 @@ def test_switch_python(
         path=next_python_path,
         argv=expected_argv,
         env={
-            EnvVar.var_PROTOPRIMER_PY_EXEC.value: PythonExecutable.py_exec_required.name,
+            EnvVar.var_PROTOPRIMER_PY_EXEC.value: StateStride.stride_py_required.name,
             EnvVar.var_PROTOPRIMER_START_ID.value: start_id,
             EnvVar.var_PROTOPRIMER_PROTO_CODE.value: proto_code_abs_file_path,
         },
@@ -68,9 +67,9 @@ def test_switch_python_no_proto_code(
     mock_execve: MagicMock,
 ):
     # given:
-    curr_py_exec = PythonExecutable.py_exec_arbitrary
+    curr_py_exec = StateStride.stride_py_arbitrary
     curr_python_path = "/usr/bin/python"
-    next_py_exec = PythonExecutable.py_exec_required
+    next_py_exec = StateStride.stride_py_required
     next_python_path = "/usr/bin/python3.9"
     start_id = "test_start_id"
     proto_code_abs_file_path = None
@@ -95,7 +94,7 @@ def test_switch_python_no_proto_code(
         path=next_python_path,
         argv=expected_argv,
         env={
-            EnvVar.var_PROTOPRIMER_PY_EXEC.value: PythonExecutable.py_exec_required.name,
+            EnvVar.var_PROTOPRIMER_PY_EXEC.value: StateStride.stride_py_required.name,
             EnvVar.var_PROTOPRIMER_START_ID.value: start_id,
         },
     )

@@ -1,4 +1,4 @@
-# FT_93_57_03_75.app_vs_lib.md: see also `cmd_hello_world_via_lib.py`
+# FT_93_57_03_75.app_vs_lib.md: see also `cmd_app_starter.py`
 from __future__ import annotations
 
 import enum
@@ -6,8 +6,8 @@ import logging
 
 from protoprimer.primer_kernel import (
     AbstractCachingStateNode,
-    EnvContext,
     app_main,
+    EnvContext,
     TargetState,
     ValueType,
 )

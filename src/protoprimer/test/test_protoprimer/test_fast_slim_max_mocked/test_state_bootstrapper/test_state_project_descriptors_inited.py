@@ -31,7 +31,7 @@ def test_relationship():
 @patch(
     f"{primer_kernel.__name__}.{Bootstrapper_state_env_conf_file_data_loaded.__name__}.eval_own_state"
 )
-def test_py_exec_venv(
+def test_stride_py_venv(
     mock_state_env_conf_file_data_loaded,
     mock_state_client_conf_file_data_loaded,
     env_ctx,

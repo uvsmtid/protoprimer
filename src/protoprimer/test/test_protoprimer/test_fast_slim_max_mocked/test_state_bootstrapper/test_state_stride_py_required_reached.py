@@ -10,20 +10,20 @@ from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     Bootstrapper_state_args_parsed,
-    Bootstrapper_state_local_conf_file_abs_path_inited,
     Bootstrapper_state_default_file_log_handler_configured,
-    Bootstrapper_state_required_python_file_abs_path_inited,
+    Bootstrapper_state_input_py_exec_var_loaded,
+    Bootstrapper_state_input_start_id_var_loaded,
+    Bootstrapper_state_local_conf_file_abs_path_inited,
     Bootstrapper_state_local_tmp_dir_abs_path_inited,
     Bootstrapper_state_local_venv_dir_abs_path_inited,
     Bootstrapper_state_proto_code_file_abs_path_inited,
-    Bootstrapper_state_input_py_exec_var_loaded,
-    Bootstrapper_state_input_start_id_var_loaded,
+    Bootstrapper_state_required_python_file_abs_path_inited,
     ConfConstEnv,
     ConfConstGeneral,
     EnvContext,
     EnvState,
     ParsedArg,
-    PythonExecutable,
+    StateStride,
 )
 
 mock_client_dir = "/mock_client_dir"
@@ -53,7 +53,9 @@ class ThisTestClass(BasePyfakefsTestClass):
 
     # noinspection PyMethodMayBeStatic
     def test_relationship(self):
-        assert_test_module_name_embeds_str(EnvState.state_py_exec_required_reached.name)
+        assert_test_module_name_embeds_str(
+            EnvState.state_stride_py_required_reached.name
+        )
 
     def test_assumptions_used_in_other_tests(self):
         self.assertNotEqual(
@@ -65,7 +67,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch.dict(
         os.environ,
         {
-            primer_kernel.EnvVar.var_PROTOPRIMER_PY_EXEC.value: PythonExecutable.py_exec_arbitrary.name
+            primer_kernel.EnvVar.var_PROTOPRIMER_PY_EXEC.value: StateStride.stride_py_arbitrary.name
         },
         clear=True,
     )
@@ -83,9 +85,6 @@ class ThisTestClass(BasePyfakefsTestClass):
     )
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_proto_code_file_abs_path_inited.__name__}.eval_own_state"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_input_py_exec_var_loaded.__name__}.eval_own_state"
     )
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_file_abs_path_inited.__name__}.eval_own_state"
@@ -114,7 +113,6 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_required_python_file_abs_path_inited,
         mock_state_local_venv_dir_abs_path_inited,
         mock_state_local_conf_file_abs_path_inited,
-        mock_state_input_py_exec_var_loaded,
         mock_state_proto_code_file_abs_path_inited,
         mock_state_args_parsed,
         mock_state_default_file_log_handler_configured,
@@ -126,7 +124,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         assert_parent_states_mocked(
             self.env_ctx,
-            EnvState.state_py_exec_required_reached.name,
+            EnvState.state_stride_py_required_reached.name,
         )
 
         mock_state_args_parsed.return_value = argparse.Namespace(
@@ -152,12 +150,12 @@ class ThisTestClass(BasePyfakefsTestClass):
         # when:
 
         self.env_ctx.state_graph.eval_state(
-            EnvState.state_py_exec_required_reached.name
+            EnvState.state_stride_py_required_reached.name
         )
 
         # then:
 
-        # With `py_exec_arbitrary`, we expect `execve` to be called to switch `python`.
+        # With `stride_py_arbitrary`, we expect `execve` to be called to switch `python`.
         mock_execve.assert_called_once()
         mock_venv_create.assert_not_called()
         mock_get_path_to_curr_python.assert_called_once()
@@ -165,7 +163,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch.dict(
         os.environ,
         {
-            primer_kernel.EnvVar.var_PROTOPRIMER_PY_EXEC.value: PythonExecutable.py_exec_required.name
+            primer_kernel.EnvVar.var_PROTOPRIMER_PY_EXEC.value: StateStride.stride_py_required.name
         },
         clear=True,
     )
@@ -183,9 +181,6 @@ class ThisTestClass(BasePyfakefsTestClass):
     )
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_proto_code_file_abs_path_inited.__name__}.eval_own_state"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_input_py_exec_var_loaded.__name__}.eval_own_state"
     )
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_file_abs_path_inited.__name__}.eval_own_state"
@@ -214,7 +209,6 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_required_python_file_abs_path_inited,
         mock_state_local_venv_dir_abs_path_inited,
         mock_state_local_conf_file_abs_path_inited,
-        mock_state_input_py_exec_var_loaded,
         mock_state_proto_code_file_abs_path_inited,
         mock_state_args_parsed,
         mock_state_default_file_log_handler_configured,
@@ -222,16 +216,16 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_input_start_id_var_loaded,
     ):
         # given:
-        self.env_ctx.state_stride = PythonExecutable.py_exec_required
+        self.env_ctx.state_stride = StateStride.stride_py_required
 
         # when:
         actual_result = self.env_ctx.state_graph.eval_state(
-            EnvState.state_py_exec_required_reached.name
+            EnvState.state_stride_py_required_reached.name
         )
 
         # then:
         self.assertEqual(
-            PythonExecutable.py_exec_required,
+            StateStride.stride_py_required,
             actual_result,
         )
         mock_execve.assert_not_called()
@@ -241,7 +235,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch.dict(
         os.environ,
         {
-            primer_kernel.EnvVar.var_PROTOPRIMER_PY_EXEC.value: PythonExecutable.py_exec_arbitrary.name
+            primer_kernel.EnvVar.var_PROTOPRIMER_PY_EXEC.value: StateStride.stride_py_arbitrary.name
         },
         clear=True,
     )
@@ -259,9 +253,6 @@ class ThisTestClass(BasePyfakefsTestClass):
     )
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_proto_code_file_abs_path_inited.__name__}.eval_own_state"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_input_py_exec_var_loaded.__name__}.eval_own_state"
     )
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_file_abs_path_inited.__name__}.eval_own_state"
@@ -290,7 +281,6 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_required_python_file_abs_path_inited,
         mock_state_local_venv_dir_abs_path_inited,
         mock_state_local_conf_file_abs_path_inited,
-        mock_state_input_py_exec_var_loaded,
         mock_state_proto_code_file_abs_path_inited,
         mock_state_args_parsed,
         mock_state_default_file_log_handler_configured,
@@ -307,12 +297,12 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # when:
         actual_result = self.env_ctx.state_graph.eval_state(
-            EnvState.state_py_exec_required_reached.name
+            EnvState.state_stride_py_required_reached.name
         )
 
         # then:
         self.assertEqual(
-            PythonExecutable.py_exec_required,
+            StateStride.stride_py_required,
             actual_result,
         )
         mock_execve.assert_not_called()

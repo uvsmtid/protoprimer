@@ -204,7 +204,7 @@ class NameCategory(enum.Enum):
         name_enums=[],
     )
 
-    # Every time `PythonExecutable` is switched:
+    # Every time `StateStride` is switched:
     category_python_exec = CategoryMeta(
         name_enums=[],
     )

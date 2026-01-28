@@ -8,13 +8,13 @@ from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     Bootstrapper_state_args_parsed,
-    Bootstrapper_state_local_log_dir_abs_path_inited,
     Bootstrapper_state_input_start_id_var_loaded,
     Bootstrapper_state_input_stderr_log_level_eval_finalized,
+    Bootstrapper_state_local_log_dir_abs_path_inited,
     EnvContext,
     EnvState,
-    PythonExecutableFilter,
     FileLogFormatter,
+    StateStrideFilter,
 )
 
 
@@ -82,7 +82,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.assertIsInstance(file_handler.formatter, FileLogFormatter)
 
         self.assertTrue(
-            any(isinstance(f, PythonExecutableFilter) for f in file_handler.filters)
+            any(isinstance(f, StateStrideFilter) for f in file_handler.filters)
         )
         self.assertIn(file_handler, logging.getLogger().handlers)
 

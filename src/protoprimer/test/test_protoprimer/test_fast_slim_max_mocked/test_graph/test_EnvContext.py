@@ -12,14 +12,15 @@ from protoprimer.primer_kernel import (
     Bootstrapper_state_client_conf_file_data_loaded,
     Bootstrapper_state_env_conf_file_data_loaded,
     Bootstrapper_state_local_cache_dir_abs_path_inited,
-    Bootstrapper_state_required_python_file_abs_path_inited,
     Bootstrapper_state_reinstall_triggered,
+    Bootstrapper_state_required_python_file_abs_path_inited,
     EnvContext,
     EnvState,
     EnvVar,
     PackageDriverPip,
     PackageDriverType,
     PackageDriverUv,
+    StateNode,
 )
 
 
@@ -34,23 +35,23 @@ class TestEnvContext(BasePyfakefsTestClass):
 
     @patch("sys.argv", ["script_name"])
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_required_python_file_abs_path_inited.__name__}.eval_own_state",
+        f"{primer_kernel.__name__}.{Bootstrapper_state_required_python_file_abs_path_inited.__name__}.{StateNode.eval_own_state.__name__}",
         return_value="/usr/bin/python",
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_reinstall_triggered.__name__}.eval_own_state",
+        f"{primer_kernel.__name__}.{Bootstrapper_state_reinstall_triggered.__name__}.{StateNode.eval_own_state.__name__}",
         return_value=False,
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.eval_own_state",
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.{StateNode.eval_own_state.__name__}",
         return_value={},
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_env_conf_file_data_loaded.__name__}.eval_own_state",
+        f"{primer_kernel.__name__}.{Bootstrapper_state_env_conf_file_data_loaded.__name__}.{StateNode.eval_own_state.__name__}",
         return_value={},
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_local_cache_dir_abs_path_inited.__name__}.eval_own_state",
+        f"{primer_kernel.__name__}.{Bootstrapper_state_local_cache_dir_abs_path_inited.__name__}.{StateNode.eval_own_state.__name__}",
         return_value="/tmp",
     )
     @patch("subprocess.check_call")
@@ -81,23 +82,23 @@ class TestEnvContext(BasePyfakefsTestClass):
         },
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_required_python_file_abs_path_inited.__name__}.eval_own_state",
+        f"{primer_kernel.__name__}.{Bootstrapper_state_required_python_file_abs_path_inited.__name__}.{StateNode.eval_own_state.__name__}",
         return_value="/usr/bin/python",
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_reinstall_triggered.__name__}.eval_own_state",
+        f"{primer_kernel.__name__}.{Bootstrapper_state_reinstall_triggered.__name__}.{StateNode.eval_own_state.__name__}",
         return_value=False,
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.eval_own_state",
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.{StateNode.eval_own_state.__name__}",
         return_value={},
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_env_conf_file_data_loaded.__name__}.eval_own_state",
+        f"{primer_kernel.__name__}.{Bootstrapper_state_env_conf_file_data_loaded.__name__}.{StateNode.eval_own_state.__name__}",
         return_value={},
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_local_cache_dir_abs_path_inited.__name__}.eval_own_state",
+        f"{primer_kernel.__name__}.{Bootstrapper_state_local_cache_dir_abs_path_inited.__name__}.{StateNode.eval_own_state.__name__}",
         return_value="/tmp",
     )
     @patch("subprocess.check_call")
@@ -128,23 +129,23 @@ class TestEnvContext(BasePyfakefsTestClass):
         },
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_required_python_file_abs_path_inited.__name__}.eval_own_state",
+        f"{primer_kernel.__name__}.{Bootstrapper_state_required_python_file_abs_path_inited.__name__}.{StateNode.eval_own_state.__name__}",
         return_value="/usr/bin/python",
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_reinstall_triggered.__name__}.eval_own_state",
+        f"{primer_kernel.__name__}.{Bootstrapper_state_reinstall_triggered.__name__}.{StateNode.eval_own_state.__name__}",
         return_value=False,
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.eval_own_state",
+        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.{StateNode.eval_own_state.__name__}",
         return_value={},
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_env_conf_file_data_loaded.__name__}.eval_own_state",
+        f"{primer_kernel.__name__}.{Bootstrapper_state_env_conf_file_data_loaded.__name__}.{StateNode.eval_own_state.__name__}",
         return_value={},
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_local_cache_dir_abs_path_inited.__name__}.eval_own_state",
+        f"{primer_kernel.__name__}.{Bootstrapper_state_local_cache_dir_abs_path_inited.__name__}.{StateNode.eval_own_state.__name__}",
         return_value="/tmp",
     )
     def test_init_without_uv(

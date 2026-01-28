@@ -5,7 +5,6 @@ import pytest
 
 from protoprimer import primer_kernel as try_main
 from protoprimer.primer_kernel import (
-    CommandAction,
     parse_args,
     ParsedArg,
     RunMode,

@@ -9,10 +9,10 @@ from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     Bootstrapper_state_input_proto_code_file_abs_path_var_loaded,
-    Bootstrapper_state_py_exec_arbitrary_reached,
+    Bootstrapper_state_stride_py_arbitrary_reached,
     EnvContext,
     EnvState,
-    PythonExecutable,
+    StateStride,
 )
 
 
@@ -29,14 +29,14 @@ def test_relationship():
 
 @patch(f"{primer_kernel.__name__}.is_venv")
 @patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_py_exec_arbitrary_reached.__name__}.eval_own_state"
+    f"{primer_kernel.__name__}.{Bootstrapper_state_stride_py_arbitrary_reached.__name__}.eval_own_state"
 )
 @patch(
     f"{primer_kernel.__name__}.{Bootstrapper_state_input_proto_code_file_abs_path_var_loaded.__name__}.eval_own_state"
 )
-def test_py_exec_arbitrary_not_in_venv(
+def test_stride_py_arbitrary_not_in_venv(
     mock_state_input_proto_code_file_abs_path_var_loaded,
-    mock_state_py_exec_arbitrary_reached,
+    mock_state_stride_py_arbitrary_reached,
     mock_is_venv,
     env_ctx,
 ):
@@ -47,8 +47,8 @@ def test_py_exec_arbitrary_not_in_venv(
         EnvState.state_proto_code_file_abs_path_inited.name,
     )
 
-    mock_state_py_exec_arbitrary_reached.return_value = (
-        PythonExecutable.py_exec_arbitrary
+    mock_state_stride_py_arbitrary_reached.return_value = (
+        StateStride.stride_py_arbitrary
     )
 
     mock_is_venv.return_value = False
@@ -64,17 +64,19 @@ def test_py_exec_arbitrary_not_in_venv(
     assert state_value == primer_kernel.__file__
 
 
-@patch(f"{primer_kernel.__name__}.EnvContext.get_curr_py_exec")
 @patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_py_exec_arbitrary_reached.__name__}.eval_own_state"
+    f"{primer_kernel.__name__}.{EnvContext.__name__}.{EnvContext.get_stride.__name__}"
+)
+@patch(
+    f"{primer_kernel.__name__}.{Bootstrapper_state_stride_py_arbitrary_reached.__name__}.eval_own_state"
 )
 @patch(
     f"{primer_kernel.__name__}.{Bootstrapper_state_input_proto_code_file_abs_path_var_loaded.__name__}.eval_own_state"
 )
-def test_py_exec_venv(
+def test_stride_py_venv(
     mock_state_input_proto_code_file_abs_path_var_loaded,
-    mock_state_py_exec_arbitrary_reached,
-    mock_get_curr_py_exec,
+    mock_state_stride_py_arbitrary_reached,
+    mock_get_stride,
     env_ctx,
 ):
     # given:
@@ -89,7 +91,7 @@ def test_py_exec_venv(
     mock_state_input_proto_code_file_abs_path_var_loaded.return_value = (
         proto_code_abs_file_path
     )
-    mock_get_curr_py_exec.return_value = PythonExecutable.py_exec_venv
+    mock_get_stride.return_value = StateStride.stride_py_venv
 
     # when:
 
@@ -102,17 +104,19 @@ def test_py_exec_venv(
     assert state_value == proto_code_abs_file_path
 
 
-@patch(f"{primer_kernel.__name__}.EnvContext.get_curr_py_exec")
+@patch(
+    f"{primer_kernel.__name__}.{EnvContext.__name__}.{EnvContext.get_stride.__name__}"
+)
 @patch(
     f"{primer_kernel.__name__}.{Bootstrapper_state_input_proto_code_file_abs_path_var_loaded.__name__}.eval_own_state"
 )
 @patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_py_exec_arbitrary_reached.__name__}.eval_own_state"
+    f"{primer_kernel.__name__}.{Bootstrapper_state_stride_py_arbitrary_reached.__name__}.eval_own_state"
 )
-def test_py_exec_venv_no_arg(
-    mock_state_py_exec_arbitrary_reached,
+def test_stride_py_venv_no_arg(
+    mock_state_stride_py_arbitrary_reached,
     mock_state_input_proto_code_file_abs_path_var_loaded,
-    mock_get_curr_py_exec,
+    mock_get_stride,
     env_ctx,
 ):
     # given:
@@ -123,7 +127,7 @@ def test_py_exec_venv_no_arg(
     )
 
     mock_state_input_proto_code_file_abs_path_var_loaded.return_value = None
-    mock_get_curr_py_exec.return_value = PythonExecutable.py_exec_venv
+    mock_get_stride.return_value = StateStride.stride_py_venv
 
     # when/then:
 

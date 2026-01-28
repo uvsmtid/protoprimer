@@ -1,7 +1,7 @@
 import logging
 from unittest.mock import (
-    patch,
     MagicMock,
+    patch,
 )
 
 import pytest
