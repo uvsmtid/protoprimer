@@ -35,8 +35,11 @@ def test_relationship():
     )
 
 
+@patch(
+    "protoprimer.primer_kernel.Bootstrapper_state_input_py_exec_var_loaded.eval_own_state"
+)
 @patch.dict(f"{os.__name__}.environ", {}, clear=True)
-def test_default_case(env_ctx):
+def test_default_case(mock_eval_own_state, env_ctx):
     # given:
     assert_parent_states_mocked(
         env_ctx,
@@ -53,12 +56,15 @@ def test_default_case(env_ctx):
     )
 
 
+@patch(
+    "protoprimer.primer_kernel.Bootstrapper_state_input_py_exec_var_loaded.eval_own_state"
+)
 @patch.dict(
     f"{os.__name__}.environ",
     {EnvVar.var_PROTOPRIMER_STDERR_LOG_LEVEL.value: "DEBUG"},
     clear=True,
 )
-def test_env_var_set_to_debug(env_ctx):
+def test_env_var_set_to_debug(mock_eval_own_state, env_ctx):
     # given:
     assert_parent_states_mocked(
         env_ctx,
@@ -72,12 +78,15 @@ def test_env_var_set_to_debug(env_ctx):
     assert logging.DEBUG == state_value
 
 
+@patch(
+    "protoprimer.primer_kernel.Bootstrapper_state_input_py_exec_var_loaded.eval_own_state"
+)
 @patch.dict(
     f"{os.__name__}.environ",
     {EnvVar.var_PROTOPRIMER_STDERR_LOG_LEVEL.value: "10"},
     clear=True,
 )
-def test_env_var_set_to_10(env_ctx):
+def test_env_var_set_to_10(mock_eval_own_state, env_ctx):
     # given:
     assert_parent_states_mocked(
         env_ctx,
@@ -91,12 +100,15 @@ def test_env_var_set_to_10(env_ctx):
     assert 10 == state_value
 
 
+@patch(
+    "protoprimer.primer_kernel.Bootstrapper_state_input_py_exec_var_loaded.eval_own_state"
+)
 @patch.dict(
     f"{os.__name__}.environ",
     {EnvVar.var_PROTOPRIMER_STDERR_LOG_LEVEL.value: "-1"},
     clear=True,
 )
-def test_env_var_set_to_negative_1(env_ctx):
+def test_env_var_set_to_negative_1(mock_eval_own_state, env_ctx):
     # given:
     assert_parent_states_mocked(
         env_ctx,
@@ -110,12 +122,15 @@ def test_env_var_set_to_negative_1(env_ctx):
     assert default_stderr_log_level == state_value
 
 
+@patch(
+    "protoprimer.primer_kernel.Bootstrapper_state_input_py_exec_var_loaded.eval_own_state"
+)
 @patch.dict(
     f"{os.__name__}.environ",
     {EnvVar.var_PROTOPRIMER_STDERR_LOG_LEVEL.value: "NOTSET"},
     clear=True,
 )
-def test_env_var_set_to_notset(env_ctx):
+def test_env_var_set_to_notset(mock_eval_own_state, env_ctx):
     # given:
     assert_parent_states_mocked(
         env_ctx,
@@ -129,12 +144,15 @@ def test_env_var_set_to_notset(env_ctx):
     assert logging.NOTSET == state_value
 
 
+@patch(
+    "protoprimer.primer_kernel.Bootstrapper_state_input_py_exec_var_loaded.eval_own_state"
+)
 @patch.dict(
     f"{os.__name__}.environ",
     {EnvVar.var_PROTOPRIMER_STDERR_LOG_LEVEL.value: "NOT_A_LOG_LEVEL"},
     clear=True,
 )
-def test_env_var_set_to_invalid_string(env_ctx):
+def test_env_var_set_to_invalid_string(mock_eval_own_state, env_ctx):
     # given:
     assert_parent_states_mocked(
         env_ctx,

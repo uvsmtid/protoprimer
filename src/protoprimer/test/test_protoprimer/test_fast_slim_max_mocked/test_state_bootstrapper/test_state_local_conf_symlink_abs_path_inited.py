@@ -11,8 +11,8 @@ from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     Bootstrapper_state_client_conf_file_data_loaded,
-    Bootstrapper_state_selected_env_dir_rel_path_inited,
     Bootstrapper_state_ref_root_dir_abs_path_inited,
+    Bootstrapper_state_selected_env_dir_rel_path_inited,
     ConfConstClient,
     ConfConstInput,
     ConfConstPrimer,

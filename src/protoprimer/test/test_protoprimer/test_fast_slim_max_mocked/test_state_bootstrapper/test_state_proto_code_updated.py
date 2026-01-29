@@ -10,12 +10,12 @@ from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     Bootstrapper_state_proto_code_file_abs_path_inited,
-    Bootstrapper_state_py_exec_deps_updated_reached,
+    Bootstrapper_state_stride_deps_updated_reached,
     ConfConstGeneral,
     EnvContext,
     EnvState,
-    PythonExecutable,
     RunMode,
+    StateStride,
 )
 
 
@@ -34,17 +34,19 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{Bootstrapper_state_proto_code_file_abs_path_inited.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_py_exec_deps_updated_reached.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_stride_deps_updated_reached.__name__}.eval_own_state"
     )
     @patch(
         f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
     )
-    @patch(f"{primer_kernel.__name__}.EnvContext.get_curr_py_exec")
+    @patch(
+        f"{primer_kernel.__name__}.{EnvContext.__name__}.{EnvContext.get_stride.__name__}"
+    )
     def test_state_proto_code_updated(
         self,
-        mock_get_curr_py_exec,
+        mock_get_stride,
         mock_state_input_run_mode_arg_loaded,
-        mock_state_py_exec_deps_updated_reached,
+        mock_state_stride_deps_updated_reached,
         mock_state_proto_code_file_abs_path_inited,
     ):
 
@@ -72,10 +74,10 @@ class ThisTestClass(BasePyfakefsTestClass):
             # Not real code, just 1000 empty lines:
             contents="\n" * 1000,
         )
-        mock_get_curr_py_exec.return_value = PythonExecutable.py_exec_deps_updated
+        mock_get_stride.return_value = StateStride.stride_deps_updated
 
-        mock_state_py_exec_deps_updated_reached.return_value = (
-            PythonExecutable.py_exec_deps_updated
+        mock_state_stride_deps_updated_reached.return_value = (
+            StateStride.stride_deps_updated
         )
 
         mock_state_proto_code_file_abs_path_inited.return_value = (
@@ -111,17 +113,19 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{Bootstrapper_state_proto_code_file_abs_path_inited.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_py_exec_deps_updated_reached.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_stride_deps_updated_reached.__name__}.eval_own_state"
     )
-    @patch(f"{primer_kernel.__name__}.EnvContext.get_curr_py_exec")
+    @patch(
+        f"{primer_kernel.__name__}.{EnvContext.__name__}.{EnvContext.get_stride.__name__}"
+    )
     @patch(
         f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
     )
     def test_import_error_when_protoprimer_is_missing(
         self,
         mock_state_input_run_mode_arg_loaded,
-        mock_get_curr_py_exec,
-        mock_state_py_exec_deps_updated_reached,
+        mock_get_stride,
+        mock_state_stride_deps_updated_reached,
         mock_state_proto_code_file_abs_path_inited,
         mock_is_venv,
     ):
@@ -130,7 +134,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             self.env_ctx,
             EnvState.state_proto_code_updated.name,
         )
-        mock_get_curr_py_exec.return_value = PythonExecutable.py_exec_deps_updated
+        mock_get_stride.return_value = StateStride.stride_deps_updated
 
         fake_path = "/fake/path"
         self.fs.create_file(fake_path)

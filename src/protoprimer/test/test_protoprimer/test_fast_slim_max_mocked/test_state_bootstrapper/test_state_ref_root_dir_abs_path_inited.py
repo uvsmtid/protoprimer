@@ -8,13 +8,12 @@ from local_test.mock_verifier import assert_parent_states_mocked
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
-    Bootstrapper_state_proto_code_file_abs_path_inited,
     Bootstrapper_state_primer_conf_file_data_loaded,
+    Bootstrapper_state_proto_code_file_abs_path_inited,
     ConfField,
     EnvContext,
     EnvState,
     RunMode,
-    SyntaxArg,
 )
 
 

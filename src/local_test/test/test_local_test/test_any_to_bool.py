@@ -2,8 +2,8 @@ import argparse
 
 import pytest
 
-from local_test.name_assertion import assert_test_module_name_embeds_str
 from local_test.case_condition import any_to_bool
+from local_test.name_assertion import assert_test_module_name_embeds_str
 
 
 def test_relationship():

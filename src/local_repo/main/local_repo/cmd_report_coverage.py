@@ -8,7 +8,7 @@ from local_repo.sub_proc_util import get_command_code
 logger = logging.getLogger()
 
 
-def main():
+def custom_main():
     """
     See also:
     .github/workflows/cover.yaml
@@ -47,4 +47,4 @@ def init_arg_parser():
 
 
 if __name__ == "__main__":
-    main()
+    custom_main()

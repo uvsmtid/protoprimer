@@ -4,8 +4,8 @@ import logging
 
 from neoprimer.venv_shell import Bootstrapper_state_activated_venv_shell_started
 from protoprimer.primer_kernel import (
-    EnvContext,
     app_main,
+    EnvContext,
 )
 
 logger = logging.getLogger()

@@ -48,6 +48,11 @@ class StateName(enum.Enum):
     This enum re-lists all items from the `EnvState` enum with metadata to verify their naming.
     """
 
+    state_input_py_exec_var_loaded = StateMeta(
+        EnvState.state_input_py_exec_var_loaded,
+        NameCategory.category_named_value,
+    )
+
     state_input_stderr_log_level_var_loaded = StateMeta(
         EnvState.state_input_stderr_log_level_var_loaded,
         NameCategory.category_named_value,
@@ -93,11 +98,6 @@ class StateName(enum.Enum):
         NameCategory.category_state_mutation,
     )
 
-    state_input_py_exec_var_loaded = StateMeta(
-        EnvState.state_input_py_exec_var_loaded,
-        NameCategory.category_named_value,
-    )
-
     state_input_start_id_var_loaded = StateMeta(
         EnvState.state_input_start_id_var_loaded,
         NameCategory.category_named_value,
@@ -108,8 +108,8 @@ class StateName(enum.Enum):
         NameCategory.category_path_value_deprecated,
     )
 
-    state_py_exec_arbitrary_reached = StateMeta(
-        EnvState.state_py_exec_arbitrary_reached,
+    state_stride_py_arbitrary_reached = StateMeta(
+        EnvState.state_stride_py_arbitrary_reached,
         NameCategory.category_python_exec,
     )
 
@@ -213,8 +213,8 @@ class StateName(enum.Enum):
         NameCategory.category_state_mutation,
     )
 
-    state_py_exec_required_reached = StateMeta(
-        EnvState.state_py_exec_required_reached,
+    state_stride_py_required_reached = StateMeta(
+        EnvState.state_stride_py_required_reached,
         NameCategory.category_python_exec,
     )
 
@@ -223,14 +223,9 @@ class StateName(enum.Enum):
         NameCategory.category_state_mutation,
     )
 
-    state_py_exec_venv_reached = StateMeta(
-        EnvState.state_py_exec_venv_reached,
+    state_stride_py_venv_reached = StateMeta(
+        EnvState.state_stride_py_venv_reached,
         NameCategory.category_python_exec,
-    )
-
-    state_app_starter_invoked = StateMeta(
-        EnvState.state_app_starter_invoked,
-        NameCategory.category_state_mutation,
     )
 
     state_protoprimer_package_installed = StateMeta(
@@ -243,8 +238,8 @@ class StateName(enum.Enum):
         NameCategory.category_state_mutation,
     )
 
-    state_py_exec_deps_updated_reached = StateMeta(
-        EnvState.state_py_exec_deps_updated_reached,
+    state_stride_deps_updated_reached = StateMeta(
+        EnvState.state_stride_deps_updated_reached,
         NameCategory.category_python_exec,
     )
 
@@ -253,8 +248,8 @@ class StateName(enum.Enum):
         NameCategory.category_state_mutation,
     )
 
-    state_py_exec_src_updated_reached = StateMeta(
-        EnvState.state_py_exec_src_updated_reached,
+    state_stride_src_updated_reached = StateMeta(
+        EnvState.state_stride_src_updated_reached,
         NameCategory.category_python_exec,
     )
 

@@ -7,8 +7,8 @@ from neoprimer.pre_commit import (
     Bootstrapper_state_pre_commit_configured,
 )
 from protoprimer.primer_kernel import (
-    EnvContext,
     app_main,
+    EnvContext,
 )
 
 logger = logging.getLogger()

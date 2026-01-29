@@ -73,8 +73,8 @@ class EnvVarName(enum.Enum):
         EnvVar.var_PROTOPRIMER_PACKAGE_DRIVER,
         NameCategory.category_name_only,
     )
-    var_PROTOPRIMER_TEST_MODE = EnvVarMeta(
-        EnvVar.var_PROTOPRIMER_TEST_MODE,
+    var_PROTOPRIMER_MOCKED_RESTART = EnvVarMeta(
+        EnvVar.var_PROTOPRIMER_MOCKED_RESTART,
         NameCategory.category_name_only,
     )
 

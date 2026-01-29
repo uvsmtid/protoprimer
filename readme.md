@@ -13,49 +13,277 @@ TODO: Use links to FC/UC docs under `./doc` (when ready) from this readme to nav
 
 # `protoprimer`
 
-*   An **app** to bootstrap (not only) `python` projects in a single click (from fresh repo clone).
-*   A **lib** to switch `python` runtime into `venv` directly (avoiding intermediate `shell` wrappers).
-
-## TL;DR
-
-The `protoprimer` provides a **single-touch** pure `python` bootstrap (without details confusing users):
+Want (dev) users to run software from your `git` repo after a single arg-less command?
 
 ```sh
 ./prime
 ```
 
-It switches to the required `python` version and creates a `venv` specific to the environment of that repo clone:
+`protoprimer` is a copy-able environment bootstrap script for any `git` repo avoiding fragile `shell` scripts.
+
+<!--
+
+TODO: Put it somewhere:
+
+This project implements a copy-able init script (to be hosted by other `git` repos) enabling:
+*   **`env_bootrapper`** for `python` projects in a **single click** (from fresh repo clone)
+*   **`app_starter`** to launch `some_main` function under required `python` version in an isolated `venv`
+
+-->
+
+<a id="protoprimer-motivation"></a>
+
+## Intro: why avoid `shell`?
+
+One reason:\
+Your company does **not** test `shell`-scripts.
+
+Not convinced?
+
+<details>
+<summary>This list can be **extended**:</summary>
+
+*   :x: non-testable (test code for `shell`-scripts is close to none)
+*   :x: no error detection by default (forget `set -e` in one script and false success spreads to others)
+*   :x: cryptic "write-only" syntax (e.g. `echo "${file_path##*/}"` vs `os.path.basename(file_path)`)
+*   :x: subtle error-prone pitfalls (e.g. `shopt`-modified behavior)
+*   :x: unpredictable local/user overrides (e.g. `PATH` points to unexpected binaries, etc.)
+*   :x: less cross-platform than it seems even on *nixes (e.g. different command behaviors: macOS vs Linux)
+*   :x: no stack traces on failure (encourages excessive logging)
+*   :x: limited native data structures (no nested ones)
+*   :x: no modularity (code larger than one-page-one-file is cumbersome)
+*   :x: no external libraries/packages
+*   :x: let one `shell`-script grow, and it is hard to stop (applies to many languages – so, choose wisely)
+*   :x: slow
+*   ...
+
+</details>
+
+In short, `shell` is a very poor choice of language for evolving software.
+
+Now, let's imagine: people dropped `shell` and picked `python` to automate...
+
+### Problem: one does not simply avoid `shell`
+
+Every time some `repo.git` is cloned,
+it has to be prepared/bootstrapped/primed to make many things ready.
+
+Because `python` is **not** ready yet,\
+people resort to `shell`-scripts (again!) to make it ready.
+
+<div style="text-align:center;">
+    <a href="https://www.youtube.com/shorts/gNYgeAxCK3M">
+        <img src="https://img.youtube.com/vi/gNYgeAxCK3M/0.jpg" alt="youtube">
+    </a>
+</div>
+
+Ultimately, why not use `python` to take care of itself?
+
+### Solution: immediately runnable `python`
+
+Eliminate dependency on `shell`:\
+➖ instead of relying on the presence of a `shell` executable to bootstrap `python`\
+➕ rely on a `python` executable (of any version) to bootstrap the required `python` version
+
+See the difference:
+
+```mermaid
+---
+config:
+  look: handDrawn
+  theme: neutral
+---
+flowchart LR;
+    heavy_minus["➖"];
+    shell_exec["any<br>`shell`<br>executable"];
+    subgraph "sh"
+        sh_entry_script["entry script<br>like<br>`prime`"];
+        embedded_code["re-invented<br>ad-hoc<br>non-modular<br>`shell`-script"];
+    end
+
+    heavy_plus["➕"];
+    python_exec["any<br>`python`<br>executable"];
+    subgraph "py"
+        py_entry_script["entry script<br>like<br>`prime`"];
+        proto_code["tested<br>bootstrap code<br>from<br>`protoprimer`"];
+    end
+
+    external_exec["other<br>(external)<br>executables"];
+
+    invis_block[ ];
+
+    heavy_minus ~~~ shell_exec;
+    shell_exec --runs--> sh_entry_script;
+    sh_entry_script --with--> embedded_code;
+
+    heavy_plus ~~~ python_exec;
+    python_exec --runs--> py_entry_script;
+    py_entry_script --with--> proto_code;
+
+    embedded_code --invokes--> external_exec;
+    proto_code --invokes--> external_exec;
+
+    external_exec ~~~ invis_block;
+
+    style heavy_minus fill:none,stroke:none;
+    style heavy_plus fill:none,stroke:none;
+
+    style invis_block fill:none,stroke:none;
+```
+
+### Outcome: trivial outside, necessary inside
+
+`protoprimer` wraps the details into a **single-touch**, self-contained, no-deps, no-args, cross-platform, ...\
+command started by an **arbitrary** `python` version to bootstrap the required state without user confusion:
+
+```sh
+./prime
+```
+
+Under the hood, `protoprimer` handles the non-trivial steps
+until the control is passed to the client code
+which customizes and completes the bootstrap process for any target environment:
 *   dev or prod
 *   local or cloud
 *   Alice or Bob
 *   ...
 
+<a id="protoprimer-alternatives"></a>
+
+## Alternatives
+
+The most direct alternative is [`pyapp`][pyapp_project] - unlike that:
+*   `protoprimer` does not build a binary, it stays text copy (`python` code) helper within a repo
+*   `protoprimer` supports multiple apps launched via entry scripts in the same isolated `venv`
+*   `protoprimer` explicitly separates (slower) `env_bootstrapper` and (faster) `app_starter` use cases
+
+Ultimately, `protoprimer` delegates to (rather than replaces) standard tools wrapping unnecessary invocation details.
+
+### Why not `uv`?
+
+Yes, `protoprimer` relies on `uv`.\
+Yet, it runs `python` first.
+
+<details>
+<summary>details</summary>
+
+Relying on `python` first:
+*   is more robust for the **single-touch** bootstrap (`python` is more ubiquitous than `uv`)
+*   uses **easily modifiable** local _interpreted_ `python` code to wrap calls to any _compiled_ binary (like `uv`)
+
+In short, `uv` is one of many other executables (external to `python`) employable for bootstrapping.
+
+Also, `uv` is hardly **single-touch** without a wrapper:
+*   Its binary has to be prepared. How? A wrapper.
+*   Its args have to be provided. How? A wrapper.
+*   Full bootstrap requires a few `uv` invocations. How? A wrapper.
+*   Users want these details hidden. How? A wrapper.
+
+It is **not** ideal to re-invent such wrappers for every project.
+
+</details>
+
 <a id="protoprimer-getting-started"></a>
 
 ## Quick start
 
-For the simplest case, see [instant_python_bootstrap][instant_python_bootstrap]:
+For the trivial case, see [instant_python_bootstrap][instant_python_bootstrap].
 
-*   [Copy][initial_copy] (one time):
+The single script [`proto_kernel.py`][local_proto_kernel.py] to host in the client repo is called "proto code":
+
+```mermaid
+---
+config:
+  look: handDrawn
+  theme: neutral
+---
+graph LR;
+
+    install_link["**1 x install:**"]
+    github_web["proto code<br>from github.com<br>\`protoprimer\` repo"]
+
+    bootstrap_link["**N x bootstrap:**"];
+    pypi_web["proto code<br>from pypi.org<br>\`protoprimer\` package"]
+
+    client_repo["client repo<br>with<br>**own copy**<br>of<br>proto code"];
+
+    install_link ~~~ github_web;
+    github_web --manual copy--> client_repo;
+
+    bootstrap_link ~~~ pypi_web;
+    pypi_web --auto update--> client_repo;
+
+    style install_link fill:none,stroke:none;
+    style bootstrap_link fill:none,stroke:none;
+```
+
+*   Copy (one time):
+
+    Commit your **own copy** next to `pyproject.toml`:
 
     ```
     ./
-    ├── prime            <--- own copy
+    ├── proto_kernel.py    <--- own copy
     ├── pyproject.toml
     └── *
     ```
 
-    Make your **own copy** of [`proto_kernel.py`][local_proto_kernel.py] to install it named as `prime`.
-
-    Later it can be renamed, (with some configuration) moved under any directory, used by other scripts.
-
-    For now, save it as `prime` next to your `pyproject.toml`, commit the copy to be part of the repo.
-
 *   Run (any time):
 
     ```sh
-    ./prime
+    ./proto_kernel.py
     ```
+
+*   Use an **entry script** (wrapper) to launch `some_main` function:
+
+    ```py
+    # ./some_script.py
+    # ...
+    proto_kernel.app_starter("some_module:some_main")
+    ```
+
+    ```sh
+    ./some_script.py
+    ```
+
+    This entry script is run by whatever `python` version is searchible in the `PATH`,\
+    but `some_main` function is executed by the required `python` version from the isolated `venv`.
+
+## What are "proto code" and "entry scripts"?
+
+*   **"proto code"** is the own copy of [`proto_kernel.py`][local_proto_kernel.py] to be hosted.
+
+*   **"entry scripts"** are those files which rely on "proto code" to switch to `venv`.
+
+<details>
+<summary>details</summary>
+
+This is **necessarily confusing**:
+*   The actual file name for "proto code" can be almost anything.
+*   Name `proto_kernel.py` is the default.
+*   It is a **copy** of `protoprimer.primer_kernel` module.
+*   So, all three ("proto code", `proto_kernel.py`, `primer_kernel`) are nearly the same thing, but different:
+    *   "proto code" is conceptual (always the same name)
+    *   `proto_kernel.py` depends on the host repo choice (not always the same)
+    *   `primer_kernel` is intentionally different from `proto_kernel.py` (to avoid confusing imports)
+
+Only a **single** "proto code" copy is needed per repo to be used by all "entry scripts".
+
+The own copy for this repo is stored in path:
+
+```sh
+./cmd/proto_code/proto_kernel.py
+```
+
+With some config, the copy can be moved (under any directory, under any name).
+
+Although it is possible to run the copy directly, it is more flexible to use entry scripts (wrappers):
+
+*   Entry script [`./prime`][local_prime] relies on `env_bootstrapper` function (to prepare the `venv`).
+
+*   Entry scripts in [`./cmd`][cmd_dir] dir mostly rely on `app_starter` function (to start code from the `venv`).
+
+</details>
 
 ## Typical usage
 
@@ -83,158 +311,47 @@ Review effective config:
 ./prime config
 ```
 
-## Intro
-
-Let's say, [forced by the motivation][protoprimer_motivation],
-people dropped `shell` and picked `python` to automate, but...
-
-### Common problem
-
-Every time some `repo.git` is cloned,
-it has to be prepared/bootstrapped/primed to make `python` ready.
-
-[![youtube](https://img.youtube.com/vi/gNYgeAxCK3M/0.jpg)](https://www.youtube.com/shorts/gNYgeAxCK3M)
-
-Because `python` is **not** ready yet,\
-`shell`-scripts are used to work around that. Again!
-
-Ultimately, can we stick to `python`-only tools for `python`?
-
-### General idea
-
-Replace the role of the `shell`:\
-➖ instead of relying on the presence of a `shell` executable to bootstrap `python`\
-➕ rely on a `python` executable (of any version) to bootstrap the required `python` version
-
-```mermaid
----
-config:
-  look: handDrawn
-  theme: neutral
----
-flowchart LR;
-    heavy_minus["➖"];
-    shell_exec["any<br>`shell`<br>executable"];
-    subgraph "sh"
-        sh_entry_script["entry script<br>like<br>`prime`"];
-        embedded_code["ad-hoc<br>non-modular<br>bootstrap<br>code"];
-    end
-
-    heavy_plus["➕"];
-    python_exec["any<br>`python`<br>executable"];
-    subgraph "py"
-        py_entry_script["entry script<br>like<br>`prime`"];
-        proto_code["bootstrap<br>code<br>in<br>`protoprimer`"];
-    end
-
-    external_exec["other<br>(external)<br>executables"];
-
-    invis_block[ ];
-
-    heavy_minus ~~~ shell_exec;
-    shell_exec --runs--> sh_entry_script;
-    sh_entry_script --uses--> embedded_code;
-
-    heavy_plus ~~~ python_exec;
-    python_exec --runs--> py_entry_script;
-    py_entry_script --uses--> proto_code;
-
-    embedded_code --invokes--> external_exec;
-    proto_code --invokes--> external_exec;
-
-    external_exec ~~~ invis_block;
-
-    style heavy_minus fill:none,stroke:none;
-    style heavy_plus fill:none,stroke:none;
-
-    style invis_block fill:none,stroke:none;
-```
-
-### Approach: min outside, max inside
-
-Wrap the details into a **single-touch**, self-contained, no-deps, no-args, cross-platform, ...\
-command started by an **arbitrary** `python` version to bootstrap the required one:
+Bootstrap into an interactive `shell` with activated `venv`:
 
 ```sh
-./prime
+./cmd/venv_shell
 ```
 
-Under the hood, the `protoprimer` handles the non-trivial steps
-(switching `python` executable, supporting different environments, ...)
-to transition runtime state and pass the control
-to the client code which customizes and completes the bootstrap process.
+See how `env_bootstrapper` works via this entry script:
 
-### Why not `uv`?
+```py
+# ./cmd/env_bootstrapper:
+# ...
+proto_kernel.env_bootstrapper("local_doc.cmd_env_bootstrapper:custom_main")
+```
 
-Yes, the `protoprimer` relies on `uv`.\
-Yet, it runs `python` first.
+See how `app_starter` works via this entry script:
 
-<details>
-<summary>details</summary>
+```py
+# ./cmd/app_starter:
+# ...
+proto_kernel.app_starter("local_doc.cmd_app_starter:custom_main")
+```
 
-Relying on `python` first:
-*   is more robust for the **single-touch** bootstrap (`python` is more ubiquitous than `uv`)
-*   uses **easily modifiable** local _interpreted_ `python` code to wrap calls to any _compiled_ binary (like `uv`)
+<!--
 
-In short, `uv` is one of many other executables (external to `python`) employable for bootstrapping.
+TODO: Put it somewhere
 
-Also, `uv` is hardly **single-touch** without a wrapper:
-*   Its binary has to be prepared. How? A wrapper.
-*   Its args have to be provided. How? A wrapper.
-*   Full bootstrap requires a few `uv` invocations. How? A wrapper.
-*   Users want these details hidden. How? A wrapper.
-
-It is **not** ideal to re-invent such wrappers for every project.
-
-</details>
-
-### Project focus
-
-The `protoprimer` **covers the details** for these two use cases:
-*   **app**: bootstrapping required `python` version and `venv` by arbitrary `python` from the `PATH`
-*   **lib**: executing `python` scripts directly (without explicit `venv` activation and `shell` wrappers)
-
-... and exposes API-s to reuse its internals (e.g. config discovery, DAG, ...).
-
-<a id="protoprimer-motivation"></a>
-
-## Motivation: avoiding `shell` scripts
-
-In short, `shell` is a **deceptive trap**:
-1.  it makes interactive typing concise and ubiquitous for CLI (everyone knows it)
-2.  yet it is a very poor lang for evolving software
-
-<details>
-<summary>details</summary>
-
-Why avoid `shell`?
-*   :x: non-testable (test code for `shell`-scripts is close to none)
-*   :x: subtle error-prone pitfalls (e.g. no halt on error by default, `shopt`-modified behavior)
-*   :x: unpredictable local/user overrides (e.g. `PATH` points to non-standard external binaries like `ls`)
-*   :x: cryptic "write-only" syntax (e.g. `echo "${file_path##*/}"` vs `os.path.basename(file_path)`)
-*   :x: no stack traces on failure (encourages excessive logging)
-*   :x: limited native data structures (no nested ones)
-*   :x: no modularity (code larger than one-page-one-file is cumbersome)
-*   :x: no external libraries/packages
-*   :x: slower
-*   ...
-
-**The main obstacle** to overcome all that is to make any alternative as immediately runnable as `shell`.
-
-</details>
-
-The `protoprimer` targets `python` as the alternative:
-*   `python` occupies the equivalent niche (as `shell`)
+`protoprimer` targets `python` as the alternative:
+*   `python` occupies almost the equivalent niche (as `shell`) for scripting
 *   `python` maintains vast mind share (as `shell`)
-*   `protoprimer` enables **single-touch** `python` code execution using:
-    *   required `python` version
-    *   required dependencies in `venv`
+
+-->
+
+<!--
+
+TODO: Put it somewhere: or is it already obvious?
 
 ## Why `proto*`?
 
 `proto` = early, when nothing exists yet.
 
-The `protoprimer` design aims to survive with **minimal pre-conditions**:
+`protoprimer` design aims to survive with **minimal pre-conditions**:
 
 *   no pre-installed dependencies
 *   no pre-initialized `venv`
@@ -242,7 +359,13 @@ The `protoprimer` design aims to survive with **minimal pre-conditions**:
 *   no special shell config
 *   no user CLI args to guess (by default)
 *   ...
-*   just naked `python` (relatively omnipresent) + [a stand-alone copy][FT_90_65_67_62.proto_code.md] of the `protoprimer`.
+*   just naked `python` (relatively omnipresent) + [a stand-alone copy][FT_90_65_67_62.proto_code.md] of `protoprimer`.
+
+-->
+
+<!--
+
+TODO: Put it somewhere: or is it unnecessary?
 
 ## What are the primary features?
 
@@ -269,97 +392,7 @@ This mono repo is roughly divided into:
 *   **hard**: **pre**-`venv` runtime is the scope of `protoprimer` (the main focus)
 *   **easy**: **post**-`venv` runtime is the scope of `neoprimer` (useful but not essential)
 
-## The stand-alone copy: proto code
-
-Installing the `protoprimer` as a package would introduce the "chicken & egg" problem
-because that package requires `venv` (which is the very thing the `protoprimer` is supposed to create).
-
-Instead, the (proto code) script is stand-alone (a copy from this repo),
-but it auto-updates itself from the `protoprimer` package when `venv` is ready:
-*   install = 1 x copy
-*   bootstrap = N x update
-
-```mermaid
----
-config:
-  look: handDrawn
-  theme: neutral
----
-graph TD;
-
-    copy_link["**1 x copy**"]
-    github_web["from<br>github.com"]
-    protoprimer_repo["from<br>\`protoprimer\` repo"];
-
-    update_link["**N x update**"];
-    pypi_web["from<br>pypi.org"]
-    protoprimer_package["from<br>\`protoprimer\` package"];
-
-    client_repo["client repo<br>**own_copy**"];
-
-    copy_link ~~~ github_web;
-    github_web ---> protoprimer_repo;
-    protoprimer_repo --install--> client_repo;
-
-    update_link ~~~ pypi_web;
-    pypi_web ---> protoprimer_package;
-    protoprimer_package --bootstrap--> client_repo;
-```
-
-## Distinction: proto code vs entry script
-
-*   ["proto code"][FT_90_65_67_62.proto_code.md] ~ `./cmd/proto_code/proto_kernel.py`
-
-    A copy of [`proto_kernel.py`][local_proto_kernel.py] stored in the client target repo.
-
-    Only a **single** copy of the proto code script is needed per repo.
-
-*   ["entry script"][FT_75_87_82_46.entry_script.md] ~ `./prime`
-
-    Any script that relies on the proto code to run.
-
-    There can be **many** entry scripts per repo.
-
-    In this repo:
-
-    *   there are scripts like `./prime` using proto code as an **app** (bootstrap).
-
-    *   there are many others in [cmd][cmd] dir using proto code as a **lib**.
-
-### Example (this repo): proto code vs entry script
-
-Instead of the `path/to/own_copy`, this repo uses this specific path for **proto code**:
-
-```sh
-./cmd/proto_code/proto_kernel.py --help
-```
-
-However, for brevity, the rest of this doc uses this **entry script** (which invokes the proto code):
-
-```sh
-./prime --help
-```
-
-<a id="protoprimer-install-copy"></a>
-
-## Installation: initial 1 x copy
-
-*   Get the `own_copy` of the [`proto_kernel.py`][local_proto_kernel.py]:
-
-    ```sh
-    git fetch --depth 1 https://github.com/uvsmtid/protoprimer main
-    git show FETCH_HEAD:cmd/proto_code/proto_kernel.py > path/to/own_copy
-    chmod u+x path/to/own_copy
-    ```
-
-    Feel free to move the `own_copy` under any name or any path within the target client repo.
-
-*   Commit the `own_copy` to make it immediately available on the repo clone:
-
-    ```sh
-    git add path/to/own_copy
-    git commit -m 'Copy `proto_kernel.py` from `protoprimer`'
-    ```
+-->
 
 <a id="protoprimer-effective-config"></a>
 
@@ -377,7 +410,7 @@ The output uses dynamically generated annotations to explain the purpose of each
 
 ## Configuration: global vs local
 
-The `protoprimer` supports:
+`protoprimer` supports:
 *   `gconf` ~ global config: shared between all environments (repo clones)
 *   `lconf` ~ local config: private to specific environments (repo clones)
 
@@ -420,7 +453,7 @@ but all its possible targets in `dst/*` have to be versioned.
 
 ## Filesystem layout: configuration leaps
 
-The `protoprimer` supports any filesystem layout for client repos.
+`protoprimer` supports any filesystem layout for client repos.
 
 To discover the config files within the filesystem, it uses the concept of "config leap" - see:
 
@@ -491,7 +524,7 @@ Eventually, based on the target client repo requirements, it must become:
 *   specific `python` version
 *   executed from the initialized `venv` (with all dependencies)
 
-To achieve this, the `protoprimer` switches `python` executables in a multi-staged bootstrap sequence:
+To achieve this, `protoprimer` switches `python` executables in a multi-staged bootstrap sequence:
 
 ```sh
 ./prime -v
@@ -505,7 +538,11 @@ TODO: To support Windows, `os.execve` will have to be changed to use `subprocess
 
 ## Reproducible `venv`: version pinning
 
-To make bootstrap reproducible for any target env, the `protoprimer` supports version pinning (locking):
+<!--
+TODO: Explain that it is delegated to tools lie `pip` or `uv`.
+-->
+
+To make bootstrap reproducible for any target env, `protoprimer` supports version pinning (locking):
 *   the actual dependencies are specified in the individual [pyproject.toml][pyproject.toml] per project
 *   the versions are constrained by [constraints.txt][constraints.txt] managed for selected env (for "local config")
 
@@ -529,6 +566,10 @@ To control the dependency versions, spec them inside the [pyproject.toml][pyproj
 TODO: UC_52_87_82_92.conditional_auto_update.md: update when disabling auto-update is possible.
 -->
 
+<!--
+
+TODO: Combine this section with "proto code" and "entry scripts".
+
 ## Delegation to client code
 
 The bootstrap uses an extensible [DAG][DAG_wiki] to reach a specific state with all its dependencies.
@@ -542,16 +583,23 @@ which:
 *   auto-updates the copy within the client repo (to be available on repo clone)
 *   eventually passes control back to trigger additional client-specific steps
 
+-->
+
 <!--
+
 ## How to extend and customize it?
 
-TODO: FT_93_57_03_75.app_vs_lib.md: Explain examples `./cmd/hello_world_via_app` and `./cmd/hello_world_via_lib`
+TODO: FT_93_57_03_75.app_vs_lib.md: Explain examples `./cmd/env_bootstrapper` and `./cmd/app_starter`
 
 -->
 
+<!--
+
+TODO: Remove the section in this form. Add a section about support for monorepos.
+
 ## This repo directory structure: monorepo with related projects
 
-Each subdirectory of [src][src] directory contains related sub-projects (with `pyproject.toml` files):
+Each subdirectory of [`./src`][src_dir] directory contains related sub-projects (with `pyproject.toml` files):
 *   [protoprimer][protoprimer] addresses running `python` code before `venv` is fully configured
 *   [neoprimer][neoprimer] contains extensions with code useful to run after `venv` is fully configured
 *   non-releasable for this repo:
@@ -559,9 +607,13 @@ Each subdirectory of [src][src] directory contains related sub-projects (with `p
     *   [local_test][local_test] test-related helpers
     *   [local_doc][local_doc] documentation-related helpers
 
+-->
+
 ---
 
 [readme.md]: readme.md
+
+[pyapp_project]: https://github.com/ofek/pyapp
 
 [local_proto_kernel.py]: cmd/proto_code/proto_kernel.py
 [local_primer_kernel.py]: src/protoprimer/main/protoprimer/primer_kernel.py
@@ -574,8 +626,8 @@ Each subdirectory of [src][src] directory contains related sub-projects (with `p
 [protoprimer]: src/protoprimer
 [neoprimer]: src/neoprimer
 
-[src]: src
-[cmd]: cmd
+[src_dir]: src
+[cmd_dir]: cmd
 
 [FT_90_65_67_62.proto_code.md]: doc/feature_topic/FT_90_65_67_62.proto_code.md
 [FT_75_87_82_46.entry_script.md]: doc/feature_topic/FT_75_87_82_46.entry_script.md
@@ -592,9 +644,9 @@ Each subdirectory of [src][src] directory contains related sub-projects (with `p
 [constraints.txt]: dst/default_env/constraints.txt
 [pyproject.toml]: src/neoprimer/pyproject.toml
 
+[protoprimer_alternatives]: #protoprimer-alternatives
 [getting_started]: #protoprimer-getting-started
 [protoprimer_motivation]: #protoprimer-motivation
-[initial_copy]: #protoprimer-install-copy
 [effective_config]: #protoprimer-effective-config
 [subsequent_upgrade]: #protoprimer-upgrade-project
 

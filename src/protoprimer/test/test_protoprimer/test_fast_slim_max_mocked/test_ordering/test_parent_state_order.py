@@ -23,6 +23,7 @@ class TestParentStateOrdering:
     It also helps to keep line history consistent with ordering.
     """
 
+    # noinspection PyPep8Naming
     def test_EnvState_parent_order(self) -> None:
         # given:
         env_context_instance = EnvContext()

@@ -3,10 +3,10 @@ from __future__ import annotations
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer.primer_kernel import (
     ConfField,
+    EnvState,
     RenderConfigVisitor,
     RootNode_derived,
     TermColor,
-    EnvState,
 )
 
 

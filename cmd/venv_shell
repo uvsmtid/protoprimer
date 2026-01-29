@@ -19,7 +19,5 @@ if __name__ == "__main__":
 
     os.environ["PROTOPRIMER_DO_INSTALL"] = str(False)
 
-    proto_kernel.run_main(
-        "neoprimer.cmd_venv_shell",
-        "custom_main",
-    )
+    # TODO: Do we really want to start `venv_shell` as `env_bootstrapper` (not as `app_starter`)?
+    proto_kernel.env_bootstrapper("neoprimer.cmd_venv_shell:custom_main")

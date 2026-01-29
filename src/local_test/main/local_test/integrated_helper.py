@@ -66,7 +66,7 @@ def create_plain_proto_code(
         next_stat = curr_stat.st_mode | stat.S_IXUSR | stat.S_IRUSR | stat.S_IWUSR
         os.chmod(proto_kernel_abs_path, next_stat)
 
-    # TODO: Instead of returning, set `EvnVar.var_PROTOPRIMER_PROTO_CODE` in case of `EnvVar.var_PROTOPRIMER_TEST_MODE`.
+    # TODO: Instead of returning, set `EvnVar.var_PROTOPRIMER_PROTO_CODE` in case of `EnvVar.var_PROTOPRIMER_MOCKED_RESTART`.
     #       This would allow running `test_slow_integrated` wrapped in mocks set by `test_fast_slim_max_mocked`
     #       without modifications.
     return proto_kernel_abs_path

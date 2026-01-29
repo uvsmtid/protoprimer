@@ -11,6 +11,7 @@
 
 import argparse
 import enum
+import logging
 import os
 import re
 import shutil
@@ -22,9 +23,22 @@ from local_repo.sub_proc_util import (
     get_command_output,
 )
 
+logger: logging.Logger = logging.getLogger()
+
+
+def custom_main():
+    publish_package(
+        # TODO: FT_93_57_03_75.app_vs_lib.md: Get ref_root from `protoprimer` config (as a lib) instead:
+        client_dir=os.path.dirname(
+            os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
+        )
+    )
+
 
 def publish_package(client_dir: str):
     parsed_args = init_arg_parser().parse_args()
+
+    logger.info(f"client_dir: {client_dir}")
 
     _publish_package(
         client_dir=client_dir,
