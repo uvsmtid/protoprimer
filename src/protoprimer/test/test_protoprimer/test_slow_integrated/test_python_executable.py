@@ -18,7 +18,7 @@ from protoprimer.primer_kernel import (
     ConfConstInput,
     ConfConstPrimer,
     EnvVar,
-    PythonExecutable,
+    StateStride,
 )
 
 
@@ -190,7 +190,7 @@ def test_python_from_required_venv(
         text=True,
         check=True,
         env={
-            EnvVar.var_PROTOPRIMER_PY_EXEC.value: PythonExecutable.py_exec_venv.name,
+            EnvVar.var_PROTOPRIMER_PY_EXEC.value: StateStride.stride_py_venv.name,
             EnvVar.var_PROTOPRIMER_PROTO_CODE.value: str(proto_code_file),
         },
     )

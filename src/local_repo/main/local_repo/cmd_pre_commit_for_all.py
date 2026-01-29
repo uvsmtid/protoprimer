@@ -8,7 +8,7 @@ import sys
 logger = logging.getLogger()
 
 
-def main():
+def custom_main():
 
     parsed_args = init_arg_parser().parse_args()
 
@@ -43,4 +43,4 @@ def init_arg_parser():
 
 
 if __name__ == "__main__":
-    main()
+    custom_main()

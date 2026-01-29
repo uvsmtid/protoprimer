@@ -4,7 +4,7 @@ from local_repo.sub_proc_util import (
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from local_test.repo_tree import change_to_known_repo_path
 
-file_name = "hello_world_via_lib"
+file_name = "env_bootstrapper"
 
 
 # noinspection PyPep8Naming
@@ -15,4 +15,4 @@ def test_relationship():
 def test_cmd_run():
 
     with change_to_known_repo_path("."):
-        get_command_code(f"./cmd/{file_name}")
+        get_command_code(f"./cmd/{file_name} -h")

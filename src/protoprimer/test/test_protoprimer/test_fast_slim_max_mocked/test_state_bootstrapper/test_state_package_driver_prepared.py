@@ -12,9 +12,9 @@ from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     Bootstrapper_state_local_cache_dir_abs_path_inited,
-    Bootstrapper_state_required_python_file_abs_path_inited,
     Bootstrapper_state_package_driver_inited,
     Bootstrapper_state_reinstall_triggered,
+    Bootstrapper_state_required_python_file_abs_path_inited,
     EnvContext,
     EnvState,
     PackageDriverPip,

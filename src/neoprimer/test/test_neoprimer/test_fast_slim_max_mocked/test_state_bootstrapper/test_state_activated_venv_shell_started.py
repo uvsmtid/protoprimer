@@ -1,7 +1,7 @@
 import argparse
 import logging
 import os
-from unittest.mock import patch, ANY
+from unittest.mock import patch
 
 from local_test.base_test_class import BasePyfakefsTestClass
 from local_test.mock_verifier import assert_parent_states_mocked
@@ -14,10 +14,11 @@ from protoprimer.primer_kernel import (
     Bootstrapper_state_default_stderr_log_handler_configured,
     Bootstrapper_state_local_cache_dir_abs_path_inited,
     Bootstrapper_state_local_venv_dir_abs_path_inited,
-    Bootstrapper_state_py_exec_src_updated_reached,
+    Bootstrapper_state_stride_src_updated_reached,
     ConfConstGeneral,
+    EnvContext,
     ParsedArg,
-    PythonExecutable,
+    StateStride,
 )
 
 
@@ -48,18 +49,20 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{Bootstrapper_state_local_cache_dir_abs_path_inited.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_py_exec_src_updated_reached.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_stride_src_updated_reached.__name__}.eval_own_state"
     )
     @patch(f"{primer_kernel.__name__}.write_text_file")
-    @patch(f"{primer_kernel.__name__}.EnvContext.get_curr_py_exec")
+    @patch(
+        f"{primer_kernel.__name__}.{EnvContext.__name__}.{EnvContext.get_stride.__name__}"
+    )
     @patch(f"{primer_kernel.__name__}.os.execve")
     @patch.dict(os.environ, {"SHELL": "/path/to/bash"})
     def test_start_bash_shell_with_activated_venv(
         self,
         mock_execve,
-        mock_get_curr_py_exec,
+        mock_get_stride,
         mock_write_text_file,
-        mock_state_py_exec_src_updated_reached,
+        mock_state_stride_src_updated_reached,
         mock_state_local_cache_dir_abs_path_inited,
         mock_state_local_venv_dir_abs_path_inited,
         mock_state_default_stderr_log_handler_configured,
@@ -86,10 +89,10 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.fs.create_dir(mock_client_dir)
         os.chdir(mock_client_dir)
 
-        mock_get_curr_py_exec.return_value = PythonExecutable.py_exec_src_updated
+        mock_get_stride.return_value = StateStride.stride_src_updated
 
-        mock_state_py_exec_src_updated_reached.return_value = (
-            PythonExecutable.py_exec_src_updated
+        mock_state_stride_src_updated_reached.return_value = (
+            StateStride.stride_src_updated
         )
 
         mock_state_local_venv_dir_abs_path_inited.return_value = mock_client_dir
@@ -137,18 +140,20 @@ source {expected_venv_activate_path}
         f"{primer_kernel.__name__}.{Bootstrapper_state_local_cache_dir_abs_path_inited.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_py_exec_src_updated_reached.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_stride_src_updated_reached.__name__}.eval_own_state"
     )
     @patch(f"{primer_kernel.__name__}.write_text_file")
-    @patch(f"{primer_kernel.__name__}.EnvContext.get_curr_py_exec")
+    @patch(
+        f"{primer_kernel.__name__}.{EnvContext.__name__}.{EnvContext.get_stride.__name__}"
+    )
     @patch(f"{primer_kernel.__name__}.os.execve")
     @patch.dict(os.environ, {"SHELL": "/path/to/zsh"})
     def test_start_zsh_shell_with_activated_venv(
         self,
         mock_execve,
-        mock_get_curr_py_exec,
+        mock_get_stride,
         mock_write_text_file,
-        mock_state_py_exec_src_updated_reached,
+        mock_state_stride_src_updated_reached,
         mock_state_local_cache_dir_abs_path_inited,
         mock_state_local_venv_dir_abs_path_inited,
         mock_state_default_stderr_log_handler_configured,
@@ -175,10 +180,10 @@ source {expected_venv_activate_path}
         self.fs.create_dir(mock_client_dir)
         os.chdir(mock_client_dir)
 
-        mock_get_curr_py_exec.return_value = PythonExecutable.py_exec_src_updated
+        mock_get_stride.return_value = StateStride.stride_src_updated
 
-        mock_state_py_exec_src_updated_reached.return_value = (
-            PythonExecutable.py_exec_src_updated
+        mock_state_stride_src_updated_reached.return_value = (
+            StateStride.stride_src_updated
         )
 
         mock_state_local_venv_dir_abs_path_inited.return_value = mock_client_dir

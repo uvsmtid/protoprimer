@@ -1,13 +1,14 @@
-from unittest.mock import patch
 import os
+from unittest.mock import patch
+
 import pytest
 
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer.primer_kernel import (
-    ShellDriverZsh,
-    ShellType,
     _get_shell_driver,
     ShellDriverBash,
+    ShellDriverZsh,
+    ShellType,
 )
 
 

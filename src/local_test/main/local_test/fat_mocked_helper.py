@@ -11,9 +11,9 @@ from pyfakefs.fake_filesystem import FakeFilesystem
 import protoprimer
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
+    app_main,
     ConfConstGeneral,
     EnvVar,
-    app_main,
     PackageDriverBase,
     PackageDriverPip,
     PackageDriverUv,
@@ -34,7 +34,7 @@ def fat_mock_wrapper(fs: FakeFilesystem):
     """
 
     mock_env = {
-        EnvVar.var_PROTOPRIMER_TEST_MODE.value: "",
+        EnvVar.var_PROTOPRIMER_MOCKED_RESTART.value: "",
     }
 
     # Allow copying the real file in `integrated_test`:
@@ -118,7 +118,7 @@ def run_primer_main(
     cli_args: list[str],
 ) -> None:
     """
-    Run the `proto_code` in different test modes (depending on `EnvVar.var_PROTOPRIMER_TEST_MODE`):
+    Run the `proto_code` in different test modes (depending on `EnvVar.var_PROTOPRIMER_MOCKED_RESTART`):
     1.  in a separate process (integrated)
     2.  in a mock for the current process test runner
 
@@ -129,7 +129,7 @@ def run_primer_main(
     *   all the env preparations have already been done by the test case
     """
 
-    if EnvVar.var_PROTOPRIMER_TEST_MODE.value in os.environ:
+    if EnvVar.var_PROTOPRIMER_MOCKED_RESTART.value in os.environ:
         proto_kernel_abs_path = cli_args[0]
         os.environ[EnvVar.var_PROTOPRIMER_PROTO_CODE.value] = proto_kernel_abs_path
         _run_primer_main_in_mock_env(cli_args)
@@ -204,7 +204,7 @@ def assert_editable_install(
     project_dir_abs_path: pathlib.Path,
     package_name: str,
 ):
-    if os.environ.get(EnvVar.var_PROTOPRIMER_TEST_MODE.value, None) is None:
+    if os.environ.get(EnvVar.var_PROTOPRIMER_MOCKED_RESTART.value, None) is None:
         egg_info_dir = project_dir_abs_path / f"{package_name}.egg-info"
         assert os.path.isdir(egg_info_dir)
     else:

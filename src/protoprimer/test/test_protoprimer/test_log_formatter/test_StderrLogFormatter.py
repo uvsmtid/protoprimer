@@ -1,11 +1,13 @@
 import datetime
 import logging
-from unittest.mock import Mock
 
 from freezegun import freeze_time
 
 from local_test.name_assertion import assert_test_module_name_embeds_str
-from protoprimer.primer_kernel import StderrLogFormatter, TermColor
+from protoprimer.primer_kernel import (
+    StderrLogFormatter,
+    TermColor,
+)
 
 
 def test_relationship():

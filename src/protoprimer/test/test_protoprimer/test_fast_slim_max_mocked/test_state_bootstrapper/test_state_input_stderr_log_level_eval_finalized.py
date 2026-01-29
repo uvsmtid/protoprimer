@@ -16,12 +16,12 @@ from protoprimer.primer_kernel import (
     Bootstrapper_state_args_parsed,
     Bootstrapper_state_default_stderr_log_handler_configured,
     Bootstrapper_state_input_stderr_log_level_var_loaded,
+    ConfConstInput,
     EnvContext,
     EnvState,
     EnvVar,
     StderrLogFormatter,
     SyntaxArg,
-    ConfConstInput,
 )
 
 
