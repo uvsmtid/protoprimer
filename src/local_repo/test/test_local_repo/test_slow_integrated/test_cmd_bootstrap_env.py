@@ -25,6 +25,9 @@ from protoprimer.proto_generator import generate_entry_script_content
 
 
 def test_bootstrap_env(tmp_path: pathlib.Path):
+    """
+    Runs local custom `./cmd/bootstrap_env` and checks that it installs `pre-commit`.
+    """
 
     # given:
 
