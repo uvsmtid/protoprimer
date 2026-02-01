@@ -1,3 +1,4 @@
+import os
 import pathlib
 import subprocess
 import sys
@@ -149,11 +150,14 @@ def test_python_from_required_venv(
         ref_root_abs_path / ConfConstClient.default_default_env_dir_rel_path
     )
 
+    base_python_executable = os.path.join(
+        sys.base_prefix, ConfConstGeneral.file_rel_path_venv_python
+    )
     create_conf_env_file(
         ref_root_abs_path,
         conf_env_dir_abs_path,
         project_dir_abs_path,
-        python_abs_path=sys.executable,
+        python_abs_path=base_python_executable,
         venv_dir_rel_path=required_venv_dir_rel_path,
     )
 
@@ -189,8 +193,4 @@ def test_python_from_required_venv(
         capture_output=False,
         text=True,
         check=True,
-        env={
-            EnvVar.var_PROTOPRIMER_PY_EXEC.value: StateStride.stride_py_venv.name,
-            EnvVar.var_PROTOPRIMER_PROTO_CODE.value: str(proto_code_file),
-        },
     )
