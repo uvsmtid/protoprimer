@@ -13,20 +13,20 @@ TODO: Use links to FC/UC docs under `./doc` (when ready) from this readme to nav
 
 # `protoprimer`
 
-Want (dev) users to run software from your `git` repo after a single arg-less command?
+Want your dev-users to run software from a `git` repo after a single-run, arg-less bootstrap?
 
 ```sh
 ./prime
 ```
 
-`protoprimer` is a copy-able environment bootstrap script for any `git` repo avoiding fragile `shell` scripts.
+`protoprimer` avoids fragile `shell` scripts with a copyable standalone `python` bootstrap script.
 
 <!--
 
 TODO: Put it somewhere:
 
 This project implements a copy-able init script (to be hosted by other `git` repos) enabling:
-*   **`env_bootrapper`** for `python` projects in a **single click** (from fresh repo clone)
+*   **`env_bootstrapper`** for `python` projects in a **single click** (from fresh repo clone)
 *   **`app_starter`** to launch `some_main` function under required `python` version in an isolated `venv`
 
 -->
@@ -36,24 +36,25 @@ This project implements a copy-able init script (to be hosted by other `git` rep
 ## Intro: why avoid `shell`?
 
 One reason:\
-Your company does **not** test `shell`-scripts.
-
-Not convinced?
+Your org does **not** test `shell` scripts.
 
 <details>
-<summary>This list can be **extended**:</summary>
+<summary>Let's expand:</summary>
 
-*   :x: non-testable (test code for `shell`-scripts is close to none)
-*   :x: no error detection by default (forget `set -e` in one script and false success spreads to others)
+`shell` scripts:
+
+*   :x: (unit) test code for `shell` scripts is close to none
+*   :x: no default error detection (forget `set -e` and undetected disaster bubbles through the call stack)
 *   :x: cryptic "write-only" syntax (e.g. `echo "${file_path##*/}"` vs `os.path.basename(file_path)`)
-*   :x: subtle error-prone pitfalls (e.g. `shopt`-modified behavior)
-*   :x: unpredictable local/user overrides (e.g. `PATH` points to unexpected binaries, etc.)
-*   :x: less cross-platform than it seems even on *nixes (e.g. different command behaviors: macOS vs Linux)
-*   :x: no stack traces on failure (encourages excessive logging)
+*   :x: subtle, error-prone pitfalls (e.g. `shopt` nuances)
+*   :x: unpredictable local/user overrides (e.g. `PATH` points to unexpected binaries)
+*   :x: less cross-platform than it seems even on *nixes (e.g. divergent command behaviors: macOS vs Linux)
+*   :x: no stack traces on failure (encourages noisy, excessive logging instead)
 *   :x: limited native data structures (no nested ones)
 *   :x: no modularity (code larger than one-page-one-file is cumbersome)
-*   :x: no external libraries/packages
-*   :x: let one `shell`-script grow, and it is hard to stop (applies to many languages – so, choose wisely)
+*   :x: no external libraries/packages (no enforce-able dependencies)
+*   :x: when `shell` scripts multiply, they inter-depend for reuse (by `source`-ing) into entangled mess
+*   :x: being so unpredictable makes `shell` scripts high security risks
 *   :x: slow
 *   ...
 
@@ -69,7 +70,7 @@ Every time some `repo.git` is cloned,
 it has to be prepared/bootstrapped/primed to make many things ready.
 
 Because `python` is **not** ready yet,\
-people resort to `shell`-scripts (again!) to make it ready.
+people resort to `shell` scripts (again!) to make it ready.
 
 <div style="text-align:center;">
     <a href="https://www.youtube.com/shorts/gNYgeAxCK3M">
@@ -98,7 +99,7 @@ flowchart LR;
     shell_exec["any<br>`shell`<br>executable"];
     subgraph "sh"
         sh_entry_script["entry script<br>like<br>`prime`"];
-        embedded_code["re-invented<br>ad-hoc<br>non-modular<br>`shell`-script"];
+        embedded_code["re-invented<br>ad-hoc<br>non-modular<br>`shell` script"];
     end
 
     heavy_plus["➕"];
@@ -153,8 +154,8 @@ which customizes and completes the bootstrap process for any target environment:
 ## Alternatives
 
 The most direct alternative is [`pyapp`][pyapp_project] - unlike that:
-*   `protoprimer` does not build a binary, it stays text copy (`python` code) helper within a repo
-*   `protoprimer` supports multiple apps launched via entry scripts in the same isolated `venv`
+*   `protoprimer` does not build a binary, it is a text copy helper (`python` code) within a repo
+*   `protoprimer` supports multiple entry scripts (to launch multiple apps) from the same isolated `venv`
 *   `protoprimer` explicitly separates (slower) `env_bootstrapper` and (faster) `app_starter` use cases
 
 Ultimately, `protoprimer` delegates to (rather than replaces) standard tools wrapping unnecessary invocation details.
