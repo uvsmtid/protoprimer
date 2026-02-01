@@ -36,7 +36,7 @@ from typing import (
 
 # The release process ensures that content in this file matches the version below while tagging the release commit
 # (otherwise, if the file comes from a different commit, the version is irrelevant):
-__version__ = "0.6.0"
+__version__ = "0.6.1"
 
 logger: logging.Logger = logging.getLogger()
 
@@ -49,13 +49,12 @@ DataValueType = TypeVar("DataValueType")
 def app_main(
     configure_env_context: typing.Callable[[], EnvContext] | None = None,
 ):
-
+    # Avoid `NameError` (not associated with a value in enclosing scope) for the last `except`:
+    env_ctx = EnvContext()
     try:
         ensure_min_python_version()
 
-        if configure_env_context is None:
-            env_ctx = EnvContext()
-        else:
+        if configure_env_context is not None:
             # See UC_10_80_27_57.extend_DAG.md:
             env_ctx = configure_env_context()
 
@@ -864,6 +863,7 @@ source {self.get_venv_activate_script_abs_path(venv_abs_path)}
             self.shell_env_vars,
         )
 
+        # When `os.execve` is mocked:
         return 0
 
 
@@ -3594,6 +3594,7 @@ class Bootstrapper_state_stride_py_arbitrary_reached(
         super().__init__(
             env_ctx=env_ctx,
             parent_states=[
+                EnvState.state_input_run_mode_arg_loaded.name,
                 EnvState.state_input_start_id_var_loaded.name,
             ],
             state_name=if_none(
@@ -3608,15 +3609,21 @@ class Bootstrapper_state_stride_py_arbitrary_reached(
 
         state_stride_py_arbitrary_reached: StateStride = StateStride.stride_py_arbitrary
 
+        state_input_run_mode_arg_loaded: RunMode = self.eval_parent_state(
+            EnvState.state_input_run_mode_arg_loaded.name
+        )
+
         if self.env_ctx.has_stride_reached(
             next_stride=state_stride_py_arbitrary_reached,
         ):
             return self.env_ctx.set_max_stride(state_stride_py_arbitrary_reached)
 
-        if os.environ.get(EnvVar.var_PROTOPRIMER_PROTO_CODE.value, None) is not None:
+        if (
+            os.environ.get(EnvVar.var_PROTOPRIMER_PROTO_CODE.value, None) is not None
+        ) and state_input_run_mode_arg_loaded == RunMode.mode_start:
             # The only reason for `EnvState.state_stride_py_arbitrary_reached`
             # is to obtain `proto_code` abs path in `EnvState.state_proto_code_file_abs_path_inited`.
-            # Skip `python` switching as the env var already set:
+            # Skip `python` switching for `RunMode.mode_start` as the env var already set:
             return self.env_ctx.set_max_stride(state_stride_py_arbitrary_reached)
 
         state_input_start_id_var_loaded: str = self.eval_parent_state(
@@ -3673,6 +3680,7 @@ class Bootstrapper_state_proto_code_file_abs_path_inited(AbstractCachingStateNod
         super().__init__(
             env_ctx=env_ctx,
             parent_states=[
+                EnvState.state_input_run_mode_arg_loaded.name,
                 EnvState.state_input_proto_code_file_abs_path_var_loaded.name,
                 EnvState.state_stride_py_arbitrary_reached.name,
             ],
@@ -3688,6 +3696,10 @@ class Bootstrapper_state_proto_code_file_abs_path_inited(AbstractCachingStateNod
 
         state_stride_py_arbitrary_reached: StateStride = self.eval_parent_state(
             EnvState.state_stride_py_arbitrary_reached.name
+        )
+
+        state_input_run_mode_arg_loaded: RunMode = self.eval_parent_state(
+            EnvState.state_input_run_mode_arg_loaded.name,
         )
 
         state_input_proto_code_file_abs_path_var_loaded: str | None = (
@@ -3712,8 +3724,23 @@ class Bootstrapper_state_proto_code_file_abs_path_inited(AbstractCachingStateNod
                 os.environ.get(EnvVar.var_PROTOPRIMER_MOCKED_RESTART.value, None)
                 is None
             ):
-                assert not is_venv()
-                state_proto_code_file_abs_path_inited = os.path.abspath(__file__)
+                if state_input_run_mode_arg_loaded != RunMode.mode_start:
+                    if (
+                        self.env_ctx.get_stride().value
+                        > StateStride.stride_py_unknown.value
+                    ):
+                        assert (
+                            self.env_ctx.get_stride().value
+                            < StateStride.stride_py_venv.value
+                        )
+                        assert not is_venv()
+                    state_proto_code_file_abs_path_inited = os.path.abspath(__file__)
+                else:
+                    # `RunMode.mode_start` relies on the `EnvVar.var_PROTOPRIMER_PROTO_CODE`:
+                    assert state_input_proto_code_file_abs_path_var_loaded is not None
+                    state_proto_code_file_abs_path_inited = (
+                        state_input_proto_code_file_abs_path_var_loaded
+                    )
             else:
                 # `EnvVar.var_PROTOPRIMER_MOCKED_RESTART`: rely on the path given in env var:
                 assert state_input_proto_code_file_abs_path_var_loaded is not None
@@ -6747,12 +6774,14 @@ def if_none(
 
 
 def is_venv() -> bool:
-    # TODO: assert VIRTUAL_ENV or not assert?
+    # NOTE: `VIRTUAL_ENV` is not asserted because it is only set for `shell` by `source`-ing `venv/bin/activate`.
+    #       Most of the commands avoid using `shell` (that is the goal for `protoprimer`).
+    # NOTE: Restriction on `field_required_python_file_abs_path`: it should not lead to `venv/bin/python`.
+    #       It should use `sys.base_prefix` - see `get_path_to_base_python`.
+    # TODO: Maybe it is possible to convert `field_required_python_file_abs_path` to its base version automatically?
     if sys.prefix != sys.base_prefix:
-        # assert os.environ["VIRTUAL_ENV"]
         return True
     else:
-        # assert not os.environ["VIRTUAL_ENV"]
         return False
 
 

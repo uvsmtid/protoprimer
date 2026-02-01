@@ -13,20 +13,20 @@ TODO: Use links to FC/UC docs under `./doc` (when ready) from this readme to nav
 
 # `protoprimer`
 
-Want (dev) users to run software from your `git` repo after a single arg-less command?
+Want your dev-users to run software from a `git` repo after a single-run, arg-less bootstrap?
 
 ```sh
 ./prime
 ```
 
-`protoprimer` is a copy-able environment bootstrap script for any `git` repo avoiding fragile `shell` scripts.
+`protoprimer` avoids fragile `shell` scripts with a copyable standalone `python` bootstrap script.
 
 <!--
 
 TODO: Put it somewhere:
 
 This project implements a copy-able init script (to be hosted by other `git` repos) enabling:
-*   **`env_bootrapper`** for `python` projects in a **single click** (from fresh repo clone)
+*   **`env_bootstrapper`** for `python` projects in a **single click** (from fresh repo clone)
 *   **`app_starter`** to launch `some_main` function under required `python` version in an isolated `venv`
 
 -->
@@ -36,40 +36,53 @@ This project implements a copy-able init script (to be hosted by other `git` rep
 ## Intro: why avoid `shell`?
 
 One reason:\
-Your company does **not** test `shell`-scripts.
-
-Not convinced?
+Your org does **not** test `shell` scripts.
 
 <details>
-<summary>This list can be **extended**:</summary>
+<summary>Let's expand:</summary>
 
-*   :x: non-testable (test code for `shell`-scripts is close to none)
-*   :x: no error detection by default (forget `set -e` in one script and false success spreads to others)
+<br>
+
+`shell` scripts:
+
+*   :x: (unit) test code for `shell` scripts is close to none
+*   :x: no default error detection (forget `set -e` and undetected disaster bubbles through the call stack)
 *   :x: cryptic "write-only" syntax (e.g. `echo "${file_path##*/}"` vs `os.path.basename(file_path)`)
-*   :x: subtle error-prone pitfalls (e.g. `shopt`-modified behavior)
-*   :x: unpredictable local/user overrides (e.g. `PATH` points to unexpected binaries, etc.)
-*   :x: less cross-platform than it seems even on *nixes (e.g. different command behaviors: macOS vs Linux)
-*   :x: no stack traces on failure (encourages excessive logging)
+*   :x: subtle, error-prone pitfalls (e.g. `shopt` nuances)
+*   :x: unpredictable local/user overrides (e.g. `PATH` points to unexpected binaries)
+*   :x: less cross-platform than it seems even on *nixes (e.g. divergent command behaviors: macOS vs Linux)
+*   :x: no stack traces on failure (encourages noisy, excessive logging instead)
 *   :x: limited native data structures (no nested ones)
 *   :x: no modularity (code larger than one-page-one-file is cumbersome)
-*   :x: no external libraries/packages
-*   :x: let one `shell`-script grow, and it is hard to stop (applies to many languages – so, choose wisely)
+*   :x: no external libraries/packages (no enforce-able dependencies)
+*   :x: when `shell` scripts multiply, they inter-depend for reuse (by `source`-ing) into entangled mess
+*   :x: being so unpredictable makes `shell` scripts high security risks
 *   :x: slow
 *   ...
 
 </details>
 
-In short, `shell` is a very poor choice of language for evolving software.
+In short, `shell` is a very poor language choice for evolving software.
 
-Now, let's imagine: people dropped `shell` and picked `python` to automate...
+Now, let's imagine that people dropped `shell` and picked `python` to automate.
 
-### Problem: one does not simply avoid `shell`
+<details>
+<summary>We have:</summary>
+
+<br>
+
+*   almost the equivalent niche for scripting (as `shell`)
+*   maintains vast mind share (as `shell`)
+
+</details>
+
+### Problem 1: one does not simply avoid `shell`
 
 Every time some `repo.git` is cloned,
 it has to be prepared/bootstrapped/primed to make many things ready.
 
 Because `python` is **not** ready yet,\
-people resort to `shell`-scripts (again!) to make it ready.
+people resort to `shell` scripts (again!) to make it ready.
 
 <div style="text-align:center;">
     <a href="https://www.youtube.com/shorts/gNYgeAxCK3M">
@@ -77,9 +90,10 @@ people resort to `shell`-scripts (again!) to make it ready.
     </a>
 </div>
 
+\
 Ultimately, why not use `python` to take care of itself?
 
-### Solution: immediately runnable `python`
+### Solution 1: immediately runnable `python`
 
 Eliminate dependency on `shell`:\
 ➖ instead of relying on the presence of a `shell` executable to bootstrap `python`\
@@ -98,7 +112,7 @@ flowchart LR;
     shell_exec["any<br>`shell`<br>executable"];
     subgraph "sh"
         sh_entry_script["entry script<br>like<br>`prime`"];
-        embedded_code["re-invented<br>ad-hoc<br>non-modular<br>`shell`-script"];
+        embedded_code["re-invented<br>ad-hoc<br>non-modular<br>`shell` script"];
     end
 
     heavy_plus["➕"];
@@ -131,10 +145,84 @@ flowchart LR;
     style invis_block fill:none,stroke:none;
 ```
 
-### Outcome: trivial outside, necessary inside
+## Next: why not `uv`?
 
-`protoprimer` wraps the details into a **single-touch**, self-contained, no-deps, no-args, cross-platform, ...\
-command started by an **arbitrary** `python` version to bootstrap the required state without user confusion:
+Yes, `protoprimer` relies on `uv`.\
+But, it runs `python` first (then delegates to `uv`).
+
+### Problem 2: audience
+
+Distinguish these:
+*   **dev-authors**: deeply undeerstand their repo and the tools in use (like `uv`)
+*   **dev-users**: strangers to the repo, new to `python` ecosystem, but can improve some stuff
+
+`protoprimer`:
+*   does not obstruct **dev-authors** to use whatever they want
+*   but makes **dev-users** happier without details
+
+<details>
+<summary>Details:</summary>
+
+<br>
+
+Relying on `python` first:
+*   is more robust for the **single-touch** bootstrap (`python` is more ubiquitous than `uv`)
+*   uses **easily modifiable** local _interpreted_ `python` code to wrap calls to any _compiled_ binary (like `uv`)
+
+In short, `uv` is one of many other executables (external to `python`) employable for bootstrapping.
+
+Also, `uv` is hardly **arg-less** and **single-touch** without a `shell` wrapper:
+*   Its binary has to be prepared. A `shell` wrapper?
+*   Its args have to be provided. A `shell` wrapper?
+*   Full bootstrap requires a few `uv` invocations. A `shell` wrapper?
+*   Project-specific steps require more than `uv`. A `shell` wrapper?
+*   Users want these details hidden. A `shell` wrapper?
+
+It is **not** ideal to re-invent such wrappers for every project.
+
+</details>
+
+### Solution 2: use arg-less and single-touch wrappers
+
+Feel the difference:
+
+| `protoprimer` | `uv`                                  |
+|---------------|---------------------------------------|
+| `./bootstrap` | `uv run python -m module_a.bootstrap` |
+| `./app`       | `uv run python -m module_b.app`       |
+
+<a id="protoprimer-alternatives"></a>
+
+## Alternatives
+
+The most direct alternative is [`pyapp`][pyapp_project].
+
+<details>
+<summary>Some practical differences:</summary>
+
+<br>
+
+*   `protoprimer` does not build a binary, it is a text wrapper (`python` code) within a repo
+*   `protoprimer` targets multiple entry scripts (to launch multiple apps) from the same isolated `venv`
+*   `protoprimer` explicitly separates (slower) `env_bootstrapper` and (faster) `app_starter` use cases
+
+</details>
+
+Ultimately, `protoprimer` helps **dev-users** to run apps directly from a repo (using "front or back doors").
+
+## Summary
+
+<details>
+<summary>Trivial outside, necessarily complex inside:</summary>
+
+<br>
+
+`protoprimer` wraps the details into simple commands started by an **arbitrary** `python` version to bootstrap the required state without user confusion:
+*   one-shot
+*   self-contained
+*   no-deps
+*   no-args
+*   cross-platform
 
 ```sh
 ./prime
@@ -148,38 +236,12 @@ which customizes and completes the bootstrap process for any target environment:
 *   Alice or Bob
 *   ...
 
-<a id="protoprimer-alternatives"></a>
+Any other app can be started quicker in the prepared isolated environment:
 
-## Alternatives
-
-The most direct alternative is [`pyapp`][pyapp_project] - unlike that:
-*   `protoprimer` does not build a binary, it stays text copy (`python` code) helper within a repo
-*   `protoprimer` supports multiple apps launched via entry scripts in the same isolated `venv`
-*   `protoprimer` explicitly separates (slower) `env_bootstrapper` and (faster) `app_starter` use cases
-
-Ultimately, `protoprimer` delegates to (rather than replaces) standard tools wrapping unnecessary invocation details.
-
-### Why not `uv`?
-
-Yes, `protoprimer` relies on `uv`.\
-Yet, it runs `python` first.
-
-<details>
-<summary>details</summary>
-
-Relying on `python` first:
-*   is more robust for the **single-touch** bootstrap (`python` is more ubiquitous than `uv`)
-*   uses **easily modifiable** local _interpreted_ `python` code to wrap calls to any _compiled_ binary (like `uv`)
-
-In short, `uv` is one of many other executables (external to `python`) employable for bootstrapping.
-
-Also, `uv` is hardly **single-touch** without a wrapper:
-*   Its binary has to be prepared. How? A wrapper.
-*   Its args have to be provided. How? A wrapper.
-*   Full bootstrap requires a few `uv` invocations. How? A wrapper.
-*   Users want these details hidden. How? A wrapper.
-
-It is **not** ideal to re-invent such wrappers for every project.
+```sh
+./app_1
+./app_2
+```
 
 </details>
 
@@ -256,7 +318,9 @@ graph LR;
 *   **"entry scripts"** are those files which rely on "proto code" to switch to `venv`.
 
 <details>
-<summary>details</summary>
+<summary>Details:</summary>
+
+<br>
 
 This is **necessarily confusing**:
 *   The actual file name for "proto code" can be almost anything.
@@ -335,16 +399,6 @@ proto_kernel.app_starter("local_doc.cmd_app_starter:custom_main")
 
 <!--
 
-TODO: Put it somewhere
-
-`protoprimer` targets `python` as the alternative:
-*   `python` occupies almost the equivalent niche (as `shell`) for scripting
-*   `python` maintains vast mind share (as `shell`)
-
--->
-
-<!--
-
 TODO: Put it somewhere: or is it already obvious?
 
 ## Why `proto*`?
@@ -374,7 +428,9 @@ The single primary feature is handling the set of early bootstrap steps:
 *   being **very boring** to re-invent
 
 <details>
-<summary>details</summary>
+<summary>Details:</summary>
+
+<br>
 
 Those early bootstrap steps:
 *   distinguish (A) global repo-wide and (B) local environment-specific configuration
@@ -393,6 +449,15 @@ This mono repo is roughly divided into:
 *   **easy**: **post**-`venv` runtime is the scope of `neoprimer` (useful but not essential)
 
 -->
+
+## Mono-repo support
+
+`protoprimer` allows multiple projects under the same repo (multiple `pyproject.toml` files).
+
+For example, each subdirectory of [`./src`][src_dir] directory this repo itself contains related sub-projects:
+*   [protoprimer][protoprimer] addresses running `python` code before `venv` is fully configured
+*   [neoprimer][neoprimer] contains extensions with code useful to run after `venv` is fully configured
+*   ...
 
 <a id="protoprimer-effective-config"></a>
 
@@ -539,7 +604,7 @@ TODO: To support Windows, `os.execve` will have to be changed to use `subprocess
 ## Reproducible `venv`: version pinning
 
 <!--
-TODO: Explain that it is delegated to tools lie `pip` or `uv`.
+TODO: Explain that it is delegated to tools like `pip` or `uv`.
 -->
 
 To make bootstrap reproducible for any target env, `protoprimer` supports version pinning (locking):
@@ -590,22 +655,6 @@ which:
 ## How to extend and customize it?
 
 TODO: FT_93_57_03_75.app_vs_lib.md: Explain examples `./cmd/env_bootstrapper` and `./cmd/app_starter`
-
--->
-
-<!--
-
-TODO: Remove the section in this form. Add a section about support for monorepos.
-
-## This repo directory structure: monorepo with related projects
-
-Each subdirectory of [`./src`][src_dir] directory contains related sub-projects (with `pyproject.toml` files):
-*   [protoprimer][protoprimer] addresses running `python` code before `venv` is fully configured
-*   [neoprimer][neoprimer] contains extensions with code useful to run after `venv` is fully configured
-*   non-releasable for this repo:
-    *   [local_repo][local_repo] support scripts
-    *   [local_test][local_test] test-related helpers
-    *   [local_doc][local_doc] documentation-related helpers
 
 -->
 

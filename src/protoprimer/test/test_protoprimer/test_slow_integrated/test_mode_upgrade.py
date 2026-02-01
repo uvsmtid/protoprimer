@@ -84,7 +84,7 @@ def test_upgrade(tmp_path: pathlib.Path):
     run_primer_main(
         [
             str(proto_kernel_abs_path),
-            "prime",
+            RunMode.mode_prime.value,
             SyntaxArg.arg_v,
             SyntaxArg.arg_v,
         ]

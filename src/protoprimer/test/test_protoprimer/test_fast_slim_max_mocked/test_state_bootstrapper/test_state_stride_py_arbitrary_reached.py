@@ -11,6 +11,7 @@ from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     Bootstrapper_state_input_py_exec_var_loaded,
     Bootstrapper_state_input_start_id_var_loaded,
+    Bootstrapper_state_input_run_mode_arg_loaded,
     ConfConstInput,
     EnvContext,
     EnvState,
@@ -45,7 +46,11 @@ def test_relationship():
 @patch(
     f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.eval_own_state"
 )
+@patch(
+    f"{primer_kernel.__name__}.{Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
+)
 def test_py_exec_stride_py_unknown_in_venv(
+    mock_state_input_run_mode_arg_loaded,
     mock_state_input_start_id_var_loaded,
     mock_switch_python,
     mock_get_path_to_base_python,
@@ -108,7 +113,11 @@ def test_py_exec_stride_py_unknown_in_venv(
 @patch(
     f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.eval_own_state"
 )
+@patch(
+    f"{primer_kernel.__name__}.{Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
+)
 def test_py_exec_stride_py_unknown_not_in_venv(
+    mock_state_input_run_mode_arg_loaded,
     mock_state_input_start_id_var_loaded,
     mock_switch_python,
     mock_get_path_to_base_python,

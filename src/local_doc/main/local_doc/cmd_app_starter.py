@@ -3,7 +3,7 @@ from __future__ import annotations
 
 
 def custom_main():
-    print("hello world")
+    print("Hello, world!")
 
 
 if __name__ == "__main__":
