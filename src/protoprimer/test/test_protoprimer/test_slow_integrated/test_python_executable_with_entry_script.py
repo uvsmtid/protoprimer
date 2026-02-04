@@ -5,7 +5,6 @@ import subprocess
 import sys
 import venv
 
-import local_doc
 from local_doc import (
     cmd_app_starter,
     cmd_env_bootstrapper,
@@ -24,9 +23,7 @@ from protoprimer.primer_kernel import (
     ConfConstGeneral,
     ConfConstInput,
     ConfConstPrimer,
-    EnvVar,
     RunMode,
-    StateStride,
 )
 from protoprimer.proto_generator import generate_entry_script_content
 
@@ -67,7 +64,7 @@ def test_python_from_arbitrary_venv_with_app_starter(
     # === create `pyproject.toml`
 
     project_dir_abs_path = ref_root_abs_path / test_pyproject_src_dir_rel_path
-    create_test_pyproject_toml(project_dir_abs_path, [local_doc.__name__])
+    create_test_pyproject_toml(project_dir_abs_path)
 
     # === create `ConfLeap.leap_env` / `default_env`
 
@@ -199,7 +196,7 @@ def test_python_from_required_venv_with_app_starter(
     # === create `pyproject.toml`
 
     project_dir_abs_path = ref_root_abs_path / test_pyproject_src_dir_rel_path
-    create_test_pyproject_toml(project_dir_abs_path, ["local_doc"])
+    create_test_pyproject_toml(project_dir_abs_path)
 
     # === create `ConfLeap.leap_env` / `default_env`
 

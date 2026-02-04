@@ -13,29 +13,24 @@ TODO: Use links to FC/UC docs under `./doc` (when ready) from this readme to nav
 
 # `protoprimer`
 
-Want your dev-users to run software from a `git` repo after a single-run, arg-less bootstrap?
+Want your users to run software straight from a `git` repo with just one command and zero arguments?
 
 ```sh
 ./prime
 ```
 
-`protoprimer` avoids fragile `shell` scripts with a copyable standalone `python` bootstrap script.
-
-<!--
-
-TODO: Put it somewhere:
-
-This project implements a copy-able init script (to be hosted by other `git` repos) enabling:
-*   **`env_bootstrapper`** for `python` projects in a **single click** (from fresh repo clone)
-*   **`app_starter`** to launch `some_main` function under required `python` version in an isolated `venv`
-
--->
+`protoprimer` is the bootstrapper that eliminates the growth of fragile `shell` scripts:
+*   not a binary but a text = a copyable standalone `python` script to live inside a hosting repo
+*   starts with any `python` version, finishes in isolated `venv` with pinned dependencies
+*   `env_bootstrapper` API follows an extensible DAG to set up things in one shot
+*   `app_starter` API starts `some_main` function without explicit `venv` activation
+*   handles multiple environments with different configs
 
 <a id="protoprimer-motivation"></a>
 
-## Intro: why avoid `shell`?
+## First: why avoid `shell`?
 
-One reason:\
+Main reason:\
 Your org does **not** test `shell` scripts.
 
 <details>
@@ -64,7 +59,7 @@ Your org does **not** test `shell` scripts.
 
 In short, `shell` is a very poor language choice for evolving software.
 
-Now, let's imagine that people dropped `shell` and picked `python` to automate.
+Now, let's imagine that people abandoned `shell` and picked `python` to automate.
 
 <details>
 <summary>We have:</summary>
@@ -90,7 +85,8 @@ people resort to `shell` scripts (again!) to make it ready.
     </a>
 </div>
 
-\
+<br>
+
 Ultimately, why not use `python` to take care of itself?
 
 ### Solution 1: immediately runnable `python`
@@ -98,6 +94,12 @@ Ultimately, why not use `python` to take care of itself?
 Eliminate dependency on `shell`:\
 ➖ instead of relying on the presence of a `shell` executable to bootstrap `python`\
 ➕ rely on a `python` executable (of any version) to bootstrap the required `python` version
+
+An app started via `protoprimer` switches to `venv` - no (explicit) `activate`-tion needed:
+
+```sh
+./hello_world
+```
 
 See the difference:
 
@@ -147,18 +149,19 @@ flowchart LR;
 
 ## Next: why not `uv`?
 
-Yes, `protoprimer` relies on `uv`.\
-But, it runs `python` first (then delegates to `uv`).
+In fact, `protoprimer` relies on `uv` (optionally).\
+But, it starts as a `python` script (then bootstraps `uv` and runs `uv`).
 
 ### Problem 2: audience
 
 Distinguish these:
-*   **dev-authors**: deeply undeerstand their repo and the tools in use (like `uv`)
+*   **dev-authors**: deeply understand their repo and the tools in use (like `uv` or anything else)
 *   **dev-users**: strangers to the repo, new to `python` ecosystem, but can improve some stuff
+*   **end-users**: ...
 
 `protoprimer`:
 *   does not obstruct **dev-authors** to use whatever they want
-*   but makes **dev-users** happier without details
+*   but makes **dev-users** faster to start
 
 <details>
 <summary>Details:</summary>
@@ -182,68 +185,28 @@ It is **not** ideal to re-invent such wrappers for every project.
 
 </details>
 
-### Solution 2: use arg-less and single-touch wrappers
+### Solution 2: wrap details
 
 Feel the difference:
 
 | `protoprimer` | `uv`                                  |
 |---------------|---------------------------------------|
 | `./bootstrap` | `uv run python -m module_a.bootstrap` |
-| `./app`       | `uv run python -m module_b.app`       |
+| `./app_1`     | `uv run python -m module_b.app_1`     |
+| `./app_2`     | `uv run python -m module_c.app_2`     |
 
 <a id="protoprimer-alternatives"></a>
 
-## Alternatives
+## Last: Can one size fit all?
 
-The most direct alternative is [`pyapp`][pyapp_project].
+No. Think: generating code, downloading artifacts, ensuring security keys, configuring pre-commit linters, etc.
 
-<details>
-<summary>Some practical differences:</summary>
-
-<br>
-
-*   `protoprimer` does not build a binary, it is a text wrapper (`python` code) within a repo
-*   `protoprimer` targets multiple entry scripts (to launch multiple apps) from the same isolated `venv`
-*   `protoprimer` explicitly separates (slower) `env_bootstrapper` and (faster) `app_starter` use cases
-
-</details>
-
-Ultimately, `protoprimer` helps **dev-users** to run apps directly from a repo (using "front or back doors").
-
-## Summary
-
-<details>
-<summary>Trivial outside, necessarily complex inside:</summary>
-
-<br>
-
-`protoprimer` wraps the details into simple commands started by an **arbitrary** `python` version to bootstrap the required state without user confusion:
-*   one-shot
-*   self-contained
-*   no-deps
-*   no-args
-*   cross-platform
-
-```sh
-./prime
-```
-
-Under the hood, `protoprimer` handles the non-trivial steps
-until the control is passed to the client code
-which customizes and completes the bootstrap process for any target environment:
-*   dev or prod
+But a "seed" of `protoprimer` can grow via extensible bootstrap DAG and config for any target environment:
 *   local or cloud
 *   Alice or Bob
+*   dev or prod
+*   v1 or v2
 *   ...
-
-Any other app can be started quicker in the prepared isolated environment:
-
-```sh
-./app_1
-./app_2
-```
-
-</details>
 
 <a id="protoprimer-getting-started"></a>
 
@@ -308,7 +271,7 @@ graph LR;
     ./some_script.py
     ```
 
-    This entry script is run by whatever `python` version is searchible in the `PATH`,\
+    This entry script is run by whatever `python` version is searchable in the `PATH`,\
     but `some_main` function is executed by the required `python` version from the isolated `venv`.
 
 ## What are "proto code" and "entry scripts"?
