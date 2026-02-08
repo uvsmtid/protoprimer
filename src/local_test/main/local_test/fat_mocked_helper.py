@@ -1,14 +1,20 @@
 import copy
+import logging
 import os
 import pathlib
 import subprocess
 import sys
-from contextlib import contextmanager
+from contextlib import contextmanager, ExitStack
 from unittest.mock import patch
+from typing import List, Optional
 
 from pyfakefs.fake_filesystem import FakeFilesystem
 
 import protoprimer
+from local_test.mock_subprocess import (
+    mock_get_python_version_by_current,
+    mock_shutil_which_python,
+)
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     app_main,
@@ -21,7 +27,14 @@ from protoprimer.primer_kernel import (
 
 
 @contextmanager
-def fat_mock_wrapper(fs: FakeFilesystem):
+def fat_mock_wrapper(
+    fs: FakeFilesystem,
+    # TODO: Consider using `pytest-subprocess` to register
+    #       different output for different invocation args
+    #       (mock more than one process invocation):
+    #       https://github.com/aklajnert/pytest-subprocess
+    proc_mock_run_stdout: Optional[str] = None,
+):
     """
     This wrapper allows running some of the `test_slow_integrated` tests as `test_fast_fat_min_mocked` ones.
 
@@ -79,7 +92,7 @@ def fat_mock_wrapper(fs: FakeFilesystem):
 
     def _mock_install_packages(
         required_python_file_abs_path: str,
-        given_packages: list[str],
+        given_packages: List[str],
     ):
         # Translate: "./venv/bin/python" -> "./venv/"
         venv_dir_abs_path = os.path.dirname(
@@ -91,31 +104,57 @@ def fat_mock_wrapper(fs: FakeFilesystem):
                 contents="# whatever",
             )
 
-    with (
-        patch("sys.exit", side_effect=_mock_exit),
-        patch("os.execv", side_effect=_mock_execv),
-        patch("os.execve", side_effect=_mock_execve),
-        patch("subprocess.check_call", return_value=0),
-        patch(
-            f"{primer_kernel.__name__}.{PackageDriverBase.__name__}.install_packages",
-            side_effect=_mock_install_packages,
-        ),
-        patch(
-            f"{protoprimer.primer_kernel.__name__}.{PackageDriverPip.__name__}._create_venv_impl",
-            side_effect=_mock_create_pip_venv,
-        ),
-        patch(
-            f"{protoprimer.primer_kernel.__name__}.{PackageDriverUv.__name__}._create_venv_impl",
-            side_effect=_mock_create_uv_venv,
-        ),
-        patch("shutil.move"),
-        patch.dict(os.environ, mock_env, clear=False),
-    ):
-        yield
+    with ExitStack() as exit_stack:
+        exit_stack.enter_context(
+            patch("shutil.which", side_effect=mock_shutil_which_python)
+        )
+        exit_stack.enter_context(patch("sys.exit", side_effect=_mock_exit))
+        exit_stack.enter_context(patch("os.execv", side_effect=_mock_execv))
+        exit_stack.enter_context(patch("os.execve", side_effect=_mock_execve))
+        exit_stack.enter_context(patch("subprocess.check_call", return_value=0))
+        if proc_mock_run_stdout is not None:
+            exit_stack.enter_context(
+                patch(
+                    "subprocess.run",
+                    return_value=subprocess.CompletedProcess(
+                        args=[], returncode=0, stdout=proc_mock_run_stdout, stderr=""
+                    ),
+                )
+            )
+        exit_stack.enter_context(
+            patch(
+                f"{primer_kernel.__name__}.{PackageDriverBase.__name__}.install_packages",
+                side_effect=_mock_install_packages,
+            )
+        )
+        exit_stack.enter_context(
+            patch(
+                f"{protoprimer.primer_kernel.__name__}.{PackageDriverPip.__name__}._create_venv_impl",
+                side_effect=_mock_create_pip_venv,
+            )
+        )
+        exit_stack.enter_context(
+            patch(
+                f"{protoprimer.primer_kernel.__name__}.{PackageDriverUv.__name__}._create_venv_impl",
+                side_effect=_mock_create_uv_venv,
+            )
+        )
+        exit_stack.enter_context(
+            patch(
+                f"{protoprimer.primer_kernel.__name__}.get_python_version",
+                side_effect=mock_get_python_version_by_current,
+            )
+        )
+        exit_stack.enter_context(patch("shutil.move"))
+        exit_stack.enter_context(patch.dict(os.environ, mock_env, clear=False))
+        try:
+            yield
+        finally:
+            clean_up_pyfakefs_file_log_handlers()
 
 
 def run_primer_main(
-    cli_args: list[str],
+    cli_args: List[str],
 ) -> None:
     """
     Run the `proto_code` in different test modes (depending on `EnvVar.var_PROTOPRIMER_MOCKED_RESTART`):
@@ -149,7 +188,7 @@ class _ExitCalled(Exception):
 
 
 def _run_primer_main_in_mock_env(
-    cli_args: list[str],
+    cli_args: List[str],
 ):
     """
     This function simulates the execution of the `proto_code` main function.
@@ -198,6 +237,27 @@ def _run_primer_main_in_mock_env(
             exec_args, exec_kwargs = e.args
             assert exec_args[0] == 0
             break
+
+
+def clean_up_pyfakefs_file_log_handlers():
+    """
+    Problem:
+    The issue is a resource lifecycle mismatch within the test environment.
+    Tests using `pyfakefs` simulate multiple application runs.
+    Each run configures a `logging.FileHandler` that writes to an in-memory file.
+    Because handlers from previous simulated runs are not being cleaned up,
+    they persist after the `pyfakefs` in-memory filesystem is destroyed.
+    These "stale" handlers later attempt to access the non-existent files, which causes an `AssertionError`.
+
+    Solution:
+    The solution is to clean up the logging.FileHandler instances created during a test
+    preventing any attempts to access the defunct fake filesystem.
+    """
+    root_logger = logging.getLogger()
+    for log_handler in root_logger.handlers[:]:
+        if isinstance(log_handler, logging.FileHandler):
+            root_logger.removeHandler(log_handler)
+            log_handler.close()
 
 
 def assert_editable_install(

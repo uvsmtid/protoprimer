@@ -3,7 +3,9 @@ import os
 import pathlib
 import shutil
 import stat
+import sys
 from pathlib import Path
+from typing import List, Union, Tuple
 
 import protoprimer
 from local_test.toml_handler import save_toml_data
@@ -74,7 +76,7 @@ def create_plain_proto_code(
 
 def create_test_pyproject_toml(
     project_dir_abs_path: pathlib.Path,
-    extra_dependencies: list[str] | None = None,
+    extra_dependencies: Union[List[str], None] = None,
 ):
     if extra_dependencies is None:
         extra_dependencies = []
@@ -197,11 +199,11 @@ def create_conf_env_file(
     ref_root_abs_path: pathlib.Path,
     conf_env_dir_abs_path: pathlib.Path,
     project_dir_abs_path: pathlib.Path,
-    python_abs_path: str | None = None,
-    venv_dir_rel_path: str | None = None,
+    python_abs_path: Union[str, None] = None,
+    venv_dir_rel_path: Union[str, None] = None,
 ) -> None:
     if python_abs_path is None:
-        python_abs_path = ConfConstEnv.default_file_abs_path_python
+        python_abs_path = sys.executable
     if venv_dir_rel_path is None:
         venv_dir_rel_path = ConfConstEnv.default_dir_rel_path_venv
 
@@ -238,7 +240,7 @@ def create_conf_env_file(
     )
 
 
-def create_min_layout(tmp_path: Path) -> tuple[Path, Path, Path]:
+def create_min_layout(tmp_path: Path) -> Tuple[Path, Path, Path]:
     """
     See "min" layout: FT_59_95_81_63.env_layout.md
     """
@@ -268,7 +270,7 @@ def create_min_layout(tmp_path: Path) -> tuple[Path, Path, Path]:
     )
 
 
-def create_max_layout(tmp_path: Path) -> tuple[Path, Path, Path]:
+def create_max_layout(tmp_path: Path) -> Tuple[Path, Path, Path]:
     """
     See "max" layout: FT_59_95_81_63.env_layout.md
     """

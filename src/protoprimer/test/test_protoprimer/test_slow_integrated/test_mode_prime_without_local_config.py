@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 
+from local_test.case_condition import requires_max_python
 from local_test.fat_mocked_helper import (
     run_primer_main,
 )
@@ -22,6 +23,7 @@ def test_relationship():
     assert_test_module_name_embeds_str(RunMode.mode_prime.value)
 
 
+@requires_max_python
 def test_mode_prime_without_local_config(tmp_path: Path):
     """
     Make sure bootstrap works with all defaults (from global config) when the local config file is missing.

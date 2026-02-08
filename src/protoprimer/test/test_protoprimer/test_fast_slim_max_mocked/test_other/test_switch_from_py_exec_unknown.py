@@ -3,6 +3,11 @@ import sys
 from unittest.mock import patch
 
 from local_test.base_test_class import BasePyfakefsTestClass
+from local_test.fat_mocked_helper import clean_up_pyfakefs_file_log_handlers
+from local_test.mock_subprocess import (
+    mock_get_python_version_by_current,
+    mock_shutil_which_python,
+)
 from local_test.name_assertion import assert_test_func_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
@@ -25,7 +30,16 @@ class ThisTestClass(BasePyfakefsTestClass):
     def setUp(self):
         self.setUpPyfakefs()
 
+    def tearDown(self):
+        clean_up_pyfakefs_file_log_handlers()
+        super().tearDown()
+
     @patch.dict(f"{os.__name__}.environ", {}, clear=True)
+    @patch(
+        f"{primer_kernel.__name__}.get_python_version",
+        new=mock_get_python_version_by_current,
+    )
+    @patch("shutil.which", new=mock_shutil_which_python)
     @patch(
         f"{primer_kernel.__name__}.get_default_start_id", return_value="mock_start_id"
     )
@@ -39,6 +53,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_proto_code_file_abs_path_inited,
         mock_get_default_start_id,
     ):
+        expected_python_path = mock_shutil_which_python("python3")
         assert_test_func_name_embeds_str(StateStride.stride_py_unknown.name)
 
         # given:
@@ -110,7 +125,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         ]
 
         execv_args = [
-            ConfConstEnv.default_file_abs_path_python,
+            expected_python_path,
             "-I",
             *test_args,
         ]
@@ -135,7 +150,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         # then:
 
         mock_execve.assert_called_once_with(
-            path=ConfConstEnv.default_file_abs_path_python,
+            path=expected_python_path,
             argv=execv_args,
             env={
                 EnvVar.var_PROTOPRIMER_PY_EXEC.value: StateStride.stride_py_required.name,

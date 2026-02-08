@@ -3,10 +3,16 @@ from __future__ import annotations
 import argparse
 import os
 import pathlib
+import sys
+from contextlib import contextmanager
 
 import pytest
 
-from protoprimer.primer_kernel import str_to_bool
+from local_test.mock_environ import mock_and_restore_environ
+from protoprimer.primer_kernel import (
+    EnvVar,
+    str_to_bool,
+)
 
 integ_env_var = "CI"
 
@@ -62,5 +68,33 @@ def skip_test_slow_integrated(
                 # legacy:
                 test_path = pathlib.Path(pytest_item.fspath)
 
-            if test_path.is_relative_to(parent_dir_abs_path):
+            if str(test_path.resolve()).startswith(
+                str(pathlib.Path(parent_dir_abs_path).resolve())
+            ):
                 pytest_item.add_marker(skip_int_marker)
+
+
+@contextmanager
+def set_protoprimer_debug_log_level():
+    """
+    Set debug level (especially for `app_starter` which cannot take args for `protoprimer`).
+    """
+    with mock_and_restore_environ():
+        os.environ[EnvVar.var_PROTOPRIMER_STDERR_LOG_LEVEL.value] = "debug"
+        yield
+
+
+def is_min_python():
+    """
+    See: FT_84_11_73_28.supported_python_versions.md
+
+    TODO: TODO_18_22_12_97.run_all_tests_under_min_python.md: there should not be such condition.
+    """
+    # 3.8 = min python 3.7 + 0.1:
+    return sys.version_info < (3, 8)
+
+
+requires_max_python = pytest.mark.skipif(
+    is_min_python(),
+    reason="The test is disabled for min python version (see FT_84_11_73_28.supported_python_versions.md).",
+)

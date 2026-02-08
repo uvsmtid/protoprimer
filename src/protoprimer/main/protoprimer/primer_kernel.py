@@ -11,6 +11,7 @@ Ensure that `python3` is in the `PATH` for shebang to work.
 from __future__ import annotations
 
 import argparse
+import ast
 import atexit
 import contextvars
 import datetime
@@ -36,7 +37,7 @@ from typing import (
 
 # The release process ensures that content in this file matches the version below while tagging the release commit
 # (otherwise, if the file comes from a different commit, the version is irrelevant):
-__version__ = "0.6.2"
+__version__ = "0.6.3"
 
 logger: logging.Logger = logging.getLogger()
 
@@ -668,7 +669,21 @@ class PackageDriverPip(PackageDriverBase):
         venv.create(
             local_venv_dir_abs_path,
             with_pip=True,
-            upgrade_deps=True,
+            # FT_84_11_73_28.supported_python_versions.md:
+            # `upgrade_deps` is not available in `python3.7`:
+            # upgrade_deps=True,
+        )
+        # Use the python executable within the created venv
+        venv_python_executable = os.path.join(local_venv_dir_abs_path, "bin", "python")
+        subprocess.check_call(
+            [
+                venv_python_executable,  # Use the venv's python
+                "-m",
+                "pip",
+                "install",
+                "--upgrade",
+                "pip",
+            ]
         )
 
     def get_install_dependencies_cmd(
@@ -1081,6 +1096,8 @@ class ConfConstClient:
     Constants for FT_89_41_35_82.conf_leap.md / leap_client
     """
 
+    common_env_name = "common_env"
+
     # TODO: Is this used? If link_name is not specified, the env conf dir becomes ref root dir:
     default_dir_rel_path_leap_env_link_name: str = os.path.join(
         ConfDst.dst_local.value,
@@ -1089,7 +1106,7 @@ class ConfConstClient:
     # FT_59_95_81_63.env_layout.md / max layout
     default_default_env_dir_rel_path: str = os.path.join(
         "dst",
-        "default_env",
+        common_env_name,
     )
 
     # Next FT_89_41_35_82.conf_leap.md: `ConfLeap.leap_env`:
@@ -1110,8 +1127,9 @@ class ConfConstEnv:
     Constants for FT_89_41_35_82.conf_leap.md / leap_env
     """
 
+    # TODO: TODO_03_47_85_89.implement_python_selection.md:
     # TODO: This may not work everywhere:
-    default_file_abs_path_python = "/usr/bin/python"
+    default_file_abs_path_python = "python3"
 
     default_dir_rel_path_venv = "venv"
 
@@ -1121,6 +1139,9 @@ class ConfConstEnv:
 
     default_dir_rel_path_cache = "cache"
 
+    # TODO: TODO_03_47_85_89.implement_python_selection.md:
+    # NOTE: FT_84_11_73_28.supported_python_versions.md:
+    #       The default is `uv` only if it is supported by the required `python` version:
     default_package_driver = PackageDriverType.driver_uv.name
 
     default_project_descriptors = [
@@ -3708,13 +3729,15 @@ class Bootstrapper_state_proto_code_file_abs_path_inited(AbstractCachingStateNod
             )
         )
 
+        assert self.env_ctx.get_stride().value >= StateStride.stride_py_arbitrary
+
         state_proto_code_file_abs_path_inited: str
         if self.env_ctx.get_stride().value >= StateStride.stride_py_venv.value:
             if state_input_proto_code_file_abs_path_var_loaded is None:
                 raise AssertionError(
                     f"`{EnvVar.var_PROTOPRIMER_PROTO_CODE.value}` is not specified at `{self.env_ctx.get_stride().name}` [{self.env_ctx.get_stride()}]"
                 )
-            # rely on the path given in env var:
+            # rely on the path given in the `EnvVar.var_PROTOPRIMER_PROTO_CODE` env var:
             state_proto_code_file_abs_path_inited = (
                 state_input_proto_code_file_abs_path_var_loaded
             )
@@ -3727,22 +3750,49 @@ class Bootstrapper_state_proto_code_file_abs_path_inited(AbstractCachingStateNod
                 if state_input_run_mode_arg_loaded != RunMode.mode_start:
                     if (
                         self.env_ctx.get_stride().value
-                        > StateStride.stride_py_unknown.value
+                        == StateStride.stride_py_arbitrary.value
                     ):
+                        state_proto_code_file_abs_path_inited = os.path.abspath(
+                            __file__
+                        )
+                    else:
+                        # Anything except `StateStride.stride_py_arbitrary`
+                        # relies on `EnvVar.var_PROTOPRIMER_PROTO_CODE`:
+                        assert (
+                            state_input_proto_code_file_abs_path_var_loaded is not None
+                        )
+                        state_proto_code_file_abs_path_inited = (
+                            state_input_proto_code_file_abs_path_var_loaded
+                        )
                         assert (
                             self.env_ctx.get_stride().value
                             < StateStride.stride_py_venv.value
                         )
-                        assert not is_venv()
-                    state_proto_code_file_abs_path_inited = os.path.abspath(__file__)
+                        if (
+                            self.env_ctx.get_stride().value
+                            > StateStride.stride_py_unknown.value
+                        ):
+                            # NOTE: Even `StateStride.stride_py_required` may
+                            #       have `py_exec` in `venv` (not the dedicated, just current):
+                            if (
+                                self.env_ctx.get_stride().value
+                                != StateStride.stride_py_required.value
+                            ):
+                                assert not is_venv()
+                            else:
+                                if is_venv():
+                                    logger.warning(
+                                        f"`sys.executable` [{sys.executable}] for [{StateStride.stride_py_required.name}] evaluated from config should ideally be outside `venv`"
+                                    )
                 else:
-                    # `RunMode.mode_start` relies on the `EnvVar.var_PROTOPRIMER_PROTO_CODE`:
+                    # `RunMode.mode_start` relies only on the `EnvVar.var_PROTOPRIMER_PROTO_CODE` env var:
                     assert state_input_proto_code_file_abs_path_var_loaded is not None
                     state_proto_code_file_abs_path_inited = (
                         state_input_proto_code_file_abs_path_var_loaded
                     )
             else:
-                # `EnvVar.var_PROTOPRIMER_MOCKED_RESTART`: rely on the path given in env var:
+                # `EnvVar.var_PROTOPRIMER_MOCKED_RESTART`: rely on the path
+                # given in the `EnvVar.var_PROTOPRIMER_PROTO_CODE` env var:
                 assert state_input_proto_code_file_abs_path_var_loaded is not None
                 state_proto_code_file_abs_path_inited = (
                     state_input_proto_code_file_abs_path_var_loaded
@@ -4263,6 +4313,7 @@ class Bootstrapper_state_local_conf_symlink_abs_path_inited(
         super().__init__(
             env_ctx=env_ctx,
             parent_states=[
+                EnvState.state_input_run_mode_arg_loaded.name,
                 EnvState.state_ref_root_dir_abs_path_inited.name,
                 EnvState.state_client_conf_file_data_loaded.name,
                 EnvState.state_selected_env_dir_rel_path_inited.name,
@@ -4277,6 +4328,10 @@ class Bootstrapper_state_local_conf_symlink_abs_path_inited(
         self,
     ) -> ValueType:
 
+        state_input_run_mode_arg_loaded: RunMode = self.eval_parent_state(
+            EnvState.state_input_run_mode_arg_loaded.name,
+        )
+
         state_ref_root_dir_abs_path_inited: str = self.eval_parent_state(
             EnvState.state_ref_root_dir_abs_path_inited.name
         )
@@ -4285,8 +4340,11 @@ class Bootstrapper_state_local_conf_symlink_abs_path_inited(
             EnvState.state_selected_env_dir_rel_path_inited.name
         )
 
+        # TODO: TODO_53_40_17_68.default_env_config_vs_lconf_symlink.md
+        #       This is `None` when (A) config is missing (B) no CLI arg.
+        #       But do we want to use `gconf` as target for `lconf`?
         if state_selected_env_dir_rel_path_inited is None:
-            # No symlink target => no `conf_leap` => use `client_conf`:
+            # No symlink target => no `conf_leap` => use `client_conf` instead of `env_conf`:
             return state_ref_root_dir_abs_path_inited
 
         state_client_conf_file_data_loaded: dict = self.eval_parent_state(
@@ -4316,14 +4374,24 @@ class Bootstrapper_state_local_conf_symlink_abs_path_inited(
         if os.path.exists(state_local_conf_symlink_abs_path_inited):
             if os.path.islink(state_local_conf_symlink_abs_path_inited):
                 if os.path.isdir(state_local_conf_symlink_abs_path_inited):
-                    # Compare the existing link target and the configured one:
-                    conf_dir_path = os.path.normpath(
-                        os.readlink(state_local_conf_symlink_abs_path_inited)
-                    )
-                    if state_selected_env_dir_rel_path_inited != conf_dir_path:
-                        raise AssertionError(
-                            f"The symlink [{state_local_conf_symlink_abs_path_inited}] target [{conf_dir_path}] is not the same as the provided target [{state_selected_env_dir_rel_path_inited}]."
+                    if state_input_run_mode_arg_loaded == RunMode.mode_start:
+                        # Nonthing to do:
+                        pass
+                    else:
+                        # Compare the existing link target and the configured one:
+                        conf_dir_path = os.path.normpath(
+                            os.readlink(state_local_conf_symlink_abs_path_inited)
                         )
+                        if state_selected_env_dir_rel_path_inited != conf_dir_path:
+                            # TODO: TODO_53_40_17_68.default_env_config_vs_lconf_symlink.md
+                            #       If symlink target does not match default env, why not reset instead of raising?
+                            #       If we do not reset automatically, user has to do it manually.
+                            #       More over, symlink matching default env may actually be normal...
+                            #       What if user wants to keep "decision" of what env he uses in that symlink?
+                            #       The automatic reset must only be done when --env arg is specified.
+                            raise AssertionError(
+                                f"The symlink [{state_local_conf_symlink_abs_path_inited}] target [{conf_dir_path}] is not the same as the provided target [{state_selected_env_dir_rel_path_inited}]."
+                            )
                 else:
                     raise AssertionError(
                         f"The symlink [{state_local_conf_symlink_abs_path_inited}] target [{state_local_conf_symlink_abs_path_inited}] is not a directory.",
@@ -4473,14 +4541,30 @@ class Bootstrapper_state_required_python_file_abs_path_inited(
         )
 
         if not os.path.isabs(state_required_python_file_abs_path_inited):
-            # TODO: Really? Do we really want to allow specifying `python` using rel path?
-            #       Regardless, even if rel path, the `field_required_python_file_abs_path.value` should remove `abs` from the name then.
-            state_required_python_file_abs_path_inited = os.path.join(
-                self.eval_parent_state(
-                    EnvState.state_ref_root_dir_abs_path_inited.name
-                ),
-                state_required_python_file_abs_path_inited,
-            )
+            # TODO: TODO_03_47_85_89.implement_python_selection.md:
+            #       Regardless how the abs path is selected,
+            #       the `field_required_python_file_abs_path` must remove `abs` from its name then.
+
+            path_obj = pathlib.Path(state_required_python_file_abs_path_inited)
+
+            # If the path contains a separator (the path has more than one part):
+            has_separator: bool = len(path_obj.parts) > 1
+
+            if has_separator:
+                # TODO: TODO_03_47_85_89.implement_python_selection.md:
+                #       HACK: Really? Do we really want to allow specifying `python` using rel path?
+                state_required_python_file_abs_path_inited = str(
+                    pathlib.Path(
+                        self.eval_parent_state(
+                            EnvState.state_ref_root_dir_abs_path_inited.name
+                        )
+                    )
+                    / path_obj
+                )
+            else:
+                # TODO: TODO_03_47_85_89.implement_python_selection.md:
+                # TODO: This will not work on Windows:
+                state_required_python_file_abs_path_inited = shutil.which(str(path_obj))
 
         return state_required_python_file_abs_path_inited
 
@@ -4692,6 +4776,7 @@ class Bootstrapper_state_package_driver_inited(
             parent_states=[
                 EnvState.state_client_conf_file_data_loaded.name,
                 EnvState.state_env_conf_file_data_loaded.name,
+                EnvState.state_required_python_file_abs_path_inited.name,
             ],
             state_name=if_none(
                 state_name,
@@ -4702,20 +4787,49 @@ class Bootstrapper_state_package_driver_inited(
     def _eval_state_once(
         self,
     ) -> ValueType:
-        field_package_driver: PackageDriverType
+
+        state_required_python_file_abs_path_inited: str = self.eval_parent_state(
+            EnvState.state_required_python_file_abs_path_inited.name
+        )
+
+        # FT_84_11_73_28: supported python versions:
+        uv_min_version: tuple[int, int, int] = (3, 8, 0)
+        required_version: tuple[int, int, int] = get_python_version(
+            state_required_python_file_abs_path_inited
+        )
+
+        default_package_driver: str
+        if required_version < uv_min_version:
+            default_package_driver = PackageDriverType.driver_pip.name
+        else:
+            default_package_driver = ConfConstEnv.default_package_driver
+
+        state_package_driver_inited: PackageDriverType
         if os.environ.get(EnvVar.var_PROTOPRIMER_PACKAGE_DRIVER.value, None) is None:
-            field_package_driver = PackageDriverType[
+            # TODO: TODO_03_47_85_89.implement_python_selection.md
+            #       Default package driver must depend on the required python version.
+            #       This version has to be identified by running the selected `python` executable.
+            state_package_driver_inited = PackageDriverType[
                 self._get_overridden_value_or_default(
                     ConfField.field_package_driver.value,
-                    ConfConstEnv.default_package_driver,
+                    default_package_driver,
                 )
             ]
         else:
-            field_package_driver = PackageDriverType[
+            state_package_driver_inited = PackageDriverType[
                 os.environ.get(EnvVar.var_PROTOPRIMER_PACKAGE_DRIVER.value)
             ]
 
-        return field_package_driver
+        if (
+            required_version < uv_min_version
+            and state_package_driver_inited == PackageDriverType.driver_uv
+        ):
+            logger.warning(
+                f"Overriding package driver [{state_package_driver_inited}] to [{PackageDriverType.driver_pip}] because required python [{required_version}] is below minimum required [{uv_min_version}] for [{PackageDriverType.driver_uv}]"
+            )
+            state_package_driver_inited = PackageDriverType.driver_pip
+
+        return state_package_driver_inited
 
 
 # noinspection PyPep8Naming
@@ -6833,6 +6947,20 @@ def get_venv_type(
         raise AssertionError(
             f"Cannot determine `venv` type by file [{venv_cfg_file_abs_path}]",
         )
+
+
+def get_python_version(path_to_python: str) -> tuple[int, int, int] | None:
+    """
+    Executes a `python` binary and retrieves its version as a numeric tuple.
+    """
+    cmd_args: list[str] = [
+        path_to_python,
+        "-c",
+        "import sys; print(tuple(sys.version_info[:3]))",
+    ]
+    cmd_output: str = subprocess.check_output(cmd_args, universal_newlines=True)
+    python_version: tuple[int, int, int] = ast.literal_eval(cmd_output.strip())
+    return python_version
 
 
 def log_python_context(log_level: int = logging.INFO):

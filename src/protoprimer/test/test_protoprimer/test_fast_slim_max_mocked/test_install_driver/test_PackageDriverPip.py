@@ -22,7 +22,8 @@ def test_relationship():
 
 
 @patch(f"{primer_kernel.__name__}.{venv.__name__}")
-def test_create_venv(mock_venv):
+@patch(f"{primer_kernel.__name__}.subprocess.check_call")
+def test_create_venv(mock_check_call, mock_venv):
     # given:
     install_driver = PackageDriverPip()
     venv_dir_abs_path = "/tmp/test_venv"
@@ -34,7 +35,17 @@ def test_create_venv(mock_venv):
     mock_venv.create.assert_called_once_with(
         venv_dir_abs_path,
         with_pip=True,
-        upgrade_deps=True,
+    )
+    # Assert that subprocess.check_call was called with the correct arguments
+    mock_check_call.assert_called_once_with(
+        [
+            os.path.join(venv_dir_abs_path, "bin", "python"),
+            "-m",
+            "pip",
+            "install",
+            "--upgrade",
+            "pip",
+        ]
     )
 
 

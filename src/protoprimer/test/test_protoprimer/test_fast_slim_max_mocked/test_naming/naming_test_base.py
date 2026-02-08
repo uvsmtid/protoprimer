@@ -17,9 +17,10 @@ class NamingTestBase:
     def test_prod_enum_item_values_embed_enum_item_names(self):
         for test_enum_item in self.test_enum:
             assert (
-                test_enum_item.name.removeprefix(self.enum_prefix)
-                in test_enum_item.value.extract_prod_item_value_name()
-            )
+                test_enum_item.name[len(self.enum_prefix) :]
+                if test_enum_item.name.startswith(self.enum_prefix)
+                else test_enum_item.name
+            ) in test_enum_item.value.extract_prod_item_value_name()
 
     def test_enum_items_are_assigned_correctly(self):
         for test_enum_item in self.test_enum:

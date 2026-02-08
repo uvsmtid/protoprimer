@@ -3,6 +3,7 @@ from unittest.mock import (
     mock_open,
     patch,
 )
+from typing import List
 
 import pytest
 
@@ -27,10 +28,10 @@ class PackageDriverConcrete(PackageDriverBase):
 
     def get_install_dependencies_cmd(
         self, required_python_file_abs_path: str
-    ) -> list[str]:
+    ) -> List[str]:
         return []
 
-    def _get_pin_versions_cmd(self, required_python_file_abs_path: str) -> list[str]:
+    def _get_pin_versions_cmd(self, required_python_file_abs_path: str) -> List[str]:
         return []
 
 

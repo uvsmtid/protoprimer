@@ -28,20 +28,26 @@ jobs:
                 with:
                     python-version: ${{ matrix.python-version }}
 
-            -   run: "python -c \"import sys; print(sys.version);\""
+            # FT_84_11_73_28: supported python versions:
+            -   run: "which python3.7"
+            -   run: "python --version"
 
             -   uses: actions/checkout@v4
 
-            -   run: "${{ github.workspace }}/prime"
-            -   run: "${{ github.workspace }}/cmd/bootstrap_env"
+            -   run: |
+                    ${{ github.workspace }}/prime -vvv --env dst/test_python_min
+                    ${{ github.workspace }}/cmd/bootstrap_env -vvv --env dst/test_python_min
 
             -   name: ensure git has no local changes and untracked files
                 run: |
                     git diff || true
                     git status --porcelain || true
-                    # NOTE: Unlike the latest version, the earlier one may use a different set of dependencies:
-                    test -z "$(git status --porcelain -- ':!dst/default_env/constraints.txt')"
+                    # NOTE: Avoid verifying `constraints.txt`:
+                    #       Different `python` version may depend on different set of dependencies:
+                    test -z "$(git status --porcelain -- ':!dst/test_python_min/constraints.txt')"
 
-            -   run: "${{ github.workspace }}/venv/bin/python -m pytest"
+            -   run: |
+                    ${{ github.workspace }}/venv/bin/python --version
+                    ${{ github.workspace }}/venv/bin/python -m pytest
 
             -   run: "echo job.status: ${{ job.status }}"

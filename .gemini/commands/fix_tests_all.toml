@@ -1,0 +1,6 @@
+
+description = "Runs all tests (see FT_83_60_72_19.test_perimeter.md / pytest_all.run.xml)"
+
+prompt = """
+Run `pytest` (as is, you are in `venv`) with `CI` env var set to `true` and adjust failing tests.
+"""

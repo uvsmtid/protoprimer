@@ -24,6 +24,7 @@ from protoprimer.primer_kernel import (
     ConfConstInput,
     ConfConstPrimer,
     RunMode,
+    PackageDriverPip,
 )
 from protoprimer.proto_generator import generate_entry_script_content
 
@@ -43,7 +44,8 @@ def test_python_from_arbitrary_venv_with_app_starter(
 
     # An arbitrary venv to start from:
     arbitrary_venv_dir = ref_root_abs_path / "arbitrary_venv"
-    venv.create(arbitrary_venv_dir, with_pip=True)
+    package_driver = PackageDriverPip()
+    package_driver.create_venv(sys.executable, str(arbitrary_venv_dir))
     arbitrary_venv_python = (
         arbitrary_venv_dir / ConfConstGeneral.file_rel_path_venv_python
     )
@@ -177,7 +179,8 @@ def test_python_from_required_venv_with_app_starter(
     # Create the required `venv`:
     required_venv_dir_rel_path = "required_venv"
     required_venv_dir_abs_path = ref_root_abs_path / required_venv_dir_rel_path
-    venv.create(required_venv_dir_abs_path, with_pip=True)
+    package_driver = PackageDriverPip()
+    package_driver.create_venv(sys.executable, str(required_venv_dir_abs_path))
     required_venv_python = (
         required_venv_dir_abs_path / ConfConstGeneral.file_rel_path_venv_python
     )

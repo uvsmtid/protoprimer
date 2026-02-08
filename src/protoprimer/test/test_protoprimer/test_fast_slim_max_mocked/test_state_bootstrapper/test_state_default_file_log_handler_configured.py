@@ -3,6 +3,7 @@ import os
 from unittest.mock import patch
 
 from local_test.base_test_class import BasePyfakefsTestClass
+from local_test.fat_mocked_helper import clean_up_pyfakefs_file_log_handlers
 from local_test.mock_verifier import assert_parent_states_mocked
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
@@ -26,6 +27,10 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.env_ctx = EnvContext()
         self.mock_log_dir = "/mock_log_dir"
         self.mock_start_id = "mock_start_id"
+
+    def tearDown(self):
+        clean_up_pyfakefs_file_log_handlers()
+        super().tearDown()
 
     # noinspection PyMethodMayBeStatic
     def test_relationship(self):
