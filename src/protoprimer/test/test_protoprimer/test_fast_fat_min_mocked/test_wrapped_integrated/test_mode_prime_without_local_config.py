@@ -2,6 +2,7 @@ import pathlib
 
 from pyfakefs.fake_filesystem import FakeFilesystem
 
+from local_test.case_condition import requires_max_python
 from local_test.fat_mocked_helper import fat_mock_wrapper
 from local_test.name_assertion import (
     assert_test_module_name_embeds_another_module_name,
@@ -15,6 +16,7 @@ def test_relationship():
     )
 
 
+@requires_max_python
 def test_wrapped_prime_in_mock_env(fs: FakeFilesystem):
     mock_test_dir = fs.create_dir("/mock_test_dir")
 

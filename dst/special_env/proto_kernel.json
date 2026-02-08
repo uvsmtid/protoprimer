@@ -1,5 +1,5 @@
 {
-    "required_python_file_abs_path": "/usr/bin/python",
+    "required_python_file_abs_path": "python3",
     "local_venv_dir_rel_path": "venv",
     "local_log_dir_rel_path": "log",
     "local_tmp_dir_rel_path": "tmp",

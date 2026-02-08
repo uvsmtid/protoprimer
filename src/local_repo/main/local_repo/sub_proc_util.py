@@ -1,11 +1,12 @@
 import os
 import subprocess
+from typing import Dict, Union, List
 
 
 def get_command_code(
     command_line: str,
     fail_on_error=True,
-    env_vars: dict[str, str] | None = None,
+    env_vars: Union[Dict[str, str], None] = None,
 ) -> int:
     env = os.environ.copy()
     if env_vars:
@@ -24,7 +25,7 @@ def get_command_code(
 def get_command_output(
     command_line: str,
     fail_on_error=True,
-    env_vars: dict[str, str] | None = None,
+    env_vars: Union[Dict[str, str], None] = None,
 ) -> str:
     env = os.environ.copy()
     if env_vars:

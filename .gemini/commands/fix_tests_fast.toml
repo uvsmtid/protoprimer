@@ -1,0 +1,6 @@
+
+description = "Runs fasts tests (see FT_83_60_72_19.test_perimeter.md / pytest_fast.run.xml)"
+
+prompt = """
+Run `pytest` (as is, you are in `venv`) and adjust failing tests.
+"""

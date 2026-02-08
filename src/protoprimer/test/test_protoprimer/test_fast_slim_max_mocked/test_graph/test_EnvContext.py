@@ -6,6 +6,8 @@ from unittest.mock import (
 )
 
 from local_test.base_test_class import BasePyfakefsTestClass
+from local_test.case_condition import requires_max_python
+from local_test.mock_subprocess import mock_get_python_version_by_current
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
@@ -35,6 +37,10 @@ class TestEnvContext(BasePyfakefsTestClass):
 
     @patch("sys.argv", ["script_name"])
     @patch(
+        f"{primer_kernel.__name__}.get_python_version",
+        new=mock_get_python_version_by_current,
+    )
+    @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_required_python_file_abs_path_inited.__name__}.{StateNode.eval_own_state.__name__}",
         return_value="/usr/bin/python",
     )
@@ -55,14 +61,15 @@ class TestEnvContext(BasePyfakefsTestClass):
         return_value="/tmp",
     )
     @patch("subprocess.check_call")
+    @requires_max_python
     def test_init_default(
         self,
         mock_check_call,
-        mock_cache,
-        mock_env_conf,
-        mock_client_conf,
-        mock_reinstall,
-        mock_python,
+        mock_state_local_cache_dir_abs_path_inited,
+        mock_state_env_conf_file_data_loaded,
+        mock_state_client_conf_file_data_loaded,
+        mock_state_reinstall_triggered,
+        mock_state_required_python_file_abs_path_inited,
     ):
         # given:
         self.fs.create_file("/tmp/venv/uv.venv/bin/uv", contents="foo")
@@ -82,6 +89,10 @@ class TestEnvContext(BasePyfakefsTestClass):
         },
     )
     @patch(
+        f"{primer_kernel.__name__}.get_python_version",
+        new=mock_get_python_version_by_current,
+    )
+    @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_required_python_file_abs_path_inited.__name__}.{StateNode.eval_own_state.__name__}",
         return_value="/usr/bin/python",
     )
@@ -102,14 +113,15 @@ class TestEnvContext(BasePyfakefsTestClass):
         return_value="/tmp",
     )
     @patch("subprocess.check_call")
+    @requires_max_python
     def test_init_with_uv(
         self,
         mock_check_call,
-        mock_cache,
-        mock_env_conf,
-        mock_client_conf,
-        mock_reinstall,
-        mock_python,
+        mock_state_local_cache_dir_abs_path_inited,
+        mock_state_env_conf_file_data_loaded,
+        mock_state_client_conf_file_data_loaded,
+        mock_state_reinstall_triggered,
+        mock_state_required_python_file_abs_path_inited,
     ):
         # given:
         self.fs.create_file("/tmp/venv/uv.venv/bin/uv", contents="foo")
@@ -127,6 +139,10 @@ class TestEnvContext(BasePyfakefsTestClass):
         {
             EnvVar.var_PROTOPRIMER_PACKAGE_DRIVER.value: PackageDriverType.driver_pip.name,
         },
+    )
+    @patch(
+        f"{primer_kernel.__name__}.get_python_version",
+        new=mock_get_python_version_by_current,
     )
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_required_python_file_abs_path_inited.__name__}.{StateNode.eval_own_state.__name__}",
@@ -150,11 +166,11 @@ class TestEnvContext(BasePyfakefsTestClass):
     )
     def test_init_without_uv(
         self,
-        mock_cache,
-        mock_env_conf,
-        mock_client_conf,
-        mock_reinstall,
-        mock_python,
+        mock_state_local_cache_dir_abs_path_inited,
+        mock_state_env_conf_file_data_loaded,
+        mock_state_client_conf_file_data_loaded,
+        mock_state_reinstall_triggered,
+        mock_state_required_python_file_abs_path_inited,
     ):
         # given:
         # when:

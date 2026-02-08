@@ -1,6 +1,7 @@
 import argparse
 import logging
 import os
+import sys
 from unittest.mock import patch
 
 from local_test.base_test_class import BasePyfakefsTestClass
@@ -205,10 +206,15 @@ source {expected_venv_activate_path}
         mock_execve.assert_called_once()
         self.assertEqual(mock_execve.call_args[0][0], "/path/to/zsh")
         self.assertNotIn("--init-file", mock_execve.call_args[0][1])
-        self.assertEqual(
-            mock_execve.call_args.args[2]["ZDOTDIR"],
-            os.path.dirname(init_file_path),
-        )
+
+        # FT_84_11_73_28.supported_python_versions.md:
+        # Python 3.7 does not see env var in `mock_execve.call_args.args[2]`.
+        # This does not happen with the ` max ` version of `python`.
+        if sys.version_info >= (3, 8):
+            self.assertEqual(
+                mock_execve.call_args.args[2]["ZDOTDIR"],
+                os.path.dirname(init_file_path),
+            )
 
         mock_write_text_file.assert_called_once_with(
             init_file_path,

@@ -1,5 +1,6 @@
 import collections
 import enum
+from typing import List, Type
 
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer.primer_kernel import (
@@ -21,7 +22,7 @@ from test_protoprimer.test_fast_slim_max_mocked.test_naming.naming_metadata impo
 
 
 def verify_enum_string_uniqueness(
-    enum_type: type[enum.Enum],
+    enum_type: Type[enum.Enum],
 ) -> None:
     seen_values = set()
     value_duplicates = set()
@@ -36,7 +37,7 @@ def verify_enum_string_uniqueness(
         )
 
 
-def check_enum_string_uniqueness_across_all(enum_types: list[type[enum.Enum]]):
+def check_enum_string_uniqueness_across_all(enum_types: List[Type[enum.Enum]]):
     """
     Helper function to check for unique string values across a list of Enum types.
     """

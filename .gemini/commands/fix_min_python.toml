@@ -1,0 +1,12 @@
+
+description = "Runs tests for min python (see FT_84_11_73_28.supported_python_versions.md)"
+
+prompt = """
+Run `./cmd/test_python_version --python min` and fix any errors.
+
+To speed test iteration, test only specific file which fails via `--test_file` CLI arg.
+
+Do not change `./cmd/proto_code/proto_kernel.py`.
+Instead, change `./src/protoprimer/main/protoprimer/primer_kernel.py` and
+run `./prime` which copies changes into `./cmd/proto_code/proto_kernel.py`.
+"""

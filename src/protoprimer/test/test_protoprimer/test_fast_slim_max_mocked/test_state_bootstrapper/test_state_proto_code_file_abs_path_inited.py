@@ -28,6 +28,9 @@ def test_relationship():
     )
 
 
+@patch(
+    f"{primer_kernel.__name__}.{EnvContext.__name__}.{EnvContext.get_stride.__name__}"
+)
 @patch(f"{primer_kernel.__name__}.is_venv")
 @patch(
     f"{primer_kernel.__name__}.{Bootstrapper_state_stride_py_arbitrary_reached.__name__}.eval_own_state"
@@ -43,6 +46,7 @@ def test_stride_py_arbitrary_not_in_venv(
     mock_state_input_proto_code_file_abs_path_var_loaded,
     mock_state_stride_py_arbitrary_reached,
     mock_is_venv,
+    mock_get_stride,
     env_ctx,
 ):
     # given:
@@ -56,7 +60,13 @@ def test_stride_py_arbitrary_not_in_venv(
         StateStride.stride_py_arbitrary
     )
 
+    mock_get_stride.return_value = StateStride.stride_py_arbitrary
+
     mock_is_venv.return_value = False
+
+    mock_state_input_proto_code_file_abs_path_var_loaded.return_value = (
+        primer_kernel.__file__
+    )
 
     # when:
 

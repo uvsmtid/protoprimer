@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 
+from local_test.case_condition import requires_max_python
 from local_test.fat_mocked_helper import (
     assert_editable_install,
     run_primer_main,
@@ -17,6 +18,7 @@ from protoprimer.primer_kernel import (
 )
 
 
+@requires_max_python
 def test_instant_scenario(tmp_path: Path):
     """
     This test runs `proto_code` directly (rather than importing it via `entry_script`).

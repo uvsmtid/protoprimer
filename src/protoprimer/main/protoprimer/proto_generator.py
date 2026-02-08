@@ -1,4 +1,5 @@
 import os
+from typing import Dict
 
 
 def generate_entry_script_content(
@@ -8,7 +9,7 @@ def generate_entry_script_content(
     entry_script_abs_path: str,
     module_name: str,
     func_name: str,
-    env_vars: dict[str, str] = None,
+    env_vars: Dict[str, str] = None,
 ) -> str:
     """
     Generates: FT_75_87_82_46.entry_script.md
