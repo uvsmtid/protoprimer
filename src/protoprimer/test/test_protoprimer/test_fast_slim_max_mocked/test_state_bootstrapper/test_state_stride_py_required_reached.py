@@ -11,7 +11,6 @@ from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     Bootstrapper_state_args_parsed,
     Bootstrapper_state_default_file_log_handler_configured,
-    Bootstrapper_state_input_py_exec_var_loaded,
     Bootstrapper_state_input_start_id_var_loaded,
     Bootstrapper_state_local_conf_file_abs_path_inited,
     Bootstrapper_state_local_tmp_dir_abs_path_inited,
@@ -100,14 +99,14 @@ class ThisTestClass(BasePyfakefsTestClass):
         return_value=ConfConstEnv.default_file_abs_path_python,
     )
     @patch(f"{primer_kernel.__name__}.os.execve")
-    @patch(f"{primer_kernel.__name__}.venv.create")
+    @patch(f"{primer_kernel.__name__}.subprocess.check_call")
     @patch(
         f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
     )
     def test_success_on_arbitrary_py_exec_outside_venv(
         self,
         mock_input_run_mode_arg_loaded,
-        mock_venv_create,
+        mock_check_call,
         mock_execve,
         mock_get_path_to_curr_python,
         mock_state_required_python_file_abs_path_inited,
@@ -157,7 +156,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # With `stride_py_arbitrary`, we expect `execve` to be called to switch `python`.
         mock_execve.assert_called_once()
-        mock_venv_create.assert_not_called()
+        mock_check_call.assert_not_called()
         mock_get_path_to_curr_python.assert_called_once()
 
     @patch.dict(
@@ -196,14 +195,14 @@ class ThisTestClass(BasePyfakefsTestClass):
         return_value=ConfConstEnv.default_file_abs_path_python,
     )
     @patch(f"{primer_kernel.__name__}.os.execve")
-    @patch(f"{primer_kernel.__name__}.venv.create")
+    @patch(f"{primer_kernel.__name__}.subprocess.check_call")
     @patch(
         f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
     )
     def test_skip_if_py_exec_is_already_required(
         self,
         mock_input_run_mode_arg_loaded,
-        mock_venv_create,
+        mock_check_call,
         mock_execve,
         mock_get_path_to_curr_python,
         mock_state_required_python_file_abs_path_inited,
@@ -229,7 +228,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             actual_result,
         )
         mock_execve.assert_not_called()
-        mock_venv_create.assert_not_called()
+        mock_check_call.assert_not_called()
         mock_get_path_to_curr_python.assert_not_called()
 
     @patch.dict(
@@ -268,14 +267,14 @@ class ThisTestClass(BasePyfakefsTestClass):
         return_value=non_default_file_abs_path_python,
     )
     @patch(f"{primer_kernel.__name__}.os.execve")
-    @patch(f"{primer_kernel.__name__}.venv.create")
+    @patch(f"{primer_kernel.__name__}.subprocess.check_call")
     @patch(
         f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
     )
     def test_success_if_correct_python_is_already_used(
         self,
         mock_input_run_mode_arg_loaded,
-        mock_venv_create,
+        mock_check_call,
         mock_execve,
         mock_get_path_to_curr_python,
         mock_state_required_python_file_abs_path_inited,
@@ -306,5 +305,5 @@ class ThisTestClass(BasePyfakefsTestClass):
             actual_result,
         )
         mock_execve.assert_not_called()
-        mock_venv_create.assert_not_called()
+        mock_check_call.assert_not_called()
         mock_get_path_to_curr_python.assert_called_once()

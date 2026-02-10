@@ -9,9 +9,8 @@ from local_test.mock_verifier import (
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
-    Bootstrapper_state_input_py_exec_var_loaded,
-    Bootstrapper_state_input_start_id_var_loaded,
     Bootstrapper_state_input_run_mode_arg_loaded,
+    Bootstrapper_state_input_start_id_var_loaded,
     ConfConstInput,
     EnvContext,
     EnvState,

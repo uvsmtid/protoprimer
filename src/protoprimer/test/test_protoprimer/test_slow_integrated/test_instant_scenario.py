@@ -18,6 +18,15 @@ from protoprimer.primer_kernel import (
 )
 
 
+# FT_84_11_73_28.supported_python_versions.md:
+# NOTE: This test fails with `python` 3.7 because `pip` treats dependencies like
+#       `"protoprimer @ file://{protoprimer_project_dir}"` as "Direct Reference" and
+#       installs them in "regular" mode (copying files to site-packages) from `pypi.org`
+#       rather than "editable" mode from the source.
+#       This makes the installed code older than current sources.
+#       If there were no changes, the test passes. It may fail otherwise.
+#       This is not a problem with any other project except `protoprimer` itself
+#       (because any other project does not use "editable" mode for `protoprimer`).
 @requires_max_python
 def test_instant_scenario(tmp_path: Path):
     """

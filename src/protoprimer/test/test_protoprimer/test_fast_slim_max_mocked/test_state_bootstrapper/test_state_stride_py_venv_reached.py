@@ -11,7 +11,6 @@ from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     Bootstrapper_state_args_parsed,
-    Bootstrapper_state_input_py_exec_var_loaded,
     Bootstrapper_state_input_start_id_var_loaded,
     Bootstrapper_state_local_conf_file_abs_path_inited,
     Bootstrapper_state_local_venv_dir_abs_path_inited,
@@ -95,14 +94,12 @@ class ThisTestClass(BasePyfakefsTestClass):
         return_value=ConfConstEnv.default_file_abs_path_python,
     )
     @patch(f"{primer_kernel.__name__}.os.execve")
-    @patch(f"{primer_kernel.__name__}.venv.create")
     @patch(
         f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
     )
     def test_success_on_path_to_curr_python_is_outside_of_path_to_venv_when_venv_is_created(
         self,
         mock_state_input_run_mode_arg_loaded,
-        mock_venv_create,
         mock_execve,
         mock_get_path_to_curr_python,
         mock_state_package_driver_prepared,
@@ -208,14 +205,12 @@ class ThisTestClass(BasePyfakefsTestClass):
         return_value="/mock_client_dir/venv/wrong/path/to/python",
     )
     @patch(f"{primer_kernel.__name__}.os.execve")
-    @patch(f"{primer_kernel.__name__}.venv.create")
     @patch(
         f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
     )
     def test_failure_when_path_to_curr_python_is_inside_venv(
         self,
         mock_state_input_run_mode_arg_loaded,
-        mock_venv_create,
         mock_execve,
         mock_get_path_to_curr_python,
         mock_state_package_driver_prepared,
@@ -267,7 +262,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             "must be outside of the `venv`",
             str(cm.exception),
         )
-        mock_venv_create.assert_not_called()
+        mock_state_package_driver_prepared.return_value.create_venv.assert_not_called()
         mock_execve.assert_not_called()
         mock_get_path_to_curr_python.assert_called_once()
 
@@ -303,14 +298,12 @@ class ThisTestClass(BasePyfakefsTestClass):
         return_value="/mock_client_dir/venv/bin/python",
     )
     @patch(f"{primer_kernel.__name__}.os.execve")
-    @patch(f"{primer_kernel.__name__}.venv.create")
     @patch(
         f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
     )
     def test_failure_when_path_to_curr_python_is_inside_venv_initially_and_expected(
         self,
         mock_state_input_run_mode_arg_loaded,
-        mock_venv_create,
         mock_execve,
         mock_get_path_to_curr_python,
         mock_state_package_driver_prepared,
@@ -362,7 +355,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             "must be outside of the `venv`",
             str(cm.exception),
         )
-        mock_venv_create.assert_not_called()
+        mock_state_package_driver_prepared.return_value.create_venv.assert_not_called()
         mock_execve.assert_not_called()
         mock_get_path_to_curr_python.assert_called_once()
 
@@ -398,14 +391,12 @@ class ThisTestClass(BasePyfakefsTestClass):
         return_value=ConfConstEnv.default_file_abs_path_python,
     )
     @patch(f"{primer_kernel.__name__}.os.execve")
-    @patch(f"{primer_kernel.__name__}.venv.create")
     @patch(
         f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
     )
     def test_failure_when_path_to_python_differs_from_path_to_curr_python(
         self,
         mock_state_input_run_mode_arg_loaded,
-        mock_venv_create,
         mock_execve,
         mock_get_path_to_curr_python,
         mock_state_package_driver_prepared,
@@ -457,7 +448,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             "must match the required",
             str(cm.exception),
         )
-        mock_venv_create.assert_not_called()
+        mock_state_package_driver_prepared.return_value.create_venv.assert_not_called()
         mock_execve.assert_not_called()
         mock_get_path_to_curr_python.assert_called_once()
 
@@ -493,14 +484,12 @@ class ThisTestClass(BasePyfakefsTestClass):
         return_value=ConfConstEnv.default_file_abs_path_python,
     )
     @patch(f"{primer_kernel.__name__}.os.execve")
-    @patch(f"{primer_kernel.__name__}.venv.create")
     @patch(
         f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
     )
     def test_success_when_path_to_python_matches_path_to_curr_python_and_execv_is_called_for_venv_python(
         self,
         mock_state_input_run_mode_arg_loaded,
-        mock_venv_create,
         mock_execve,
         mock_get_path_to_curr_python,
         mock_state_package_driver_prepared,
@@ -608,14 +597,12 @@ class ThisTestClass(BasePyfakefsTestClass):
         return_value=non_default_file_abs_path_python,
     )
     @patch(f"{primer_kernel.__name__}.os.execve")
-    @patch(f"{primer_kernel.__name__}.venv.create")
     @patch(
         f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
     )
     def test_success_when_path_to_python_is_not_inside_existing_venv(
         self,
         mock_state_input_run_mode_arg_loaded,
-        mock_venv_create,
         mock_execve,
         mock_get_path_to_curr_python,
         mock_state_package_driver_prepared,
@@ -721,14 +708,12 @@ class ThisTestClass(BasePyfakefsTestClass):
         return_value="/a/different/python",
     )
     @patch(f"{primer_kernel.__name__}.os.execve")
-    @patch(f"{primer_kernel.__name__}.venv.create")
     @patch(
         f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
     )
     def test_success_on_arbitrary_py_exec_outside_venv(
         self,
         mock_state_input_run_mode_arg_loaded,
-        mock_venv_create,
         mock_execve,
         mock_get_path_to_curr_python,
         mock_state_package_driver_prepared,
@@ -835,14 +820,12 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.get_path_to_curr_python",
     )
     @patch(f"{primer_kernel.__name__}.os.execve")
-    @patch(f"{primer_kernel.__name__}.venv.create")
     @patch(
         f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
     )
     def test_success_when_py_exec_is_already_venv(
         self,
         mock_state_input_run_mode_arg_loaded,
-        mock_venv_create,
         mock_execve,
         mock_get_path_to_curr_python,
         mock_state_package_driver_prepared,
@@ -874,7 +857,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         self.assertEqual(StateStride.stride_py_venv, actual_result)
 
-        mock_venv_create.assert_not_called()
+        mock_state_package_driver_prepared.return_value.create_venv.assert_not_called()
         mock_execve.assert_not_called()
 
     ####################################################################################################################
@@ -910,14 +893,12 @@ class ThisTestClass(BasePyfakefsTestClass):
         return_value=ConfConstEnv.default_file_abs_path_python,
     )
     @patch(f"{primer_kernel.__name__}.os.execve")
-    @patch(f"{primer_kernel.__name__}.venv.create")
     @patch(
         f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
     )
     def test_success_when_reusing_existing_venv(
         self,
         mock_state_input_run_mode_arg_loaded,
-        mock_venv_create,
         mock_execve,
         mock_get_path_to_curr_python,
         mock_state_package_driver_prepared,
@@ -968,7 +949,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # then:
 
-        mock_venv_create.assert_not_called()
+        mock_state_package_driver_prepared.return_value.create_venv.assert_not_called()
         mock_logger_info.assert_any_call(f"reusing existing `venv` [{path_to_venv}]")
 
         path_to_venv_python = os.path.join(
@@ -1023,14 +1004,16 @@ class ThisTestClass(BasePyfakefsTestClass):
         return_value=ConfConstEnv.default_file_abs_path_python,
     )
     @patch(f"{primer_kernel.__name__}.os.execve")
-    @patch(f"{primer_kernel.__name__}.venv.create")
+    @patch(
+        f"{primer_kernel.__name__}.{primer_kernel.PackageDriverPip.__name__}.create_venv"
+    )
     @patch(
         f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
     )
     def test_failure_when_reusing_existing_venv_of_wrong_type(
         self,
         mock_state_input_run_mode_arg_loaded,
-        mock_venv_create,
+        mock_package_driver_pip_create_venv,
         mock_execve,
         mock_get_path_to_curr_python,
         mock_state_package_driver_prepared,
@@ -1089,5 +1072,5 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # then:
         self.assertIn("was not created by this driver", str(cm.exception))
-        mock_venv_create.assert_not_called()
+        mock_package_driver_pip_create_venv.assert_not_called()
         mock_execve.assert_not_called()

@@ -58,6 +58,7 @@ def skip_test_slow_integrated(
     if not is_integ_run:
 
         skip_int_marker = pytest.mark.skip(reason=reason_text)
+        resolved_parent_path = pathlib.Path(parent_dir_abs_path).resolve()
 
         for pytest_item in pytest_items:
 
@@ -68,8 +69,10 @@ def skip_test_slow_integrated(
                 # legacy:
                 test_path = pathlib.Path(pytest_item.fspath)
 
-            if str(test_path.resolve()).startswith(
-                str(pathlib.Path(parent_dir_abs_path).resolve())
+            resolved_test_path = test_path.resolve()
+            if (
+                resolved_parent_path == resolved_test_path
+                or resolved_parent_path in resolved_test_path.parents
             ):
                 pytest_item.add_marker(skip_int_marker)
 

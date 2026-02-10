@@ -10,7 +10,6 @@ from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     Bootstrapper_state_args_parsed,
-    Bootstrapper_state_input_py_exec_var_loaded,
     Bootstrapper_state_input_start_id_var_loaded,
     Bootstrapper_state_proto_code_file_abs_path_inited,
     Bootstrapper_state_version_constraints_generated,

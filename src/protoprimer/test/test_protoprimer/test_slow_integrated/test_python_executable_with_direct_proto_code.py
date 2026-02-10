@@ -2,7 +2,6 @@ import os
 import pathlib
 import subprocess
 import sys
-import venv
 
 from local_test.integrated_helper import (
     create_conf_client_file,
@@ -18,8 +17,6 @@ from protoprimer.primer_kernel import (
     ConfConstGeneral,
     ConfConstInput,
     ConfConstPrimer,
-    EnvVar,
-    StateStride,
     PackageDriverPip,
     SyntaxArg,
 )
