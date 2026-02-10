@@ -3,7 +3,6 @@ import pathlib
 import stat
 import subprocess
 import sys
-import venv
 
 from local_doc import (
     cmd_app_starter,
@@ -23,8 +22,8 @@ from protoprimer.primer_kernel import (
     ConfConstGeneral,
     ConfConstInput,
     ConfConstPrimer,
-    RunMode,
     PackageDriverPip,
+    RunMode,
 )
 from protoprimer.proto_generator import generate_entry_script_content
 

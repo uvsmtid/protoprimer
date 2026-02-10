@@ -5,7 +5,11 @@ import shutil
 import stat
 import sys
 from pathlib import Path
-from typing import List, Union, Tuple
+from typing import (
+    List,
+    Tuple,
+    Union,
+)
 
 import protoprimer
 from local_test.toml_handler import save_toml_data
@@ -31,10 +35,10 @@ def switch_to_ref_root_abs_path(tmp_path: pathlib.Path) -> pathlib.Path:
     Ensure the current directory is the `PathName.path_ref_root`.
     """
 
-    tmp_dir_abs_path = pathlib.Path(tmp_path)
-    assert os.path.isdir(tmp_dir_abs_path)
-    assert os.path.isabs(tmp_dir_abs_path)
-    os.chdir(tmp_path)
+    tmp_dir_abs_path = tmp_path.resolve()
+    assert os.path.isdir(str(tmp_dir_abs_path))
+    assert os.path.isabs(str(tmp_dir_abs_path))
+    os.chdir(str(tmp_dir_abs_path))
 
     return tmp_dir_abs_path
 
@@ -275,7 +279,7 @@ def create_max_layout(tmp_path: Path) -> Tuple[Path, Path, Path]:
     See "max" layout: FT_59_95_81_63.env_layout.md
     """
 
-    ref_root_abs_path = switch_to_ref_root_abs_path(tmp_path)
+    ref_root_abs_path: pathlib.Path = switch_to_ref_root_abs_path(tmp_path)
 
     # === create `ConfLeap.leap_primer`
 

@@ -1,9 +1,9 @@
 import subprocess
+from typing import List
 from unittest.mock import (
     mock_open,
     patch,
 )
-from typing import List
 
 import pytest
 

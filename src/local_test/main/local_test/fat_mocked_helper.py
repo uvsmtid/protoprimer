@@ -4,9 +4,15 @@ import os
 import pathlib
 import subprocess
 import sys
-from contextlib import contextmanager, ExitStack
+from contextlib import (
+    contextmanager,
+    ExitStack,
+)
+from typing import (
+    List,
+    Optional,
+)
 from unittest.mock import patch
-from typing import List, Optional
 
 from pyfakefs.fake_filesystem import FakeFilesystem
 

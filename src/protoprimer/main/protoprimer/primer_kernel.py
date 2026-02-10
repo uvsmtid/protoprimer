@@ -27,7 +27,6 @@ import shutil
 import subprocess
 import sys
 import typing
-import venv
 from types import CodeType
 from typing import (
     Any,
@@ -37,7 +36,7 @@ from typing import (
 
 # The release process ensures that content in this file matches the version below while tagging the release commit
 # (otherwise, if the file comes from a different commit, the version is irrelevant):
-__version__ = "0.6.3"
+__version__ = "0.6.4"
 
 logger: logging.Logger = logging.getLogger()
 
@@ -666,18 +665,19 @@ class PackageDriverPip(PackageDriverBase):
         required_python_file_abs_path: str,
         local_venv_dir_abs_path: str,
     ) -> None:
-        venv.create(
-            local_venv_dir_abs_path,
-            with_pip=True,
-            # FT_84_11_73_28.supported_python_versions.md:
-            # `upgrade_deps` is not available in `python3.7`:
-            # upgrade_deps=True,
+        subprocess.check_call(
+            [
+                required_python_file_abs_path,
+                "-m",
+                "venv",
+                local_venv_dir_abs_path,
+            ]
         )
-        # Use the python executable within the created venv
+        # Use the python executable within the created `venv`:
         venv_python_executable = os.path.join(local_venv_dir_abs_path, "bin", "python")
         subprocess.check_call(
             [
-                venv_python_executable,  # Use the venv's python
+                venv_python_executable,
                 "-m",
                 "pip",
                 "install",
@@ -3729,7 +3729,7 @@ class Bootstrapper_state_proto_code_file_abs_path_inited(AbstractCachingStateNod
             )
         )
 
-        assert self.env_ctx.get_stride().value >= StateStride.stride_py_arbitrary
+        assert self.env_ctx.get_stride().value >= StateStride.stride_py_arbitrary.value
 
         state_proto_code_file_abs_path_inited: str
         if self.env_ctx.get_stride().value >= StateStride.stride_py_venv.value:
@@ -4375,7 +4375,7 @@ class Bootstrapper_state_local_conf_symlink_abs_path_inited(
             if os.path.islink(state_local_conf_symlink_abs_path_inited):
                 if os.path.isdir(state_local_conf_symlink_abs_path_inited):
                     if state_input_run_mode_arg_loaded == RunMode.mode_start:
-                        # Nonthing to do:
+                        # Nothing to do:
                         pass
                     else:
                         # Compare the existing link target and the configured one:
@@ -4565,6 +4565,10 @@ class Bootstrapper_state_required_python_file_abs_path_inited(
                 # TODO: TODO_03_47_85_89.implement_python_selection.md:
                 # TODO: This will not work on Windows:
                 state_required_python_file_abs_path_inited = shutil.which(str(path_obj))
+                if state_required_python_file_abs_path_inited is None:
+                    raise AssertionError(
+                        f"Unable to find any executable in `PATH` for the basename [{str(path_obj)}]"
+                    )
 
         return state_required_python_file_abs_path_inited
 
@@ -6949,7 +6953,7 @@ def get_venv_type(
         )
 
 
-def get_python_version(path_to_python: str) -> tuple[int, int, int] | None:
+def get_python_version(path_to_python: str) -> tuple[int, int, int]:
     """
     Executes a `python` binary and retrieves its version as a numeric tuple.
     """

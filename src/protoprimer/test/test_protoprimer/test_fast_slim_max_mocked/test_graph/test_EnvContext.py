@@ -6,7 +6,7 @@ from unittest.mock import (
 )
 
 from local_test.base_test_class import BasePyfakefsTestClass
-from local_test.case_condition import requires_max_python
+from local_test.case_condition import is_min_python
 from local_test.mock_subprocess import mock_get_python_version_by_current
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
@@ -61,7 +61,6 @@ class TestEnvContext(BasePyfakefsTestClass):
         return_value="/tmp",
     )
     @patch("subprocess.check_call")
-    @requires_max_python
     def test_init_default(
         self,
         mock_check_call,
@@ -79,7 +78,10 @@ class TestEnvContext(BasePyfakefsTestClass):
             EnvState.state_package_driver_prepared.name
         )
         # then:
-        assert isinstance(package_driver, PackageDriverUv)
+        if is_min_python():
+            assert isinstance(package_driver, PackageDriverPip)
+        else:
+            assert isinstance(package_driver, PackageDriverUv)
 
     @patch("sys.argv", ["script_name"])
     @patch.dict(
@@ -113,7 +115,6 @@ class TestEnvContext(BasePyfakefsTestClass):
         return_value="/tmp",
     )
     @patch("subprocess.check_call")
-    @requires_max_python
     def test_init_with_uv(
         self,
         mock_check_call,
@@ -131,7 +132,10 @@ class TestEnvContext(BasePyfakefsTestClass):
             EnvState.state_package_driver_prepared.name
         )
         # then:
-        assert isinstance(package_driver, PackageDriverUv)
+        if is_min_python():
+            assert isinstance(package_driver, PackageDriverPip)
+        else:
+            assert isinstance(package_driver, PackageDriverUv)
 
     @patch("sys.argv", ["script_name"])
     @patch.dict(

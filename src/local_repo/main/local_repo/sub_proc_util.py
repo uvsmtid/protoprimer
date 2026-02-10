@@ -1,6 +1,9 @@
 import os
 import subprocess
-from typing import Dict, Union, List
+from typing import (
+    Dict,
+    Union,
+)
 
 
 def get_command_code(
