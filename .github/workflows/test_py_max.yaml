@@ -15,9 +15,9 @@ jobs:
             # When one of the jobs fails, this prevents canceling another job (for another Python version):
             fail-fast: false
             matrix:
-                # FT_84_11_73_28: supported python versions:
+                # FT_84_11_73_28.supported_python_versions.md:
                 python-version:
-                    -   3.14
+                    -   "3.14"
         steps:
             -   run: "echo runner.os: ${{ runner.os }}"
             -   run: "echo github.repository: ${{ github.repository }}"
@@ -28,7 +28,7 @@ jobs:
                 with:
                     python-version: ${{ matrix.python-version }}
 
-            # FT_84_11_73_28: supported python versions:
+            # FT_84_11_73_28.supported_python_versions.md:
             -   run: "which python3.14"
             -   run: "python --version"
 

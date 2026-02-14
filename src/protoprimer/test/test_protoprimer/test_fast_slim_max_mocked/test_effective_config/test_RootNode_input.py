@@ -109,12 +109,14 @@ def test_render_input_config_data_with_unused_fields_quiet():
         orig_data=config_data,
     )
 
-    expected_output = f"""leap_input = (
+    expected_output = f"""\
+leap_input = (
     {{
         "state_proto_code_file_abs_path_inited": "/{ConfConstGeneral.default_proto_code_basename}",
         "state_primer_conf_file_abs_path_inited": "/{ConfConstGeneral.name_protoprimer_package}.{ConfConstInput.conf_file_ext}",
         "some_string": "some_value",
         "some_int": 123,
     }}
-)"""
+)\
+"""
     assert RenderConfigVisitor(is_quiet=True).render_node(root_node) == expected_output

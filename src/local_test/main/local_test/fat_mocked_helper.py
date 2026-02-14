@@ -82,14 +82,12 @@ def fat_mock_wrapper(
         )
 
     def _mock_create_pip_venv(
-        self,
         env_dir,
         **kwargs,
     ):
         _mock_create_venv(env_dir, **kwargs)
 
     def _mock_create_uv_venv(
-        self,
         env_dir,
         **kwargs,
     ):

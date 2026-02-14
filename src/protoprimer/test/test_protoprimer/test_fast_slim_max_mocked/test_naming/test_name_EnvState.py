@@ -168,6 +168,11 @@ class StateName(enum.Enum):
         NameCategory.category_loaded_data,
     )
 
+    state_required_python_version_inited = StateMeta(
+        EnvState.state_required_python_version_inited,
+        NameCategory.category_value_field_action,
+    )
+
     state_required_python_file_abs_path_inited = StateMeta(
         EnvState.state_required_python_file_abs_path_inited,
         NameCategory.category_path_value,

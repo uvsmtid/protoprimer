@@ -36,7 +36,7 @@ from typing import (
 
 # The release process ensures that content in this file matches the version below while tagging the release commit
 # (otherwise, if the file comes from a different commit, the version is irrelevant):
-__version__ = "0.6.4"
+__version__ = "0.7.0"
 
 logger: logging.Logger = logging.getLogger()
 
@@ -85,7 +85,7 @@ def ensure_min_python_version():
     Ensure the running Python interpreter is >= (major, minor, patch).
     """
 
-    # FT_84_11_73_28: supported python versions:
+    # FT_84_11_73_28.supported_python_versions.md:
     version_tuple: tuple[int, int, int] = (3, 7, 0)
 
     if sys.version_info < version_tuple:
@@ -367,6 +367,10 @@ class ValueName(enum.Enum):
 
     value_package_driver = "package_driver"
 
+    value_python = "python"
+
+    value_version = "version"
+
 
 class PathName(enum.Enum):
 
@@ -483,6 +487,11 @@ class ConfField(enum.Enum):
     ####################################################################################################################
     # Common overridable `global` and `local` fields: FT_23_37_64_44.conf_dst.md
 
+    # state_required_python_version_inited:
+    field_required_python_version = (
+        f"{PathName.path_required_python.value}_{ValueName.value_version.value}"
+    )
+
     # state_required_python_file_abs_path_inited:
     field_required_python_file_abs_path = f"{PathName.path_required_python.value}_{FilesystemObject.fs_object_file.value}_{PathType.path_abs.value}"
 
@@ -517,6 +526,9 @@ class ConfField(enum.Enum):
     field_install_extras = f"{ValueName.value_install_extras.value}"
 
 
+########################################################################################################################
+
+
 class PackageDriverBase:
 
     def get_type(
@@ -532,15 +544,13 @@ class PackageDriverBase:
 
     def create_venv(
         self,
-        required_python_file_abs_path: str,
         local_venv_dir_abs_path: str,
     ) -> None:
         logger.info(f"creating `venv` [{local_venv_dir_abs_path}]")
-        self._create_venv_impl(required_python_file_abs_path, local_venv_dir_abs_path)
+        self._create_venv_impl(local_venv_dir_abs_path)
 
     def _create_venv_impl(
         self,
-        required_python_file_abs_path: str,
         local_venv_dir_abs_path: str,
     ) -> None:
         raise NotImplementedError()
@@ -655,6 +665,14 @@ class PackageDriverBase:
 
 class PackageDriverPip(PackageDriverBase):
 
+    def __init__(
+        self,
+        required_python_file_abs_path: str,
+        required_python_version: str,
+    ):
+        self.required_python_file_abs_path: str = required_python_file_abs_path
+        self.required_python_version: str = required_python_version
+
     def get_type(
         self,
     ) -> PackageDriverType:
@@ -662,12 +680,11 @@ class PackageDriverPip(PackageDriverBase):
 
     def _create_venv_impl(
         self,
-        required_python_file_abs_path: str,
         local_venv_dir_abs_path: str,
     ) -> None:
         subprocess.check_call(
             [
-                required_python_file_abs_path,
+                self.required_python_file_abs_path,
                 "-m",
                 "venv",
                 local_venv_dir_abs_path,
@@ -714,26 +731,84 @@ class PackageDriverUv(PackageDriverBase):
 
     def __init__(
         self,
-        uv_exec_abs_path: str,
+        required_python_version: str,
+        state_local_cache_dir_abs_path_inited: str,
     ):
-        self.uv_exec_abs_path: str = uv_exec_abs_path
+        self.required_python_version: str = required_python_version
+        self.uv_venv_abs_path: str = os.path.join(
+            # TODO: make it relative to "cache/venv" specifically (instead of directly to "cache"):
+            state_local_cache_dir_abs_path_inited,
+            # TODO: take from config (or default constant):
+            "venv",
+            # TODO: take from config (or default constant):
+            "uv.venv",
+        )
+        self.uv_exec_abs_path: str = os.path.join(
+            self.uv_venv_abs_path,
+            ConfConstGeneral.file_rel_path_venv_uv,
+        )
 
     def get_type(
         self,
     ) -> PackageDriverType:
         return PackageDriverType.driver_uv
 
+    def _ensure_uv_is_available(self):
+        if not os.path.exists(self.uv_exec_abs_path):
+            # To use `PackageDriverType.driver_uv`, use `PackageDriverType.driver_pip` to install `uv` first:
+            pip_driver = PackageDriverPip(
+                # TODO: assert python version suitable for `uv` (because this `venv` will be used to install `uv).
+                # NOTE: Create this `venv` (to install `uv`) with whatever `python` runs now:
+                sys.executable,
+                self.required_python_version,
+            )
+            pip_driver.create_venv(
+                self.uv_venv_abs_path,
+            )
+            uv_exec_venv_python_abs_path = os.path.join(
+                self.uv_venv_abs_path,
+                ConfConstGeneral.file_rel_path_venv_python,
+            )
+            pip_driver.install_packages(
+                uv_exec_venv_python_abs_path,
+                [
+                    ConfConstGeneral.name_uv_package,
+                ],
+            )
+        else:
+            # Verify `self.uv_exec_abs_path` is functional:
+            subprocess.check_call(
+                [
+                    self.uv_exec_abs_path,
+                    "python",
+                    "dir",
+                ]
+            )
+
+        assert os.path.isfile(self.uv_exec_abs_path)
+
     def _create_venv_impl(
         self,
-        required_python_file_abs_path: str,
         local_venv_dir_abs_path: str,
     ) -> None:
+
+        self._ensure_uv_is_available()
+
+        subprocess.check_call(
+            [
+                self.uv_exec_abs_path,
+                "python",
+                "install",
+                self.required_python_version,
+            ]
+        )
+
         subprocess.check_call(
             [
                 self.uv_exec_abs_path,
                 "venv",
                 "--python",
-                required_python_file_abs_path,
+                self.required_python_version,
                 local_venv_dir_abs_path,
             ]
         )
@@ -742,6 +817,9 @@ class PackageDriverUv(PackageDriverBase):
         self,
         required_python_file_abs_path: str,
     ) -> list[str]:
+
+        self._ensure_uv_is_available()
+
         return [
             self.uv_exec_abs_path,
             "pip",
@@ -754,6 +832,9 @@ class PackageDriverUv(PackageDriverBase):
         self,
         required_python_file_abs_path: str,
     ) -> list[str]:
+
+        self._ensure_uv_is_available()
+
         return [
             self.uv_exec_abs_path,
             "pip",
@@ -762,6 +843,19 @@ class PackageDriverUv(PackageDriverBase):
             "--python",
             required_python_file_abs_path,
         ]
+
+
+class PackageDriverType(enum.Enum):
+    """
+    See UC_09_61_98_94.installer_pip_vs_uv.md
+    """
+
+    driver_pip = PackageDriverPip
+
+    driver_uv = PackageDriverUv
+
+
+########################################################################################################################
 
 
 class ShellType(enum.Enum):
@@ -949,14 +1043,7 @@ def _get_shell_driver(cache_dir_abs_path: str) -> ShellDriverBase:
     )
 
 
-class PackageDriverType(enum.Enum):
-    """
-    See UC_09_61_98_94.installer_pip_vs_uv.md
-    """
-
-    driver_pip = PackageDriverPip
-
-    driver_uv = PackageDriverUv
+########################################################################################################################
 
 
 class ConfConstGeneral:
@@ -976,6 +1063,10 @@ class ConfConstGeneral:
 
     # File name of the FT_90_65_67_62.proto_code.md:
     default_proto_code_basename = f"{default_proto_code_module}.py"
+
+    python_version_file_basename = ".python-version"
+
+    name_pip_package = "pip"
 
     name_uv_package = "uv"
 
@@ -1152,6 +1243,9 @@ class ConfConstEnv:
     ]
 
     constraints_txt_basename = "constraints.txt"
+
+    # FT_84_11_73_28.supported_python_versions.md:
+    latest_known_python_version = "3.14"
 
 
 class CustomArgumentParser(argparse.ArgumentParser):
@@ -2005,6 +2099,13 @@ class AbstractConfLeapNodeBuilder(ConfigBuilderVisitor):
 
         self._create_used_dict_field(
             dict_node=dict_node,
+            field_name=ConfField.field_required_python_version.value,
+            node_class=Node_field_required_python_version,
+            conf_leap=conf_leap,
+        )
+
+        self._create_used_dict_field(
+            dict_node=dict_node,
             field_name=ConfField.field_required_python_file_abs_path.value,
             node_class=Node_field_required_python_file_abs_path,
             conf_leap=conf_leap,
@@ -2351,6 +2452,27 @@ class Node_field_default_env_dir_rel_path(AbstractValueNode[str]):
             f"The path is ignored when the `{ConfField.field_local_conf_symlink_rel_path.value}` symlink already exists.\n"
             f"Arg `{SyntaxArg.arg_env}` overrides this `{ConfField.field_default_env_dir_rel_path.value}` field.\n"
         )
+
+
+# noinspection PyPep8Naming
+class Node_field_required_python_version(AbstractValueNode[str]):
+
+    def __init__(
+        self,
+        conf_leap: ConfLeap,
+        **kwargs,
+    ):
+        super().__init__(
+            **kwargs,
+        )
+        if conf_leap == ConfLeap.leap_client:
+            self.note_text = (
+                f"Field `{ConfField.field_required_python_version.value}` selects `python` version.\n"
+                f'The value specifies the version of `python` interpreter which is used to create `venv` (e.g. "{ConfConstEnv.latest_known_python_version}").\n'
+                f"{ConfConstGeneral.common_field_global_note}\n"
+            )
+        elif conf_leap == ConfLeap.leap_env:
+            self.note_text = f"{ConfConstGeneral.common_field_local_note}\n"
 
 
 # noinspection PyPep8Naming
@@ -2793,6 +2915,15 @@ class Builder_RootNode_derived(AbstractConfLeapNodeBuilder):
 
         field_node = self._create_used_dict_field(
             dict_node=dict_node,
+            field_name=EnvState.state_required_python_version_inited.name,
+            node_class=AbstractValueNode,
+            conf_leap=conf_leap,
+            **kwargs,
+        )
+        field_node.note_text = f"{ConfConstGeneral.func_note_derived_based_on_common(ConfField.field_required_python_version.value)}\n"
+
+        field_node = self._create_used_dict_field(
+            dict_node=dict_node,
             field_name=EnvState.state_required_python_file_abs_path_inited.name,
             node_class=AbstractValueNode,
             conf_leap=conf_leap,
@@ -2968,7 +3099,7 @@ class StateNode(Generic[ValueType]):
     ) -> typing.Any:
         if parent_state not in self.parent_states:
             raise AssertionError(
-                f"parent_state[{parent_state}] is not parent of [{self.state_name}]"
+                f"parent_state [{parent_state}] is not parent of [{self.state_name}]"
             )
         return self.env_ctx.state_graph.eval_state(parent_state)
 
@@ -3904,10 +4035,6 @@ class Bootstrapper_state_primer_conf_file_data_loaded(AbstractCachingStateNode[d
         file_data: dict
         if os.path.exists(state_primer_conf_file_abs_path_inited):
             file_data = read_json_file(state_primer_conf_file_abs_path_inited)
-            verify_conf_file_data_contains_known_fields_only(
-                state_primer_conf_file_abs_path_inited,
-                file_data,
-            )
         else:
             warn_on_missing_conf_file(state_primer_conf_file_abs_path_inited)
             file_data = {}
@@ -4138,10 +4265,6 @@ class Bootstrapper_state_client_conf_file_data_loaded(AbstractCachingStateNode[d
         file_data: dict
         if os.path.exists(state_global_conf_file_abs_path_inited):
             file_data = read_json_file(state_global_conf_file_abs_path_inited)
-            verify_conf_file_data_contains_known_fields_only(
-                state_global_conf_file_abs_path_inited,
-                file_data,
-            )
         else:
             warn_on_missing_conf_file(state_global_conf_file_abs_path_inited)
             file_data = {}
@@ -4474,17 +4597,13 @@ class Bootstrapper_state_env_conf_file_data_loaded(AbstractCachingStateNode[dict
     def _eval_state_once(
         self,
     ) -> ValueType:
-        state_local_conf_file_abs_path_inited = self.eval_parent_state(
+        state_local_conf_file_abs_path_inited: str = self.eval_parent_state(
             EnvState.state_local_conf_file_abs_path_inited.name
         )
 
         file_data: dict
         if os.path.exists(state_local_conf_file_abs_path_inited):
             file_data = read_json_file(state_local_conf_file_abs_path_inited)
-            verify_conf_file_data_contains_known_fields_only(
-                state_local_conf_file_abs_path_inited,
-                file_data,
-            )
         else:
             warn_on_missing_conf_file(state_local_conf_file_abs_path_inited)
             file_data = {}
@@ -4503,6 +4622,62 @@ class Bootstrapper_state_env_conf_file_data_loaded(AbstractCachingStateNode[dict
             print(RenderConfigVisitor(is_quiet=is_quiet).render_node(conf_env))
 
         return file_data
+
+
+# noinspection PyPep8Naming
+class Bootstrapper_required_python_version_inited(
+    AbstractOverriddenFieldCachingStateNode[str]
+):
+
+    def __init__(
+        self,
+        env_ctx: EnvContext,
+        state_name: str | None = None,
+    ):
+        super().__init__(
+            env_ctx=env_ctx,
+            parent_states=[
+                EnvState.state_ref_root_dir_abs_path_inited.name,
+                EnvState.state_client_conf_file_data_loaded.name,
+                EnvState.state_env_conf_file_data_loaded.name,
+            ],
+            state_name=if_none(
+                state_name,
+                EnvState.state_required_python_version_inited.name,
+            ),
+        )
+
+    def _eval_state_once(
+        self,
+    ) -> ValueType:
+        state_required_python_version_inited: str | None = (
+            self._get_overridden_value_or_default(
+                ConfField.field_required_python_version.value,
+                None,
+            )
+        )
+
+        state_ref_root_dir_abs_path_inited: str = self.eval_parent_state(
+            EnvState.state_ref_root_dir_abs_path_inited.name
+        )
+
+        if state_required_python_version_inited is None:
+            python_version_file_abs_path: str | None = find_python_version_file(
+                state_ref_root_dir_abs_path_inited
+            )
+            if python_version_file_abs_path is None:
+                raise AssertionError(
+                    f"Both field [{ConfField.field_required_python_version.name}] value is [{state_required_python_version_inited}] and no file [{ConfConstGeneral.python_version_file_basename}] found walking up from [{state_ref_root_dir_abs_path_inited}] dir."
+                )
+            logger.info(
+                f"Using file [{python_version_file_abs_path}] as field [{ConfField.field_required_python_version.name}] value is [{state_required_python_version_inited}]."
+            )
+            state_required_python_version_inited = read_text_file(
+                python_version_file_abs_path
+            ).strip()
+
+        assert state_required_python_version_inited is not None
+        return state_required_python_version_inited
 
 
 # noinspection PyPep8Naming
@@ -4796,7 +4971,7 @@ class Bootstrapper_state_package_driver_inited(
             EnvState.state_required_python_file_abs_path_inited.name
         )
 
-        # FT_84_11_73_28: supported python versions:
+        # FT_84_11_73_28.supported_python_versions.md:
         uv_min_version: tuple[int, int, int] = (3, 8, 0)
         required_version: tuple[int, int, int] = get_python_version(
             state_required_python_file_abs_path_inited
@@ -4901,6 +5076,7 @@ class Bootstrapper_state_derived_conf_data_loaded(AbstractCachingStateNode[dict]
             # nothing specific
             # ===
             # `ConfLeap.leap_derived`
+            EnvState.state_required_python_version_inited.name,
             EnvState.state_required_python_file_abs_path_inited.name,
             EnvState.state_local_venv_dir_abs_path_inited.name,
             EnvState.state_local_log_dir_abs_path_inited.name,
@@ -5288,6 +5464,7 @@ class Bootstrapper_state_package_driver_prepared(
             env_ctx=env_ctx,
             parent_states=[
                 EnvState.state_input_run_mode_arg_loaded.name,
+                EnvState.state_required_python_version_inited.name,
                 EnvState.state_required_python_file_abs_path_inited.name,
                 EnvState.state_local_cache_dir_abs_path_inited.name,
                 EnvState.state_package_driver_inited.name,
@@ -5313,6 +5490,10 @@ class Bootstrapper_state_package_driver_prepared(
             # Skip it as `venv` is supposed to be ready in `RunMode.mode_start`:
             return PackageDriverBase()
 
+        state_required_python_version_inited: str = self.eval_parent_state(
+            EnvState.state_required_python_version_inited.name
+        )
+
         state_required_python_file_abs_path_inited: str = self.eval_parent_state(
             EnvState.state_required_python_file_abs_path_inited.name
         )
@@ -5327,49 +5508,17 @@ class Bootstrapper_state_package_driver_prepared(
 
         package_driver: PackageDriverBase
         if PackageDriverType.driver_uv == state_package_driver_inited:
-            # TODO: assert python version suitable for `uv`
-
-            uv_venv_abs_path = os.path.join(
-                # TODO: make it relative to "cache/venv" specifically (instead of directly to "cache"):
-                state_local_cache_dir_abs_path_inited,
-                # TODO: take from config (or default constant):
-                "venv",
-                # TODO: take from config (or default constant):
-                "uv.venv",
-            )
-            uv_exec_abs_path = os.path.join(
-                uv_venv_abs_path,
-                ConfConstGeneral.file_rel_path_venv_uv,
-            )
-
-            if not os.path.exists(uv_exec_abs_path):
-                # To use `PackageDriverType.driver_uv`, use `PackageDriverType.driver_pip` to install `uv` first:
-                pip_driver = PackageDriverPip()
-                pip_driver.create_venv(
-                    state_required_python_file_abs_path_inited,
-                    uv_venv_abs_path,
-                )
-                uv_exec_venv_python_abs_path = os.path.join(
-                    uv_venv_abs_path,
-                    ConfConstGeneral.file_rel_path_venv_python,
-                )
-                pip_driver.install_packages(
-                    uv_exec_venv_python_abs_path,
-                    [
-                        ConfConstGeneral.name_uv_package,
-                    ],
-                )
-
-            assert os.path.isfile(uv_exec_abs_path)
-
             package_driver = PackageDriverUv(
-                uv_exec_abs_path=uv_exec_abs_path,
+                required_python_version=state_required_python_version_inited,
+                state_local_cache_dir_abs_path_inited=state_local_cache_dir_abs_path_inited,
             )
-
         elif PackageDriverType.driver_pip == state_package_driver_inited:
             # Nothing to do:
             # `PackageDriverType.driver_pip` is available by default with the new `venv` without installation.
-            package_driver = PackageDriverPip()
+            package_driver = PackageDriverPip(
+                required_python_version=state_required_python_version_inited,
+                required_python_file_abs_path=state_required_python_file_abs_path_inited,
+            )
         else:
             raise AssertionError(
                 f"unsupported `{PackageDriverType.__name__}` [{state_package_driver_inited.name}]"
@@ -5486,7 +5635,6 @@ class Bootstrapper_state_stride_py_venv_reached(AbstractCachingStateNode[StateSt
                 )
             else:
                 state_package_driver_prepared.create_venv(
-                    state_required_python_file_abs_path_inited,
                     state_local_venv_dir_abs_path_inited,
                 )
         else:
@@ -6112,6 +6260,8 @@ class EnvState(enum.Enum):
     # `ConfLeap.leap_env`:
     state_env_conf_file_data_loaded = Bootstrapper_state_env_conf_file_data_loaded
 
+    state_required_python_version_inited = Bootstrapper_required_python_version_inited
+
     state_required_python_file_abs_path_inited = (
         Bootstrapper_state_required_python_file_abs_path_inited
     )
@@ -6658,19 +6808,33 @@ def can_print_effective_config(
     )
 
 
-def verify_conf_file_data_contains_known_fields_only(
-    file_path: str,
-    file_data: dict,
-) -> None:
+def find_python_version_file(curr_dir_any_path=".") -> str | None:
     """
-    Verifies that the config file data contains no unknown fields.
-
-    Because config files can be combined, any defined field (regardless of `ConfLeap`) is possible.
-
-    See: FT_00_22_19_59.derived_config.md
+    Walks up the directory tree to find the path to a `.python-version` file.
     """
-    # TODO: After removal of `--wizard` is this still needed?
-    #       All unknown fields are reported by `config`.
+
+    # Use abs path to ensure we can reach the root:
+    curr_dir_abs_path: str = os.path.abspath(curr_dir_any_path)
+
+    while True:
+        file_abs_path = os.path.join(
+            curr_dir_abs_path,
+            ConfConstGeneral.python_version_file_basename,
+        )
+
+        if os.path.isfile(file_abs_path):
+            return file_abs_path
+
+        # Walk up one level:
+        parent_dir_abs_path = os.path.dirname(curr_dir_abs_path)
+
+        # If the walk did not work, we hit the root:
+        if parent_dir_abs_path == curr_dir_abs_path:
+            break
+
+        curr_dir_abs_path = parent_dir_abs_path
+
+    return None
 
 
 def switch_python(

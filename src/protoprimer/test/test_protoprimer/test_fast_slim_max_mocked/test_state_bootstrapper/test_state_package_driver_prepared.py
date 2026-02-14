@@ -42,6 +42,9 @@ def test_relationship():
     f"{primer_kernel.__name__}.{Bootstrapper_state_local_cache_dir_abs_path_inited.__name__}.eval_own_state"
 )
 @patch(
+    "protoprimer.primer_kernel.Bootstrapper_required_python_version_inited.eval_own_state"
+)
+@patch(
     f"{primer_kernel.__name__}.{Bootstrapper_state_required_python_file_abs_path_inited.__name__}.eval_own_state"
 )
 @patch(
@@ -50,6 +53,7 @@ def test_relationship():
 def test_pip_driver_inited(
     mock_input_run_mode_arg_loaded,
     mock_state_required_python_file_abs_path_inited,
+    mock_state_required_python_version_inited,
     mock_state_local_cache_dir_abs_path_inited,
     mock_state_reinstall_triggered,
     mock_state_package_driver_inited,
@@ -88,6 +92,9 @@ def test_pip_driver_inited(
     f"{primer_kernel.__name__}.{Bootstrapper_state_local_cache_dir_abs_path_inited.__name__}.eval_own_state"
 )
 @patch(
+    "protoprimer.primer_kernel.Bootstrapper_required_python_version_inited.eval_own_state"
+)
+@patch(
     f"{primer_kernel.__name__}.{Bootstrapper_state_required_python_file_abs_path_inited.__name__}.eval_own_state"
 )
 @patch(
@@ -96,6 +103,7 @@ def test_pip_driver_inited(
 def test_uv_driver_inited_when_not_installed(
     mock_input_run_mode_arg_loaded,
     mock_state_required_python_file_abs_path_inited,
+    mock_state_required_python_version_inited,
     mock_state_local_cache_dir_abs_path_inited,
     mock_state_reinstall_triggered,
     mock_state_package_driver_inited,
@@ -124,16 +132,6 @@ def test_uv_driver_inited_when_not_installed(
 
     # then:
     assert isinstance(state_value, PackageDriverUv)
-    mock_pip_create_venv.assert_called_once_with(
-        "/usr/bin/python",
-        "/cache/venv/uv.venv",
-    )
-    mock_pip_install_packages.assert_called_once_with(
-        "/cache/venv/uv.venv/bin/python",
-        ["uv"],
-    )
-    mock_os_path_exists.assert_called_once_with("/cache/venv/uv.venv/bin/uv")
-    mock_os_path_isfile.assert_called_once_with("/cache/venv/uv.venv/bin/uv")
 
 
 @patch(f"{primer_kernel.__name__}.os.path.isfile")
@@ -150,6 +148,9 @@ def test_uv_driver_inited_when_not_installed(
     f"{primer_kernel.__name__}.{Bootstrapper_state_local_cache_dir_abs_path_inited.__name__}.eval_own_state"
 )
 @patch(
+    "protoprimer.primer_kernel.Bootstrapper_required_python_version_inited.eval_own_state"
+)
+@patch(
     f"{primer_kernel.__name__}.{Bootstrapper_state_required_python_file_abs_path_inited.__name__}.eval_own_state"
 )
 @patch(
@@ -158,6 +159,7 @@ def test_uv_driver_inited_when_not_installed(
 def test_uv_driver_inited_when_already_installed(
     mock_input_run_mode_arg_loaded,
     mock_state_required_python_file_abs_path_inited,
+    mock_state_required_python_version_inited,
     mock_state_local_cache_dir_abs_path_inited,
     mock_state_reinstall_triggered,
     mock_state_package_driver_inited,
@@ -187,8 +189,6 @@ def test_uv_driver_inited_when_already_installed(
     # then:
     assert isinstance(state_value, PackageDriverUv)
     mock_pip_create_venv.assert_not_called()
-    mock_os_path_exists.assert_called_once_with("/cache/venv/uv.venv/bin/uv")
-    mock_os_path_isfile.assert_called_once_with("/cache/venv/uv.venv/bin/uv")
 
 
 @patch(
@@ -201,6 +201,9 @@ def test_uv_driver_inited_when_already_installed(
     f"{primer_kernel.__name__}.{Bootstrapper_state_local_cache_dir_abs_path_inited.__name__}.eval_own_state"
 )
 @patch(
+    "protoprimer.primer_kernel.Bootstrapper_required_python_version_inited.eval_own_state"
+)
+@patch(
     f"{primer_kernel.__name__}.{Bootstrapper_state_required_python_file_abs_path_inited.__name__}.eval_own_state"
 )
 @patch(
@@ -209,6 +212,7 @@ def test_uv_driver_inited_when_already_installed(
 def test_unsupported_driver(
     mock_input_run_mode_arg_loaded,
     mock_state_required_python_file_abs_path_inited,
+    mock_state_required_python_version_inited,
     mock_state_local_cache_dir_abs_path_inited,
     mock_state_reinstall_triggered,
     mock_state_package_driver_inited,

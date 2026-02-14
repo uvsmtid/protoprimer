@@ -16,18 +16,20 @@ from local_test.toml_handler import save_toml_data
 from protoprimer.primer_kernel import (
     ConfConstClient,
     ConfConstEnv,
+    ConfConstGeneral,
     ConfConstInput,
     ConfConstPrimer,
     ConfField,
-    PackageDriverType,
     TopDir,
     write_json_file,
+    write_text_file,
 )
 
 logger = logging.getLogger()
 
 test_pyproject_src_dir_rel_path = "pyproject_src"
 test_package_name = "test_whatever"
+test_python_version = "3.10"
 
 
 def switch_to_ref_root_abs_path(tmp_path: pathlib.Path) -> pathlib.Path:
@@ -157,6 +159,20 @@ def create_conf_primer_file(
     )
 
 
+def create_python_version_file(
+    ref_root_dir_abs_path: str,
+    python_version: str,
+) -> None:
+    python_version_file_abs_path: str = os.path.join(
+        ref_root_dir_abs_path,
+        ConfConstGeneral.python_version_file_basename,
+    )
+    write_text_file(
+        python_version_file_abs_path,
+        python_version,
+    )
+
+
 def create_conf_client_file(
     ref_root_abs_path: pathlib.Path,
     conf_client_dir_abs_path: pathlib.Path,
@@ -175,6 +191,7 @@ def create_conf_client_file(
     )
 
     client_conf_data = {
+        ConfField.field_required_python_version.value: test_python_version,
         ConfField.field_local_conf_symlink_rel_path.value: ConfConstClient.default_dir_rel_path_leap_env_link_name,
         ConfField.field_default_env_dir_rel_path.value: str(conf_env_dir_rel_path),
         ConfField.field_project_descriptors.value: [
@@ -205,6 +222,7 @@ def create_conf_env_file(
     project_dir_abs_path: pathlib.Path,
     python_abs_path: Union[str, None] = None,
     venv_dir_rel_path: Union[str, None] = None,
+    required_python_version: str = test_python_version,
 ) -> None:
     if python_abs_path is None:
         python_abs_path = sys.executable
@@ -217,11 +235,13 @@ def create_conf_env_file(
     )
 
     env_conf_data = {
+        ConfField.field_required_python_version.value: required_python_version,
         ConfField.field_required_python_file_abs_path.value: python_abs_path,
         ConfField.field_local_venv_dir_rel_path.value: venv_dir_rel_path,
-        # TODO: Parameterize tests to succeed with
-        #       both `PackageDriverType.driver_pip` and `PackageDriverType.driver_uv`.
-        ConfField.field_package_driver.value: PackageDriverType.driver_pip.name,
+        # NOTE: Not specifying `ConfField.field_package_driver.value` - it will be (automatic):
+        #       *   `PackageDriverType.driver_pip` for `python` version < 3.8
+        #       *   `PackageDriverType.driver_uv` for `python` version >= 3.8
+        # ConfField.field_package_driver.value: PackageDriverType.driver_pip.name,
         ConfField.field_project_descriptors.value: [
             {
                 ConfField.field_build_root_dir_rel_path.value: str(
@@ -250,6 +270,9 @@ def create_min_layout(tmp_path: Path) -> Tuple[Path, Path, Path]:
     """
 
     ref_root_abs_path = switch_to_ref_root_abs_path(tmp_path)
+
+    # Use the `ConfConstGeneral.python_version_file_basename` file in the min layout:
+    create_python_version_file(str(ref_root_abs_path), test_python_version)
 
     # === create `pyproject.toml`
 

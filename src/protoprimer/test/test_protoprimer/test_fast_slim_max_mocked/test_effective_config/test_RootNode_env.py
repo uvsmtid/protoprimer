@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from local_test.integrated_helper import test_python_version
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer.primer_kernel import (
     ConfField,
@@ -17,6 +18,7 @@ def test_render_env_config_data_with_unused_fields():
     state_input_proto_conf_env_file_abs_path_eval_finalized = "/abs/path/to/file.json"
 
     config_data = {
+        ConfField.field_required_python_version.value: test_python_version,
         ConfField.field_project_descriptors.value: [
             {
                 ConfField.field_build_root_dir_rel_path.value: "src/test_project",
@@ -42,6 +44,9 @@ def test_render_env_config_data_with_unused_fields():
 leap_env = (
     \n\
     {{
+        \n\
+        {TermColor.config_comment.value}# This local environment-specific field overrides the global one (see description in `leap_client`).{TermColor.reset_style.value}
+        "required_python_version": "{test_python_version}",
         \n\
         {TermColor.config_missing.value}# This local environment-specific field overrides the global one (see description in `leap_client`).{TermColor.reset_style.value}
         {TermColor.config_missing.value}# "required_python_file_abs_path": None,{TermColor.reset_style.value}
@@ -107,6 +112,9 @@ leap_env = (
     {{
         \n\
         {TermColor.config_missing.value}# This local environment-specific field overrides the global one (see description in `leap_client`).{TermColor.reset_style.value}
+        {TermColor.config_missing.value}# "required_python_version": None,{TermColor.reset_style.value}
+        \n\
+        {TermColor.config_missing.value}# This local environment-specific field overrides the global one (see description in `leap_client`).{TermColor.reset_style.value}
         {TermColor.config_missing.value}# "required_python_file_abs_path": None,{TermColor.reset_style.value}
         \n\
         {TermColor.config_missing.value}# This local environment-specific field overrides the global one (see description in `leap_client`).{TermColor.reset_style.value}
@@ -137,6 +145,7 @@ def test_render_env_config_data_with_unused_fields_quiet():
     state_input_proto_conf_env_file_abs_path_eval_finalized = "/abs/path/to/file.json"
 
     config_data = {
+        ConfField.field_required_python_version.value: test_python_version,
         ConfField.field_project_descriptors.value: [
             {
                 ConfField.field_build_root_dir_rel_path.value: "src/test_project",
@@ -157,8 +166,10 @@ def test_render_env_config_data_with_unused_fields_quiet():
         state_local_conf_file_abs_path_inited=state_input_proto_conf_env_file_abs_path_eval_finalized,
     )
 
-    expected_output = f"""leap_env = (
+    expected_output = f"""\
+leap_env = (
     {{
+        "required_python_version": "{test_python_version}",
         "project_descriptors": [
             {{
                 "build_root_dir_rel_path": "src/test_project",
@@ -172,5 +183,6 @@ def test_render_env_config_data_with_unused_fields_quiet():
         ],
         "whatever_test": 5,
     }}
-)"""
+)\
+"""
     assert RenderConfigVisitor(is_quiet=True).render_node(root_node) == expected_output

@@ -67,6 +67,9 @@ leap_derived = (
         {TermColor.config_missing.value}# This value is derived from `state_primer_conf_file_abs_path_inited` - see description in `leap_input`.{TermColor.reset_style.value}
         {TermColor.config_missing.value}# "state_local_conf_file_abs_path_inited": None,{TermColor.reset_style.value}
         \n\
+        {TermColor.config_missing.value}# This value is derived from `required_python_version` in `leap_client` (override-able in `leap_env`) - see description there.{TermColor.reset_style.value}
+        {TermColor.config_missing.value}# "state_required_python_version_inited": None,{TermColor.reset_style.value}
+        \n\
         {TermColor.config_missing.value}# This value is derived from `required_python_file_abs_path` in `leap_client` (override-able in `leap_env`) - see description there.{TermColor.reset_style.value}
         {TermColor.config_missing.value}# "state_required_python_file_abs_path_inited": None,{TermColor.reset_style.value}
         \n\
@@ -131,7 +134,8 @@ def test_render_derived_config_data_with_unused_fields_quiet():
         orig_data=config_data,
     )
 
-    expected_output = f"""leap_derived = (
+    expected_output = f"""\
+leap_derived = (
     {{
         "state_proto_code_file_abs_path_inited": "/abs/path/to/proto.py",
         "state_project_descriptors_inited": [
@@ -144,5 +148,6 @@ def test_render_derived_config_data_with_unused_fields_quiet():
         ],
         "whatever_test": 5,
     }}
-)"""
+)\
+"""
     assert RenderConfigVisitor(is_quiet=True).render_node(root_node) == expected_output

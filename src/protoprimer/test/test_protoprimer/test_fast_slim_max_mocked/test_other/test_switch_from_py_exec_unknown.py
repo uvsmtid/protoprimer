@@ -4,6 +4,7 @@ from unittest.mock import patch
 
 from local_test.base_test_class import BasePyfakefsTestClass
 from local_test.fat_mocked_helper import clean_up_pyfakefs_file_log_handlers
+from local_test.integrated_helper import test_python_version
 from local_test.mock_subprocess import (
     mock_get_python_version_by_current,
     mock_shutil_which_python,
@@ -96,6 +97,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
 
         env_conf_data = {
+            ConfField.field_required_python_version.value: test_python_version,
             ConfField.field_required_python_file_abs_path.value: ConfConstEnv.default_file_abs_path_python,
             ConfField.field_local_venv_dir_rel_path.value: ConfConstEnv.default_dir_rel_path_venv,
             ConfField.field_project_descriptors.value: ConfConstEnv.default_project_descriptors,

@@ -1,0 +1,6 @@
+{
+    "__comment__": "See: FT_84_11_73_28.supported_python_versions.md",
+    "__required_python_version.comment__": "It runs `python` 3.10 but switched to `python` 3.11.",
+    "required_python_version": "3.11",
+    "required_python_file_abs_path": "python3.10"
+}

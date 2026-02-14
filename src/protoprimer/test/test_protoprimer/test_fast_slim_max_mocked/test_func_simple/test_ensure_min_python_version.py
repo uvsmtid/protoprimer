@@ -17,12 +17,12 @@ class ThisTestClass(BaseTestClass):
 
     @patch("sys.version_info", (3, 7, 0))
     def test_version_succeeds(self):
-        # FT_84_11_73_28: supported python versions:
+        # FT_84_11_73_28.supported_python_versions.md:
         ensure_min_python_version()
 
     @patch("sys.version_info", (3, 6, 5))
     def test_version_fails(self):
-        # FT_84_11_73_28: supported python versions:
+        # FT_84_11_73_28.supported_python_versions.md:
         with self.assertRaises(AssertionError) as context:
             ensure_min_python_version()
         self.assertIn("below the min required", str(context.exception))

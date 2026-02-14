@@ -6,6 +6,7 @@ from local_repo.sub_proc_util import (
     get_command_code,
     get_command_output,
 )
+from local_test.case_condition import is_min_python
 from local_test.integrated_helper import (
     create_conf_client_file,
     create_conf_env_file,
@@ -21,6 +22,7 @@ from neoprimer.cmd_venv_shell import custom_main
 from protoprimer.primer_kernel import (
     ConfConstClient,
     ConfConstEnv,
+    ConfConstGeneral,
     ConfConstInput,
     ConfConstPrimer,
     EnvVar,
@@ -50,7 +52,14 @@ def test_venv_shell_no_update(tmp_path: pathlib.Path):
     # ===
 
     project_dir_abs_path = ref_root_abs_path / test_pyproject_src_dir_rel_path
-    create_test_pyproject_toml(project_dir_abs_path, ["pyfakefs"])
+    create_test_pyproject_toml(
+        project_dir_abs_path,
+        [
+            # NOTE: Install `pip` to query package versions below (even if it might be a `venv` created with `uv`):
+            ConfConstGeneral.name_pip_package,
+            "pyfakefs",
+        ],
+    )
 
     # ===
 
@@ -90,8 +99,11 @@ def test_venv_shell_no_update(tmp_path: pathlib.Path):
 
     # then:
 
-    venv_pip = (
-        ref_root_abs_path / ConfConstEnv.default_dir_rel_path_venv / "bin" / "pip"
+    venv_pip: str = str(
+        ref_root_abs_path
+        / ConfConstEnv.default_dir_rel_path_venv
+        / "bin"
+        / ConfConstGeneral.name_pip_package
     )
     pip_freeze_output_install = get_command_output(f"{venv_pip} freeze")
     package_version_install = extract_package_version(

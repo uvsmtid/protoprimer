@@ -414,7 +414,8 @@ def test_render_config_quiet():
         config_data,
     )
 
-    expected_output = f"""some_var = (
+    expected_output = f"""\
+some_var = (
     {{
         "a": 1,
         "b": "hello",
@@ -437,7 +438,8 @@ def test_render_config_quiet():
             8,
         ],
     }}
-)"""
+)\
+"""
     assert RenderConfigVisitor(is_quiet=True).render_node(root_node) == expected_output
 
 

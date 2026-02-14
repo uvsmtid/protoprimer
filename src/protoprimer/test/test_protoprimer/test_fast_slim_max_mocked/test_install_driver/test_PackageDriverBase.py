@@ -21,9 +21,7 @@ def test_relationship():
 
 
 class PackageDriverConcrete(PackageDriverBase):
-    def _create_venv_impl(
-        self, required_python_file_abs_path: str, local_venv_dir_abs_path: str
-    ) -> None:
+    def _create_venv_impl(self, local_venv_dir_abs_path: str) -> None:
         pass
 
     def get_install_dependencies_cmd(
@@ -49,10 +47,10 @@ def test_package_driver_base_create_venv(mock_create_venv_impl):
     driver = PackageDriverConcrete()
 
     # when:
-    driver.create_venv("python_path", "venv_path")
+    driver.create_venv("venv_path")
 
     # then:
-    mock_create_venv_impl.assert_called_once_with("python_path", "venv_path")
+    mock_create_venv_impl.assert_called_once_with("venv_path")
 
 
 @patch.object(PackageDriverConcrete, "get_install_dependencies_cmd")
@@ -109,7 +107,7 @@ def test_package_driver_base_create_venv_impl_raises_not_implemented_error():
     # given:
     # when/then:
     with pytest.raises(NotImplementedError):
-        PackageDriverBase._create_venv_impl(None, "python_path", "venv_path")
+        PackageDriverBase._create_venv_impl(None, "venv_path")
 
 
 @patch.object(PackageDriverConcrete, "get_install_dependencies_cmd")

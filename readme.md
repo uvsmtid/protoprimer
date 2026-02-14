@@ -1,12 +1,12 @@
 
 [![PyPI version](https://img.shields.io/pypi/v/protoprimer.svg?style=flat-square&color=blue&label=package)](https://pypi.org/project/protoprimer)
-[![GitHub test 3.7 job](https://img.shields.io/github/actions/workflow/status/uvsmtid/protoprimer/test_3.7.yaml.svg?style=flat-square&color=palegreen&label=test%203.7)](https://github.com/uvsmtid/protoprimer/actions/workflows/test_3.7.yaml)
-[![GitHub test 3.14 job](https://img.shields.io/github/actions/workflow/status/uvsmtid/protoprimer/test_3.14.yaml.svg?style=flat-square&color=palegreen&label=test%203.14)](https://github.com/uvsmtid/protoprimer/actions/workflows/test_3.14.yaml)
+[![GitHub test py_min job](https://img.shields.io/github/actions/workflow/status/uvsmtid/protoprimer/test_py_min.yaml.svg?style=flat-square&color=palegreen&label=test%203.7)](https://github.com/uvsmtid/protoprimer/actions/workflows/test_py_min.yaml)
+[![GitHub test py_max job](https://img.shields.io/github/actions/workflow/status/uvsmtid/protoprimer/test_py_max.yaml.svg?style=flat-square&color=palegreen&label=test%203.14)](https://github.com/uvsmtid/protoprimer/actions/workflows/test_py_max.yaml)
 [![GitHub lint job](https://img.shields.io/github/actions/workflow/status/uvsmtid/protoprimer/lint.yaml.svg?style=flat-square&color=palegreen&label=lint)](https://github.com/uvsmtid/protoprimer/actions/workflows/lint.yaml)
 [![GitHub doc job](https://img.shields.io/github/actions/workflow/status/uvsmtid/protoprimer/doc.yaml.svg?style=flat-square&color=palegreen&label=doc)](https://github.com/uvsmtid/protoprimer/actions/workflows/doc.yaml)
 [![code coverage](https://img.shields.io/coveralls/github/uvsmtid/protoprimer.svg?style=flat-square&color=palegreen)](https://coveralls.io/github/uvsmtid/protoprimer)
 <!--
-FT_84_11_73_28: see supported python versions above.
+FT_84_11_73_28.supported_python_versions.md: see sbove.
 
 TODO: Use links to FC/UC docs under `./doc` (when ready) from this readme to navigate to details.
 -->
@@ -33,7 +33,7 @@ Want your users to run software straight from a `git` repo with just one command
 Main reason:\
 Your org does **not** test `shell` scripts.
 
-<details>
+<details id="shell-issues">
 <summary>Let's expand:</summary>
 
 <br>
@@ -197,15 +197,53 @@ Feel the difference:
 
 <a id="protoprimer-alternatives"></a>
 
-## Last: Can one size fit all?
+## Last: can one size fit all?
 
-No. Think: generating code, downloading artifacts, ensuring security keys, configuring pre-commit linters, etc.
+Obviously, no.
 
-But a "seed" of `protoprimer` can grow via extensible bootstrap DAG and config for any target environment:
-*   local or cloud
-*   Alice or Bob
-*   dev or prod
-*   v1 or v2
+Think: generating code, downloading versioned artifacts, ensuring security keys, configuring pre-commit linters, etc.
+
+`protoprimer` acts as a "seed" to grow via extensible bootstrap DAG.
+
+Also, due to differences in target environments, there is native support for different env configs:
+*   local **or** cloud
+*   Alice **or** Bob
+*   dev **or** prod
+*   v1 **or** v2
+*   ...
+
+## Bonus: a springboard for any other language toolchain
+
+`python` is **omnipresent**.
+
+<details>
+<summary>Single-touch <strong>requires omnipresence</strong> (in principle):</summary>
+
+<br>
+
+The bootstrap code **must** rely on very basic pre-requisites to expect them to be satisfied by default.
+
+Perhaps, pre-installed availability of `python` is even more expected than `shell` compatibility:
+*   old `bash` 3.x and `zsh` differences on macOS
+*   non-POSIX "shells" on Windows
+*   ...
+
+What other languages are omnipresent enough to start a bootstrap sequence?
+
+Potentially `js`, but it is rarely pre-installed.
+
+Why `python` is the next best choice (after `shell`)?
+*   omnipresent (just like `shell`): if not, trivially installed (e.g. on Windows, unlike POSIX shell)
+*   vast mind-share (just like `shell`): also, new `python` devs write less error-prone code than old `shell` devs
+*   no compiler stage (just like `shell`): in-place source code modification to run without build tools
+*   satisfying: solves most of the "Why avoid `shell`?" problems ([see above][shell_issues])
+
+</details>
+
+In turn, `python` code (bootstrapped via `protoprimer`) may springboard other toolchains:
+*   `java`
+*   `js`
+*   `go`
 *   ...
 
 <a id="protoprimer-getting-started"></a>
@@ -544,12 +582,32 @@ graph TD;
 *   [`leap_env`][leap_env]: provides "local config"
 *   `leap_derived`: not a file - represents effective config data derived from all the other data
 
-## Required `python`: switching executables
+<!--
+
+TODO: Add a section explaining how to select the `venv` driver (`uv`, `pip`, etc.).
+
+-->
+
+## Selecting required `python` version
+
+Required `python` version is selected per environment via config field `required_python_version`.
+
+If the field is not specified, `.python-version` file is searched up from ref root dir (e.g. repo root).
+
+Depending on the tools (e.g. `uv`, `pip`, ...) the required `python` version is installed or only validated.
+
+<!--
+
+TODO: Elaborate on `python` executable selection (in an expandable section) via path or basename.
+
+-->
+
+## Switching to required `python` executable
 
 The stand-alone "proto code" is designed to be run by any `python` executable (available in `PATH`).
 
 Eventually, based on the target client repo requirements, it must become:
-*   specific `python` version
+*   required `python` version
 *   executed from the initialized `venv` (with all dependencies)
 
 To achieve this, `protoprimer` switches `python` executables in a multi-staged bootstrap sequence:
@@ -564,23 +622,42 @@ Each executable is replaced with `os.execve` call.
 TODO: To support Windows, `os.execve` will have to be changed to use `subprocess` with a chain of children.
 -->
 
-## Reproducible `venv`: version pinning
-
 <!--
-TODO: Explain that it is delegated to tools like `pip` or `uv`.
+TODO: Add a section explaining how commands can be run inside and outside `venv`.
 -->
 
-To make bootstrap reproducible for any target env, `protoprimer` supports version pinning (locking):
-*   the actual dependencies are specified in the individual [pyproject.toml][pyproject.toml] per project
-*   the versions are constrained by [constraints.txt][constraints.txt] managed for selected env (for "local config")
+<!--
+TODO: Add a section on debugging both `env_bootstrapper` and `app_starter`.
+-->
 
-In short:
-*   `pyproject.toml` lists the dependencies (and version ranges)
-*   `constraints.txt` pins the dependencies to specific versions
+## Reproducible `venv`: version pinning
+
+Version pinning is delegated to tools like `uv`, `pip`, ...
+
+In short, there are two files to control the dependency versions:
+*   [pyproject.toml][pyproject.toml] lists the dependencies (and version **ranges**) for **all** environments
+*   [constraints.txt][constraints.txt] pins the dependencies to **specific** versions for the **selected** environment
+
+<details>
+<summary>Details:</summary>
+
+<br>
+
+Technically, only `constraints.txt` pins the versions.
+
+The role of `pyproject.toml` is to list required dependency names optionally with possible version ranges.
+
+The content of `constraints.txt` captures one of the possible outcomes of the dependency resolution considering:
+*   selected `python` version
+*   version ranges in `pyproject.toml`
+*   versions pinned in existing `constaints.txt`
+*   versions available in artifact repo (e.g. pypi.org)
+
+</details>
 
 <a id="protoprimer-upgrade-project"></a>
 
-## Upgrading versions
+## Upgrading versions: full vs partial
 
 To re-create `venv`, re-install the deps, and re-pin the versions, run:
 
@@ -588,7 +665,32 @@ To re-create `venv`, re-install the deps, and re-pin the versions, run:
 ./prime upgrade
 ```
 
-To control the dependency versions, spec them inside the [pyproject.toml][pyproject.toml] files.
+<details>
+<summary>See the difference between <strong>full</strong> vs <strong>partial</strong> upgrade:</summary>
+
+<br>
+
+*   **Full** (auto): upgrade all dependency versions (respecting version ranges specified in `pyproject.toml`).
+
+    The `upgrade` sub-command automates removal of the old `constaint.txt` file (to re-populate a new one).
+
+    Missing `constraints.txt` allows re-capturing a new outcome of the dependency resolution for all dependencies.
+
+    NOTE: This approach also destroys the old `venv` (any manual changes to `venv` will be lost).
+
+*   **Partial** (manual): upgrade a version only for one specific dependency.
+
+    *   Remove only the line for that dependency from `constaint.txt` file.
+
+    *   Re-run the normal bootstrap:
+
+        ```sh
+        ./prime
+        ```
+
+    NOTE: This approach re-uses the old `venv` (retains all manual changes).
+
+</details>
 
 <!--
 TODO: UC_52_87_82_92.conditional_auto_update.md: update when disabling auto-update is possible.
@@ -661,5 +763,12 @@ TODO: FT_93_57_03_75.app_vs_lib.md: Explain examples `./cmd/env_bootstrapper` an
 [protoprimer_motivation]: #protoprimer-motivation
 [effective_config]: #protoprimer-effective-config
 [subsequent_upgrade]: #protoprimer-upgrade-project
+
+<!-- markdownlint-disable MD051 -->
+<!--
+NOTE: This "user-content-" prefix is added by github.com when it renders the Markdown into HTML.
+-->
+[shell_issues]: #user-content-shell-issues
+<!-- markdownlint-enable -->
 
 [instant_python_bootstrap]: https://github.com/uvsmtid/instant_python_bootstrap

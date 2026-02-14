@@ -107,11 +107,13 @@ def test_render_primer_config_data_with_unused_fields_quiet():
         state_primer_conf_file_abs_path_inited=state_primer_conf_file_abs_path_inited,
     )
 
-    expected_output = f"""leap_primer = (
+    expected_output = f"""\
+leap_primer = (
     {{
         "ref_root_dir_rel_path": "../..",
         "global_conf_dir_rel_path": "gconf",
         "whatever_test": 5,
     }}
-)"""
+)\
+"""
     assert RenderConfigVisitor(is_quiet=True).render_node(root_node) == expected_output

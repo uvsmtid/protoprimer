@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+from local_test.integrated_helper import test_python_version
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer.primer_kernel import (
+    ConfConstEnv,
     ConfField,
     RenderConfigVisitor,
     RootNode_client,
@@ -20,6 +22,7 @@ def test_render_client_config_data_with_unused_fields():
     config_data = {
         ConfField.field_local_conf_symlink_rel_path.value: "lconf",
         ConfField.field_default_env_dir_rel_path.value: "dst/default_env",
+        ConfField.field_required_python_version.value: test_python_version,
         ConfField.field_required_python_file_abs_path.value: "/usr/bin/python3",
         ConfField.field_local_venv_dir_rel_path.value: "venv",
         ConfField.field_local_log_dir_rel_path.value: "log",
@@ -54,6 +57,11 @@ leap_client = (
         {TermColor.config_comment.value}# The path is ignored when the `local_conf_symlink_rel_path` symlink already exists.{TermColor.reset_style.value}
         {TermColor.config_comment.value}# Arg `--env` overrides this `default_env_dir_rel_path` field.{TermColor.reset_style.value}
         "default_env_dir_rel_path": "dst/default_env",
+        \n\
+        {TermColor.config_comment.value}# Field `required_python_version` selects `python` version.{TermColor.reset_style.value}
+        {TermColor.config_comment.value}# The value specifies the version of `python` interpreter which is used to create `venv` (e.g. "{ConfConstEnv.latest_known_python_version}").{TermColor.reset_style.value}
+        {TermColor.config_comment.value}# This field can be specified in global config (see `leap_client`) but it is override-able by local environment-specific config (see `leap_env`).{TermColor.reset_style.value}
+        "required_python_version": "{test_python_version}",
         \n\
         {TermColor.config_comment.value}# Field `required_python_file_abs_path` selects `python` version.{TermColor.reset_style.value}
         {TermColor.config_comment.value}# The value specifies absolute path to `python` interpreter which is used to create `venv`.{TermColor.reset_style.value}
@@ -135,6 +143,11 @@ leap_client = (
         {TermColor.config_missing.value}# Arg `--env` overrides this `default_env_dir_rel_path` field.{TermColor.reset_style.value}
         {TermColor.config_missing.value}# "default_env_dir_rel_path": None,{TermColor.reset_style.value}
         \n\
+        {TermColor.config_missing.value}# Field `required_python_version` selects `python` version.{TermColor.reset_style.value}
+        {TermColor.config_missing.value}# The value specifies the version of `python` interpreter which is used to create `venv` (e.g. "{ConfConstEnv.latest_known_python_version}").{TermColor.reset_style.value}
+        {TermColor.config_missing.value}# This field can be specified in global config (see `leap_client`) but it is override-able by local environment-specific config (see `leap_env`).{TermColor.reset_style.value}
+        {TermColor.config_missing.value}# "required_python_version": None,{TermColor.reset_style.value}
+        \n\
         {TermColor.config_missing.value}# Field `required_python_file_abs_path` selects `python` version.{TermColor.reset_style.value}
         {TermColor.config_missing.value}# The value specifies absolute path to `python` interpreter which is used to create `venv`.{TermColor.reset_style.value}
         {TermColor.config_missing.value}# This field can be specified in global config (see `leap_client`) but it is override-able by local environment-specific config (see `leap_env`).{TermColor.reset_style.value}
@@ -185,6 +198,7 @@ def test_render_client_config_data_with_unused_fields_quiet():
     config_data = {
         ConfField.field_local_conf_symlink_rel_path.value: "lconf",
         ConfField.field_default_env_dir_rel_path.value: "dst/default_env",
+        ConfField.field_required_python_version.value: test_python_version,
         ConfField.field_required_python_file_abs_path.value: "/usr/bin/python3",
         ConfField.field_local_venv_dir_rel_path.value: "venv",
         ConfField.field_local_log_dir_rel_path.value: "log",
@@ -198,15 +212,18 @@ def test_render_client_config_data_with_unused_fields_quiet():
         state_global_conf_file_abs_path_inited=state_global_conf_file_abs_path_inited,
     )
 
-    expected_output = f"""leap_client = (
+    expected_output = f"""\
+leap_client = (
     {{
         "local_conf_symlink_rel_path": "lconf",
         "default_env_dir_rel_path": "dst/default_env",
+        "required_python_version": "{test_python_version}",
         "required_python_file_abs_path": "/usr/bin/python3",
         "local_venv_dir_rel_path": "venv",
         "local_log_dir_rel_path": "log",
         "local_tmp_dir_rel_path": "tmp",
         "whatever_test": 5,
     }}
-)"""
+)\
+"""
     assert RenderConfigVisitor(is_quiet=True).render_node(root_node) == expected_output

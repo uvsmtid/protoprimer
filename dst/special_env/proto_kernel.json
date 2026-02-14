@@ -1,4 +1,6 @@
 {
+    "__comment__": "See: FT_84_11_73_28.supported_python_versions.md",
+    "required_python_version": "3.10",
     "required_python_file_abs_path": "python3",
     "local_venv_dir_rel_path": "venv",
     "local_log_dir_rel_path": "log",
