@@ -4,6 +4,7 @@ import sys
 from unittest.mock import patch
 
 from local_test.base_test_class import BasePyfakefsTestClass
+from local_test.integrated_helper import test_python_version
 from local_test.mock_verifier import (
     assert_parent_states_mocked,
 )
@@ -146,11 +147,10 @@ class ThisTestClass(BasePyfakefsTestClass):
         # then:
 
         mock_state_package_driver_prepared.return_value.create_venv.assert_called_once_with(
-            ConfConstEnv.default_file_abs_path_python,
             os.path.join(
                 mock_client_dir,
                 ConfConstEnv.default_dir_rel_path_venv,
-            ),
+            )
         )
         path_to_required_python = os.path.join(
             mock_client_dir,
@@ -541,7 +541,6 @@ class ThisTestClass(BasePyfakefsTestClass):
             ConfConstEnv.default_dir_rel_path_venv,
         )
         mock_state_package_driver_prepared.return_value.create_venv.assert_called_once_with(
-            ConfConstEnv.default_file_abs_path_python,
             path_to_venv,
         )
         path_to_venv_python = os.path.join(
@@ -650,7 +649,6 @@ class ThisTestClass(BasePyfakefsTestClass):
         # then:
 
         mock_state_package_driver_prepared.return_value.create_venv.assert_called_once_with(
-            non_default_file_abs_path_python,
             non_default_dir_abs_path_venv,
         )
 
@@ -1062,7 +1060,10 @@ class ThisTestClass(BasePyfakefsTestClass):
         # But the driver is pip
         from protoprimer.primer_kernel import PackageDriverPip
 
-        mock_state_package_driver_prepared.return_value = PackageDriverPip()
+        mock_state_package_driver_prepared.return_value = PackageDriverPip(
+            ConfConstEnv.default_file_abs_path_python,
+            test_python_version,
+        )
 
         # when:
         with self.assertRaises(AssertionError) as cm:

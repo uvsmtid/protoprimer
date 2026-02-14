@@ -177,7 +177,7 @@ def test_generate_next_id_user_scenario(mock_choice: MagicMock) -> None:
 
     # Let's say it picks '5' for the first digit.
     # Then for the second digit, it looks at IDs starting with 5: "57...", "59...".
-    # Freqs for 2nd digit: '7':1, '9':1. Others: 0.
+    # Freqs for the 2nd digit: '7':1, '9':1. Others: 0.
     # Let's say it picks '0'.
     # Then candidates are empty.
     # Let's say it picks '1','2','3','4','5','6' for the rest.

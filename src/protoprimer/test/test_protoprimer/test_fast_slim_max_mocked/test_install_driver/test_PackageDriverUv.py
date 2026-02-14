@@ -1,6 +1,7 @@
 import os
 import subprocess
 from unittest.mock import (
+    call,
     mock_open,
     patch,
 )
@@ -21,37 +22,66 @@ def test_relationship():
     )
 
 
+@patch(f"{primer_kernel.__name__}.os.path.isfile")
+@patch(f"{primer_kernel.__name__}.os.path.exists")
 @patch(f"{subprocess.__name__}.{subprocess.check_call.__name__}")
-def test_create_venv(mock_subprocess_check_call):
+def test_create_venv(mock_subprocess_check_call, mock_exists, mock_isfile):
     # given:
-    uv_exec_abs_path = "/tmp/uv"
-    install_driver = PackageDriverUv(uv_exec_abs_path=uv_exec_abs_path)
-    required_python_file_abs_path = "/tmp/python"
+    mock_exists.return_value = True
+    mock_isfile.return_value = True
+    install_driver = PackageDriverUv(
+        required_python_version="3.10",
+        state_local_cache_dir_abs_path_inited="/tmp/cache",
+    )
     venv_dir_abs_path = "/tmp/test_venv"
 
     # when:
     install_driver.create_venv(
-        required_python_file_abs_path=required_python_file_abs_path,
         local_venv_dir_abs_path=venv_dir_abs_path,
     )
 
     # then:
-    mock_subprocess_check_call.assert_called_once_with(
-        [
-            uv_exec_abs_path,
-            "venv",
-            "--python",
-            required_python_file_abs_path,
-            venv_dir_abs_path,
-        ]
-    )
+    expected_calls = [
+        call(
+            [
+                "/tmp/cache/venv/uv.venv/bin/uv",
+                "python",
+                "dir",
+            ]
+        ),
+        call(
+            [
+                "/tmp/cache/venv/uv.venv/bin/uv",
+                "python",
+                "install",
+                "3.10",
+            ]
+        ),
+        call(
+            [
+                "/tmp/cache/venv/uv.venv/bin/uv",
+                "venv",
+                "--python",
+                "3.10",
+                venv_dir_abs_path,
+            ]
+        ),
+    ]
+    mock_subprocess_check_call.assert_has_calls(expected_calls)
+    assert mock_subprocess_check_call.call_count == 3
 
 
+@patch(f"{primer_kernel.__name__}.os.path.isfile")
+@patch(f"{primer_kernel.__name__}.os.path.exists")
 @patch(f"{subprocess.__name__}.{subprocess.check_call.__name__}")
-def test_install_dependencies(mock_subprocess_check_call):
+def test_install_dependencies(mock_subprocess_check_call, mock_exists, mock_isfile):
     # given:
-    uv_exec_abs_path = "/tmp/uv"
-    install_driver = PackageDriverUv(uv_exec_abs_path=uv_exec_abs_path)
+    mock_exists.return_value = True
+    mock_isfile.return_value = True
+    install_driver = PackageDriverUv(
+        required_python_version="3.10",
+        state_local_cache_dir_abs_path_inited="/tmp/cache",
+    )
     ref_root_dir_abs_path = "/tmp"
     required_python_file_abs_path = "/tmp/test_venv/bin/python"
     constraints_file_abs_path = "/tmp/constraints.txt"
@@ -75,28 +105,45 @@ def test_install_dependencies(mock_subprocess_check_call):
     )
 
     # then:
-    mock_subprocess_check_call.assert_called_once_with(
-        [
-            uv_exec_abs_path,
-            "pip",
-            "install",
-            "--python",
-            required_python_file_abs_path,
-            "--constraint",
-            constraints_file_abs_path,
-            "--editable",
-            "/tmp/project1[extra1]",
-            "--editable",
-            "/tmp/project2",
-        ]
-    )
+    expected_calls = [
+        call(
+            [
+                "/tmp/cache/venv/uv.venv/bin/uv",
+                "python",
+                "dir",
+            ]
+        ),
+        call(
+            [
+                "/tmp/cache/venv/uv.venv/bin/uv",
+                "pip",
+                "install",
+                "--python",
+                required_python_file_abs_path,
+                "--constraint",
+                constraints_file_abs_path,
+                "--editable",
+                "/tmp/project1[extra1]",
+                "--editable",
+                "/tmp/project2",
+            ]
+        ),
+    ]
+    mock_subprocess_check_call.assert_has_calls(expected_calls)
+    assert mock_subprocess_check_call.call_count == 2
 
 
+@patch(f"{primer_kernel.__name__}.os.path.isfile")
+@patch(f"{primer_kernel.__name__}.os.path.exists")
 @patch(f"{subprocess.__name__}.{subprocess.check_call.__name__}")
-def test_pin_versions(mock_subprocess_check_call):
+def test_pin_versions(mock_subprocess_check_call, mock_exists, mock_isfile):
     # given:
-    uv_exec_abs_path = "/tmp/uv"
-    install_driver = PackageDriverUv(uv_exec_abs_path=uv_exec_abs_path)
+    mock_exists.return_value = True
+    mock_isfile.return_value = True
+    install_driver = PackageDriverUv(
+        required_python_version="3.10",
+        state_local_cache_dir_abs_path_inited="/tmp/cache",
+    )
     required_python_file_abs_path = "/tmp/test_venv/bin/python"
     constraints_file_abs_path = "/tmp/constraints.txt"
 
@@ -108,23 +155,37 @@ def test_pin_versions(mock_subprocess_check_call):
         )
 
     # then:
-    mock_subprocess_check_call.assert_called_once_with(
-        [
-            uv_exec_abs_path,
-            "pip",
-            "freeze",
-            "--exclude-editable",
-            "--python",
-            required_python_file_abs_path,
-        ],
-        stdout=mock_file(),
-    )
+    expected_calls = [
+        call(
+            [
+                "/tmp/cache/venv/uv.venv/bin/uv",
+                "python",
+                "dir",
+            ]
+        ),
+        call(
+            [
+                "/tmp/cache/venv/uv.venv/bin/uv",
+                "pip",
+                "freeze",
+                "--exclude-editable",
+                "--python",
+                required_python_file_abs_path,
+            ],
+            stdout=mock_file(),
+        ),
+    ]
+    mock_subprocess_check_call.assert_has_calls(expected_calls)
+    assert mock_subprocess_check_call.call_count == 2
 
 
 @patch("protoprimer.primer_kernel.get_venv_type")
 def test_is_mine_venv_when_uv_venv(mock_get_venv_type):
     # given
-    driver = PackageDriverUv(uv_exec_abs_path="/tmp/uv")
+    driver = PackageDriverUv(
+        required_python_version="3.10",
+        state_local_cache_dir_abs_path_inited="/tmp/cache",
+    )
     venv_path = "/fake/venv"
     mock_get_venv_type.return_value = primer_kernel.PackageDriverType.driver_uv
 
@@ -139,7 +200,10 @@ def test_is_mine_venv_when_uv_venv(mock_get_venv_type):
 @patch("protoprimer.primer_kernel.get_venv_type")
 def test_is_mine_venv_when_pip_venv(mock_get_venv_type):
     # given
-    driver = PackageDriverUv(uv_exec_abs_path="/tmp/uv")
+    driver = PackageDriverUv(
+        required_python_version="3.10",
+        state_local_cache_dir_abs_path_inited="/tmp/cache",
+    )
     venv_path = "/fake/venv"
     mock_get_venv_type.return_value = primer_kernel.PackageDriverType.driver_pip
 
@@ -151,15 +215,17 @@ def test_is_mine_venv_when_pip_venv(mock_get_venv_type):
     assert result is False
 
 
-@patch("os.path.exists")
-def test_is_mine_venv_when_cfg_not_exists(mock_exists):
+@patch("protoprimer.primer_kernel.get_venv_type")
+def test_is_mine_venv_when_cfg_not_exists(mock_get_venv_type):
     # given
-    driver = PackageDriverUv(uv_exec_abs_path="/tmp/uv")
+    driver = PackageDriverUv(
+        required_python_version="3.10",
+        state_local_cache_dir_abs_path_inited="/tmp/cache",
+    )
     venv_path = "/fake/venv"
-    cfg_path = os.path.join(venv_path, "pyvenv.cfg")
-    mock_exists.return_value = False
+    mock_get_venv_type.side_effect = AssertionError("File not found")
 
     # when/then
     with pytest.raises(AssertionError):
         driver.is_mine_venv(venv_path)
-    mock_exists.assert_called_once_with(cfg_path)
+    mock_get_venv_type.assert_called_once_with(venv_path)

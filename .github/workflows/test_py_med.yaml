@@ -1,0 +1,53 @@
+run-name: "${{ github.workflow }}: ${{ github.actor }}: ${{ github.event_name }}: ${{ github.ref_name }}: ${{ github.ref_type }}"
+on:
+    push:
+        branches:
+        -   "*"
+    schedule:
+        # Keep running periodically to detect issues with newly released dependencies:
+        # Every day at 18:00 SGT:
+        -   cron: "0 10 * * *"
+jobs:
+    bootstrap_scenarios:
+        runs-on: ubuntu-22.04
+
+        strategy:
+            # When one of the jobs fails, this prevents canceling another job (for another Python version):
+            fail-fast: false
+            matrix:
+                # FT_84_11_73_28.supported_python_versions.md:
+                python-version:
+                    -   "3.10"
+        steps:
+            -   run: "echo runner.os: ${{ runner.os }}"
+            -   run: "echo github.repository: ${{ github.repository }}"
+            -   run: "echo github.ref: ${{ github.ref }}"
+
+            -   name: "matrix.python-version: ${{ matrix.python-version }}"
+                uses: actions/setup-python@v5
+                with:
+                    python-version: ${{ matrix.python-version }}
+
+            # FT_84_11_73_28.supported_python_versions.md:
+            -   run: "which python3.10"
+            -   run: "python --version"
+
+            -   uses: actions/checkout@v4
+
+            -   run: |
+                    ${{ github.workspace }}/prime -vvv --env dst/test_python_med
+                    ${{ github.workspace }}/cmd/bootstrap_env -vvv --env dst/test_python_med
+
+            -   name: ensure git has no local changes and untracked files
+                run: |
+                    git diff || true
+                    git status --porcelain || true
+                    # NOTE: Avoid verifying `constraints.txt`:
+                    #       Different `python` version may depend on different set of dependencies:
+                    test -z "$(git status --porcelain -- ':!dst/test_python_med/constraints.txt')"
+
+            -   run: |
+                    ${{ github.workspace }}/venv/bin/python --version
+                    ${{ github.workspace }}/venv/bin/python -m pytest
+
+            -   run: "echo job.status: ${{ job.status }}"

@@ -1,5 +1,6 @@
 import os
 import pathlib
+import platform
 import stat
 import subprocess
 import sys
@@ -8,6 +9,7 @@ from local_doc import (
     cmd_app_starter,
     cmd_env_bootstrapper,
 )
+from local_test.case_condition import is_min_python
 from local_test.integrated_helper import (
     create_conf_client_file,
     create_conf_env_file,
@@ -22,7 +24,10 @@ from protoprimer.primer_kernel import (
     ConfConstGeneral,
     ConfConstInput,
     ConfConstPrimer,
+    KeyWord,
+    PackageDriverBase,
     PackageDriverPip,
+    PackageDriverUv,
     RunMode,
 )
 from protoprimer.proto_generator import generate_entry_script_content
@@ -43,8 +48,11 @@ def test_python_from_arbitrary_venv_with_app_starter(
 
     # An arbitrary venv to start from:
     arbitrary_venv_dir = ref_root_abs_path / "arbitrary_venv"
-    package_driver = PackageDriverPip()
-    package_driver.create_venv(sys.executable, str(arbitrary_venv_dir))
+    package_driver = PackageDriverPip(
+        sys.executable,
+        platform.python_version(),
+    )
+    package_driver.create_venv(str(arbitrary_venv_dir))
     arbitrary_venv_python = (
         arbitrary_venv_dir / ConfConstGeneral.file_rel_path_venv_python
     )
@@ -178,8 +186,18 @@ def test_python_from_required_venv_with_app_starter(
     # Create the required `venv`:
     required_venv_dir_rel_path = "required_venv"
     required_venv_dir_abs_path = ref_root_abs_path / required_venv_dir_rel_path
-    package_driver = PackageDriverPip()
-    package_driver.create_venv(sys.executable, str(required_venv_dir_abs_path))
+    package_driver: PackageDriverBase
+    if is_min_python():
+        package_driver = PackageDriverPip(
+            sys.executable,
+            platform.python_version(),
+        )
+    else:
+        package_driver = PackageDriverUv(
+            platform.python_version(),
+            str(ref_root_abs_path / KeyWord.key_var.value / KeyWord.key_cache.value),
+        )
+    package_driver.create_venv(str(required_venv_dir_abs_path))
     required_venv_python = (
         required_venv_dir_abs_path / ConfConstGeneral.file_rel_path_venv_python
     )

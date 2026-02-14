@@ -1,7 +1,11 @@
 {
     "local_conf_symlink_rel_path": "lconf",
     "default_env_dir_rel_path": "dst/default_env",
+
+    "__comment__": "See: FT_84_11_73_28.supported_python_versions.md",
+    "required_python_version": "3.14",
     "required_python_file_abs_path": "/usr/bin/python",
+
     "local_venv_dir_rel_path": "venv",
     "local_log_dir_rel_path": "log",
     "local_tmp_dir_rel_path": "tmp",

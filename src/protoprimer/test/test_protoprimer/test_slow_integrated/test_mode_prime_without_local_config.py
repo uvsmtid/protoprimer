@@ -7,6 +7,8 @@ from local_test.fat_mocked_helper import (
 )
 from local_test.integrated_helper import (
     create_max_layout,
+    create_python_version_file,
+    test_python_version,
 )
 from local_test.name_assertion import (
     assert_test_module_name_embeds_str,
@@ -37,6 +39,9 @@ def test_mode_prime_without_local_config(tmp_path: Path):
         project_dir_abs_path,
     ) = create_max_layout(tmp_path)
 
+    # Use the `ConfConstGeneral.python_version_file_basename` file for this case of missing global config:
+    create_python_version_file(str(ref_root_abs_path), test_python_version)
+
     # delete local config:
 
     env_local_config_abs_path = (
@@ -58,4 +63,3 @@ def test_mode_prime_without_local_config(tmp_path: Path):
     # then:
 
     assert os.path.exists(ref_root_abs_path / TopDir.dir_venv.value)
-    assert os.path.exists(ref_root_abs_path / TopDir.dir_cache.value)

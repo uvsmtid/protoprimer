@@ -9,10 +9,11 @@ from pathlib import Path
 logger = logging.getLogger()
 
 
-# FT_84_11_73_28: supported python versions:
+# FT_84_11_73_28.supported_python_versions.md:
 class PythonVersion(enum.Enum):
 
     python_min = "3.7"
+    python_med = "3.10"
     python_max = "3.14"
 
 

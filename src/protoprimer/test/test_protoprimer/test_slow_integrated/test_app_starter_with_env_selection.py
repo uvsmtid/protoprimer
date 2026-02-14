@@ -13,6 +13,7 @@ from local_test.integrated_helper import (
     create_test_pyproject_toml,
     switch_to_ref_root_abs_path,
     test_pyproject_src_dir_rel_path,
+    test_python_version,
 )
 from protoprimer.primer_kernel import (
     ConfConstClient,
@@ -51,8 +52,8 @@ def test_app_starter_from_env_default(tmp_path: pathlib.Path):
 
     # An arbitrary venv to start from:
     arbitrary_venv_dir = ref_root_abs_path / "arbitrary_venv"
-    package_driver = PackageDriverPip()
-    package_driver.create_venv(sys.executable, str(arbitrary_venv_dir))
+    package_driver = PackageDriverPip(sys.executable, test_python_version)
+    package_driver.create_venv(str(arbitrary_venv_dir))
     arbitrary_venv_python = (
         arbitrary_venv_dir / ConfConstGeneral.file_rel_path_venv_python
     )
@@ -186,8 +187,8 @@ def test_app_started_from_env_special(tmp_path: pathlib.Path):
 
     # An arbitrary venv to start from:
     arbitrary_venv_dir = ref_root_abs_path / "arbitrary_venv"
-    package_driver = PackageDriverPip()
-    package_driver.create_venv(sys.executable, str(arbitrary_venv_dir))
+    package_driver = PackageDriverPip(sys.executable, test_python_version)
+    package_driver.create_venv(str(arbitrary_venv_dir))
     arbitrary_venv_python = (
         arbitrary_venv_dir / ConfConstGeneral.file_rel_path_venv_python
     )
@@ -327,8 +328,8 @@ def test_app_started_with_symlink_to_env_special_but_config_to_env_common(
 
     # An arbitrary venv to start from:
     arbitrary_venv_dir = ref_root_abs_path / "arbitrary_venv"
-    package_driver = PackageDriverPip()
-    package_driver.create_venv(sys.executable, str(arbitrary_venv_dir))
+    package_driver = PackageDriverPip(sys.executable, test_python_version)
+    package_driver.create_venv(str(arbitrary_venv_dir))
     arbitrary_venv_python = (
         arbitrary_venv_dir / ConfConstGeneral.file_rel_path_venv_python
     )

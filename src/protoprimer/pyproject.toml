@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "protoprimer"
-version = "0.6.4"
+version = "0.7.0"
 
 authors = [
     { name = "uvsmtid", email = "uvsmtid@gmail.com" },
@@ -17,7 +17,7 @@ description = "Escape the fragile mess of pre-venv shell scripts with a pure Pyt
 
 readme = "readme.md"
 
-# FT_84_11_73_28: supported python versions:
+# FT_84_11_73_28.supported_python_versions.md:
 requires-python = ">=3.7"
 
 license = { text = "MIT" }
