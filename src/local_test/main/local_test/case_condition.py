@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import os
 import pathlib
+import subprocess
 import sys
 from contextlib import contextmanager
 
@@ -101,3 +102,18 @@ requires_max_python = pytest.mark.skipif(
     is_min_python(),
     reason="The test is disabled for min python version (see FT_84_11_73_28.supported_python_versions.md).",
 )
+
+
+def git_is_not_available() -> bool:
+    try:
+        subprocess.run(
+            [
+                "git",
+                "--version",
+            ],
+            check=True,
+            capture_output=True,
+        )
+    except FileNotFoundError:
+        return True
+    return False

@@ -16,6 +16,7 @@ from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     Bootstrapper_state_command_executed,
     Bootstrapper_state_global_conf_file_abs_path_inited,
+    Bootstrapper_state_ref_root_dir_abs_path_inited,
     write_json_file,
 )
 
@@ -34,6 +35,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
 
     @patch(f"{pre_commit.__name__}.subprocess.check_call")
+    @patch(f"{pre_commit.__name__}.subprocess.check_output")
     @patch(f"{primer_kernel.__name__}.os.execve")
     @patch("sys.argv", [""])
     @patch(f"{primer_kernel.__name__}.is_venv", return_value=False)
@@ -44,12 +46,17 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_global_conf_file_abs_path_inited.__name__}.eval_own_state"
     )
+    @patch(
+        f"{primer_kernel.__name__}.{Bootstrapper_state_ref_root_dir_abs_path_inited.__name__}.eval_own_state"
+    )
     def test_state_evaluation(
         self,
+        mock_state_ref_root_dir_abs_path_inited,
         mock_state_global_conf_file_abs_path_inited,
         mock_command_executed_eval_own_state,
         mock_is_venv,
         mock_execve,
+        mock_subprocess_check_output,
         mock_check_call,
     ):
         # given:
@@ -63,6 +70,8 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.fs.create_dir("/gconf")
         write_json_file(mock_client_conf_path, {})
         mock_state_global_conf_file_abs_path_inited.return_value = mock_client_conf_path
+        mock_ref_root_dir = "/test/project"
+        mock_state_ref_root_dir_abs_path_inited.return_value = mock_ref_root_dir
 
         client_conf_dir_path = "/gconf"
         pre_commit_conf_file_path = os.path.join(
@@ -77,6 +86,15 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # then:
         assert state_value == 0
+
+        mock_subprocess_check_output.assert_called_once_with(
+            [
+                "git",
+                "rev-parse",
+                "--is-inside-work-tree",
+            ],
+            cwd=mock_ref_root_dir,
+        )
 
         path_to_pre_commit = os.path.join(
             os.path.dirname(sys.executable),

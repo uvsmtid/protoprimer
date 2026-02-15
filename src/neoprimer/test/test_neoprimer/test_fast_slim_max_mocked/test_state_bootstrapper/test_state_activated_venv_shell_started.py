@@ -123,7 +123,10 @@ class ThisTestClass(BasePyfakefsTestClass):
 # Load user settings if available:
 test -f ~/.bashrc && source ~/.bashrc || true
 # Activate `venv`:
-source {expected_venv_activate_path}
+if [ "true" = "true" ]
+then
+    source {expected_venv_activate_path}
+fi
 """,
         )
 
@@ -222,6 +225,9 @@ source {expected_venv_activate_path}
 # Load user settings if available:
 test -f ~/.zshrc && source ~/.zshrc || true
 # Activate `venv`:
-source {expected_venv_activate_path}
+if [ "true" = "true" ]
+then
+    source {expected_venv_activate_path}
+fi
 """,
         )

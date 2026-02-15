@@ -83,7 +83,10 @@ def test_write_init_file(mock_write_text_file, fs):
 # Load user settings if available:
 test -f ~/.bashrc && source ~/.bashrc || true
 # Activate `venv`:
-source /fake/venv/bin/activate
+if [ "true" = "true" ]
+then
+    source /fake/venv/bin/activate
+fi
 """,
     )
 

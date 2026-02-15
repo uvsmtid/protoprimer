@@ -30,6 +30,7 @@ class Bootstrapper_state_pre_commit_configured(AbstractCachingStateNode[int]):
             parent_states=[
                 TargetState.target_proto_bootstrap_completed.value.name,
                 EnvState.state_global_conf_file_abs_path_inited.name,
+                EnvState.state_ref_root_dir_abs_path_inited.name,
             ],
             state_name=self.state_pre_commit_configured,
         )
@@ -37,6 +38,30 @@ class Bootstrapper_state_pre_commit_configured(AbstractCachingStateNode[int]):
     def _eval_state_once(
         self,
     ) -> ValueType:
+
+        state_ref_root_dir_abs_path_inited: str = self.eval_parent_state(
+            EnvState.state_ref_root_dir_abs_path_inited.name
+        )
+
+        is_git_repo: bool = False
+        try:
+            # It succeeds only if under `git` repo (and `git` installed):
+            subprocess.check_output(
+                [
+                    "git",
+                    "rev-parse",
+                    "--is-inside-work-tree",
+                ],
+                cwd=state_ref_root_dir_abs_path_inited,
+            )
+            is_git_repo = True
+        except (subprocess.CalledProcessError, FileNotFoundError):
+            logger.info(
+                f"ref root dir [{state_ref_root_dir_abs_path_inited}] is not under a `git` repository, skipping pre-commit..."
+            )
+
+        if not is_git_repo:
+            return 0
 
         state_global_conf_file_abs_path_inited = self.eval_parent_state(
             EnvState.state_global_conf_file_abs_path_inited.name

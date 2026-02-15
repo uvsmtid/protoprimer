@@ -2,9 +2,12 @@ import pathlib
 import stat
 import subprocess
 
+import pytest
+
 from local_repo import cmd_bootstrap_env
 from local_repo.cmd_bootstrap_env import custom_main
 from local_repo.sub_proc_util import get_command_code
+from local_test.case_condition import git_is_not_available
 from local_test.integrated_helper import (
     create_conf_client_file,
     create_conf_env_file,
@@ -24,6 +27,7 @@ from protoprimer.primer_kernel import (
 from protoprimer.proto_generator import generate_entry_script_content
 
 
+@pytest.mark.skipif(git_is_not_available(), reason="git command is not available")
 def test_bootstrap_env(tmp_path: pathlib.Path):
     """
     Runs local custom `./cmd/bootstrap_env` and checks that it installs `pre-commit`.
