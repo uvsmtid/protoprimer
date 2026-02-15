@@ -31,14 +31,22 @@ def custom_main():
         # Remove leftovers:
         "rm -f lconf",
         "rm -rf venv",
-        #
-        "apt-get update",
-        "apt-get install -y git",
-        # TODO: FT_48_62_07_98.config_format.md:
-        #       After moving to `*.py` config files, add comment to ref back to this script why this config exists:
-        # TODO: TODO_03_47_85_89.implement_python_selection.md:
-        f"./prime --env dst/test_python_{parsed_args.python}",
     ]
+    if parsed_args.git:
+        container_commands_list.extend(
+            [
+                "apt-get update",
+                "apt-get install -y git",
+            ]
+        )
+    container_commands_list.extend(
+        [
+            # TODO: FT_48_62_07_98.config_format.md:
+            #       After moving to `*.py` config files, add comment to ref back to this script why this config exists:
+            # TODO: TODO_03_47_85_89.implement_python_selection.md:
+            f"./prime --env dst/test_python_{parsed_args.python}",
+        ]
+    )
     if not parsed_args.shell:
         container_commands_list.append("./venv/bin/pytest")
     container_commands = " && ".join(container_commands_list)
@@ -94,7 +102,7 @@ def init_arg_parser():
     arg_parser.add_argument(
         "--ci",
         action="store_true",
-        help="Run tests in CI mode (sets CI=true inside docker container).",
+        help="Run tests in CI mode (sets `CI=true` inside `docker` container).",
     )
     arg_parser.add_argument(
         "--test_file",
@@ -104,7 +112,12 @@ def init_arg_parser():
     arg_parser.add_argument(
         "--shell",
         action="store_true",
-        help="Jump into the shell of the docker container instead of running pytest.",
+        help="Jump into the shell of the `docker` container instead of running pytest.",
+    )
+    arg_parser.add_argument(
+        "--git",
+        action="store_true",
+        help="Install `git` in the `docker` container.",
     )
     return arg_parser
 

@@ -195,6 +195,8 @@ class KeyWord(enum.Enum):
     key_local = "local"
     key_derived = "derived"
 
+    key_help = "help"
+
     key_var = "var"
     key_tmp = "tmp"
     key_log = "log"
@@ -436,6 +438,9 @@ class LogLevel(enum.Enum):
 
 
 class SyntaxArg:
+
+    arg_h = f"-{KeyWord.key_help.value[0]}"
+    arg_help = f"--{KeyWord.key_help.value}"
 
     arg_final_state = f"--{ParsedArg.name_final_state.value}"
 
@@ -738,8 +743,7 @@ class PackageDriverUv(PackageDriverBase):
         self.uv_venv_abs_path: str = os.path.join(
             # TODO: make it relative to "cache/venv" specifically (instead of directly to "cache"):
             state_local_cache_dir_abs_path_inited,
-            # TODO: take from config (or default constant):
-            "venv",
+            ConfConstEnv.default_dir_rel_path_venv,
             # TODO: take from config (or default constant):
             "uv.venv",
         )
@@ -878,6 +882,7 @@ class ShellDriverBase:
         shell_abs_path: str,
         shell_env_vars: dict[str, str],
         cache_dir_abs_path: str,
+        activate_venv: bool = True,
     ):
         self.shell_abs_path: str = shell_abs_path
         self.shell_args: list[str] = [
@@ -885,6 +890,7 @@ class ShellDriverBase:
         ]
         self.shell_env_vars: dict[str, str] = shell_env_vars
         self.cache_dir_abs_path: str = cache_dir_abs_path
+        self.activate_venv: bool = activate_venv
 
     def get_type(self) -> ShellType:
         raise NotImplementedError()
@@ -924,7 +930,10 @@ class ShellDriverBase:
 # Load user settings if available:
 test -f ~/{self.get_init_file_basename()} && source ~/{self.get_init_file_basename()} || true
 # Activate `venv`:
-source {self.get_venv_activate_script_abs_path(venv_abs_path)}
+if [ "{str(self.activate_venv).lower()}" = "true" ]
+then
+    source {self.get_venv_activate_script_abs_path(venv_abs_path)}
+fi
 """,
         )
 
@@ -1018,7 +1027,10 @@ class ShellDriverZsh(ShellDriverBase):
         self.shell_env_vars["ZDOTDIR"] = os.path.dirname(self.get_init_file_abs_path())
 
 
-def _get_shell_driver(cache_dir_abs_path: str) -> ShellDriverBase:
+def _get_shell_driver(
+    cache_dir_abs_path: str,
+    activate_venv: bool = True,
+) -> ShellDriverBase:
 
     var_shell = "SHELL"
     shell_abs_path: str | None = os.environ.get(var_shell, None)
@@ -1040,6 +1052,7 @@ def _get_shell_driver(cache_dir_abs_path: str) -> ShellDriverBase:
         shell_abs_path=shell_abs_path,
         shell_env_vars=remove_protoprimer_env_vars(os.environ.copy()),
         cache_dir_abs_path=cache_dir_abs_path,
+        activate_venv=activate_venv,
     )
 
 
@@ -1413,8 +1426,10 @@ def parse_args(remaining_argv=None) -> argparse.Namespace:
             parent_argparser,
         ],
     )
-    # TODO: use constants:
-    if "-h" not in remaining_argv and "--help" not in remaining_argv:
+    if (
+        SyntaxArg.arg_h not in remaining_argv
+        and SyntaxArg.arg_help not in remaining_argv
+    ):
         try:
             # Try to parse with `prime` as the default sub-command:
             parsed_args = child_argparser.parse_args(
