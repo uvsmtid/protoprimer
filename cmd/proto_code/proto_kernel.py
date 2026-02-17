@@ -383,7 +383,7 @@ class EnvVar(enum.Enum):
 
     var_PROTOPRIMER_START_ID = "PROTOPRIMER_START_ID"
 
-    var_PROTOPRIMER_PACKAGE_DRIVER = "PROTOPRIMER_PACKAGE_DRIVER"
+    var_PROTOPRIMER_VENV_DRIVER = "PROTOPRIMER_VENV_DRIVER"
 
     # TODO: Consider splitting `is_test_run()` and `PROTOPRIMER_MOCKED_RESTART` into different `feature_story`-ies.
     var_PROTOPRIMER_MOCKED_RESTART = "PROTOPRIMER_MOCKED_RESTART"
@@ -432,7 +432,7 @@ class ValueName(enum.Enum):
 
     value_install_extras = "install_extras"
 
-    value_package_driver = "package_driver"
+    value_venv_driver = "venv_driver"
 
     value_python = "python"
 
@@ -478,6 +478,8 @@ class PathName(enum.Enum):
 
     path_required_python = "required_python"
 
+    path_selected_python = "selected_python"
+
     path_local_venv = "local_venv"
 
     path_local_log = "local_log"
@@ -488,9 +490,9 @@ class PathName(enum.Enum):
 
     path_build_root = "build_root"
 
-
-
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
+
 
 class ParsedArg(enum.Enum):
 
@@ -511,10 +513,10 @@ class LogLevel(enum.Enum):
     name_verbose = "verbose"
 
 
-class SyntaxArg:
-
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+
+class SyntaxArg:
 
     arg_h = f"-{KeyWord.key_help.value[0]}"
     arg_help = f"--{KeyWord.key_help.value}"
@@ -534,10 +536,10 @@ class SyntaxArg:
         f"{ValueName.value_stderr_log_level.value}_{LogLevel.name_verbose.value}"
     )
 
-    arg_e = f"-{KeyWord.key_env.value[0]}"
-
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+
+    arg_e = f"-{KeyWord.key_env.value[0]}"
     arg_env = f"--{KeyWord.key_env.value}"
 
 
@@ -556,10 +558,10 @@ class ConfField(enum.Enum):
     field_global_conf_dir_rel_path = f"{PathName.path_global_conf.value}_{FilesystemObject.fs_object_dir.value}_{PathType.path_rel.value}"
 
     ####################################################################################################################
-    # `ConfLeap.leap_client`-specific
-
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
+    # `ConfLeap.leap_client`-specific
 
     # state_local_conf_symlink_abs_path_inited:
     field_local_conf_symlink_rel_path = f"{PathName.path_local_conf.value}_{FilesystemObject.fs_object_symlink.value}_{PathType.path_rel.value}"
@@ -580,11 +582,11 @@ class ConfField(enum.Enum):
         f"{PathName.path_required_python.value}_{ValueName.value_version.value}"
     )
 
-    # state_required_python_file_abs_path_inited:
-
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
-    field_required_python_file_abs_path = f"{PathName.path_required_python.value}_{FilesystemObject.fs_object_file.value}_{PathType.path_abs.value}"
+
+    # state_selected_python_file_abs_path_inited:
+    field_selected_python_file_abs_path = f"{PathName.path_selected_python.value}_{FilesystemObject.fs_object_file.value}_{PathType.path_abs.value}"
 
     # state_local_venv_dir_abs_path_inited:
     field_local_venv_dir_rel_path = f"{PathName.path_local_venv.value}_{FilesystemObject.fs_object_dir.value}_{PathType.path_rel.value}"
@@ -601,11 +603,11 @@ class ConfField(enum.Enum):
     # state_local_cache_dir_abs_path_inited:
     field_local_cache_dir_rel_path = f"{PathName.path_local_cache.value}_{FilesystemObject.fs_object_dir.value}_{PathType.path_rel.value}"
 
-    # state_package_driver_inited:
-    field_package_driver = f"{ValueName.value_package_driver.value}"
-
+    # state_venv_driver_inited:
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
+    field_venv_driver = f"{ValueName.value_venv_driver.value}"
 
     # parent of `field_build_root_dir_rel_path` & `field_install_extras`:
     # state_project_descriptors_inited:
@@ -623,14 +625,14 @@ class ConfField(enum.Enum):
 ########################################################################################################################
 
 
-class PackageDriverBase:
+class VenvDriverBase:
 
-    def get_type(
-        self,
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
-    ) -> PackageDriverType:
+    def get_type(
+        self,
+    ) -> VenvDriverType:
         raise NotImplementedError()
 
     def is_mine_venv(
@@ -648,16 +650,16 @@ class PackageDriverBase:
 
     def _create_venv_impl(
         self,
-        local_venv_dir_abs_path: str,
-    ) -> None:
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+        local_venv_dir_abs_path: str,
+    ) -> None:
         raise NotImplementedError()
 
     def install_packages(
         self,
-        required_python_file_abs_path: str,
+        selected_python_file_abs_path: str,
         given_packages: list[str],
     ):
         """
@@ -667,21 +669,21 @@ class PackageDriverBase:
         but it is required for separate non-main `venv`-s created for tools (like `uv`).
         """
         sub_proc_args: list[str] = self.get_install_dependencies_cmd(
-            required_python_file_abs_path,
+            selected_python_file_abs_path,
         )
         sub_proc_args.extend(given_packages)
 
-        logger.info(f"installing packages: {' '.join(sub_proc_args)}")
-
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
+        logger.info(f"installing packages: {' '.join(sub_proc_args)}")
 
         subprocess.check_call(sub_proc_args)
 
     def install_dependencies(
         self,
         ref_root_dir_abs_path: str,
-        required_python_file_abs_path: str,
+        selected_python_file_abs_path: str,
         constraints_file_abs_path: str,
         project_descriptors: list[dict],
     ) -> None:
@@ -695,10 +697,10 @@ class PackageDriverBase:
         *   FT_46_37_27_11.editable_install.md
         """
 
-        editable_project_install_args = []
-
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+
+        editable_project_install_args = []
         for project_descriptor in project_descriptors:
             project_build_root_dir_rel_path = project_descriptor[
                 ConfField.field_build_root_dir_rel_path.value
@@ -717,11 +719,11 @@ class PackageDriverBase:
                 install_extras = []
 
             editable_project_install_args.append("--editable")
-            if len(install_extras) > 0:
-                editable_project_install_args.append(
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+            if len(install_extras) > 0:
+                editable_project_install_args.append(
                     f"{project_build_root_dir_abs_path}[{','.join(install_extras)}]"
                 )
             else:
@@ -730,7 +732,7 @@ class PackageDriverBase:
                 )
 
         sub_proc_args = self.get_install_dependencies_cmd(
-            required_python_file_abs_path,
+            selected_python_file_abs_path,
         )
         sub_proc_args.extend(
             [
@@ -741,60 +743,60 @@ class PackageDriverBase:
 
         sub_proc_args.extend(editable_project_install_args)
 
-        logger.info(f"installing projects: {' '.join(sub_proc_args)}")
-
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+
+        logger.info(f"installing projects: {' '.join(sub_proc_args)}")
 
         subprocess.check_call(sub_proc_args)
 
     def get_install_dependencies_cmd(
         self,
-        required_python_file_abs_path: str,
+        selected_python_file_abs_path: str,
     ) -> list[str]:
         raise NotImplementedError()
 
     def pin_versions(
         self,
-        required_python_file_abs_path: str,
+        selected_python_file_abs_path: str,
         constraints_file_abs_path: str,
     ) -> None:
         logger.info(
             f"generating version constraints file [{constraints_file_abs_path}]"
         )
         with open(constraints_file_abs_path, "w") as f:
-            subprocess.check_call(
-                self._get_pin_versions_cmd(required_python_file_abs_path),
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+            subprocess.check_call(
+                self._get_pin_versions_cmd(selected_python_file_abs_path),
                 stdout=f,
             )
 
     def _get_pin_versions_cmd(
         self,
-        required_python_file_abs_path: str,
+        selected_python_file_abs_path: str,
     ) -> list[str]:
         raise NotImplementedError()
 
 
-class PackageDriverPip(PackageDriverBase):
+class VenvDriverPip(VenvDriverBase):
 
     def __init__(
         self,
-        required_python_file_abs_path: str,
+        selected_python_file_abs_path: str,
         required_python_version: str,
     ):
-        self.required_python_file_abs_path: str = required_python_file_abs_path
-        self.required_python_version: str = required_python_version
-
+        self.selected_python_file_abs_path: str = selected_python_file_abs_path
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+        self.required_python_version: str = required_python_version
+
     def get_type(
         self,
-    ) -> PackageDriverType:
-        return PackageDriverType.driver_pip
+    ) -> VenvDriverType:
+        return VenvDriverType.venv_pip
 
     def _create_venv_impl(
         self,
@@ -802,18 +804,18 @@ class PackageDriverPip(PackageDriverBase):
     ) -> None:
         subprocess.check_call(
             [
-                self.required_python_file_abs_path,
+                self.selected_python_file_abs_path,
                 "-m",
                 "venv",
                 local_venv_dir_abs_path,
             ]
         )
         # Use the python executable within the created `venv`:
-        venv_python_executable = os.path.join(local_venv_dir_abs_path, "bin", "python")
-        subprocess.check_call(
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+        venv_python_executable = os.path.join(local_venv_dir_abs_path, "bin", "python")
+        subprocess.check_call(
             [
                 venv_python_executable,
                 "-m",
@@ -826,24 +828,24 @@ class PackageDriverPip(PackageDriverBase):
 
     def get_install_dependencies_cmd(
         self,
-        required_python_file_abs_path: str,
+        selected_python_file_abs_path: str,
     ) -> list[str]:
         return [
-            required_python_file_abs_path,
+            selected_python_file_abs_path,
             "-m",
             "pip",
-            "install",
-        ]
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+            "install",
+        ]
 
     def _get_pin_versions_cmd(
         self,
-        required_python_file_abs_path: str,
+        selected_python_file_abs_path: str,
     ) -> list[str]:
         return [
-            required_python_file_abs_path,
+            selected_python_file_abs_path,
             "-m",
             "pip",
             "freeze",
@@ -851,15 +853,15 @@ class PackageDriverPip(PackageDriverBase):
         ]
 
 
-class PackageDriverUv(PackageDriverBase):
+class VenvDriverUv(VenvDriverBase):
 
     def __init__(
         self,
-        required_python_version: str,
-        state_local_cache_dir_abs_path_inited: str,
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+        required_python_version: str,
+        state_local_cache_dir_abs_path_inited: str,
     ):
         self.required_python_version: str = required_python_version
         self.uv_venv_abs_path: str = os.path.join(
@@ -876,16 +878,16 @@ class PackageDriverUv(PackageDriverBase):
 
     def get_type(
         self,
-    ) -> PackageDriverType:
-        return PackageDriverType.driver_uv
-
-    def _ensure_uv_is_available(self):
+    ) -> VenvDriverType:
+        return VenvDriverType.venv_uv
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+
+    def _ensure_uv_is_available(self):
         if not os.path.exists(self.uv_exec_abs_path):
-            # To use `PackageDriverType.driver_uv`, use `PackageDriverType.driver_pip` to install `uv` first:
-            pip_driver = PackageDriverPip(
+            # To use `VenvDriverType.venv_uv`, use `VenvDriverType.venv_pip` to install `uv` first:
+            pip_driver = VenvDriverPip(
                 # TODO: assert python version suitable for `uv` (because this `venv` will be used to install `uv).
                 # NOTE: Create this `venv` (to install `uv`) with whatever `python` runs now:
                 sys.executable,
@@ -901,11 +903,11 @@ class PackageDriverUv(PackageDriverBase):
             pip_driver.install_packages(
                 uv_exec_venv_python_abs_path,
                 [
-                    ConfConstGeneral.name_uv_package,
-                ],
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+                    ConfConstGeneral.name_uv_package,
+                ],
             )
         else:
             # Verify `self.uv_exec_abs_path` is functional:
@@ -924,10 +926,10 @@ class PackageDriverUv(PackageDriverBase):
         local_venv_dir_abs_path: str,
     ) -> None:
 
-        self._ensure_uv_is_available()
-
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
+        self._ensure_uv_is_available()
 
         subprocess.check_call(
             [
@@ -948,12 +950,12 @@ class PackageDriverUv(PackageDriverBase):
             ]
         )
 
-    def get_install_dependencies_cmd(
-
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+
+    def get_install_dependencies_cmd(
         self,
-        required_python_file_abs_path: str,
+        selected_python_file_abs_path: str,
     ) -> list[str]:
 
         self._ensure_uv_is_available()
@@ -963,18 +965,18 @@ class PackageDriverUv(PackageDriverBase):
             "pip",
             "install",
             "--python",
-            required_python_file_abs_path,
+            selected_python_file_abs_path,
         ]
 
     def _get_pin_versions_cmd(
         self,
-        required_python_file_abs_path: str,
+        selected_python_file_abs_path: str,
     ) -> list[str]:
-
-        self._ensure_uv_is_available()
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+
+        self._ensure_uv_is_available()
 
         return [
             self.uv_exec_abs_path,
@@ -982,21 +984,21 @@ class PackageDriverUv(PackageDriverBase):
             "freeze",
             "--exclude-editable",
             "--python",
-            required_python_file_abs_path,
+            selected_python_file_abs_path,
         ]
 
 
-class PackageDriverType(enum.Enum):
+class VenvDriverType(enum.Enum):
     """
     See UC_09_61_98_94.installer_pip_vs_uv.md
     """
 
-    driver_pip = PackageDriverPip
-
-    driver_uv = PackageDriverUv
+    venv_pip = VenvDriverPip
 
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
+    venv_uv = VenvDriverUv
 
 
 ########################################################################################################################
@@ -1017,10 +1019,10 @@ def remove_protoprimer_env_vars(env_vars: dict[str, str]) -> dict[str, str]:
 
 class ShellDriverBase:
 
-    def __init__(
-
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+
+    def __init__(
         self,
         shell_abs_path: str,
         shell_env_vars: dict[str, str],
@@ -1039,10 +1041,10 @@ class ShellDriverBase:
         raise NotImplementedError()
 
     def get_init_file_basename(self):
-        raise NotImplementedError()
-
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
+        raise NotImplementedError()
 
     def get_init_file_abs_path(self):
         return os.path.join(
@@ -1062,11 +1064,11 @@ class ShellDriverBase:
             ConfConstGeneral.file_rel_path_venv_activate,
         )
 
-    def write_init_file(
-        self,
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+    def write_init_file(
+        self,
         venv_abs_path: str,
     ):
         pathlib.Path(os.path.dirname(self.get_init_file_abs_path())).mkdir(
@@ -1086,10 +1088,10 @@ fi
 """,
         )
 
-    def configure_interactive_shell(self, has_command: bool) -> None:
-
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+
+    def configure_interactive_shell(self, has_command: bool) -> None:
         """
         Implements: UC_36_72_11_12.pipe_to_execute_with_activated_venv.md
         """
@@ -1108,11 +1110,11 @@ fi
 
         self.shell_args.extend(
             [
-                # Always start interactive `shell` (even if it exits immediately in case of `-c`)
-                # because we need to override `*rc`-files which activate `venv`:
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+                # Always start interactive `shell` (even if it exits immediately in case of `-c`)
+                # because we need to override `*rc`-files which activate `venv`:
                 "-i",
             ]
         )
@@ -1131,11 +1133,11 @@ fi
         )
 
         os.execve(
-            self.shell_abs_path,
-            self.shell_args,
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+            self.shell_abs_path,
+            self.shell_args,
             self.shell_env_vars,
         )
 
@@ -1154,11 +1156,11 @@ class ShellDriverBash(ShellDriverBase):
         return ".bashrc"
 
     def configure_interactive_shell(self, has_command: bool) -> None:
-        self.shell_args.extend(
-            [
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+        self.shell_args.extend(
+            [
                 # `bash` uses explicit override for `.bashrc`:
                 "--init-file",
                 self.get_init_file_abs_path(),
@@ -1177,11 +1179,11 @@ class ShellDriverZsh(ShellDriverBase):
         return ".zshrc"
 
     def configure_interactive_shell(self, has_command: bool) -> None:
-        if not sys.stdin.closed and not sys.stdin.isatty() and not has_command:
-            # Unlike `bash`, `zsh` reads `tty` instead of `stdin` (for UI control) unless `-s` is specified:
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+        if not sys.stdin.closed and not sys.stdin.isatty() and not has_command:
+            # Unlike `bash`, `zsh` reads `tty` instead of `stdin` (for UI control) unless `-s` is specified:
             self.shell_args.extend(
                 [
                     "-s",
@@ -1200,11 +1202,11 @@ def _get_shell_driver(
     shell_abs_path: str | None = os.environ.get(var_shell, None)
     shell_driver_type: type[ShellDriverBase]
 
-    if shell_abs_path is None:
-        # TODO: Implement `ShellDriverSh` using `/bin/sh` instead:
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+    if shell_abs_path is None:
+        # TODO: Implement `ShellDriverSh` using `/bin/sh` instead:
         logger.warning(f"env var `{var_shell}` is not set - assuming `bash` as default")
         shell_abs_path = shutil.which("bash")
         shell_driver_type = ShellDriverBash
@@ -1223,10 +1225,10 @@ def _get_shell_driver(
     )
 
 
-########################################################################################################################
-
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
+########################################################################################################################
 
 
 class ConfConstGeneral:
@@ -1247,10 +1249,10 @@ class ConfConstGeneral:
     # File name of the FT_90_65_67_62.proto_code.md:
     default_proto_code_basename = f"{default_proto_code_module}.py"
 
-    python_version_file_basename = ".python-version"
-
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+
+    python_version_file_basename = ".python-version"
 
     name_pip_package = "pip"
 
@@ -1269,11 +1271,11 @@ class ConfConstGeneral:
 
     file_rel_path_venv_python = os.path.join(
         file_rel_path_venv_bin,
-        "python",
-    )
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+        "python",
+    )
 
     file_rel_path_venv_activate = os.path.join(
         file_rel_path_venv_bin,
@@ -1292,11 +1294,11 @@ class ConfConstGeneral:
 ################################################################################
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 ################################################################################
-# This is a (proto) copy of `{module_obj.__name__}` updated automatically.
-# It is supposed to be versioned
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+# This is a (proto) copy of `{module_obj.__name__}` updated automatically.
+# It is supposed to be versioned
 # (to be available in the target client repo on clone),
 # but it should not be linted
 # (as its content/style is governed by the source repo).
@@ -1315,11 +1317,11 @@ class ConfConstGeneral:
     )
     common_field_global_note: str = (
         f"This field can be specified in global config (see `{ConfLeap.leap_client.name}`) but it is override-able by local environment-specific config (see `{ConfLeap.leap_env.name}`)."
-    )
-    common_field_local_note: str = (
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+    )
+    common_field_local_note: str = (
         f"This local environment-specific field overrides the global one (see description in `{ConfLeap.leap_client.name}`)."
     )
     func_note_derived_based_on_common = lambda field_name: (
@@ -1338,10 +1340,10 @@ class ConfConstInput:
     file_abs_path_script = ConfConstGeneral.input_based
     dir_abs_path_current = ConfConstGeneral.input_based
 
-    default_proto_conf_dir_rel_path: str = f"{ConfConstGeneral.name_proto_code}"
-
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
+    default_proto_conf_dir_rel_path: str = f"{ConfConstGeneral.name_proto_code}"
 
     conf_file_ext = "json"
 
@@ -1361,11 +1363,11 @@ class ConfConstInput:
     default_PROTOPRIMER_DO_INSTALL: str = str(True)
 
 
-class ConfConstPrimer:
-    """
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+class ConfConstPrimer:
+    """
     Constants for FT_89_41_35_82.conf_leap.md / leap_primer
     """
 
@@ -1384,11 +1386,11 @@ class ConfConstPrimer:
 
 
 class ConfConstClient:
-    """
-    Constants for FT_89_41_35_82.conf_leap.md / leap_client
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+    """
+    Constants for FT_89_41_35_82.conf_leap.md / leap_client
     """
 
     common_env_name = "common_env"
@@ -1407,10 +1409,10 @@ class ConfConstClient:
     # Next FT_89_41_35_82.conf_leap.md: `ConfLeap.leap_env`:
     default_file_basename_leap_env: str = (
         ConfConstInput.default_file_basename_conf_primer
-    )
-
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
+    )
 
     default_env_conf_file_rel_path: str = os.path.join(
         default_default_env_dir_rel_path,
@@ -1431,10 +1433,10 @@ class ConfConstEnv:
 
     default_dir_rel_path_venv = "venv"
 
-    default_dir_rel_path_log = "log"
-
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+
+    default_dir_rel_path_log = "log"
 
     default_dir_rel_path_tmp = "tmp"
 
@@ -1443,7 +1445,7 @@ class ConfConstEnv:
     # TODO: TODO_03_47_85_89.implement_python_selection.md:
     # NOTE: FT_84_11_73_28.supported_python_versions.md:
     #       The default is `uv` only if it is supported by the required `python` version:
-    default_package_driver = PackageDriverType.driver_uv.name
+    default_venv_driver = VenvDriverType.venv_uv.name
 
     default_project_descriptors = [
         {
@@ -1454,10 +1456,10 @@ class ConfConstEnv:
 
     constraints_txt_basename = "constraints.txt"
 
-    # FT_84_11_73_28.supported_python_versions.md:
-
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+
+    # FT_84_11_73_28.supported_python_versions.md:
     latest_known_python_version = "3.14"
 
 
@@ -1476,11 +1478,11 @@ def _create_parent_argparser():
         dest=SyntaxArg.dest_quiet,
         default=0,
         help="decrease log verbosity level",
-    )
-    parent_argparser.add_argument(
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+    )
+    parent_argparser.add_argument(
         # See: FT_38_73_38_52.log_verbosity.md
         SyntaxArg.arg_v,
         SyntaxArg.arg_verbose,
@@ -1499,11 +1501,11 @@ def _create_child_argparser(
         sub_command_desc = "Prime the environment to make it ready to use."
         parser_prime = sub_command_parsers.add_parser(
             RunMode.mode_prime.value,
-            help=sub_command_desc,
-            description=sub_command_desc,
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+            help=sub_command_desc,
+            description=sub_command_desc,
         )
         parser_prime.set_defaults(
             run_mode=RunMode.mode_prime.value,
@@ -1522,11 +1524,11 @@ def _create_child_argparser(
             ),
         )
         parser_prime.add_argument(
-            SyntaxArg.arg_c,
-            SyntaxArg.arg_command,
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+            SyntaxArg.arg_c,
+            SyntaxArg.arg_command,
             type=str,
             dest=ParsedArg.name_command.value,
             metavar=ParsedArg.name_command.value,
@@ -1545,11 +1547,11 @@ def _create_child_argparser(
             # TODO: Use "env_state" as `dest` and `metavar`, but `--state` as option name:
             dest=ParsedArg.name_final_state.value,
             metavar=ParsedArg.name_final_state.value,
-            help=f"Select final `{EnvState.__name__}` name.",
-        )
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+            help=f"Select final `{EnvState.__name__}` name.",
+        )
 
     def create_upgrade_parser(sub_command_parsers):
         sub_command_desc = (
@@ -1568,11 +1570,11 @@ def _create_child_argparser(
         sub_command_desc = "Print effective config."
         parser_config = sub_command_parsers.add_parser(
             RunMode.mode_config.value,
-            help=sub_command_desc,
-            description=sub_command_desc,
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+            help=sub_command_desc,
+            description=sub_command_desc,
         )
         parser_config.set_defaults(
             run_mode=RunMode.mode_config.value,
@@ -1591,11 +1593,11 @@ def _create_child_argparser(
 
     child_argparser = CustomArgumentParser(
         description=(
-            f"Bootstrap the environment (see default `{RunMode.mode_prime.value}` mode) "
-            f"according to the configuration (see `{RunMode.mode_config.value}` mode)."
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+            f"Bootstrap the environment (see default `{RunMode.mode_prime.value}` mode) "
+            f"according to the configuration (see `{RunMode.mode_config.value}` mode)."
         ),
         parents=parent_argparsers,
     )
@@ -1615,9 +1617,9 @@ def _create_child_argparser(
 
     return child_argparser
 
-
-
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
+
 
 def parse_args(remaining_argv=None) -> argparse.Namespace:
     """
@@ -1637,11 +1639,11 @@ def parse_args(remaining_argv=None) -> argparse.Namespace:
     # Phase 1: parse common args:
     parent_argparser = _create_parent_argparser()
     (
-        parsed_args,
-        remaining_argv,
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+        parsed_args,
+        remaining_argv,
     ) = parent_argparser.parse_known_args(remaining_argv)
 
     # Phase 2: parse sub-command args:
@@ -1660,11 +1662,11 @@ def parse_args(remaining_argv=None) -> argparse.Namespace:
                 [RunMode.mode_prime.value] + remaining_argv,
                 namespace=argparse.Namespace(**vars(parsed_args)),
             )
-        except ValueError:
-            # If that fails, it might be because another sub-command was specified.
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+        except ValueError:
+            # If that fails, it might be because another sub-command was specified.
             # In that case, parse without any default sub-command.
             try:
                 parsed_args = child_argparser.parse_args(
@@ -1684,9 +1686,9 @@ def parse_args(remaining_argv=None) -> argparse.Namespace:
 
     return parsed_args
 
-
-
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
+
 
 def str_to_bool(v: str) -> bool:
     if v.lower() in ("yes", "true", "t", "y", "1"):
@@ -1706,11 +1708,11 @@ class AbstractConfigVisitor:
     Implements the visitor pattern for classed derived from `AbstractConfigNode`.
     """
 
-    def visit_dict(
-        self,
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+    def visit_dict(
+        self,
         dict_node: "AbstractDictNode",
         **kwargs,
     ) -> None:
@@ -1730,10 +1732,10 @@ class AbstractConfigVisitor:
     ) -> None:
         pass
 
-    def visit_root(
-
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+
+    def visit_root(
         self,
         root_node: "AbstractRootNode",
         **kwargs,
@@ -1752,11 +1754,11 @@ class RenderConfigVisitor(AbstractConfigVisitor):
         self,
         is_quiet: bool = False,
     ):
-        self.is_quiet: bool = is_quiet
-        self.rendered_value: str = ""
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+        self.is_quiet: bool = is_quiet
+        self.rendered_value: str = ""
 
     def render_node(
         self,
@@ -1775,10 +1777,10 @@ class RenderConfigVisitor(AbstractConfigVisitor):
                 rendered_value,
                 config_node,
             )
-        return s
-
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
+        return s
 
     def _render_node_annotation(
         self,
@@ -1799,10 +1801,10 @@ class RenderConfigVisitor(AbstractConfigVisitor):
             )
         return s
 
-    @staticmethod
-
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+
+    @staticmethod
     def _render_node_name(
         config_node: "AbstractConfigNode",
     ) -> str:
@@ -1821,11 +1823,11 @@ class RenderConfigVisitor(AbstractConfigVisitor):
         self,
         rendered_text: str,
         config_node: "AbstractConfigNode",
-    ) -> str:
-        if self.is_quiet:
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+    ) -> str:
+        if self.is_quiet:
             return ""
         deactivated_lines = []
         rendered_lines = rendered_text.splitlines()
@@ -1844,11 +1846,11 @@ class RenderConfigVisitor(AbstractConfigVisitor):
         **kwargs,
     ):
         s: str = ""
-        s += (
-            " " * dict_node.node_indent
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+        s += (
+            " " * dict_node.node_indent
             + self._render_node_name(dict_node)
             + "{"
             + os.linesep
@@ -1867,11 +1869,11 @@ class RenderConfigVisitor(AbstractConfigVisitor):
         **kwargs,
     ):
         s: str = ""
-        s += (
-            " " * list_node.node_indent
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+        s += (
+            " " * list_node.node_indent
             + self._render_node_name(list_node)
             + "["
             + os.linesep
@@ -1890,11 +1892,11 @@ class RenderConfigVisitor(AbstractConfigVisitor):
         **kwargs,
     ):
         s: str = ""
-        if isinstance(value_node.orig_data, str):
-            s += (
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+        if isinstance(value_node.orig_data, str):
+            s += (
                 " " * value_node.node_indent
                 + self._render_node_name(value_node)
                 # Use double-quote for `str`:
@@ -1913,11 +1915,11 @@ class RenderConfigVisitor(AbstractConfigVisitor):
     def visit_root(
         self,
         root_node: "AbstractRootNode",
-        **kwargs,
-    ):
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+        **kwargs,
+    ):
         # Remove the last char (which is supposed to be `,`):
         rendered_child: str = self.render_node(root_node.child_node)[:-1]
         s: str = ""
@@ -1936,11 +1938,11 @@ class ConfigBuilderVisitor(AbstractConfigVisitor):
         self,
         orig_data: Any,
         **kwargs,
-    ) -> "AbstractConfigNode":
-        if isinstance(orig_data, dict):
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+    ) -> "AbstractConfigNode":
+        if isinstance(orig_data, dict):
             return self.build_dict_node(
                 orig_data=orig_data,
                 **kwargs,
@@ -1959,11 +1961,11 @@ class ConfigBuilderVisitor(AbstractConfigVisitor):
     def build_dict_node(
         self,
         **kwargs,
-    ) -> "AbstractDictNode":
-        kwargs.pop("is_present", None)
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+    ) -> "AbstractDictNode":
+        kwargs.pop("is_present", None)
         return AbstractDictNode(
             is_present=True,
             child_builder=self,
@@ -1982,11 +1984,11 @@ class ConfigBuilderVisitor(AbstractConfigVisitor):
         )
 
     def build_value_node(
-        self,
-        **kwargs,
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+        self,
+        **kwargs,
     ) -> "AbstractValueNode":
         kwargs.pop("is_present", None)
         return AbstractValueNode(
@@ -2005,11 +2007,11 @@ class ConfigBuilderVisitor(AbstractConfigVisitor):
             **kwargs,
         )
 
-    def visit_dict(
-        self,
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+    def visit_dict(
+        self,
         dict_node: "AbstractDictNode",
         **kwargs,
     ) -> None:
@@ -2028,11 +2030,11 @@ class ConfigBuilderVisitor(AbstractConfigVisitor):
             dict_node.child_nodes[field_name] = child_node
 
     def visit_list(
-        self,
-        list_node: "AbstractListNode",
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+        self,
+        list_node: "AbstractListNode",
         **kwargs,
     ) -> None:
         if list_node.orig_data is None:
@@ -2051,11 +2053,11 @@ class ConfigBuilderVisitor(AbstractConfigVisitor):
 
     def visit_value(
         self,
-        value_node: "AbstractValueNode",
-        **kwargs,
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+        value_node: "AbstractValueNode",
+        **kwargs,
     ) -> None:
         # Value nodes have no children.
         pass
@@ -2074,11 +2076,11 @@ class ConfigBuilderVisitor(AbstractConfigVisitor):
             node_name=None,
             node_indent=root_node.node_indent + AbstractConfigNode.indent_size,
             orig_data=root_node.orig_data,
-            **kwargs,
-        )
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+            **kwargs,
+        )
 
 
 class AnnotateUnusedVisitor(AbstractConfigVisitor):
@@ -2097,11 +2099,11 @@ class AnnotateUnusedVisitor(AbstractConfigVisitor):
     def visit_list(
         self,
         list_node: "AbstractListNode",
-        **kwargs,
-    ) -> None:
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+        **kwargs,
+    ) -> None:
         list_node.note_text = f"This `list` is not used by the `{ConfConstGeneral.name_protoprimer_package}`."
         list_node.note_color = TermColor.config_unused
 
@@ -2121,9 +2123,9 @@ class AnnotateUnusedVisitor(AbstractConfigVisitor):
         root_node.note_text = f"This config is not used by the `{ConfConstGeneral.name_protoprimer_package}`."
         root_node.note_color = TermColor.config_unused
 
-
-
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
+
 
 class UnusedConfigBuilderVisitor(ConfigBuilderVisitor):
     """
@@ -2143,11 +2145,11 @@ class UnusedConfigBuilderVisitor(ConfigBuilderVisitor):
         self.recursion_level += 1
         config_node: AbstractConfigNode = super().build_config_node(
             orig_data=orig_data,
-            **kwargs,
-        )
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+            **kwargs,
+        )
         self.recursion_level -= 1
         if self.recursion_level == 0:
             # Set annotation only for the top-level node:
@@ -2167,10 +2169,10 @@ class AbstractConfigNode(Generic[ValueType]):
     It loads config from: FT_48_62_07_98.config_format.md
     """
 
-    indent_size: int = 4
-
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+
+    indent_size: int = 4
 
     def __init__(
         self,
@@ -2189,11 +2191,11 @@ class AbstractConfigNode(Generic[ValueType]):
 
         self.orig_data: ValueType | None = orig_data
 
-        self.note_text: str = ""
-        self.note_color: TermColor = (
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+        self.note_text: str = ""
+        self.note_color: TermColor = (
             TermColor.config_comment if is_present else TermColor.config_missing
         )
 
@@ -2213,10 +2215,10 @@ class AbstractDictNode(AbstractConfigNode[dict]):
     Models `{ ... }` JSON-like `dict`.
     """
 
-    def __init__(
-
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+
+    def __init__(
         self,
         child_builder: ConfigBuilderVisitor,
         **kwargs,
@@ -2235,11 +2237,11 @@ class AbstractDictNode(AbstractConfigNode[dict]):
         visitor: AbstractConfigVisitor,
         **kwargs,
     ) -> None:
-        visitor.visit_dict(
-            self,
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+        visitor.visit_dict(
+            self,
             **kwargs,
         )
 
@@ -2258,11 +2260,11 @@ class AbstractListNode(AbstractConfigNode[list]):
             **kwargs,
         )
         self.child_nodes: list[AbstractConfigNode] = []
-        self.accept_visitor(
-            child_builder,
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+        self.accept_visitor(
+            child_builder,
             **kwargs,
         )
 
@@ -2282,10 +2284,10 @@ class AbstractValueNode(AbstractConfigNode[ValueType]):
     Models any simple value in JSON-like data structure (neither `list` nor `dict`).
     """
 
-    def __init__(
-
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+
+    def __init__(
         self,
         orig_data: ValueType | None,
         **kwargs,
@@ -2304,11 +2306,11 @@ class AbstractValueNode(AbstractConfigNode[ValueType]):
     ) -> None:
         visitor.visit_value(
             self,
-            **kwargs,
-        )
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+            **kwargs,
+        )
 
 
 class AbstractRootNode(AbstractConfigNode[ValueType]):
@@ -2327,11 +2329,11 @@ class AbstractRootNode(AbstractConfigNode[ValueType]):
         super().__init__(
             **kwargs,
         )
-        self.child_node: AbstractConfigNode | None = None
-        self.accept_visitor(
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+        self.child_node: AbstractConfigNode | None = None
+        self.accept_visitor(
             child_builder,
             **kwargs,
         )
@@ -2350,11 +2352,11 @@ class AbstractRootNode(AbstractConfigNode[ValueType]):
         self,
     ) -> Any:
         """
-        Produces rendered config and compiles it to access data.
-        """
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+        Produces rendered config and compiles it to access data.
+        """
         generated_code = RenderConfigVisitor().render_node(self)
         # TODO: Instead, maybe configure rendering without colors?
         generated_code = self._erase_annotation_colors(generated_code)
@@ -2373,11 +2375,11 @@ class AbstractRootNode(AbstractConfigNode[ValueType]):
             TermColor.config_unused,
             TermColor.reset_style,
         ]:
-            generated_code = generated_code.replace(term_color.value, "")
-        return generated_code
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+            generated_code = generated_code.replace(term_color.value, "")
+        return generated_code
 
 
 class AbstractConfLeapRootNode(AbstractRootNode):
@@ -2396,10 +2398,10 @@ class AbstractConfLeapRootNode(AbstractRootNode):
             is_present=True,
             child_builder=child_builder,
             **kwargs,
-        )
-
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
+        )
 
 
 class AbstractConfLeapNodeBuilder(ConfigBuilderVisitor):
@@ -2419,11 +2421,11 @@ class AbstractConfLeapNodeBuilder(ConfigBuilderVisitor):
         kwargs.pop("node_indent", None)
         field_node: AbstractConfigNode = node_class(
             node_name=field_name,
-            node_indent=dict_node.node_indent + AbstractConfigNode.indent_size,
-            is_present=(field_name in dict_node.orig_data),
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+            node_indent=dict_node.node_indent + AbstractConfigNode.indent_size,
+            is_present=(field_name in dict_node.orig_data),
             orig_data=dict_node.orig_data.get(field_name, None),
             conf_leap=conf_leap,
             **kwargs,
@@ -2442,16 +2444,16 @@ class AbstractConfLeapNodeBuilder(ConfigBuilderVisitor):
             dict_node=dict_node,
             field_name=ConfField.field_required_python_version.value,
             node_class=Node_field_required_python_version,
-            conf_leap=conf_leap,
-        )
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+            conf_leap=conf_leap,
+        )
 
         self._create_used_dict_field(
             dict_node=dict_node,
-            field_name=ConfField.field_required_python_file_abs_path.value,
-            node_class=Node_field_required_python_file_abs_path,
+            field_name=ConfField.field_selected_python_file_abs_path.value,
+            node_class=Node_field_selected_python_file_abs_path,
             conf_leap=conf_leap,
         )
 
@@ -2465,11 +2467,11 @@ class AbstractConfLeapNodeBuilder(ConfigBuilderVisitor):
         self._create_used_dict_field(
             dict_node=dict_node,
             field_name=ConfField.field_local_log_dir_rel_path.value,
-            node_class=Node_field_local_log_dir_rel_path,
-            conf_leap=conf_leap,
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+            node_class=Node_field_local_log_dir_rel_path,
+            conf_leap=conf_leap,
         )
 
         self._create_used_dict_field(
@@ -2488,11 +2490,11 @@ class AbstractConfLeapNodeBuilder(ConfigBuilderVisitor):
 
         self._create_used_dict_field(
             dict_node=dict_node,
-            field_name=ConfField.field_package_driver.value,
-            node_class=Node_field_package_driver,
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+            field_name=ConfField.field_venv_driver.value,
+            node_class=Node_field_venv_driver,
             conf_leap=conf_leap,
         )
 
@@ -2511,11 +2513,11 @@ class AbstractConfLeapNodeBuilder(ConfigBuilderVisitor):
 
             if field_name not in dict_node.child_nodes:
                 dict_node.child_nodes[
-                    field_name
-                ] = UnusedConfigBuilderVisitor().build_config_node(
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+                    field_name
+                ] = UnusedConfigBuilderVisitor().build_config_node(
                     node_name=field_name,
                     node_indent=dict_node.node_indent + AbstractConfigNode.indent_size,
                     orig_data=field_value,
@@ -2534,10 +2536,10 @@ class Builder_RootNode_input(AbstractConfLeapNodeBuilder):
         self,
         dict_node: AbstractDictNode,
         **kwargs,
-    ) -> None:
-
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
+    ) -> None:
 
         conf_leap = ConfLeap.leap_input
 
@@ -2557,11 +2559,11 @@ class Builder_RootNode_input(AbstractConfLeapNodeBuilder):
 
         field_node = self._create_used_dict_field(
             dict_node=dict_node,
-            field_name=EnvState.state_primer_conf_file_abs_path_inited.name,
-            node_class=AbstractValueNode,
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+            field_name=EnvState.state_primer_conf_file_abs_path_inited.name,
+            node_class=AbstractValueNode,
             conf_leap=conf_leap,
             **kwargs,
         )
@@ -2580,11 +2582,11 @@ class Builder_RootNode_input(AbstractConfLeapNodeBuilder):
         self._create_unused_dict_fields(dict_node)
 
 
-# noinspection PyPep8Naming
-class RootNode_input(AbstractConfLeapRootNode):
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+# noinspection PyPep8Naming
+class RootNode_input(AbstractConfLeapRootNode):
     """
     Root node for `ConfLeap.leap_input`.
     """
@@ -2604,9 +2606,9 @@ class RootNode_input(AbstractConfLeapRootNode):
             f"*   combination of the above with applied defaults.\n"
         )
 
-
-
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
+
 
 ########################################################################################################################
 # `ConfLeap.leap_primer` node types.
@@ -2626,11 +2628,11 @@ class Builder_RootNode_primer(AbstractConfLeapNodeBuilder):
 
     def visit_dict(
         self,
-        dict_node: AbstractDictNode,
-        **kwargs,
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+        dict_node: AbstractDictNode,
+        **kwargs,
     ) -> None:
         self._create_used_dict_field(
             dict_node=dict_node,
@@ -2650,9 +2652,9 @@ class Builder_RootNode_primer(AbstractConfLeapNodeBuilder):
 
         self._create_unused_dict_fields(dict_node)
 
-
-
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
+
 
 # noinspection PyPep8Naming
 class RootNode_primer(AbstractConfLeapRootNode):
@@ -2672,11 +2674,11 @@ class RootNode_primer(AbstractConfLeapRootNode):
             ),
             **kwargs,
         )
-        self.state_primer_conf_file_abs_path_inited: str = (
-            state_primer_conf_file_abs_path_inited
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+        self.state_primer_conf_file_abs_path_inited: str = (
+            state_primer_conf_file_abs_path_inited
         )
         self.note_text = f"The `{ConfLeap.leap_primer.name}` data is loaded from the [{self.state_primer_conf_file_abs_path_inited}] file."
 
@@ -2695,11 +2697,11 @@ class Node_field_ref_root_dir_rel_path(AbstractValueNode[str]):
         self.state_primer_conf_file_abs_path_inited: str = (
             state_primer_conf_file_abs_path_inited
         )
-        self.note_text = (
-            f"Field `{ConfField.field_ref_root_dir_rel_path.value}` points to the dir called `{PathName.path_ref_root.value}`.\n"
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+        self.note_text = (
+            f"Field `{ConfField.field_ref_root_dir_rel_path.value}` points to the dir called `{PathName.path_ref_root.value}`.\n"
             f"The path is relative to the `{ConfConstGeneral.name_proto_code}` file [{self.state_primer_conf_file_abs_path_inited}].\n"
             f"Normally, the `{PathName.path_ref_root.value}` dir is the client repo root, but it can be anything.\n"
             f"See `{EnvState.state_ref_root_dir_abs_path_inited.name}` in `{ConfLeap.leap_derived.name}` -\n"
@@ -2718,11 +2720,11 @@ class Node_field_global_conf_dir_rel_path(AbstractValueNode[str]):
         super().__init__(
             **kwargs,
         )
-        self.state_primer_conf_file_abs_path_inited: str = (
-            state_primer_conf_file_abs_path_inited
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+        self.state_primer_conf_file_abs_path_inited: str = (
+            state_primer_conf_file_abs_path_inited
         )
         self.note_text = (
             f"Field `{ConfField.field_global_conf_dir_rel_path.value}` points to the global config dir (as opposed to local config dir `{ConfField.field_local_conf_symlink_rel_path.value}`).\n"
@@ -2741,11 +2743,11 @@ class Node_field_global_conf_dir_rel_path(AbstractValueNode[str]):
 class Builder_RootNode_client(AbstractConfLeapNodeBuilder):
 
     def visit_dict(
-        self,
-        dict_node: AbstractDictNode,
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+        self,
+        dict_node: AbstractDictNode,
         **kwargs,
     ) -> None:
 
@@ -2764,11 +2766,11 @@ class Builder_RootNode_client(AbstractConfLeapNodeBuilder):
             field_name=ConfField.field_default_env_dir_rel_path.value,
             node_class=Node_field_default_env_dir_rel_path,
             conf_leap=conf_leap,
-            **kwargs,
-        )
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+            **kwargs,
+        )
 
         self._create_common_fields(
             dict_node=dict_node,
@@ -2787,11 +2789,11 @@ class RootNode_client(AbstractConfLeapRootNode):
     def __init__(
         self,
         state_global_conf_file_abs_path_inited: str,
-        **kwargs,
-    ):
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+        **kwargs,
+    ):
         super().__init__(
             conf_leap=ConfLeap.leap_client,
             child_builder=Builder_RootNode_client(),
@@ -2810,11 +2812,11 @@ class Node_field_local_conf_symlink_rel_path(AbstractValueNode[str]):
         self,
         **kwargs,
     ):
-        super().__init__(
-            **kwargs,
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+        super().__init__(
+            **kwargs,
         )
         self.note_text = (
             f"Field `{ConfField.field_local_conf_symlink_rel_path.value}` points to local config dir (as opposed to the global config dir `{ConfField.field_global_conf_dir_rel_path.value}`).\n"
@@ -2833,11 +2835,11 @@ class Node_field_default_env_dir_rel_path(AbstractValueNode[str]):
 
     def __init__(
         self,
-        **kwargs,
-    ):
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+        **kwargs,
+    ):
         super().__init__(
             **kwargs,
         )
@@ -2856,11 +2858,11 @@ class Node_field_required_python_version(AbstractValueNode[str]):
         self,
         conf_leap: ConfLeap,
         **kwargs,
-    ):
-        super().__init__(
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+    ):
+        super().__init__(
             **kwargs,
         )
         if conf_leap == ConfLeap.leap_client:
@@ -2874,22 +2876,22 @@ class Node_field_required_python_version(AbstractValueNode[str]):
 
 
 # noinspection PyPep8Naming
-class Node_field_required_python_file_abs_path(AbstractValueNode[str]):
+class Node_field_selected_python_file_abs_path(AbstractValueNode[str]):
 
     def __init__(
         self,
         conf_leap: ConfLeap,
-        **kwargs,
-    ):
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+        **kwargs,
+    ):
         super().__init__(
             **kwargs,
         )
         if conf_leap == ConfLeap.leap_client:
             self.note_text = (
-                f"Field `{ConfField.field_required_python_file_abs_path.value}` selects `python` version.\n"
+                f"Field `{ConfField.field_selected_python_file_abs_path.value}` selects `python` version.\n"
                 f"The value specifies absolute path to `python` interpreter which is used to create `venv`.\n"
                 f"{ConfConstGeneral.common_field_global_note}\n"
             )
@@ -2902,11 +2904,11 @@ class Node_field_local_venv_dir_rel_path(AbstractValueNode[str]):
 
     def __init__(
         self,
-        conf_leap: ConfLeap,
-        **kwargs,
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+        conf_leap: ConfLeap,
+        **kwargs,
     ):
         super().__init__(
             **kwargs,
@@ -2925,11 +2927,11 @@ class Node_field_local_venv_dir_rel_path(AbstractValueNode[str]):
 class Node_field_local_log_dir_rel_path(AbstractValueNode[str]):
 
     def __init__(
-        self,
-        conf_leap: ConfLeap,
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+        self,
+        conf_leap: ConfLeap,
         **kwargs,
     ):
         super().__init__(
@@ -2948,11 +2950,11 @@ class Node_field_local_log_dir_rel_path(AbstractValueNode[str]):
 # noinspection PyPep8Naming
 class Node_field_local_tmp_dir_rel_path(AbstractValueNode[str]):
 
-    def __init__(
-        self,
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+    def __init__(
+        self,
         conf_leap: ConfLeap,
         **kwargs,
     ):
@@ -2972,10 +2974,10 @@ class Node_field_local_tmp_dir_rel_path(AbstractValueNode[str]):
 # noinspection PyPep8Naming
 class Node_field_local_cache_dir_rel_path(AbstractValueNode[str]):
 
-    def __init__(
-
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+
+    def __init__(
         self,
         conf_leap: ConfLeap,
         **kwargs,
@@ -2994,10 +2996,10 @@ class Node_field_local_cache_dir_rel_path(AbstractValueNode[str]):
 
 
 # noinspection PyPep8Naming
-class Node_field_package_driver(AbstractValueNode[str]):
-
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
+class Node_field_venv_driver(AbstractValueNode[str]):
 
     def __init__(
         self,
@@ -3009,19 +3011,19 @@ class Node_field_package_driver(AbstractValueNode[str]):
         )
         if conf_leap == ConfLeap.leap_client:
             self.note_text = (
-                f"Field `{ConfField.field_package_driver.value}` selects a tool to manage packages:\n"
-                f'*   specify "{PackageDriverType.driver_pip.name}" to use native `pip`,\n'
-                f'*   specify "{PackageDriverType.driver_uv.name}" to use fast `uv`.\n'
+                f"Field `{ConfField.field_venv_driver.value}` selects a tool to manage packages:\n"
+                f'*   specify "{VenvDriverType.venv_pip.name}" to use native `pip`,\n'
+                f'*   specify "{VenvDriverType.venv_uv.name}" to use fast `uv`.\n'
                 f"{ConfConstGeneral.common_field_global_note}\n"
             )
         elif conf_leap == ConfLeap.leap_env:
             self.note_text = f"{ConfConstGeneral.common_field_local_note}\n"
 
 
-# noinspection PyPep8Naming
-
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+
+# noinspection PyPep8Naming
 class Builder_Node_field_project_descriptors(AbstractConfLeapNodeBuilder):
 
     def build_dict_node(
@@ -3040,11 +3042,11 @@ class Builder_Node_field_project_descriptors(AbstractConfLeapNodeBuilder):
         )
 
 
-# noinspection PyPep8Naming
-class Node_field_project_descriptors(AbstractListNode):
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+# noinspection PyPep8Naming
+class Node_field_project_descriptors(AbstractListNode):
 
     def __init__(
         self,
@@ -3063,11 +3065,11 @@ class Node_field_project_descriptors(AbstractListNode):
                 # See: UC_78_58_06_54.no_stray_packages.md:
                 f"Note that the `{ConfConstGeneral.name_protoprimer_package}` does not manage package dependencies itself.\n"
                 f"Instead, the `{ConfConstGeneral.name_protoprimer_package}` relies on `{ConfConstClient.default_pyproject_toml_basename}` file per `python` project to specify these dependencies.\n"
-                f"See `{EnvState.state_project_descriptors_inited.name}` in `{ConfLeap.leap_derived.name}`.\n"
-            )
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+                f"See `{EnvState.state_project_descriptors_inited.name}` in `{ConfLeap.leap_derived.name}`.\n"
+            )
         elif conf_leap == ConfLeap.leap_env:
             self.note_text = f"{ConfConstGeneral.common_field_local_note}\n"
         elif conf_leap == ConfLeap.leap_derived:
@@ -3087,10 +3089,10 @@ class Builder_Node_project_descriptor(AbstractConfLeapNodeBuilder):
         )
         self.conf_leap: ConfLeap = conf_leap
 
-    def visit_dict(
-
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+
+    def visit_dict(
         self,
         dict_node: AbstractDictNode,
         **kwargs,
@@ -3109,10 +3111,10 @@ class Builder_Node_project_descriptor(AbstractConfLeapNodeBuilder):
             node_class=Node_field_install_extras,
             conf_leap=self.conf_leap,
             **kwargs,
-        )
-
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
+        )
 
         self._create_unused_dict_fields(dict_node)
 
@@ -3132,11 +3134,11 @@ class Node_project_descriptor(AbstractDictNode):
             is_present=True,
             child_builder=Builder_Node_project_descriptor(
                 conf_leap=conf_leap,
-            ),
-            **kwargs,
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+            ),
+            **kwargs,
         )
 
 
@@ -3155,11 +3157,11 @@ class Node_field_build_root_dir_rel_path(AbstractValueNode[str]):
             ConfLeap.leap_client,
             ConfLeap.leap_derived,
         ]:
-            self.note_text = (
-                f"This is similar to specifying the dir of `{ConfConstClient.default_pyproject_toml_basename}` for `pip`:\n"
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+            self.note_text = (
+                f"This is similar to specifying the dir of `{ConfConstClient.default_pyproject_toml_basename}` for `pip`:\n"
                 f"pip install path/to/project\n"
                 f"{ConfConstGeneral.relative_path_field_note}\n"
             )
@@ -3178,11 +3180,11 @@ class Node_field_install_extras(AbstractListNode):
             **kwargs,
         )
         if conf_leap in [
-            ConfLeap.leap_client,
-            ConfLeap.leap_derived,
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+            ConfLeap.leap_client,
+            ConfLeap.leap_derived,
         ]:
             self.note_text = (
                 f"This is similar to specifying a list of `extra_item`-s per `path/to/project` for `pip`:\n"
@@ -3201,11 +3203,11 @@ class Builder_RootNode_env(AbstractConfLeapNodeBuilder):
     def visit_dict(
         self,
         dict_node: AbstractDictNode,
-        **kwargs,
-    ) -> None:
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+        **kwargs,
+    ) -> None:
 
         self._create_common_fields(
             dict_node=dict_node,
@@ -3224,11 +3226,11 @@ class RootNode_env(AbstractConfLeapRootNode):
     def __init__(
         self,
         state_local_conf_file_abs_path_inited: str,
-        **kwargs,
-    ):
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+        **kwargs,
+    ):
         super().__init__(
             conf_leap=ConfLeap.leap_env,
             child_builder=Builder_RootNode_env(),
@@ -3248,10 +3250,10 @@ class RootNode_env(AbstractConfLeapRootNode):
 # noinspection PyPep8Naming
 class Builder_RootNode_derived(AbstractConfLeapNodeBuilder):
 
-    def visit_dict(
-
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+
+    def visit_dict(
         self,
         dict_node: AbstractDictNode,
         **kwargs,
@@ -3270,11 +3272,11 @@ class Builder_RootNode_derived(AbstractConfLeapNodeBuilder):
             node_class=AbstractValueNode,
             conf_leap=conf_leap,
             **kwargs,
-        )
-        field_node.note_text = f"{ConfConstGeneral.func_note_derived_based_on_conf_leap_field(EnvState.state_proto_code_file_abs_path_inited.name, ConfLeap.leap_input)}\n"
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+        )
+        field_node.note_text = f"{ConfConstGeneral.func_note_derived_based_on_conf_leap_field(EnvState.state_proto_code_file_abs_path_inited.name, ConfLeap.leap_input)}\n"
 
         field_node = self._create_used_dict_field(
             dict_node=dict_node,
@@ -3293,11 +3295,11 @@ class Builder_RootNode_derived(AbstractConfLeapNodeBuilder):
             field_name=EnvState.state_ref_root_dir_abs_path_inited.name,
             node_class=AbstractValueNode,
             conf_leap=conf_leap,
-            **kwargs,
-        )
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+            **kwargs,
+        )
         field_node.note_text = f"{ConfConstGeneral.func_note_derived_based_on_conf_leap_field(ConfField.field_ref_root_dir_rel_path.value, ConfLeap.leap_primer)}\n"
 
         field_node = self._create_used_dict_field(
@@ -3316,11 +3318,11 @@ class Builder_RootNode_derived(AbstractConfLeapNodeBuilder):
             conf_leap=conf_leap,
             **kwargs,
         )
-        field_node.note_text = (
-            # TODO: It is not derived from just this:
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+        field_node.note_text = (
+            # TODO: It is not derived from just this:
             #       *   dirname is from `field_global_conf_dir_rel_path`
             #       *   basename is from `state_primer_conf_file_abs_path_inited`
             f"{ConfConstGeneral.func_note_derived_based_on_conf_leap_field(EnvState.state_primer_conf_file_abs_path_inited.name, ConfLeap.leap_input)}\n"
@@ -3339,10 +3341,10 @@ class Builder_RootNode_derived(AbstractConfLeapNodeBuilder):
         field_node.note_text = (
             # TODO: Either default or --env arg:
             f"{ConfConstGeneral.func_note_derived_based_on_conf_leap_field(ConfField.field_default_env_dir_rel_path.value, ConfLeap.leap_client)}\n"
-        )
-
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
+        )
 
         field_node = self._create_used_dict_field(
             dict_node=dict_node,
@@ -3362,11 +3364,11 @@ class Builder_RootNode_derived(AbstractConfLeapNodeBuilder):
         )
         field_node.note_text = (
             # TODO: It is not derived from just this:
-            #       *   dirname is from `field_local_conf_symlink_rel_path`
-            #       *   basename is from `state_primer_conf_file_abs_path_inited`
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+            #       *   dirname is from `field_local_conf_symlink_rel_path`
+            #       *   basename is from `state_primer_conf_file_abs_path_inited`
             f"{ConfConstGeneral.func_note_derived_based_on_conf_leap_field(EnvState.state_primer_conf_file_abs_path_inited.name, ConfLeap.leap_input)}\n"
         )
 
@@ -3386,17 +3388,17 @@ class Builder_RootNode_derived(AbstractConfLeapNodeBuilder):
         )
         field_node.note_text = f"{ConfConstGeneral.func_note_derived_based_on_common(ConfField.field_required_python_version.value)}\n"
 
-        field_node = self._create_used_dict_field(
-
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+
+        field_node = self._create_used_dict_field(
             dict_node=dict_node,
-            field_name=EnvState.state_required_python_file_abs_path_inited.name,
+            field_name=EnvState.state_selected_python_file_abs_path_inited.name,
             node_class=AbstractValueNode,
             conf_leap=conf_leap,
             **kwargs,
         )
-        field_node.note_text = f"{ConfConstGeneral.func_note_derived_based_on_common(ConfField.field_required_python_file_abs_path.value)}\n"
+        field_node.note_text = f"{ConfConstGeneral.func_note_derived_based_on_common(ConfField.field_selected_python_file_abs_path.value)}\n"
 
         field_node = self._create_used_dict_field(
             dict_node=dict_node,
@@ -3408,11 +3410,11 @@ class Builder_RootNode_derived(AbstractConfLeapNodeBuilder):
         field_node.note_text = f"{ConfConstGeneral.func_note_derived_based_on_common(ConfField.field_local_venv_dir_rel_path.value)}\n"
 
         field_node = self._create_used_dict_field(
-            dict_node=dict_node,
-            field_name=EnvState.state_local_log_dir_abs_path_inited.name,
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+            dict_node=dict_node,
+            field_name=EnvState.state_local_log_dir_abs_path_inited.name,
             node_class=AbstractValueNode,
             conf_leap=conf_leap,
             **kwargs,
@@ -3431,34 +3433,34 @@ class Builder_RootNode_derived(AbstractConfLeapNodeBuilder):
         field_node = self._create_used_dict_field(
             dict_node=dict_node,
             field_name=EnvState.state_local_cache_dir_abs_path_inited.name,
-            node_class=AbstractValueNode,
-            conf_leap=conf_leap,
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+            node_class=AbstractValueNode,
+            conf_leap=conf_leap,
             **kwargs,
         )
         field_node.note_text = f"{ConfConstGeneral.func_note_derived_based_on_common(ConfField.field_local_cache_dir_rel_path.value)}\n"
 
         field_node = self._create_used_dict_field(
             dict_node=dict_node,
-            field_name=EnvState.state_package_driver_inited.name,
+            field_name=EnvState.state_venv_driver_inited.name,
             node_class=AbstractValueNode,
             conf_leap=conf_leap,
             **kwargs,
         )
-        field_node.note_text = f"{ConfConstGeneral.func_note_derived_based_on_common(ConfField.field_package_driver.value)}\n"
+        field_node.note_text = f"{ConfConstGeneral.func_note_derived_based_on_common(ConfField.field_venv_driver.value)}\n"
 
         self._create_used_dict_field(
             dict_node=dict_node,
             field_name=EnvState.state_project_descriptors_inited.name,
             node_class=Node_field_project_descriptors,
             conf_leap=conf_leap,
-            **kwargs,
-        )
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+            **kwargs,
+        )
 
         self._create_unused_dict_fields(dict_node)
 
@@ -3477,11 +3479,11 @@ class RootNode_derived(AbstractConfLeapRootNode):
             conf_leap=ConfLeap.leap_derived,
             child_builder=Builder_RootNode_derived(),
             **kwargs,
-        )
-        self.note_text = (
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+        )
+        self.note_text = (
             f"The `{ConfLeap.leap_derived.name}` data is derived from other data - it is computed by:\n"
             f"*   applying defaults to missing field values\n"
             f"*   combining with other field values\n"
@@ -3500,11 +3502,11 @@ class RunStrategy:
     """
 
     def execute_strategy(
-        self,
-        state_node: StateNode,
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+        self,
+        state_node: StateNode,
     ) -> None:
         raise NotImplementedError()
 
@@ -3523,11 +3525,11 @@ class ExitCodeReporter(RunStrategy):
 
     def execute_strategy(
         self,
-        state_node: StateNode,
-    ) -> None:
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+        state_node: StateNode,
+    ) -> None:
         """
         This is a trivial implementation.
 
@@ -3546,11 +3548,11 @@ class ExitCodeReporter(RunStrategy):
 
 class StateNode(Generic[ValueType]):
     """
-    All nodes form a `StateGraph`, which must be a DAG.
-    """
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+    All nodes form a `StateGraph`, which must be a DAG.
+    """
 
     def __init__(
         self,
@@ -3569,10 +3571,10 @@ class StateNode(Generic[ValueType]):
         assert type(state_name) is str
 
         for state_parent in parent_states:
-            assert type(state_parent) is str
-
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
+            assert type(state_parent) is str
 
     def get_state_name(
         self,
@@ -3592,10 +3594,10 @@ class StateNode(Generic[ValueType]):
             raise AssertionError(
                 f"parent_state [{parent_state}] is not parent of [{self.state_name}]"
             )
-        return self.env_ctx.state_graph.eval_state(parent_state)
-
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
+        return self.env_ctx.state_graph.eval_state(parent_state)
 
     def eval_own_state(
         self,
@@ -3615,11 +3617,11 @@ class AbstractCachingStateNode(StateNode[ValueType]):
         env_ctx: EnvContext,
         parent_states: list[str],
         state_name: str,
-        auto_bootstrap_parents: bool = True,
-    ):
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+        auto_bootstrap_parents: bool = True,
+    ):
         super().__init__(
             env_ctx=env_ctx,
             parent_states=parent_states,
@@ -3639,10 +3641,10 @@ class AbstractCachingStateNode(StateNode[ValueType]):
                 for state_name in self.parent_states:
                     self.eval_parent_state(state_name)
 
-            # See FT_30_24_95_65.state_idempotency.md
-
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+
+            # See FT_30_24_95_65.state_idempotency.md
             self.cached_value = self._eval_state_once()
             logger.debug(
                 f"state [{self.state_name}] evaluated value [{self.cached_value}]"
@@ -3661,11 +3663,11 @@ class AbstractOverriddenFieldCachingStateNode(AbstractCachingStateNode[ValueType
     """
     Base class which overrides field values from `ConfLeap.leap_client` and `ConfLeap.leap_env`.
 
-    See: FT_00_22_19_59.derived_config.md
-    """
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+    See: FT_00_22_19_59.derived_config.md
+    """
 
     def __init__(
         self,
@@ -3684,10 +3686,10 @@ class AbstractOverriddenFieldCachingStateNode(AbstractCachingStateNode[ValueType
         assert (
             EnvState.state_client_conf_file_data_loaded.name in parent_states
             and EnvState.state_env_conf_file_data_loaded.name in parent_states
-        )
-
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
+        )
 
     def _get_overridden_value_or_default(
         self,
@@ -3707,11 +3709,11 @@ class AbstractOverriddenFieldCachingStateNode(AbstractCachingStateNode[ValueType
         field_value: DataValueType
         if field_name in state_env_conf_file_data_loaded:
             field_value = state_env_conf_file_data_loaded[field_name]
-        else:
-            field_value = state_client_conf_file_data_loaded.get(
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+        else:
+            field_value = state_client_conf_file_data_loaded.get(
                 field_name,
                 default_field_value,
             )
@@ -3730,11 +3732,11 @@ class Bootstrapper_state_input_py_exec_var_loaded(
         self,
         env_ctx: EnvContext,
         state_name: str | None = None,
-    ):
-        super().__init__(
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+    ):
+        super().__init__(
             env_ctx=env_ctx,
             parent_states=[],
             state_name=if_none(
@@ -3753,10 +3755,10 @@ class Bootstrapper_state_input_py_exec_var_loaded(
             )
         ]
 
-        return self.env_ctx.set_max_stride(py_exec)
-
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
+        return self.env_ctx.set_max_stride(py_exec)
 
 
 # noinspection PyPep8Naming
@@ -3776,11 +3778,11 @@ class Bootstrapper_state_input_stderr_log_level_var_loaded(
             ],
             state_name=if_none(
                 state_name,
-                EnvState.state_input_stderr_log_level_var_loaded.name,
-            ),
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+                EnvState.state_input_stderr_log_level_var_loaded.name,
+            ),
         )
 
     def _eval_state_once(
@@ -3799,11 +3801,11 @@ class Bootstrapper_state_input_stderr_log_level_var_loaded(
         state_input_stderr_log_level_var_loaded: int
         try:
             state_input_stderr_log_level_var_loaded = int(loaded_stderr_level)
-            if state_input_stderr_log_level_var_loaded < 0:
-                logger.warning(
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+            if state_input_stderr_log_level_var_loaded < 0:
+                logger.warning(
                     f"Unsupported log level value [{loaded_stderr_level}] for `{EnvVar.var_PROTOPRIMER_STDERR_LOG_LEVEL.value}`"
                 )
                 state_input_stderr_log_level_var_loaded = default_stderr_log_level
@@ -3822,10 +3824,10 @@ class Bootstrapper_state_input_stderr_log_level_var_loaded(
 
             state_input_stderr_log_level_var_loaded = defined_value
 
-        return state_input_stderr_log_level_var_loaded
-
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
+        return state_input_stderr_log_level_var_loaded
 
 
 # noinspection PyPep8Naming
@@ -3845,11 +3847,11 @@ class Bootstrapper_state_input_do_install_var_loaded(AbstractCachingStateNode[bo
             ),
         )
 
-    def _eval_state_once(
-        self,
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+    def _eval_state_once(
+        self,
     ) -> ValueType:
         state_input_do_install_var_loaded: bool = str_to_bool(
             os.getenv(
@@ -3868,11 +3870,11 @@ class Bootstrapper_state_default_stderr_log_handler_configured(
     def __init__(
         self,
         env_ctx: EnvContext,
-        state_name: str | None = None,
-    ):
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+        state_name: str | None = None,
+    ):
         super().__init__(
             env_ctx=env_ctx,
             parent_states=[
@@ -3891,11 +3893,11 @@ class Bootstrapper_state_default_stderr_log_handler_configured(
         logging.captureWarnings(True)
 
         state_input_stderr_log_level_var_loaded: int = self.eval_parent_state(
-            EnvState.state_input_stderr_log_level_var_loaded.name
-        )
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+            EnvState.state_input_stderr_log_level_var_loaded.name
+        )
         assert state_input_stderr_log_level_var_loaded >= 0
 
         stderr_handler: logging.Handler = configure_stderr_log_handler(
@@ -3914,11 +3916,11 @@ class Bootstrapper_state_args_parsed(AbstractCachingStateNode[argparse.Namespace
         state_name: str | None = None,
     ):
         super().__init__(
-            env_ctx=env_ctx,
-            parent_states=[],
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+            env_ctx=env_ctx,
+            parent_states=[],
             state_name=if_none(
                 state_name,
                 EnvState.state_args_parsed.name,
@@ -3937,11 +3939,11 @@ class Bootstrapper_state_args_parsed(AbstractCachingStateNode[argparse.Namespace
             == RunMode.mode_start.value
         ):
             # Pretend there is no args except `RunMode.mode_start`:
-            state_args_parsed = parse_args([])
-            setattr(
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+            state_args_parsed = parse_args([])
+            setattr(
                 state_args_parsed,
                 ParsedArg.name_run_mode.value,
                 RunMode.mode_start.value,
@@ -3960,11 +3962,11 @@ class Bootstrapper_state_input_stderr_log_level_eval_finalized(
     To control the default log level, see `EnvVar.var_PROTOPRIMER_STDERR_LOG_LEVEL`.
     """
 
-    def __init__(
-        self,
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+    def __init__(
+        self,
         env_ctx: EnvContext,
         state_name: str | None = None,
     ):
@@ -3983,10 +3985,10 @@ class Bootstrapper_state_input_stderr_log_level_eval_finalized(
 
     def _eval_state_once(
         self,
-    ) -> ValueType:
-
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
+    ) -> ValueType:
 
         state_input_stderr_log_level_var_loaded: int = self.eval_parent_state(
             EnvState.state_input_stderr_log_level_var_loaded.name,
@@ -4006,10 +4008,10 @@ class Bootstrapper_state_input_stderr_log_level_eval_finalized(
         stderr_log_level_verbose_count: int = getattr(
             parsed_args,
             SyntaxArg.dest_verbose,
-        )
-
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
+        )
 
         stderr_log_level_eval_finalized: int
         if stderr_log_level_quiet_count == 0 and stderr_log_level_verbose_count == 0:
@@ -4029,10 +4031,10 @@ class Bootstrapper_state_input_stderr_log_level_eval_finalized(
             stderr_log_level_eval_finalized = base_log_level + relative_log_level
 
             if stderr_log_level_eval_finalized < logging.NOTSET:
-                stderr_log_level_eval_finalized = logging.NOTSET
-
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
+                stderr_log_level_eval_finalized = logging.NOTSET
 
         state_default_stderr_logger_configured.setLevel(stderr_log_level_eval_finalized)
         assert isinstance(
@@ -4052,11 +4054,11 @@ class Bootstrapper_state_input_stderr_log_level_eval_finalized(
             level_var_value = str(stderr_log_level_eval_finalized)
 
         # Remove stack trace for levels >= WARNING (it will only print the exception itself):
-        if stderr_log_level_eval_finalized >= logging.WARNING:
-            # Avoid changing that in tests - it changes the global state and causes many tests to fail unexpectedly:
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+        if stderr_log_level_eval_finalized >= logging.WARNING:
+            # Avoid changing that in tests - it changes the global state and causes many tests to fail unexpectedly:
             if not is_test_run():
                 sys.tracebacklimit = 0
 
@@ -4075,11 +4077,11 @@ class Bootstrapper_state_input_run_mode_arg_loaded(AbstractCachingStateNode[RunM
             env_ctx=env_ctx,
             parent_states=[
                 EnvState.state_args_parsed.name,
-            ],
-            state_name=if_none(
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+            ],
+            state_name=if_none(
                 state_name,
                 EnvState.state_input_run_mode_arg_loaded.name,
             ),
@@ -4099,9 +4101,9 @@ class Bootstrapper_state_input_run_mode_arg_loaded(AbstractCachingStateNode[RunM
         )
         return state_input_run_mode_arg_loaded
 
-
-
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
+
 
 # noinspection PyPep8Naming
 class Bootstrapper_state_input_final_state_eval_finalized(
@@ -4121,11 +4123,11 @@ class Bootstrapper_state_input_final_state_eval_finalized(
             ],
             state_name=if_none(
                 state_name,
-                EnvState.state_input_final_state_eval_finalized.name,
-            ),
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+                EnvState.state_input_final_state_eval_finalized.name,
+            ),
         )
 
     def _eval_state_once(
@@ -4144,11 +4146,11 @@ class Bootstrapper_state_input_final_state_eval_finalized(
             state_args_parsed,
             ParsedArg.name_final_state.value,
             # NOTE: The value is only set for `RunMode.mode_prime`, otherwise, this default is used:
-            None,
-        )
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+            None,
+        )
 
         if state_input_final_state_eval_finalized is None:
             # TODO: Fix duplicated logs: try default bootstrap - this line is printed repeatedly.
@@ -4167,10 +4169,10 @@ class Bootstrapper_state_run_mode_executed(AbstractCachingStateNode[bool]):
     This is a special node - it traverses ALL nodes.
 
     BUT: It does not depend on ALL nodes - instead, it uses a run mode strategy implementation.
-    """
-
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
+    """
 
     def __init__(
         self,
@@ -4190,11 +4192,11 @@ class Bootstrapper_state_run_mode_executed(AbstractCachingStateNode[bool]):
             ),
         )
 
-    def _eval_state_once(
-        self,
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+    def _eval_state_once(
+        self,
     ) -> ValueType:
 
         state_input_stderr_log_level_eval_finalized = self.eval_parent_state(
@@ -4214,10 +4216,10 @@ class Bootstrapper_state_run_mode_executed(AbstractCachingStateNode[bool]):
             state_input_final_state_eval_finalized
         ]
 
-        selected_strategy: RunStrategy
-
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+
+        selected_strategy: RunStrategy
         if state_input_run_mode_arg_loaded is None:
             raise ValueError(f"run mode is not defined")
         elif state_input_run_mode_arg_loaded == RunMode.mode_prime:
@@ -4236,10 +4238,10 @@ class Bootstrapper_state_run_mode_executed(AbstractCachingStateNode[bool]):
                 f"cannot handle run mode [{state_input_run_mode_arg_loaded}]"
             )
 
-        selected_strategy.execute_strategy(state_node)
-
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
+        selected_strategy.execute_strategy(state_node)
 
         return True
 
@@ -4259,10 +4261,10 @@ class Bootstrapper_state_input_start_id_var_loaded(AbstractCachingStateNode[str]
                 state_name,
                 EnvState.state_input_start_id_var_loaded.name,
             ),
-        )
-
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
+        )
 
     def _eval_state_once(
         self,
@@ -4282,11 +4284,11 @@ class Bootstrapper_state_input_proto_code_file_abs_path_var_loaded(
         self,
         env_ctx: EnvContext,
         state_name: str | None = None,
-    ):
-        super().__init__(
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+    ):
+        super().__init__(
             env_ctx=env_ctx,
             parent_states=[],
             state_name=if_none(
@@ -4305,11 +4307,11 @@ class Bootstrapper_state_input_proto_code_file_abs_path_var_loaded(
         if state_input_proto_code_file_abs_path_var_loaded is not None:
             if not os.path.isabs(state_input_proto_code_file_abs_path_var_loaded):
                 raise AssertionError(
-                    f"`{EnvVar.var_PROTOPRIMER_PROTO_CODE.value}` must specify absolute path"
-                )
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+                    f"`{EnvVar.var_PROTOPRIMER_PROTO_CODE.value}` must specify absolute path"
+                )
             if not os.path.isfile(state_input_proto_code_file_abs_path_var_loaded):
                 raise AssertionError(
                     f"file {state_input_proto_code_file_abs_path_var_loaded} is not available"
@@ -4328,11 +4330,11 @@ class Bootstrapper_state_stride_py_arbitrary_reached(
     def __init__(
         self,
         env_ctx: EnvContext,
-        state_name: str | None = None,
-    ):
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+        state_name: str | None = None,
+    ):
         super().__init__(
             env_ctx=env_ctx,
             parent_states=[
@@ -4351,11 +4353,11 @@ class Bootstrapper_state_stride_py_arbitrary_reached(
 
         state_stride_py_arbitrary_reached: StateStride = StateStride.stride_py_arbitrary
 
-        state_input_run_mode_arg_loaded: RunMode = self.eval_parent_state(
-            EnvState.state_input_run_mode_arg_loaded.name
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+        state_input_run_mode_arg_loaded: RunMode = self.eval_parent_state(
+            EnvState.state_input_run_mode_arg_loaded.name
         )
 
         if self.env_ctx.has_stride_reached(
@@ -4375,10 +4377,10 @@ class Bootstrapper_state_stride_py_arbitrary_reached(
             EnvState.state_input_start_id_var_loaded.name
         )
 
-        log_python_context(logging.DEBUG)
-
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+
+        log_python_context(logging.DEBUG)
 
         # UC_90_98_17_93.run_under_venv.md
         # Switch out of the current `venv` -
@@ -4397,11 +4399,11 @@ class Bootstrapper_state_stride_py_arbitrary_reached(
         orig_PATH_value: str = cleaned_env.get(ConfConstInput.ext_env_var_PATH, "")
 
         # TODO: Is this (above and below) manual clean-up necessary after we switched to isolated `-I` `python` mode?
-        if orig_venv_abs_path is not None:
-            # Remove `venv/bin` dir from the `PATH` env var:
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+        if orig_venv_abs_path is not None:
+            # Remove `venv/bin` dir from the `PATH` env var:
             venv_bin_abs_path: str = os.path.join(orig_venv_abs_path, "bin")
             PATH_parts: list[str] = orig_PATH_value.split(os.pathsep)
             cleaned_path_parts = [p for p in PATH_parts if p != venv_bin_abs_path]
@@ -4421,10 +4423,10 @@ class Bootstrapper_state_stride_py_arbitrary_reached(
         )
 
 
-# noinspection PyPep8Naming
-
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+
+# noinspection PyPep8Naming
 class Bootstrapper_state_proto_code_file_abs_path_inited(AbstractCachingStateNode[str]):
     def __init__(
         self,
@@ -4444,10 +4446,10 @@ class Bootstrapper_state_proto_code_file_abs_path_inited(AbstractCachingStateNod
             ),
         )
 
-    def _eval_state_once(
-
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+
+    def _eval_state_once(
         self,
     ) -> ValueType:
 
@@ -4467,10 +4469,10 @@ class Bootstrapper_state_proto_code_file_abs_path_inited(AbstractCachingStateNod
 
         assert self.env_ctx.get_stride().value >= StateStride.stride_py_arbitrary.value
 
-        state_proto_code_file_abs_path_inited: str
-
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+
+        state_proto_code_file_abs_path_inited: str
         if self.env_ctx.get_stride().value >= StateStride.stride_py_venv.value:
             if state_input_proto_code_file_abs_path_var_loaded is None:
                 raise AssertionError(
@@ -4489,11 +4491,11 @@ class Bootstrapper_state_proto_code_file_abs_path_inited(AbstractCachingStateNod
                 if state_input_run_mode_arg_loaded != RunMode.mode_start:
                     if (
                         self.env_ctx.get_stride().value
-                        == StateStride.stride_py_arbitrary.value
-                    ):
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+                        == StateStride.stride_py_arbitrary.value
+                    ):
                         state_proto_code_file_abs_path_inited = os.path.abspath(
                             __file__
                         )
@@ -4512,11 +4514,11 @@ class Bootstrapper_state_proto_code_file_abs_path_inited(AbstractCachingStateNod
                         )
                         if (
                             self.env_ctx.get_stride().value
-                            > StateStride.stride_py_unknown.value
-                        ):
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+                            > StateStride.stride_py_unknown.value
+                        ):
                             # NOTE: Even `StateStride.stride_py_required` may
                             #       have `py_exec` in `venv` (not the dedicated, just current):
                             if (
@@ -4535,11 +4537,11 @@ class Bootstrapper_state_proto_code_file_abs_path_inited(AbstractCachingStateNod
                     state_proto_code_file_abs_path_inited = (
                         state_input_proto_code_file_abs_path_var_loaded
                     )
-            else:
-                # `EnvVar.var_PROTOPRIMER_MOCKED_RESTART`: rely on the path
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+            else:
+                # `EnvVar.var_PROTOPRIMER_MOCKED_RESTART`: rely on the path
                 # given in the `EnvVar.var_PROTOPRIMER_PROTO_CODE` env var:
                 assert state_input_proto_code_file_abs_path_var_loaded is not None
                 state_proto_code_file_abs_path_inited = (
@@ -4558,11 +4560,11 @@ class Bootstrapper_state_primer_conf_file_abs_path_inited(
     def __init__(
         self,
         env_ctx: EnvContext,
-        state_name: str | None = None,
-    ):
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+        state_name: str | None = None,
+    ):
         super().__init__(
             env_ctx=env_ctx,
             parent_states=[
@@ -4581,11 +4583,11 @@ class Bootstrapper_state_primer_conf_file_abs_path_inited(
         Select the conf file name from a list of candidate basenames (whichever is found first).
         """
         state_proto_code_file_abs_path_inited = self.eval_parent_state(
-            EnvState.state_proto_code_file_abs_path_inited.name
-        )
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+            EnvState.state_proto_code_file_abs_path_inited.name
+        )
 
         proto_code_dir_abs_path: str = os.path.dirname(
             state_proto_code_file_abs_path_inited
@@ -4604,10 +4606,10 @@ class Bootstrapper_state_primer_conf_file_abs_path_inited(
                 f"{pathlib.Path(state_proto_code_file_abs_path_inited).stem}.{ConfConstInput.conf_file_ext}",
                 ConfConstInput.default_file_basename_conf_primer,
             ]
-        )
-
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
+        )
 
         for candidate_basename in candidate_basenames:
             candidate_conf_file_abs_path = os.path.join(
@@ -4627,10 +4629,10 @@ class Bootstrapper_state_primer_conf_file_abs_path_inited(
 
 
 # noinspection PyPep8Naming
-class Bootstrapper_state_primer_conf_file_data_loaded(AbstractCachingStateNode[dict]):
-
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
+class Bootstrapper_state_primer_conf_file_data_loaded(AbstractCachingStateNode[dict]):
 
     def __init__(
         self,
@@ -4651,10 +4653,10 @@ class Bootstrapper_state_primer_conf_file_data_loaded(AbstractCachingStateNode[d
             ),
         )
 
-    def _eval_state_once(
-
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+
+    def _eval_state_once(
         self,
     ) -> ValueType:
         state_proto_code_file_abs_path_inited: str = self.eval_parent_state(
@@ -4668,16 +4670,19 @@ class Bootstrapper_state_primer_conf_file_data_loaded(AbstractCachingStateNode[d
         if os.path.exists(state_primer_conf_file_abs_path_inited):
             file_data = read_json_file(state_primer_conf_file_abs_path_inited)
         else:
-            warn_on_missing_conf_file(state_primer_conf_file_abs_path_inited)
+            warn_once_at_state_stride(
+                missing_conf_file_message(state_primer_conf_file_abs_path_inited),
+                self.env_ctx.get_stride(),
+            )
             file_data = {}
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
 
         if can_print_effective_config(self):
 
             state_input_stderr_log_level_eval_finalized: int = self.eval_parent_state(
                 EnvState.state_input_stderr_log_level_eval_finalized.name
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
             )
             is_quiet: bool = state_input_stderr_log_level_eval_finalized > logging.INFO
 
@@ -4693,14 +4698,14 @@ class Bootstrapper_state_primer_conf_file_data_loaded(AbstractCachingStateNode[d
             conf_input = RootNode_input(
                 node_indent=0,
                 orig_data={
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
                     EnvState.state_proto_code_file_abs_path_inited.name: state_proto_code_file_abs_path_inited,
                     EnvState.state_primer_conf_file_abs_path_inited.name: state_primer_conf_file_abs_path_inited,
                 },
             )
             print(RenderConfigVisitor(is_quiet=is_quiet).render_node(conf_input))
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
 
             # ===
             # `ConfLeap.leap_primer`:
@@ -4717,13 +4722,13 @@ class Bootstrapper_state_primer_conf_file_data_loaded(AbstractCachingStateNode[d
 # noinspection PyPep8Naming
 class Bootstrapper_state_ref_root_dir_abs_path_inited(AbstractCachingStateNode[str]):
 
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
+
     def __init__(
         self,
         env_ctx: EnvContext,
         state_name: str | None = None,
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
     ):
         super().__init__(
             env_ctx=env_ctx,
@@ -4739,13 +4744,13 @@ class Bootstrapper_state_ref_root_dir_abs_path_inited(AbstractCachingStateNode[s
 
     def _eval_state_once(
         self,
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     ) -> ValueType:
         state_proto_code_file_abs_path_inited = self.eval_parent_state(
             EnvState.state_proto_code_file_abs_path_inited.name
         )
-
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
         proto_code_dir_abs_path: str = os.path.dirname(
             state_proto_code_file_abs_path_inited
@@ -4762,14 +4767,15 @@ class Bootstrapper_state_ref_root_dir_abs_path_inited(AbstractCachingStateNode[s
 
         state_ref_root_dir_abs_path_inited: str
         if field_client_dir_rel_path is None:
-            logger.warning(
-                f"Field `{ConfField.field_ref_root_dir_rel_path.value}` is [{field_client_dir_rel_path}] - use [{RunMode.mode_config.value}] sub-command for description."
-            )
-            state_ref_root_dir_abs_path_inited = proto_code_dir_abs_path
-        else:
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+            warn_once_at_state_stride(
+                f"Field `{ConfField.field_ref_root_dir_rel_path.value}` is [{field_client_dir_rel_path}] - use [{RunMode.mode_config.value}] sub-command for description.",
+                self.env_ctx.get_stride(),
+            )
+            state_ref_root_dir_abs_path_inited = proto_code_dir_abs_path
+        else:
             state_ref_root_dir_abs_path_inited = os.path.join(
                 proto_code_dir_abs_path,
                 field_client_dir_rel_path,
@@ -4784,15 +4790,15 @@ class Bootstrapper_state_ref_root_dir_abs_path_inited(AbstractCachingStateNode[s
 
 
 # noinspection PyPep8Naming
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
 class Bootstrapper_state_global_conf_dir_abs_path_inited(AbstractCachingStateNode[str]):
 
     def __init__(
         self,
         env_ctx: EnvContext,
         state_name: str | None = None,
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
     ):
         super().__init__(
             env_ctx=env_ctx,
@@ -4807,15 +4813,15 @@ class Bootstrapper_state_global_conf_dir_abs_path_inited(AbstractCachingStateNod
         )
 
     def _eval_state_once(
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
         self,
     ) -> ValueType:
 
         state_ref_root_dir_abs_path_inited: str = self.eval_parent_state(
             EnvState.state_ref_root_dir_abs_path_inited.name
         )
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
 
         state_primer_conf_file_data_loaded: dict = self.eval_parent_state(
             EnvState.state_primer_conf_file_data_loaded.name
@@ -4830,15 +4836,15 @@ class Bootstrapper_state_global_conf_dir_abs_path_inited(AbstractCachingStateNod
 
         state_global_conf_dir_abs_path_inited: str | None
         if field_client_config_dir_rel_path is None:
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
             state_global_conf_dir_abs_path_inited = os.path.join(
                 state_ref_root_dir_abs_path_inited,
                 ConfConstPrimer.default_client_conf_dir_rel_path,
             )
         else:
             state_global_conf_dir_abs_path_inited = os.path.join(
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
                 state_ref_root_dir_abs_path_inited,
                 field_client_config_dir_rel_path,
             )
@@ -4853,15 +4859,15 @@ class Bootstrapper_state_global_conf_file_abs_path_inited(
 
     def __init__(
         self,
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
         env_ctx: EnvContext,
         state_name: str | None = None,
     ):
         super().__init__(
             env_ctx=env_ctx,
             parent_states=[
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
                 EnvState.state_primer_conf_file_abs_path_inited.name,
                 EnvState.state_global_conf_dir_abs_path_inited.name,
             ],
@@ -4876,15 +4882,15 @@ class Bootstrapper_state_global_conf_file_abs_path_inited(
     ) -> ValueType:
 
         state_primer_conf_file_abs_path_inited: str = self.eval_parent_state(
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
             EnvState.state_primer_conf_file_abs_path_inited.name
         )
         conf_file_base_name = os.path.basename(state_primer_conf_file_abs_path_inited)
 
         state_global_conf_dir_abs_path_inited: str = self.eval_parent_state(
             EnvState.state_global_conf_dir_abs_path_inited.name
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
         )
 
         state_global_conf_file_abs_path_inited: str = os.path.join(
@@ -4899,15 +4905,15 @@ class Bootstrapper_state_global_conf_file_abs_path_inited(
 class Bootstrapper_state_client_conf_file_data_loaded(AbstractCachingStateNode[dict]):
 
     def __init__(
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
         self,
         env_ctx: EnvContext,
         state_name: str | None = None,
     ):
         super().__init__(
             env_ctx=env_ctx,
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
             parent_states=[
                 EnvState.state_input_stderr_log_level_eval_finalized.name,
                 EnvState.state_input_run_mode_arg_loaded.name,
@@ -4923,18 +4929,21 @@ class Bootstrapper_state_client_conf_file_data_loaded(AbstractCachingStateNode[d
         self,
     ) -> ValueType:
 
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
+
         state_global_conf_file_abs_path_inited: str = self.eval_parent_state(
             EnvState.state_global_conf_file_abs_path_inited.name
         )
 
         file_data: dict
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
         if os.path.exists(state_global_conf_file_abs_path_inited):
             file_data = read_json_file(state_global_conf_file_abs_path_inited)
         else:
-            warn_on_missing_conf_file(state_global_conf_file_abs_path_inited)
+            warn_once_at_state_stride(
+                missing_conf_file_message(state_global_conf_file_abs_path_inited),
+                self.env_ctx.get_stride(),
+            )
             file_data = {}
 
         if can_print_effective_config(self):
@@ -4942,6 +4951,9 @@ class Bootstrapper_state_client_conf_file_data_loaded(AbstractCachingStateNode[d
                 EnvState.state_input_stderr_log_level_eval_finalized.name
             )
             is_quiet: bool = state_input_stderr_log_level_eval_finalized > logging.INFO
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
 
             conf_client = RootNode_client(
                 node_indent=0,
@@ -4951,9 +4963,6 @@ class Bootstrapper_state_client_conf_file_data_loaded(AbstractCachingStateNode[d
             print(RenderConfigVisitor(is_quiet=is_quiet).render_node(conf_client))
 
         return file_data
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
 
 
 # noinspection PyPep8Naming
@@ -4965,6 +4974,9 @@ class Bootstrapper_state_selected_env_dir_rel_path_inited(
         self,
         env_ctx: EnvContext,
         state_name: str | None = None,
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     ):
         super().__init__(
             env_ctx=env_ctx,
@@ -4974,9 +4986,6 @@ class Bootstrapper_state_selected_env_dir_rel_path_inited(
                 EnvState.state_client_conf_file_data_loaded.name,
             ],
             state_name=if_none(
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
                 state_name,
                 EnvState.state_selected_env_dir_rel_path_inited.name,
             ),
@@ -4988,6 +4997,9 @@ class Bootstrapper_state_selected_env_dir_rel_path_inited(
 
         client_local_env_dir_any_path: str | None = (
             self._select_client_local_env_dir_any_path()
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
         )
         if client_local_env_dir_any_path is None:
             return None
@@ -4997,9 +5009,6 @@ class Bootstrapper_state_selected_env_dir_rel_path_inited(
         )
 
         if not os.path.isdir(client_local_env_dir_abs_path):
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
             raise AssertionError(
                 f"`{PathName.path_selected_env.value}` [{client_local_env_dir_abs_path}] must be a dir."
             )
@@ -5011,6 +5020,9 @@ class Bootstrapper_state_selected_env_dir_rel_path_inited(
             client_local_env_dir_abs_path,
             state_ref_root_dir_abs_path_inited,
         ):
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
             raise AssertionError(
                 f"`{PathName.path_selected_env.value}` [{client_local_env_dir_abs_path}] is not under `{EnvState.state_ref_root_dir_abs_path_inited.name}` [{state_ref_root_dir_abs_path_inited}]."
             )
@@ -5020,9 +5032,6 @@ class Bootstrapper_state_selected_env_dir_rel_path_inited(
                 client_local_env_dir_abs_path,
                 state_ref_root_dir_abs_path_inited,
             )
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
         )
 
         assert ".." not in pathlib.Path(state_selected_env_dir_rel_path_inited).parts
@@ -5034,6 +5043,9 @@ class Bootstrapper_state_selected_env_dir_rel_path_inited(
     ) -> str | None:
         state_args_parsed: argparse.Namespace = self.eval_parent_state(
             EnvState.state_args_parsed.name
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
         )
         env_conf_dir_any_path: str | None = getattr(
             state_args_parsed,
@@ -5043,9 +5055,6 @@ class Bootstrapper_state_selected_env_dir_rel_path_inited(
         )
         if env_conf_dir_any_path is None:
             # Use the default env configured:
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
             state_client_conf_file_data_loaded: dict = self.eval_parent_state(
                 EnvState.state_client_conf_file_data_loaded.name
             )
@@ -5056,8 +5065,12 @@ class Bootstrapper_state_selected_env_dir_rel_path_inited(
                 )
             )
             if field_default_env_dir_rel_path is None:
-                logger.warning(
-                    f"Field `{ConfField.field_default_env_dir_rel_path.value}` is [{field_default_env_dir_rel_path}] - use [{RunMode.mode_config.value}] sub-command for description."
+                warn_once_at_state_stride(
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
+                    f"Field `{ConfField.field_default_env_dir_rel_path.value}` is [{field_default_env_dir_rel_path}] - use [{RunMode.mode_config.value}] sub-command for description.",
+                    self.env_ctx.get_stride(),
                 )
                 return None
             if os.path.isabs(field_default_env_dir_rel_path):
@@ -5066,9 +5079,6 @@ class Bootstrapper_state_selected_env_dir_rel_path_inited(
                 )
             return field_default_env_dir_rel_path
         else:
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
             return env_conf_dir_any_path
 
     def _select_client_local_env_dir_abs_path(
@@ -5079,6 +5089,9 @@ class Bootstrapper_state_selected_env_dir_rel_path_inited(
         Determine the target dir abs path by trying the path it is relative to.
 
         *   If the input path is already absolute, return as is.
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
         *   Use ref root as the base first.
         *   Use curr dir as the base last.
         """
@@ -5089,9 +5102,6 @@ class Bootstrapper_state_selected_env_dir_rel_path_inited(
             state_ref_root_dir_abs_path_inited = self.eval_parent_state(
                 EnvState.state_ref_root_dir_abs_path_inited.name
             )
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
             # ===
             abs_path = os.path.join(
                 state_ref_root_dir_abs_path_inited,
@@ -5102,6 +5112,9 @@ class Bootstrapper_state_selected_env_dir_rel_path_inited(
             # ===
             abs_path = os.path.join(
                 os.getcwd(),
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
                 client_local_env_dir_any_path,
             )
             if os.path.isdir(abs_path):
@@ -5111,9 +5124,6 @@ class Bootstrapper_state_selected_env_dir_rel_path_inited(
                 f"`{PathName.path_selected_env.value}` [{client_local_env_dir_any_path}] is relative to neither `{PathName.path_ref_root.value}` [{state_ref_root_dir_abs_path_inited}] nor curr dir [{os.getcwd()}]."
             )
 
-
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
 # noinspection PyPep8Naming
 class Bootstrapper_state_local_conf_symlink_abs_path_inited(
@@ -5125,6 +5135,9 @@ class Bootstrapper_state_local_conf_symlink_abs_path_inited(
         env_ctx: EnvContext,
         state_name: str | None = None,
     ):
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
         super().__init__(
             env_ctx=env_ctx,
             parent_states=[
@@ -5135,9 +5148,6 @@ class Bootstrapper_state_local_conf_symlink_abs_path_inited(
             ],
             state_name=if_none(
                 state_name,
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
                 EnvState.state_local_conf_symlink_abs_path_inited.name,
             ),
         )
@@ -5148,6 +5158,9 @@ class Bootstrapper_state_local_conf_symlink_abs_path_inited(
 
         state_input_run_mode_arg_loaded: RunMode = self.eval_parent_state(
             EnvState.state_input_run_mode_arg_loaded.name,
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
         )
 
         state_ref_root_dir_abs_path_inited: str = self.eval_parent_state(
@@ -5157,9 +5170,6 @@ class Bootstrapper_state_local_conf_symlink_abs_path_inited(
         state_selected_env_dir_rel_path_inited: str | None = self.eval_parent_state(
             EnvState.state_selected_env_dir_rel_path_inited.name
         )
-
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
         # TODO: TODO_53_40_17_68.default_env_config_vs_lconf_symlink.md
         #       This is `None` when (A) config is missing (B) no CLI arg.
@@ -5171,6 +5181,9 @@ class Bootstrapper_state_local_conf_symlink_abs_path_inited(
         state_client_conf_file_data_loaded: dict = self.eval_parent_state(
             EnvState.state_client_conf_file_data_loaded.name
         )
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
         client_env_conf_link_name_dir_rel_path: str | None = (
             state_client_conf_file_data_loaded.get(
                 ConfField.field_local_conf_symlink_rel_path.value,
@@ -5181,9 +5194,6 @@ class Bootstrapper_state_local_conf_symlink_abs_path_inited(
         # Convert to absolute:
         state_local_conf_symlink_abs_path_inited: str
         if client_env_conf_link_name_dir_rel_path is None:
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
             state_local_conf_symlink_abs_path_inited = (
                 state_ref_root_dir_abs_path_inited
             )
@@ -5195,6 +5205,9 @@ class Bootstrapper_state_local_conf_symlink_abs_path_inited(
                 client_env_conf_link_name_dir_rel_path,
             )
 
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
+
         if os.path.exists(state_local_conf_symlink_abs_path_inited):
             if os.path.islink(state_local_conf_symlink_abs_path_inited):
                 if os.path.isdir(state_local_conf_symlink_abs_path_inited):
@@ -5204,9 +5217,6 @@ class Bootstrapper_state_local_conf_symlink_abs_path_inited(
                     else:
                         # Compare the existing link target and the configured one:
                         conf_dir_path = os.path.normpath(
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
                             os.readlink(state_local_conf_symlink_abs_path_inited)
                         )
                         if state_selected_env_dir_rel_path_inited != conf_dir_path:
@@ -5217,6 +5227,9 @@ class Bootstrapper_state_local_conf_symlink_abs_path_inited(
                             #       What if user wants to keep "decision" of what env he uses in that symlink?
                             #       The automatic reset must only be done when --env arg is specified.
                             raise AssertionError(
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
                                 f"The symlink [{state_local_conf_symlink_abs_path_inited}] target [{conf_dir_path}] is not the same as the provided target [{state_selected_env_dir_rel_path_inited}]."
                             )
                 else:
@@ -5227,9 +5240,6 @@ class Bootstrapper_state_local_conf_symlink_abs_path_inited(
                 raise AssertionError(
                     f"The entry [{state_local_conf_symlink_abs_path_inited}] is not a symlink.",
                 )
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
         else:
             os.symlink(
                 os.path.normpath(state_selected_env_dir_rel_path_inited),
@@ -5240,6 +5250,9 @@ class Bootstrapper_state_local_conf_symlink_abs_path_inited(
 
 
 # noinspection PyPep8Naming
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
 class Bootstrapper_state_local_conf_file_abs_path_inited(AbstractCachingStateNode[str]):
 
     def __init__(
@@ -5250,9 +5263,6 @@ class Bootstrapper_state_local_conf_file_abs_path_inited(AbstractCachingStateNod
         super().__init__(
             env_ctx=env_ctx,
             parent_states=[
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
                 EnvState.state_primer_conf_file_abs_path_inited.name,
                 EnvState.state_local_conf_symlink_abs_path_inited.name,
             ],
@@ -5263,6 +5273,9 @@ class Bootstrapper_state_local_conf_file_abs_path_inited(AbstractCachingStateNod
         )
 
     def _eval_state_once(
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
         self,
     ) -> ValueType:
 
@@ -5273,9 +5286,6 @@ class Bootstrapper_state_local_conf_file_abs_path_inited(AbstractCachingStateNod
 
         state_local_conf_symlink_abs_path_inited: str = self.eval_parent_state(
             EnvState.state_local_conf_symlink_abs_path_inited.name
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
         )
 
         state_local_conf_file_abs_path_inited = os.path.join(
@@ -5285,6 +5295,9 @@ class Bootstrapper_state_local_conf_file_abs_path_inited(AbstractCachingStateNod
 
         return state_local_conf_file_abs_path_inited
 
+
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
 # noinspection PyPep8Naming
 class Bootstrapper_state_env_conf_file_data_loaded(AbstractCachingStateNode[dict]):
@@ -5296,9 +5309,6 @@ class Bootstrapper_state_env_conf_file_data_loaded(AbstractCachingStateNode[dict
     ):
         super().__init__(
             env_ctx=env_ctx,
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
             parent_states=[
                 EnvState.state_input_stderr_log_level_eval_finalized.name,
                 EnvState.state_input_run_mode_arg_loaded.name,
@@ -5310,6 +5320,9 @@ class Bootstrapper_state_env_conf_file_data_loaded(AbstractCachingStateNode[dict
             ),
         )
 
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
+
     def _eval_state_once(
         self,
     ) -> ValueType:
@@ -5319,16 +5332,19 @@ class Bootstrapper_state_env_conf_file_data_loaded(AbstractCachingStateNode[dict
 
         file_data: dict
         if os.path.exists(state_local_conf_file_abs_path_inited):
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
             file_data = read_json_file(state_local_conf_file_abs_path_inited)
         else:
-            warn_on_missing_conf_file(state_local_conf_file_abs_path_inited)
+            warn_once_at_state_stride(
+                missing_conf_file_message(state_local_conf_file_abs_path_inited),
+                self.env_ctx.get_stride(),
+            )
             file_data = {}
 
         if can_print_effective_config(self):
             state_input_stderr_log_level_eval_finalized: int = self.eval_parent_state(
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
                 EnvState.state_input_stderr_log_level_eval_finalized.name
             )
             is_quiet: bool = state_input_stderr_log_level_eval_finalized > logging.INFO
@@ -5343,15 +5359,15 @@ class Bootstrapper_state_env_conf_file_data_loaded(AbstractCachingStateNode[dict
         return file_data
 
 
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
-
 # noinspection PyPep8Naming
 class Bootstrapper_required_python_version_inited(
     AbstractOverriddenFieldCachingStateNode[str]
 ):
 
     def __init__(
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
         self,
         env_ctx: EnvContext,
         state_name: str | None = None,
@@ -5365,9 +5381,6 @@ class Bootstrapper_required_python_version_inited(
             ],
             state_name=if_none(
                 state_name,
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
                 EnvState.state_required_python_version_inited.name,
             ),
         )
@@ -5375,6 +5388,9 @@ class Bootstrapper_required_python_version_inited(
     def _eval_state_once(
         self,
     ) -> ValueType:
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
         state_required_python_version_inited: str | None = (
             self._get_overridden_value_or_default(
                 ConfField.field_required_python_version.value,
@@ -5388,9 +5404,6 @@ class Bootstrapper_required_python_version_inited(
 
         if state_required_python_version_inited is None:
             python_version_file_abs_path: str | None = find_python_version_file(
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
                 state_ref_root_dir_abs_path_inited
             )
             if python_version_file_abs_path is None:
@@ -5398,6 +5411,9 @@ class Bootstrapper_required_python_version_inited(
                     f"Both field [{ConfField.field_required_python_version.name}] value is [{state_required_python_version_inited}] and no file [{ConfConstGeneral.python_version_file_basename}] found walking up from [{state_ref_root_dir_abs_path_inited}] dir."
                 )
             logger.info(
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
                 f"Using file [{python_version_file_abs_path}] as field [{ConfField.field_required_python_version.name}] value is [{state_required_python_version_inited}]."
             )
             state_required_python_version_inited = read_text_file(
@@ -5409,11 +5425,8 @@ class Bootstrapper_required_python_version_inited(
 
 
 # noinspection PyPep8Naming
-class Bootstrapper_state_required_python_file_abs_path_inited(
+class Bootstrapper_state_selected_python_file_abs_path_inited(
     AbstractOverriddenFieldCachingStateNode[str]
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
 ):
 
     def __init__(
@@ -5421,6 +5434,9 @@ class Bootstrapper_state_required_python_file_abs_path_inited(
         env_ctx: EnvContext,
         state_name: str | None = None,
     ):
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
         super().__init__(
             env_ctx=env_ctx,
             parent_states=[
@@ -5430,43 +5446,43 @@ class Bootstrapper_state_required_python_file_abs_path_inited(
             ],
             state_name=if_none(
                 state_name,
-                EnvState.state_required_python_file_abs_path_inited.name,
+                EnvState.state_selected_python_file_abs_path_inited.name,
             ),
         )
-
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
     def _eval_state_once(
         self,
     ) -> ValueType:
 
-        state_required_python_file_abs_path_inited: str = (
+        state_selected_python_file_abs_path_inited: str = (
             self._get_overridden_value_or_default(
-                ConfField.field_required_python_file_abs_path.value,
+                ConfField.field_selected_python_file_abs_path.value,
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
                 # TODO: Do not use default values directly - resolve it differently at the prev|next step based on the need:
                 ConfConstEnv.default_file_abs_path_python,
             )
         )
 
-        if not os.path.isabs(state_required_python_file_abs_path_inited):
+        if not os.path.isabs(state_selected_python_file_abs_path_inited):
             # TODO: TODO_03_47_85_89.implement_python_selection.md:
             #       Regardless how the abs path is selected,
-            #       the `field_required_python_file_abs_path` must remove `abs` from its name then.
+            #       the `field_selected_python_file_abs_path` must remove `abs` from its name then.
 
-            path_obj = pathlib.Path(state_required_python_file_abs_path_inited)
+            path_obj = pathlib.Path(state_selected_python_file_abs_path_inited)
 
             # If the path contains a separator (the path has more than one part):
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
             has_separator: bool = len(path_obj.parts) > 1
 
             if has_separator:
                 # TODO: TODO_03_47_85_89.implement_python_selection.md:
                 #       HACK: Really? Do we really want to allow specifying `python` using rel path?
-                state_required_python_file_abs_path_inited = str(
+                state_selected_python_file_abs_path_inited = str(
                     pathlib.Path(
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
                         self.eval_parent_state(
                             EnvState.state_ref_root_dir_abs_path_inited.name
                         )
@@ -5476,20 +5492,20 @@ class Bootstrapper_state_required_python_file_abs_path_inited(
             else:
                 # TODO: TODO_03_47_85_89.implement_python_selection.md:
                 # TODO: This will not work on Windows:
-                state_required_python_file_abs_path_inited = shutil.which(str(path_obj))
-                if state_required_python_file_abs_path_inited is None:
+                state_selected_python_file_abs_path_inited = shutil.which(str(path_obj))
+                if state_selected_python_file_abs_path_inited is None:
                     raise AssertionError(
                         f"Unable to find any executable in `PATH` for the basename [{str(path_obj)}]"
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
                     )
 
-        return state_required_python_file_abs_path_inited
+        return state_selected_python_file_abs_path_inited
 
 
 # noinspection PyPep8Naming
 class Bootstrapper_state_local_venv_dir_abs_path_inited(
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     AbstractOverriddenFieldCachingStateNode[str]
 ):
 
@@ -5503,9 +5519,6 @@ class Bootstrapper_state_local_venv_dir_abs_path_inited(
             parent_states=[
                 EnvState.state_ref_root_dir_abs_path_inited.name,
                 EnvState.state_client_conf_file_data_loaded.name,
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
                 EnvState.state_env_conf_file_data_loaded.name,
             ],
             state_name=if_none(
@@ -5513,6 +5526,9 @@ class Bootstrapper_state_local_venv_dir_abs_path_inited(
                 EnvState.state_local_venv_dir_abs_path_inited.name,
             ),
         )
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
 
     def _eval_state_once(
         self,
@@ -5526,9 +5542,6 @@ class Bootstrapper_state_local_venv_dir_abs_path_inited(
             )
         )
 
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
         if not os.path.isabs(state_local_venv_dir_abs_path_inited):
             state_ref_root_dir_abs_path_inited = self.eval_parent_state(
                 EnvState.state_ref_root_dir_abs_path_inited.name
@@ -5536,6 +5549,9 @@ class Bootstrapper_state_local_venv_dir_abs_path_inited(
             state_local_venv_dir_abs_path_inited = os.path.join(
                 state_ref_root_dir_abs_path_inited,
                 state_local_venv_dir_abs_path_inited,
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
             )
 
         assert os.path.isabs(state_local_venv_dir_abs_path_inited)
@@ -5549,9 +5565,6 @@ class Bootstrapper_state_local_log_dir_abs_path_inited(
 
     def __init__(
         self,
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
         env_ctx: EnvContext,
         state_name: str | None = None,
     ):
@@ -5559,6 +5572,9 @@ class Bootstrapper_state_local_log_dir_abs_path_inited(
             env_ctx=env_ctx,
             parent_states=[
                 EnvState.state_ref_root_dir_abs_path_inited.name,
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
                 EnvState.state_client_conf_file_data_loaded.name,
                 EnvState.state_env_conf_file_data_loaded.name,
             ],
@@ -5572,9 +5588,6 @@ class Bootstrapper_state_local_log_dir_abs_path_inited(
         self,
     ) -> ValueType:
 
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
         field_local_log_dir_rel_path: str = self._get_overridden_value_or_default(
             ConfField.field_local_log_dir_rel_path.value,
             ConfConstEnv.default_dir_rel_path_log,
@@ -5582,6 +5595,9 @@ class Bootstrapper_state_local_log_dir_abs_path_inited(
 
         state_ref_root_dir_abs_path_inited: str = self.eval_parent_state(
             EnvState.state_ref_root_dir_abs_path_inited.name
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
         )
 
         state_local_log_dir_abs_path_inited = os.path.join(
@@ -5596,15 +5612,15 @@ class Bootstrapper_state_local_log_dir_abs_path_inited(
         return state_local_log_dir_abs_path_inited
 
 
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
-
 # noinspection PyPep8Naming
 class Bootstrapper_state_local_tmp_dir_abs_path_inited(
     AbstractOverriddenFieldCachingStateNode[str]
 ):
 
     def __init__(
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
         self,
         env_ctx: EnvContext,
         state_name: str | None = None,
@@ -5618,9 +5634,6 @@ class Bootstrapper_state_local_tmp_dir_abs_path_inited(
             ],
             state_name=if_none(
                 state_name,
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
                 EnvState.state_local_tmp_dir_abs_path_inited.name,
             ),
         )
@@ -5628,6 +5641,9 @@ class Bootstrapper_state_local_tmp_dir_abs_path_inited(
     def _eval_state_once(
         self,
     ) -> ValueType:
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
 
         field_local_tmp_dir_rel_path: str = self._get_overridden_value_or_default(
             ConfField.field_local_tmp_dir_rel_path.value,
@@ -5641,9 +5657,6 @@ class Bootstrapper_state_local_tmp_dir_abs_path_inited(
         state_local_tmp_dir_abs_path_inited = os.path.join(
             state_ref_root_dir_abs_path_inited,
             field_local_tmp_dir_rel_path,
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
         )
         state_local_tmp_dir_abs_path_inited = os.path.normpath(
             state_local_tmp_dir_abs_path_inited
@@ -5651,6 +5664,9 @@ class Bootstrapper_state_local_tmp_dir_abs_path_inited(
 
         assert os.path.isabs(state_local_tmp_dir_abs_path_inited)
         return state_local_tmp_dir_abs_path_inited
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
 
 
 # noinspection PyPep8Naming
@@ -5664,9 +5680,6 @@ class Bootstrapper_state_local_cache_dir_abs_path_inited(
         state_name: str | None = None,
     ):
         super().__init__(
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
             env_ctx=env_ctx,
             parent_states=[
                 EnvState.state_ref_root_dir_abs_path_inited.name,
@@ -5674,6 +5687,9 @@ class Bootstrapper_state_local_cache_dir_abs_path_inited(
                 EnvState.state_env_conf_file_data_loaded.name,
             ],
             state_name=if_none(
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
                 state_name,
                 EnvState.state_local_cache_dir_abs_path_inited.name,
             ),
@@ -5688,15 +5704,15 @@ class Bootstrapper_state_local_cache_dir_abs_path_inited(
             ConfConstEnv.default_dir_rel_path_cache,
         )
 
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
-
         state_ref_root_dir_abs_path_inited: str = self.eval_parent_state(
             EnvState.state_ref_root_dir_abs_path_inited.name
         )
 
         state_local_cache_dir_abs_path_inited = os.path.join(
             state_ref_root_dir_abs_path_inited,
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
             field_local_cache_dir_rel_path,
         )
         state_local_cache_dir_abs_path_inited = os.path.normpath(
@@ -5708,11 +5724,8 @@ class Bootstrapper_state_local_cache_dir_abs_path_inited(
 
 
 # noinspection PyPep8Naming
-class Bootstrapper_state_package_driver_inited(
-    AbstractOverriddenFieldCachingStateNode[PackageDriverType]
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
+class Bootstrapper_state_venv_driver_inited(
+    AbstractOverriddenFieldCachingStateNode[VenvDriverType]
 ):
 
     def __init__(
@@ -5720,74 +5733,77 @@ class Bootstrapper_state_package_driver_inited(
         env_ctx: EnvContext,
         state_name: str | None = None,
     ):
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
         super().__init__(
             env_ctx=env_ctx,
             parent_states=[
                 EnvState.state_client_conf_file_data_loaded.name,
                 EnvState.state_env_conf_file_data_loaded.name,
-                EnvState.state_required_python_file_abs_path_inited.name,
+                EnvState.state_selected_python_file_abs_path_inited.name,
             ],
             state_name=if_none(
                 state_name,
-                EnvState.state_package_driver_inited.name,
+                EnvState.state_venv_driver_inited.name,
             ),
         )
-
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
     def _eval_state_once(
         self,
     ) -> ValueType:
 
-        state_required_python_file_abs_path_inited: str = self.eval_parent_state(
-            EnvState.state_required_python_file_abs_path_inited.name
+        state_selected_python_file_abs_path_inited: str = self.eval_parent_state(
+            EnvState.state_selected_python_file_abs_path_inited.name
         )
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
 
         # FT_84_11_73_28.supported_python_versions.md:
         uv_min_version: tuple[int, int, int] = (3, 8, 0)
         required_version: tuple[int, int, int] = get_python_version(
-            state_required_python_file_abs_path_inited
+            state_selected_python_file_abs_path_inited
         )
 
-        default_package_driver: str
+        default_venv_driver: str
         if required_version < uv_min_version:
-            default_package_driver = PackageDriverType.driver_pip.name
+            default_venv_driver = VenvDriverType.venv_pip.name
         else:
-            default_package_driver = ConfConstEnv.default_package_driver
+            default_venv_driver = ConfConstEnv.default_venv_driver
 
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
-        state_package_driver_inited: PackageDriverType
-        if os.environ.get(EnvVar.var_PROTOPRIMER_PACKAGE_DRIVER.value, None) is None:
+        state_venv_driver_inited: VenvDriverType
+        if os.environ.get(EnvVar.var_PROTOPRIMER_VENV_DRIVER.value, None) is None:
             # TODO: TODO_03_47_85_89.implement_python_selection.md
             #       Default package driver must depend on the required python version.
             #       This version has to be identified by running the selected `python` executable.
-            state_package_driver_inited = PackageDriverType[
+            state_venv_driver_inited = VenvDriverType[
                 self._get_overridden_value_or_default(
-                    ConfField.field_package_driver.value,
-                    default_package_driver,
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
+                    ConfField.field_venv_driver.value,
+                    default_venv_driver,
                 )
             ]
         else:
-            state_package_driver_inited = PackageDriverType[
-                os.environ.get(EnvVar.var_PROTOPRIMER_PACKAGE_DRIVER.value)
+            state_venv_driver_inited = VenvDriverType[
+                os.environ.get(EnvVar.var_PROTOPRIMER_VENV_DRIVER.value)
             ]
 
         if (
             required_version < uv_min_version
-            and state_package_driver_inited == PackageDriverType.driver_uv
+            and state_venv_driver_inited == VenvDriverType.venv_uv
         ):
+            logger.warning(
+                f"Overriding package driver [{state_venv_driver_inited}] to [{VenvDriverType.venv_pip}] because required python [{required_version}] is below minimum required [{uv_min_version}] for [{VenvDriverType.venv_uv}]"
+            )
+            state_venv_driver_inited = VenvDriverType.venv_pip
+
+        return state_venv_driver_inited
+
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
-            logger.warning(
-                f"Overriding package driver [{state_package_driver_inited}] to [{PackageDriverType.driver_pip}] because required python [{required_version}] is below minimum required [{uv_min_version}] for [{PackageDriverType.driver_uv}]"
-            )
-            state_package_driver_inited = PackageDriverType.driver_pip
-
-        return state_package_driver_inited
 
 
 # noinspection PyPep8Naming
@@ -5802,9 +5818,6 @@ class Bootstrapper_state_project_descriptors_inited(
     ):
         super().__init__(
             env_ctx=env_ctx,
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
             parent_states=[
                 EnvState.state_client_conf_file_data_loaded.name,
                 EnvState.state_env_conf_file_data_loaded.name,
@@ -5812,6 +5825,9 @@ class Bootstrapper_state_project_descriptors_inited(
             state_name=if_none(
                 state_name,
                 EnvState.state_project_descriptors_inited.name,
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
             ),
         )
 
@@ -5826,15 +5842,15 @@ class Bootstrapper_state_project_descriptors_inited(
 
         return project_descriptors
 
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
-
 
 # noinspection PyPep8Naming
 class Bootstrapper_state_derived_conf_data_loaded(AbstractCachingStateNode[dict]):
     """
     Implements: FT_00_22_19_59.derived_config.md
     """
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
 
     def __init__(
         self,
@@ -5848,9 +5864,6 @@ class Bootstrapper_state_derived_conf_data_loaded(AbstractCachingStateNode[dict]
             EnvState.state_primer_conf_file_abs_path_inited.name,
             # ===
             # `ConfLeap.leap_primer`
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
             EnvState.state_ref_root_dir_abs_path_inited.name,
             EnvState.state_global_conf_dir_abs_path_inited.name,
             EnvState.state_global_conf_file_abs_path_inited.name,
@@ -5858,6 +5871,9 @@ class Bootstrapper_state_derived_conf_data_loaded(AbstractCachingStateNode[dict]
             # `ConfLeap.leap_client`
             EnvState.state_selected_env_dir_rel_path_inited.name,
             EnvState.state_local_conf_symlink_abs_path_inited.name,
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
             EnvState.state_local_conf_file_abs_path_inited.name,
             # ===
             # `ConfLeap.leap_env`
@@ -5865,15 +5881,12 @@ class Bootstrapper_state_derived_conf_data_loaded(AbstractCachingStateNode[dict]
             # ===
             # `ConfLeap.leap_derived`
             EnvState.state_required_python_version_inited.name,
-            EnvState.state_required_python_file_abs_path_inited.name,
+            EnvState.state_selected_python_file_abs_path_inited.name,
             EnvState.state_local_venv_dir_abs_path_inited.name,
             EnvState.state_local_log_dir_abs_path_inited.name,
             EnvState.state_local_tmp_dir_abs_path_inited.name,
             EnvState.state_local_cache_dir_abs_path_inited.name,
-            EnvState.state_package_driver_inited.name,
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
+            EnvState.state_venv_driver_inited.name,
             EnvState.state_project_descriptors_inited.name,
         ]
 
@@ -5881,6 +5894,9 @@ class Bootstrapper_state_derived_conf_data_loaded(AbstractCachingStateNode[dict]
         parent_states = [
             EnvState.state_input_run_mode_arg_loaded.name,
             EnvState.state_primer_conf_file_data_loaded.name,
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
             EnvState.state_client_conf_file_data_loaded.name,
             EnvState.state_env_conf_file_data_loaded.name,
             EnvState.state_input_stderr_log_level_eval_finalized.name,
@@ -5894,9 +5910,6 @@ class Bootstrapper_state_derived_conf_data_loaded(AbstractCachingStateNode[dict]
             ),
         )
 
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
         super().__init__(
             env_ctx=env_ctx,
             parent_states=parent_states,
@@ -5904,6 +5917,9 @@ class Bootstrapper_state_derived_conf_data_loaded(AbstractCachingStateNode[dict]
                 state_name,
                 EnvState.state_derived_conf_data_loaded.name,
             ),
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
         )
 
     def _eval_state_once(
@@ -5918,14 +5934,14 @@ class Bootstrapper_state_derived_conf_data_loaded(AbstractCachingStateNode[dict]
             else:
                 config_data_derived[derived_data_env_state] = evaluated_value
 
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
-
         if can_print_effective_config(self):
             state_input_stderr_log_level_eval_finalized: int = self.eval_parent_state(
                 EnvState.state_input_stderr_log_level_eval_finalized.name
             )
             is_quiet: bool = state_input_stderr_log_level_eval_finalized > logging.INFO
+
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
             conf_derived = RootNode_derived(
                 node_indent=0,
@@ -5940,9 +5956,6 @@ class Bootstrapper_state_derived_conf_data_loaded(AbstractCachingStateNode[dict]
 class Bootstrapper_state_effective_config_data_printed(AbstractCachingStateNode[int]):
     """
     Implements: FT_19_44_42_19.effective_config.md
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
     """
 
     def __init__(
@@ -5950,6 +5963,9 @@ class Bootstrapper_state_effective_config_data_printed(AbstractCachingStateNode[
         env_ctx: EnvContext,
         state_name: str | None = None,
     ):
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
         super().__init__(
             env_ctx=env_ctx,
             parent_states=[
@@ -5963,15 +5979,15 @@ class Bootstrapper_state_effective_config_data_printed(AbstractCachingStateNode[
 
     def _eval_state_once(
         self,
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
     ) -> ValueType:
         # Nothing to do:
         # If we reach this state,
         # then, transitively, effective configs for all `ConfLeap.*` has been printed.
         return 0
 
+
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
 # noinspection PyPep8Naming
 class Bootstrapper_state_default_file_log_handler_configured(
@@ -5986,9 +6002,6 @@ class Bootstrapper_state_default_file_log_handler_configured(
         super().__init__(
             env_ctx=env_ctx,
             parent_states=[
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
                 EnvState.state_args_parsed.name,
                 EnvState.state_input_stderr_log_level_eval_finalized.name,
                 EnvState.state_input_start_id_var_loaded.name,
@@ -5996,6 +6009,9 @@ class Bootstrapper_state_default_file_log_handler_configured(
             ],
             state_name=if_none(
                 state_name,
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
                 EnvState.state_default_file_log_handler_configured.name,
             ),
         )
@@ -6009,15 +6025,15 @@ class Bootstrapper_state_default_file_log_handler_configured(
         )
 
         state_local_log_dir_abs_path_inited: str = self.eval_parent_state(
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
             EnvState.state_local_log_dir_abs_path_inited.name
         )
 
         state_input_stderr_log_level_eval_finalized: int = self.eval_parent_state(
             EnvState.state_input_stderr_log_level_eval_finalized.name
         )
+
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
         script_path = sys.argv[0]
         script_name = os.path.basename(script_path)
@@ -6032,9 +6048,6 @@ class Bootstrapper_state_default_file_log_handler_configured(
         return file_handler
 
 
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
 # noinspection PyPep8Naming
 class Bootstrapper_state_stride_py_required_reached(
     AbstractCachingStateNode[StateStride]
@@ -6042,7 +6055,10 @@ class Bootstrapper_state_stride_py_required_reached(
     """
     Recursively runs this script inside the `python` interpreter required by the client.
 
-    The `python` interpreter required by the client is saved into `field_required_python_file_abs_path`.
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
+    The `python` interpreter required by the client is saved into `field_selected_python_file_abs_path`.
     """
 
     def __init__(
@@ -6055,16 +6071,16 @@ class Bootstrapper_state_stride_py_required_reached(
             parent_states=[
                 EnvState.state_args_parsed.name,
                 EnvState.state_input_run_mode_arg_loaded.name,
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
                 EnvState.state_input_start_id_var_loaded.name,
                 EnvState.state_proto_code_file_abs_path_inited.name,
                 EnvState.state_local_conf_file_abs_path_inited.name,
-                EnvState.state_required_python_file_abs_path_inited.name,
+                EnvState.state_selected_python_file_abs_path_inited.name,
                 EnvState.state_local_venv_dir_abs_path_inited.name,
                 EnvState.state_local_tmp_dir_abs_path_inited.name,
                 EnvState.state_default_file_log_handler_configured.name,
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
             ],
             state_name=if_none(
                 state_name,
@@ -6078,9 +6094,6 @@ class Bootstrapper_state_stride_py_required_reached(
 
         state_stride_py_required_reached: StateStride = StateStride.stride_py_required
 
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
         if self.env_ctx.has_stride_reached(
             next_stride=state_stride_py_required_reached,
         ):
@@ -6088,6 +6101,9 @@ class Bootstrapper_state_stride_py_required_reached(
 
         state_input_run_mode_arg_loaded: RunMode = self.eval_parent_state(
             EnvState.state_input_run_mode_arg_loaded.name
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
         )
 
         if state_input_run_mode_arg_loaded == RunMode.mode_start:
@@ -6101,9 +6117,6 @@ class Bootstrapper_state_stride_py_required_reached(
             EnvState.state_default_file_log_handler_configured.name
         )
 
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
         # TODO: Unused, but plugged in to form complete DAG: consider adding intermediate state to plug it in:
         state_local_tmp_dir_abs_path_inited = self.eval_parent_state(
             EnvState.state_local_tmp_dir_abs_path_inited.name
@@ -6111,52 +6124,55 @@ class Bootstrapper_state_stride_py_required_reached(
 
         state_input_start_id_var_loaded: str = self.eval_parent_state(
             EnvState.state_input_start_id_var_loaded.name
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
         )
 
         state_proto_code_file_abs_path_inited: str = self.eval_parent_state(
             EnvState.state_proto_code_file_abs_path_inited.name
         )
 
-        state_required_python_file_abs_path_inited: str = self.eval_parent_state(
-            EnvState.state_required_python_file_abs_path_inited.name
+        state_selected_python_file_abs_path_inited: str = self.eval_parent_state(
+            EnvState.state_selected_python_file_abs_path_inited.name
         )
         state_local_venv_dir_abs_path_inited: str = self.eval_parent_state(
             EnvState.state_local_venv_dir_abs_path_inited.name
         )
 
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
         assert not is_sub_path(
-            state_required_python_file_abs_path_inited,
+            state_selected_python_file_abs_path_inited,
             state_local_venv_dir_abs_path_inited,
-        ), f"Configured `python` [{state_required_python_file_abs_path_inited}] must be outside of configured `venv` [{state_local_venv_dir_abs_path_inited}]"
+        ), f"Configured `python` [{state_selected_python_file_abs_path_inited}] must be outside of configured `venv` [{state_local_venv_dir_abs_path_inited}]"
 
         path_to_curr_python = get_path_to_curr_python()
         logger.debug(f"path_to_curr_python: {path_to_curr_python}")
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
 
         assert not is_sub_path(
             path_to_curr_python,
             state_local_venv_dir_abs_path_inited,
         ), f"Current `python` [{path_to_curr_python}] must be outside of the `venv` [{state_local_venv_dir_abs_path_inited}]."
 
-        if path_to_curr_python != state_required_python_file_abs_path_inited:
+        if path_to_curr_python != state_selected_python_file_abs_path_inited:
             assert (
                 self.env_ctx.get_stride().value <= StateStride.stride_py_arbitrary.value
             )
             return switch_python(
                 curr_python_path=path_to_curr_python,
                 next_py_exec=self.env_ctx.set_max_stride(
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
                     state_stride_py_required_reached
                 ),
-                next_python_path=state_required_python_file_abs_path_inited,
+                next_python_path=state_selected_python_file_abs_path_inited,
                 start_id=state_input_start_id_var_loaded,
                 proto_code_abs_file_path=state_proto_code_file_abs_path_inited,
             )
         else:
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
             assert (
                 self.env_ctx.get_stride().value <= StateStride.stride_py_required.value
             )
@@ -6170,9 +6186,6 @@ class Bootstrapper_state_stride_py_required_reached(
 
 
 # noinspection PyPep8Naming
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
 class Bootstrapper_state_reinstall_triggered(AbstractCachingStateNode[bool]):
     """
     Removes current `venv` dir and `constraints.txt` file (to trigger their re-creation subsequently).
@@ -6180,6 +6193,9 @@ class Bootstrapper_state_reinstall_triggered(AbstractCachingStateNode[bool]):
 
     def __init__(
         self,
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
         env_ctx: EnvContext,
         state_name: str | None = None,
     ):
@@ -6193,9 +6209,6 @@ class Bootstrapper_state_reinstall_triggered(AbstractCachingStateNode[bool]):
                 EnvState.state_local_conf_symlink_abs_path_inited.name,
                 EnvState.state_local_venv_dir_abs_path_inited.name,
                 EnvState.state_local_tmp_dir_abs_path_inited.name,
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
                 EnvState.state_stride_py_required_reached.name,
             ],
             state_name=if_none(
@@ -6203,6 +6216,9 @@ class Bootstrapper_state_reinstall_triggered(AbstractCachingStateNode[bool]):
                 EnvState.state_reinstall_triggered.name,
             ),
         )
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
 
     def _eval_state_once(
         self,
@@ -6216,9 +6232,6 @@ class Bootstrapper_state_reinstall_triggered(AbstractCachingStateNode[bool]):
             EnvState.state_input_run_mode_arg_loaded.name
         )
 
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
         if state_input_run_mode_arg_loaded == RunMode.mode_start:
             # The only reason for `EnvState.state_reinstall_triggered`
             # is to destroy `venv` to recreate it later.
@@ -6226,6 +6239,9 @@ class Bootstrapper_state_reinstall_triggered(AbstractCachingStateNode[bool]):
             return False
 
         state_input_start_id_var_loaded: str = self.eval_parent_state(
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
             EnvState.state_input_start_id_var_loaded.name
         )
 
@@ -6240,15 +6256,15 @@ class Bootstrapper_state_reinstall_triggered(AbstractCachingStateNode[bool]):
         )
         assert self.env_ctx.get_stride().value >= StateStride.stride_py_required.value
 
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
-
         state_proto_code_file_abs_path_inited: str = self.eval_parent_state(
             EnvState.state_proto_code_file_abs_path_inited.name
         )
 
         # Reinstall can only happen outside `venv`:
         if not (
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
             do_reinstall
             and state_stride_py_required_reached == StateStride.stride_py_required
         ):
@@ -6262,9 +6278,6 @@ class Bootstrapper_state_reinstall_triggered(AbstractCachingStateNode[bool]):
             # Move old `venv` to temporary directory:
 
             state_local_tmp_dir_abs_path_inited = self.eval_parent_state(
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
                 EnvState.state_local_tmp_dir_abs_path_inited.name
             )
 
@@ -6272,6 +6285,9 @@ class Bootstrapper_state_reinstall_triggered(AbstractCachingStateNode[bool]):
                 state_local_tmp_dir_abs_path_inited,
                 f"venv.before.{state_input_start_id_var_loaded}",
             )
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
 
             logger.info(
                 f"moving `venv` dir from [{state_local_venv_dir_abs_path_inited}] to [{moved_venv_dir}]"
@@ -6285,9 +6301,6 @@ class Bootstrapper_state_reinstall_triggered(AbstractCachingStateNode[bool]):
         constraints_txt_path = os.path.join(
             state_local_conf_symlink_abs_path_inited,
             ConfConstEnv.constraints_txt_basename,
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
         )
         if os.path.exists(constraints_txt_path):
             logger.info(f"removing version constraints file [{constraints_txt_path}]")
@@ -6296,10 +6309,11 @@ class Bootstrapper_state_reinstall_triggered(AbstractCachingStateNode[bool]):
         return True
 
 
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
+
 # noinspection PyPep8Naming
-class Bootstrapper_state_package_driver_prepared(
-    AbstractCachingStateNode[PackageDriverBase]
-):
+class Bootstrapper_state_venv_driver_prepared(AbstractCachingStateNode[VenvDriverBase]):
     def __init__(
         self,
         env_ctx: EnvContext,
@@ -6308,19 +6322,19 @@ class Bootstrapper_state_package_driver_prepared(
         super().__init__(
             env_ctx=env_ctx,
             parent_states=[
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
                 EnvState.state_input_run_mode_arg_loaded.name,
                 EnvState.state_required_python_version_inited.name,
-                EnvState.state_required_python_file_abs_path_inited.name,
+                EnvState.state_selected_python_file_abs_path_inited.name,
                 EnvState.state_local_cache_dir_abs_path_inited.name,
-                EnvState.state_package_driver_inited.name,
+                EnvState.state_venv_driver_inited.name,
                 EnvState.state_reinstall_triggered.name,
             ],
             state_name=if_none(
                 state_name,
-                EnvState.state_package_driver_prepared.name,
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
+                EnvState.state_venv_driver_prepared.name,
             ),
         )
 
@@ -6332,56 +6346,53 @@ class Bootstrapper_state_package_driver_prepared(
             EnvState.state_input_run_mode_arg_loaded.name
         )
 
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
-
         if state_input_run_mode_arg_loaded == RunMode.mode_start:
-            # The only reason for `EnvState.state_package_driver_prepared`
-            # is to prepare `PackageDriverBase` to create `venv`.
+            # The only reason for `EnvState.state_venv_driver_prepared`
+            # is to prepare `VenvDriverBase` to create `venv`.
             # Skip it as `venv` is supposed to be ready in `RunMode.mode_start`:
-            return PackageDriverBase()
+            return VenvDriverBase()
 
         state_required_python_version_inited: str = self.eval_parent_state(
             EnvState.state_required_python_version_inited.name
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
         )
 
-        state_required_python_file_abs_path_inited: str = self.eval_parent_state(
-            EnvState.state_required_python_file_abs_path_inited.name
+        state_selected_python_file_abs_path_inited: str = self.eval_parent_state(
+            EnvState.state_selected_python_file_abs_path_inited.name
         )
 
-        state_package_driver_inited: PackageDriverType = self.eval_parent_state(
-            EnvState.state_package_driver_inited.name
+        state_venv_driver_inited: VenvDriverType = self.eval_parent_state(
+            EnvState.state_venv_driver_inited.name
         )
 
         state_local_cache_dir_abs_path_inited: str = self.eval_parent_state(
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
             EnvState.state_local_cache_dir_abs_path_inited.name
         )
 
-        package_driver: PackageDriverBase
-        if PackageDriverType.driver_uv == state_package_driver_inited:
-            package_driver = PackageDriverUv(
+        venv_driver: VenvDriverBase
+        if VenvDriverType.venv_uv == state_venv_driver_inited:
+            venv_driver = VenvDriverUv(
                 required_python_version=state_required_python_version_inited,
                 state_local_cache_dir_abs_path_inited=state_local_cache_dir_abs_path_inited,
-            )
-        elif PackageDriverType.driver_pip == state_package_driver_inited:
-            # Nothing to do:
-            # `PackageDriverType.driver_pip` is available by default with the new `venv` without installation.
-            package_driver = PackageDriverPip(
-                required_python_version=state_required_python_version_inited,
-                required_python_file_abs_path=state_required_python_file_abs_path_inited,
-            )
-        else:
-            raise AssertionError(
-                f"unsupported `{PackageDriverType.__name__}` [{state_package_driver_inited.name}]"
             )
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+        elif VenvDriverType.venv_pip == state_venv_driver_inited:
+            # Nothing to do:
+            # `VenvDriverType.venv_pip` is available by default with the new `venv` without installation.
+            venv_driver = VenvDriverPip(
+                required_python_version=state_required_python_version_inited,
+                selected_python_file_abs_path=state_selected_python_file_abs_path_inited,
+            )
+        else:
+            raise AssertionError(
+                f"unsupported `{VenvDriverType.__name__}` [{state_venv_driver_inited.name}]"
+            )
 
-        return package_driver
+        return venv_driver
 
 
 # noinspection PyPep8Naming
@@ -6389,6 +6400,9 @@ class Bootstrapper_state_stride_py_venv_reached(AbstractCachingStateNode[StateSt
     """
     Creates `venv` and switches to `python` from there.
     """
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
 
     def __init__(
         self,
@@ -6400,18 +6414,18 @@ class Bootstrapper_state_stride_py_venv_reached(AbstractCachingStateNode[StateSt
             parent_states=[
                 EnvState.state_args_parsed.name,
                 EnvState.state_input_run_mode_arg_loaded.name,
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
                 EnvState.state_input_start_id_var_loaded.name,
                 EnvState.state_proto_code_file_abs_path_inited.name,
                 EnvState.state_local_conf_file_abs_path_inited.name,
-                EnvState.state_required_python_file_abs_path_inited.name,
+                EnvState.state_selected_python_file_abs_path_inited.name,
                 EnvState.state_local_venv_dir_abs_path_inited.name,
                 EnvState.state_reinstall_triggered.name,
-                EnvState.state_package_driver_prepared.name,
+                EnvState.state_venv_driver_prepared.name,
             ],
             state_name=if_none(
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
                 state_name,
                 EnvState.state_stride_py_venv_reached.name,
             ),
@@ -6423,9 +6437,6 @@ class Bootstrapper_state_stride_py_venv_reached(AbstractCachingStateNode[StateSt
 
         state_stride_py_venv_reached: StateStride = StateStride.stride_py_venv
 
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
         if self.env_ctx.has_stride_reached(
             next_stride=state_stride_py_venv_reached,
         ):
@@ -6434,6 +6445,9 @@ class Bootstrapper_state_stride_py_venv_reached(AbstractCachingStateNode[StateSt
         state_input_run_mode_arg_loaded: RunMode = self.eval_parent_state(
             EnvState.state_input_run_mode_arg_loaded.name
         )
+
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
         if state_input_run_mode_arg_loaded == RunMode.mode_start:
             # The only reason for `EnvState.state_stride_py_venv_reached`
@@ -6446,9 +6460,6 @@ class Bootstrapper_state_stride_py_venv_reached(AbstractCachingStateNode[StateSt
         )
 
         state_reinstall_triggered: bool = self.eval_parent_state(
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
             EnvState.state_reinstall_triggered.name
         )
 
@@ -6456,22 +6467,22 @@ class Bootstrapper_state_stride_py_venv_reached(AbstractCachingStateNode[StateSt
             EnvState.state_proto_code_file_abs_path_inited.name
         )
 
-        state_required_python_file_abs_path_inited: str = self.eval_parent_state(
-            EnvState.state_required_python_file_abs_path_inited.name
+        state_selected_python_file_abs_path_inited: str = self.eval_parent_state(
+            EnvState.state_selected_python_file_abs_path_inited.name
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
         )
         state_local_venv_dir_abs_path_inited: str = self.eval_parent_state(
             EnvState.state_local_venv_dir_abs_path_inited.name
         )
 
-        state_package_driver_prepared: PackageDriverBase = self.eval_parent_state(
-            EnvState.state_package_driver_prepared.name
+        state_venv_driver_prepared: VenvDriverBase = self.eval_parent_state(
+            EnvState.state_venv_driver_prepared.name
         )
 
         venv_path_to_python: str = os.path.join(
             state_local_venv_dir_abs_path_inited,
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
             ConfConstGeneral.file_rel_path_venv_python,
         )
         path_to_curr_python: str = get_path_to_curr_python()
@@ -6481,6 +6492,9 @@ class Bootstrapper_state_stride_py_venv_reached(AbstractCachingStateNode[StateSt
             path_to_curr_python,
             state_local_venv_dir_abs_path_inited,
         ):
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
             raise AssertionError(
                 f"Current `python` [{path_to_curr_python}] must be outside of the `venv` [{state_local_venv_dir_abs_path_inited}]."
             )
@@ -6490,12 +6504,9 @@ class Bootstrapper_state_stride_py_venv_reached(AbstractCachingStateNode[StateSt
                 # Skip required `python` validation because we do not need it to create `venv`:
                 pass
             else:
-                if path_to_curr_python != state_required_python_file_abs_path_inited:
+                if path_to_curr_python != state_selected_python_file_abs_path_inited:
                     raise AssertionError(
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
-                        f"Current `python` [{path_to_curr_python}] must match the required one [{state_required_python_file_abs_path_inited}]."
+                        f"Current `python` [{path_to_curr_python}] must match the required one [{state_selected_python_file_abs_path_inited}]."
                     )
 
         assert self.env_ctx.get_stride().value <= StateStride.stride_py_required.value
@@ -6504,9 +6515,12 @@ class Bootstrapper_state_stride_py_venv_reached(AbstractCachingStateNode[StateSt
                 # The `venv` is supposed to be ready in `RunMode.mode_start`:
                 raise AssertionError(
                     f"`venv` [{state_local_venv_dir_abs_path_inited}] is supposed to be ready in `RunMode` [{state_input_run_mode_arg_loaded.name}] execute `RunMode` [{RunMode.mode_prime.name}] to prepare it."
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
                 )
             else:
-                state_package_driver_prepared.create_venv(
+                state_venv_driver_prepared.create_venv(
                     state_local_venv_dir_abs_path_inited,
                 )
         else:
@@ -6515,20 +6529,20 @@ class Bootstrapper_state_stride_py_venv_reached(AbstractCachingStateNode[StateSt
             )
             if state_input_run_mode_arg_loaded == RunMode.mode_start:
                 # Skip `venv` type validation:
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
                 pass
             else:
-                if not state_package_driver_prepared.is_mine_venv(
+                if not state_venv_driver_prepared.is_mine_venv(
                     state_local_venv_dir_abs_path_inited,
                 ):
                     raise AssertionError(
-                        f"`venv` [{state_local_venv_dir_abs_path_inited}] was not created by this driver [{state_package_driver_prepared.get_type().name}] retry with [{CommandAction.action_reinstall.value}]"
+                        f"`venv` [{state_local_venv_dir_abs_path_inited}] was not created by this driver [{state_venv_driver_prepared.get_type().name}] retry with [{CommandAction.action_reinstall.value}]"
                     )
 
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
         return switch_python(
-            curr_python_path=state_required_python_file_abs_path_inited,
+            curr_python_path=state_selected_python_file_abs_path_inited,
             next_py_exec=self.env_ctx.set_max_stride(state_stride_py_venv_reached),
             next_python_path=venv_path_to_python,
             start_id=state_input_start_id_var_loaded,
@@ -6539,9 +6553,6 @@ class Bootstrapper_state_stride_py_venv_reached(AbstractCachingStateNode[StateSt
 # noinspection PyPep8Naming
 class Bootstrapper_state_protoprimer_package_installed(AbstractCachingStateNode[bool]):
 
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
-
     def __init__(
         self,
         env_ctx: EnvContext,
@@ -6550,20 +6561,20 @@ class Bootstrapper_state_protoprimer_package_installed(AbstractCachingStateNode[
         super().__init__(
             env_ctx=env_ctx,
             parent_states=[
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
                 EnvState.state_input_do_install_var_loaded.name,
                 EnvState.state_args_parsed.name,
                 EnvState.state_input_run_mode_arg_loaded.name,
                 EnvState.state_ref_root_dir_abs_path_inited.name,
                 EnvState.state_local_conf_symlink_abs_path_inited.name,
                 EnvState.state_project_descriptors_inited.name,
-                EnvState.state_package_driver_prepared.name,
+                EnvState.state_venv_driver_prepared.name,
                 EnvState.state_stride_py_venv_reached.name,
             ],
             state_name=if_none(
                 state_name,
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
                 EnvState.state_protoprimer_package_installed.name,
             ),
         )
@@ -6573,6 +6584,9 @@ class Bootstrapper_state_protoprimer_package_installed(AbstractCachingStateNode[
     ) -> ValueType:
 
         state_args_parsed: argparse.Namespace = self.eval_parent_state(
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
             EnvState.state_args_parsed.name
         )
 
@@ -6584,9 +6598,6 @@ class Bootstrapper_state_protoprimer_package_installed(AbstractCachingStateNode[
             # The only reason for `EnvState.state_protoprimer_package_installed`
             # is to install dependencies into `venv`.
             # Skip it as `venv` is supposed to be ready in `RunMode.mode_start`:
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
             return False
 
         state_input_do_install_var_loaded: bool = self.eval_parent_state(
@@ -6596,6 +6607,9 @@ class Bootstrapper_state_protoprimer_package_installed(AbstractCachingStateNode[
         state_stride_py_venv_reached: StateStride = self.eval_parent_state(
             EnvState.state_stride_py_venv_reached.name
         )
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
         assert self.env_ctx.get_stride().value >= StateStride.stride_py_venv.value
 
         state_ref_root_dir_abs_path_inited: str = self.eval_parent_state(
@@ -6607,18 +6621,18 @@ class Bootstrapper_state_protoprimer_package_installed(AbstractCachingStateNode[
         )
 
         state_project_descriptors_inited: list[dict] = self.eval_parent_state(
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
             EnvState.state_project_descriptors_inited.name
         )
 
-        state_package_driver_prepared: PackageDriverBase = self.eval_parent_state(
-            EnvState.state_package_driver_prepared.name
+        state_venv_driver_prepared: VenvDriverBase = self.eval_parent_state(
+            EnvState.state_venv_driver_prepared.name
         )
 
         do_reinstall: bool = (
             state_args_parsed.run_mode == CommandAction.action_reinstall.value
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
         )
 
         do_install: bool = (
@@ -6630,9 +6644,6 @@ class Bootstrapper_state_protoprimer_package_installed(AbstractCachingStateNode[
             return False
 
         constraints_txt_path = os.path.join(
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
             state_local_conf_symlink_abs_path_inited,
             ConfConstEnv.constraints_txt_basename,
         )
@@ -6642,19 +6653,19 @@ class Bootstrapper_state_protoprimer_package_installed(AbstractCachingStateNode[
 
         if len(state_project_descriptors_inited) == 0:
             logger.warning(
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
                 f"{ValueName.value_project_descriptors.value} is empty - nothing to install"
             )
             return True
 
-        state_package_driver_prepared.install_dependencies(
+        state_venv_driver_prepared.install_dependencies(
             state_ref_root_dir_abs_path_inited,
             get_path_to_curr_python(),
             constraints_txt_path,
             state_project_descriptors_inited,
         )
-
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
         return True
 
@@ -6664,6 +6675,9 @@ class Bootstrapper_state_version_constraints_generated(AbstractCachingStateNode[
     """
     Implements UC_44_82_07_30.requirements_lock.md.
     """
+
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
     def __init__(
         self,
@@ -6675,10 +6689,7 @@ class Bootstrapper_state_version_constraints_generated(AbstractCachingStateNode[
             parent_states=[
                 EnvState.state_input_run_mode_arg_loaded.name,
                 EnvState.state_local_conf_symlink_abs_path_inited.name,
-                EnvState.state_package_driver_prepared.name,
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
+                EnvState.state_venv_driver_prepared.name,
                 EnvState.state_protoprimer_package_installed.name,
             ],
             state_name=if_none(
@@ -6688,6 +6699,9 @@ class Bootstrapper_state_version_constraints_generated(AbstractCachingStateNode[
         )
 
     def _eval_state_once(
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
         self,
     ) -> ValueType:
 
@@ -6699,9 +6713,6 @@ class Bootstrapper_state_version_constraints_generated(AbstractCachingStateNode[
             # The only reason for `EnvState.state_version_constraints_generated`
             # is to re-generate the `constraints.txt` file based on `venv`.
             # Skip it as `venv` is supposed to be ready in `RunMode.mode_start`:
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
             return False
 
         state_protoprimer_package_installed: bool = self.eval_parent_state(
@@ -6711,20 +6722,20 @@ class Bootstrapper_state_version_constraints_generated(AbstractCachingStateNode[
         if not state_protoprimer_package_installed:
             return False
 
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
         state_local_conf_symlink_abs_path_inited: str = self.eval_parent_state(
             EnvState.state_local_conf_symlink_abs_path_inited.name
         )
 
-        state_package_driver_prepared: PackageDriverBase = self.eval_parent_state(
-            EnvState.state_package_driver_prepared.name
+        state_venv_driver_prepared: VenvDriverBase = self.eval_parent_state(
+            EnvState.state_venv_driver_prepared.name
         )
 
-        state_package_driver_prepared.pin_versions(
+        state_venv_driver_prepared.pin_versions(
             get_path_to_curr_python(),
             os.path.join(
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
                 state_local_conf_symlink_abs_path_inited,
                 ConfConstEnv.constraints_txt_basename,
             ),
@@ -6734,6 +6745,9 @@ class Bootstrapper_state_version_constraints_generated(AbstractCachingStateNode[
 
 
 # noinspection PyPep8Naming
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
 class Bootstrapper_state_stride_deps_updated_reached(
     AbstractCachingStateNode[StateStride]
 ):
@@ -6745,9 +6759,6 @@ class Bootstrapper_state_stride_deps_updated_reached(
     ):
         super().__init__(
             env_ctx=env_ctx,
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
             parent_states=[
                 EnvState.state_args_parsed.name,
                 EnvState.state_input_run_mode_arg_loaded.name,
@@ -6757,6 +6768,9 @@ class Bootstrapper_state_stride_deps_updated_reached(
                 EnvState.state_version_constraints_generated.name,
             ],
             state_name=if_none(
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
                 state_name,
                 EnvState.state_stride_deps_updated_reached.name,
             ),
@@ -6768,9 +6782,6 @@ class Bootstrapper_state_stride_deps_updated_reached(
 
         state_stride_deps_updated_reached: StateStride = StateStride.stride_deps_updated
 
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
         if self.env_ctx.has_stride_reached(
             next_stride=state_stride_deps_updated_reached,
         ):
@@ -6779,6 +6790,9 @@ class Bootstrapper_state_stride_deps_updated_reached(
         state_input_run_mode_arg_loaded: RunMode = self.eval_parent_state(
             EnvState.state_input_run_mode_arg_loaded.name
         )
+
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
         if state_input_run_mode_arg_loaded == RunMode.mode_start:
             # The only reason for `EnvState.state_stride_deps_updated_reached`
@@ -6791,9 +6805,6 @@ class Bootstrapper_state_stride_deps_updated_reached(
         )
 
         state_version_constraints_generated: bool = self.eval_parent_state(
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
             EnvState.state_version_constraints_generated.name
         )
 
@@ -6803,6 +6814,9 @@ class Bootstrapper_state_stride_deps_updated_reached(
 
         venv_path_to_python: str = os.path.join(
             state_local_venv_dir_abs_path_inited,
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
             ConfConstGeneral.file_rel_path_venv_python,
         )
 
@@ -6814,9 +6828,6 @@ class Bootstrapper_state_stride_deps_updated_reached(
             curr_python_path=venv_path_to_python,
             next_py_exec=self.env_ctx.set_max_stride(state_stride_deps_updated_reached),
             next_python_path=venv_path_to_python,
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
             start_id=state_input_start_id_var_loaded,
             proto_code_abs_file_path=state_proto_code_file_abs_path_inited,
         )
@@ -6826,6 +6837,9 @@ class Bootstrapper_state_stride_deps_updated_reached(
 class Bootstrapper_state_proto_code_updated(AbstractCachingStateNode[bool]):
     """
     Return `True` if content of the `proto_kernel` has changed.
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
 
     TODO: UC_52_87_82_92.conditional_auto_update.md
     """
@@ -6837,9 +6851,6 @@ class Bootstrapper_state_proto_code_updated(AbstractCachingStateNode[bool]):
     ):
         super().__init__(
             env_ctx=env_ctx,
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
             parent_states=[
                 EnvState.state_input_run_mode_arg_loaded.name,
                 EnvState.state_proto_code_file_abs_path_inited.name,
@@ -6849,6 +6860,9 @@ class Bootstrapper_state_proto_code_updated(AbstractCachingStateNode[bool]):
                 state_name,
                 EnvState.state_proto_code_updated.name,
             ),
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
         )
 
     def _eval_state_once(
@@ -6860,9 +6874,6 @@ class Bootstrapper_state_proto_code_updated(AbstractCachingStateNode[bool]):
         )
         assert self.env_ctx.get_stride().value >= StateStride.stride_deps_updated.value
 
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
         if self.env_ctx.get_stride().value != StateStride.stride_deps_updated.value:
             # Update only after package installation, otherwise, nothing to do:
             return False
@@ -6872,6 +6883,9 @@ class Bootstrapper_state_proto_code_updated(AbstractCachingStateNode[bool]):
         )
 
         if state_input_run_mode_arg_loaded == RunMode.mode_start:
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
             # The only reason for `EnvState.state_proto_code_updated`
             # is to update sources, but that has to be done in `RunMode.mode_prime`.
             # Skip:
@@ -6884,9 +6898,6 @@ class Bootstrapper_state_proto_code_updated(AbstractCachingStateNode[bool]):
         assert not os.path.islink(state_proto_code_file_abs_path_inited)
         assert os.path.isfile(state_proto_code_file_abs_path_inited)
 
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
-
         assert is_venv()
         try:
             import protoprimer
@@ -6895,6 +6906,9 @@ class Bootstrapper_state_proto_code_updated(AbstractCachingStateNode[bool]):
                 f"Module `{ConfConstGeneral.name_protoprimer_package}` is missing in `venv`. "
                 f"{get_import_error_hint(ConfConstGeneral.name_protoprimer_package)} "
             )
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
             # These must be "instant" conditions.
             # No module => no update:
             return False
@@ -6906,9 +6920,6 @@ class Bootstrapper_state_proto_code_updated(AbstractCachingStateNode[bool]):
             protoprimer.primer_kernel.ConfConstGeneral.func_get_proto_code_generated_boilerplate_single_header(
                 protoprimer.primer_kernel
             )
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
         )
         generated_content_multiple_body: str = (
             protoprimer.primer_kernel.ConfConstGeneral.func_get_proto_code_generated_boilerplate_multiple_body(
@@ -6918,6 +6929,9 @@ class Bootstrapper_state_proto_code_updated(AbstractCachingStateNode[bool]):
 
         # Use `primer_kernel` from installed package as the source for `proto_code` update:
         primer_kernel_abs_path = os.path.abspath(protoprimer.primer_kernel.__file__)
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
         primer_kernel_text: str = read_text_file(primer_kernel_abs_path)
         proto_code_text_old: str = read_text_file(
             state_proto_code_file_abs_path_inited,
@@ -6930,9 +6944,6 @@ class Bootstrapper_state_proto_code_updated(AbstractCachingStateNode[bool]):
             every_n=20,
         )
 
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
-
         # Update header:
         file_lines = proto_code_text_periodic.splitlines()
         file_lines.insert(1, generated_content_single_header)
@@ -6941,6 +6952,9 @@ class Bootstrapper_state_proto_code_updated(AbstractCachingStateNode[bool]):
         logger.debug(
             f"writing `primer_kernel_abs_path` [{primer_kernel_abs_path}] over `state_proto_code_file_abs_path_inited` [{state_proto_code_file_abs_path_inited}]"
         )
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
         write_text_file(
             file_path=state_proto_code_file_abs_path_inited,
             file_data=proto_code_text_new,
@@ -6952,9 +6966,6 @@ class Bootstrapper_state_proto_code_updated(AbstractCachingStateNode[bool]):
 
 # noinspection PyPep8Naming
 class Bootstrapper_state_stride_src_updated_reached(
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
     AbstractCachingStateNode[StateStride]
 ):
 
@@ -6964,6 +6975,9 @@ class Bootstrapper_state_stride_src_updated_reached(
         state_name: str | None = None,
     ):
         super().__init__(
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
             env_ctx=env_ctx,
             parent_states=[
                 EnvState.state_args_parsed.name,
@@ -6975,9 +6989,6 @@ class Bootstrapper_state_stride_src_updated_reached(
             ],
             state_name=if_none(
                 state_name,
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
                 EnvState.state_stride_src_updated_reached.name,
             ),
         )
@@ -6987,6 +6998,9 @@ class Bootstrapper_state_stride_src_updated_reached(
     ) -> ValueType:
 
         state_stride_src_updated_reached: StateStride = StateStride.stride_src_updated
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
 
         state_input_run_mode_arg_loaded: RunMode = self.eval_parent_state(
             EnvState.state_input_run_mode_arg_loaded.name
@@ -6998,9 +7012,6 @@ class Bootstrapper_state_stride_src_updated_reached(
             return self.env_ctx.set_max_stride(state_stride_src_updated_reached)
 
         state_proto_code_file_abs_path_inited: str = self.eval_parent_state(
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
             EnvState.state_proto_code_file_abs_path_inited.name
         )
 
@@ -7010,6 +7021,9 @@ class Bootstrapper_state_stride_src_updated_reached(
 
         state_local_venv_dir_abs_path_inited: str = self.eval_parent_state(
             EnvState.state_local_venv_dir_abs_path_inited.name
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
         )
 
         venv_path_to_python: str = os.path.join(
@@ -7021,9 +7035,6 @@ class Bootstrapper_state_stride_src_updated_reached(
             EnvState.state_input_start_id_var_loaded.name
         )
 
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
         return switch_python(
             curr_python_path=venv_path_to_python,
             next_py_exec=self.env_ctx.set_max_stride(state_stride_src_updated_reached),
@@ -7032,6 +7043,9 @@ class Bootstrapper_state_stride_src_updated_reached(
             proto_code_abs_file_path=state_proto_code_file_abs_path_inited,
         )
 
+
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
 # noinspection PyPep8Naming
 class Bootstrapper_state_command_executed(AbstractCachingStateNode[int]):
@@ -7044,9 +7058,6 @@ class Bootstrapper_state_command_executed(AbstractCachingStateNode[int]):
         env_ctx: EnvContext,
         parent_states: list[str] | None = None,
         state_name: str | None = None,
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
     ):
         super().__init__(
             env_ctx=env_ctx,
@@ -7056,6 +7067,9 @@ class Bootstrapper_state_command_executed(AbstractCachingStateNode[int]):
                     EnvState.state_default_stderr_log_handler_configured.name,
                     EnvState.state_args_parsed.name,
                     EnvState.state_local_venv_dir_abs_path_inited.name,
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
                     EnvState.state_local_cache_dir_abs_path_inited.name,
                     EnvState.state_stride_src_updated_reached.name,
                 ],
@@ -7068,9 +7082,6 @@ class Bootstrapper_state_command_executed(AbstractCachingStateNode[int]):
 
         self.start_interactive_shell: bool = False
 
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
-
     def _eval_state_once(
         self,
     ) -> ValueType:
@@ -7079,6 +7090,9 @@ class Bootstrapper_state_command_executed(AbstractCachingStateNode[int]):
             self.eval_parent_state(
                 EnvState.state_default_stderr_log_handler_configured.name
             )
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
         )
 
         state_stride_src_updated_reached: StateStride = self.eval_parent_state(
@@ -7090,9 +7104,6 @@ class Bootstrapper_state_command_executed(AbstractCachingStateNode[int]):
             EnvState.state_args_parsed.name
         )
 
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
         state_local_venv_dir_abs_path_inited: str = self.eval_parent_state(
             EnvState.state_local_venv_dir_abs_path_inited.name
         )
@@ -7102,6 +7113,9 @@ class Bootstrapper_state_command_executed(AbstractCachingStateNode[int]):
         )
 
         shell_driver: ShellDriverBase = _get_shell_driver(
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
             state_local_cache_dir_abs_path_inited
         )
 
@@ -7113,9 +7127,6 @@ class Bootstrapper_state_command_executed(AbstractCachingStateNode[int]):
 
         if command_line is not None or self.start_interactive_shell:
             return shell_driver.run_shell(
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
                 command_line,
                 state_default_stderr_log_handler_configured,
                 state_local_venv_dir_abs_path_inited,
@@ -7124,6 +7135,9 @@ class Bootstrapper_state_command_executed(AbstractCachingStateNode[int]):
             # Otherwise, exit_code is 0:
             return 0
 
+
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
 ########################################################################################################################
 
@@ -7136,9 +7150,6 @@ class EnvState(enum.Enum):
     The value of `AbstractCachingStateNode` assigned is the default implementation for the state,
     and the only reason it is assigned is purely for the quick navigation across the source code in the IDE.
 
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
     FT_68_54_41_96.state_dependency.md
     """
 
@@ -7147,6 +7158,9 @@ class EnvState(enum.Enum):
     state_input_stderr_log_level_var_loaded = (
         Bootstrapper_state_input_stderr_log_level_var_loaded
     )
+
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
     state_input_do_install_var_loaded = Bootstrapper_state_input_do_install_var_loaded
 
@@ -7160,9 +7174,6 @@ class EnvState(enum.Enum):
         Bootstrapper_state_input_stderr_log_level_eval_finalized
     )
 
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
-
     state_input_run_mode_arg_loaded = Bootstrapper_state_input_run_mode_arg_loaded
 
     state_input_final_state_eval_finalized = (
@@ -7172,19 +7183,20 @@ class EnvState(enum.Enum):
     # Special case: triggers everything:
     state_run_mode_executed = Bootstrapper_state_run_mode_executed
 
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
+
     state_input_start_id_var_loaded = Bootstrapper_state_input_start_id_var_loaded
 
     state_input_proto_code_file_abs_path_var_loaded = (
         Bootstrapper_state_input_proto_code_file_abs_path_var_loaded
     )
 
+    # restart: `StateStride.stride_py_unknown` -> `StateStride.stride_py_arbitrary`:
     state_stride_py_arbitrary_reached = Bootstrapper_state_stride_py_arbitrary_reached
 
     state_proto_code_file_abs_path_inited = (
         Bootstrapper_state_proto_code_file_abs_path_inited
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
     )
 
     state_primer_conf_file_abs_path_inited = (
@@ -7193,6 +7205,9 @@ class EnvState(enum.Enum):
 
     # `ConfLeap.leap_primer`:
     state_primer_conf_file_data_loaded = Bootstrapper_state_primer_conf_file_data_loaded
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
 
     state_ref_root_dir_abs_path_inited = Bootstrapper_state_ref_root_dir_abs_path_inited
 
@@ -7205,9 +7220,6 @@ class EnvState(enum.Enum):
     )
 
     # `ConfLeap.leap_client`:
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
     state_client_conf_file_data_loaded = Bootstrapper_state_client_conf_file_data_loaded
 
     state_selected_env_dir_rel_path_inited = (
@@ -7216,6 +7228,9 @@ class EnvState(enum.Enum):
 
     state_local_conf_symlink_abs_path_inited = (
         Bootstrapper_state_local_conf_symlink_abs_path_inited
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     )
 
     state_local_conf_file_abs_path_inited = (
@@ -7227,17 +7242,17 @@ class EnvState(enum.Enum):
 
     state_required_python_version_inited = Bootstrapper_required_python_version_inited
 
-    state_required_python_file_abs_path_inited = (
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
-        Bootstrapper_state_required_python_file_abs_path_inited
+    state_selected_python_file_abs_path_inited = (
+        Bootstrapper_state_selected_python_file_abs_path_inited
     )
 
     # TODO: log, tmp, venv, ... dirs should better be configured at client level:
     state_local_venv_dir_abs_path_inited = (
         Bootstrapper_state_local_venv_dir_abs_path_inited
     )
+
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
     # TODO: log, tmp, venv, ... dirs should better be configured at client level:
     state_local_log_dir_abs_path_inited = (
@@ -7251,17 +7266,17 @@ class EnvState(enum.Enum):
 
     # TODO: log, tmp, venv, ... dirs should better be configured at client level:
     state_local_cache_dir_abs_path_inited = (
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
         Bootstrapper_state_local_cache_dir_abs_path_inited
     )
 
-    state_package_driver_inited = Bootstrapper_state_package_driver_inited
+    state_venv_driver_inited = Bootstrapper_state_venv_driver_inited
 
     state_project_descriptors_inited = Bootstrapper_state_project_descriptors_inited
 
     # `ConfLeap.leap_derived`:
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     state_derived_conf_data_loaded = Bootstrapper_state_derived_conf_data_loaded
 
     state_effective_config_data_printed = (
@@ -7272,16 +7287,18 @@ class EnvState(enum.Enum):
         Bootstrapper_state_default_file_log_handler_configured
     )
 
+    # restart: `StateStride.stride_py_arbitrary` -> `StateStride.stride_py_required`:
     state_stride_py_required_reached = Bootstrapper_state_stride_py_required_reached
-
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
     state_reinstall_triggered = Bootstrapper_state_reinstall_triggered
 
-    state_package_driver_prepared = Bootstrapper_state_package_driver_prepared
+    state_venv_driver_prepared = Bootstrapper_state_venv_driver_prepared
 
+    # restart: `StateStride.stride_py_required` -> `StateStride.stride_py_venv`:
     state_stride_py_venv_reached = Bootstrapper_state_stride_py_venv_reached
+
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
     # TODO: rename to "client" (or "ref"?): `client_project_descriptors_installed`:
     state_protoprimer_package_installed = (
@@ -7292,18 +7309,20 @@ class EnvState(enum.Enum):
         Bootstrapper_state_version_constraints_generated
     )
 
+    # restart: `StateStride.stride_py_venv` -> `StateStride.stride_deps_updated`:
     # TODO: rename - "reached" sounds weird (and makes no sense):
     state_stride_deps_updated_reached = Bootstrapper_state_stride_deps_updated_reached
 
     # TODO: rename according to the final name:
     state_proto_code_updated = Bootstrapper_state_proto_code_updated
 
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
-
+    # restart: `StateStride.stride_deps_updated` -> `StateStride.stride_src_updated`:
     state_stride_src_updated_reached = Bootstrapper_state_stride_src_updated_reached
 
     state_command_executed = Bootstrapper_state_command_executed
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
 
 
 class TargetState(enum.Enum):
@@ -7319,13 +7338,13 @@ class TargetState(enum.Enum):
 
     # TODO: This should be `state_derived_conf_data_loaded`:
     # When all config files loaded:
-    target_config_loaded = EnvState.state_package_driver_inited
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
+    target_config_loaded = EnvState.state_venv_driver_inited
 
     # The final state before switching to `PrimerRuntime.runtime_neo`:
     target_proto_bootstrap_completed = EnvState.state_command_executed
+
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
 
 class StateGraph:
@@ -7343,13 +7362,13 @@ class StateGraph:
         state_node: StateNode,
         replace_existing: bool = False,
     ) -> StateNode | None:
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
         state_name: str = state_node.get_state_name()
         if state_name in self.state_nodes:
             if replace_existing:
                 existing_node = self.state_nodes[state_name]
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
                 self.state_nodes[state_name] = state_node
                 return existing_node
             else:
@@ -7366,13 +7385,13 @@ class StateGraph:
     ) -> StateNode | None:
         return self.state_nodes[state_name]
 
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
     def eval_state(
         self,
         state_name: str,
     ) -> Any:
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
         try:
             state_node = self.state_nodes[state_name]
         except KeyError:
@@ -7389,13 +7408,13 @@ class MutableValue(Generic[ValueType]):
 
     Immutable values produced by `StateNode`-s cannot be changed -
     once evaluated, these values stay the same.
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
     Unlike `StateNode` values, `MutableValue` can evolve.
 
     NOTE: The issue with `MutableValue`-s is that the order of reading/writing them is important.
     To avoid defects, always read them last (after evaluation of all parent `StateNode` states).
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     It is not required to bootstrap to the latest `StateNode` updating the given `MutableValue`
     because some of these `StateNode`-s may not be (transitive) parents.
     But, if the current `StateNode` depends on parents updating that `MutableValue`,
@@ -7413,12 +7432,12 @@ class MutableValue(Generic[ValueType]):
         self.state_name = state_name
         self.curr_value: ValueType | None = None
 
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
-
     def get_curr_value(
         self,
         state_node: StateNode,
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     ) -> ValueType:
 
         # This ensures that the `StateNode` using that `MutableValue`
@@ -7435,13 +7454,13 @@ class MutableValue(Generic[ValueType]):
 
     def set_curr_value(
         self,
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
         state_node: StateNode | None,
         curr_value: ValueType,
     ) -> None:
         # TODO: Shell we also ensure that the `StateNode` using that `MutableValue` has necessary dependencies on write?
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
 
         if self.curr_value is None:
             raise AssertionError(
@@ -7458,13 +7477,13 @@ class EnvContext:
 
     def __init__(
         self,
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
     ):
         self.state_graph: StateGraph = StateGraph()
 
         self.state_stride: StateStride = StateStride.stride_py_unknown
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
 
         # TODO: Do not set it on `EnvContext` - use bootstrap-able values:
         self.final_state: str = TargetState.target_proto_bootstrap_completed.value.name
@@ -7481,13 +7500,13 @@ class EnvContext:
     def get_stride(self) -> StateStride:
         return self.state_stride
 
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
     def set_max_stride(
         self,
         next_stride: StateStride,
     ) -> StateStride:
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
         if not self.has_stride_reached(next_stride):
             self.state_stride = next_stride
         log_stride.set(self.state_stride)
@@ -7504,13 +7523,13 @@ class EnvContext:
         return self.get_stride().value >= next_stride.value
 
     def print_exit_line(
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
         self,
         exit_code: int,
         test_failure: bool = False,
     ) -> None:
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
         """
         Print a color-coded status message to stderr.
         """
@@ -7527,13 +7546,13 @@ class EnvContext:
         if exit_code == 0:
             color_status = (
                 f"{TermColor.back_dark_green.value}{TermColor.fore_dark_black.value}"
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
             )
             status_name = "SUCCESS"
             is_reportable = (
                 state_default_stderr_log_handler_configured.level <= logging.INFO
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
             )
         else:
             if not test_failure and is_test_run():
@@ -7550,13 +7569,13 @@ class EnvContext:
 
         if is_reportable:
             print(
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
                 f"{color_status}{status_name}{TermColor.reset_style.value} [{exit_code}]: {get_path_to_curr_python()} {get_script_command_line()}",
                 file=sys.stderr,
                 flush=True,
             )
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
 
 
 class StateStrideFilter(logging.Filter):
@@ -7573,13 +7592,13 @@ class StateStrideFilter(logging.Filter):
                 EnvVar.var_PROTOPRIMER_PY_EXEC.value,
                 ConfConstInput.default_PROTOPRIMER_PY_EXEC,
             )
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
         ]
         record.state_stride = log_stride.get(StateStride.stride_py_unknown)
         # Do not filter:
         return True
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
 
 
 class UtcTimeFormatter(logging.Formatter):
@@ -7596,13 +7615,13 @@ class UtcTimeFormatter(logging.Formatter):
     ):
         super().__init__(*args, **kwargs)
         self.print_date = print_date
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
         self.print_time = print_time
 
     def formatTime(
         self,
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
         record,
         datefmt=None,
     ):
@@ -7619,13 +7638,13 @@ class UtcTimeFormatter(logging.Formatter):
         if self.print_date and self.print_time:
             return iso_str
 
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
         date_part, time_part = iso_str.split("T")
 
         if self.print_date:
             return date_part
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
         else:
             return time_part
 
@@ -7643,12 +7662,12 @@ class FileLogFormatter(UtcTimeFormatter):
         )
 
 
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
-
 class StderrLogFormatter(UtcTimeFormatter):
     """
     Custom formatter with color and format based on log level for stderr.
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     """
 
     color_reset = TermColor.reset_style.value
@@ -7665,13 +7684,13 @@ class StderrLogFormatter(UtcTimeFormatter):
     }
 
     def __init__(
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
         self,
         verbosity_level: int,
     ):
         super().__init__(
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
             # Default: least verbose:
             print_date=False,
             print_time=False,
@@ -7688,13 +7707,13 @@ class StderrLogFormatter(UtcTimeFormatter):
             fmt="%(asctime)s pid:%(process)d %(levelname)s py:%(py_exec_name)s s:%(state_stride)s %(filename)s:%(lineno)d %(message)s",
         )
         self.verbose_formatters = {
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
             # Anything above `logging.INFO` use default (least verbose):
             logging.INFO: info_formatter,
             # Most verbose:
             logging.DEBUG: debug_formatter,
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
             logging.NOTSET: debug_formatter,
         }
         self.verbosity_level = verbosity_level
@@ -7711,13 +7730,13 @@ class StderrLogFormatter(UtcTimeFormatter):
     ):
         # Format the output:
         log_formatter = self.verbose_formatters.get(self.verbosity_level, None)
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
         if log_formatter is None:
             log_msg = super().format(record)
         else:
             log_msg = log_formatter.format(record)
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
 
         # Color the output:
         log_color = self.color_set.get(record.levelname, self.color_reset)
@@ -7734,13 +7753,13 @@ def configure_stderr_log_handler(
     # Log everything (the filters are supposed to be set on output handlers instead):
     logger.setLevel(logging.NOTSET)
 
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
     handler_class = logging.StreamHandler
     stderr_handler: logging.Handler | None = None
     if os.environ.get(EnvVar.var_PROTOPRIMER_MOCKED_RESTART.value, None) is not None:
         # Prevent duplicate handler (when `os.execv*` calls restart `main` again in tests).
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
         # Select `stderr` handler:
         for handler_instance in logger.handlers:
             if isinstance(handler_instance, handler_class):
@@ -7758,11 +7777,11 @@ def configure_stderr_log_handler(
 
         logger.addHandler(stderr_handler)
 
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
-
     stderr_handler.setLevel(state_input_stderr_log_level_var_loaded)
     return stderr_handler
+
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
 
 def configure_file_log_handler(
@@ -7781,12 +7800,12 @@ def configure_file_log_handler(
         log_file_basename,
     )
 
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
-
     # TODO: Configure MAX file log level in the config file (NOTE: the higher the level the fewer the log entries):
     file_log_level: int = logging.INFO
     # Increase the log level at most to what is used by stderr:
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     if state_input_stderr_log_level_eval_finalized < file_log_level:
         file_log_level = state_input_stderr_log_level_eval_finalized
 
@@ -7803,12 +7822,12 @@ def configure_file_log_handler(
         )
 
     file_handler: logging.Handler = logging.FileHandler(log_file_abs_path)
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
     file_handler.addFilter(StateStrideFilter())
 
     file_formatter = FileLogFormatter()
+
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
     file_handler.setLevel(file_log_level)
     file_handler.setFormatter(file_formatter)
@@ -7824,15 +7843,21 @@ def rename_to_moved_state_name(state_name: str) -> str:
     return f"_{state_name}"
 
 
-def warn_on_missing_conf_file(
+def missing_conf_file_message(
     file_abs_path: str,
+) -> str:
+    return f"File [{file_abs_path}] does not exist - use [{RunMode.mode_config.value}] sub-command for description."
+
+
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+def warn_once_at_state_stride(
+    log_message,
+    state_stride: StateStride,
 ) -> None:
-    logger.warning(
-        f"File [{file_abs_path}] does not exist - use [{RunMode.mode_config.value}] sub-command for description."
-    )
+    if state_stride == StateStride.stride_py_arbitrary:
+        logger.warning(log_message)
 
 
 def can_print_effective_config(
@@ -7847,11 +7872,11 @@ def can_print_effective_config(
     )
 
     return (
-        state_node.env_ctx.get_stride().value
-        # `StateStride.stride_py_arbitrary` ensures that the path to `proto_code` is outside `venv`:
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+        state_node.env_ctx.get_stride().value
+        # `StateStride.stride_py_arbitrary` ensures that the path to `proto_code` is outside `venv`:
         == StateStride.stride_py_arbitrary.value
         and state_input_run_mode_arg_loaded == RunMode.mode_config
     )
@@ -7871,10 +7896,10 @@ def find_python_version_file(curr_dir_any_path=".") -> str | None:
             ConfConstGeneral.python_version_file_basename,
         )
 
-        if os.path.isfile(file_abs_path):
-
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+
+        if os.path.isfile(file_abs_path):
             return file_abs_path
 
         # Walk up one level:
@@ -7893,11 +7918,11 @@ def switch_python(
     curr_python_path: str,
     next_py_exec: StateStride,
     next_python_path: str,
-    start_id: str,
-    proto_code_abs_file_path: str | None,
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+    start_id: str,
+    proto_code_abs_file_path: str | None,
     required_environ: dict | None = None,
 ) -> StateStride:
     """
@@ -7916,11 +7941,11 @@ def switch_python(
         next_python_path,
         # FT_28_25_63_06.isolated_python.md:
         # This CLI arg is not added to `sys.argv` of the next `python` process
-        # (instead, it simply sets `sys.flags.isolated`):
-        "-I",
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+        # (instead, it simply sets `sys.flags.isolated`):
+        "-I",
     ]
     exec_argv.extend(sys.argv)
 
@@ -7939,11 +7964,11 @@ def switch_python(
         "\n"
         "\n"
         f"{ConfConstGeneral.log_section_delimiter} before: [{curr_py_exec.name}] <<< restart >>> after: [{next_py_exec.name}] {ConfConstGeneral.log_section_delimiter}"
-        "\n"
-    )
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+        "\n"
+    )
 
     os.execve(
         path=next_python_path,
@@ -7962,10 +7987,10 @@ def skip_python(
     logger.info(
         f"{log_message}: skip `python` executable switch from [{curr_py_exec.name}] to [{next_py_exec.name}]"
     )
-    return next_py_exec
-
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
+    return next_py_exec
 
 
 def print_delegate_line(
@@ -7985,10 +8010,10 @@ def print_delegate_line(
             f"{color_delegate}DELEGATE{color_reset}: {command_line}",
             file=sys.stderr,
             flush=True,
-        )
-
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
+        )
 
 
 def get_file_name_timestamp():
@@ -8008,11 +8033,11 @@ def get_default_start_id():
 def is_sub_path(
     abs_sub_path: str,
     abs_base_base: str,
-) -> bool:
-    try:
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+) -> bool:
+    try:
         rel_path(
             abs_sub_path,
             abs_base_base,
@@ -8031,15 +8056,32 @@ def rel_path(
     )
 
 
-def get_path_to_curr_python() -> str:
-    return sys.executable
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+def get_path_to_curr_python() -> str:
+    return sys.executable
 
 
-def get_path_to_base_python():
+def get_path_to_base_python() -> str:
+
+    executable_basename: str = os.path.basename(sys.executable)
+
+    # Try current `executable_basename` first.
+    # In some cases (e.g. on `macOS` with `homebrew`),
+    # there are no simple basenames like `python`, instead, there are versioned ones like `python3.10`:
+    path_to_next_python: str = os.path.join(
+        sys.base_prefix,
+        ConfConstGeneral.file_rel_path_venv_bin,
+        executable_basename,
+    )
+    if os.path.exists(path_to_next_python):
+        return path_to_next_python
+
     path_to_next_python = os.path.join(
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
         sys.base_prefix,
         ConfConstGeneral.file_rel_path_venv_python,
     )
@@ -8056,13 +8098,13 @@ def get_shell_command_line(arg_list: list[str]):
 
 
 def read_json_file(
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
     file_path: str,
 ) -> dict:
     with open(file_path, "r", encoding="utf-8") as file_obj:
         return json.load(file_obj)
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
 
 
 def write_json_file(
@@ -8080,12 +8122,12 @@ def read_text_file(
     with open(file_path, "r", encoding="utf-8") as file_obj:
         return file_obj.read()
 
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
-
 
 def write_text_file(
     file_path: str,
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     file_data: str,
 ) -> None:
     with open(file_path, "w", encoding="utf-8") as file_obj:
@@ -8102,13 +8144,13 @@ def insert_every_n_lines(
 
     Original use case: add boilerplate text indicating generated content throughout entire file.
     """
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
     input_lines: list[str] = input_text.splitlines()
     output_text = []
 
     for line_n, text_line in enumerate(input_lines, 1):
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
         output_text.append(text_line)
         if line_n % every_n == 0:
             output_text.append(insert_text)
@@ -8126,12 +8168,12 @@ def insert_every_n_lines(
         + "\n"
     )
 
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
-
 
 def if_none(
     given_value: ValueType | None,
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     default_value: ValueType,
 ) -> ValueType:
     if given_value is None:
@@ -8143,17 +8185,17 @@ def if_none(
 def is_venv() -> bool:
     # NOTE: `VIRTUAL_ENV` is not asserted because it is only set for `shell` by `source`-ing `venv/bin/activate`.
     #       Most of the commands avoid using `shell` (that is the goal for `protoprimer`).
-    # NOTE: Restriction on `field_required_python_file_abs_path`: it should not lead to `venv/bin/python`.
+    # NOTE: Restriction on `field_selected_python_file_abs_path`: it should not lead to `venv/bin/python`.
     #       It should use `sys.base_prefix` - see `get_path_to_base_python`.
-    # TODO: Maybe it is possible to convert `field_required_python_file_abs_path` to its base version automatically?
+    # TODO: Maybe it is possible to convert `field_selected_python_file_abs_path` to its base version automatically?
     if sys.prefix != sys.base_prefix:
         return True
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
     else:
         return False
 
+
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
 def is_uv_venv(
     venv_cfg_file_abs_path: str,
@@ -8171,13 +8213,13 @@ def is_pip_venv(
     # Not sure how to check if it regular `venv` other than saying it is not by `uv`:
     return not is_uv_venv(
         venv_cfg_file_abs_path,
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
     )
 
 
 def is_test_run() -> bool:
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     """
     See: FT_83_60_72_19.test_perimeter.md
     """
@@ -8187,24 +8229,24 @@ def is_test_run() -> bool:
 
 def get_venv_type(
     local_venv_dir_abs_path: str,
-) -> PackageDriverType:
+) -> VenvDriverType:
     venv_cfg_file_abs_path = os.path.join(
         local_venv_dir_abs_path,
         # TODO: use constant:
         "pyvenv.cfg",
     )
     if not os.path.exists(venv_cfg_file_abs_path):
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
         raise AssertionError(
             f"File [{venv_cfg_file_abs_path}] does not exist",
         )
 
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     if is_uv_venv(venv_cfg_file_abs_path):
-        return PackageDriverType.driver_uv
+        return VenvDriverType.venv_uv
     elif is_pip_venv(venv_cfg_file_abs_path):
-        return PackageDriverType.driver_pip
+        return VenvDriverType.venv_pip
     else:
         raise AssertionError(
             f"Cannot determine `venv` type by file [{venv_cfg_file_abs_path}]",
@@ -8217,13 +8259,13 @@ def get_python_version(path_to_python: str) -> tuple[int, int, int]:
     """
     cmd_args: list[str] = [
         path_to_python,
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
         "-c",
         "import sys; print(tuple(sys.version_info[:3]))",
     ]
     cmd_output: str = subprocess.check_output(cmd_args, universal_newlines=True)
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     python_version: tuple[int, int, int] = ast.literal_eval(cmd_output.strip())
     return python_version
 
@@ -8240,13 +8282,13 @@ def log_python_context(log_level: int = logging.INFO):
     logger.log(
         log_level,
         f"`{ConfConstInput.ext_env_var_PATH}`: {os.environ.get(ConfConstInput.ext_env_var_PATH, None)}",
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
     )
     logger.log(
         log_level,
         f"`{ConfConstInput.ext_env_var_PYTHONPATH}`: {os.environ.get(ConfConstInput.ext_env_var_PYTHONPATH, None)}",
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     )
     logger.log(
         log_level,
@@ -8263,13 +8305,13 @@ def log_python_context(log_level: int = logging.INFO):
     logger.log(
         log_level,
         f"`sys.executable`: {sys.executable}",
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
     )
 
 
 def get_import_error_hint(
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     neo_main_module: str,
 ) -> str:
     # See: UC_78_58_06_54.no_stray_packages.md
@@ -8286,13 +8328,13 @@ def env_bootstrapper(
     It bootstraps `venv` from nothing.
     The majority of the entry scripts are supposed to use `app_starter` function instead
     (which only starts the specified `venv_main_func` assuming `venv` has already been bootstrapped).
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
     """
     _start_main(
         RunMode.mode_prime,
         venv_main_func,
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     )
 
 
@@ -8309,12 +8351,12 @@ def app_starter(
     """
     _start_main(
         RunMode.mode_start,
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
         venv_main_func,
     )
 
+
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
 def _start_main(
     run_mode: RunMode,
@@ -8332,13 +8374,13 @@ def _start_main(
     func_name: str
     if ":" in venv_main_func:
         (
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
             module_name,
             func_name,
         ) = venv_main_func.split(":", 1)
     else:
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
         raise ValueError(
             f"The specified main function [{venv_main_func}] does not match expected format `module_name:function_name`."
         )
@@ -8355,13 +8397,13 @@ def _start_main(
         # NOTE: `state_stride_src_updated_reached` forces restart with this `StateStride`:
         if curr_py_exec.value >= StateStride.stride_src_updated.value:
             venv_module = importlib.import_module(module_name)
-
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
             selected_main = getattr(venv_module, func_name)
         elif curr_py_exec.value >= StateStride.stride_deps_updated.value:
             # Switch from running `proto_code` to installed `venv` code:
             venv_module = importlib.import_module("protoprimer.primer_kernel")
+
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
             selected_main = getattr(venv_module, "app_main")
     except ImportError:
         if curr_py_exec.value >= StateStride.stride_src_updated.value:

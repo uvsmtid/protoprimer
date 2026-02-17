@@ -14,6 +14,7 @@ from protoprimer.primer_kernel import (
     Bootstrapper_state_proto_code_file_abs_path_inited,
     EnvContext,
     EnvState,
+    StateStride,
 )
 
 
@@ -71,6 +72,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         self.assertEqual(state_value, {"test": "data"})
 
+    @patch(f"{primer_kernel.__name__}.EnvContext.get_stride")
     @patch(
         f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_stderr_log_level_eval_finalized.__name__}.eval_own_state"
     )
@@ -89,6 +91,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_input_run_mode_arg_loaded,
         mock_state_proto_code_file_abs_path_inited,
         mock_state_input_stderr_log_level_eval_finalized,
+        mock_get_stride,
     ):
 
         # given:
@@ -101,6 +104,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_file_path = "/mock/path/to/file"
         self.fs.create_dir("/mock/path/to")
         mock_state_primer_conf_file_abs_path_inited.return_value = mock_file_path
+        mock_get_stride.return_value = StateStride.stride_py_arbitrary
 
         # when:
 

@@ -25,9 +25,9 @@ from protoprimer.primer_kernel import (
     ConfConstInput,
     ConfConstPrimer,
     KeyWord,
-    PackageDriverBase,
-    PackageDriverPip,
-    PackageDriverUv,
+    VenvDriverBase,
+    VenvDriverPip,
+    VenvDriverUv,
     RunMode,
 )
 from protoprimer.proto_generator import generate_entry_script_content
@@ -48,11 +48,11 @@ def test_python_from_arbitrary_venv_with_app_starter(
 
     # An arbitrary venv to start from:
     arbitrary_venv_dir = ref_root_abs_path / "arbitrary_venv"
-    package_driver = PackageDriverPip(
+    venv_driver = VenvDriverPip(
         sys.executable,
         platform.python_version(),
     )
-    package_driver.create_venv(str(arbitrary_venv_dir))
+    venv_driver.create_venv(str(arbitrary_venv_dir))
     arbitrary_venv_python = (
         arbitrary_venv_dir / ConfConstGeneral.file_rel_path_venv_python
     )
@@ -186,18 +186,18 @@ def test_python_from_required_venv_with_app_starter(
     # Create the required `venv`:
     required_venv_dir_rel_path = "required_venv"
     required_venv_dir_abs_path = ref_root_abs_path / required_venv_dir_rel_path
-    package_driver: PackageDriverBase
+    venv_driver: VenvDriverBase
     if is_min_python():
-        package_driver = PackageDriverPip(
+        venv_driver = VenvDriverPip(
             sys.executable,
             platform.python_version(),
         )
     else:
-        package_driver = PackageDriverUv(
+        venv_driver = VenvDriverUv(
             platform.python_version(),
             str(ref_root_abs_path / KeyWord.key_var.value / KeyWord.key_cache.value),
         )
-    package_driver.create_venv(str(required_venv_dir_abs_path))
+    venv_driver.create_venv(str(required_venv_dir_abs_path))
     required_venv_python = (
         required_venv_dir_abs_path / ConfConstGeneral.file_rel_path_venv_python
     )

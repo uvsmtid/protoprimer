@@ -70,8 +70,8 @@ leap_derived = (
         {TermColor.config_missing.value}# This value is derived from `required_python_version` in `leap_client` (override-able in `leap_env`) - see description there.{TermColor.reset_style.value}
         {TermColor.config_missing.value}# "state_required_python_version_inited": None,{TermColor.reset_style.value}
         \n\
-        {TermColor.config_missing.value}# This value is derived from `required_python_file_abs_path` in `leap_client` (override-able in `leap_env`) - see description there.{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# "state_required_python_file_abs_path_inited": None,{TermColor.reset_style.value}
+        {TermColor.config_missing.value}# This value is derived from `selected_python_file_abs_path` in `leap_client` (override-able in `leap_env`) - see description there.{TermColor.reset_style.value}
+        {TermColor.config_missing.value}# "state_selected_python_file_abs_path_inited": None,{TermColor.reset_style.value}
         \n\
         {TermColor.config_missing.value}# This value is derived from `local_venv_dir_rel_path` in `leap_client` (override-able in `leap_env`) - see description there.{TermColor.reset_style.value}
         {TermColor.config_missing.value}# "state_local_venv_dir_abs_path_inited": None,{TermColor.reset_style.value}
@@ -85,8 +85,8 @@ leap_derived = (
         {TermColor.config_missing.value}# This value is derived from `local_cache_dir_rel_path` in `leap_client` (override-able in `leap_env`) - see description there.{TermColor.reset_style.value}
         {TermColor.config_missing.value}# "state_local_cache_dir_abs_path_inited": None,{TermColor.reset_style.value}
         \n\
-        {TermColor.config_missing.value}# This value is derived from `package_driver` in `leap_client` (override-able in `leap_env`) - see description there.{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# "state_package_driver_inited": None,{TermColor.reset_style.value}
+        {TermColor.config_missing.value}# This value is derived from `venv_driver` in `leap_client` (override-able in `leap_env`) - see description there.{TermColor.reset_style.value}
+        {TermColor.config_missing.value}# "state_venv_driver_inited": None,{TermColor.reset_style.value}
         \n\
         {TermColor.config_comment.value}# This value is derived from `project_descriptors` in `leap_client` (override-able in `leap_env`) - see description there.{TermColor.reset_style.value}
         "{EnvState.state_project_descriptors_inited.name}": [

@@ -26,9 +26,9 @@ from protoprimer.primer_kernel import (
     app_main,
     ConfConstGeneral,
     EnvVar,
-    PackageDriverBase,
-    PackageDriverPip,
-    PackageDriverUv,
+    VenvDriverBase,
+    VenvDriverPip,
+    VenvDriverUv,
 )
 
 
@@ -95,12 +95,12 @@ def fat_mock_wrapper(
         # TODO: Make this `venv` pass "Is `uv`-managed `venv`?" check.
 
     def _mock_install_packages(
-        required_python_file_abs_path: str,
+        selected_python_file_abs_path: str,
         given_packages: List[str],
     ):
         # Translate: "./venv/bin/python" -> "./venv/"
         venv_dir_abs_path = os.path.dirname(
-            os.path.dirname(required_python_file_abs_path)
+            os.path.dirname(selected_python_file_abs_path)
         )
         if "uv" in given_packages:
             fs.create_file(
@@ -127,19 +127,19 @@ def fat_mock_wrapper(
             )
         exit_stack.enter_context(
             patch(
-                f"{primer_kernel.__name__}.{PackageDriverBase.__name__}.install_packages",
+                f"{primer_kernel.__name__}.{VenvDriverBase.__name__}.install_packages",
                 side_effect=_mock_install_packages,
             )
         )
         exit_stack.enter_context(
             patch(
-                f"{protoprimer.primer_kernel.__name__}.{PackageDriverPip.__name__}._create_venv_impl",
+                f"{protoprimer.primer_kernel.__name__}.{VenvDriverPip.__name__}._create_venv_impl",
                 side_effect=_mock_create_pip_venv,
             )
         )
         exit_stack.enter_context(
             patch(
-                f"{protoprimer.primer_kernel.__name__}.{PackageDriverUv.__name__}._create_venv_impl",
+                f"{protoprimer.primer_kernel.__name__}.{VenvDriverUv.__name__}._create_venv_impl",
                 side_effect=_mock_create_uv_venv,
             )
         )

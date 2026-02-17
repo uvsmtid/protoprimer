@@ -173,8 +173,8 @@ class StateName(enum.Enum):
         NameCategory.category_value_field_action,
     )
 
-    state_required_python_file_abs_path_inited = StateMeta(
-        EnvState.state_required_python_file_abs_path_inited,
+    state_selected_python_file_abs_path_inited = StateMeta(
+        EnvState.state_selected_python_file_abs_path_inited,
         NameCategory.category_path_value,
     )
 
@@ -203,8 +203,8 @@ class StateName(enum.Enum):
         NameCategory.category_value_field_action,
     )
 
-    state_package_driver_inited = StateMeta(
-        EnvState.state_package_driver_inited,
+    state_venv_driver_inited = StateMeta(
+        EnvState.state_venv_driver_inited,
         NameCategory.category_value_field_action,
     )
 
@@ -263,8 +263,8 @@ class StateName(enum.Enum):
         NameCategory.category_state_mutation,
     )
 
-    state_package_driver_prepared = StateMeta(
-        EnvState.state_package_driver_prepared,
+    state_venv_driver_prepared = StateMeta(
+        EnvState.state_venv_driver_prepared,
         NameCategory.category_state_mutation,
     )
 

@@ -23,7 +23,7 @@ def test_render_client_config_data_with_unused_fields():
         ConfField.field_local_conf_symlink_rel_path.value: "lconf",
         ConfField.field_default_env_dir_rel_path.value: "dst/default_env",
         ConfField.field_required_python_version.value: test_python_version,
-        ConfField.field_required_python_file_abs_path.value: "/usr/bin/python3",
+        ConfField.field_selected_python_file_abs_path.value: "/usr/bin/python3",
         ConfField.field_local_venv_dir_rel_path.value: "venv",
         ConfField.field_local_log_dir_rel_path.value: "log",
         ConfField.field_local_tmp_dir_rel_path.value: "tmp",
@@ -63,10 +63,10 @@ leap_client = (
         {TermColor.config_comment.value}# This field can be specified in global config (see `leap_client`) but it is override-able by local environment-specific config (see `leap_env`).{TermColor.reset_style.value}
         "required_python_version": "{test_python_version}",
         \n\
-        {TermColor.config_comment.value}# Field `required_python_file_abs_path` selects `python` version.{TermColor.reset_style.value}
+        {TermColor.config_comment.value}# Field `selected_python_file_abs_path` selects `python` version.{TermColor.reset_style.value}
         {TermColor.config_comment.value}# The value specifies absolute path to `python` interpreter which is used to create `venv`.{TermColor.reset_style.value}
         {TermColor.config_comment.value}# This field can be specified in global config (see `leap_client`) but it is override-able by local environment-specific config (see `leap_env`).{TermColor.reset_style.value}
-        "required_python_file_abs_path": "/usr/bin/python3",
+        "selected_python_file_abs_path": "/usr/bin/python3",
         \n\
         {TermColor.config_comment.value}# Field `local_venv_dir_rel_path` points to the dir where `venv` (`python` virtual environment) is created.{TermColor.reset_style.value}
         {TermColor.config_comment.value}# The path is relative to the `ref_root` dir specified in the `ref_root_dir_rel_path` field.{TermColor.reset_style.value}
@@ -88,11 +88,11 @@ leap_client = (
         {TermColor.config_missing.value}# This field can be specified in global config (see `leap_client`) but it is override-able by local environment-specific config (see `leap_env`).{TermColor.reset_style.value}
         {TermColor.config_missing.value}# "local_cache_dir_rel_path": None,{TermColor.reset_style.value}
         \n\
-        {TermColor.config_missing.value}# Field `package_driver` selects a tool to manage packages:{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# *   specify "driver_pip" to use native `pip`,{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# *   specify "driver_uv" to use fast `uv`.{TermColor.reset_style.value}
+        {TermColor.config_missing.value}# Field `venv_driver` selects a tool to manage packages:{TermColor.reset_style.value}
+        {TermColor.config_missing.value}# *   specify "venv_pip" to use native `pip`,{TermColor.reset_style.value}
+        {TermColor.config_missing.value}# *   specify "venv_uv" to use fast `uv`.{TermColor.reset_style.value}
         {TermColor.config_missing.value}# This field can be specified in global config (see `leap_client`) but it is override-able by local environment-specific config (see `leap_env`).{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# "package_driver": None,{TermColor.reset_style.value}
+        {TermColor.config_missing.value}# "venv_driver": None,{TermColor.reset_style.value}
         \n\
         {TermColor.config_missing.value}# Field `project_descriptors` lists `python` projects and their installation details.{TermColor.reset_style.value}
         {TermColor.config_missing.value}# This field can be specified in global config (see `leap_client`) but it is override-able by local environment-specific config (see `leap_env`).{TermColor.reset_style.value}
@@ -148,10 +148,10 @@ leap_client = (
         {TermColor.config_missing.value}# This field can be specified in global config (see `leap_client`) but it is override-able by local environment-specific config (see `leap_env`).{TermColor.reset_style.value}
         {TermColor.config_missing.value}# "required_python_version": None,{TermColor.reset_style.value}
         \n\
-        {TermColor.config_missing.value}# Field `required_python_file_abs_path` selects `python` version.{TermColor.reset_style.value}
+        {TermColor.config_missing.value}# Field `selected_python_file_abs_path` selects `python` version.{TermColor.reset_style.value}
         {TermColor.config_missing.value}# The value specifies absolute path to `python` interpreter which is used to create `venv`.{TermColor.reset_style.value}
         {TermColor.config_missing.value}# This field can be specified in global config (see `leap_client`) but it is override-able by local environment-specific config (see `leap_env`).{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# "required_python_file_abs_path": None,{TermColor.reset_style.value}
+        {TermColor.config_missing.value}# "selected_python_file_abs_path": None,{TermColor.reset_style.value}
         \n\
         {TermColor.config_missing.value}# Field `local_venv_dir_rel_path` points to the dir where `venv` (`python` virtual environment) is created.{TermColor.reset_style.value}
         {TermColor.config_missing.value}# The path is relative to the `ref_root` dir specified in the `ref_root_dir_rel_path` field.{TermColor.reset_style.value}
@@ -173,11 +173,11 @@ leap_client = (
         {TermColor.config_missing.value}# This field can be specified in global config (see `leap_client`) but it is override-able by local environment-specific config (see `leap_env`).{TermColor.reset_style.value}
         {TermColor.config_missing.value}# "local_cache_dir_rel_path": None,{TermColor.reset_style.value}
         \n\
-        {TermColor.config_missing.value}# Field `package_driver` selects a tool to manage packages:{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# *   specify "driver_pip" to use native `pip`,{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# *   specify "driver_uv" to use fast `uv`.{TermColor.reset_style.value}
+        {TermColor.config_missing.value}# Field `venv_driver` selects a tool to manage packages:{TermColor.reset_style.value}
+        {TermColor.config_missing.value}# *   specify "venv_pip" to use native `pip`,{TermColor.reset_style.value}
+        {TermColor.config_missing.value}# *   specify "venv_uv" to use fast `uv`.{TermColor.reset_style.value}
         {TermColor.config_missing.value}# This field can be specified in global config (see `leap_client`) but it is override-able by local environment-specific config (see `leap_env`).{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# "package_driver": None,{TermColor.reset_style.value}
+        {TermColor.config_missing.value}# "venv_driver": None,{TermColor.reset_style.value}
         \n\
         {TermColor.config_missing.value}# Field `project_descriptors` lists `python` projects and their installation details.{TermColor.reset_style.value}
         {TermColor.config_missing.value}# This field can be specified in global config (see `leap_client`) but it is override-able by local environment-specific config (see `leap_env`).{TermColor.reset_style.value}
@@ -199,7 +199,7 @@ def test_render_client_config_data_with_unused_fields_quiet():
         ConfField.field_local_conf_symlink_rel_path.value: "lconf",
         ConfField.field_default_env_dir_rel_path.value: "dst/default_env",
         ConfField.field_required_python_version.value: test_python_version,
-        ConfField.field_required_python_file_abs_path.value: "/usr/bin/python3",
+        ConfField.field_selected_python_file_abs_path.value: "/usr/bin/python3",
         ConfField.field_local_venv_dir_rel_path.value: "venv",
         ConfField.field_local_log_dir_rel_path.value: "log",
         ConfField.field_local_tmp_dir_rel_path.value: "tmp",
@@ -218,7 +218,7 @@ leap_client = (
         "local_conf_symlink_rel_path": "lconf",
         "default_env_dir_rel_path": "dst/default_env",
         "required_python_version": "{test_python_version}",
-        "required_python_file_abs_path": "/usr/bin/python3",
+        "selected_python_file_abs_path": "/usr/bin/python3",
         "local_venv_dir_rel_path": "venv",
         "local_log_dir_rel_path": "log",
         "local_tmp_dir_rel_path": "tmp",

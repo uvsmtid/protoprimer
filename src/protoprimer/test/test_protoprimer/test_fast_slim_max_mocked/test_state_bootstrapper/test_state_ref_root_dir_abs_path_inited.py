@@ -14,6 +14,7 @@ from protoprimer.primer_kernel import (
     EnvContext,
     EnvState,
     RunMode,
+    StateStride,
 )
 
 
@@ -69,6 +70,7 @@ def test_success_when_field_present(
     assert result == ref_root_abs_path
 
 
+@patch(f"{primer_kernel.__name__}.EnvContext.get_stride")
 @patch(
     f"{primer_kernel.__name__}.{Bootstrapper_state_proto_code_file_abs_path_inited.__name__}.eval_own_state"
 )
@@ -78,6 +80,7 @@ def test_success_when_field_present(
 def test_warning_when_field_missing(
     mock_state_primer_conf_file_data_loaded,
     state_proto_code_file_abs_path_inited,
+    mock_get_stride,
     env_ctx,
     mock_proto_code_dir,
     caplog,
@@ -90,6 +93,7 @@ def test_warning_when_field_missing(
     state_proto_code_file_abs_path_inited.return_value = mock_proto_code_dir
 
     mock_state_primer_conf_file_data_loaded.return_value = {}
+    mock_get_stride.return_value = StateStride.stride_py_arbitrary
 
     # when:
     caplog.set_level(WARNING)

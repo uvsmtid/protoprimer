@@ -60,8 +60,8 @@ class FieldName(enum.Enum):
         NameCategory.category_path_field,
     )
 
-    field_required_python_file_abs_path = FieldMeta(
-        ConfField.field_required_python_file_abs_path,
+    field_selected_python_file_abs_path = FieldMeta(
+        ConfField.field_selected_python_file_abs_path,
         NameCategory.category_derived_path_field,
     )
 
@@ -105,8 +105,8 @@ class FieldName(enum.Enum):
         NameCategory.category_derived_path_field,
     )
 
-    field_package_driver = FieldMeta(
-        ConfField.field_package_driver,
+    field_venv_driver = FieldMeta(
+        ConfField.field_venv_driver,
         NameCategory.category_value_field,
     )
 
