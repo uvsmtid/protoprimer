@@ -120,8 +120,8 @@ class StateMeta(enum.Enum):
         env_state=EnvState.state_required_python_version_inited,
         sub_graph=SubGraph.graph_config,
     )
-    state_required_python_file_abs_path_inited = StateNodeMeta(
-        env_state=EnvState.state_required_python_file_abs_path_inited,
+    state_selected_python_file_abs_path_inited = StateNodeMeta(
+        env_state=EnvState.state_selected_python_file_abs_path_inited,
         sub_graph=SubGraph.graph_config,
     )
     state_local_venv_dir_abs_path_inited = StateNodeMeta(
@@ -140,8 +140,8 @@ class StateMeta(enum.Enum):
         env_state=EnvState.state_local_cache_dir_abs_path_inited,
         sub_graph=SubGraph.graph_config,
     )
-    state_package_driver_inited = StateNodeMeta(
-        env_state=EnvState.state_package_driver_inited,
+    state_venv_driver_inited = StateNodeMeta(
+        env_state=EnvState.state_venv_driver_inited,
         sub_graph=SubGraph.graph_config,
     )
     state_project_descriptors_inited = StateNodeMeta(
@@ -168,8 +168,8 @@ class StateMeta(enum.Enum):
         env_state=EnvState.state_reinstall_triggered,
         sub_graph=SubGraph.graph_runtime,
     )
-    state_package_driver_prepared = StateNodeMeta(
-        env_state=EnvState.state_package_driver_prepared,
+    state_venv_driver_prepared = StateNodeMeta(
+        env_state=EnvState.state_venv_driver_prepared,
         sub_graph=SubGraph.graph_runtime,
     )
     state_stride_py_venv_reached = StateNodeMeta(

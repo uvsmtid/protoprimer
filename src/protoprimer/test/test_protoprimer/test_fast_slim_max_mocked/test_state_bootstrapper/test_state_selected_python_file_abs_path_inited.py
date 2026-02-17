@@ -25,7 +25,7 @@ def env_ctx():
 
 def test_relationship():
     assert_test_module_name_embeds_str(
-        EnvState.state_required_python_file_abs_path_inited.name
+        EnvState.state_selected_python_file_abs_path_inited.name
     )
 
 
@@ -38,7 +38,7 @@ def test_relationship():
 @patch(
     f"{primer_kernel.__name__}.{Bootstrapper_state_ref_root_dir_abs_path_inited.__name__}.eval_own_state"
 )
-# TODO: if `rel` is possible, the field should not be named `abs`, but `any` instead - see: ConfConstEnv.field_required_python_file_abs_path.value
+# TODO: if `rel` is possible, the field should not be named `abs`, but `any` instead - see: ConfConstEnv.field_selected_python_file_abs_path.value
 def test_allow_rel_path_for_required_python_abs_path(
     mock_state_ref_root_dir_abs_path_inited,
     mock_state_env_conf_file_data_loaded,
@@ -50,7 +50,7 @@ def test_allow_rel_path_for_required_python_abs_path(
 
     assert_parent_states_mocked(
         env_ctx,
-        EnvState.state_required_python_file_abs_path_inited.name,
+        EnvState.state_selected_python_file_abs_path_inited.name,
     )
 
     mock_state_ref_root_dir_abs_path_inited.return_value = "/abs/to/ref/dir"
@@ -59,13 +59,13 @@ def test_allow_rel_path_for_required_python_abs_path(
 
     mock_state_client_conf_file_data_loaded.return_value = {}
     mock_state_env_conf_file_data_loaded.return_value = {
-        ConfField.field_required_python_file_abs_path.value: rel_path_to_python,
+        ConfField.field_selected_python_file_abs_path.value: rel_path_to_python,
     }
 
     # when:
 
     state_value: str = env_ctx.state_graph.eval_state(
-        EnvState.state_required_python_file_abs_path_inited.name
+        EnvState.state_selected_python_file_abs_path_inited.name
     )
 
     # then:

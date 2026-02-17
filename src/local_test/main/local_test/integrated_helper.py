@@ -236,12 +236,12 @@ def create_conf_env_file(
 
     env_conf_data = {
         ConfField.field_required_python_version.value: required_python_version,
-        ConfField.field_required_python_file_abs_path.value: python_abs_path,
+        ConfField.field_selected_python_file_abs_path.value: python_abs_path,
         ConfField.field_local_venv_dir_rel_path.value: venv_dir_rel_path,
-        # NOTE: Not specifying `ConfField.field_package_driver.value` - it will be (automatic):
-        #       *   `PackageDriverType.driver_pip` for `python` version < 3.8
-        #       *   `PackageDriverType.driver_uv` for `python` version >= 3.8
-        # ConfField.field_package_driver.value: PackageDriverType.driver_pip.name,
+        # NOTE: Not specifying `ConfField.field_venv_driver.value` - it will be (automatic):
+        #       *   `VenvDriverType.venv_pip` for `python` version < 3.8
+        #       *   `VenvDriverType.venv_uv` for `python` version >= 3.8
+        # ConfField.field_venv_driver.value: VenvDriverType.venv_pip.name,
         ConfField.field_project_descriptors.value: [
             {
                 ConfField.field_build_root_dir_rel_path.value: str(

@@ -16,13 +16,13 @@ from protoprimer.primer_kernel import (
     Bootstrapper_state_env_conf_file_data_loaded,
     Bootstrapper_state_local_cache_dir_abs_path_inited,
     Bootstrapper_state_reinstall_triggered,
-    Bootstrapper_state_required_python_file_abs_path_inited,
+    Bootstrapper_state_selected_python_file_abs_path_inited,
     EnvContext,
     EnvState,
     EnvVar,
-    PackageDriverPip,
-    PackageDriverType,
-    PackageDriverUv,
+    VenvDriverPip,
+    VenvDriverType,
+    VenvDriverUv,
     StateNode,
 )
 
@@ -46,7 +46,7 @@ class TestEnvContext(BasePyfakefsTestClass):
         return_value=test_python_version,
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_required_python_file_abs_path_inited.__name__}.{StateNode.eval_own_state.__name__}",
+        f"{primer_kernel.__name__}.{Bootstrapper_state_selected_python_file_abs_path_inited.__name__}.{StateNode.eval_own_state.__name__}",
         return_value="/usr/bin/python",
     )
     @patch(
@@ -73,27 +73,27 @@ class TestEnvContext(BasePyfakefsTestClass):
         mock_state_env_conf_file_data_loaded,
         mock_state_client_conf_file_data_loaded,
         mock_state_reinstall_triggered,
-        mock_state_required_python_file_abs_path_inited,
+        mock_state_selected_python_file_abs_path_inited,
         mock_state_required_python_version_inited,
     ):
         # given:
         self.fs.create_file("/tmp/venv/uv.venv/bin/uv", contents="foo")
         # when:
         env_ctx = EnvContext()
-        package_driver = env_ctx.state_graph.eval_state(
-            EnvState.state_package_driver_prepared.name
+        venv_driver = env_ctx.state_graph.eval_state(
+            EnvState.state_venv_driver_prepared.name
         )
         # then:
         if is_min_python():
-            assert isinstance(package_driver, PackageDriverPip)
+            assert isinstance(venv_driver, VenvDriverPip)
         else:
-            assert isinstance(package_driver, PackageDriverUv)
+            assert isinstance(venv_driver, VenvDriverUv)
 
     @patch("sys.argv", ["script_name"])
     @patch.dict(
         os.environ,
         {
-            EnvVar.var_PROTOPRIMER_PACKAGE_DRIVER.value: PackageDriverType.driver_uv.name,
+            EnvVar.var_PROTOPRIMER_VENV_DRIVER.value: VenvDriverType.venv_uv.name,
         },
     )
     @patch(
@@ -105,7 +105,7 @@ class TestEnvContext(BasePyfakefsTestClass):
         return_value=test_python_version,
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_required_python_file_abs_path_inited.__name__}.{StateNode.eval_own_state.__name__}",
+        f"{primer_kernel.__name__}.{Bootstrapper_state_selected_python_file_abs_path_inited.__name__}.{StateNode.eval_own_state.__name__}",
         return_value="/usr/bin/python",
     )
     @patch(
@@ -132,27 +132,27 @@ class TestEnvContext(BasePyfakefsTestClass):
         mock_state_env_conf_file_data_loaded,
         mock_state_client_conf_file_data_loaded,
         mock_state_reinstall_triggered,
-        mock_state_required_python_file_abs_path_inited,
+        mock_state_selected_python_file_abs_path_inited,
         mock_state_required_python_version_inited,
     ):
         # given:
         self.fs.create_file("/tmp/venv/uv.venv/bin/uv", contents="foo")
         # when:
         env_ctx = EnvContext()
-        package_driver = env_ctx.state_graph.eval_state(
-            EnvState.state_package_driver_prepared.name
+        venv_driver = env_ctx.state_graph.eval_state(
+            EnvState.state_venv_driver_prepared.name
         )
         # then:
         if is_min_python():
-            assert isinstance(package_driver, PackageDriverPip)
+            assert isinstance(venv_driver, VenvDriverPip)
         else:
-            assert isinstance(package_driver, PackageDriverUv)
+            assert isinstance(venv_driver, VenvDriverUv)
 
     @patch("sys.argv", ["script_name"])
     @patch.dict(
         os.environ,
         {
-            EnvVar.var_PROTOPRIMER_PACKAGE_DRIVER.value: PackageDriverType.driver_pip.name,
+            EnvVar.var_PROTOPRIMER_VENV_DRIVER.value: VenvDriverType.venv_pip.name,
         },
     )
     @patch(
@@ -164,7 +164,7 @@ class TestEnvContext(BasePyfakefsTestClass):
         return_value=test_python_version,
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_required_python_file_abs_path_inited.__name__}.{StateNode.eval_own_state.__name__}",
+        f"{primer_kernel.__name__}.{Bootstrapper_state_selected_python_file_abs_path_inited.__name__}.{StateNode.eval_own_state.__name__}",
         return_value="/usr/bin/python",
     )
     @patch(
@@ -189,14 +189,14 @@ class TestEnvContext(BasePyfakefsTestClass):
         mock_state_env_conf_file_data_loaded,
         mock_state_client_conf_file_data_loaded,
         mock_state_reinstall_triggered,
-        mock_state_required_python_file_abs_path_inited,
+        mock_state_selected_python_file_abs_path_inited,
         mock_state_required_python_version_inited,
     ):
         # given:
         # when:
         env_ctx = EnvContext()
-        package_driver = env_ctx.state_graph.eval_state(
-            EnvState.state_package_driver_prepared.name
+        venv_driver = env_ctx.state_graph.eval_state(
+            EnvState.state_venv_driver_prepared.name
         )
         # then:
-        assert isinstance(package_driver, PackageDriverPip)
+        assert isinstance(venv_driver, VenvDriverPip)

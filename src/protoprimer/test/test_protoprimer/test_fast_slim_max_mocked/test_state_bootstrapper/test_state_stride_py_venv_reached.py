@@ -15,10 +15,10 @@ from protoprimer.primer_kernel import (
     Bootstrapper_state_input_start_id_var_loaded,
     Bootstrapper_state_local_conf_file_abs_path_inited,
     Bootstrapper_state_local_venv_dir_abs_path_inited,
-    Bootstrapper_state_package_driver_prepared,
+    Bootstrapper_state_venv_driver_prepared,
     Bootstrapper_state_proto_code_file_abs_path_inited,
     Bootstrapper_state_reinstall_triggered,
-    Bootstrapper_state_required_python_file_abs_path_inited,
+    Bootstrapper_state_selected_python_file_abs_path_inited,
     ConfConstEnv,
     ConfConstGeneral,
     EnvContext,
@@ -85,10 +85,10 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_required_python_file_abs_path_inited.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_selected_python_file_abs_path_inited.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_package_driver_prepared.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_venv_driver_prepared.__name__}.eval_own_state"
     )
     @patch(
         f"{primer_kernel.__name__}.get_path_to_curr_python",
@@ -103,8 +103,8 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_input_run_mode_arg_loaded,
         mock_execve,
         mock_get_path_to_curr_python,
-        mock_state_package_driver_prepared,
-        mock_state_required_python_file_abs_path_inited,
+        mock_state_venv_driver_prepared,
+        mock_state_selected_python_file_abs_path_inited,
         mock_state_local_venv_dir_abs_path_inited,
         mock_state_local_conf_file_abs_path_inited,
         mock_state_proto_code_file_abs_path_inited,
@@ -130,7 +130,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_proto_code_file_abs_path_inited.return_value = (
             state_proto_code_file_abs_path_inited
         )
-        mock_state_required_python_file_abs_path_inited.return_value = (
+        mock_state_selected_python_file_abs_path_inited.return_value = (
             ConfConstEnv.default_file_abs_path_python
         )
         mock_state_local_venv_dir_abs_path_inited.return_value = os.path.join(
@@ -146,7 +146,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # then:
 
-        mock_state_package_driver_prepared.return_value.create_venv.assert_called_once_with(
+        mock_state_venv_driver_prepared.return_value.create_venv.assert_called_once_with(
             os.path.join(
                 mock_client_dir,
                 ConfConstEnv.default_dir_rel_path_venv,
@@ -195,10 +195,10 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_required_python_file_abs_path_inited.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_selected_python_file_abs_path_inited.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_package_driver_prepared.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_venv_driver_prepared.__name__}.eval_own_state"
     )
     @patch(
         f"{primer_kernel.__name__}.get_path_to_curr_python",
@@ -213,8 +213,8 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_input_run_mode_arg_loaded,
         mock_execve,
         mock_get_path_to_curr_python,
-        mock_state_package_driver_prepared,
-        mock_state_required_python_file_abs_path_inited,
+        mock_state_venv_driver_prepared,
+        mock_state_selected_python_file_abs_path_inited,
         mock_state_local_venv_dir_abs_path_inited,
         mock_state_local_conf_file_abs_path_inited,
         mock_state_proto_code_file_abs_path_inited,
@@ -241,7 +241,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             state_proto_code_file_abs_path_inited
         )
 
-        mock_state_required_python_file_abs_path_inited.return_value = (
+        mock_state_selected_python_file_abs_path_inited.return_value = (
             ConfConstEnv.default_file_abs_path_python
         )
         mock_state_local_venv_dir_abs_path_inited.return_value = os.path.join(
@@ -262,7 +262,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             "must be outside of the `venv`",
             str(cm.exception),
         )
-        mock_state_package_driver_prepared.return_value.create_venv.assert_not_called()
+        mock_state_venv_driver_prepared.return_value.create_venv.assert_not_called()
         mock_execve.assert_not_called()
         mock_get_path_to_curr_python.assert_called_once()
 
@@ -287,10 +287,10 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_required_python_file_abs_path_inited.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_selected_python_file_abs_path_inited.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_package_driver_prepared.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_venv_driver_prepared.__name__}.eval_own_state"
     )
     @patch(
         f"{primer_kernel.__name__}.get_path_to_curr_python",
@@ -306,8 +306,8 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_input_run_mode_arg_loaded,
         mock_execve,
         mock_get_path_to_curr_python,
-        mock_state_package_driver_prepared,
-        mock_state_required_python_file_abs_path_inited,
+        mock_state_venv_driver_prepared,
+        mock_state_selected_python_file_abs_path_inited,
         mock_state_local_venv_dir_abs_path_inited,
         mock_state_local_conf_file_abs_path_inited,
         mock_state_proto_code_file_abs_path_inited,
@@ -334,7 +334,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             state_proto_code_file_abs_path_inited
         )
 
-        mock_state_required_python_file_abs_path_inited.return_value = (
+        mock_state_selected_python_file_abs_path_inited.return_value = (
             ConfConstEnv.default_file_abs_path_python
         )
         mock_state_local_venv_dir_abs_path_inited.return_value = os.path.join(
@@ -355,7 +355,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             "must be outside of the `venv`",
             str(cm.exception),
         )
-        mock_state_package_driver_prepared.return_value.create_venv.assert_not_called()
+        mock_state_venv_driver_prepared.return_value.create_venv.assert_not_called()
         mock_execve.assert_not_called()
         mock_get_path_to_curr_python.assert_called_once()
 
@@ -381,10 +381,10 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_required_python_file_abs_path_inited.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_selected_python_file_abs_path_inited.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_package_driver_prepared.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_venv_driver_prepared.__name__}.eval_own_state"
     )
     @patch(
         f"{primer_kernel.__name__}.get_path_to_curr_python",
@@ -399,8 +399,8 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_input_run_mode_arg_loaded,
         mock_execve,
         mock_get_path_to_curr_python,
-        mock_state_package_driver_prepared,
-        mock_state_required_python_file_abs_path_inited,
+        mock_state_venv_driver_prepared,
+        mock_state_selected_python_file_abs_path_inited,
         mock_state_local_venv_dir_abs_path_inited,
         mock_state_local_conf_file_abs_path_inited,
         mock_state_proto_code_file_abs_path_inited,
@@ -427,7 +427,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             state_proto_code_file_abs_path_inited
         )
 
-        mock_state_required_python_file_abs_path_inited.return_value = (
+        mock_state_selected_python_file_abs_path_inited.return_value = (
             non_default_file_abs_path_python
         )
         mock_state_local_venv_dir_abs_path_inited.return_value = (
@@ -448,7 +448,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             "must match the required",
             str(cm.exception),
         )
-        mock_state_package_driver_prepared.return_value.create_venv.assert_not_called()
+        mock_state_venv_driver_prepared.return_value.create_venv.assert_not_called()
         mock_execve.assert_not_called()
         mock_get_path_to_curr_python.assert_called_once()
 
@@ -474,10 +474,10 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_required_python_file_abs_path_inited.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_selected_python_file_abs_path_inited.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_package_driver_prepared.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_venv_driver_prepared.__name__}.eval_own_state"
     )
     @patch(
         f"{primer_kernel.__name__}.get_path_to_curr_python",
@@ -492,8 +492,8 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_input_run_mode_arg_loaded,
         mock_execve,
         mock_get_path_to_curr_python,
-        mock_state_package_driver_prepared,
-        mock_state_required_python_file_abs_path_inited,
+        mock_state_venv_driver_prepared,
+        mock_state_selected_python_file_abs_path_inited,
         mock_state_local_venv_dir_abs_path_inited,
         mock_state_local_conf_file_abs_path_inited,
         mock_state_proto_code_file_abs_path_inited,
@@ -520,7 +520,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             state_proto_code_file_abs_path_inited
         )
 
-        mock_state_required_python_file_abs_path_inited.return_value = (
+        mock_state_selected_python_file_abs_path_inited.return_value = (
             ConfConstEnv.default_file_abs_path_python
         )
         mock_state_local_venv_dir_abs_path_inited.return_value = os.path.join(
@@ -540,7 +540,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             mock_client_dir,
             ConfConstEnv.default_dir_rel_path_venv,
         )
-        mock_state_package_driver_prepared.return_value.create_venv.assert_called_once_with(
+        mock_state_venv_driver_prepared.return_value.create_venv.assert_called_once_with(
             path_to_venv,
         )
         path_to_venv_python = os.path.join(
@@ -586,10 +586,10 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_required_python_file_abs_path_inited.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_selected_python_file_abs_path_inited.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_package_driver_prepared.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_venv_driver_prepared.__name__}.eval_own_state"
     )
     @patch(
         f"{primer_kernel.__name__}.get_path_to_curr_python",
@@ -604,8 +604,8 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_input_run_mode_arg_loaded,
         mock_execve,
         mock_get_path_to_curr_python,
-        mock_state_package_driver_prepared,
-        mock_state_required_python_file_abs_path_inited,
+        mock_state_venv_driver_prepared,
+        mock_state_selected_python_file_abs_path_inited,
         mock_state_local_venv_dir_abs_path_inited,
         mock_state_local_conf_file_abs_path_inited,
         mock_state_proto_code_file_abs_path_inited,
@@ -632,7 +632,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             state_proto_code_file_abs_path_inited
         )
 
-        mock_state_required_python_file_abs_path_inited.return_value = (
+        mock_state_selected_python_file_abs_path_inited.return_value = (
             non_default_file_abs_path_python
         )
         mock_state_local_venv_dir_abs_path_inited.return_value = (
@@ -648,7 +648,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # then:
 
-        mock_state_package_driver_prepared.return_value.create_venv.assert_called_once_with(
+        mock_state_venv_driver_prepared.return_value.create_venv.assert_called_once_with(
             non_default_dir_abs_path_venv,
         )
 
@@ -696,10 +696,10 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_required_python_file_abs_path_inited.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_selected_python_file_abs_path_inited.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_package_driver_prepared.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_venv_driver_prepared.__name__}.eval_own_state"
     )
     @patch(
         f"{primer_kernel.__name__}.get_path_to_curr_python",
@@ -714,8 +714,8 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_input_run_mode_arg_loaded,
         mock_execve,
         mock_get_path_to_curr_python,
-        mock_state_package_driver_prepared,
-        mock_state_required_python_file_abs_path_inited,
+        mock_state_venv_driver_prepared,
+        mock_state_selected_python_file_abs_path_inited,
         mock_state_local_venv_dir_abs_path_inited,
         mock_state_local_conf_file_abs_path_inited,
         mock_state_proto_code_file_abs_path_inited,
@@ -744,7 +744,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.env_ctx.state_stride = StateStride.stride_py_arbitrary
 
         # Make sure `path_to_curr_python` != `configured python`:
-        mock_state_required_python_file_abs_path_inited.return_value = (
+        mock_state_selected_python_file_abs_path_inited.return_value = (
             "/a/different/python"
         )
 
@@ -778,7 +778,7 @@ class ThisTestClass(BasePyfakefsTestClass):
                 EnvVar.var_PROTOPRIMER_PROTO_CODE.value: "any/path",
             },
         )
-        mock_state_package_driver_prepared.return_value.create_venv.assert_called_once()
+        mock_state_venv_driver_prepared.return_value.create_venv.assert_called_once()
         mock_get_path_to_curr_python.assert_called_once()
 
     ####################################################################################################################
@@ -809,10 +809,10 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_required_python_file_abs_path_inited.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_selected_python_file_abs_path_inited.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_package_driver_prepared.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_venv_driver_prepared.__name__}.eval_own_state"
     )
     @patch(
         f"{primer_kernel.__name__}.get_path_to_curr_python",
@@ -826,8 +826,8 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_input_run_mode_arg_loaded,
         mock_execve,
         mock_get_path_to_curr_python,
-        mock_state_package_driver_prepared,
-        mock_state_required_python_file_abs_path_inited,
+        mock_state_venv_driver_prepared,
+        mock_state_selected_python_file_abs_path_inited,
         mock_state_local_venv_dir_abs_path_inited,
         mock_state_local_conf_file_abs_path_inited,
         mock_state_proto_code_file_abs_path_inited,
@@ -855,7 +855,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         self.assertEqual(StateStride.stride_py_venv, actual_result)
 
-        mock_state_package_driver_prepared.return_value.create_venv.assert_not_called()
+        mock_state_venv_driver_prepared.return_value.create_venv.assert_not_called()
         mock_execve.assert_not_called()
 
     ####################################################################################################################
@@ -881,10 +881,10 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_required_python_file_abs_path_inited.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_selected_python_file_abs_path_inited.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_package_driver_prepared.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_venv_driver_prepared.__name__}.eval_own_state"
     )
     @patch(
         f"{primer_kernel.__name__}.get_path_to_curr_python",
@@ -899,8 +899,8 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_input_run_mode_arg_loaded,
         mock_execve,
         mock_get_path_to_curr_python,
-        mock_state_package_driver_prepared,
-        mock_state_required_python_file_abs_path_inited,
+        mock_state_venv_driver_prepared,
+        mock_state_selected_python_file_abs_path_inited,
         mock_state_local_venv_dir_abs_path_inited,
         mock_state_local_conf_file_abs_path_inited,
         mock_state_proto_code_file_abs_path_inited,
@@ -928,7 +928,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             state_proto_code_file_abs_path_inited
         )
 
-        mock_state_required_python_file_abs_path_inited.return_value = (
+        mock_state_selected_python_file_abs_path_inited.return_value = (
             ConfConstEnv.default_file_abs_path_python
         )
         path_to_venv = os.path.join(
@@ -947,7 +947,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # then:
 
-        mock_state_package_driver_prepared.return_value.create_venv.assert_not_called()
+        mock_state_venv_driver_prepared.return_value.create_venv.assert_not_called()
         mock_logger_info.assert_any_call(f"reusing existing `venv` [{path_to_venv}]")
 
         path_to_venv_python = os.path.join(
@@ -992,10 +992,10 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_required_python_file_abs_path_inited.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_selected_python_file_abs_path_inited.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_package_driver_prepared.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_venv_driver_prepared.__name__}.eval_own_state"
     )
     @patch(
         f"{primer_kernel.__name__}.get_path_to_curr_python",
@@ -1003,7 +1003,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     )
     @patch(f"{primer_kernel.__name__}.os.execve")
     @patch(
-        f"{primer_kernel.__name__}.{primer_kernel.PackageDriverPip.__name__}.create_venv"
+        f"{primer_kernel.__name__}.{primer_kernel.VenvDriverPip.__name__}.create_venv"
     )
     @patch(
         f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
@@ -1011,11 +1011,11 @@ class ThisTestClass(BasePyfakefsTestClass):
     def test_failure_when_reusing_existing_venv_of_wrong_type(
         self,
         mock_state_input_run_mode_arg_loaded,
-        mock_package_driver_pip_create_venv,
+        mock_venv_venv_pip_create_venv,
         mock_execve,
         mock_get_path_to_curr_python,
-        mock_state_package_driver_prepared,
-        mock_state_required_python_file_abs_path_inited,
+        mock_state_venv_driver_prepared,
+        mock_state_selected_python_file_abs_path_inited,
         mock_state_local_venv_dir_abs_path_inited,
         mock_state_local_conf_file_abs_path_inited,
         mock_state_proto_code_file_abs_path_inited,
@@ -1040,7 +1040,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             state_proto_code_file_abs_path_inited
         )
 
-        mock_state_required_python_file_abs_path_inited.return_value = (
+        mock_state_selected_python_file_abs_path_inited.return_value = (
             ConfConstEnv.default_file_abs_path_python
         )
         path_to_venv = os.path.join(
@@ -1058,9 +1058,9 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
 
         # But the driver is pip
-        from protoprimer.primer_kernel import PackageDriverPip
+        from protoprimer.primer_kernel import VenvDriverPip
 
-        mock_state_package_driver_prepared.return_value = PackageDriverPip(
+        mock_state_venv_driver_prepared.return_value = VenvDriverPip(
             ConfConstEnv.default_file_abs_path_python,
             test_python_version,
         )
@@ -1073,5 +1073,5 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # then:
         self.assertIn("was not created by this driver", str(cm.exception))
-        mock_package_driver_pip_create_venv.assert_not_called()
+        mock_venv_venv_pip_create_venv.assert_not_called()
         mock_execve.assert_not_called()

@@ -12,7 +12,7 @@ from protoprimer.primer_kernel import (
     Bootstrapper_state_args_parsed,
     Bootstrapper_state_input_do_install_var_loaded,
     Bootstrapper_state_local_conf_symlink_abs_path_inited,
-    Bootstrapper_state_package_driver_prepared,
+    Bootstrapper_state_venv_driver_prepared,
     Bootstrapper_state_project_descriptors_inited,
     Bootstrapper_state_ref_root_dir_abs_path_inited,
     Bootstrapper_state_stride_py_venv_reached,
@@ -67,7 +67,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_package_driver_prepared.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_venv_driver_prepared.__name__}.eval_own_state"
     )
     @patch(
         f"{primer_kernel.__name__}.{EnvContext.__name__}.{EnvContext.get_stride.__name__}"
@@ -75,7 +75,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     def test_default_install(
         self,
         mock_get_stride,
-        mock_state_package_driver_prepared,
+        mock_state_venv_driver_prepared,
         mock_state_input_run_mode_arg_loaded,
         mock_state_args_parsed,
         mock_state_input_do_install_var_loaded,
@@ -142,7 +142,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             EnvState.state_protoprimer_package_installed.name
         )
         # then:
-        mock_state_package_driver_prepared.return_value.install_dependencies.assert_called_once()
+        mock_state_venv_driver_prepared.return_value.install_dependencies.assert_called_once()
 
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_symlink_abs_path_inited.__name__}.eval_own_state"
@@ -170,7 +170,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_package_driver_prepared.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_venv_driver_prepared.__name__}.eval_own_state"
     )
     @patch(
         f"{primer_kernel.__name__}.{EnvContext.__name__}.{EnvContext.get_stride.__name__}"
@@ -178,7 +178,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     def test_reinstall(
         self,
         mock_get_stride,
-        mock_state_package_driver_prepared,
+        mock_state_venv_driver_prepared,
         mock_state_input_run_mode_arg_loaded,
         mock_state_args_parsed,
         mock_state_input_do_install_var_loaded,
@@ -247,7 +247,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             EnvState.state_protoprimer_package_installed.name
         )
         # then:
-        mock_state_package_driver_prepared.return_value.install_dependencies.assert_called_once()
+        mock_state_venv_driver_prepared.return_value.install_dependencies.assert_called_once()
 
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_symlink_abs_path_inited.__name__}.eval_own_state"
@@ -275,7 +275,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_package_driver_prepared.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_venv_driver_prepared.__name__}.eval_own_state"
     )
     @patch(
         f"{primer_kernel.__name__}.{EnvContext.__name__}.{EnvContext.get_stride.__name__}"
@@ -283,7 +283,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     def test_no_install_triggered(
         self,
         mock_get_stride,
-        mock_state_package_driver_prepared,
+        mock_state_venv_driver_prepared,
         mock_state_input_run_mode_arg_loaded,
         mock_state_args_parsed,
         mock_state_input_do_install_var_loaded,
@@ -350,7 +350,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             EnvState.state_protoprimer_package_installed.name
         )
         # then:
-        mock_state_package_driver_prepared.return_value.install_dependencies.assert_not_called()
+        mock_state_venv_driver_prepared.return_value.install_dependencies.assert_not_called()
 
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_symlink_abs_path_inited.__name__}.eval_own_state"
@@ -378,7 +378,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_package_driver_prepared.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_venv_driver_prepared.__name__}.eval_own_state"
     )
     @patch(
         f"{primer_kernel.__name__}.{EnvContext.__name__}.{EnvContext.get_stride.__name__}"
@@ -386,7 +386,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     def test_nothing_to_install(
         self,
         mock_get_stride,
-        mock_state_package_driver_prepared,
+        mock_state_venv_driver_prepared,
         mock_state_input_run_mode_arg_loaded,
         mock_state_args_parsed,
         mock_state_input_do_install_var_loaded,
@@ -439,4 +439,4 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # then:
 
-        mock_state_package_driver_prepared.return_value.install_dependencies.assert_not_called()
+        mock_state_venv_driver_prepared.return_value.install_dependencies.assert_not_called()

@@ -16,6 +16,7 @@ from protoprimer.primer_kernel import (
     ConfField,
     EnvContext,
     EnvState,
+    StateStride,
 )
 
 
@@ -166,6 +167,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         # then:
         self.assertEqual(state_selected_env_dir_rel_path_inited, "my_env_dir")
 
+    @patch(f"{primer_kernel.__name__}.EnvContext.get_stride")
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_ref_root_dir_abs_path_inited.__name__}.eval_own_state"
     )
@@ -180,6 +182,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_client_conf_file_data_loaded,
         mock_state_args_parsed,
         mock_state_ref_root_dir_abs_path_inited,
+        mock_get_stride,
     ):
         # given:
 
@@ -196,6 +199,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         client_conf_file_data = {}
         mock_state_client_conf_file_data_loaded.return_value = client_conf_file_data
+        mock_get_stride.return_value = StateStride.stride_py_arbitrary
 
         # when:
 

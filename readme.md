@@ -1,13 +1,13 @@
 
 [![PyPI version](https://img.shields.io/pypi/v/protoprimer.svg?style=flat-square&color=blue&label=package)](https://pypi.org/project/protoprimer)
-[![GitHub test py_min job](https://img.shields.io/github/actions/workflow/status/uvsmtid/protoprimer/test_py_min.yaml.svg?style=flat-square&color=palegreen&label=min_py)](https://github.com/uvsmtid/protoprimer/actions/workflows/test_py_min.yaml)
-[![GitHub test py_med job](https://img.shields.io/github/actions/workflow/status/uvsmtid/protoprimer/test_py_med.yaml.svg?style=flat-square&color=palegreen&label=med_py)](https://github.com/uvsmtid/protoprimer/actions/workflows/test_py_med.yaml)
-[![GitHub test py_max job](https://img.shields.io/github/actions/workflow/status/uvsmtid/protoprimer/test_py_max.yaml.svg?style=flat-square&color=palegreen&label=max_py)](https://github.com/uvsmtid/protoprimer/actions/workflows/test_py_max.yaml)
+[![GitHub test min python job](https://img.shields.io/github/actions/workflow/status/uvsmtid/protoprimer/test_py_min.yaml.svg?style=flat-square&color=palegreen&label=py%5Bmin%5D)](https://github.com/uvsmtid/protoprimer/actions/workflows/test_py_min.yaml)
+[![GitHub test med python job](https://img.shields.io/github/actions/workflow/status/uvsmtid/protoprimer/test_py_med.yaml.svg?style=flat-square&color=palegreen&label=py%5Bmed%5D)](https://github.com/uvsmtid/protoprimer/actions/workflows/test_py_med.yaml)
+[![GitHub test max python job](https://img.shields.io/github/actions/workflow/status/uvsmtid/protoprimer/test_py_max.yaml.svg?style=flat-square&color=palegreen&label=py%5Bmax%5D)](https://github.com/uvsmtid/protoprimer/actions/workflows/test_py_max.yaml)
 [![GitHub lint job](https://img.shields.io/github/actions/workflow/status/uvsmtid/protoprimer/lint.yaml.svg?style=flat-square&color=palegreen&label=lint)](https://github.com/uvsmtid/protoprimer/actions/workflows/lint.yaml)
 [![GitHub doc job](https://img.shields.io/github/actions/workflow/status/uvsmtid/protoprimer/doc.yaml.svg?style=flat-square&color=palegreen&label=doc)](https://github.com/uvsmtid/protoprimer/actions/workflows/doc.yaml)
 [![code coverage](https://img.shields.io/coveralls/github/uvsmtid/protoprimer.svg?style=flat-square&color=palegreen)](https://coveralls.io/github/uvsmtid/protoprimer)
 <!--
-FT_84_11_73_28.supported_python_versions.md: see sbove.
+FT_84_11_73_28.supported_python_versions.md: see above.
 
 TODO: Use links to FC/UC docs under `./doc` (when ready) from this readme to navigate to details.
 -->
@@ -122,7 +122,7 @@ flowchart LR;
     python_exec["any<br>`python`<br>executable"];
     subgraph "py"
         py_entry_script["entry script<br>like<br>`prime`"];
-        proto_code["tested<br>bootstrap code<br>from<br>`protoprimer`"];
+        py_bootstrap_code["tested<br>bootstrap code<br>from<br>`protoprimer`"];
     end
 
     external_exec["other<br>(external)<br>executables"];
@@ -135,10 +135,10 @@ flowchart LR;
 
     heavy_plus ~~~ python_exec;
     python_exec --runs--> py_entry_script;
-    py_entry_script --with--> proto_code;
+    py_entry_script --with--> py_bootstrap_code;
 
     embedded_code --invokes--> external_exec;
-    proto_code --invokes--> external_exec;
+    py_bootstrap_code --invokes--> external_exec;
 
     external_exec ~~~ invis_block;
 
@@ -202,7 +202,12 @@ Feel the difference:
 
 Obviously, no.
 
-Think: generating code, downloading versioned artifacts, ensuring security keys, configuring pre-commit linters, etc.
+Think:
+*   generating code
+*   downloading data
+*   ensuring security keys
+*   configuring pre-commit hooks & linters
+*   ...
 
 `protoprimer` acts as a "seed" to grow via extensible bootstrap DAG.
 
@@ -253,7 +258,7 @@ In turn, `python` code (bootstrapped via `protoprimer`) may springboard other to
 
 For the trivial case, see [instant_python_bootstrap][instant_python_bootstrap].
 
-The single script [`proto_kernel.py`][local_proto_kernel.py] to host in the client repo is called "proto code":
+The single script [`proto_kernel.py`][local_proto_kernel.py] to be hosted by the client repo is called "proto code":
 
 ```mermaid
 ---
@@ -461,6 +466,18 @@ For example, each subdirectory of [`./src`][src_dir] directory this repo itself 
 *   [neoprimer][neoprimer] contains extensions with code useful to run after `venv` is fully configured
 *   ...
 
+<!--
+
+TODO: Explain ref root and all paths in all config files relative to ref root.
+
+-->
+
+<!--
+
+TODO: Explain how all scripts should know their relative position to proto_code.
+
+-->
+
 <a id="protoprimer-effective-config"></a>
 
 ## Effective configuration
@@ -589,9 +606,9 @@ TODO: Add a section explaining how to select the `venv` driver (`uv`, `pip`, etc
 
 -->
 
-## Selecting required `python` version
+## Required `python`: selecting executable path
 
-Required `python` version is selected per environment via config field `required_python_version`.
+Required `python` version is specified per environment via config field `required_python_version`.
 
 If the field is not specified, `.python-version` file is searched up from ref root dir (e.g. repo root).
 
@@ -603,7 +620,7 @@ TODO: Elaborate on `python` executable selection (in an expandable section) via 
 
 -->
 
-## Switching to required `python` executable
+## Required `python`: switching executable runtime
 
 The stand-alone "proto code" is designed to be run by any `python` executable (available in `PATH`).
 
@@ -658,7 +675,7 @@ The content of `constraints.txt` captures one of the possible outcomes of the de
 
 <a id="protoprimer-upgrade-project"></a>
 
-## Upgrading versions: full vs partial
+## Upgrading `venv`: full vs partial
 
 To re-create `venv`, re-install the deps, and re-pin the versions, run:
 

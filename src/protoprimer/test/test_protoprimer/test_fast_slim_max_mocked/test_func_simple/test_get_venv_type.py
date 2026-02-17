@@ -5,7 +5,7 @@ import pytest
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer.primer_kernel import (
     get_venv_type,
-    PackageDriverType,
+    VenvDriverType,
 )
 
 
@@ -25,7 +25,7 @@ def test_get_venv_type_for_uv(fs):
     result = get_venv_type(venv_path)
 
     # then:
-    assert result == PackageDriverType.driver_uv
+    assert result == VenvDriverType.venv_uv
 
 
 def test_get_venv_type_for_pip(fs):
@@ -40,7 +40,7 @@ def test_get_venv_type_for_pip(fs):
     result = get_venv_type(venv_path)
 
     # then:
-    assert result == PackageDriverType.driver_pip
+    assert result == VenvDriverType.venv_pip
 
 
 def test_get_venv_type_when_cfg_missing(fs):

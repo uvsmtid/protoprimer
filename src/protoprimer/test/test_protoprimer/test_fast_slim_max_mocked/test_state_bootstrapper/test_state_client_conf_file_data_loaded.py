@@ -14,6 +14,7 @@ from protoprimer.primer_kernel import (
     ConfConstPrimer,
     EnvContext,
     EnvState,
+    StateStride,
 )
 
 
@@ -79,6 +80,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # no exception happens
 
+    @patch(f"{primer_kernel.__name__}.EnvContext.get_stride")
     @patch(
         f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_stderr_log_level_eval_finalized.__name__}.eval_own_state"
     )
@@ -93,6 +95,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_global_conf_file_abs_path_inited,
         mock_state_input_run_mode_arg_loaded,
         mock_state_input_stderr_log_level_eval_finalized,
+        mock_get_stride,
     ):
 
         # given:
@@ -114,6 +117,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
 
         self.assertFalse(os.path.isfile(state_global_conf_file_abs_path_inited))
+        mock_get_stride.return_value = StateStride.stride_py_arbitrary
 
         # when:
 

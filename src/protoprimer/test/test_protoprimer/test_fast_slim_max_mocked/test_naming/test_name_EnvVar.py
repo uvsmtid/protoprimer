@@ -69,8 +69,8 @@ class EnvVarName(enum.Enum):
         EnvVar.var_PROTOPRIMER_START_ID,
         NameCategory.category_name_only,
     )
-    var_PROTOPRIMER_PACKAGE_DRIVER = EnvVarMeta(
-        EnvVar.var_PROTOPRIMER_PACKAGE_DRIVER,
+    var_PROTOPRIMER_VENV_DRIVER = EnvVarMeta(
+        EnvVar.var_PROTOPRIMER_VENV_DRIVER,
         NameCategory.category_name_only,
     )
     var_PROTOPRIMER_MOCKED_RESTART = EnvVarMeta(

@@ -98,7 +98,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         env_conf_data = {
             ConfField.field_required_python_version.value: test_python_version,
-            ConfField.field_required_python_file_abs_path.value: ConfConstEnv.default_file_abs_path_python,
+            ConfField.field_selected_python_file_abs_path.value: ConfConstEnv.default_file_abs_path_python,
             ConfField.field_local_venv_dir_rel_path.value: ConfConstEnv.default_dir_rel_path_venv,
             ConfField.field_project_descriptors.value: ConfConstEnv.default_project_descriptors,
         }
