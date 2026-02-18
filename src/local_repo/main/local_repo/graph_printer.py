@@ -120,6 +120,10 @@ class StateMeta(enum.Enum):
         env_state=EnvState.state_required_python_version_inited,
         sub_graph=SubGraph.graph_config,
     )
+    state_python_selector_file_abs_path_inited = StateNodeMeta(
+        env_state=EnvState.state_python_selector_file_abs_path_inited,
+        sub_graph=SubGraph.graph_config,
+    )
     state_selected_python_file_abs_path_inited = StateNodeMeta(
         env_state=EnvState.state_selected_python_file_abs_path_inited,
         sub_graph=SubGraph.graph_config,

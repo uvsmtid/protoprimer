@@ -3,8 +3,8 @@
     "default_env_dir_rel_path": "dst/default_env",
 
     "__comment__": "See: FT_84_11_73_28.supported_python_versions.md",
-    "required_python_version": "3.14",
-    "selected_python_file_abs_path": "/usr/bin/python",
+    "required_python_version": "3.14.0",
+    "python_selector_file_rel_path": "cmd/proto_code/python_selector_same.py",
 
     "local_venv_dir_rel_path": "venv",
     "local_log_dir_rel_path": "log",

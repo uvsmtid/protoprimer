@@ -12,18 +12,20 @@ from local_test.mock_subprocess import mock_get_python_version_by_current
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
+    Bootstrapper_required_python_version_inited,
     Bootstrapper_state_client_conf_file_data_loaded,
     Bootstrapper_state_env_conf_file_data_loaded,
     Bootstrapper_state_local_cache_dir_abs_path_inited,
+    Bootstrapper_state_local_venv_dir_abs_path_inited,
     Bootstrapper_state_reinstall_triggered,
     Bootstrapper_state_selected_python_file_abs_path_inited,
     EnvContext,
     EnvState,
     EnvVar,
+    StateNode,
     VenvDriverPip,
     VenvDriverType,
     VenvDriverUv,
-    StateNode,
 )
 
 
@@ -42,7 +44,7 @@ class TestEnvContext(BasePyfakefsTestClass):
         new=mock_get_python_version_by_current,
     )
     @patch(
-        "protoprimer.primer_kernel.Bootstrapper_required_python_version_inited.eval_own_state",
+        f"{primer_kernel.__name__}.{Bootstrapper_required_python_version_inited.__name__}.{StateNode.eval_own_state.__name__}",
         return_value=test_python_version,
     )
     @patch(
@@ -65,10 +67,15 @@ class TestEnvContext(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{Bootstrapper_state_local_cache_dir_abs_path_inited.__name__}.{StateNode.eval_own_state.__name__}",
         return_value="/tmp",
     )
+    @patch(
+        f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.{StateNode.eval_own_state.__name__}",
+        return_value="/tmp/venv",
+    )
     @patch("subprocess.check_call")
     def test_init_default(
         self,
         mock_check_call,
+        mock_state_local_venv_dir_abs_path_inited,
         mock_state_local_cache_dir_abs_path_inited,
         mock_state_env_conf_file_data_loaded,
         mock_state_client_conf_file_data_loaded,
@@ -101,7 +108,7 @@ class TestEnvContext(BasePyfakefsTestClass):
         new=mock_get_python_version_by_current,
     )
     @patch(
-        "protoprimer.primer_kernel.Bootstrapper_required_python_version_inited.eval_own_state",
+        f"{primer_kernel.__name__}.{Bootstrapper_required_python_version_inited.__name__}.{StateNode.eval_own_state.__name__}",
         return_value=test_python_version,
     )
     @patch(
@@ -124,10 +131,15 @@ class TestEnvContext(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{Bootstrapper_state_local_cache_dir_abs_path_inited.__name__}.{StateNode.eval_own_state.__name__}",
         return_value="/tmp",
     )
+    @patch(
+        f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.{StateNode.eval_own_state.__name__}",
+        return_value="/tmp/venv",
+    )
     @patch("subprocess.check_call")
     def test_init_with_uv(
         self,
         mock_check_call,
+        mock_state_local_venv_dir_abs_path_inited,
         mock_state_local_cache_dir_abs_path_inited,
         mock_state_env_conf_file_data_loaded,
         mock_state_client_conf_file_data_loaded,
@@ -160,7 +172,7 @@ class TestEnvContext(BasePyfakefsTestClass):
         new=mock_get_python_version_by_current,
     )
     @patch(
-        "protoprimer.primer_kernel.Bootstrapper_required_python_version_inited.eval_own_state",
+        f"{primer_kernel.__name__}.{Bootstrapper_required_python_version_inited.__name__}.{StateNode.eval_own_state.__name__}",
         return_value=test_python_version,
     )
     @patch(
@@ -183,8 +195,13 @@ class TestEnvContext(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{Bootstrapper_state_local_cache_dir_abs_path_inited.__name__}.{StateNode.eval_own_state.__name__}",
         return_value="/tmp",
     )
+    @patch(
+        f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.{StateNode.eval_own_state.__name__}",
+        return_value="/tmp/venv",
+    )
     def test_init_without_uv(
         self,
+        mock_state_local_venv_dir_abs_path_inited,
         mock_state_local_cache_dir_abs_path_inited,
         mock_state_env_conf_file_data_loaded,
         mock_state_client_conf_file_data_loaded,

@@ -49,7 +49,7 @@ leap_env = (
         "required_python_version": "{test_python_version}",
         \n\
         {TermColor.config_missing.value}# This local environment-specific field overrides the global one (see description in `leap_client`).{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# "selected_python_file_abs_path": None,{TermColor.reset_style.value}
+        {TermColor.config_missing.value}# "python_selector_file_rel_path": None,{TermColor.reset_style.value}
         \n\
         {TermColor.config_missing.value}# This local environment-specific field overrides the global one (see description in `leap_client`).{TermColor.reset_style.value}
         {TermColor.config_missing.value}# "local_venv_dir_rel_path": None,{TermColor.reset_style.value}
@@ -115,7 +115,7 @@ leap_env = (
         {TermColor.config_missing.value}# "required_python_version": None,{TermColor.reset_style.value}
         \n\
         {TermColor.config_missing.value}# This local environment-specific field overrides the global one (see description in `leap_client`).{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# "selected_python_file_abs_path": None,{TermColor.reset_style.value}
+        {TermColor.config_missing.value}# "python_selector_file_rel_path": None,{TermColor.reset_style.value}
         \n\
         {TermColor.config_missing.value}# This local environment-specific field overrides the global one (see description in `leap_client`).{TermColor.reset_style.value}
         {TermColor.config_missing.value}# "local_venv_dir_rel_path": None,{TermColor.reset_style.value}

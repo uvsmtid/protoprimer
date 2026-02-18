@@ -1,6 +1,5 @@
 import os
 import subprocess
-import venv
 from unittest.mock import (
     patch,
 )
@@ -24,15 +23,23 @@ def test_relationship():
 
 @patch(f"{primer_kernel.__name__}.subprocess.check_call")
 def test_create_venv(mock_check_call):
+
     # given:
-    install_driver = VenvDriverPip("/tmp/python", test_python_version)
+
     venv_dir_abs_path = "/tmp/test_venv"
     python_path = "/tmp/python"
+    install_driver = VenvDriverPip(
+        required_python_version=test_python_version,
+        selected_python_file_abs_path=python_path,
+        state_local_venv_dir_abs_path_inited=venv_dir_abs_path,
+    )
 
     # when:
+
     install_driver.create_venv(venv_dir_abs_path)
 
     # then:
+
     assert mock_check_call.call_count == 2
     mock_check_call.assert_any_call(
         [
@@ -56,10 +63,16 @@ def test_create_venv(mock_check_call):
 
 @patch(f"{subprocess.__name__}.{subprocess.check_call.__name__}")
 def test_install_dependencies(mock_subprocess_check_call):
+
     # given:
-    install_driver = VenvDriverPip("/tmp/python", test_python_version)
+
     ref_root_dir_abs_path = "/tmp"
     selected_python_file_abs_path = "/tmp/test_venv/bin/python"
+    install_driver = VenvDriverPip(
+        required_python_version=test_python_version,
+        selected_python_file_abs_path=selected_python_file_abs_path,
+        state_local_venv_dir_abs_path_inited="/tmp/venv",
+    )
     constraints_file_abs_path = "/tmp/constraints.txt"
     project_descriptors = [
         {
@@ -73,14 +86,16 @@ def test_install_dependencies(mock_subprocess_check_call):
     ]
 
     # when:
+
     install_driver.install_dependencies(
         ref_root_dir_abs_path=ref_root_dir_abs_path,
-        selected_python_file_abs_path=selected_python_file_abs_path,
+        venv_python_file_abs_path=selected_python_file_abs_path,
         constraints_file_abs_path=constraints_file_abs_path,
         project_descriptors=project_descriptors,
     )
 
     # then:
+
     mock_subprocess_check_call.assert_called_once_with(
         [
             selected_python_file_abs_path,
@@ -99,43 +114,70 @@ def test_install_dependencies(mock_subprocess_check_call):
 
 @patch("protoprimer.primer_kernel.get_venv_type")
 def test_is_mine_venv_when_pip_venv(mock_get_venv_type):
-    # given
-    driver = VenvDriverPip("/tmp/python", test_python_version)
+
+    # given:
+
     venv_path = "/fake/venv"
+
+    install_driver = VenvDriverPip(
+        required_python_version=test_python_version,
+        selected_python_file_abs_path="/tmp/python",
+        state_local_venv_dir_abs_path_inited=venv_path,
+    )
+
     mock_get_venv_type.return_value = primer_kernel.VenvDriverType.venv_pip
 
-    # when
-    result = driver.is_mine_venv(venv_path)
+    # when:
 
-    # then
+    result = install_driver.is_mine_venv(venv_path)
+
+    # then:
+
     mock_get_venv_type.assert_called_once_with(venv_path)
     assert result is True
 
 
 @patch("protoprimer.primer_kernel.get_venv_type")
 def test_is_mine_venv_when_uv_venv(mock_get_venv_type):
-    # given
-    driver = VenvDriverPip("/tmp/python", test_python_version)
+
+    # given:
+
+    install_driver = VenvDriverPip(
+        required_python_version=test_python_version,
+        selected_python_file_abs_path="/tmp/python",
+        state_local_venv_dir_abs_path_inited="/tmp/venv",
+    )
+
     venv_path = "/fake/venv"
     mock_get_venv_type.return_value = primer_kernel.VenvDriverType.venv_uv
 
-    # when
-    result = driver.is_mine_venv(venv_path)
+    # when:
 
-    # then
+    result = install_driver.is_mine_venv(venv_path)
+
+    # then:
+
     mock_get_venv_type.assert_called_once_with(venv_path)
     assert result is False
 
 
 @patch("os.path.exists")
 def test_is_mine_venv_when_cfg_not_exists(mock_exists):
-    # given
-    driver = VenvDriverPip("/tmp/python", test_python_version)
+
+    # given:
+
+    install_driver = VenvDriverPip(
+        required_python_version=test_python_version,
+        selected_python_file_abs_path="/tmp/python",
+        state_local_venv_dir_abs_path_inited="/tmp/venv",
+    )
+
     venv_path = "/fake/venv"
     cfg_path = os.path.join(venv_path, "pyvenv.cfg")
     mock_exists.return_value = False
 
-    # when/then
+    # when/then:
+
     with pytest.raises(AssertionError):
-        driver.is_mine_venv(venv_path)
+        install_driver.is_mine_venv(venv_path)
     mock_exists.assert_called_once_with(cfg_path)

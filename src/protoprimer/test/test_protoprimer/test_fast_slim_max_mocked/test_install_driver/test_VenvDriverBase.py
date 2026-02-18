@@ -24,12 +24,10 @@ class VenvDriverConcrete(VenvDriverBase):
     def _create_venv_impl(self, local_venv_dir_abs_path: str) -> None:
         pass
 
-    def get_install_dependencies_cmd(
-        self, selected_python_file_abs_path: str
-    ) -> List[str]:
+    def get_install_dependencies_cmd(self, venv_python_file_abs_path: str) -> List[str]:
         return []
 
-    def _get_pin_versions_cmd(self, selected_python_file_abs_path: str) -> List[str]:
+    def _get_pin_versions_cmd(self, venv_python_file_abs_path: str) -> List[str]:
         return []
 
 
@@ -63,7 +61,7 @@ def test_venv_driver_base_install_dependencies(mock_check_call, mock_get_cmd_bas
     # when:
     driver.install_dependencies(
         ref_root_dir_abs_path="/ref",
-        selected_python_file_abs_path="python_path",
+        venv_python_file_abs_path="python_path",
         constraints_file_abs_path="constraints_path",
         project_descriptors=[
             {
@@ -122,7 +120,7 @@ def test_venv_driver_base_install_dependencies_no_extras(
     # when:
     driver.install_dependencies(
         ref_root_dir_abs_path="/ref",
-        selected_python_file_abs_path="python_path",
+        venv_python_file_abs_path="python_path",
         constraints_file_abs_path="constraints_path",
         project_descriptors=[
             {

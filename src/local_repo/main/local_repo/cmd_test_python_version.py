@@ -39,16 +39,15 @@ def custom_main():
                 "apt-get install -y git",
             ]
         )
-    container_commands_list.extend(
-        [
-            # TODO: FT_48_62_07_98.config_format.md:
-            #       After moving to `*.py` config files, add comment to ref back to this script why this config exists:
-            # TODO: TODO_03_47_85_89.implement_python_selection.md:
-            f"./prime --env dst/test_python_{parsed_args.python}",
-        ]
-    )
     if not parsed_args.shell:
-        container_commands_list.append("./venv/bin/pytest")
+        container_commands_list.extend(
+            [
+                # TODO: FT_48_62_07_98.config_format.md:
+                #       After moving to `*.py` config files, add comment to ref back to this script why this config exists:
+                f"./prime -vvv --env dst/test_python_{parsed_args.python}",
+                "./venv/bin/pytest",
+            ]
+        )
     container_commands = " && ".join(container_commands_list)
     if parsed_args.test_file:
         container_commands = f"{container_commands} {parsed_args.test_file}"

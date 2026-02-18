@@ -11,11 +11,13 @@ from local_doc import (
 )
 from local_test.case_condition import is_min_python
 from local_test.integrated_helper import (
+    convert_test_python_version,
     create_conf_client_file,
     create_conf_env_file,
     create_conf_primer_file,
     create_plain_proto_code,
     create_test_pyproject_toml,
+    create_test_python_selector,
     switch_to_ref_root_abs_path,
     test_pyproject_src_dir_rel_path,
 )
@@ -24,11 +26,13 @@ from protoprimer.primer_kernel import (
     ConfConstGeneral,
     ConfConstInput,
     ConfConstPrimer,
+    EnvVar,
     KeyWord,
+    RunMode,
+    SyntaxArg,
     VenvDriverBase,
     VenvDriverPip,
     VenvDriverUv,
-    RunMode,
 )
 from protoprimer.proto_generator import generate_entry_script_content
 
@@ -49,8 +53,9 @@ def test_python_from_arbitrary_venv_with_app_starter(
     # An arbitrary venv to start from:
     arbitrary_venv_dir = ref_root_abs_path / "arbitrary_venv"
     venv_driver = VenvDriverPip(
-        sys.executable,
-        platform.python_version(),
+        required_python_version=platform.python_version(),
+        selected_python_file_abs_path=sys.executable,
+        state_local_venv_dir_abs_path_inited=str(arbitrary_venv_dir),
     )
     venv_driver.create_venv(str(arbitrary_venv_dir))
     arbitrary_venv_python = (
@@ -189,17 +194,36 @@ def test_python_from_required_venv_with_app_starter(
     venv_driver: VenvDriverBase
     if is_min_python():
         venv_driver = VenvDriverPip(
-            sys.executable,
-            platform.python_version(),
+            required_python_version=platform.python_version(),
+            selected_python_file_abs_path=sys.executable,
+            state_local_venv_dir_abs_path_inited=str(required_venv_dir_abs_path),
         )
     else:
         venv_driver = VenvDriverUv(
-            platform.python_version(),
-            str(ref_root_abs_path / KeyWord.key_var.value / KeyWord.key_cache.value),
+            required_python_version=convert_test_python_version(
+                platform.python_version()
+            ),
+            selected_python_file_abs_path=sys.executable,
+            state_local_venv_dir_abs_path_inited=str(required_venv_dir_abs_path),
+            state_local_cache_dir_abs_path_inited=str(
+                ref_root_abs_path / KeyWord.key_var.value / KeyWord.key_cache.value
+            ),
         )
     venv_driver.create_venv(str(required_venv_dir_abs_path))
     required_venv_python = (
         required_venv_dir_abs_path / ConfConstGeneral.file_rel_path_venv_python
+    )
+
+    # === create `python` selector (see FT_72_45_12_06.python_executable.md)
+
+    python_version: str = f"{sys.version_info.major}.{sys.version_info.minor}"
+    python_selector_rel_path: pathlib.Path = pathlib.Path(
+        f"test_python_selector_py{python_version}.py"
+    )
+    create_test_python_selector(
+        ref_root_abs_path,
+        python_selector_rel_path,
+        python_version,
     )
 
     # === create `ConfLeap.leap_primer`
@@ -233,6 +257,7 @@ def test_python_from_required_venv_with_app_starter(
         project_dir_abs_path,
         python_abs_path=base_python_executable,
         venv_dir_rel_path=required_venv_dir_rel_path,
+        python_selector_rel_path=python_selector_rel_path,
     )
 
     # === create `ConfLeap.leap_client`

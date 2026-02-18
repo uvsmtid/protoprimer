@@ -173,6 +173,11 @@ class StateName(enum.Enum):
         NameCategory.category_value_field_action,
     )
 
+    state_python_selector_file_abs_path_inited = StateMeta(
+        EnvState.state_python_selector_file_abs_path_inited,
+        NameCategory.category_path_value,
+    )
+
     state_selected_python_file_abs_path_inited = StateMeta(
         EnvState.state_selected_python_file_abs_path_inited,
         NameCategory.category_path_value,

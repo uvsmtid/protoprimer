@@ -8,12 +8,15 @@ def test_relationship():
 
 
 def test_generate_entry_script_content_no_env_vars():
+
     # given:
+
     module_name = "my_module"
     func_name = "my_func"
 
     # when:
-    result = generate_entry_script_content(
+
+    generated_content = generate_entry_script_content(
         RunMode.mode_prime.value,
         "/dummy/path/proto_kernel.py",
         "/dummy/path/entry.py",
@@ -22,17 +25,21 @@ def test_generate_entry_script_content_no_env_vars():
     )
 
     # then:
-    assert 'os.environ["' not in result
+
+    assert 'os.environ["' not in generated_content
 
 
 def test_generate_entry_script_content_with_env_vars():
+
     # given:
+
     module_name = "my_module"
     func_name = "my_func"
     env_vars = {"MY_VAR": "my_value"}
 
     # when:
-    result = generate_entry_script_content(
+
+    generated_content = generate_entry_script_content(
         RunMode.mode_prime.value,
         "/dummy/path/proto_kernel.py",
         "/dummy/path/entry.py",
@@ -42,4 +49,5 @@ def test_generate_entry_script_content_with_env_vars():
     )
 
     # then:
-    assert 'os.environ["MY_VAR"] = "my_value"' in result
+
+    assert 'os.environ["MY_VAR"] = "my_value"' in generated_content
