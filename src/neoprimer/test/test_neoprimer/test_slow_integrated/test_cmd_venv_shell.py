@@ -6,7 +6,6 @@ from local_repo.sub_proc_util import (
     get_command_code,
     get_command_output,
 )
-from local_test.case_condition import is_min_python
 from local_test.integrated_helper import (
     create_conf_client_file,
     create_conf_env_file,

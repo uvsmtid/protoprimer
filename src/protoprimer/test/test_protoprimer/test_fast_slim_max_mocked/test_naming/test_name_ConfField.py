@@ -60,14 +60,14 @@ class FieldName(enum.Enum):
         NameCategory.category_path_field,
     )
 
-    field_selected_python_file_abs_path = FieldMeta(
-        ConfField.field_selected_python_file_abs_path,
-        NameCategory.category_derived_path_field,
-    )
-
     field_required_python_version = FieldMeta(
         ConfField.field_required_python_version,
         NameCategory.category_value_field,
+    )
+
+    field_python_selector_file_rel_path = FieldMeta(
+        ConfField.field_python_selector_file_rel_path,
+        NameCategory.category_path_field,
     )
 
     field_local_venv_dir_rel_path = FieldMeta(

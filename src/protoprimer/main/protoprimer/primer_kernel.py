@@ -22,10 +22,12 @@ import json
 import logging
 import os
 import pathlib
+import re
 import shlex
 import shutil
 import subprocess
 import sys
+import types
 import typing
 from types import CodeType
 from typing import (
@@ -407,6 +409,8 @@ class PathName(enum.Enum):
 
     path_required_python = "required_python"
 
+    path_python_selector = "python_selector"
+
     path_selected_python = "selected_python"
 
     path_local_venv = "local_venv"
@@ -463,6 +467,16 @@ class SyntaxArg:
     arg_env = f"--{KeyWord.key_env.value}"
 
 
+class SelectorFunc(enum.Enum):
+    """
+    Lists selector functions (called from standalone `python` scripts).
+    """
+
+    # A function of this signature:
+    # def select_python_file_abs_path(required_version: tuple[int, int, int]) -> str | None:
+    select_python_file_abs_path = "select_python_file_abs_path"
+
+
 class ConfField(enum.Enum):
     """
     Lists all conf fields from persisted files for every `ConfLeap.*`.
@@ -499,8 +513,8 @@ class ConfField(enum.Enum):
         f"{PathName.path_required_python.value}_{ValueName.value_version.value}"
     )
 
-    # state_selected_python_file_abs_path_inited:
-    field_selected_python_file_abs_path = f"{PathName.path_selected_python.value}_{FilesystemObject.fs_object_file.value}_{PathType.path_abs.value}"
+    # state_python_selector_file_abs_path_inited:
+    field_python_selector_file_rel_path = f"{PathName.path_python_selector.value}_{FilesystemObject.fs_object_file.value}_{PathType.path_rel.value}"
 
     # state_local_venv_dir_abs_path_inited:
     field_local_venv_dir_rel_path = f"{PathName.path_local_venv.value}_{FilesystemObject.fs_object_dir.value}_{PathType.path_rel.value}"
@@ -585,7 +599,7 @@ class VenvDriverBase:
     def install_dependencies(
         self,
         ref_root_dir_abs_path: str,
-        selected_python_file_abs_path: str,
+        venv_python_file_abs_path: str,
         constraints_file_abs_path: str,
         project_descriptors: list[dict],
     ) -> None:
@@ -628,7 +642,7 @@ class VenvDriverBase:
                 )
 
         sub_proc_args = self.get_install_dependencies_cmd(
-            selected_python_file_abs_path,
+            venv_python_file_abs_path,
         )
         sub_proc_args.extend(
             [
@@ -645,13 +659,13 @@ class VenvDriverBase:
 
     def get_install_dependencies_cmd(
         self,
-        selected_python_file_abs_path: str,
+        venv_python_file_abs_path: str,
     ) -> list[str]:
         raise NotImplementedError()
 
     def pin_versions(
         self,
-        selected_python_file_abs_path: str,
+        venv_python_file_abs_path: str,
         constraints_file_abs_path: str,
     ) -> None:
         logger.info(
@@ -659,13 +673,13 @@ class VenvDriverBase:
         )
         with open(constraints_file_abs_path, "w") as f:
             subprocess.check_call(
-                self._get_pin_versions_cmd(selected_python_file_abs_path),
+                self._get_pin_versions_cmd(venv_python_file_abs_path),
                 stdout=f,
             )
 
     def _get_pin_versions_cmd(
         self,
-        selected_python_file_abs_path: str,
+        venv_python_file_abs_path: str,
     ) -> list[str]:
         raise NotImplementedError()
 
@@ -674,11 +688,15 @@ class VenvDriverPip(VenvDriverBase):
 
     def __init__(
         self,
-        selected_python_file_abs_path: str,
         required_python_version: str,
+        selected_python_file_abs_path: str,
+        state_local_venv_dir_abs_path_inited: str,
     ):
-        self.selected_python_file_abs_path: str = selected_python_file_abs_path
         self.required_python_version: str = required_python_version
+        self.selected_python_file_abs_path: str = selected_python_file_abs_path
+        self.state_local_venv_dir_abs_path_inited: str = (
+            state_local_venv_dir_abs_path_inited
+        )
 
     def get_type(
         self,
@@ -687,6 +705,7 @@ class VenvDriverPip(VenvDriverBase):
 
     def _create_venv_impl(
         self,
+        # TODO: Do we need this arg if we have `state_local_venv_dir_abs_path_inited`?
         local_venv_dir_abs_path: str,
     ) -> None:
         subprocess.check_call(
@@ -698,7 +717,10 @@ class VenvDriverPip(VenvDriverBase):
             ]
         )
         # Use the python executable within the created `venv`:
-        venv_python_executable = os.path.join(local_venv_dir_abs_path, "bin", "python")
+        venv_python_executable = os.path.join(
+            local_venv_dir_abs_path,
+            ConfConstGeneral.file_rel_path_venv_python,
+        )
         subprocess.check_call(
             [
                 venv_python_executable,
@@ -712,10 +734,11 @@ class VenvDriverPip(VenvDriverBase):
 
     def get_install_dependencies_cmd(
         self,
-        selected_python_file_abs_path: str,
+        # TODO: Do we need this arg if we have `state_local_venv_dir_abs_path_inited`?
+        venv_python_file_abs_path: str,
     ) -> list[str]:
         return [
-            selected_python_file_abs_path,
+            venv_python_file_abs_path,
             "-m",
             "pip",
             "install",
@@ -723,10 +746,11 @@ class VenvDriverPip(VenvDriverBase):
 
     def _get_pin_versions_cmd(
         self,
-        selected_python_file_abs_path: str,
+        # TODO: Do we need this arg if we have `state_local_venv_dir_abs_path_inited`?
+        venv_python_file_abs_path: str,
     ) -> list[str]:
         return [
-            selected_python_file_abs_path,
+            venv_python_file_abs_path,
             "-m",
             "pip",
             "freeze",
@@ -739,9 +763,15 @@ class VenvDriverUv(VenvDriverBase):
     def __init__(
         self,
         required_python_version: str,
+        selected_python_file_abs_path: str,
+        state_local_venv_dir_abs_path_inited: str,
         state_local_cache_dir_abs_path_inited: str,
     ):
         self.required_python_version: str = required_python_version
+        self.selected_python_file_abs_path: str = selected_python_file_abs_path
+        self.state_local_venv_dir_abs_path_inited: str = (
+            state_local_venv_dir_abs_path_inited
+        )
         self.uv_venv_abs_path: str = os.path.join(
             # TODO: make it relative to "cache/venv" specifically (instead of directly to "cache"):
             state_local_cache_dir_abs_path_inited,
@@ -753,6 +783,10 @@ class VenvDriverUv(VenvDriverBase):
             self.uv_venv_abs_path,
             ConfConstGeneral.file_rel_path_venv_uv,
         )
+        self.venv_python_file_abs_path: str = os.path.join(
+            self.state_local_venv_dir_abs_path_inited,
+            ConfConstGeneral.file_rel_path_venv_python,
+        )
 
     def get_type(
         self,
@@ -763,10 +797,13 @@ class VenvDriverUv(VenvDriverBase):
         if not os.path.exists(self.uv_exec_abs_path):
             # To use `VenvDriverType.venv_uv`, use `VenvDriverType.venv_pip` to install `uv` first:
             pip_driver = VenvDriverPip(
+                required_python_version=self.required_python_version,
                 # TODO: assert python version suitable for `uv` (because this `venv` will be used to install `uv).
                 # NOTE: Create this `venv` (to install `uv`) with whatever `python` runs now:
-                sys.executable,
-                self.required_python_version,
+                selected_python_file_abs_path=self.selected_python_file_abs_path,
+                # Instead of `self.state_local_venv_dir_abs_path_inited`,
+                # this intermediate driver uses ` self.uv_venv_abs_path`:
+                state_local_venv_dir_abs_path_inited=self.uv_venv_abs_path,
             )
             pip_driver.create_venv(
                 self.uv_venv_abs_path,
@@ -795,6 +832,7 @@ class VenvDriverUv(VenvDriverBase):
 
     def _create_venv_impl(
         self,
+        # TODO: Do we need this arg if we have `state_local_venv_dir_abs_path_inited`?
         local_venv_dir_abs_path: str,
     ) -> None:
 
@@ -821,7 +859,8 @@ class VenvDriverUv(VenvDriverBase):
 
     def get_install_dependencies_cmd(
         self,
-        selected_python_file_abs_path: str,
+        # TODO: Do we need this arg if we have `state_local_venv_dir_abs_path_inited`?
+        venv_python_file_abs_path: str,
     ) -> list[str]:
 
         self._ensure_uv_is_available()
@@ -831,12 +870,17 @@ class VenvDriverUv(VenvDriverBase):
             "pip",
             "install",
             "--python",
-            selected_python_file_abs_path,
+            # TODO: Clean up `venv_python_file_abs_path` arg:
+            # NOTE: Use simple relative path like `${venv_abs_path}/bin/python`.
+            #       The `venv_python_file_abs_path` arg passed to this function might be
+            #       a `python` exec path internal to `uv` which fails if used directly.
+            self.venv_python_file_abs_path,
         ]
 
     def _get_pin_versions_cmd(
         self,
-        selected_python_file_abs_path: str,
+        # TODO: Do we need this arg if we have `state_local_venv_dir_abs_path_inited`?
+        venv_python_file_abs_path: str,
     ) -> list[str]:
 
         self._ensure_uv_is_available()
@@ -847,7 +891,11 @@ class VenvDriverUv(VenvDriverBase):
             "freeze",
             "--exclude-editable",
             "--python",
-            selected_python_file_abs_path,
+            # TODO: Clean up `venv_python_file_abs_path` arg:
+            # NOTE: Use simple relative path like `${venv_abs_path}/bin/python`.
+            #       The `venv_python_file_abs_path` arg passed to this function might be
+            #       a `python` exec path internal to `uv` which fails if used directly.
+            self.venv_python_file_abs_path,
         ]
 
 
@@ -1041,6 +1089,7 @@ def _get_shell_driver(
     if shell_abs_path is None:
         # TODO: Implement `ShellDriverSh` using `/bin/sh` instead:
         logger.warning(f"env var `{var_shell}` is not set - assuming `bash` as default")
+        # TODO: How will work on Windows without `shutil`? And without POSIX shell?
         shell_abs_path = shutil.which("bash")
         shell_driver_type = ShellDriverBash
     elif os.path.basename(shell_abs_path) == ShellType.shell_bash.value:
@@ -1233,10 +1282,6 @@ class ConfConstEnv:
     Constants for FT_89_41_35_82.conf_leap.md / leap_env
     """
 
-    # TODO: TODO_03_47_85_89.implement_python_selection.md:
-    # TODO: This may not work everywhere:
-    default_file_abs_path_python = "python3"
-
     default_dir_rel_path_venv = "venv"
 
     default_dir_rel_path_log = "log"
@@ -1245,9 +1290,8 @@ class ConfConstEnv:
 
     default_dir_rel_path_cache = "cache"
 
-    # TODO: TODO_03_47_85_89.implement_python_selection.md:
     # NOTE: FT_84_11_73_28.supported_python_versions.md:
-    #       The default is `uv` only if it is supported by the required `python` version:
+    #       The default is `uv` only if it is supported by the selected `python` version:
     default_venv_driver = VenvDriverType.venv_uv.name
 
     default_project_descriptors = [
@@ -1306,7 +1350,7 @@ def _create_child_argparser(
         )
         parser_prime.add_argument(
             SyntaxArg.arg_e,
-            "--env",
+            SyntaxArg.arg_env,
             type=str,
             default=None,
             dest=ParsedArg.name_selected_env_dir.value,
@@ -2123,8 +2167,8 @@ class AbstractConfLeapNodeBuilder(ConfigBuilderVisitor):
 
         self._create_used_dict_field(
             dict_node=dict_node,
-            field_name=ConfField.field_selected_python_file_abs_path.value,
-            node_class=Node_field_selected_python_file_abs_path,
+            field_name=ConfField.field_python_selector_file_rel_path.value,
+            node_class=Node_field_python_selector_file_rel_path,
             conf_leap=conf_leap,
         )
 
@@ -2493,7 +2537,7 @@ class Node_field_required_python_version(AbstractValueNode[str]):
 
 
 # noinspection PyPep8Naming
-class Node_field_selected_python_file_abs_path(AbstractValueNode[str]):
+class Node_field_python_selector_file_rel_path(AbstractValueNode[str]):
 
     def __init__(
         self,
@@ -2505,8 +2549,8 @@ class Node_field_selected_python_file_abs_path(AbstractValueNode[str]):
         )
         if conf_leap == ConfLeap.leap_client:
             self.note_text = (
-                f"Field `{ConfField.field_selected_python_file_abs_path.value}` selects `python` version.\n"
-                f"The value specifies absolute path to `python` interpreter which is used to create `venv`.\n"
+                f"Field `{ConfField.field_python_selector_file_rel_path.value}` specifies rel path to `python` selector.\n"
+                f"The selector is a standalone script written in `python` which must implement `{SelectorFunc.select_python_file_abs_path.value}` function.\n"
                 f"{ConfConstGeneral.common_field_global_note}\n"
             )
         elif conf_leap == ConfLeap.leap_env:
@@ -2941,12 +2985,12 @@ class Builder_RootNode_derived(AbstractConfLeapNodeBuilder):
 
         field_node = self._create_used_dict_field(
             dict_node=dict_node,
-            field_name=EnvState.state_selected_python_file_abs_path_inited.name,
+            field_name=EnvState.state_python_selector_file_abs_path_inited.name,
             node_class=AbstractValueNode,
             conf_leap=conf_leap,
             **kwargs,
         )
-        field_node.note_text = f"{ConfConstGeneral.func_note_derived_based_on_common(ConfField.field_selected_python_file_abs_path.value)}\n"
+        field_node.note_text = f"{ConfConstGeneral.func_note_derived_based_on_common(ConfField.field_python_selector_file_rel_path.value)}\n"
 
         field_node = self._create_used_dict_field(
             dict_node=dict_node,
@@ -4428,21 +4472,16 @@ class Bootstrapper_state_selected_env_dir_rel_path_inited(
             state_ref_root_dir_abs_path_inited = self.eval_parent_state(
                 EnvState.state_ref_root_dir_abs_path_inited.name
             )
-            # ===
-            abs_path = os.path.join(
+            for base_dir_abs_path in [
                 state_ref_root_dir_abs_path_inited,
-                client_local_env_dir_any_path,
-            )
-            if os.path.isdir(abs_path):
-                return abs_path
-            # ===
-            abs_path = os.path.join(
                 os.getcwd(),
-                client_local_env_dir_any_path,
-            )
-            if os.path.isdir(abs_path):
-                return abs_path
-            # ===
+            ]:
+                abs_path = os.path.join(
+                    base_dir_abs_path,
+                    client_local_env_dir_any_path,
+                )
+                if os.path.isdir(abs_path):
+                    return abs_path
             raise AssertionError(
                 f"`{PathName.path_selected_env.value}` [{client_local_env_dir_any_path}] is relative to neither `{PathName.path_ref_root.value}` [{state_ref_root_dir_abs_path_inited}] nor curr dir [{os.getcwd()}]."
             )
@@ -4705,11 +4744,23 @@ class Bootstrapper_required_python_version_inited(
             ).strip()
 
         assert state_required_python_version_inited is not None
+        logger.debug(
+            f"raw `state_required_python_version_inited` [{state_required_python_version_inited}]"
+        )
+
+        # normalize:
+        python_version: tuple[int, int, int] = parse_python_version(
+            state_required_python_version_inited
+        )
+        state_required_python_version_inited = (
+            f"{python_version[0]}.{python_version[1]}.{python_version[2]}"
+        )
+
         return state_required_python_version_inited
 
 
 # noinspection PyPep8Naming
-class Bootstrapper_state_selected_python_file_abs_path_inited(
+class Bootstrapper_state_python_selector_file_abs_path_inited(
     AbstractOverriddenFieldCachingStateNode[str]
 ):
 
@@ -4727,6 +4778,56 @@ class Bootstrapper_state_selected_python_file_abs_path_inited(
             ],
             state_name=if_none(
                 state_name,
+                EnvState.state_python_selector_file_abs_path_inited.name,
+            ),
+        )
+
+    def _eval_state_once(
+        self,
+    ) -> ValueType:
+
+        python_selector_file_rel_path: str | None = (
+            self._get_overridden_value_or_default(
+                ConfField.field_python_selector_file_rel_path.value,
+                None,
+            )
+        )
+
+        state_python_selector_file_abs_path_inited: str | None
+        if python_selector_file_rel_path is not None:
+            state_ref_root_dir_abs_path_inited: str = self.eval_parent_state(
+                EnvState.state_ref_root_dir_abs_path_inited.name
+            )
+            state_python_selector_file_abs_path_inited = os.path.join(
+                state_ref_root_dir_abs_path_inited,
+                python_selector_file_rel_path,
+            )
+        else:
+            state_python_selector_file_abs_path_inited = None
+
+        return state_python_selector_file_abs_path_inited
+
+
+# noinspection PyPep8Naming
+class Bootstrapper_state_selected_python_file_abs_path_inited(
+    AbstractCachingStateNode[str]
+):
+
+    def __init__(
+        self,
+        env_ctx: EnvContext,
+        state_name: str | None = None,
+    ):
+        super().__init__(
+            env_ctx=env_ctx,
+            parent_states=[
+                EnvState.state_ref_root_dir_abs_path_inited.name,
+                EnvState.state_client_conf_file_data_loaded.name,
+                EnvState.state_required_python_version_inited.name,
+                EnvState.state_python_selector_file_abs_path_inited.name,
+            ],
+            state_name=if_none(
+                state_name,
                 EnvState.state_selected_python_file_abs_path_inited.name,
             ),
         )
@@ -4735,43 +4836,24 @@ class Bootstrapper_state_selected_python_file_abs_path_inited(
         self,
     ) -> ValueType:
 
-        state_selected_python_file_abs_path_inited: str = (
-            self._get_overridden_value_or_default(
-                ConfField.field_selected_python_file_abs_path.value,
-                # TODO: Do not use default values directly - resolve it differently at the prev|next step based on the need:
-                ConfConstEnv.default_file_abs_path_python,
-            )
+        state_python_selector_file_abs_path_inited: str | None = self.eval_parent_state(
+            EnvState.state_python_selector_file_abs_path_inited.name
         )
 
-        if not os.path.isabs(state_selected_python_file_abs_path_inited):
-            # TODO: TODO_03_47_85_89.implement_python_selection.md:
-            #       Regardless how the abs path is selected,
-            #       the `field_selected_python_file_abs_path` must remove `abs` from its name then.
+        state_required_python_version_inited: str = self.eval_parent_state(
+            EnvState.state_required_python_version_inited.name
+        )
 
-            path_obj = pathlib.Path(state_selected_python_file_abs_path_inited)
+        required_python_version: tuple[int, int, int] = parse_python_version(
+            state_required_python_version_inited
+        )
 
-            # If the path contains a separator (the path has more than one part):
-            has_separator: bool = len(path_obj.parts) > 1
-
-            if has_separator:
-                # TODO: TODO_03_47_85_89.implement_python_selection.md:
-                #       HACK: Really? Do we really want to allow specifying `python` using rel path?
-                state_selected_python_file_abs_path_inited = str(
-                    pathlib.Path(
-                        self.eval_parent_state(
-                            EnvState.state_ref_root_dir_abs_path_inited.name
-                        )
-                    )
-                    / path_obj
-                )
-            else:
-                # TODO: TODO_03_47_85_89.implement_python_selection.md:
-                # TODO: This will not work on Windows:
-                state_selected_python_file_abs_path_inited = shutil.which(str(path_obj))
-                if state_selected_python_file_abs_path_inited is None:
-                    raise AssertionError(
-                        f"Unable to find any executable in `PATH` for the basename [{str(path_obj)}]"
-                    )
+        state_selected_python_file_abs_path_inited: str | None = (
+            probe_python_file_abs_path(
+                state_python_selector_file_abs_path_inited,
+                required_python_version,
+            )
+        )
 
         return state_selected_python_file_abs_path_inited
 
@@ -5001,21 +5083,18 @@ class Bootstrapper_state_venv_driver_inited(
 
         # FT_84_11_73_28.supported_python_versions.md:
         uv_min_version: tuple[int, int, int] = (3, 8, 0)
-        required_version: tuple[int, int, int] = get_python_version(
+        selected_version: tuple[int, int, int] = get_python_version(
             state_selected_python_file_abs_path_inited
         )
 
         default_venv_driver: str
-        if required_version < uv_min_version:
+        if selected_version < uv_min_version:
             default_venv_driver = VenvDriverType.venv_pip.name
         else:
             default_venv_driver = ConfConstEnv.default_venv_driver
 
         state_venv_driver_inited: VenvDriverType
         if os.environ.get(EnvVar.var_PROTOPRIMER_VENV_DRIVER.value, None) is None:
-            # TODO: TODO_03_47_85_89.implement_python_selection.md
-            #       Default package driver must depend on the required python version.
-            #       This version has to be identified by running the selected `python` executable.
             state_venv_driver_inited = VenvDriverType[
                 self._get_overridden_value_or_default(
                     ConfField.field_venv_driver.value,
@@ -5028,11 +5107,11 @@ class Bootstrapper_state_venv_driver_inited(
             ]
 
         if (
-            required_version < uv_min_version
+            selected_version < uv_min_version
             and state_venv_driver_inited == VenvDriverType.venv_uv
         ):
             logger.warning(
-                f"Overriding package driver [{state_venv_driver_inited}] to [{VenvDriverType.venv_pip}] because required python [{required_version}] is below minimum required [{uv_min_version}] for [{VenvDriverType.venv_uv}]"
+                f"Overriding package driver [{state_venv_driver_inited}] to [{VenvDriverType.venv_pip}] because selected `python` version [{selected_version}] is below minimum required [{uv_min_version}] for [{VenvDriverType.venv_uv}]"
             )
             state_venv_driver_inited = VenvDriverType.venv_pip
 
@@ -5492,6 +5571,7 @@ class Bootstrapper_state_venv_driver_prepared(AbstractCachingStateNode[VenvDrive
                 EnvState.state_input_run_mode_arg_loaded.name,
                 EnvState.state_required_python_version_inited.name,
                 EnvState.state_selected_python_file_abs_path_inited.name,
+                EnvState.state_local_venv_dir_abs_path_inited.name,
                 EnvState.state_local_cache_dir_abs_path_inited.name,
                 EnvState.state_venv_driver_inited.name,
                 EnvState.state_reinstall_triggered.name,
@@ -5524,6 +5604,10 @@ class Bootstrapper_state_venv_driver_prepared(AbstractCachingStateNode[VenvDrive
             EnvState.state_selected_python_file_abs_path_inited.name
         )
 
+        state_local_venv_dir_abs_path_inited: str = self.eval_parent_state(
+            EnvState.state_local_venv_dir_abs_path_inited.name
+        )
+
         state_venv_driver_inited: VenvDriverType = self.eval_parent_state(
             EnvState.state_venv_driver_inited.name
         )
@@ -5536,6 +5620,8 @@ class Bootstrapper_state_venv_driver_prepared(AbstractCachingStateNode[VenvDrive
         if VenvDriverType.venv_uv == state_venv_driver_inited:
             venv_driver = VenvDriverUv(
                 required_python_version=state_required_python_version_inited,
+                selected_python_file_abs_path=state_selected_python_file_abs_path_inited,
+                state_local_venv_dir_abs_path_inited=state_local_venv_dir_abs_path_inited,
                 state_local_cache_dir_abs_path_inited=state_local_cache_dir_abs_path_inited,
             )
         elif VenvDriverType.venv_pip == state_venv_driver_inited:
@@ -5544,6 +5630,7 @@ class Bootstrapper_state_venv_driver_prepared(AbstractCachingStateNode[VenvDrive
             venv_driver = VenvDriverPip(
                 required_python_version=state_required_python_version_inited,
                 selected_python_file_abs_path=state_selected_python_file_abs_path_inited,
+                state_local_venv_dir_abs_path_inited=state_local_venv_dir_abs_path_inited,
             )
         else:
             raise AssertionError(
@@ -5647,9 +5734,12 @@ class Bootstrapper_state_stride_py_venv_reached(AbstractCachingStateNode[StateSt
                 # Skip required `python` validation because we do not need it to create `venv`:
                 pass
             else:
-                if path_to_curr_python != state_selected_python_file_abs_path_inited:
+                if not is_same_file(
+                    path_to_curr_python,
+                    state_selected_python_file_abs_path_inited,
+                ):
                     raise AssertionError(
-                        f"Current `python` [{path_to_curr_python}] must match the required one [{state_selected_python_file_abs_path_inited}]."
+                        f"Current `python` [{path_to_curr_python}] must point to the same file as the selected one [{state_selected_python_file_abs_path_inited}]."
                     )
 
         assert self.env_ctx.get_stride().value <= StateStride.stride_py_required.value
@@ -6288,6 +6378,10 @@ class EnvState(enum.Enum):
     state_env_conf_file_data_loaded = Bootstrapper_state_env_conf_file_data_loaded
 
     state_required_python_version_inited = Bootstrapper_required_python_version_inited
+
+    state_python_selector_file_abs_path_inited = (
+        Bootstrapper_state_python_selector_file_abs_path_inited
+    )
 
     state_selected_python_file_abs_path_inited = (
         Bootstrapper_state_selected_python_file_abs_path_inited
@@ -6993,9 +7087,19 @@ def rel_path(
     target_any_path: str,
     source_any_path: str,
 ) -> str:
+    """
+    `PurePath` compares `str` paths (without looking at the filesystem or resolving symlinks).
+    """
     return str(
         pathlib.PurePath(target_any_path).relative_to(pathlib.PurePath(source_any_path))
     )
+
+
+def is_same_file(
+    l_abs_path: str,
+    r_abs_path: str,
+) -> bool:
+    return pathlib.Path(l_abs_path).samefile(pathlib.Path(r_abs_path))
 
 
 def get_path_to_curr_python() -> str:
@@ -7179,7 +7283,169 @@ def get_python_version(path_to_python: str) -> tuple[int, int, int]:
     ]
     cmd_output: str = subprocess.check_output(cmd_args, universal_newlines=True)
     python_version: tuple[int, int, int] = ast.literal_eval(cmd_output.strip())
+    assert (
+        isinstance(python_version, tuple)
+        and len(python_version) == 3
+        and all(isinstance(i, int) for i in python_version)
+    ), f"invalid `python` version format: {python_version}"
     return python_version
+
+
+# noinspection PyTypeChecker
+def parse_python_version(python_version: str) -> tuple[int, int, int]:
+    """
+    Converts a version `str` version "X.Y.Z" into a `tuple` of integers (X, Y, Z) handling:
+    *   "3.13.4-beta" -> (3.13.4)
+    *   "3" -> (3.0.0)
+    """
+    version_parts: tuple[str, str, str] = tuple(
+        (python_version.split(".") + ["0", "0", "0"])[:3]
+    )
+    version_tuple: tuple[int, int, int] = tuple(
+        int(re.search(r"\d+", version_part).group())
+        for version_part in version_parts
+        if re.search(r"\d+", version_part)
+    )
+    return version_tuple
+
+
+def import_proto_module(
+    proto_module_name: str,
+    proto_module_abs_path: str,
+) -> types.ModuleType:
+    """
+    Import a module from an absolute path.
+    """
+
+    module_spec = importlib.util.spec_from_file_location(
+        proto_module_name,
+        proto_module_abs_path,
+    )
+    loaded_proto_module: types.ModuleType = importlib.util.module_from_spec(module_spec)
+    module_spec.loader.exec_module(loaded_proto_module)
+    return loaded_proto_module
+
+
+def select_python_file_abs_path(
+    required_version: tuple[int, int, int],
+    state_python_selector_file_abs_path_inited: str,
+) -> str | None:
+    """
+    Run the `python` selector script specified in `ConfField.field_python_selector_file_rel_path`.
+    """
+
+    # TODO: use constants:
+    proto_module_name: str = "python_selector_module"
+    python_selector_module = import_proto_module(
+        proto_module_name,
+        state_python_selector_file_abs_path_inited,
+    )
+
+    external_select_python_file_abs_path = getattr(
+        python_selector_module,
+        SelectorFunc.select_python_file_abs_path.value,
+    )
+
+    logger.debug(
+        f"running `{SelectorFunc.select_python_file_abs_path.value}` from `{proto_module_name}`"
+    )
+    selected_python_abs_path: str | None = external_select_python_file_abs_path(
+        required_version
+    )
+    logger.debug(
+        f"returned `selected_python_abs_path` value [{selected_python_abs_path}]"
+    )
+
+    if selected_python_abs_path is not None:
+        assert isinstance(selected_python_abs_path, str)
+        try:
+            logger.debug(
+                f"trying `python` version of `selected_python_abs_path` [{selected_python_abs_path}]"
+            )
+            python_version: tuple[int, int, int] = get_python_version(
+                selected_python_abs_path
+            )
+            logger.info(
+                f"`python` version of `selected_python_abs_path` [{selected_python_abs_path}] is [{python_version}]"
+            )
+        except (subprocess.CalledProcessError, FileNotFoundError):
+            logger.warning(
+                f"`python` in `selected_python_abs_path` [{selected_python_abs_path}] failed without returning its version"
+            )
+            selected_python_abs_path = None
+
+    return selected_python_abs_path
+
+
+def search_python_file_abs_path_by_basename(
+    required_version: tuple[int, int, int],
+) -> str | None:
+    """
+    Use `required_version` tuple formatted as (X, Y, Z) to try each basename (in that order):
+    *   `pythonX.Y.Z`
+    *   `pythonX.Y`
+    *   `pythonX`
+    *   `python`
+    Return the abs path of the first basename found in `PATH` (e.g. via `shutil.which(...)`).
+    The which also succeeds when invoked with the `--version` option.
+    """
+    (
+        ver_x,
+        ver_y,
+        ver_z,
+    ) = required_version
+    python_basenames = [
+        f"python{ver_x}.{ver_y}.{ver_z}",
+        f"python{ver_x}.{ver_y}",
+        f"python{ver_x}",
+        f"python",
+    ]
+    for python_basename in python_basenames:
+        logger.debug(f"trying `python_basename` [{python_basename}]")
+        # TODO: This will not work on Windows:
+        python_abs_path = shutil.which(python_basename)
+        if python_abs_path is not None:
+            try:
+                logger.debug(
+                    f"checking version of `python_abs_path` [{python_abs_path}]"
+                )
+                python_version: tuple[int, int, int] = get_python_version(
+                    python_abs_path
+                )
+                logger.info(
+                    f"`python_abs_path` [{python_abs_path}] returned its version [{python_version}]"
+                )
+                return python_abs_path
+            except (subprocess.CalledProcessError, FileNotFoundError):
+                logger.warning(
+                    f"`python_abs_path` [{python_abs_path}] failed without returning its version"
+                )
+                continue
+    return None
+
+
+def probe_python_file_abs_path(
+    state_python_selector_file_abs_path_inited: str | None,
+    state_required_python_version_inited: tuple[int, int, int],
+) -> str | None:
+    """
+    Tries to select python via the selector script, falls back to search by basename.
+    """
+
+    selected_python_file_abs_path: str | None
+    if state_python_selector_file_abs_path_inited is not None:
+        selected_python_file_abs_path = select_python_file_abs_path(
+            state_required_python_version_inited,
+            state_python_selector_file_abs_path_inited,
+        )
+    else:
+        selected_python_file_abs_path = None
+
+    if selected_python_file_abs_path is None:
+        selected_python_file_abs_path = search_python_file_abs_path_by_basename(
+            state_required_python_version_inited,
+        )
+    return selected_python_file_abs_path
 
 
 def log_python_context(log_level: int = logging.INFO):

@@ -21,6 +21,7 @@ from protoprimer.primer_kernel import (
     ConfConstPrimer,
     ConfField,
     TopDir,
+    parse_python_version,
     write_json_file,
     write_text_file,
 )
@@ -30,6 +31,35 @@ logger = logging.getLogger()
 test_pyproject_src_dir_rel_path = "pyproject_src"
 test_package_name = "test_whatever"
 test_python_version = "3.10"
+test_python_abs_path = "/test/python"
+
+
+def convert_test_python_version(python_version_str: str) -> str:
+    """
+    It turns out `uv` may not have all `python` versions available for download which fails integration tests.
+
+    This function adjusts version `X.Y.Z` to `X.Y.P` where `P` makes it available for download.
+
+    Use this function only as an input to generate test config files.
+    """
+
+    python_version_tuple: tuple[int, int, int] = parse_python_version(
+        python_version_str
+    )
+
+    (
+        major_version,
+        minor_version,
+        patch_level,
+    ) = python_version_tuple
+
+    # FT_84_11_73_28.supported_python_versions.md:
+    if (3, 14) <= (major_version, minor_version) < (3, 15):
+        python_version_tuple = (3, 14, 0)
+
+    return (
+        f"{python_version_tuple[0]}.{python_version_tuple[1]}.{python_version_tuple[2]}"
+    )
 
 
 def switch_to_ref_root_abs_path(tmp_path: pathlib.Path) -> pathlib.Path:
@@ -134,6 +164,32 @@ def create_test_pyproject_toml(
     )
 
 
+def create_test_python_selector(
+    ref_root_abs_path: pathlib.Path,
+    python_selector_rel_path: pathlib.Path,
+    python_version: str,
+) -> None:
+    """
+    Creates a test python selector script.
+
+    See: FT_72_45_12_06.python_executable.md
+    """
+    python_selector_abs_path = ref_root_abs_path / python_selector_rel_path
+    python_selector_abs_path.parent.mkdir(parents=True, exist_ok=True)
+    write_text_file(
+        str(python_selector_abs_path),
+        f"""\
+from __future__ import annotations
+
+import shutil
+
+
+def select_python_file_abs_path(required_version: tuple[int, int, int]) -> str | None:
+    return shutil.which("python{python_version}")
+""",
+    )
+
+
 def create_conf_primer_file(
     ref_root_abs_path: pathlib.Path,
     proto_code_dir_abs_path: pathlib.Path,
@@ -223,6 +279,7 @@ def create_conf_env_file(
     python_abs_path: Union[str, None] = None,
     venv_dir_rel_path: Union[str, None] = None,
     required_python_version: str = test_python_version,
+    python_selector_rel_path: pathlib.Path = None,
 ) -> None:
     if python_abs_path is None:
         python_abs_path = sys.executable
@@ -234,23 +291,35 @@ def create_conf_env_file(
         ref_root_abs_path,
     )
 
-    env_conf_data = {
-        ConfField.field_required_python_version.value: required_python_version,
-        ConfField.field_selected_python_file_abs_path.value: python_abs_path,
-        ConfField.field_local_venv_dir_rel_path.value: venv_dir_rel_path,
-        # NOTE: Not specifying `ConfField.field_venv_driver.value` - it will be (automatic):
-        #       *   `VenvDriverType.venv_pip` for `python` version < 3.8
-        #       *   `VenvDriverType.venv_uv` for `python` version >= 3.8
-        # ConfField.field_venv_driver.value: VenvDriverType.venv_pip.name,
-        ConfField.field_project_descriptors.value: [
+    env_conf_data = {}
+
+    if python_selector_rel_path is not None:
+        env_conf_data.update(
             {
-                ConfField.field_build_root_dir_rel_path.value: str(
-                    project_dir_rel_path
+                ConfField.field_python_selector_file_rel_path.value: str(
+                    python_selector_rel_path
                 ),
-                ConfField.field_install_extras.value: [],
-            },
-        ],
-    }
+            }
+        )
+
+    env_conf_data.update(
+        {
+            ConfField.field_required_python_version.value: required_python_version,
+            ConfField.field_local_venv_dir_rel_path.value: venv_dir_rel_path,
+            # NOTE: Not specifying `ConfField.field_venv_driver.value` - it will be (automatic):
+            #       *   `VenvDriverType.venv_pip` for `python` version < 3.8
+            #       *   `VenvDriverType.venv_uv` for `python` version >= 3.8
+            # ConfField.field_venv_driver.value: VenvDriverType.venv_pip.name,
+            ConfField.field_project_descriptors.value: [
+                {
+                    ConfField.field_build_root_dir_rel_path.value: str(
+                        project_dir_rel_path
+                    ),
+                    ConfField.field_install_extras.value: [],
+                },
+            ],
+        }
+    )
 
     conf_env_dir_abs_path.mkdir(parents=True, exist_ok=True)
 

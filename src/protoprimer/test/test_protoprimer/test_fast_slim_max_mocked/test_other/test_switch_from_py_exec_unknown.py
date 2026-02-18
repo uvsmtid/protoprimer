@@ -7,7 +7,6 @@ from local_test.fat_mocked_helper import clean_up_pyfakefs_file_log_handlers
 from local_test.integrated_helper import test_python_version
 from local_test.mock_subprocess import (
     mock_get_python_version_by_current,
-    mock_shutil_which_python,
 )
 from local_test.name_assertion import assert_test_func_name_embeds_str
 from protoprimer import primer_kernel
@@ -40,7 +39,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.get_python_version",
         new=mock_get_python_version_by_current,
     )
-    @patch("shutil.which", new=mock_shutil_which_python)
+    @patch(f"{primer_kernel.__name__}.probe_python_file_abs_path")
     @patch(
         f"{primer_kernel.__name__}.get_default_start_id", return_value="mock_start_id"
     )
@@ -53,8 +52,10 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_execve,
         mock_state_proto_code_file_abs_path_inited,
         mock_get_default_start_id,
+        mock_probe_python_file_abs_path,
     ):
-        expected_python_path = mock_shutil_which_python("python3")
+        expected_python_path = "/mock/python"
+        mock_probe_python_file_abs_path.return_value = expected_python_path
         assert_test_func_name_embeds_str(StateStride.stride_py_unknown.name)
 
         # given:
@@ -98,7 +99,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         env_conf_data = {
             ConfField.field_required_python_version.value: test_python_version,
-            ConfField.field_selected_python_file_abs_path.value: ConfConstEnv.default_file_abs_path_python,
+            ConfField.field_python_selector_file_rel_path.value: "path/to/test_python_selector.py",
             ConfField.field_local_venv_dir_rel_path.value: ConfConstEnv.default_dir_rel_path_venv,
             ConfField.field_project_descriptors.value: ConfConstEnv.default_project_descriptors,
         }

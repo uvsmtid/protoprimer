@@ -3,6 +3,7 @@ import os
 from unittest.mock import patch
 
 from local_test.base_test_class import BasePyfakefsTestClass
+from local_test.integrated_helper import test_python_abs_path
 from local_test.mock_verifier import (
     assert_parent_states_mocked,
 )
@@ -59,7 +60,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     def test_assumptions_used_in_other_tests(self):
         self.assertNotEqual(
             non_default_file_abs_path_python,
-            ConfConstEnv.default_file_abs_path_python,
+            test_python_abs_path,
         )
 
     ####################################################################################################################
@@ -96,7 +97,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     )
     @patch(
         f"{primer_kernel.__name__}.get_path_to_curr_python",
-        return_value=ConfConstEnv.default_file_abs_path_python,
+        return_value=test_python_abs_path,
     )
     @patch(f"{primer_kernel.__name__}.os.execve")
     @patch(f"{primer_kernel.__name__}.subprocess.check_call")
@@ -192,7 +193,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     )
     @patch(
         f"{primer_kernel.__name__}.get_path_to_curr_python",
-        return_value=ConfConstEnv.default_file_abs_path_python,
+        return_value=test_python_abs_path,
     )
     @patch(f"{primer_kernel.__name__}.os.execve")
     @patch(f"{primer_kernel.__name__}.subprocess.check_call")
