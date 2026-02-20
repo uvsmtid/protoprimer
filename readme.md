@@ -14,44 +14,51 @@ TODO: Use links to FC/UC docs under `./doc` (when ready) from this readme to nav
 
 # `protoprimer`
 
-Want your users to run software straight from a `git` repo with just one command and zero arguments?
+Want your users to run software straight from a `git` repo with a single, zero-argument, healing command?
 
 ```sh
 ./prime
 ```
 
-`protoprimer` is the bootstrapper that eliminates the growth of fragile `shell` scripts:
-*   not a binary but a text = a copyable standalone `python` script to live inside a hosting repo
-*   starts with any `python` version, finishes in isolated `venv` with pinned dependencies
-*   `env_bootstrapper` API follows an extensible DAG to set up things in one shot
-*   `app_starter` API starts `some_main` function without explicit `venv` activation
-*   handles multiple environments with different configs
+<details>
+<summary><code>protoprimer</code> is the bootstrapper that eliminates the growth of fragile <code>shell</code> scripts:</summary>
+
+<br>
+
+*   not a binary but **a text** - a transparent, standalone `python` script that lives inside your repo
+*   starts with **"wild"** `python` - hands over with required `python` in an isolated `venv` with pinned dependencies
+*   handles multiple target environments with basic configs to take off in different directions
+*   an extensible bootstrap DAG to handle it all **in one shot**
+*   a universal main-function starter **without** explicit `venv` **activation**
+
+</details>
 
 <a id="protoprimer-motivation"></a>
 
 ## First: why avoid `shell`?
 
 Main reason:\
-Your org does **not** test `shell` scripts.
+Your org **does not test** `shell` scripts.
 
 <details id="shell-issues">
 <summary>Let's expand:</summary>
 
 <br>
 
-`shell` scripts:
+The `shell` paradox:\
+we start with `shell` because it is "simple", but that is also `shell`:
 
 *   :x: (unit) test code for `shell` scripts is close to none
-*   :x: no default error detection (forget `set -e` and undetected disaster bubbles through the call stack)
+*   :x: no default error detection (forget `set -e` and an undetected disaster bubbles through the call stack)
 *   :x: cryptic "write-only" syntax (e.g. `echo "${file_path##*/}"` vs `os.path.basename(file_path)`)
 *   :x: subtle, error-prone pitfalls (e.g. `shopt` nuances)
 *   :x: unpredictable local/user overrides (e.g. `PATH` points to unexpected binaries)
 *   :x: less cross-platform than it seems even on *nixes (e.g. divergent command behaviors: macOS vs Linux)
-*   :x: no stack traces on failure (encourages noisy, excessive logging instead)
+*   :x: no stack traces on failure (which encourages noisy, excessive logging instead)
 *   :x: limited native data structures (no nested ones)
 *   :x: no modularity (code larger than one-page-one-file is cumbersome)
 *   :x: no external libraries/packages (no enforce-able dependencies)
-*   :x: when `shell` scripts multiply, they inter-depend for reuse (by `source`-ing) into entangled mess
+*   :x: when `shell` scripts multiply, they inter-depend for reuse (by `source`-ing) into an entangled mess
 *   :x: being so unpredictable makes `shell` scripts high security risks
 *   :x: slow
 *   ...
@@ -60,15 +67,14 @@ Your org does **not** test `shell` scripts.
 
 In short, `shell` is a very poor language choice for evolving software.
 
-Now, let's imagine that people abandoned `shell` and picked `python` to automate.
-
 <details>
-<summary>We have:</summary>
+<summary>What if we automated with <code>python</code> instead?</summary>
 
 <br>
 
-*   almost the equivalent niche for scripting (as `shell`)
-*   maintains vast mind share (as `shell`)
+*   **Ubiquity**: shares the same "pre-installed-anywhere" scripting niche (as `shell`).
+*   **Mindshare**: leverages a massive community and vast ecosystem everyone is exposed to (as `shell`).
+*   **Sanity**: testable, structured code with a clear syntax.
 
 </details>
 
@@ -156,16 +162,12 @@ But, it starts as a `python` script (then bootstraps `uv` and runs `uv`).
 ### Problem 2: audience
 
 Distinguish these:
-*   **dev-authors**: deeply understand their repo and the tools in use (like `uv` or anything else)
-*   **dev-users**: strangers to the repo, new to `python` ecosystem, but can improve some stuff
+*   **dev-authors**: deeply understand the tools in use (like `uv` or anything else), do not like writing manuals
+*   **dev-users**: strangers to the repo, new to the `python` ecosystem, but can contribute and improve some stuff
 *   **end-users**: ...
 
-`protoprimer`:
-*   does not obstruct **dev-authors** to use whatever they want
-*   but makes **dev-users** faster to start
-
 <details>
-<summary>Details:</summary>
+<summary>You do not want to obstruct experienced <strong>dev-authors</strong>, but you want <strong>dev-users</strong> to start fast:</summary>
 
 <br>
 
@@ -196,11 +198,9 @@ Feel the difference:
 | `./app_1`     | `uv run python -m module_b.app_1`     |
 | `./app_2`     | `uv run python -m module_c.app_2`     |
 
-<a id="protoprimer-alternatives"></a>
+<a id="protoprimer-extensions"></a>
 
-## Last: can one size fit all?
-
-Obviously, no.
+## Last: adaptive bootstrapping
 
 Think:
 *   generating code
@@ -209,44 +209,40 @@ Think:
 *   configuring pre-commit hooks & linters
 *   ...
 
-`protoprimer` acts as a "seed" to grow via extensible bootstrap DAG.
+`protoprimer` acts as a "seed" to grow via an extensible bootstrap (DAG or handover).
 
-Also, due to differences in target environments, there is native support for different env configs:
+Different env? Different direction:
 *   local **or** cloud
 *   Alice **or** Bob
 *   dev **or** prod
 *   v1 **or** v2
 *   ...
 
-## Bonus: a springboard for any other language toolchain
+## Bonus: the springboard for any toolchain
 
 `python` is **omnipresent**.
 
 <details>
-<summary>Single-touch <strong>requires omnipresence</strong> (in principle):</summary>
+<summary>In principle, achieving single-touch <strong>requires omnipresence</strong>:</summary>
 
 <br>
 
-The bootstrap code **must** rely on very basic pre-requisites to expect them to be satisfied by default.
+The bootstrap code can **only rely on very basic** pre-requisites satisfiable by default.
 
-Perhaps, pre-installed availability of `python` is even more expected than `shell` compatibility:
+The availability of `python` is more reliable than "universal" `shell` compatibility:
 *   old `bash` 3.x and `zsh` differences on macOS
 *   non-POSIX "shells" on Windows
 *   ...
 
-What other languages are omnipresent enough to start a bootstrap sequence?
-
-Potentially `js`, but it is rarely pre-installed.
-
-Why `python` is the next best choice (after `shell`)?
-*   omnipresent (just like `shell`): if not, trivially installed (e.g. on Windows, unlike POSIX shell)
-*   vast mind-share (just like `shell`): also, new `python` devs write less error-prone code than old `shell` devs
-*   no compiler stage (just like `shell`): in-place source code modification to run without build tools
-*   satisfying: solves most of the "Why avoid `shell`?" problems ([see above][shell_issues])
+Why is `python` the ultimate seed?
+*   if not available, trivially installed
+*   arguably, new `python` devs write less error-prone "Day 0" code than old `shell` devs
+*   no compiler stage - it executes "committable text" directly without invoking build tools (just like `shell`)
+*   solves most of the "Why avoid `shell`?" problems ([see above][shell_issues])
 
 </details>
 
-In turn, `python` code (bootstrapped via `protoprimer`) may springboard other toolchains:
+In turn, once bootstrapped, `python` code may springboard other toolchains:
 *   `java`
 *   `js`
 *   `go`
@@ -322,7 +318,7 @@ graph LR;
 
 *   **"proto code"** is the own copy of [`proto_kernel.py`][local_proto_kernel.py] to be hosted.
 
-*   **"entry scripts"** are those files which rely on "proto code" to switch to `venv`.
+*   **"entry scripts"** are those files that rely on "proto code" to switch to `venv`.
 
 <details>
 <summary>Details:</summary>
@@ -331,7 +327,7 @@ graph LR;
 
 This is **necessarily confusing**:
 *   The actual file name for "proto code" can be almost anything.
-*   Name `proto_kernel.py` is the default.
+*   The name `proto_kernel.py` is the default.
 *   It is a **copy** of `protoprimer.primer_kernel` module.
 *   So, all three ("proto code", `proto_kernel.py`, `primer_kernel`) are nearly the same thing, but different:
     *   "proto code" is conceptual (always the same name)
@@ -340,7 +336,7 @@ This is **necessarily confusing**:
 
 Only a **single** "proto code" copy is needed per repo to be used by all "entry scripts".
 
-The own copy for this repo is stored in path:
+The own copy for this repo is stored at:
 
 ```sh
 ./cmd/proto_code/proto_kernel.py
@@ -350,9 +346,9 @@ With some config, the copy can be moved (under any directory, under any name).
 
 Although it is possible to run the copy directly, it is more flexible to use entry scripts (wrappers):
 
-*   Entry script [`./prime`][local_prime] relies on `env_bootstrapper` function (to prepare the `venv`).
+*   Entry script [`./prime`][local_prime] relies on the `env_bootstrapper` function (to prepare the `venv`).
 
-*   Entry scripts in [`./cmd`][cmd_dir] dir mostly rely on `app_starter` function (to start code from the `venv`).
+*   Entry scripts in the [`./cmd`][cmd_dir] dir mostly rely on the `app_starter` function (to start code from the `venv`).
 
 </details>
 
@@ -376,13 +372,13 @@ Upgrade: re-create venv, re-solve and re-install deps, re-pin versions:
 ./prime upgrade
 ```
 
-Review effective config:
+Review the effective config:
 
 ```sh
 ./prime config
 ```
 
-Bootstrap into an interactive `shell` with activated `venv`:
+Bootstrap into an interactive `shell` with an activated `venv`:
 
 ```sh
 ./cmd/venv_shell
@@ -461,7 +457,7 @@ This mono repo is roughly divided into:
 
 `protoprimer` allows multiple projects under the same repo (multiple `pyproject.toml` files).
 
-For example, each subdirectory of [`./src`][src_dir] directory this repo itself contains related sub-projects:
+For example, each subdirectory of the [`./src`][src_dir] directory this repo itself contains related sub-projects:
 *   [protoprimer][protoprimer] addresses running `python` code before `venv` is fully configured
 *   [neoprimer][neoprimer] contains extensions with code useful to run after `venv` is fully configured
 *   ...
@@ -478,11 +474,17 @@ TODO: Explain how all scripts should know their relative position to proto_code.
 
 -->
 
+<!--
+
+TODO: Emphasise symlink to environment config.
+
+-->
+
 <a id="protoprimer-effective-config"></a>
 
 ## Effective configuration
 
-It is possible to generate effective config to see:
+It is possible to generate the effective config to see:
 *   the data **loaded** from files
 *   the data **derived** from the **loaded** data
 
@@ -608,7 +610,7 @@ TODO: Add a section explaining how to select the `venv` driver (`uv`, `pip`, etc
 
 ## Required `python`: selecting executable path
 
-Required `python` version is specified per environment via config field `required_python_version`.
+Required `python` version is specified per environment via the config field `required_python_version`.
 
 If the field is not specified, `.python-version` file is searched up from ref root dir (e.g. repo root).
 
@@ -625,16 +627,16 @@ TODO: Elaborate on `python` executable selection (in an expandable section) via 
 The stand-alone "proto code" is designed to be run by any `python` executable (available in `PATH`).
 
 Eventually, based on the target client repo requirements, it must become:
-*   required `python` version
+*   the required `python` version
 *   executed from the initialized `venv` (with all dependencies)
 
-To achieve this, `protoprimer` switches `python` executables in a multi-staged bootstrap sequence:
+To achieve this, `protoprimer` switches `python` executables in a multi-stage bootstrap sequence:
 
 ```sh
 ./prime -v
 ```
 
-Each executable is replaced with `os.execve` call.
+Each executable is replaced with an `os.execve` call.
 
 <!--
 TODO: To support Windows, `os.execve` will have to be changed to use `subprocess` with a chain of children.
@@ -677,7 +679,7 @@ The content of `constraints.txt` captures one of the possible outcomes of the de
 
 ## Upgrading `venv`: full vs partial
 
-To re-create `venv`, re-install the deps, and re-pin the versions, run:
+To re-create the `venv`, re-install the deps, and re-pin the versions, run:
 
 ```sh
 ./prime upgrade
@@ -690,15 +692,15 @@ To re-create `venv`, re-install the deps, and re-pin the versions, run:
 
 *   **Full** (auto): upgrade all dependency versions (respecting version ranges specified in `pyproject.toml`).
 
-    The `upgrade` sub-command automates removal of the old `constaint.txt` file (to re-populate a new one).
+    The `upgrade` sub-command automates the removal of the old `constraints.txt` file (to repopulate it).
 
-    Missing `constraints.txt` allows re-capturing a new outcome of the dependency resolution for all dependencies.
+    A missing `constraints.txt` allows re-capturing a new outcome of the dependency resolution for all dependencies.
 
-    NOTE: This approach also destroys the old `venv` (any manual changes to `venv` will be lost).
+    NOTE: This approach also destroys the old `venv` (any manual changes to the `venv` will be lost).
 
 *   **Partial** (manual): upgrade a version only for one specific dependency.
 
-    *   Remove only the line for that dependency from `constaint.txt` file.
+    *   Remove only the line for that dependency from the `constraints.txt` file.
 
     *   Re-run the normal bootstrap:
 
@@ -706,7 +708,7 @@ To re-create `venv`, re-install the deps, and re-pin the versions, run:
         ./prime
         ```
 
-    NOTE: This approach re-uses the old `venv` (retains all manual changes).
+    NOTE: This approach re-uses the old `venv` (and retains any manual changes).
 
 </details>
 
@@ -776,7 +778,7 @@ TODO: FT_93_57_03_75.app_vs_lib.md: Explain examples `./cmd/env_bootstrapper` an
 [constraints.txt]: dst/default_env/constraints.txt
 [pyproject.toml]: src/neoprimer/pyproject.toml
 
-[protoprimer_alternatives]: #protoprimer-alternatives
+[protoprimer_extensions]: #protoprimer-extensions
 [getting_started]: #protoprimer-getting-started
 [protoprimer_motivation]: #protoprimer-motivation
 [effective_config]: #protoprimer-effective-config

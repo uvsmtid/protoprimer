@@ -44,7 +44,7 @@ class ThisTestClass(TestCase):
         parsed_html = BeautifulSoup(text_html, "html.parser")
 
         # Find the description from the "About" section:
-        about_section = parsed_html.find("p", class_="f4 my-3")
+        about_section = parsed_html.find("p", class_="f4 tmp-my-3")
         github_description = (
             about_section.get_text(strip=True) if about_section else None
         )
