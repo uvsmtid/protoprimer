@@ -7490,6 +7490,25 @@ def get_import_error_hint(
     return f"Is `{neo_main_module}` a (transitive) dependency of any `{ConfConstClient.default_pyproject_toml_basename}` being installed?"
 
 
+def get_derived_config(
+    proto_kernel_sbs_path: str,
+) -> dict:
+
+    # NOTE: Assume (no verification) the module is loaded from
+    #       (outside venv, outside local packages, outside global packages):
+    os.environ[EnvVar.var_PROTOPRIMER_PROTO_CODE.value] = os.path.abspath(__file__)
+
+    env_ctx = EnvContext()
+
+    state_derived_conf_data_loaded: dict = env_ctx.state_graph.eval_state(
+        EnvState.state_derived_conf_data_loaded.name
+    )
+
+    print(json.dumps(state_derived_conf_data_loaded, indent=4))
+
+    return state_derived_conf_data_loaded
+
+
 def env_bootstrapper(
     venv_main_func: str,
 ):
