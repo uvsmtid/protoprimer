@@ -7539,10 +7539,12 @@ def _start_main(
 
     module_name: str
     func_name: str
+    # TODO: use constants:
     if ":" in venv_main_func:
         (
             module_name,
             func_name,
+            # TODO: use constants:
         ) = venv_main_func.split(":", 1)
     else:
         raise ValueError(
@@ -7563,6 +7565,7 @@ def _start_main(
             venv_module = importlib.import_module(module_name)
             selected_main = getattr(venv_module, func_name)
         elif curr_py_exec.value >= StateStride.stride_deps_updated.value:
+            # TODO: use constants:
             # Switch from running `proto_code` to installed `venv` code:
             venv_module = importlib.import_module("protoprimer.primer_kernel")
             selected_main = getattr(venv_module, "app_main")
