@@ -110,13 +110,13 @@ class StateStride(enum.IntEnum):
     # No value for `EnvVar.var_PROTOPRIMER_PY_EXEC` -> `python` executable has not been categorized yet:
     stride_py_unknown = -1
 
-    # To run `proto_code` by `python` outside `venv`:
+    # To run `proto_code` by `python` outside any `venv` (to identify `proto_code` abs path):
     stride_py_arbitrary = 1
 
     # To run `python` of specific version (to create `venv` using that `python`):
     stride_py_required = 2
 
-    # To use `venv` (to install packages):
+    # To use dedicated `venv` (to install packages):
     stride_py_venv = 3
 
     # To use the latest `protoprimer` package:
