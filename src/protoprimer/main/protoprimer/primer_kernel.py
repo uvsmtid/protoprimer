@@ -7498,7 +7498,7 @@ def env_bootstrapper(
     which implements FT_58_74_37_70.starter_vs_bootstrapper.md / env bootstrapper.
 
     It bootstraps `venv` from nothing.
-    The majority of the entry scripts are supposed to use `app_starter` function instead
+    The majority of the entry scripts are supposed to use the `app_starter` function instead
     (which only starts the specified `venv_main_func` assuming `venv` has already been bootstrapped).
     """
     _start_main(
@@ -7530,7 +7530,8 @@ def _start_main(
     venv_main_func: str,
 ) -> None:
 
-    # NOTE: Assume (no verification) the module is loaded from outside venv and local or global packages:
+    # NOTE: Assume (no verification) the module is loaded from
+    #       (outside venv, outside local packages, outside global packages):
     os.environ[EnvVar.var_PROTOPRIMER_PROTO_CODE.value] = os.path.abspath(__file__)
 
     os.environ[EnvVar.var_PROTOPRIMER_RUN_MODE.value] = run_mode.value
