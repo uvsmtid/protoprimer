@@ -3090,7 +3090,7 @@ class RunStrategy:
 
 class ExitCodeReporter(RunStrategy):
     """
-    This strategy requires state to return `int` value (as exit code).
+    This strategy requires the state to return an `int` value (as exit code).
     """
 
     def __init__(
