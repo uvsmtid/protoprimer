@@ -60,7 +60,8 @@ def app_main(
             # See UC_10_80_27_57.extend_DAG.md:
             env_ctx = configure_env_context()
 
-        # TODO: Do not call `state_graph.eval_state` directly.
+        # TODO: TODO_60_63_68_81.refactor_DAG_builder.md:
+        #       Do not call `state_graph.eval_state` directly.
         #       Evaluate state via child state (to check that this is eligible).
         #       But... What is the child state here?
         state_run_mode_executed: bool = env_ctx.state_graph.eval_state(
@@ -110,13 +111,13 @@ class StateStride(enum.IntEnum):
     # No value for `EnvVar.var_PROTOPRIMER_PY_EXEC` -> `python` executable has not been categorized yet:
     stride_py_unknown = -1
 
-    # To run `proto_code` by `python` outside `venv`:
+    # To run `proto_code` by `python` outside any `venv` (to identify `proto_code` abs path):
     stride_py_arbitrary = 1
 
     # To run `python` of specific version (to create `venv` using that `python`):
     stride_py_required = 2
 
-    # To use `venv` (to install packages):
+    # To use dedicated `venv` (to install packages):
     stride_py_venv = 3
 
     # To use the latest `protoprimer` package:
@@ -249,6 +250,29 @@ class PrimerRuntime(enum.Enum):
     runtime_proto = "proto"
 
     runtime_neo = "neo"
+
+
+class StartMode(enum.Enum):
+    """
+    Specifies how `primer_kernel` module was started (which API was the entry point).
+
+    TODO: Add feature_topic.
+
+    TODO: TODO_60_63_68_81.refactor_DAG_builder.md:
+          make use of this enum.
+    """
+
+    # Start via `env_bootstrapper` call:
+    mode_env_bootstrapper = "env_bootstrapper"
+
+    # Start via `app_starter` call:
+    mode_app_starter = "app_starter"
+
+    # A lib function call (e.g. `get_derived_config`):
+    mode_lib_invoker = "lib_invoker"
+
+    # Direct CLI execution via (e.g.) `./proto_kernel.py`:
+    mode_main_executor = "main_executor"
 
 
 class RunMode(enum.Enum):
@@ -3079,6 +3103,10 @@ class RunStrategy:
     See related:
     *   `RunMode`
     *   FT_11_27_29_83.run_mode.md
+
+    TODO: TODO_60_63_68_81.refactor_DAG_builder.md:
+          Currently, `RunStrategy` is degenerated into single implementation `ExitCodeReporter`.
+          Is it even needed (unless make it useful beyond that)?
     """
 
     def execute_strategy(
@@ -3090,7 +3118,7 @@ class RunStrategy:
 
 class ExitCodeReporter(RunStrategy):
     """
-    This strategy requires state to return `int` value (as exit code).
+    This strategy requires the state to return an `int` value (as exit code).
     """
 
     def __init__(
@@ -6300,6 +6328,10 @@ class EnvState(enum.Enum):
     and the only reason it is assigned is purely for the quick navigation across the source code in the IDE.
 
     FT_68_54_41_96.state_dependency.md
+
+    TODO: TODO_60_63_68_81.refactor_DAG_builder.md:
+          Currently, this enum class maps "state name" -> "impl class" directly.
+          In the future, it may change to "state name" -> "impl factory" instead.
     """
 
     state_input_py_exec_var_loaded = Bootstrapper_state_input_py_exec_var_loaded
@@ -6486,11 +6518,15 @@ class StateGraph:
     def register_node(
         self,
         state_node: StateNode,
+        # TODO: TODO_60_63_68_81.refactor_DAG_builder.md:
+        #       This use_case may become obsolete if we use "state name" -> "impl factory" naming
+        #       where the factory cannot be replaced (currently, it is "state name" -> "impl class" directly).
         replace_existing: bool = False,
     ) -> StateNode | None:
         state_name: str = state_node.get_state_name()
         if state_name in self.state_nodes:
             if replace_existing:
+                # See: UC_27_40_17_59.replace_by_new_and_use_old.md:
                 existing_node = self.state_nodes[state_name]
                 self.state_nodes[state_name] = state_node
                 return existing_node
@@ -6536,6 +6572,10 @@ class MutableValue(Generic[ValueType]):
     because some of these `StateNode`-s may not be (transitive) parents.
     But, if the current `StateNode` depends on parents updating that `MutableValue`,
     read it after evaluation of all parent states.
+
+    TODO: TODO_60_63_68_81.refactor_DAG_builder.md:
+          Why not simply rely on `EnvContext` to maintain current mutable state.
+          It already does it with `StateStride`.
     """
 
     def __init__(
@@ -7490,6 +7530,30 @@ def get_import_error_hint(
     return f"Is `{neo_main_module}` a (transitive) dependency of any `{ConfConstClient.default_pyproject_toml_basename}` being installed?"
 
 
+def get_derived_config(
+    proto_kernel_abs_path: str,
+) -> dict:
+
+    # NOTE: Assume (no verification) the module is loaded from
+    #       (outside venv, outside local packages, outside global packages):
+    os.environ[EnvVar.var_PROTOPRIMER_PROTO_CODE.value] = proto_kernel_abs_path
+    # TODO: TODO_60_63_68_81.refactor_DAG_builder.md:
+    #       It is set to `StateStride.stride_py_arbitrary` even though we do not really know
+    #       whether this python is outside `venv` (what `StateStride.stride_py_arbitrary` is really for).
+    #       But it works for now until we an build different implementation for `get_derived_config` lib call.
+    os.environ[EnvVar.var_PROTOPRIMER_PY_EXEC.value] = (
+        StateStride.stride_py_arbitrary.name
+    )
+
+    env_ctx = EnvContext()
+
+    state_derived_conf_data_loaded: dict = env_ctx.state_graph.eval_state(
+        EnvState.state_derived_conf_data_loaded.name
+    )
+
+    return state_derived_conf_data_loaded
+
+
 def env_bootstrapper(
     venv_main_func: str,
 ):
@@ -7498,7 +7562,7 @@ def env_bootstrapper(
     which implements FT_58_74_37_70.starter_vs_bootstrapper.md / env bootstrapper.
 
     It bootstraps `venv` from nothing.
-    The majority of the entry scripts are supposed to use `app_starter` function instead
+    The majority of the entry scripts are supposed to use the `app_starter` function instead
     (which only starts the specified `venv_main_func` assuming `venv` has already been bootstrapped).
     """
     _start_main(
@@ -7530,7 +7594,8 @@ def _start_main(
     venv_main_func: str,
 ) -> None:
 
-    # NOTE: Assume (no verification) the module is loaded from outside venv and local or global packages:
+    # NOTE: Assume (no verification) the module is loaded from
+    #       (outside venv, outside local packages, outside global packages):
     os.environ[EnvVar.var_PROTOPRIMER_PROTO_CODE.value] = os.path.abspath(__file__)
 
     os.environ[EnvVar.var_PROTOPRIMER_RUN_MODE.value] = run_mode.value
@@ -7538,10 +7603,12 @@ def _start_main(
 
     module_name: str
     func_name: str
+    # TODO: use constants:
     if ":" in venv_main_func:
         (
             module_name,
             func_name,
+            # TODO: use constants:
         ) = venv_main_func.split(":", 1)
     else:
         raise ValueError(
@@ -7562,6 +7629,7 @@ def _start_main(
             venv_module = importlib.import_module(module_name)
             selected_main = getattr(venv_module, func_name)
         elif curr_py_exec.value >= StateStride.stride_deps_updated.value:
+            # TODO: use constants:
             # Switch from running `proto_code` to installed `venv` code:
             venv_module = importlib.import_module("protoprimer.primer_kernel")
             selected_main = getattr(venv_module, "app_main")

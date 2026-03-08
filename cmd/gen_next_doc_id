@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
 
 
-def import_proto_kernel(proto_kernel_rel_path: str):
+def import_proto_kernel(proto_kernel_rel_path):
     """
-    Boilerplate function to import `proto_kernel` from the `protoprimer`.
+    `protoprimer` entry script boilerplate function to import `proto_kernel`.
     """
-
     import os
     import importlib.util
 
