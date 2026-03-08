@@ -1,21 +1,26 @@
 #!/usr/bin/env python3
 # FT_93_57_03_75.app_vs_lib.md: see also `./cmd/env_bootstrapper`
 
-if __name__ == "__main__":
 
-    proto_kernel_rel_path = "./proto_code/proto_kernel.py"
-
-    # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-    # Boilerplate to import `proto_kernel` from `protoprimer`
+def import_proto_kernel(proto_kernel_rel_path):
+    """
+    `protoprimer` entry script boilerplate function to import `proto_kernel`.
+    """
     import os
     import importlib.util
 
-    spec = importlib.util.spec_from_file_location(
+    module_spec = importlib.util.spec_from_file_location(
         "proto_kernel",
-        os.path.join(os.path.dirname(__file__), proto_kernel_rel_path),
+        os.path.join(
+            os.path.dirname(__file__),
+            proto_kernel_rel_path,
+        ),
     )
-    proto_kernel = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(proto_kernel)
-    # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    loaded_proto_kernel = importlib.util.module_from_spec(module_spec)
+    module_spec.loader.exec_module(loaded_proto_kernel)
+    return loaded_proto_kernel
 
+
+if __name__ == "__main__":
+    proto_kernel = import_proto_kernel("./proto_code/proto_kernel.py")
     proto_kernel.app_starter("local_doc.cmd_app_starter:custom_main")
