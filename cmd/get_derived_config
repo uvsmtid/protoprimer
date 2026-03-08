@@ -22,4 +22,8 @@ def import_proto_kernel(proto_kernel_rel_path):
 
 if __name__ == "__main__":
     proto_kernel = import_proto_kernel("./proto_code/proto_kernel.py")
-    proto_kernel.get_derived_config(proto_kernel.__file__)
+    derived_config = proto_kernel.get_derived_config(proto_kernel.__file__)
+
+    import json
+
+    print(json.dumps(derived_config, indent=4))
