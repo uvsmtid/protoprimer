@@ -60,7 +60,8 @@ def app_main(
             # See UC_10_80_27_57.extend_DAG.md:
             env_ctx = configure_env_context()
 
-        # TODO: Do not call `state_graph.eval_state` directly.
+        # TODO: TODO_60_63_68_81.refactor_DAG_builder.md:
+        #       Do not call `state_graph.eval_state` directly.
         #       Evaluate state via child state (to check that this is eligible).
         #       But... What is the child state here?
         state_run_mode_executed: bool = env_ctx.state_graph.eval_state(
@@ -3079,6 +3080,10 @@ class RunStrategy:
     See related:
     *   `RunMode`
     *   FT_11_27_29_83.run_mode.md
+
+    TODO: TODO_60_63_68_81.refactor_DAG_builder.md:
+          Currently, `RunStrategy` is degenerated into single implementation `ExitCodeReporter`.
+          Is it even needed (unless make it useful beyond that)?
     """
 
     def execute_strategy(
@@ -6300,6 +6305,10 @@ class EnvState(enum.Enum):
     and the only reason it is assigned is purely for the quick navigation across the source code in the IDE.
 
     FT_68_54_41_96.state_dependency.md
+
+    TODO: TODO_60_63_68_81.refactor_DAG_builder.md:
+          Currently, this enum class maps "state name" -> "impl class" directly.
+          In the future, it may change to "state name" -> "impl factory" instead.
     """
 
     state_input_py_exec_var_loaded = Bootstrapper_state_input_py_exec_var_loaded
@@ -6486,11 +6495,15 @@ class StateGraph:
     def register_node(
         self,
         state_node: StateNode,
+        # TODO: TODO_60_63_68_81.refactor_DAG_builder.md:
+        #       This use_case may become obsolete if we use "state name" -> "impl factory" naming
+        #       where the factory cannot be replaced (currently, it is "state name" -> "impl class" directly).
         replace_existing: bool = False,
     ) -> StateNode | None:
         state_name: str = state_node.get_state_name()
         if state_name in self.state_nodes:
             if replace_existing:
+                # See: UC_27_40_17_59.replace_by_new_and_use_old.md:
                 existing_node = self.state_nodes[state_name]
                 self.state_nodes[state_name] = state_node
                 return existing_node
@@ -6536,6 +6549,10 @@ class MutableValue(Generic[ValueType]):
     because some of these `StateNode`-s may not be (transitive) parents.
     But, if the current `StateNode` depends on parents updating that `MutableValue`,
     read it after evaluation of all parent states.
+
+    TODO: TODO_60_63_68_81.refactor_DAG_builder.md:
+          Why not simply rely on `EnvContext` to maintain current mutable state.
+          It already does it with `StateStride`.
     """
 
     def __init__(
@@ -7491,20 +7508,25 @@ def get_import_error_hint(
 
 
 def get_derived_config(
-    proto_kernel_sbs_path: str,
+    proto_kernel_abs_path: str,
 ) -> dict:
 
     # NOTE: Assume (no verification) the module is loaded from
     #       (outside venv, outside local packages, outside global packages):
-    os.environ[EnvVar.var_PROTOPRIMER_PROTO_CODE.value] = os.path.abspath(__file__)
+    os.environ[EnvVar.var_PROTOPRIMER_PROTO_CODE.value] = proto_kernel_abs_path
+    # TODO: TODO_60_63_68_81.refactor_DAG_builder.md:
+    #       It is set to `StateStride.stride_py_arbitrary` even though we do not really know
+    #       whether this python is outside `venv` (what `StateStride.stride_py_arbitrary` is really for).
+    #       But it works for now until we an build different implementation for `get_derived_config` lib call.
+    os.environ[EnvVar.var_PROTOPRIMER_PY_EXEC.value] = (
+        StateStride.stride_py_arbitrary.name
+    )
 
     env_ctx = EnvContext()
 
     state_derived_conf_data_loaded: dict = env_ctx.state_graph.eval_state(
         EnvState.state_derived_conf_data_loaded.name
     )
-
-    print(json.dumps(state_derived_conf_data_loaded, indent=4))
 
     return state_derived_conf_data_loaded
 
