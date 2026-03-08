@@ -20,6 +20,10 @@ Want your users to run software straight from a `git` repo with a single, zero-a
 ./prime
 ```
 
+*   No conflicts: everything is isolated to that repo clone.
+*   No bloat: no automatic changes to global, local, user configs (e.g. no `~/.*rc` updates, etc.).
+*   Reversible: simply remove the repo clone.
+
 <details>
 <summary><code>protoprimer</code> is the bootstrapper that eliminates the growth of fragile <code>shell</code> scripts:</summary>
 
