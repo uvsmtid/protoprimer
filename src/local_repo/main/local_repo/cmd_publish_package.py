@@ -209,7 +209,7 @@ def _publish_package(
     get_command_code(f"{build_pip_path} install build")
     get_command_code(f"{build_pip_path} install twine")
 
-    # The following are the staps found in the majority of the web resources.
+    # The following are the steps found in the majority of the web resources.
     build_python_path = os.path.join(
         build_venv_path,
         "bin",

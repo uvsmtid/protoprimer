@@ -54,3 +54,22 @@ repos:
             stages: [
                 "pre-commit",
             ]
+
+    -   repo: https://github.com/sphinx-contrib/sphinx-lint
+        rev: v1.0.2
+        hooks:
+        -   id: sphinx-lint
+            stages: [
+                "pre-commit",
+            ]
+
+    -   repo: https://github.com/codespell-project/codespell
+        rev: v2.3.0
+        hooks:
+        -   id: codespell
+            args: [
+                "--ignore-words=gconf/codespell_ignore.txt",
+            ]
+            stages: [
+                "pre-commit",
+            ]
