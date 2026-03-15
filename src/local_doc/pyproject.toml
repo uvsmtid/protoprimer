@@ -17,6 +17,12 @@ requires-python = ">=3.7"
 
 dependencies = [
     "setuptools",
+
+    # Used for `./doc/readthedocs`:
+    "sphinx",
+    "sphinx-rtd-theme",
+    "sphinxcontrib-googleanalytics",
+    "sphinxcontrib-mermaid",
 ]
 
 [tool.setuptools.packages.find]

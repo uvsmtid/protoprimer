@@ -674,7 +674,7 @@ The role of `pyproject.toml` is to list required dependency names optionally wit
 The content of `constraints.txt` captures one of the possible outcomes of the dependency resolution considering:
 *   selected `python` version
 *   version ranges in `pyproject.toml`
-*   versions pinned in existing `constaints.txt`
+*   versions pinned in existing `constraints.txt`
 *   versions available in artifact repo (e.g. pypi.org)
 
 </details>

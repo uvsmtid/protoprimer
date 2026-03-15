@@ -1,0 +1,6 @@
+# One word per line: each word you want `codespell` to ignore should be on its own line.
+# Comments: any line beginning with a `#` char is treated as a comment and will be ignored.
+# Blank lines are ignored.
+
+# typical `python` assertion:
+assertIn
