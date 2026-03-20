@@ -17,6 +17,7 @@ import re
 import shutil
 import sys
 import venv
+from typing import Optional
 
 from local_repo.sub_proc_util import (
     get_command_code,
@@ -43,6 +44,7 @@ def publish_package(client_dir: str):
     _publish_package(
         client_dir=client_dir,
         package_name=parsed_args.package_name,
+        repository_url=parsed_args.repository_url,
     )
 
 
@@ -64,6 +66,12 @@ def init_arg_parser():
         choices=[distrib_package.value for distrib_package in DistribPackage],
         help=f"Select package name.",
     )
+    arg_parser.add_argument(
+        "--repository_url",
+        type=str,
+        default=None,
+        help="Repository URL for twine upload.",
+    )
     return arg_parser
 
 
@@ -77,6 +85,7 @@ def get_tag_name(
 def _publish_package(
     client_dir: str,
     package_name: str,
+    repository_url: Optional[str],
 ):
     # Switch to `@/` to avoid creating temporary dirs somewhere else:
     os.chdir(client_dir)
@@ -209,6 +218,10 @@ def _publish_package(
     get_command_code(f"{build_pip_path} install build")
     get_command_code(f"{build_pip_path} install twine")
 
+    # See: FT_17_41_51_83.private_artifact_repo.md:
+    get_command_code(f"{build_pip_path} install keyring")
+    get_command_code(f"{build_pip_path} install keyrings.google-artifactregistry-auth")
+
     # The following are the steps found in the majority of the web resources.
     build_python_path = os.path.join(
         build_venv_path,
@@ -227,7 +240,13 @@ def _publish_package(
         f"{package_name}-{distrib_version}.tar.gz",
     )
     # This will prompt for login credentials:
-    get_command_code(f"{twine_command_path} upload --verbose {dist_file}")
+    if repository_url:
+        # See: FT_17_41_51_83.private_artifact_repo.md:
+        get_command_code(
+            f"{twine_command_path} upload --verbose --repository-url {repository_url} {dist_file}"
+        )
+    else:
+        get_command_code(f"{twine_command_path} upload --verbose {dist_file}")
 
     # Switch back to `client_dir`:
     os.chdir(client_dir)

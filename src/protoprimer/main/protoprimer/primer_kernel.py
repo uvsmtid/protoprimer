@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
+# A bootstrap script that starts with a **wild** `python` version
+# to invoke code from a configured `venv` using the **required** `python` version.
+# Source: https://github.com/uvsmtid/protoprimer
 # SPDX-License-Identifier: MIT
 # Copyright (C) 2025 Alexey Pakseykin
-# Source: https://github.com/uvsmtid/protoprimer
 """
 
 TODO: TODO_91_75_37_57.implement_shebang_update.md / FT_02_89_37_65.shebang_line.md and update this comment:
@@ -38,7 +40,7 @@ from typing import (
 
 # The release process ensures that content in this file matches the version below while tagging the release commit
 # (otherwise, if the file comes from a different commit, the version is irrelevant):
-__version__ = "0.7.0"
+__version__ = "0.8.0"
 
 logger: logging.Logger = logging.getLogger()
 
