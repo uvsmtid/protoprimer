@@ -21,6 +21,8 @@ dependencies = [
     "requests",
     "tomli",
     "beautifulsoup4",
+    "keyring",
+    "keyrings.google-artifactregistry-auth",
 ]
 
 [tool.setuptools.packages.find]

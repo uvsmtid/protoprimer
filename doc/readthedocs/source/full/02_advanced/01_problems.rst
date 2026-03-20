@@ -43,9 +43,15 @@ Additional constraints
 
     To evolve and be auditable, it must be a (text) script, not a binary.
 
+*   Support private infrastructure.
+
+    .. see: FT_17_41_51_83.private_artifact_repo.md
+
+    Bootstrap should allow authn/authz for internal artifact repositories and other resources.
+
 *   No dependencies.
 
-    Because it starts without ``venv``, it must depend only on ``python`` standard library.
+    Because it starts without ``venv``, it must initially depend only on ``python`` standard library.
 
 *   Required ``python`` version.
 
@@ -63,13 +69,15 @@ Additional constraints
 
     *   Each repo clone is also isolated.
 
-*   Support for monorepos with any directory structure.
+*   No fixed configuration paths.
 
-    No specific configuration paths must be demanded.
+    Support monorepos with any directory structure.
 
-*   As simple as possible, but not simpler.
+*   Limited size limits functionality.
 
-    *   It must not replace other tools, it must delegate.
+    The immediate thought would be "delegate", but that is only possible when ``venv`` is populated.
+
+*   Do not restrict choices.
 
     *   It must provide choice for underlying tooling.
 

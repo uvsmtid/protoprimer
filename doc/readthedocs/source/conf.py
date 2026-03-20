@@ -1,4 +1,5 @@
 # Configuration file for the Sphinx documentation builder.
+import os
 
 # TODO: This is a temporary option to have basic `readthedocs` page while the rest of the docs are in progress.
 #       When changed here, it should also be changed in `./index.rst` (automation did not work):
@@ -68,7 +69,13 @@ if is_full_protoprimer_content:
 else:
     exclude_patterns.append("full/")
 
-html_baseurl = "https://protoprimer.readthedocs.io/"
+base_url = "https://protoprimer.readthedocs.io"
+
+# Get the version name (e.g., "latest", "stable", "v1.0"):
+rtd_version_name = os.environ.get("READTHEDOCS_VERSION")
+
+# The URL structure configured in the `protoprimer` project:
+html_baseurl = f"{base_url}/{rtd_version_name}/"
 
 # -- Options for HTML output
 
