@@ -208,6 +208,11 @@ class StateName(enum.Enum):
         NameCategory.category_value_field_action,
     )
 
+    state_install_specs_inited = StateMeta(
+        EnvState.state_install_specs_inited,
+        NameCategory.category_value_field_action,
+    )
+
     state_venv_driver_inited = StateMeta(
         EnvState.state_venv_driver_inited,
         NameCategory.category_value_field_action,
