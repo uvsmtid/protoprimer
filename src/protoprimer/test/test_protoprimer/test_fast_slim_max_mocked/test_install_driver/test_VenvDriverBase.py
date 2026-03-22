@@ -1,6 +1,7 @@
 import subprocess
 from typing import List
 from unittest.mock import (
+    ANY,
     mock_open,
     patch,
 )
@@ -69,6 +70,7 @@ def test_venv_driver_base_install_dependencies(mock_check_call, mock_get_cmd_bas
                 ConfField.field_install_extras.value: ["extra1"],
             }
         ],
+        extra_command_args=["--test-option"],
     )
 
     # then:
@@ -79,9 +81,11 @@ def test_venv_driver_base_install_dependencies(mock_check_call, mock_get_cmd_bas
             "command",
             "--constraint",
             "constraints_path",
+            "--test-option",
             "--editable",
             "/ref/proj1[extra1]",
-        ]
+        ],
+        env=ANY,
     )
 
 
@@ -127,6 +131,7 @@ def test_venv_driver_base_install_dependencies_no_extras(
                 ConfField.field_build_root_dir_rel_path.value: "proj1",
             }
         ],
+        extra_command_args=[],
     )
 
     # then:
@@ -139,7 +144,8 @@ def test_venv_driver_base_install_dependencies_no_extras(
             "constraints_path",
             "--editable",
             "/ref/proj1",
-        ]
+        ],
+        env=ANY,
     )
 
 

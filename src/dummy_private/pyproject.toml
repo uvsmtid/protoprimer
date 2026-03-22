@@ -4,8 +4,11 @@ requires = ["setuptools>=42"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "local_repo"
-version = "0.0.0"
+# This is a private package to be installed only into private artifact repo.
+# NOTE: It is not used automatically - it exists only for manual tests.
+# See: FT_17_41_51_83.private_artifact_repo.md.
+name = "dummy_private"
+version = "0.0.0.dev0"
 
 classifiers = [
     # This package is local and is never published:
@@ -17,17 +20,10 @@ requires-python = ">=3.7"
 
 dependencies = [
     "setuptools",
-    "pre-commit",
-    "requests",
-    "tomli",
-    "beautifulsoup4",
-    # This is used for manual test.
-    # See: FT_17_41_51_83.private_artifact_repo.md
-    # "dummy_private",
 ]
 
 [tool.setuptools.packages.find]
 where = ["./main"]
 
 [tool.setuptools.package-dir]
-local_repo = "./main/local_repo"
+dummy_private = "./main/dummy_private"

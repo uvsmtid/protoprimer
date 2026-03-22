@@ -393,7 +393,13 @@ class ValueName(enum.Enum):
 
     value_project_descriptors = "project_descriptors"
 
+    value_install_specs = "install_specs"
+
+    value_install_group = "install_group"
+
     value_install_extras = "install_extras"
+
+    value_extra_command_args = "extra_command_args"
 
     value_venv_driver = "venv_driver"
 
@@ -564,6 +570,8 @@ class ConfField(enum.Enum):
     # state_project_descriptors_inited:
     field_project_descriptors = f"{ValueName.value_project_descriptors.value}"
 
+    field_install_specs = f"{ValueName.value_install_specs.value}"
+
     ####################################################################################################################
 
     # child of `field_project_descriptors`:
@@ -571,6 +579,14 @@ class ConfField(enum.Enum):
 
     # child of `field_project_descriptors`:
     field_install_extras = f"{ValueName.value_install_extras.value}"
+
+    # child of `field_project_descriptors`:
+    field_install_group = f"{ValueName.value_install_group.value}"
+
+    ####################################################################################################################
+
+    # child of `field_install_specs`:
+    field_extra_command_args = f"{ValueName.value_extra_command_args.value}"
 
 
 ########################################################################################################################
@@ -628,6 +644,7 @@ class VenvDriverBase:
         venv_python_file_abs_path: str,
         constraints_file_abs_path: str,
         project_descriptors: list[dict],
+        extra_command_args: list[str],
     ) -> None:
         """
         Install each project from the `project_descriptors`.
@@ -676,12 +693,24 @@ class VenvDriverBase:
                 constraints_file_abs_path,
             ]
         )
+        sub_proc_args.extend(extra_command_args)
 
         sub_proc_args.extend(editable_project_install_args)
 
         logger.info(f"installing projects: {' '.join(sub_proc_args)}")
 
-        subprocess.check_call(sub_proc_args)
+        env_vars = os.environ.copy()
+
+        # Adding `venv/bin` is required for `uv` to access `keyring`.
+        # See: FT_17_41_51_83.private_artifact_repo.md
+        env_vars[ConfConstInput.ext_env_var_PATH] = (
+            f"{os.path.dirname(venv_python_file_abs_path)}:{env_vars[ConfConstInput.ext_env_var_PATH]}"
+        )
+
+        subprocess.check_call(
+            sub_proc_args,
+            env=env_vars,
+        )
 
     def get_install_dependencies_cmd(
         self,
@@ -1324,8 +1353,11 @@ class ConfConstEnv:
         {
             ConfField.field_build_root_dir_rel_path.value: ".",
             ConfField.field_install_extras.value: [],
+            ConfField.field_install_group.value: None,
         },
     ]
+
+    default_install_specs = []
 
     constraints_txt_basename = "constraints.txt"
 
@@ -5188,6 +5220,40 @@ class Bootstrapper_state_project_descriptors_inited(
 
 
 # noinspection PyPep8Naming
+class Bootstrapper_state_install_specs_inited(
+    AbstractOverriddenFieldCachingStateNode[list]
+):
+
+    def __init__(
+        self,
+        env_ctx: EnvContext,
+        state_name: str | None = None,
+    ):
+        super().__init__(
+            env_ctx=env_ctx,
+            parent_states=[
+                EnvState.state_client_conf_file_data_loaded.name,
+                EnvState.state_env_conf_file_data_loaded.name,
+            ],
+            state_name=if_none(
+                state_name,
+                EnvState.state_install_specs_inited.name,
+            ),
+        )
+
+    def _eval_state_once(
+        self,
+    ) -> ValueType:
+
+        install_specs: list = self._get_overridden_value_or_default(
+            ConfField.field_install_specs.value,
+            [],
+        )
+
+        return install_specs
+
+
+# noinspection PyPep8Naming
 class Bootstrapper_state_derived_conf_data_loaded(AbstractCachingStateNode[dict]):
     """
     Implements: FT_00_22_19_59.derived_config.md
@@ -5829,6 +5895,7 @@ class Bootstrapper_state_protoprimer_package_installed(AbstractCachingStateNode[
                 EnvState.state_ref_root_dir_abs_path_inited.name,
                 EnvState.state_local_conf_symlink_abs_path_inited.name,
                 EnvState.state_project_descriptors_inited.name,
+                EnvState.state_install_specs_inited.name,
                 EnvState.state_venv_driver_prepared.name,
                 EnvState.state_stride_py_venv_reached.name,
             ],
@@ -5877,6 +5944,10 @@ class Bootstrapper_state_protoprimer_package_installed(AbstractCachingStateNode[
             EnvState.state_project_descriptors_inited.name
         )
 
+        state_install_specs_inited: list[dict] = self.eval_parent_state(
+            EnvState.state_install_specs_inited.name
+        )
+
         state_venv_driver_prepared: VenvDriverBase = self.eval_parent_state(
             EnvState.state_venv_driver_prepared.name
         )
@@ -5907,12 +5978,73 @@ class Bootstrapper_state_protoprimer_package_installed(AbstractCachingStateNode[
             )
             return True
 
-        state_venv_driver_prepared.install_dependencies(
-            state_ref_root_dir_abs_path_inited,
-            get_path_to_curr_python(),
-            constraints_txt_path,
-            state_project_descriptors_inited,
-        )
+        # Group `project_descriptor`-s into `install_group`-s:
+        grouped_descriptors: dict[str | None, list[dict]] = {}
+        for project_descriptor in state_project_descriptors_inited:
+            install_group: str | None = project_descriptor.get(
+                ConfField.field_install_group.value,
+                None,
+            )
+            if install_group not in grouped_descriptors:
+                grouped_descriptors[install_group] = []
+            grouped_descriptors[install_group].append(project_descriptor)
+
+        # Determine `install_group` order and collect extra args:
+        group_to_extra_args: dict[str | None, list[str]] = {}
+        ordered_install_groups: list[str | None] = []
+        for install_spec_item in state_install_specs_inited:
+
+            # The `install_specs` is a list of singleton dict-s:
+            # (where each key is one of the `install_group`-s)
+            if not isinstance(install_spec_item, dict) or len(install_spec_item) != 1:
+                raise AssertionError(
+                    f"invalid item in `{ConfField.field_install_specs.value}` "
+                    f"(must be a single-item `dict`): "
+                    f"[{install_spec_item}]"
+                )
+
+            install_group_name = list(install_spec_item.keys())[0]
+            install_spec_obj = install_spec_item[install_group_name]
+
+            if not isinstance(install_spec_obj, dict):
+                raise AssertionError(
+                    f"invalid value of `{install_group_name}` "
+                    f"in `{ConfField.field_install_specs.value}` (must be a `dict`): "
+                    f"[{install_spec_obj}]"
+                )
+
+            extra_command_args: list[str] = install_spec_obj.get(
+                ConfField.field_extra_command_args.value,
+                [],
+            )
+
+            if install_group_name in grouped_descriptors:
+                ordered_install_groups.append(install_group_name)
+                group_to_extra_args[install_group_name] = extra_command_args
+            else:
+                logger.warning(
+                    f"`{install_group_name}` from `{ConfField.field_install_specs.value}` "
+                    f"is not found in `{ConfField.field_project_descriptors.value}`"
+                )
+
+        # Add `install_group`-s not listed in `install_specs`:
+        for install_group in grouped_descriptors.keys():
+            if install_group not in ordered_install_groups:
+                ordered_install_groups.append(install_group)
+                group_to_extra_args[install_group] = []
+
+        # Install groups one by one:
+        for install_group in ordered_install_groups:
+            group_descriptors = grouped_descriptors[install_group]
+            logger.info(f"installing group: [{install_group}]")
+
+            state_venv_driver_prepared.install_dependencies(
+                state_ref_root_dir_abs_path_inited,
+                get_path_to_curr_python(),
+                constraints_txt_path,
+                group_descriptors,
+                group_to_extra_args[install_group],
+            )
 
         return True
 
@@ -6449,6 +6581,8 @@ class EnvState(enum.Enum):
     state_venv_driver_inited = Bootstrapper_state_venv_driver_inited
 
     state_project_descriptors_inited = Bootstrapper_state_project_descriptors_inited
+
+    state_install_specs_inited = Bootstrapper_state_install_specs_inited
 
     # `ConfLeap.leap_derived`:
     state_derived_conf_data_loaded = Bootstrapper_state_derived_conf_data_loaded

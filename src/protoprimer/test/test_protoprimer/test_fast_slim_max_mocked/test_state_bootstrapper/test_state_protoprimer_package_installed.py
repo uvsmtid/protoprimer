@@ -13,6 +13,7 @@ from protoprimer.primer_kernel import (
     Bootstrapper_state_input_do_install_var_loaded,
     Bootstrapper_state_local_conf_symlink_abs_path_inited,
     Bootstrapper_state_project_descriptors_inited,
+    Bootstrapper_state_install_specs_inited,
     Bootstrapper_state_ref_root_dir_abs_path_inited,
     Bootstrapper_state_stride_py_venv_reached,
     Bootstrapper_state_venv_driver_prepared,
@@ -54,6 +55,9 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{Bootstrapper_state_project_descriptors_inited.__name__}.eval_own_state"
     )
     @patch(
+        f"{primer_kernel.__name__}.{Bootstrapper_state_install_specs_inited.__name__}.eval_own_state"
+    )
+    @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_input_do_install_var_loaded.__name__}.eval_own_state"
     )
     @patch(
@@ -79,7 +83,8 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_input_run_mode_arg_loaded,
         mock_state_args_parsed,
         mock_state_input_do_install_var_loaded,
-        mock_state_env_project_rel_path_to_extras_list_finalized_lconf,
+        mock_state_install_specs_inited,
+        mock_state_project_descriptors_inited,
         mock_state_stride_py_venv_reached,
         mock_state_ref_root_dir_abs_path_inited,
         mock_state_local_conf_symlink_abs_path_inited,
@@ -128,9 +133,8 @@ class ThisTestClass(BasePyfakefsTestClass):
                     ConfField.field_install_extras.value: [],
                 }
             )
-        mock_state_env_project_rel_path_to_extras_list_finalized_lconf.return_value = (
-            project_descriptors
-        )
+        mock_state_project_descriptors_inited.return_value = project_descriptors
+        mock_state_install_specs_inited.return_value = []
         mock_state_input_do_install_var_loaded.return_value = True
         parsed_args = argparse.Namespace(
             **{ParsedArg.name_run_mode.value: RunMode.mode_prime.value},
@@ -142,7 +146,17 @@ class ThisTestClass(BasePyfakefsTestClass):
             EnvState.state_protoprimer_package_installed.name
         )
         # then:
-        mock_state_venv_driver_prepared.return_value.install_dependencies.assert_called_once()
+        mock_state_venv_driver_prepared.return_value.install_dependencies.assert_called()
+        mock_state_venv_driver_prepared.return_value.install_dependencies.assert_any_call(
+            mock_state_ref_root_dir_abs_path_inited.return_value,
+            primer_kernel.get_path_to_curr_python(),
+            os.path.join(
+                mock_state_local_conf_symlink_abs_path_inited.return_value,
+                primer_kernel.ConfConstEnv.constraints_txt_basename,
+            ),
+            project_descriptors,
+            [],
+        )
 
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_symlink_abs_path_inited.__name__}.eval_own_state"
@@ -155,6 +169,9 @@ class ThisTestClass(BasePyfakefsTestClass):
     )
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_project_descriptors_inited.__name__}.eval_own_state"
+    )
+    @patch(
+        f"{primer_kernel.__name__}.{Bootstrapper_state_install_specs_inited.__name__}.eval_own_state"
     )
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_input_do_install_var_loaded.__name__}.eval_own_state"
@@ -182,7 +199,8 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_input_run_mode_arg_loaded,
         mock_state_args_parsed,
         mock_state_input_do_install_var_loaded,
-        mock_state_env_project_rel_path_to_extras_list_finalized_lconf,
+        mock_state_install_specs_inited,
+        mock_state_project_descriptors_inited,
         mock_state_stride_py_venv_reached,
         mock_state_ref_root_dir_abs_path_inited,
         mock_state_local_conf_symlink_abs_path_inited,
@@ -231,9 +249,8 @@ class ThisTestClass(BasePyfakefsTestClass):
                     ConfField.field_install_extras.value: [],
                 }
             )
-        mock_state_env_project_rel_path_to_extras_list_finalized_lconf.return_value = (
-            project_descriptors
-        )
+        mock_state_project_descriptors_inited.return_value = project_descriptors
+        mock_state_install_specs_inited.return_value = []
         mock_state_input_do_install_var_loaded.return_value = True
         parsed_args = argparse.Namespace(
             **{ParsedArg.name_run_mode.value: CommandAction.action_reinstall.value},
@@ -247,7 +264,17 @@ class ThisTestClass(BasePyfakefsTestClass):
             EnvState.state_protoprimer_package_installed.name
         )
         # then:
-        mock_state_venv_driver_prepared.return_value.install_dependencies.assert_called_once()
+        mock_state_venv_driver_prepared.return_value.install_dependencies.assert_called()
+        mock_state_venv_driver_prepared.return_value.install_dependencies.assert_any_call(
+            mock_state_ref_root_dir_abs_path_inited.return_value,
+            primer_kernel.get_path_to_curr_python(),
+            os.path.join(
+                mock_state_local_conf_symlink_abs_path_inited.return_value,
+                primer_kernel.ConfConstEnv.constraints_txt_basename,
+            ),
+            project_descriptors,
+            [],
+        )
 
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_symlink_abs_path_inited.__name__}.eval_own_state"
@@ -260,6 +287,9 @@ class ThisTestClass(BasePyfakefsTestClass):
     )
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_project_descriptors_inited.__name__}.eval_own_state"
+    )
+    @patch(
+        f"{primer_kernel.__name__}.{Bootstrapper_state_install_specs_inited.__name__}.eval_own_state"
     )
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_input_do_install_var_loaded.__name__}.eval_own_state"
@@ -287,7 +317,8 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_input_run_mode_arg_loaded,
         mock_state_args_parsed,
         mock_state_input_do_install_var_loaded,
-        mock_state_env_project_rel_path_to_extras_list_finalized_lconf,
+        mock_state_install_specs_inited,
+        mock_state_project_descriptors_inited,
         mock_state_stride_py_venv_reached,
         mock_state_ref_root_dir_abs_path_inited,
         mock_state_local_conf_symlink_abs_path_inited,
@@ -336,9 +367,8 @@ class ThisTestClass(BasePyfakefsTestClass):
                     ConfField.field_install_extras.value: [],
                 }
             )
-        mock_state_env_project_rel_path_to_extras_list_finalized_lconf.return_value = (
-            project_descriptors
-        )
+        mock_state_project_descriptors_inited.return_value = project_descriptors
+        mock_state_install_specs_inited.return_value = []
         mock_state_input_do_install_var_loaded.return_value = False
         parsed_args = argparse.Namespace(
             **{ParsedArg.name_run_mode.value: RunMode.mode_prime.value},
@@ -363,6 +393,137 @@ class ThisTestClass(BasePyfakefsTestClass):
     )
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_project_descriptors_inited.__name__}.eval_own_state"
+    )
+    @patch(
+        f"{primer_kernel.__name__}.{Bootstrapper_state_install_specs_inited.__name__}.eval_own_state"
+    )
+    @patch(
+        f"{primer_kernel.__name__}.{Bootstrapper_state_input_do_install_var_loaded.__name__}.eval_own_state"
+    )
+    @patch(
+        f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.eval_own_state"
+    )
+    @patch.dict(
+        os.environ,
+        {EnvVar.var_PROTOPRIMER_PY_EXEC.value: StateStride.stride_py_venv.name},
+    )
+    @patch(
+        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
+    )
+    @patch(
+        f"{primer_kernel.__name__}.{Bootstrapper_state_venv_driver_prepared.__name__}.eval_own_state"
+    )
+    @patch(
+        f"{primer_kernel.__name__}.{EnvContext.__name__}.{EnvContext.get_stride.__name__}"
+    )
+    def test_grouped_install(
+        self,
+        mock_get_stride,
+        mock_state_venv_driver_prepared,
+        mock_state_input_run_mode_arg_loaded,
+        mock_state_args_parsed,
+        mock_state_input_do_install_var_loaded,
+        mock_state_install_specs_inited,
+        mock_state_project_descriptors_inited,
+        mock_state_stride_py_venv_reached,
+        mock_state_ref_root_dir_abs_path_inited,
+        mock_state_local_conf_symlink_abs_path_inited,
+    ):
+        # given:
+        assert_parent_states_mocked(
+            self.env_ctx,
+            EnvState.state_protoprimer_package_installed.name,
+        )
+        mock_get_stride.return_value = StateStride.stride_py_venv
+        mock_client_ref_root_dir = "/mock_client_ref_root_dir"
+        self.fs.create_dir(mock_client_ref_root_dir)
+        os.chdir(mock_client_ref_root_dir)
+        mock_state_stride_py_venv_reached.return_value = StateStride.stride_py_venv
+        mock_state_ref_root_dir_abs_path_inited.return_value = mock_client_ref_root_dir
+        mock_client_conf_env_dir = "/mock_client_conf_env_dir"
+        self.fs.create_dir(mock_client_conf_env_dir)
+        mock_state_local_conf_symlink_abs_path_inited.return_value = (
+            mock_client_conf_env_dir
+        )
+
+        project_descriptors = [
+            {
+                ConfField.field_build_root_dir_rel_path.value: "proj1",
+                ConfField.field_install_group.value: "group2",
+            },
+            {
+                ConfField.field_build_root_dir_rel_path.value: "proj2",
+                ConfField.field_install_group.value: "group1",
+            },
+            {
+                ConfField.field_build_root_dir_rel_path.value: "proj3",
+                # missing group -> None
+            },
+        ]
+        mock_state_project_descriptors_inited.return_value = project_descriptors
+        mock_state_install_specs_inited.return_value = [
+            {"group1": {ConfField.field_extra_command_args.value: ["--group_1-arg"]}},
+            {"group2": {}},
+        ]
+        mock_state_input_do_install_var_loaded.return_value = True
+        mock_state_args_parsed.return_value = argparse.Namespace(
+            run_mode=RunMode.mode_prime.value
+        )
+        mock_state_input_run_mode_arg_loaded.return_value = RunMode.mode_prime
+
+        # when:
+        self.env_ctx.state_graph.eval_state(
+            EnvState.state_protoprimer_package_installed.name
+        )
+
+        # then:
+        from unittest.mock import call
+
+        constraints_txt_path = os.path.join(
+            mock_client_conf_env_dir,
+            primer_kernel.ConfConstEnv.constraints_txt_basename,
+        )
+        mock_state_venv_driver_prepared.return_value.install_dependencies.assert_has_calls(
+            [
+                call(
+                    mock_client_ref_root_dir,
+                    primer_kernel.get_path_to_curr_python(),
+                    constraints_txt_path,
+                    [project_descriptors[1]],
+                    ["--group_1-arg"],
+                ),
+                call(
+                    mock_client_ref_root_dir,
+                    primer_kernel.get_path_to_curr_python(),
+                    constraints_txt_path,
+                    [project_descriptors[0]],
+                    [],
+                ),
+                call(
+                    mock_client_ref_root_dir,
+                    primer_kernel.get_path_to_curr_python(),
+                    constraints_txt_path,
+                    [project_descriptors[2]],
+                    [],
+                ),
+            ],
+            any_order=False,
+        )
+
+    @patch(
+        f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_symlink_abs_path_inited.__name__}.eval_own_state"
+    )
+    @patch(
+        f"{primer_kernel.__name__}.{Bootstrapper_state_ref_root_dir_abs_path_inited.__name__}.eval_own_state"
+    )
+    @patch(
+        f"{primer_kernel.__name__}.{Bootstrapper_state_stride_py_venv_reached.__name__}.eval_own_state"
+    )
+    @patch(
+        f"{primer_kernel.__name__}.{Bootstrapper_state_project_descriptors_inited.__name__}.eval_own_state"
+    )
+    @patch(
+        f"{primer_kernel.__name__}.{Bootstrapper_state_install_specs_inited.__name__}.eval_own_state"
     )
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_input_do_install_var_loaded.__name__}.eval_own_state"
@@ -390,7 +551,8 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_input_run_mode_arg_loaded,
         mock_state_args_parsed,
         mock_state_input_do_install_var_loaded,
-        mock_state_env_project_rel_path_to_extras_list_finalized_lconf,
+        mock_state_install_specs_inited,
+        mock_state_project_descriptors_inited,
         mock_state_stride_py_venv_reached,
         mock_state_ref_root_dir_abs_path_inited,
         mock_state_local_conf_symlink_abs_path_inited,
@@ -417,11 +579,10 @@ class ThisTestClass(BasePyfakefsTestClass):
             mock_client_conf_env_dir
         )
 
-        project_rel_path_to_extras_list = []
+        project_descriptors: list[dict] = []
 
-        mock_state_env_project_rel_path_to_extras_list_finalized_lconf.return_value = (
-            project_rel_path_to_extras_list
-        )
+        mock_state_project_descriptors_inited.return_value = project_descriptors
+        mock_state_install_specs_inited.return_value = []
 
         mock_state_input_do_install_var_loaded.return_value = True
 

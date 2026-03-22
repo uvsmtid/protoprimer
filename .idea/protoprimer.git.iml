@@ -12,11 +12,10 @@
       <sourceFolder url="file://$MODULE_DIR$/src/neoprimer/test" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/src/local_doc/main" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/local_doc/test" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/src/local_doc" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/local_repo" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/local_test" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/neoprimer" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/protoprimer" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/local_auth/main" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/local_auth/test" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src/dummy_private/main" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/dummy_private/test" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/venv" />
       <excludeFolder url="file://$MODULE_DIR$/src/venv.twine" />
       <excludeFolder url="file://$MODULE_DIR$/src/protoprimer/dist" />
@@ -40,6 +39,11 @@
       <excludeFolder url="file://$MODULE_DIR$/src/local_repo/build" />
       <excludeFolder url="file://$MODULE_DIR$/src/local_test/build" />
       <excludeFolder url="file://$MODULE_DIR$/doc/readthedocs/build" />
+      <excludeFolder url="file://$MODULE_DIR$/src/dummy_private/main/dummy_private.egg-info" />
+      <excludeFolder url="file://$MODULE_DIR$/src/local_auth/main/local_auth.egg-info" />
+      <excludeFolder url="file://$MODULE_DIR$/src/dummy_private/build" />
+      <excludeFolder url="file://$MODULE_DIR$/src/dummy_private/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/src/dummy_private/venv.twine" />
     </content>
     <orderEntry type="jdk" jdkName="Python 3.13 virtualenv at ~/repos/protoprimer.git/venv" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />

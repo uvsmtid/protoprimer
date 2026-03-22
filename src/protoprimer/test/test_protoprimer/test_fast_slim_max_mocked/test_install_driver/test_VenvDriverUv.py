@@ -1,5 +1,6 @@
 import subprocess
 from unittest.mock import (
+    ANY,
     call,
     mock_open,
     patch,
@@ -108,6 +109,7 @@ def test_install_dependencies(mock_subprocess_check_call, mock_exists, mock_isfi
         venv_python_file_abs_path=selected_python_file_abs_path,
         constraints_file_abs_path=constraints_file_abs_path,
         project_descriptors=project_descriptors,
+        extra_command_args=["--test-option"],
     )
 
     # then:
@@ -129,11 +131,13 @@ def test_install_dependencies(mock_subprocess_check_call, mock_exists, mock_isfi
                 "/target/venv/bin/python",
                 "--constraint",
                 constraints_file_abs_path,
+                "--test-option",
                 "--editable",
                 "/tmp/project1[extra1]",
                 "--editable",
                 "/tmp/project2",
-            ]
+            ],
+            env=ANY,
         ),
     ]
     mock_subprocess_check_call.assert_has_calls(expected_calls)

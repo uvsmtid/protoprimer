@@ -152,6 +152,10 @@ class StateMeta(enum.Enum):
         env_state=EnvState.state_project_descriptors_inited,
         sub_graph=SubGraph.graph_config,
     )
+    state_install_specs_inited = StateNodeMeta(
+        env_state=EnvState.state_install_specs_inited,
+        sub_graph=SubGraph.graph_config,
+    )
     state_derived_conf_data_loaded = StateNodeMeta(
         env_state=EnvState.state_derived_conf_data_loaded,
         sub_graph=None,

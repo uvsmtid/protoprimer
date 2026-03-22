@@ -47,15 +47,11 @@ def populate_common_args(operation_parser: ArgumentParser):
     )
     operation_parser.add_argument(
         "--location",
-        default="us-central1",
         help="The location of the repository.",
     )
     operation_parser.add_argument(
         "--project",
-        # NOTE: Project `protoprimer` was created by:
-        #       gcloud projects create protoprimer
-        default="protoprimer",
-        help="The Google Cloud project ID.",
+        help="The Google Cloud project id.",
     )
 
 
@@ -138,8 +134,9 @@ def show_repository_info(parsed_args):
 
 def main():
     """
-    Main function for the gcloud_artifact_repo script.
+    The main function for the `gcloud_artifact_repo` script.
     """
+
     arg_parser = init_arg_parser()
 
     parsed_args = arg_parser.parse_args()

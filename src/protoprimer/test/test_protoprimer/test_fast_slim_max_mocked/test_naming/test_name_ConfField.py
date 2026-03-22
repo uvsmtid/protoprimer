@@ -80,6 +80,11 @@ class FieldName(enum.Enum):
         NameCategory.category_value_field,
     )
 
+    field_install_specs = FieldMeta(
+        ConfField.field_install_specs,
+        NameCategory.category_value_field,
+    )
+
     field_build_root_dir_rel_path = FieldMeta(
         ConfField.field_build_root_dir_rel_path,
         NameCategory.category_path_arg_value,
@@ -87,6 +92,16 @@ class FieldName(enum.Enum):
 
     field_install_extras = FieldMeta(
         ConfField.field_install_extras,
+        NameCategory.category_value_field,
+    )
+
+    field_install_group = FieldMeta(
+        ConfField.field_install_group,
+        NameCategory.category_value_field,
+    )
+
+    field_extra_command_args = FieldMeta(
+        ConfField.field_extra_command_args,
         NameCategory.category_value_field,
     )
 

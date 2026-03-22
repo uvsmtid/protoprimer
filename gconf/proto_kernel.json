@@ -6,31 +6,59 @@
     "required_python_version": "3.14.0",
     "python_selector_file_rel_path": "cmd/proto_code/python_selector_same.py",
 
+    "venv_driver": "venv_uv",
+
     "local_venv_dir_rel_path": "venv",
     "local_log_dir_rel_path": "log",
     "local_tmp_dir_rel_path": "tmp",
+
     "project_descriptors": [
         {
+            "build_root_dir_rel_path": "src/local_auth",
+            "install_extras": [],
+            "install_group": "install_auth"
+        },
+        {
             "build_root_dir_rel_path": "src/local_doc",
-            "install_extras": []
+            "install_extras": [],
+            "install_group": "install_main"
         },
         {
             "build_root_dir_rel_path": "src/local_repo",
-            "install_extras": []
+            "install_extras": [],
+            "install_group": "install_main"
         },
         {
             "build_root_dir_rel_path": "src/local_test",
-            "install_extras": []
+            "install_extras": [],
+            "install_group": "install_main"
         },
         {
             "build_root_dir_rel_path": "src/neoprimer",
-            "install_extras": []
+            "install_extras": [],
+            "install_group": "install_main"
         },
         {
             "build_root_dir_rel_path": "src/protoprimer",
             "install_extras": [
                 "test"
-            ]
+            ],
+            "install_group": "install_main"
+        }
+    ],
+
+    "install_specs": [
+        {
+            "install_auth": {
+                "extra_command_args": [
+                ]
+            }
+        },
+        {
+            "install_main": {
+                "extra_command_args": [
+                ]
+            }
         }
     ]
 }

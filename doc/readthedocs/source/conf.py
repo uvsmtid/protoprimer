@@ -4,10 +4,13 @@ import os
 # TODO: This is a temporary option to have basic `readthedocs` page while the rest of the docs are in progress.
 #       When changed here, it should also be changed in `./index.rst` (automation did not work):
 is_full_protoprimer_content = False
+doc_tag_name: str
 if is_full_protoprimer_content:
-    tags.add("protoprimer_full")
+    doc_tag_name = "protoprimer_full"
 else:
-    tags.add("protoprimer_stub")
+    doc_tag_name = "protoprimer_stub"
+# NOTE: `tags` are not supposed to be `import`-ed:
+tags.add(doc_tag_name)
 
 
 def import_proto_kernel(proto_kernel_rel_path):

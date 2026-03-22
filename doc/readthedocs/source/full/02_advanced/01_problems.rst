@@ -9,7 +9,8 @@ Ultimate goal
 ``protoprimer`` must help eliminates manuals:
 
 *   no (conditional) steps for author to write and maintain
-*   no mistakes in multiple steps for user to make, no CLI args to select
+*   no mistakes in multiple steps for user to make
+*   no CLI args to remember
 
 Fist problems
 ********************************************************************************
@@ -19,20 +20,22 @@ To achieve that ``protoprimer`` has to be both:
 *   arg-less
 *   one-liner
 
-These two together require solutions for several other problems:
+Anything can be an arg-less one-liner if all details are hidden inside configuration.
 
-*   Being one-liner requires ubiquitous tool.
+But that brings several other problems:
 
-    Requiring **wild** ``python`` version is the simplest solution.
+*   Being **one-liner** requires ubiquitous tool - it must "just run" without installing anything.
 
-    In rare cases, when any ``python`` is not available, it is installed via generic tools and common knowledge.
+    Relaxing requirement to any **wild** ``python`` version is the simplest solution.
 
-*   Being arg-less requires support for environment-specific configuration.
+    In rare cases, when **any** ``python`` is not available, it is installed via generic tools and common knowledge.
+
+*   Being **arg-less** requires support for environment-specific configuration to handle differences.
 
     When no user input is expected:
 
     *   not only everything has to be pulled from the configuration
-    *   the configuration must be evaluated depending on the current environment
+    *   multiple configurations must be allowed to select from (based on the current environment)
 
 Additional constraints
 ********************************************************************************

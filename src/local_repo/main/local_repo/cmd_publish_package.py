@@ -1,5 +1,5 @@
 # !/usr/bin/env python3
-# Publish artifacts to pypi.org.
+# Publish artifacts to an artifact repository (pipy.org by default).
 # It is expected to be run under activated `venv`.
 # It must be run from the repo root:
 # ./cmd/publish_package -h
@@ -17,7 +17,9 @@ import re
 import shutil
 import sys
 import venv
-from typing import Optional
+from typing import (
+    Optional,
+)
 
 from local_repo.sub_proc_util import (
     get_command_code,
@@ -45,6 +47,7 @@ def publish_package(client_dir: str):
         client_dir=client_dir,
         package_name=parsed_args.package_name,
         repository_url=parsed_args.repository_url,
+        no_tag=parsed_args.no_tag,
     )
 
 
@@ -52,6 +55,7 @@ class DistribPackage(enum.Enum):
 
     package_neoprimer = "neoprimer"
     package_protoprimer = "protoprimer"
+    package_dummy_private = "dummy_private"
 
 
 def init_arg_parser():
@@ -72,6 +76,12 @@ def init_arg_parser():
         default=None,
         help="Repository URL for twine upload.",
     )
+    arg_parser.add_argument(
+        "--no_tag",
+        action="store_true",
+        default=False,
+        help="Do not create or push git tag.",
+    )
     return arg_parser
 
 
@@ -82,10 +92,46 @@ def get_tag_name(
     return f"{package_name}-v{distrib_version}"
 
 
+def create_and_push_tag(
+    distrib_version: str,
+    git_main_remote: str,
+    git_tag: str,
+    is_dev_version: bool,
+    package_name: str,
+):
+    # Versions have to be prefixed with `v` in tags:
+    if get_tag_name(package_name, distrib_version) != git_tag:
+        git_tag = get_tag_name(package_name, distrib_version)
+        if not is_dev_version:
+            # Append `.final` for the non-dev (release) version to make a tag:
+            git_tag = f"{git_tag}.final"
+
+        print(f"INFO: next git_tag: {git_tag}", file=sys.stderr)
+
+        # Note:
+        # *   unsigned unannotated tags appear "Verified" in GitHub
+        # *   unsigned annotated does not appear "Verified" in GitHub
+        # Create unannotated tag:
+        get_command_code(f"git tag {git_tag}")
+
+    else:
+        # Matching tag already exists - either already released, or something is wrong.
+        # It can be fixed by removing the tag, but the user has to do it consciously.
+        raise RuntimeError(f"tag already exits: {git_tag}")
+
+    # Push to remote only if it is a non-dev version:
+    if is_dev_version:
+        print(f"WARN: tag is not pushed to remote: {git_tag}", file=sys.stderr)
+    else:
+        print(f"INFO: tag is about to be pushed to remote: {git_tag}", file=sys.stderr)
+        get_command_code(f'git push "{git_main_remote}" "{git_tag}"')
+
+
 def _publish_package(
     client_dir: str,
     package_name: str,
     repository_url: Optional[str],
+    no_tag: bool,
 ):
     # Switch to `@/` to avoid creating temporary dirs somewhere else:
     os.chdir(client_dir)
@@ -105,7 +151,7 @@ def _publish_package(
     with open(version_file_path, "r") as f:
         match = re.search(r"^version\s*=\s*['\"]([^'\"]*)['\"]", f.read(), re.M)
         if match:
-            distrib_version = match.group(1)
+            distrib_version = str(match.group(1))
 
     if not distrib_version:
         raise RuntimeError(f"Could not find version in {version_file_path}")
@@ -157,32 +203,15 @@ def _publish_package(
     git_tag = get_command_output("git describe --tags")
     print(f"INFO: curr git_tag: {git_tag}", file=sys.stderr)
 
-    # Versions have to be prefixed with `v` in tags:
-    if get_tag_name(package_name, distrib_version) != git_tag:
-        git_tag = get_tag_name(package_name, distrib_version)
-        if not is_dev_version:
-            # Append `.final` for the non-dev (release) version to make a tag:
-            git_tag = f"{git_tag}.final"
-
-        print(f"INFO: next git_tag: {git_tag}", file=sys.stderr)
-
-        # Note:
-        # *   unsigned unannotated tags appear "Verified" in GitHub
-        # *   unsigned annotated does not appear "Verified" in GitHub
-        # Create unannotated tag:
-        get_command_code(f"git tag {git_tag}")
-
-    else:
-        # Matching tag already exists - either already released, or something is wrong.
-        # It can be fixed by removing the tag, but the user has to do it consciously.
-        raise RuntimeError(f"tag already exits: {git_tag}")
-
-    # Push to remote only if it is a non-dev version:
-    if is_dev_version:
-        print(f"WARN: tag is not pushed to remote: {git_tag}", file=sys.stderr)
-    else:
-        print(f"INFO: tag is about to be pushed to remote: {git_tag}", file=sys.stderr)
-        get_command_code(f'git push "{git_main_remote}" "{git_tag}"')
+    if not no_tag:
+        assert isinstance(distrib_version, str)
+        create_and_push_tag(
+            distrib_version,
+            git_main_remote,
+            git_tag,
+            is_dev_version,
+            package_name,
+        )
 
     # Switch to `build_dir`:
     build_dir = os.path.join(
@@ -251,7 +280,7 @@ def _publish_package(
     # Switch back to `client_dir`:
     os.chdir(client_dir)
 
-    # Change the version to non-release-able to force user to change it later:
+    # Change the version to non-release-able to force the user to change it later:
     # Equivalent of: sed --in-place
     with open(version_file_path, "r") as f:
         content = f.read()
