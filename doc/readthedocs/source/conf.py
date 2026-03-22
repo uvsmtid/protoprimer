@@ -65,6 +65,10 @@ intersphinx_disabled_domains = ["std"]
 
 templates_path = ["_templates"]
 
+html_extra_path = [
+    "BingSiteAuth.xml",
+]
+
 exclude_patterns = []
 
 if is_full_protoprimer_content:
