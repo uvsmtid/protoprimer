@@ -1,5 +1,5 @@
 # !/usr/bin/env python3
-# Publish artifacts to an artifact repository (pipy.org by default).
+# Publish artifacts to an artifact repository (pypi.org by default).
 # It is expected to be run under activated `venv`.
 # It must be run from the repo root:
 # ./cmd/publish_package -h
@@ -117,7 +117,7 @@ def create_and_push_tag(
     else:
         # Matching tag already exists - either already released, or something is wrong.
         # It can be fixed by removing the tag, but the user has to do it consciously.
-        raise RuntimeError(f"tag already exits: {git_tag}")
+        raise RuntimeError(f"tag already exists: {git_tag}")
 
     # Push to remote only if it is a non-dev version:
     if is_dev_version:
