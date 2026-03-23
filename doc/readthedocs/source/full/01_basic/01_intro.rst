@@ -3,17 +3,16 @@ Intro
 
 .. stub_include_start
 
-``protoprimer`` is an arg-less **one-liner** to bootstrap isolated environments per repo clones:
+An **arg-less one-liner** to bootstrap isolated environments per repo clones:
 
 .. code-block:: bash
 
     ./prime
 
-Users can extend the bootstrap sequence for any SDK.
+In a single run, `protoprimer`_ reproduces an isolated ``venv`` for the required ``python`` version and beyond.
 
-But, to be a one-liner, it utilizes ``python`` first:
+.. _protoprimer: https://github.com/uvsmtid/protoprimer
 
-*   to start (almost) everywhere
-*   to reproduce any rich versioned toolset in isolated ``venv``
+The bootstrap sequence is extendable for other tools, SDK-s, customizations, etc.
 
 .. stub_include_stop

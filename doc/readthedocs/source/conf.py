@@ -1,7 +1,7 @@
 # Configuration file for the Sphinx documentation builder.
 import os
 
-# TODO: This is a temporary option to have basic `readthedocs` page while the rest of the docs are in progress.
+# TODO: This is a temporary option to have a basic `readthedocs` page while the rest of the docs are in progress.
 #       When changed here, it should also be changed in `./index.rst` (automation did not work):
 is_full_protoprimer_content = False
 doc_tag_name: str

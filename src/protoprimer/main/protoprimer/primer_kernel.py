@@ -5247,7 +5247,7 @@ class Bootstrapper_state_install_specs_inited(
 
         install_specs: list = self._get_overridden_value_or_default(
             ConfField.field_install_specs.value,
-            [],
+            ConfConstEnv.default_install_specs,
         )
 
         return install_specs

@@ -47,10 +47,12 @@ def populate_common_args(operation_parser: ArgumentParser):
     )
     operation_parser.add_argument(
         "--location",
+        required=True,
         help="The location of the repository.",
     )
     operation_parser.add_argument(
         "--project",
+        required=True,
         help="The Google Cloud project id.",
     )
 
