@@ -7,7 +7,6 @@ from __future__ import annotations
 import enum
 import typing
 
-from local_test.consistent_naming import verify_name_enum_order_in_name
 from protoprimer.primer_kernel import (
     CommandAction,
     ConfLeap,
@@ -224,10 +223,20 @@ class AbstractMeta:
     def get_category(self) -> NameCategory:
         raise NotImplementedError
 
+    def get_name_components(self) -> list[str]:
+        raise NotImplementedError
+
 
 def verify_naming_convention(
     abstract_meta: AbstractMeta,
 ):
+
+    if True:
+        expected_name = "_".join(abstract_meta.get_name_components())
+        assert abstract_meta.get_name() == expected_name
+        return
+
+    # TODO: clean up old implementation:
     naming_order = [
         f"${{{enum_type.__name__}}}"
         for enum_type in abstract_meta.get_category().value.name_enums

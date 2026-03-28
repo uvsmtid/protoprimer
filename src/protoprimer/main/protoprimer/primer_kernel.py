@@ -208,6 +208,44 @@ class KeyWord(enum.Enum):
     key_venv = "venv"
     key_cache = "cache"
 
+    key_do = "do"
+    key_run = "run"
+    key_start = "start"
+    key_install = "install"
+    key_restart = "restart"
+
+    key_id = "id"
+    key_state = "state"
+    key_args = "args"
+    key_mode = "mode"
+    key_stderr = "stderr"
+    key_handler = "handler"
+    key_data = "data"
+    key_config = "config"
+    key_package = "package"
+    key_constraints = "constraints"
+    key_main = "main"
+    key_func = "func"
+    key_level = "level"
+    key_exec = "exec"
+    key_basename = "basename"
+
+    key_mocked = "mocked"
+    key_default = "default"
+    key_conf = "conf"
+    key_effective = "effective"
+
+    key_configured = "configured"
+    key_parsed = "parsed"
+    key_executed = "executed"
+    key_reached = "reached"
+    key_printed = "printed"
+    key_triggered = "triggered"
+    key_installed = "installed"
+    key_updated = "updated"
+    key_generated = "generated"
+    key_prepared = "prepared"
+
 
 class TopDir(enum.Enum):
     """
@@ -462,9 +500,9 @@ class ParsedArg(enum.Enum):
         f"{PathName.path_selected_env.value}_{FilesystemObject.fs_object_dir.value}"
     )
 
-    name_reinstall = f"do_{CommandAction.action_reinstall.value}"
+    name_reinstall = f"{KeyWord.key_do.value}_{CommandAction.action_reinstall.value}"
 
-    name_command = f"run_{CommandAction.action_command.value}"
+    name_command = f"{KeyWord.key_run.value}_{CommandAction.action_command.value}"
 
     name_run_mode = str(ValueName.value_run_mode.value)
     name_final_state = str(ValueName.value_final_state.value)
@@ -1185,11 +1223,17 @@ class ConfConstGeneral:
 
     python_version_file_basename = ".python-version"
 
+    venv_config_file_basename = "pyvenv.cfg"
+
+    pytest_module = "pytest"
+
     name_pip_package = "pip"
 
     name_uv_package = "uv"
 
     curr_dir_rel_path = "."
+
+    module_func_separator = ":"
 
     # TODO: use lambdas to generate based on input (instead of None):
     # This is a value declared for completeness,
@@ -7426,8 +7470,7 @@ def is_test_run() -> bool:
     """
     See: FT_83_60_72_19.test_perimeter.md
     """
-    # TODO: use constant:
-    return "pytest" in sys.modules
+    return ConfConstGeneral.pytest_module in sys.modules
 
 
 def get_venv_type(
@@ -7435,8 +7478,7 @@ def get_venv_type(
 ) -> VenvDriverType:
     venv_cfg_file_abs_path = os.path.join(
         local_venv_dir_abs_path,
-        # TODO: use constant:
-        "pyvenv.cfg",
+        ConfConstGeneral.venv_config_file_basename,
     )
     if not os.path.exists(venv_cfg_file_abs_path):
         raise AssertionError(
@@ -7515,6 +7557,7 @@ def select_python_file_abs_path(
     Run the `python` selector script specified in `ConfField.field_python_selector_file_rel_path`.
     """
 
+    # TODO: Implement local repo example with `python_selector_module`:
     # TODO: use constants:
     proto_module_name: str = "python_selector_module"
     python_selector_module = import_proto_module(
@@ -7744,13 +7787,11 @@ def _start_main(
 
     module_name: str
     func_name: str
-    # TODO: use constants:
-    if ":" in venv_main_func:
+    if ConfConstGeneral.module_func_separator in venv_main_func:
         (
             module_name,
             func_name,
-            # TODO: use constants:
-        ) = venv_main_func.split(":", 1)
+        ) = venv_main_func.split(ConfConstGeneral.module_func_separator, 1)
     else:
         raise ValueError(
             f"The specified main function [{venv_main_func}] does not match expected format `module_name:function_name`."
@@ -7770,9 +7811,10 @@ def _start_main(
             venv_module = importlib.import_module(module_name)
             selected_main = getattr(venv_module, func_name)
         elif curr_py_exec.value >= StateStride.stride_deps_updated.value:
-            # TODO: use constants:
             # Switch from running `proto_code` to installed `venv` code:
-            venv_module = importlib.import_module("protoprimer.primer_kernel")
+            venv_module = importlib.import_module(
+                f"{ConfConstGeneral.name_protoprimer_package}.{ConfConstGeneral.name_primer_kernel_module}"
+            )
             selected_main = getattr(venv_module, "app_main")
     except ImportError:
         if curr_py_exec.value >= StateStride.stride_src_updated.value:

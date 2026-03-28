@@ -3,7 +3,13 @@ from __future__ import annotations
 import enum
 
 from local_test.name_assertion import assert_test_module_name_embeds_str
-from protoprimer.primer_kernel import EnvVar
+from protoprimer.primer_kernel import (
+    ConfConstGeneral,
+    EnvVar,
+    KeyWord,
+    PathName,
+    ValueName,
+)
 from test_protoprimer.test_fast_slim_max_mocked.test_naming.naming_metadata import (
     AbstractMeta,
     NameCategory,
@@ -19,9 +25,11 @@ class EnvVarMeta(AbstractMeta):
         self,
         env_var: EnvVar,
         name_category: NameCategory,
+        name_components: list[str],
     ):
         self.env_var: EnvVar = env_var
         self.name_category: NameCategory = name_category
+        self.name_components: list[str] = name_components
 
     def get_prod_item(self):
         return self.env_var
@@ -35,47 +43,98 @@ class EnvVarMeta(AbstractMeta):
     def get_category(self):
         return self.name_category
 
+    def get_name_components(self) -> list[str]:
+        return self.name_components
+
 
 class EnvVarName(enum.Enum):
     var_PROTOPRIMER_RUN_MODE = EnvVarMeta(
         EnvVar.var_PROTOPRIMER_RUN_MODE,
         NameCategory.category_name_only,
+        [
+            ConfConstGeneral.name_protoprimer_package.upper(),
+            KeyWord.key_run.value.upper(),
+            KeyWord.key_mode.value.upper(),
+        ],
     )
     var_PROTOPRIMER_MAIN_FUNC = EnvVarMeta(
         EnvVar.var_PROTOPRIMER_MAIN_FUNC,
         NameCategory.category_name_only,
+        [
+            ConfConstGeneral.name_protoprimer_package.upper(),
+            KeyWord.key_main.value.upper(),
+            KeyWord.key_func.value.upper(),
+        ],
     )
     var_PROTOPRIMER_STDERR_LOG_LEVEL = EnvVarMeta(
         EnvVar.var_PROTOPRIMER_STDERR_LOG_LEVEL,
         NameCategory.category_name_only,
+        [
+            ConfConstGeneral.name_protoprimer_package.upper(),
+            KeyWord.key_stderr.value.upper(),
+            KeyWord.key_log.value.upper(),
+            KeyWord.key_level.value.upper(),
+        ],
     )
     var_PROTOPRIMER_PY_EXEC = EnvVarMeta(
         EnvVar.var_PROTOPRIMER_PY_EXEC,
         NameCategory.category_name_only,
+        [
+            ConfConstGeneral.name_protoprimer_package.upper(),
+            ValueName.value_py_exec.value.upper(),
+        ],
     )
     var_PROTOPRIMER_DO_INSTALL = EnvVarMeta(
         EnvVar.var_PROTOPRIMER_DO_INSTALL,
         NameCategory.category_name_only,
+        [
+            ConfConstGeneral.name_protoprimer_package.upper(),
+            KeyWord.key_do.value.upper(),
+            KeyWord.key_install.value.upper(),
+        ],
     )
     var_PROTOPRIMER_PROTO_CODE = EnvVarMeta(
         EnvVar.var_PROTOPRIMER_PROTO_CODE,
         NameCategory.category_name_only,
+        [
+            ConfConstGeneral.name_protoprimer_package.upper(),
+            PathName.path_proto_code.value.upper(),
+        ],
     )
     var_PROTOPRIMER_CONF_BASENAME = EnvVarMeta(
         EnvVar.var_PROTOPRIMER_CONF_BASENAME,
         NameCategory.category_name_only,
+        [
+            ConfConstGeneral.name_protoprimer_package.upper(),
+            KeyWord.key_conf.value.upper(),
+            KeyWord.key_basename.value.upper(),
+        ],
     )
     var_PROTOPRIMER_START_ID = EnvVarMeta(
         EnvVar.var_PROTOPRIMER_START_ID,
         NameCategory.category_name_only,
+        [
+            ConfConstGeneral.name_protoprimer_package.upper(),
+            KeyWord.key_start.value.upper(),
+            KeyWord.key_id.value.upper(),
+        ],
     )
     var_PROTOPRIMER_VENV_DRIVER = EnvVarMeta(
         EnvVar.var_PROTOPRIMER_VENV_DRIVER,
         NameCategory.category_name_only,
+        [
+            ConfConstGeneral.name_protoprimer_package.upper(),
+            ValueName.value_venv_driver.value.upper(),
+        ],
     )
     var_PROTOPRIMER_MOCKED_RESTART = EnvVarMeta(
         EnvVar.var_PROTOPRIMER_MOCKED_RESTART,
         NameCategory.category_name_only,
+        [
+            ConfConstGeneral.name_protoprimer_package.upper(),
+            KeyWord.key_mocked.value.upper(),
+            KeyWord.key_restart.value.upper(),
+        ],
     )
 
 
