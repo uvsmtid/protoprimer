@@ -48,16 +48,16 @@ class StateMeta(enum.Enum):
         env_state=EnvState.state_input_stderr_log_level_eval_finalized,
         sub_graph=SubGraph.graph_input,
     )
-    state_input_run_mode_arg_loaded = StateNodeMeta(
-        env_state=EnvState.state_input_run_mode_arg_loaded,
+    state_input_exec_mode_arg_loaded = StateNodeMeta(
+        env_state=EnvState.state_input_exec_mode_arg_loaded,
         sub_graph=SubGraph.graph_input,
     )
     state_input_final_state_eval_finalized = StateNodeMeta(
         env_state=EnvState.state_input_final_state_eval_finalized,
         sub_graph=SubGraph.graph_input,
     )
-    state_run_mode_executed = StateNodeMeta(
-        env_state=EnvState.state_run_mode_executed,
+    state_exec_mode_executed = StateNodeMeta(
+        env_state=EnvState.state_exec_mode_executed,
         sub_graph=None,
     )
     state_input_start_id_var_loaded = StateNodeMeta(

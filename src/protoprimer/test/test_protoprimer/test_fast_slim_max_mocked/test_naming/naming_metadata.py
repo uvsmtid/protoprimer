@@ -235,12 +235,6 @@ def verify_naming_convention(
         expected_name = "_".join(abstract_meta.get_name_components())
         assert abstract_meta.get_name() == expected_name
         return
-
-    # TODO: clean up old implementation:
-    naming_order = [
-        f"${{{enum_type.__name__}}}"
-        for enum_type in abstract_meta.get_category().value.name_enums
-    ]
     given_name = abstract_meta.get_name()
     ret_val: enum.Enum | None = verify_name_enum_order_in_name(
         abstract_meta.get_category().value.name_enums,

@@ -102,11 +102,11 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(f"{primer_kernel.__name__}.os.execve")
     @patch(f"{primer_kernel.__name__}.subprocess.check_call")
     @patch(
-        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.eval_own_state"
     )
     def test_success_on_arbitrary_py_exec_outside_venv(
         self,
-        mock_input_run_mode_arg_loaded,
+        mock_input_exec_mode_arg_loaded,
         mock_check_call,
         mock_execve,
         mock_get_path_to_curr_python,
@@ -198,11 +198,11 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(f"{primer_kernel.__name__}.os.execve")
     @patch(f"{primer_kernel.__name__}.subprocess.check_call")
     @patch(
-        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.eval_own_state"
     )
     def test_skip_if_py_exec_is_already_required(
         self,
-        mock_input_run_mode_arg_loaded,
+        mock_input_exec_mode_arg_loaded,
         mock_check_call,
         mock_execve,
         mock_get_path_to_curr_python,
@@ -270,11 +270,11 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(f"{primer_kernel.__name__}.os.execve")
     @patch(f"{primer_kernel.__name__}.subprocess.check_call")
     @patch(
-        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.eval_own_state"
     )
     def test_success_if_correct_python_is_already_used(
         self,
-        mock_input_run_mode_arg_loaded,
+        mock_input_exec_mode_arg_loaded,
         mock_check_call,
         mock_execve,
         mock_get_path_to_curr_python,

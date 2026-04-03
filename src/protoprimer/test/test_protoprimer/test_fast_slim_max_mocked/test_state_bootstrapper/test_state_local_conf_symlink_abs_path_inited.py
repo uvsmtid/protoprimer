@@ -11,7 +11,7 @@ from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     Bootstrapper_state_client_conf_file_data_loaded,
-    Bootstrapper_state_input_run_mode_arg_loaded,
+    Bootstrapper_state_input_exec_mode_arg_loaded,
     Bootstrapper_state_ref_root_dir_abs_path_inited,
     Bootstrapper_state_selected_env_dir_rel_path_inited,
     ConfConstClient,
@@ -19,7 +19,7 @@ from protoprimer.primer_kernel import (
     ConfConstPrimer,
     ConfField,
     EnvState,
-    RunMode,
+    ExecMode,
     write_json_file,
 )
 
@@ -38,7 +38,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
 
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.eval_own_state"
     )
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.eval_own_state"
@@ -54,12 +54,12 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_selected_env_dir_rel_path_inited,
         mock_state_ref_root_dir_abs_path_inited,
         mock_state_client_conf_file_data_loaded,
-        mock_state_input_run_mode_arg_loaded,
+        mock_state_input_exec_mode_arg_loaded,
     ):
 
         # given:
 
-        mock_state_input_run_mode_arg_loaded.return_value = RunMode.mode_start
+        mock_state_input_exec_mode_arg_loaded.return_value = ExecMode.mode_start
 
         assert_parent_states_mocked(
             self.env_ctx,
@@ -117,7 +117,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         # no exception happens
 
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.eval_own_state"
     )
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.eval_own_state"
@@ -133,12 +133,12 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_selected_env_dir_rel_path_inited,
         mock_state_ref_root_dir_abs_path_inited,
         mock_state_client_conf_file_data_loaded,
-        mock_state_input_run_mode_arg_loaded,
+        mock_state_input_exec_mode_arg_loaded,
     ):
 
         # given:
 
-        mock_state_input_run_mode_arg_loaded.return_value = RunMode.mode_prime
+        mock_state_input_exec_mode_arg_loaded.return_value = ExecMode.mode_prime
 
         assert_parent_states_mocked(
             self.env_ctx,
@@ -189,7 +189,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         # no exception happens
 
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.eval_own_state"
     )
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.eval_own_state"
@@ -205,12 +205,12 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_selected_env_dir_rel_path_inited,
         mock_state_ref_root_dir_abs_path_inited,
         mock_state_client_conf_file_data_loaded,
-        mock_state_input_run_mode_arg_loaded,
+        mock_state_input_exec_mode_arg_loaded,
     ):
 
         # given:
 
-        mock_state_input_run_mode_arg_loaded.return_value = RunMode.mode_prime
+        mock_state_input_exec_mode_arg_loaded.return_value = ExecMode.mode_prime
 
         assert_parent_states_mocked(
             self.env_ctx,
@@ -267,7 +267,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.assertIn("not the same as the provided target", str(ctx.exception))
 
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.eval_own_state"
     )
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.eval_own_state"
@@ -283,12 +283,12 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_selected_env_dir_rel_path_inited,
         mock_state_ref_root_dir_abs_path_inited,
         mock_state_client_conf_file_data_loaded,
-        mock_state_input_run_mode_arg_loaded,
+        mock_state_input_exec_mode_arg_loaded,
     ):
 
         # given:
 
-        mock_state_input_run_mode_arg_loaded.return_value = RunMode.mode_prime
+        mock_state_input_exec_mode_arg_loaded.return_value = ExecMode.mode_prime
 
         assert_parent_states_mocked(
             self.env_ctx,
@@ -340,7 +340,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.assertIn("is not a directory", str(ctx.exception))
 
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.eval_own_state"
     )
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.eval_own_state"
@@ -356,12 +356,12 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_selected_env_dir_rel_path_inited,
         mock_state_ref_root_dir_abs_path_inited,
         mock_state_client_conf_file_data_loaded,
-        mock_state_input_run_mode_arg_loaded,
+        mock_state_input_exec_mode_arg_loaded,
     ):
 
         # given:
 
-        mock_state_input_run_mode_arg_loaded.return_value = RunMode.mode_prime
+        mock_state_input_exec_mode_arg_loaded.return_value = ExecMode.mode_prime
 
         assert_parent_states_mocked(
             self.env_ctx,
@@ -413,7 +413,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.assertIn("is not a symlink", str(ctx.exception))
 
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.eval_own_state"
     )
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.eval_own_state"
@@ -429,12 +429,12 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_selected_env_dir_rel_path_inited,
         mock_state_ref_root_dir_abs_path_inited,
         mock_state_client_conf_file_data_loaded,
-        mock_state_input_run_mode_arg_loaded,
+        mock_state_input_exec_mode_arg_loaded,
     ):
 
         # given:
 
-        mock_state_input_run_mode_arg_loaded.return_value = RunMode.mode_prime
+        mock_state_input_exec_mode_arg_loaded.return_value = ExecMode.mode_prime
 
         assert_parent_states_mocked(
             self.env_ctx,
@@ -486,7 +486,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
 
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.eval_own_state"
     )
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.eval_own_state"
@@ -502,12 +502,12 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_selected_env_dir_rel_path_inited,
         mock_state_ref_root_dir_abs_path_inited,
         mock_state_client_conf_file_data_loaded,
-        mock_state_input_run_mode_arg_loaded,
+        mock_state_input_exec_mode_arg_loaded,
     ):
 
         # given:
 
-        mock_state_input_run_mode_arg_loaded.return_value = RunMode.mode_prime
+        mock_state_input_exec_mode_arg_loaded.return_value = ExecMode.mode_prime
 
         assert_parent_states_mocked(
             self.env_ctx,
@@ -561,7 +561,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
 
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.eval_own_state"
     )
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.eval_own_state"
@@ -577,10 +577,10 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_selected_env_dir_rel_path_inited,
         mock_state_ref_root_dir_abs_path_inited,
         mock_state_client_conf_file_data_loaded,
-        mock_state_input_run_mode_arg_loaded,
+        mock_state_input_exec_mode_arg_loaded,
     ):
         # given:
-        mock_state_input_run_mode_arg_loaded.return_value = RunMode.mode_prime
+        mock_state_input_exec_mode_arg_loaded.return_value = ExecMode.mode_prime
         assert_parent_states_mocked(
             self.env_ctx,
             EnvState.state_local_conf_symlink_abs_path_inited.name,

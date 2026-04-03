@@ -3,8 +3,8 @@ from typing import Dict
 
 
 def generate_entry_script_content(
-    # TODO: Move this function to `protoprimer.primer_kernel`? To use `RunMode` enum.
-    run_mode: str,
+    # TODO: Move this function to `protoprimer.primer_kernel`? To use `ExecMode` enum.
+    exec_mode: str,
     proto_kernel_abs_path: str,
     entry_script_abs_path: str,
     module_name: str,
@@ -24,12 +24,12 @@ def generate_entry_script_content(
             ]
         )
 
-    if run_mode == "start":
+    if exec_mode == "start":
         entry_func = "app_starter"
-    elif run_mode == "prime":
+    elif exec_mode == "prime":
         entry_func = "env_bootstrapper"
     else:
-        raise AssertionError(f"Unrecognized `run_mode` [{run_mode}]")
+        raise AssertionError(f"Unrecognized `exec_mode` [{exec_mode}]")
 
     proto_kernel_rel_path = os.path.relpath(
         proto_kernel_abs_path,

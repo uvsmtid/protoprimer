@@ -15,7 +15,7 @@ from protoprimer.primer_kernel import (
     PathName,
     PathType,
     PrimerRuntime,
-    RunMode,
+    ExecMode,
     ValueName,
 )
 from test_protoprimer.test_fast_slim_max_mocked.test_naming import naming_metadata
@@ -94,7 +94,7 @@ def test_enum_str_value_uniqueness_across_multiple_enums():
         [
             ConfLeap,
             PrimerRuntime,
-            RunMode,
+            ExecMode,
             FilesystemObject,
             PathType,
             EnvVar,
