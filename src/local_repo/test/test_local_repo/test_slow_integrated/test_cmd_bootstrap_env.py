@@ -22,7 +22,7 @@ from protoprimer.primer_kernel import (
     ConfConstEnv,
     ConfConstInput,
     ConfConstPrimer,
-    RunMode,
+    ExecMode,
 )
 from protoprimer.proto_generator import generate_entry_script_content
 
@@ -82,7 +82,7 @@ def test_bootstrap_env(tmp_path: pathlib.Path):
 
     bootstrap_env_script_abs_path = ref_root_abs_path / "bootstrap_env"
     bootstrap_env_script_content = generate_entry_script_content(
-        RunMode.mode_prime.value,
+        ExecMode.mode_prime.value,
         str(proto_kernel_abs_path),
         str(bootstrap_env_script_abs_path),
         f"{cmd_bootstrap_env.__name__}",

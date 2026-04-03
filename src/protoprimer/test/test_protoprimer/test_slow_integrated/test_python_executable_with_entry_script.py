@@ -28,7 +28,7 @@ from protoprimer.primer_kernel import (
     ConfConstPrimer,
     EnvVar,
     KeyWord,
-    RunMode,
+    ExecMode,
     SyntaxArg,
     VenvDriverBase,
     VenvDriverPip,
@@ -109,7 +109,7 @@ def test_python_from_arbitrary_venv_with_app_starter(
 
     env_bootstrapper_script_abs_path = ref_root_abs_path / "env_bootstrapper"
     env_bootstrapper_script_content = generate_entry_script_content(
-        RunMode.mode_prime.value,
+        ExecMode.mode_prime.value,
         str(proto_kernel_abs_path),
         str(env_bootstrapper_script_abs_path),
         f"{cmd_env_bootstrapper.__name__}",
@@ -126,7 +126,7 @@ def test_python_from_arbitrary_venv_with_app_starter(
 
     app_starter_script_abs_path = ref_root_abs_path / "app_starter"
     app_starter_script_content = generate_entry_script_content(
-        RunMode.mode_start.value,
+        ExecMode.mode_start.value,
         str(proto_kernel_abs_path),
         str(app_starter_script_abs_path),
         f"{cmd_app_starter.__name__}",
@@ -277,7 +277,7 @@ def test_python_from_required_venv_with_app_starter(
 
     env_bootstrapper_script_abs_path = ref_root_abs_path / "env_bootstrapper"
     env_bootstrapper_script_content = generate_entry_script_content(
-        RunMode.mode_prime.value,
+        ExecMode.mode_prime.value,
         str(proto_kernel_abs_path),
         str(env_bootstrapper_script_abs_path),
         f"{cmd_env_bootstrapper.__name__}",
@@ -294,7 +294,7 @@ def test_python_from_required_venv_with_app_starter(
 
     app_starter_script_abs_path = ref_root_abs_path / "app_starter"
     app_starter_script_content = generate_entry_script_content(
-        RunMode.mode_start.value,
+        ExecMode.mode_start.value,
         str(proto_kernel_abs_path),
         str(app_starter_script_abs_path),
         f"{cmd_app_starter.__name__}",

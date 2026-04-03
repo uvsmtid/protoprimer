@@ -15,7 +15,7 @@ from protoprimer.primer_kernel import (
     EnvContext,
     EnvState,
     ParsedArg,
-    RunMode,
+    ExecMode,
     StateStride,
 )
 
@@ -49,13 +49,13 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.eval_own_state"
     )
     @patch(f"{primer_kernel.__name__}.switch_python")
     def test_not_yet_at_required_python(
         self,
         mock_switch_python,
-        mock_state_input_run_mode_arg_loaded,
+        mock_state_input_exec_mode_arg_loaded,
         mock_state_local_venv_dir_abs_path_inited,
         mock_state_proto_code_file_abs_path_inited,
         mock_state_proto_code_updated,
@@ -83,7 +83,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         self.env_ctx.state_stride = StateStride.stride_py_unknown
 
-        mock_state_input_run_mode_arg_loaded.return_value = RunMode.mode_prime
+        mock_state_input_exec_mode_arg_loaded.return_value = ExecMode.mode_prime
         mock_state_local_venv_dir_abs_path_inited.return_value = "/path/to/venv"
         self.fs.create_file("/path/to/venv/bin/python")
 
@@ -119,13 +119,13 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.eval_own_state"
     )
     @patch(f"{primer_kernel.__name__}.switch_python")
     def test_already_required_python(
         self,
         mock_switch_python,
-        mock_state_input_run_mode_arg_loaded,
+        mock_state_input_exec_mode_arg_loaded,
         mock_state_local_venv_dir_abs_path_inited,
         mock_state_proto_code_file_abs_path_inited,
         mock_state_proto_code_updated,
@@ -156,7 +156,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         self.env_ctx.state_stride = StateStride.stride_src_updated
 
-        mock_state_input_run_mode_arg_loaded.return_value = RunMode.mode_prime
+        mock_state_input_exec_mode_arg_loaded.return_value = ExecMode.mode_prime
         mock_state_local_venv_dir_abs_path_inited.return_value = "/path/to/venv"
 
         # when:

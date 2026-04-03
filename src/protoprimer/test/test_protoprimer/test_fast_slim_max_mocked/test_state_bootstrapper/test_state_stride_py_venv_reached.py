@@ -101,12 +101,12 @@ class ThisTestClass(BasePyfakefsTestClass):
     )
     @patch(f"{primer_kernel.__name__}.os.execve")
     @patch(
-        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.eval_own_state"
     )
     @patch(f"{primer_kernel.__name__}.is_same_file", return_value=True)
     def test_success_on_path_to_curr_python_is_outside_of_path_to_venv_when_venv_is_created(
         self,
-        mock_state_input_run_mode_arg_loaded,
+        mock_state_input_exec_mode_arg_loaded,
         mock_is_same_file,
         mock_execve,
         mock_get_path_to_curr_python,
@@ -213,11 +213,11 @@ class ThisTestClass(BasePyfakefsTestClass):
     )
     @patch(f"{primer_kernel.__name__}.os.execve")
     @patch(
-        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.eval_own_state"
     )
     def test_failure_when_path_to_curr_python_is_inside_venv(
         self,
-        mock_state_input_run_mode_arg_loaded,
+        mock_state_input_exec_mode_arg_loaded,
         mock_execve,
         mock_get_path_to_curr_python,
         mock_state_venv_driver_prepared,
@@ -306,11 +306,11 @@ class ThisTestClass(BasePyfakefsTestClass):
     )
     @patch(f"{primer_kernel.__name__}.os.execve")
     @patch(
-        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.eval_own_state"
     )
     def test_failure_when_path_to_curr_python_is_inside_venv_initially_and_expected(
         self,
-        mock_state_input_run_mode_arg_loaded,
+        mock_state_input_exec_mode_arg_loaded,
         mock_execve,
         mock_get_path_to_curr_python,
         mock_state_venv_driver_prepared,
@@ -399,12 +399,12 @@ class ThisTestClass(BasePyfakefsTestClass):
     )
     @patch(f"{primer_kernel.__name__}.os.execve")
     @patch(
-        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.eval_own_state"
     )
     @patch(f"{primer_kernel.__name__}.is_same_file", return_value=False)
     def test_failure_when_path_to_python_differs_from_path_to_curr_python(
         self,
-        mock_state_input_run_mode_arg_loaded,
+        mock_state_input_exec_mode_arg_loaded,
         mock_is_same_file,
         mock_execve,
         mock_get_path_to_curr_python,
@@ -494,12 +494,12 @@ class ThisTestClass(BasePyfakefsTestClass):
     )
     @patch(f"{primer_kernel.__name__}.os.execve")
     @patch(
-        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.eval_own_state"
     )
     @patch(f"{primer_kernel.__name__}.is_same_file", return_value=True)
     def test_success_when_path_to_python_matches_path_to_curr_python_and_execv_is_called_for_venv_python(
         self,
-        mock_state_input_run_mode_arg_loaded,
+        mock_state_input_exec_mode_arg_loaded,
         mock_is_same_file,
         mock_execve,
         mock_get_path_to_curr_python,
@@ -608,12 +608,12 @@ class ThisTestClass(BasePyfakefsTestClass):
     )
     @patch(f"{primer_kernel.__name__}.os.execve")
     @patch(
-        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.eval_own_state"
     )
     @patch(f"{primer_kernel.__name__}.is_same_file", return_value=True)
     def test_success_when_path_to_python_is_not_inside_existing_venv(
         self,
-        mock_state_input_run_mode_arg_loaded,
+        mock_state_input_exec_mode_arg_loaded,
         mock_is_same_file,
         mock_execve,
         mock_get_path_to_curr_python,
@@ -720,12 +720,12 @@ class ThisTestClass(BasePyfakefsTestClass):
     )
     @patch(f"{primer_kernel.__name__}.os.execve")
     @patch(
-        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.eval_own_state"
     )
     @patch(f"{primer_kernel.__name__}.is_same_file", return_value=True)
     def test_success_on_arbitrary_py_exec_outside_venv(
         self,
-        mock_state_input_run_mode_arg_loaded,
+        mock_state_input_exec_mode_arg_loaded,
         mock_is_same_file,
         mock_execve,
         mock_get_path_to_curr_python,
@@ -834,11 +834,11 @@ class ThisTestClass(BasePyfakefsTestClass):
     )
     @patch(f"{primer_kernel.__name__}.os.execve")
     @patch(
-        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.eval_own_state"
     )
     def test_success_when_py_exec_is_already_venv(
         self,
-        mock_state_input_run_mode_arg_loaded,
+        mock_state_input_exec_mode_arg_loaded,
         mock_execve,
         mock_get_path_to_curr_python,
         mock_state_venv_driver_prepared,
@@ -907,12 +907,12 @@ class ThisTestClass(BasePyfakefsTestClass):
     )
     @patch(f"{primer_kernel.__name__}.os.execve")
     @patch(
-        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.eval_own_state"
     )
     @patch(f"{primer_kernel.__name__}.is_same_file", return_value=True)
     def test_success_when_reusing_existing_venv(
         self,
-        mock_state_input_run_mode_arg_loaded,
+        mock_state_input_exec_mode_arg_loaded,
         mock_is_same_file,
         mock_execve,
         mock_get_path_to_curr_python,
@@ -1023,12 +1023,12 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{primer_kernel.VenvDriverPip.__name__}.create_venv"
     )
     @patch(
-        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.eval_own_state"
     )
     @patch(f"{primer_kernel.__name__}.is_same_file", return_value=True)
     def test_failure_when_reusing_existing_venv_of_wrong_type(
         self,
-        mock_state_input_run_mode_arg_loaded,
+        mock_state_input_exec_mode_arg_loaded,
         mock_is_same_file,
         mock_venv_venv_pip_create_venv,
         mock_execve,

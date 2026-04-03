@@ -35,7 +35,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_stderr_log_level_eval_finalized.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.eval_own_state"
     )
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_global_conf_file_abs_path_inited.__name__}.eval_own_state"
@@ -43,7 +43,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     def test_state_global_conf_file_abs_path_inited_exists(
         self,
         mock_state_global_conf_file_abs_path_inited,
-        mock_state_input_run_mode_arg_loaded,
+        mock_state_input_exec_mode_arg_loaded,
         mock_state_input_stderr_log_level_eval_finalized,
     ):
 
@@ -85,7 +85,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_stderr_log_level_eval_finalized.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.eval_own_state"
     )
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_global_conf_file_abs_path_inited.__name__}.eval_own_state"
@@ -93,7 +93,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     def test_state_global_conf_file_abs_path_inited_missing(
         self,
         mock_state_global_conf_file_abs_path_inited,
-        mock_state_input_run_mode_arg_loaded,
+        mock_state_input_exec_mode_arg_loaded,
         mock_state_input_stderr_log_level_eval_finalized,
         mock_get_stride,
     ):

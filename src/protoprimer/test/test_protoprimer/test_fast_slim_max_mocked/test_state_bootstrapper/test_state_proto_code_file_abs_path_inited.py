@@ -9,7 +9,7 @@ from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     Bootstrapper_state_input_proto_code_file_abs_path_var_loaded,
-    Bootstrapper_state_input_run_mode_arg_loaded,
+    Bootstrapper_state_input_exec_mode_arg_loaded,
     Bootstrapper_state_stride_py_arbitrary_reached,
     EnvContext,
     EnvState,
@@ -39,10 +39,10 @@ def test_relationship():
     f"{primer_kernel.__name__}.{Bootstrapper_state_input_proto_code_file_abs_path_var_loaded.__name__}.eval_own_state"
 )
 @patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
+    f"{primer_kernel.__name__}.{Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.eval_own_state"
 )
 def test_stride_py_arbitrary_not_in_venv(
-    mock_state_input_run_mode_arg_loaded,
+    mock_state_input_exec_mode_arg_loaded,
     mock_state_input_proto_code_file_abs_path_var_loaded,
     mock_state_stride_py_arbitrary_reached,
     mock_is_venv,
@@ -89,10 +89,10 @@ def test_stride_py_arbitrary_not_in_venv(
     f"{primer_kernel.__name__}.{Bootstrapper_state_input_proto_code_file_abs_path_var_loaded.__name__}.eval_own_state"
 )
 @patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
+    f"{primer_kernel.__name__}.{Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.eval_own_state"
 )
 def test_stride_py_venv(
-    mock_state_input_run_mode_arg_loaded,
+    mock_state_input_exec_mode_arg_loaded,
     mock_state_input_proto_code_file_abs_path_var_loaded,
     mock_state_stride_py_arbitrary_reached,
     mock_get_stride,
@@ -133,10 +133,10 @@ def test_stride_py_venv(
     f"{primer_kernel.__name__}.{Bootstrapper_state_stride_py_arbitrary_reached.__name__}.eval_own_state"
 )
 @patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
+    f"{primer_kernel.__name__}.{Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.eval_own_state"
 )
 def test_stride_py_venv_no_arg(
-    mock_state_input_run_mode_arg_loaded,
+    mock_state_input_exec_mode_arg_loaded,
     mock_state_stride_py_arbitrary_reached,
     mock_state_input_proto_code_file_abs_path_var_loaded,
     mock_get_stride,

@@ -13,7 +13,7 @@ from protoprimer.primer_kernel import (
     ConfField,
     EnvContext,
     EnvState,
-    RunMode,
+    ExecMode,
     StateStride,
 )
 
@@ -104,6 +104,6 @@ def test_warning_when_field_missing(
     # then:
     assert result == os.path.dirname(mock_proto_code_dir)
     assert (
-        f"Field `{ConfField.field_ref_root_dir_rel_path.value}` is [None] - use [{RunMode.mode_config.value}] sub-command for description."
+        f"Field `{ConfField.field_ref_root_dir_rel_path.value}` is [None] - use [{ExecMode.mode_config.value}] sub-command for description."
         in caplog.text
     )

@@ -20,7 +20,7 @@ from protoprimer.primer_kernel import (
     ConfConstGeneral,
     ConfConstInput,
     ConfConstPrimer,
-    RunMode,
+    ExecMode,
     SyntaxArg,
     VenvDriverPip,
 )
@@ -113,7 +113,7 @@ def test_app_starter_from_env_default(tmp_path: pathlib.Path):
 
     app_starter_script_abs_path = ref_root_abs_path / "app_starter"
     app_starter_script_content = generate_entry_script_content(
-        RunMode.mode_start.value,
+        ExecMode.mode_start.value,
         str(proto_kernel_abs_path),
         str(app_starter_script_abs_path),
         f"{cmd_app_starter.__name__}",
@@ -252,7 +252,7 @@ def test_app_started_from_env_special(tmp_path: pathlib.Path):
 
     app_starter_script_abs_path = ref_root_abs_path / "app_starter"
     app_starter_script_content = generate_entry_script_content(
-        RunMode.mode_start.value,
+        ExecMode.mode_start.value,
         str(proto_kernel_abs_path),
         str(app_starter_script_abs_path),
         f"{cmd_app_starter.__name__}",
@@ -273,7 +273,7 @@ def test_app_started_from_env_special(tmp_path: pathlib.Path):
             str(proto_kernel_abs_path),
             SyntaxArg.arg_v,
             SyntaxArg.arg_v,
-            RunMode.mode_prime.value,
+            ExecMode.mode_prime.value,
             SyntaxArg.arg_env,
             special_env_dir_name,
         ]
@@ -397,7 +397,7 @@ def test_app_started_with_symlink_to_env_special_but_config_to_env_common(
 
     app_starter_script_abs_path = ref_root_abs_path / "app_starter"
     app_starter_script_content = generate_entry_script_content(
-        RunMode.mode_start.value,
+        ExecMode.mode_start.value,
         str(proto_kernel_abs_path),
         str(app_starter_script_abs_path),
         f"{cmd_app_starter.__name__}",
@@ -418,7 +418,7 @@ def test_app_started_with_symlink_to_env_special_but_config_to_env_common(
             str(proto_kernel_abs_path),
             SyntaxArg.arg_v,
             SyntaxArg.arg_v,
-            RunMode.mode_prime.value,
+            ExecMode.mode_prime.value,
             SyntaxArg.arg_env,
             special_env_dir_name,
         ]

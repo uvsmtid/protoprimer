@@ -20,7 +20,7 @@ from protoprimer.primer_kernel import (
     ConfConstGeneral,
     ConfConstInput,
     ConfConstPrimer,
-    RunMode,
+    ExecMode,
     SyntaxArg,
 )
 
@@ -92,7 +92,7 @@ def test_upgrade(tmp_path: pathlib.Path):
     run_primer_main(
         [
             str(proto_kernel_abs_path),
-            RunMode.mode_prime.value,
+            ExecMode.mode_prime.value,
             SyntaxArg.arg_v,
             SyntaxArg.arg_v,
         ]
@@ -118,7 +118,7 @@ def test_upgrade(tmp_path: pathlib.Path):
     run_primer_main(
         [
             str(proto_kernel_abs_path),
-            RunMode.mode_upgrade.value,
+            ExecMode.mode_upgrade.value,
             SyntaxArg.arg_v,
             SyntaxArg.arg_v,
         ]

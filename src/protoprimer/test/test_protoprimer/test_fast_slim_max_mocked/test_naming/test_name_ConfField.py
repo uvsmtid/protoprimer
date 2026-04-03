@@ -50,9 +50,9 @@ class FieldMeta(AbstractMeta):
 class FieldName(enum.Enum):
 
     field_ref_root_dir_rel_path = FieldMeta(
-        ConfField.field_ref_root_dir_rel_path,
-        NameCategory.category_path_field,
-        [
+        conf_field=ConfField.field_ref_root_dir_rel_path,
+        name_category=NameCategory.category_path_field,
+        name_components=[
             PathName.path_ref_root.value,
             FilesystemObject.fs_object_dir.value,
             PathType.path_rel.value,
@@ -60,9 +60,9 @@ class FieldName(enum.Enum):
     )
 
     field_global_conf_dir_rel_path = FieldMeta(
-        ConfField.field_global_conf_dir_rel_path,
-        NameCategory.category_path_field,
-        [
+        conf_field=ConfField.field_global_conf_dir_rel_path,
+        name_category=NameCategory.category_path_field,
+        name_components=[
             PathName.path_global_conf.value,
             FilesystemObject.fs_object_dir.value,
             PathType.path_rel.value,
@@ -70,9 +70,9 @@ class FieldName(enum.Enum):
     )
 
     field_local_conf_symlink_rel_path = FieldMeta(
-        ConfField.field_local_conf_symlink_rel_path,
-        NameCategory.category_path_field,
-        [
+        conf_field=ConfField.field_local_conf_symlink_rel_path,
+        name_category=NameCategory.category_path_field,
+        name_components=[
             PathName.path_local_conf.value,
             FilesystemObject.fs_object_symlink.value,
             PathType.path_rel.value,
@@ -80,9 +80,9 @@ class FieldName(enum.Enum):
     )
 
     field_default_env_dir_rel_path = FieldMeta(
-        ConfField.field_default_env_dir_rel_path,
-        NameCategory.category_path_field,
-        [
+        conf_field=ConfField.field_default_env_dir_rel_path,
+        name_category=NameCategory.category_path_field,
+        name_components=[
             PathName.path_default_env.value,
             FilesystemObject.fs_object_dir.value,
             PathType.path_rel.value,
@@ -90,18 +90,18 @@ class FieldName(enum.Enum):
     )
 
     field_required_python_version = FieldMeta(
-        ConfField.field_required_python_version,
-        NameCategory.category_value_field,
-        [
+        conf_field=ConfField.field_required_python_version,
+        name_category=NameCategory.category_value_field,
+        name_components=[
             PathName.path_required_python.value,
             ValueName.value_version.value,
         ],
     )
 
     field_python_selector_file_rel_path = FieldMeta(
-        ConfField.field_python_selector_file_rel_path,
-        NameCategory.category_path_field,
-        [
+        conf_field=ConfField.field_python_selector_file_rel_path,
+        name_category=NameCategory.category_path_field,
+        name_components=[
             PathName.path_python_selector.value,
             FilesystemObject.fs_object_file.value,
             PathType.path_rel.value,
@@ -109,9 +109,9 @@ class FieldName(enum.Enum):
     )
 
     field_local_venv_dir_rel_path = FieldMeta(
-        ConfField.field_local_venv_dir_rel_path,
-        NameCategory.category_derived_path_field,
-        [
+        conf_field=ConfField.field_local_venv_dir_rel_path,
+        name_category=NameCategory.category_derived_path_field,
+        name_components=[
             PathName.path_local_venv.value,
             FilesystemObject.fs_object_dir.value,
             PathType.path_rel.value,
@@ -119,25 +119,25 @@ class FieldName(enum.Enum):
     )
 
     field_project_descriptors = FieldMeta(
-        ConfField.field_project_descriptors,
-        NameCategory.category_value_field,
-        [
+        conf_field=ConfField.field_project_descriptors,
+        name_category=NameCategory.category_value_field,
+        name_components=[
             ValueName.value_project_descriptors.value,
         ],
     )
 
     field_install_specs = FieldMeta(
-        ConfField.field_install_specs,
-        NameCategory.category_value_field,
-        [
+        conf_field=ConfField.field_install_specs,
+        name_category=NameCategory.category_value_field,
+        name_components=[
             ValueName.value_install_specs.value,
         ],
     )
 
     field_build_root_dir_rel_path = FieldMeta(
-        ConfField.field_build_root_dir_rel_path,
-        NameCategory.category_path_arg_value,
-        [
+        conf_field=ConfField.field_build_root_dir_rel_path,
+        name_category=NameCategory.category_path_arg_value,
+        name_components=[
             PathName.path_build_root.value,
             FilesystemObject.fs_object_dir.value,
             PathType.path_rel.value,
@@ -145,33 +145,33 @@ class FieldName(enum.Enum):
     )
 
     field_install_extras = FieldMeta(
-        ConfField.field_install_extras,
-        NameCategory.category_value_field,
-        [
+        conf_field=ConfField.field_install_extras,
+        name_category=NameCategory.category_value_field,
+        name_components=[
             ValueName.value_install_extras.value,
         ],
     )
 
     field_install_group = FieldMeta(
-        ConfField.field_install_group,
-        NameCategory.category_value_field,
-        [
+        conf_field=ConfField.field_install_group,
+        name_category=NameCategory.category_value_field,
+        name_components=[
             ValueName.value_install_group.value,
         ],
     )
 
     field_extra_command_args = FieldMeta(
-        ConfField.field_extra_command_args,
-        NameCategory.category_value_field,
-        [
+        conf_field=ConfField.field_extra_command_args,
+        name_category=NameCategory.category_value_field,
+        name_components=[
             ValueName.value_extra_command_args.value,
         ],
     )
 
     field_local_log_dir_rel_path = FieldMeta(
-        ConfField.field_local_log_dir_rel_path,
-        NameCategory.category_derived_path_field,
-        [
+        conf_field=ConfField.field_local_log_dir_rel_path,
+        name_category=NameCategory.category_derived_path_field,
+        name_components=[
             PathName.path_local_log.value,
             FilesystemObject.fs_object_dir.value,
             PathType.path_rel.value,
@@ -179,9 +179,9 @@ class FieldName(enum.Enum):
     )
 
     field_local_tmp_dir_rel_path = FieldMeta(
-        ConfField.field_local_tmp_dir_rel_path,
-        NameCategory.category_derived_path_field,
-        [
+        conf_field=ConfField.field_local_tmp_dir_rel_path,
+        name_category=NameCategory.category_derived_path_field,
+        name_components=[
             PathName.path_local_tmp.value,
             FilesystemObject.fs_object_dir.value,
             PathType.path_rel.value,
@@ -189,9 +189,9 @@ class FieldName(enum.Enum):
     )
 
     field_local_cache_dir_rel_path = FieldMeta(
-        ConfField.field_local_cache_dir_rel_path,
-        NameCategory.category_derived_path_field,
-        [
+        conf_field=ConfField.field_local_cache_dir_rel_path,
+        name_category=NameCategory.category_derived_path_field,
+        name_components=[
             PathName.path_local_cache.value,
             FilesystemObject.fs_object_dir.value,
             PathType.path_rel.value,
@@ -199,9 +199,9 @@ class FieldName(enum.Enum):
     )
 
     field_venv_driver = FieldMeta(
-        ConfField.field_venv_driver,
-        NameCategory.category_value_field,
-        [
+        conf_field=ConfField.field_venv_driver,
+        name_category=NameCategory.category_value_field,
+        name_components=[
             ValueName.value_venv_driver.value,
         ],
     )
