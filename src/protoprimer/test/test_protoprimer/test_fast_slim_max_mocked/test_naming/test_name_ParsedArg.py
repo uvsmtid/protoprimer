@@ -51,44 +51,44 @@ class ArgMeta(AbstractMeta):
 class ArgName(enum.Enum):
 
     name_selected_env_dir = ArgMeta(
-        ParsedArg.name_selected_env_dir,
-        NameCategory.category_path_arg_value,
-        [
+        command_arg=ParsedArg.name_selected_env_dir,
+        name_category=NameCategory.category_path_arg_value,
+        name_components=[
             PathName.path_selected_env.value,
             FilesystemObject.fs_object_dir.value,
         ],
     )
 
     name_reinstall = ArgMeta(
-        ParsedArg.name_reinstall,
-        NameCategory.category_named_arg_action,
-        [
+        command_arg=ParsedArg.name_reinstall,
+        name_category=NameCategory.category_named_arg_action,
+        name_components=[
             KeyWord.key_do.value,
             CommandAction.action_reinstall.value,
         ],
     )
 
     name_command = ArgMeta(
-        ParsedArg.name_command,
-        NameCategory.category_named_arg_action,
-        [
+        command_arg=ParsedArg.name_command,
+        name_category=NameCategory.category_named_arg_action,
+        name_components=[
             KeyWord.key_run.value,
             CommandAction.action_command.value,
         ],
     )
 
-    name_run_mode = ArgMeta(
-        ParsedArg.name_run_mode,
-        NameCategory.category_named_arg_value,
-        [
-            ValueName.value_run_mode.value,
+    name_exec_mode = ArgMeta(
+        command_arg=ParsedArg.name_exec_mode,
+        name_category=NameCategory.category_named_arg_value,
+        name_components=[
+            ValueName.value_exec_mode.value,
         ],
     )
 
     name_final_state = ArgMeta(
-        ParsedArg.name_final_state,
-        NameCategory.category_named_arg_value,
-        [
+        command_arg=ParsedArg.name_final_state,
+        name_category=NameCategory.category_named_arg_value,
+        name_components=[
             ValueName.value_final_state.value,
         ],
     )

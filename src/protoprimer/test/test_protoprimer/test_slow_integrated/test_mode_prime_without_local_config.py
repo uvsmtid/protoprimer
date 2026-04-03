@@ -15,14 +15,14 @@ from local_test.name_assertion import (
 )
 from protoprimer.primer_kernel import (
     ConfConstClient,
-    RunMode,
+    ExecMode,
     SyntaxArg,
     TopDir,
 )
 
 
 def test_relationship():
-    assert_test_module_name_embeds_str(RunMode.mode_prime.value)
+    assert_test_module_name_embeds_str(ExecMode.mode_prime.value)
 
 
 @requires_max_python

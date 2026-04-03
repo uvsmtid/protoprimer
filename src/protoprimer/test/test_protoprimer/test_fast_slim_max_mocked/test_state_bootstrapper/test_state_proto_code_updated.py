@@ -14,7 +14,7 @@ from protoprimer.primer_kernel import (
     ConfConstGeneral,
     EnvContext,
     EnvState,
-    RunMode,
+    ExecMode,
     StateStride,
 )
 
@@ -37,7 +37,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{Bootstrapper_state_stride_deps_updated_reached.__name__}.eval_own_state"
     )
     @patch(
-        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.eval_own_state"
     )
     @patch(
         f"{primer_kernel.__name__}.{EnvContext.__name__}.{EnvContext.get_stride.__name__}"
@@ -45,7 +45,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     def test_state_proto_code_updated(
         self,
         mock_get_stride,
-        mock_state_input_run_mode_arg_loaded,
+        mock_state_input_exec_mode_arg_loaded,
         mock_state_stride_deps_updated_reached,
         mock_state_proto_code_file_abs_path_inited,
     ):
@@ -83,7 +83,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_proto_code_file_abs_path_inited.return_value = (
             proto_code_abs_file_path
         )
-        mock_state_input_run_mode_arg_loaded.return_value = RunMode.mode_prime
+        mock_state_input_exec_mode_arg_loaded.return_value = ExecMode.mode_prime
 
         # when:
 
@@ -119,11 +119,11 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{EnvContext.__name__}.{EnvContext.get_stride.__name__}"
     )
     @patch(
-        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.eval_own_state"
     )
     def test_import_error_when_protoprimer_is_missing(
         self,
-        mock_state_input_run_mode_arg_loaded,
+        mock_state_input_exec_mode_arg_loaded,
         mock_get_stride,
         mock_state_stride_deps_updated_reached,
         mock_state_proto_code_file_abs_path_inited,
@@ -139,7 +139,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         fake_path = "/fake/path"
         self.fs.create_file(fake_path)
         mock_state_proto_code_file_abs_path_inited.return_value = fake_path
-        mock_state_input_run_mode_arg_loaded.return_value = RunMode.mode_prime
+        mock_state_input_exec_mode_arg_loaded.return_value = ExecMode.mode_prime
 
         # when:
         with patch.dict("sys.modules", {"protoprimer": None}):

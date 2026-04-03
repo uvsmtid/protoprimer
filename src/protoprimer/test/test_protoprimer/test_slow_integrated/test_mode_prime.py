@@ -19,13 +19,13 @@ from protoprimer.primer_kernel import (
     ConfConstInput,
     ConfConstPrimer,
     ConfDst,
-    RunMode,
+    ExecMode,
     SyntaxArg,
 )
 
 
 def test_relationship():
-    assert_test_module_name_embeds_str(RunMode.mode_prime.value)
+    assert_test_module_name_embeds_str(ExecMode.mode_prime.value)
 
 
 def test_mode_prime(tmp_path: Path):
@@ -35,7 +35,7 @@ def test_mode_prime(tmp_path: Path):
     It uses `create_max_layout` (see FT_59_95_81_63.env_layout.md).
     """
 
-    assert_test_func_name_embeds_str(RunMode.mode_prime.value)
+    assert_test_func_name_embeds_str(ExecMode.mode_prime.value)
 
     # given:
 
@@ -87,6 +87,6 @@ def test_mode_prime(tmp_path: Path):
     run_primer_main(
         [
             str(proto_kernel_abs_path),
-            RunMode.mode_config.value,
+            ExecMode.mode_config.value,
         ]
     )

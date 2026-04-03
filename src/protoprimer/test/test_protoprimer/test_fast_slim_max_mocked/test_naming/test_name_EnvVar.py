@@ -48,28 +48,27 @@ class EnvVarMeta(AbstractMeta):
 
 
 class EnvVarName(enum.Enum):
-    var_PROTOPRIMER_RUN_MODE = EnvVarMeta(
-        EnvVar.var_PROTOPRIMER_RUN_MODE,
-        NameCategory.category_name_only,
-        [
+    var_PROTOPRIMER_EXEC_MODE = EnvVarMeta(
+        env_var=EnvVar.var_PROTOPRIMER_EXEC_MODE,
+        name_category=NameCategory.category_name_only,
+        name_components=[
             ConfConstGeneral.name_protoprimer_package.upper(),
-            KeyWord.key_run.value.upper(),
-            KeyWord.key_mode.value.upper(),
+            ValueName.value_exec_mode.value.upper(),
         ],
     )
     var_PROTOPRIMER_MAIN_FUNC = EnvVarMeta(
-        EnvVar.var_PROTOPRIMER_MAIN_FUNC,
-        NameCategory.category_name_only,
-        [
+        env_var=EnvVar.var_PROTOPRIMER_MAIN_FUNC,
+        name_category=NameCategory.category_name_only,
+        name_components=[
             ConfConstGeneral.name_protoprimer_package.upper(),
             KeyWord.key_main.value.upper(),
             KeyWord.key_func.value.upper(),
         ],
     )
     var_PROTOPRIMER_STDERR_LOG_LEVEL = EnvVarMeta(
-        EnvVar.var_PROTOPRIMER_STDERR_LOG_LEVEL,
-        NameCategory.category_name_only,
-        [
+        env_var=EnvVar.var_PROTOPRIMER_STDERR_LOG_LEVEL,
+        name_category=NameCategory.category_name_only,
+        name_components=[
             ConfConstGeneral.name_protoprimer_package.upper(),
             KeyWord.key_stderr.value.upper(),
             KeyWord.key_log.value.upper(),
@@ -77,60 +76,60 @@ class EnvVarName(enum.Enum):
         ],
     )
     var_PROTOPRIMER_PY_EXEC = EnvVarMeta(
-        EnvVar.var_PROTOPRIMER_PY_EXEC,
-        NameCategory.category_name_only,
-        [
+        env_var=EnvVar.var_PROTOPRIMER_PY_EXEC,
+        name_category=NameCategory.category_name_only,
+        name_components=[
             ConfConstGeneral.name_protoprimer_package.upper(),
             ValueName.value_py_exec.value.upper(),
         ],
     )
     var_PROTOPRIMER_DO_INSTALL = EnvVarMeta(
-        EnvVar.var_PROTOPRIMER_DO_INSTALL,
-        NameCategory.category_name_only,
-        [
+        env_var=EnvVar.var_PROTOPRIMER_DO_INSTALL,
+        name_category=NameCategory.category_name_only,
+        name_components=[
             ConfConstGeneral.name_protoprimer_package.upper(),
             KeyWord.key_do.value.upper(),
             KeyWord.key_install.value.upper(),
         ],
     )
     var_PROTOPRIMER_PROTO_CODE = EnvVarMeta(
-        EnvVar.var_PROTOPRIMER_PROTO_CODE,
-        NameCategory.category_name_only,
-        [
+        env_var=EnvVar.var_PROTOPRIMER_PROTO_CODE,
+        name_category=NameCategory.category_name_only,
+        name_components=[
             ConfConstGeneral.name_protoprimer_package.upper(),
             PathName.path_proto_code.value.upper(),
         ],
     )
     var_PROTOPRIMER_CONF_BASENAME = EnvVarMeta(
-        EnvVar.var_PROTOPRIMER_CONF_BASENAME,
-        NameCategory.category_name_only,
-        [
+        env_var=EnvVar.var_PROTOPRIMER_CONF_BASENAME,
+        name_category=NameCategory.category_name_only,
+        name_components=[
             ConfConstGeneral.name_protoprimer_package.upper(),
             KeyWord.key_conf.value.upper(),
             KeyWord.key_basename.value.upper(),
         ],
     )
     var_PROTOPRIMER_START_ID = EnvVarMeta(
-        EnvVar.var_PROTOPRIMER_START_ID,
-        NameCategory.category_name_only,
-        [
+        env_var=EnvVar.var_PROTOPRIMER_START_ID,
+        name_category=NameCategory.category_name_only,
+        name_components=[
             ConfConstGeneral.name_protoprimer_package.upper(),
             KeyWord.key_start.value.upper(),
             KeyWord.key_id.value.upper(),
         ],
     )
     var_PROTOPRIMER_VENV_DRIVER = EnvVarMeta(
-        EnvVar.var_PROTOPRIMER_VENV_DRIVER,
-        NameCategory.category_name_only,
-        [
+        env_var=EnvVar.var_PROTOPRIMER_VENV_DRIVER,
+        name_category=NameCategory.category_name_only,
+        name_components=[
             ConfConstGeneral.name_protoprimer_package.upper(),
             ValueName.value_venv_driver.value.upper(),
         ],
     )
     var_PROTOPRIMER_MOCKED_RESTART = EnvVarMeta(
-        EnvVar.var_PROTOPRIMER_MOCKED_RESTART,
-        NameCategory.category_name_only,
-        [
+        env_var=EnvVar.var_PROTOPRIMER_MOCKED_RESTART,
+        name_category=NameCategory.category_name_only,
+        name_components=[
             ConfConstGeneral.name_protoprimer_package.upper(),
             KeyWord.key_mocked.value.upper(),
             KeyWord.key_restart.value.upper(),

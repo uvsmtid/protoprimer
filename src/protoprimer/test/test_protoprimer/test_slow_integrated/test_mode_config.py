@@ -13,18 +13,18 @@ from local_test.name_assertion import (
     assert_test_module_name_embeds_str,
 )
 from protoprimer.primer_kernel import (
-    RunMode,
+    ExecMode,
     TopDir,
 )
 
 
 def test_relationship():
-    assert_test_module_name_embeds_str(RunMode.mode_config.value)
+    assert_test_module_name_embeds_str(ExecMode.mode_config.value)
 
 
 def test_mode_config_with_min_layout(tmp_path: Path):
 
-    assert_test_func_name_embeds_str(RunMode.mode_config.value)
+    assert_test_func_name_embeds_str(ExecMode.mode_config.value)
 
     # given:
 
@@ -39,7 +39,7 @@ def test_mode_config_with_min_layout(tmp_path: Path):
     run_primer_main(
         [
             str(proto_kernel_abs_path),
-            RunMode.mode_config.value,
+            ExecMode.mode_config.value,
         ]
     )
 
@@ -52,7 +52,7 @@ def test_mode_config_with_min_layout(tmp_path: Path):
 
 def test_mode_config_with_max_layout(tmp_path: Path):
 
-    assert_test_func_name_embeds_str(RunMode.mode_config.value)
+    assert_test_func_name_embeds_str(ExecMode.mode_config.value)
 
     # given:
 
@@ -67,7 +67,7 @@ def test_mode_config_with_max_layout(tmp_path: Path):
     run_primer_main(
         [
             str(proto_kernel_abs_path),
-            RunMode.mode_config.value,
+            ExecMode.mode_config.value,
         ]
     )
 

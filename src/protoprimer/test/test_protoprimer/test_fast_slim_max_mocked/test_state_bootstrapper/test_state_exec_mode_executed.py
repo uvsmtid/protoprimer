@@ -12,12 +12,12 @@ from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     Bootstrapper_state_input_final_state_eval_finalized,
-    Bootstrapper_state_input_run_mode_arg_loaded,
+    Bootstrapper_state_input_exec_mode_arg_loaded,
     Bootstrapper_state_input_stderr_log_level_eval_finalized,
     EnvContext,
     EnvState,
     ExitCodeReporter,
-    RunMode,
+    ExecMode,
 )
 
 
@@ -27,7 +27,7 @@ def env_ctx():
 
 
 def test_relationship():
-    assert_test_module_name_embeds_str(EnvState.state_run_mode_executed.name)
+    assert_test_module_name_embeds_str(EnvState.state_exec_mode_executed.name)
 
 
 @patch(
@@ -37,12 +37,12 @@ def test_relationship():
     f"{primer_kernel.__name__}.{Bootstrapper_state_input_stderr_log_level_eval_finalized.__name__}.eval_own_state"
 )
 @patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
+    f"{primer_kernel.__name__}.{Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.eval_own_state"
 )
 @patch(f"{primer_kernel.__name__}.{ExitCodeReporter.__name__}.execute_strategy")
-def test_run_mode_prime(
+def test_exec_mode_prime(
     mock_exit_code_reporter_execute_strategy,
-    mock_state_input_run_mode_arg_loaded,
+    mock_state_input_exec_mode_arg_loaded,
     mock_state_input_stderr_log_level_eval_finalized,
     mock_state_input_final_state_eval_finalized,
     env_ctx,
@@ -51,10 +51,10 @@ def test_run_mode_prime(
 
     assert_parent_states_mocked(
         env_ctx,
-        EnvState.state_run_mode_executed.name,
+        EnvState.state_exec_mode_executed.name,
     )
 
-    mock_state_input_run_mode_arg_loaded.return_value = RunMode.mode_prime
+    mock_state_input_exec_mode_arg_loaded.return_value = ExecMode.mode_prime
     mock_state_input_stderr_log_level_eval_finalized.return_value = 0
     mock_state_input_final_state_eval_finalized.return_value = "mock_final_state"
 
@@ -63,7 +63,7 @@ def test_run_mode_prime(
 
     # when:
 
-    state_value = env_ctx.state_graph.eval_state(EnvState.state_run_mode_executed.name)
+    state_value = env_ctx.state_graph.eval_state(EnvState.state_exec_mode_executed.name)
 
     # then:
 
@@ -78,10 +78,10 @@ def test_run_mode_prime(
     f"{primer_kernel.__name__}.{Bootstrapper_state_input_stderr_log_level_eval_finalized.__name__}.eval_own_state"
 )
 @patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
+    f"{primer_kernel.__name__}.{Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.eval_own_state"
 )
-def test_run_mode_none(
-    mock_state_input_run_mode_arg_loaded,
+def test_exec_mode_none(
+    mock_state_input_exec_mode_arg_loaded,
     mock_state_input_stderr_log_level_eval_finalized,
     mock_state_input_final_state_eval_finalized,
     env_ctx,
@@ -90,10 +90,10 @@ def test_run_mode_none(
 
     assert_parent_states_mocked(
         env_ctx,
-        EnvState.state_run_mode_executed.name,
+        EnvState.state_exec_mode_executed.name,
     )
 
-    mock_state_input_run_mode_arg_loaded.return_value = None
+    mock_state_input_exec_mode_arg_loaded.return_value = None
 
     mock_state_input_stderr_log_level_eval_finalized.return_value = 0
     mock_state_input_final_state_eval_finalized.return_value = "mock_final_state"
@@ -102,8 +102,8 @@ def test_run_mode_none(
     env_ctx.state_graph.state_nodes["mock_final_state"] = mock_state_node
 
     # when/then:
-    with pytest.raises(ValueError, match="run mode is not defined"):
-        env_ctx.state_graph.eval_state(EnvState.state_run_mode_executed.name)
+    with pytest.raises(ValueError, match="exec mode is not defined"):
+        env_ctx.state_graph.eval_state(EnvState.state_exec_mode_executed.name)
 
 
 @patch(
@@ -113,10 +113,10 @@ def test_run_mode_none(
     f"{primer_kernel.__name__}.{Bootstrapper_state_input_stderr_log_level_eval_finalized.__name__}.eval_own_state"
 )
 @patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
+    f"{primer_kernel.__name__}.{Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.eval_own_state"
 )
-def test_run_mode_invalid(
-    mock_state_input_run_mode_arg_loaded,
+def test_exec_mode_invalid(
+    mock_state_input_exec_mode_arg_loaded,
     mock_state_input_stderr_log_level_eval_finalized,
     mock_state_input_final_state_eval_finalized,
     env_ctx,
@@ -125,10 +125,10 @@ def test_run_mode_invalid(
 
     assert_parent_states_mocked(
         env_ctx,
-        EnvState.state_run_mode_executed.name,
+        EnvState.state_exec_mode_executed.name,
     )
 
-    mock_state_input_run_mode_arg_loaded.return_value = "invalid_run_mode"
+    mock_state_input_exec_mode_arg_loaded.return_value = "invalid_exec_mode"
     mock_state_input_stderr_log_level_eval_finalized.return_value = 0
     mock_state_input_final_state_eval_finalized.return_value = "mock_final_state"
 
@@ -136,5 +136,5 @@ def test_run_mode_invalid(
     env_ctx.state_graph.state_nodes["mock_final_state"] = mock_state_node
 
     # when/then:
-    with pytest.raises(ValueError, match="cannot handle run mode"):
-        env_ctx.state_graph.eval_state(EnvState.state_run_mode_executed.name)
+    with pytest.raises(ValueError, match="cannot handle exec mode"):
+        env_ctx.state_graph.eval_state(EnvState.state_exec_mode_executed.name)

@@ -51,10 +51,10 @@ def test_relationship():
     f"{primer_kernel.__name__}.{Bootstrapper_state_selected_python_file_abs_path_inited.__name__}.eval_own_state"
 )
 @patch(
-    f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
+    f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.eval_own_state"
 )
 def test_pip_driver_inited(
-    mock_input_run_mode_arg_loaded,
+    mock_input_exec_mode_arg_loaded,
     mock_state_selected_python_file_abs_path_inited,
     mock_state_required_python_version_inited,
     mock_state_local_cache_dir_abs_path_inited,
@@ -106,10 +106,10 @@ def test_pip_driver_inited(
     f"{primer_kernel.__name__}.{Bootstrapper_state_selected_python_file_abs_path_inited.__name__}.eval_own_state"
 )
 @patch(
-    f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
+    f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.eval_own_state"
 )
 def test_uv_driver_inited_when_not_installed(
-    mock_input_run_mode_arg_loaded,
+    mock_input_exec_mode_arg_loaded,
     mock_state_selected_python_file_abs_path_inited,
     mock_state_required_python_version_inited,
     mock_state_local_cache_dir_abs_path_inited,
@@ -167,10 +167,10 @@ def test_uv_driver_inited_when_not_installed(
     f"{primer_kernel.__name__}.{Bootstrapper_state_selected_python_file_abs_path_inited.__name__}.eval_own_state"
 )
 @patch(
-    f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
+    f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.eval_own_state"
 )
 def test_uv_driver_inited_when_already_installed(
-    mock_input_run_mode_arg_loaded,
+    mock_input_exec_mode_arg_loaded,
     mock_state_selected_python_file_abs_path_inited,
     mock_state_required_python_version_inited,
     mock_state_local_cache_dir_abs_path_inited,
@@ -225,10 +225,10 @@ def test_uv_driver_inited_when_already_installed(
     f"{primer_kernel.__name__}.{Bootstrapper_state_selected_python_file_abs_path_inited.__name__}.eval_own_state"
 )
 @patch(
-    f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
+    f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.eval_own_state"
 )
 def test_unsupported_driver(
-    mock_input_run_mode_arg_loaded,
+    mock_input_exec_mode_arg_loaded,
     mock_state_selected_python_file_abs_path_inited,
     mock_state_required_python_version_inited,
     mock_state_local_cache_dir_abs_path_inited,

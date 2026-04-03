@@ -24,7 +24,7 @@ from protoprimer.primer_kernel import (
     EnvState,
     EnvVar,
     ParsedArg,
-    RunMode,
+    ExecMode,
     StateStride,
 )
 
@@ -68,7 +68,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         {EnvVar.var_PROTOPRIMER_PY_EXEC.value: StateStride.stride_py_venv.name},
     )
     @patch(
-        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.eval_own_state"
     )
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_venv_driver_prepared.__name__}.eval_own_state"
@@ -80,7 +80,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         self,
         mock_get_stride,
         mock_state_venv_driver_prepared,
-        mock_state_input_run_mode_arg_loaded,
+        mock_state_input_exec_mode_arg_loaded,
         mock_state_args_parsed,
         mock_state_input_do_install_var_loaded,
         mock_state_install_specs_inited,
@@ -137,10 +137,10 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_install_specs_inited.return_value = []
         mock_state_input_do_install_var_loaded.return_value = True
         parsed_args = argparse.Namespace(
-            **{ParsedArg.name_run_mode.value: RunMode.mode_prime.value},
+            **{ParsedArg.name_exec_mode.value: ExecMode.mode_prime.value},
         )
         mock_state_args_parsed.return_value = parsed_args
-        mock_state_input_run_mode_arg_loaded.return_value = RunMode.mode_prime
+        mock_state_input_exec_mode_arg_loaded.return_value = ExecMode.mode_prime
         # when:
         self.env_ctx.state_graph.eval_state(
             EnvState.state_protoprimer_package_installed.name
@@ -184,7 +184,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         {EnvVar.var_PROTOPRIMER_PY_EXEC.value: StateStride.stride_py_venv.name},
     )
     @patch(
-        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.eval_own_state"
     )
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_venv_driver_prepared.__name__}.eval_own_state"
@@ -196,7 +196,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         self,
         mock_get_stride,
         mock_state_venv_driver_prepared,
-        mock_state_input_run_mode_arg_loaded,
+        mock_state_input_exec_mode_arg_loaded,
         mock_state_args_parsed,
         mock_state_input_do_install_var_loaded,
         mock_state_install_specs_inited,
@@ -253,10 +253,10 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_install_specs_inited.return_value = []
         mock_state_input_do_install_var_loaded.return_value = True
         parsed_args = argparse.Namespace(
-            **{ParsedArg.name_run_mode.value: CommandAction.action_reinstall.value},
+            **{ParsedArg.name_exec_mode.value: CommandAction.action_reinstall.value},
         )
         mock_state_args_parsed.return_value = parsed_args
-        mock_state_input_run_mode_arg_loaded.return_value = (
+        mock_state_input_exec_mode_arg_loaded.return_value = (
             CommandAction.action_reinstall
         )
         # when:
@@ -302,7 +302,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         {EnvVar.var_PROTOPRIMER_PY_EXEC.value: StateStride.stride_py_venv.name},
     )
     @patch(
-        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.eval_own_state"
     )
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_venv_driver_prepared.__name__}.eval_own_state"
@@ -314,7 +314,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         self,
         mock_get_stride,
         mock_state_venv_driver_prepared,
-        mock_state_input_run_mode_arg_loaded,
+        mock_state_input_exec_mode_arg_loaded,
         mock_state_args_parsed,
         mock_state_input_do_install_var_loaded,
         mock_state_install_specs_inited,
@@ -371,10 +371,10 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_install_specs_inited.return_value = []
         mock_state_input_do_install_var_loaded.return_value = False
         parsed_args = argparse.Namespace(
-            **{ParsedArg.name_run_mode.value: RunMode.mode_prime.value},
+            **{ParsedArg.name_exec_mode.value: ExecMode.mode_prime.value},
         )
         mock_state_args_parsed.return_value = parsed_args
-        mock_state_input_run_mode_arg_loaded.return_value = RunMode.mode_prime
+        mock_state_input_exec_mode_arg_loaded.return_value = ExecMode.mode_prime
         # when:
         self.env_ctx.state_graph.eval_state(
             EnvState.state_protoprimer_package_installed.name
@@ -408,7 +408,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         {EnvVar.var_PROTOPRIMER_PY_EXEC.value: StateStride.stride_py_venv.name},
     )
     @patch(
-        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.eval_own_state"
     )
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_venv_driver_prepared.__name__}.eval_own_state"
@@ -420,7 +420,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         self,
         mock_get_stride,
         mock_state_venv_driver_prepared,
-        mock_state_input_run_mode_arg_loaded,
+        mock_state_input_exec_mode_arg_loaded,
         mock_state_args_parsed,
         mock_state_input_do_install_var_loaded,
         mock_state_install_specs_inited,
@@ -467,9 +467,9 @@ class ThisTestClass(BasePyfakefsTestClass):
         ]
         mock_state_input_do_install_var_loaded.return_value = True
         mock_state_args_parsed.return_value = argparse.Namespace(
-            run_mode=RunMode.mode_prime.value
+            exec_mode=ExecMode.mode_prime.value
         )
-        mock_state_input_run_mode_arg_loaded.return_value = RunMode.mode_prime
+        mock_state_input_exec_mode_arg_loaded.return_value = ExecMode.mode_prime
 
         # when:
         self.env_ctx.state_graph.eval_state(
@@ -536,7 +536,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         {EnvVar.var_PROTOPRIMER_PY_EXEC.value: StateStride.stride_py_venv.name},
     )
     @patch(
-        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_run_mode_arg_loaded.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.eval_own_state"
     )
     @patch(
         f"{primer_kernel.__name__}.{Bootstrapper_state_venv_driver_prepared.__name__}.eval_own_state"
@@ -548,7 +548,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         self,
         mock_get_stride,
         mock_state_venv_driver_prepared,
-        mock_state_input_run_mode_arg_loaded,
+        mock_state_input_exec_mode_arg_loaded,
         mock_state_args_parsed,
         mock_state_input_do_install_var_loaded,
         mock_state_install_specs_inited,
@@ -587,10 +587,10 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_input_do_install_var_loaded.return_value = True
 
         parsed_args = argparse.Namespace(
-            **{ParsedArg.name_run_mode.value: RunMode.mode_prime.value},
+            **{ParsedArg.name_exec_mode.value: ExecMode.mode_prime.value},
         )
         mock_state_args_parsed.return_value = parsed_args
-        mock_state_input_run_mode_arg_loaded.return_value = RunMode.mode_prime
+        mock_state_input_exec_mode_arg_loaded.return_value = ExecMode.mode_prime
 
         # when:
 
