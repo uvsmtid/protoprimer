@@ -6,7 +6,7 @@ from unittest.mock import (
 import pytest
 
 from local_test.mock_verifier import (
-    assert_parent_states_mocked,
+    assert_parent_factories_mocked,
 )
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
@@ -17,7 +17,7 @@ from protoprimer.primer_kernel import (
     Bootstrapper_state_local_tmp_dir_abs_path_inited,
     Bootstrapper_state_local_venv_dir_abs_path_inited,
     Bootstrapper_state_proto_code_file_abs_path_inited,
-    Bootstrapper_state_stride_py_required_reached,
+    Factory_state_stride_py_required_reached,
     CommandAction,
     ConfConstEnv,
     EnvContext,
@@ -38,31 +38,31 @@ def test_relationship():
 
 
 @patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.eval_own_state"
+    f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.create_state_node"
 )
 @patch("os.path.exists")
 @patch("os.remove")
 @patch(f"{primer_kernel.__name__}.shutil.move")
 @patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_stride_py_required_reached.__name__}.eval_own_state"
+    f"{primer_kernel.__name__}.{Factory_state_stride_py_required_reached.__name__}.create_state_node"
 )
 @patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_local_tmp_dir_abs_path_inited.__name__}.eval_own_state"
+    f"{primer_kernel.__name__}.{Bootstrapper_state_local_tmp_dir_abs_path_inited.__name__}.create_state_node"
 )
 @patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_symlink_abs_path_inited.__name__}.eval_own_state"
+    f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node"
 )
 @patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.eval_own_state"
+    f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node"
 )
 @patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.eval_own_state"
+    f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.create_state_node"
 )
 @patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_proto_code_file_abs_path_inited.__name__}.eval_own_state"
+    f"{primer_kernel.__name__}.{Bootstrapper_state_proto_code_file_abs_path_inited.__name__}.create_state_node"
 )
 @patch(
-    f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.eval_own_state"
+    f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.create_state_node"
 )
 def test_reinstall_true(
     mock_state_input_exec_mode_arg_loaded,
@@ -81,29 +81,41 @@ def test_reinstall_true(
 
     # given:
 
-    assert_parent_states_mocked(
+    assert_parent_factories_mocked(
         env_ctx,
         EnvState.state_reinstall_triggered.name,
     )
-    mock_state_args_parsed.return_value = argparse.Namespace(
-        **{
-            ParsedArg.name_exec_mode.value: ExecMode.mode_upgrade.value,
-        }
+    mock_state_args_parsed.return_value.eval_own_state.return_value = (
+        argparse.Namespace(
+            **{
+                ParsedArg.name_exec_mode.value: ExecMode.mode_upgrade.value,
+            }
+        )
     )
-    mock_state_input_start_id_var_loaded.return_value = "mock_start_id"
+    mock_state_input_start_id_var_loaded.return_value.eval_own_state.return_value = (
+        "mock_start_id"
+    )
 
     py_exec = StateStride.stride_py_required
-    mock_state_stride_py_required_reached.return_value = py_exec
+    mock_state_stride_py_required_reached.return_value.eval_own_state.return_value = (
+        py_exec
+    )
     env_ctx.state_stride = py_exec
 
-    mock_state_local_venv_dir_abs_path_inited.return_value = "/path/to/venv"
-    mock_state_local_tmp_dir_abs_path_inited.return_value = "/path/to/tmp"
-    mock_state_local_conf_symlink_abs_path_inited.return_value = "/path/to/conf"
+    mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = (
+        "/path/to/venv"
+    )
+    mock_state_local_tmp_dir_abs_path_inited.return_value.eval_own_state.return_value = (
+        "/path/to/tmp"
+    )
+    mock_state_local_conf_symlink_abs_path_inited.return_value.eval_own_state.return_value = (
+        "/path/to/conf"
+    )
     mock_os_path_exists.return_value = True
 
     # when:
     state_value = env_ctx.state_graph.eval_state(
-        EnvState.state_reinstall_triggered.name
+        EnvState.state_reinstall_triggered.name, env_ctx
     )
 
     # then:
@@ -120,28 +132,28 @@ def test_reinstall_true(
 @patch("os.remove")
 @patch("shutil.move")
 @patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.eval_own_state"
+    f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.create_state_node"
 )
 @patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_stride_py_required_reached.__name__}.eval_own_state"
+    f"{primer_kernel.__name__}.{Factory_state_stride_py_required_reached.__name__}.create_state_node"
 )
 @patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_local_tmp_dir_abs_path_inited.__name__}.eval_own_state"
+    f"{primer_kernel.__name__}.{Bootstrapper_state_local_tmp_dir_abs_path_inited.__name__}.create_state_node"
 )
 @patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_symlink_abs_path_inited.__name__}.eval_own_state"
+    f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node"
 )
 @patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.eval_own_state"
+    f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node"
 )
 @patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.eval_own_state"
+    f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.create_state_node"
 )
 @patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_proto_code_file_abs_path_inited.__name__}.eval_own_state"
+    f"{primer_kernel.__name__}.{Bootstrapper_state_proto_code_file_abs_path_inited.__name__}.create_state_node"
 )
 @patch(
-    f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.eval_own_state"
+    f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.create_state_node"
 )
 def test_reinstall_false(
     mock_state_input_exec_mode_arg_loaded,
@@ -158,23 +170,27 @@ def test_reinstall_false(
     env_ctx,
 ):
     # given:
-    assert_parent_states_mocked(
+    assert_parent_factories_mocked(
         env_ctx,
         EnvState.state_reinstall_triggered.name,
     )
-    mock_state_args_parsed.return_value = argparse.Namespace(
-        **{
-            ParsedArg.name_exec_mode.value: ExecMode.mode_prime.value,
-        }
+    mock_state_args_parsed.return_value.eval_own_state.return_value = (
+        argparse.Namespace(
+            **{
+                ParsedArg.name_exec_mode.value: ExecMode.mode_prime.value,
+            }
+        )
     )
 
     py_exec = StateStride.stride_py_required
-    mock_state_stride_py_required_reached.return_value = py_exec
+    mock_state_stride_py_required_reached.return_value.eval_own_state.return_value = (
+        py_exec
+    )
     env_ctx.state_stride = py_exec
 
     # when:
     state_value = env_ctx.state_graph.eval_state(
-        EnvState.state_reinstall_triggered.name
+        EnvState.state_reinstall_triggered.name, env_ctx
     )
 
     # then:
@@ -187,28 +203,28 @@ def test_reinstall_false(
 @patch("os.remove")
 @patch("shutil.move")
 @patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.eval_own_state"
+    f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.create_state_node"
 )
 @patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_stride_py_required_reached.__name__}.eval_own_state"
+    f"{primer_kernel.__name__}.{Factory_state_stride_py_required_reached.__name__}.create_state_node"
 )
 @patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_local_tmp_dir_abs_path_inited.__name__}.eval_own_state"
+    f"{primer_kernel.__name__}.{Bootstrapper_state_local_tmp_dir_abs_path_inited.__name__}.create_state_node"
 )
 @patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_symlink_abs_path_inited.__name__}.eval_own_state"
+    f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node"
 )
 @patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.eval_own_state"
+    f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node"
 )
 @patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.eval_own_state"
+    f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.create_state_node"
 )
 @patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_proto_code_file_abs_path_inited.__name__}.eval_own_state"
+    f"{primer_kernel.__name__}.{Bootstrapper_state_proto_code_file_abs_path_inited.__name__}.create_state_node"
 )
 @patch(
-    f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.eval_own_state"
+    f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.create_state_node"
 )
 def test_reinstall_true_but_py_exec_not_required(
     mock_state_input_exec_mode_arg_loaded,
@@ -225,24 +241,30 @@ def test_reinstall_true_but_py_exec_not_required(
     env_ctx,
 ):
     # given:
-    assert_parent_states_mocked(
+    assert_parent_factories_mocked(
         env_ctx,
         EnvState.state_reinstall_triggered.name,
     )
-    mock_state_args_parsed.return_value = argparse.Namespace(
-        **{
-            ParsedArg.name_exec_mode.value: CommandAction.action_reinstall.value,
-        }
+    mock_state_args_parsed.return_value.eval_own_state.return_value = (
+        argparse.Namespace(
+            **{
+                ParsedArg.name_exec_mode.value: CommandAction.action_reinstall.value,
+            }
+        )
     )
-    mock_state_input_start_id_var_loaded.return_value = "mock_start_id"
+    mock_state_input_start_id_var_loaded.return_value.eval_own_state.return_value = (
+        "mock_start_id"
+    )
 
     py_exec = StateStride.stride_py_venv
-    mock_state_stride_py_required_reached.return_value = py_exec
+    mock_state_stride_py_required_reached.return_value.eval_own_state.return_value = (
+        py_exec
+    )
     env_ctx.state_stride = py_exec
 
     # when:
     state_value = env_ctx.state_graph.eval_state(
-        EnvState.state_reinstall_triggered.name
+        EnvState.state_reinstall_triggered.name, env_ctx
     )
 
     # then:

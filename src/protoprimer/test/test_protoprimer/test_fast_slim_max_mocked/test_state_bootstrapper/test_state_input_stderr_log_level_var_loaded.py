@@ -7,7 +7,7 @@ from unittest.mock import (
 import pytest
 
 from local_test.mock_verifier import (
-    assert_parent_states_mocked,
+    assert_parent_factories_mocked,
 )
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer.primer_kernel import (
@@ -36,18 +36,18 @@ def test_relationship():
 
 
 @patch(
-    "protoprimer.primer_kernel.Bootstrapper_state_input_py_exec_var_loaded.eval_own_state"
+    "protoprimer.primer_kernel.Bootstrapper_state_input_py_exec_var_loaded.create_state_node"
 )
 @patch.dict(f"{os.__name__}.environ", {}, clear=True)
-def test_default_case(mock_eval_own_state, env_ctx):
+def test_default_case(mock_state_input_py_exec_var_loaded, env_ctx):
     # given:
-    assert_parent_states_mocked(
+    assert_parent_factories_mocked(
         env_ctx,
         EnvState.state_input_stderr_log_level_var_loaded.name,
     )
     # when:
     state_value = env_ctx.state_graph.eval_state(
-        EnvState.state_input_stderr_log_level_var_loaded.name
+        EnvState.state_input_stderr_log_level_var_loaded.name, env_ctx
     )
     # then:
     assert (
@@ -57,110 +57,110 @@ def test_default_case(mock_eval_own_state, env_ctx):
 
 
 @patch(
-    "protoprimer.primer_kernel.Bootstrapper_state_input_py_exec_var_loaded.eval_own_state"
+    "protoprimer.primer_kernel.Bootstrapper_state_input_py_exec_var_loaded.create_state_node"
 )
 @patch.dict(
     f"{os.__name__}.environ",
     {EnvVar.var_PROTOPRIMER_STDERR_LOG_LEVEL.value: "DEBUG"},
     clear=True,
 )
-def test_env_var_set_to_debug(mock_eval_own_state, env_ctx):
+def test_env_var_set_to_debug(mock_state_input_py_exec_var_loaded, env_ctx):
     # given:
-    assert_parent_states_mocked(
+    assert_parent_factories_mocked(
         env_ctx,
         EnvState.state_input_stderr_log_level_var_loaded.name,
     )
     # when:
     state_value = env_ctx.state_graph.eval_state(
-        EnvState.state_input_stderr_log_level_var_loaded.name
+        EnvState.state_input_stderr_log_level_var_loaded.name, env_ctx
     )
     # then:
     assert logging.DEBUG == state_value
 
 
 @patch(
-    "protoprimer.primer_kernel.Bootstrapper_state_input_py_exec_var_loaded.eval_own_state"
+    "protoprimer.primer_kernel.Bootstrapper_state_input_py_exec_var_loaded.create_state_node"
 )
 @patch.dict(
     f"{os.__name__}.environ",
     {EnvVar.var_PROTOPRIMER_STDERR_LOG_LEVEL.value: "10"},
     clear=True,
 )
-def test_env_var_set_to_10(mock_eval_own_state, env_ctx):
+def test_env_var_set_to_10(mock_state_input_py_exec_var_loaded, env_ctx):
     # given:
-    assert_parent_states_mocked(
+    assert_parent_factories_mocked(
         env_ctx,
         EnvState.state_input_stderr_log_level_var_loaded.name,
     )
     # when:
     state_value = env_ctx.state_graph.eval_state(
-        EnvState.state_input_stderr_log_level_var_loaded.name
+        EnvState.state_input_stderr_log_level_var_loaded.name, env_ctx
     )
     # then:
     assert 10 == state_value
 
 
 @patch(
-    "protoprimer.primer_kernel.Bootstrapper_state_input_py_exec_var_loaded.eval_own_state"
+    "protoprimer.primer_kernel.Bootstrapper_state_input_py_exec_var_loaded.create_state_node"
 )
 @patch.dict(
     f"{os.__name__}.environ",
     {EnvVar.var_PROTOPRIMER_STDERR_LOG_LEVEL.value: "-1"},
     clear=True,
 )
-def test_env_var_set_to_negative_1(mock_eval_own_state, env_ctx):
+def test_env_var_set_to_negative_1(mock_state_input_py_exec_var_loaded, env_ctx):
     # given:
-    assert_parent_states_mocked(
+    assert_parent_factories_mocked(
         env_ctx,
         EnvState.state_input_stderr_log_level_var_loaded.name,
     )
     # when:
     state_value = env_ctx.state_graph.eval_state(
-        EnvState.state_input_stderr_log_level_var_loaded.name
+        EnvState.state_input_stderr_log_level_var_loaded.name, env_ctx
     )
     # then:
     assert default_stderr_log_level == state_value
 
 
 @patch(
-    "protoprimer.primer_kernel.Bootstrapper_state_input_py_exec_var_loaded.eval_own_state"
+    "protoprimer.primer_kernel.Bootstrapper_state_input_py_exec_var_loaded.create_state_node"
 )
 @patch.dict(
     f"{os.__name__}.environ",
     {EnvVar.var_PROTOPRIMER_STDERR_LOG_LEVEL.value: "NOTSET"},
     clear=True,
 )
-def test_env_var_set_to_notset(mock_eval_own_state, env_ctx):
+def test_env_var_set_to_notset(mock_state_input_py_exec_var_loaded, env_ctx):
     # given:
-    assert_parent_states_mocked(
+    assert_parent_factories_mocked(
         env_ctx,
         EnvState.state_input_stderr_log_level_var_loaded.name,
     )
     # when:
     state_value = env_ctx.state_graph.eval_state(
-        EnvState.state_input_stderr_log_level_var_loaded.name
+        EnvState.state_input_stderr_log_level_var_loaded.name, env_ctx
     )
     # then:
     assert logging.NOTSET == state_value
 
 
 @patch(
-    "protoprimer.primer_kernel.Bootstrapper_state_input_py_exec_var_loaded.eval_own_state"
+    "protoprimer.primer_kernel.Bootstrapper_state_input_py_exec_var_loaded.create_state_node"
 )
 @patch.dict(
     f"{os.__name__}.environ",
     {EnvVar.var_PROTOPRIMER_STDERR_LOG_LEVEL.value: "NOT_A_LOG_LEVEL"},
     clear=True,
 )
-def test_env_var_set_to_invalid_string(mock_eval_own_state, env_ctx):
+def test_env_var_set_to_invalid_string(mock_state_input_py_exec_var_loaded, env_ctx):
     # given:
-    assert_parent_states_mocked(
+    assert_parent_factories_mocked(
         env_ctx,
         EnvState.state_input_stderr_log_level_var_loaded.name,
     )
     # when:
     state_value = env_ctx.state_graph.eval_state(
-        EnvState.state_input_stderr_log_level_var_loaded.name
+        EnvState.state_input_stderr_log_level_var_loaded.name, env_ctx
     )
     # then:
     assert default_stderr_log_level == state_value

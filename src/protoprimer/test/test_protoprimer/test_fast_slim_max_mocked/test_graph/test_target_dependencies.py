@@ -3,6 +3,7 @@ from __future__ import annotations
 from protoprimer.primer_kernel import (
     EnvContext,
     EnvState,
+    ExecMode,
     TargetState,
 )
 from test_protoprimer.test_fast_slim_max_mocked.misc_tools.graph_utils import (
@@ -29,6 +30,7 @@ class TestTargetDependencies:
         # given:
 
         env_context_instance = EnvContext()
+        env_context_instance.graph_coordinates.exec_mode = ExecMode.mode_prime
         state_graph_instance = env_context_instance.state_graph
         final_state_name = EnvState.state_command_executed.name
 
@@ -38,6 +40,7 @@ class TestTargetDependencies:
             get_transitive_dependencies(
                 state_graph_instance,
                 final_state_name,
+                env_context_instance,
             )
         )
         all_dependencies.add(final_state_name)
@@ -68,6 +71,7 @@ class TestTargetDependencies:
         # given:
 
         env_context_instance = EnvContext()
+        env_context_instance.graph_coordinates.exec_mode = ExecMode.mode_prime
         state_graph_instance = env_context_instance.state_graph
         final_state_name = TargetState.target_exec_mode_executed.value.name
 
@@ -77,6 +81,7 @@ class TestTargetDependencies:
             get_transitive_dependencies(
                 state_graph_instance,
                 final_state_name,
+                env_context_instance,
             )
         )
         all_dependencies_only.add(final_state_name)

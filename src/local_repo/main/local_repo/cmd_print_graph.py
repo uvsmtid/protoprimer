@@ -8,6 +8,8 @@ from local_repo.graph_printer import (
 )
 from protoprimer.primer_kernel import (
     EnvContext,
+    EnvState,
+    ExecMode,
     StateGraph,
     StateNode,
     TargetState,
@@ -20,9 +22,23 @@ def custom_main():
 
     env_ctx = EnvContext()
 
+    # TODO: TODO_60_63_68_81.refactor_DAG_builder.md:
+    #       After Phase 2, this code should not exists.
+    #       Instead arg_parser should obtain `GraphCoordinates`
+    #       to print the required portion of the graph.
+    env_ctx.graph_coordinates.exec_mode = ExecMode.mode_config
+
     env_ctx.final_state = TargetState.target_proto_bootstrap_completed.value.name
 
-    state_node: StateNode = env_ctx.state_graph.state_nodes[env_ctx.final_state]
+    # Ensure all nodes are initialized (populated into `state_graph.state_nodes`):
+    for env_state in EnvState:
+        env_ctx.state_graph.get_state_node(env_state.name, env_ctx)
+
+    state_node: StateNode = env_ctx.state_graph.get_state_node(
+        env_ctx.final_state,
+        env_ctx,
+    )
+
     if parsed_args.mermaid:
         selected_strategy = GraphPrinterMermaid(env_ctx.state_graph)
     else:

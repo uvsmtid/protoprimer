@@ -82,6 +82,12 @@ Elaborated constraints
 
     Support monorepos with any directory structure.
 
+*   Avoid shebang size limitation.
+
+    Typical shebang size is 128 chars - it does not work for `venv`-s with long paths.
+
+    Instead ``protoprimer`` uses dynamic import to make it work generically for any path.
+
 *   Unrestricted choices.
 
     *   It must provide choice for underlying tooling.

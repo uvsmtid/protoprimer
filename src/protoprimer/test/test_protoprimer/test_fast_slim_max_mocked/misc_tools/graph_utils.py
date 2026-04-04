@@ -3,6 +3,7 @@ from __future__ import annotations
 import enum
 
 from protoprimer.primer_kernel import (
+    EnvContext,
     StateGraph,
     StateNode,
 )
@@ -10,12 +11,14 @@ from protoprimer.primer_kernel import (
 
 def topological_sort(
     state_graph: StateGraph,
+    env_ctx: EnvContext,
 ) -> list[str]:
     """
     Performs a topological sort on the given `StateGraph`.
 
     Args:
         state_graph: The StateGraph object to sort.
+        env_ctx: The environment context.
 
     Returns:
         A list of state names in topological order.
@@ -28,18 +31,19 @@ def topological_sort(
         already_visited = 2
 
     node_statuses: dict[str, VisitState] = {
-        node_name: VisitState.unvisited_node for node_name in state_graph.state_nodes
+        node_name: VisitState.unvisited_node
+        for node_name in state_graph.state_factories
     }
 
     def depth_first_search(node_name: str):
         node_statuses[node_name] = VisitState.being_visited
 
-        curr_node: StateNode = state_graph.get_state_node(node_name)
+        curr_node: StateNode = state_graph.get_state_node(node_name, env_ctx)
         if curr_node is None:
             raise ValueError(f"`{StateNode.__name__}` [{node_name}] not found in graph")
 
         for parent_name in curr_node.get_parent_states():
-            if parent_name not in state_graph.state_nodes:
+            if parent_name not in state_graph.state_factories:
                 raise ValueError(
                     f"`{StateNode.__name__}` [{parent_name}] not found in graph"
                 )
@@ -51,7 +55,7 @@ def topological_sort(
         node_statuses[node_name] = VisitState.already_visited
         sorted_nodes.append(node_name)
 
-    for node_name in state_graph.state_nodes:
+    for node_name in state_graph.state_factories:
         if node_statuses[node_name] == VisitState.unvisited_node:
             depth_first_search(node_name)
 
@@ -61,6 +65,7 @@ def topological_sort(
 def get_transitive_dependencies(
     state_graph: StateGraph,
     state_name: str,
+    env_ctx: EnvContext,
 ) -> list[str]:
     """
     Lists all transitive dependencies for a given state name.
@@ -68,6 +73,7 @@ def get_transitive_dependencies(
     Args:
         state_graph: The `StateGraph` object.
         state_name: The name of the state to get dependencies for.
+        env_ctx: The environment context.
 
     Returns:
         A list of state names representing the transitive dependencies.
@@ -77,12 +83,12 @@ def get_transitive_dependencies(
 
     def depth_first_search(node_name: str):
         visited_nodes.add(node_name)
-        curr_node: StateNode = state_graph.get_state_node(node_name)
+        curr_node: StateNode = state_graph.get_state_node(node_name, env_ctx)
         if curr_node is None:
             raise ValueError(f"`{StateNode.__name__}` [{node_name}] not found in graph")
 
         for parent_name in curr_node.get_parent_states():
-            if parent_name not in state_graph.state_nodes:
+            if parent_name not in state_graph.state_factories:
                 raise ValueError(
                     f"`{StateNode.__name__}` [{parent_name}] not found in graph"
                 )

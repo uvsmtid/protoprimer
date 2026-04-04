@@ -4,7 +4,7 @@ from unittest.mock import patch
 import pytest
 
 from local_test.mock_verifier import (
-    assert_parent_states_mocked,
+    assert_parent_factories_mocked,
 )
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
@@ -29,10 +29,10 @@ def test_relationship():
 
 
 @patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_primer_conf_file_abs_path_inited.__name__}.eval_own_state"
+    f"{primer_kernel.__name__}.{Bootstrapper_state_primer_conf_file_abs_path_inited.__name__}.create_state_node"
 )
 @patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_symlink_abs_path_inited.__name__}.eval_own_state"
+    f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node"
 )
 def test_success(
     mock_state_local_conf_symlink_abs_path_inited,
@@ -41,7 +41,7 @@ def test_success(
     fs,
 ):
     # given:
-    assert_parent_states_mocked(
+    assert_parent_factories_mocked(
         env_ctx,
         EnvState.state_local_conf_file_abs_path_inited.name,
     )
@@ -50,15 +50,17 @@ def test_success(
     fs.create_dir(mock_client_dir)
     os.chdir(mock_client_dir)
 
-    mock_state_local_conf_symlink_abs_path_inited.return_value = os.path.join(
+    mock_state_local_conf_symlink_abs_path_inited.return_value.eval_own_state.return_value = os.path.join(
         mock_client_dir,
         ConfConstClient.default_dir_rel_path_leap_env_link_name,
     )
-    mock_state_primer_conf_file_abs_path_inited.return_value = "protoprimer.json"
+    mock_state_primer_conf_file_abs_path_inited.return_value.eval_own_state.return_value = (
+        "protoprimer.json"
+    )
 
     # when:
     state_local_conf_file_abs_path_inited = env_ctx.state_graph.eval_state(
-        EnvState.state_local_conf_file_abs_path_inited.name
+        EnvState.state_local_conf_file_abs_path_inited.name, env_ctx
     )
 
     # then:

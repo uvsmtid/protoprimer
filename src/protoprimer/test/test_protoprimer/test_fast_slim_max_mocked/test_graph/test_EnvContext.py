@@ -88,7 +88,7 @@ class TestEnvContext(BasePyfakefsTestClass):
         # when:
         env_ctx = EnvContext()
         venv_driver = env_ctx.state_graph.eval_state(
-            EnvState.state_venv_driver_prepared.name
+            EnvState.state_venv_driver_prepared.name, env_ctx
         )
         # then:
         if is_min_python():
@@ -152,7 +152,7 @@ class TestEnvContext(BasePyfakefsTestClass):
         # when:
         env_ctx = EnvContext()
         venv_driver = env_ctx.state_graph.eval_state(
-            EnvState.state_venv_driver_prepared.name
+            EnvState.state_venv_driver_prepared.name, env_ctx
         )
         # then:
         if is_min_python():
@@ -213,7 +213,7 @@ class TestEnvContext(BasePyfakefsTestClass):
         # when:
         env_ctx = EnvContext()
         venv_driver = env_ctx.state_graph.eval_state(
-            EnvState.state_venv_driver_prepared.name
+            EnvState.state_venv_driver_prepared.name, env_ctx
         )
         # then:
         assert isinstance(venv_driver, VenvDriverPip)

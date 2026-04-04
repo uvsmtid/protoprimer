@@ -30,7 +30,10 @@ def customize_env_context():
 
     env_ctx = EnvContext()
 
-    env_ctx.state_graph.register_node(Bootstrapper_state_pre_commit_configured(env_ctx))
+    env_ctx.state_graph.register_factory(
+        Bootstrapper_state_pre_commit_configured.state_pre_commit_configured,
+        Bootstrapper_state_pre_commit_configured(env_ctx),
+    )
 
     env_ctx.final_state = CustomEnvState.state_pre_commit_configured.name
 

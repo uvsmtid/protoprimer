@@ -5,7 +5,7 @@ from unittest.mock import patch
 from local_repo.cmd_bootstrap_env import customize_env_context
 from local_test.base_test_class import BasePyfakefsTestClass
 from local_test.mock_verifier import (
-    assert_parent_states_mocked,
+    assert_parent_factories_mocked,
 )
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from neoprimer import pre_commit
@@ -40,20 +40,19 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch("sys.argv", [""])
     @patch(f"{primer_kernel.__name__}.is_venv", return_value=False)
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_command_executed.__name__}.eval_own_state",
-        return_value=True,
+        f"{primer_kernel.__name__}.{Bootstrapper_state_command_executed.__name__}.create_state_node"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_global_conf_file_abs_path_inited.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_global_conf_file_abs_path_inited.__name__}.create_state_node"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_ref_root_dir_abs_path_inited.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_ref_root_dir_abs_path_inited.__name__}.create_state_node"
     )
     def test_state_evaluation(
         self,
-        mock_state_ref_root_dir_abs_path_inited,
-        mock_state_global_conf_file_abs_path_inited,
-        mock_command_executed_eval_own_state,
+        mock_create_state_ref_root_dir_abs_path_inited,
+        mock_create_state_global_conf_file_abs_path_inited,
+        mock_create_state_command_executed,
         mock_is_venv,
         mock_execve,
         mock_subprocess_check_output,
@@ -61,7 +60,11 @@ class ThisTestClass(BasePyfakefsTestClass):
     ):
         # given:
 
-        assert_parent_states_mocked(
+        mock_create_state_command_executed.return_value.eval_own_state.return_value = (
+            True
+        )
+
+        assert_parent_factories_mocked(
             self.env_ctx,
             Bootstrapper_state_pre_commit_configured.state_pre_commit_configured,
         )
@@ -69,9 +72,13 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_client_conf_path = "/gconf/proto_kernel.json"
         self.fs.create_dir("/gconf")
         write_json_file(mock_client_conf_path, {})
-        mock_state_global_conf_file_abs_path_inited.return_value = mock_client_conf_path
+        mock_create_state_global_conf_file_abs_path_inited.return_value.eval_own_state.return_value = (
+            mock_client_conf_path
+        )
         mock_ref_root_dir = "/test/project"
-        mock_state_ref_root_dir_abs_path_inited.return_value = mock_ref_root_dir
+        mock_create_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = (
+            mock_ref_root_dir
+        )
 
         client_conf_dir_path = "/gconf"
         pre_commit_conf_file_path = os.path.join(
@@ -81,7 +88,8 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # when:
         state_value = self.env_ctx.state_graph.eval_state(
-            Bootstrapper_state_pre_commit_configured.state_pre_commit_configured
+            Bootstrapper_state_pre_commit_configured.state_pre_commit_configured,
+            self.env_ctx,
         )
 
         # then:

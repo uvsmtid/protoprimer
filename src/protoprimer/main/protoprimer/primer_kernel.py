@@ -10,6 +10,7 @@ TODO: TODO_91_75_37_57.implement_shebang_update.md / FT_02_89_37_65.shebang_line
 The script must be run with Python 3.
 Ensure that `python3` is in the `PATH` for shebang to work.
 """
+
 from __future__ import annotations
 
 import argparse
@@ -40,7 +41,7 @@ from typing import (
 
 # The release process ensures that content in this file matches the version below while tagging the release commit
 # (otherwise, if the file comes from a different commit, the version is irrelevant):
-__version__ = "0.8.0"
+__version__ = "0.9.0"
 
 logger: logging.Logger = logging.getLogger()
 
@@ -67,7 +68,8 @@ def app_main(
         #       Evaluate state via child state (to check that this is eligible).
         #       But... What is the child state here?
         state_exec_mode_executed: bool = env_ctx.state_graph.eval_state(
-            TargetState.target_exec_mode_executed.value.name
+            TargetState.target_exec_mode_executed.value.name,
+            env_ctx,
         )
         assert state_exec_mode_executed
         atexit.register(lambda: env_ctx.print_exit_line(0))
@@ -300,10 +302,9 @@ class PrimerRuntime(enum.Enum):
 
 class StartMode(enum.Enum):
     """
-    Specifies how `primer_kernel` module was started (which API was the entry point).
+    Specifies how `proto_kernel` was started (which API was the entry point).
 
-    TODO: Add feature_topic.
-          Similar to: FT_11_27_29_83.exec_mode.md
+    See FT_25_62_13_55.start_mode.md
 
     TODO: TODO_60_63_68_81.refactor_DAG_builder.md:
           make use of this enum.
@@ -347,12 +348,18 @@ class ExecMode(enum.Enum):
     mode_check = "check"
 
 
-class GraphDimension:
+class GraphCoordinates:
     """
+    This class defines fields which specify coordinates for `NodeFactory`-ies during DAG constructions.
+
+    Each class of `StateNode` defines applicable coordinates for its creation via its `NodeFactory`.
+
     See TODO_60_63_68_81.refactor_DAG_builder.md
     """
 
-    pass
+    def __init__(self):
+        self.start_mode: StartMode | None = None
+        self.exec_mode: ExecMode | None = None
 
 
 # TODO: TODO_31_76_38_60.exec_mode_for_shell.md: remove "reinstall" together with "command"
@@ -3291,7 +3298,7 @@ class StateNode(Generic[ValueType]):
             raise AssertionError(
                 f"parent_state [{parent_state}] is not parent of [{self.state_name}]"
             )
-        return self.env_ctx.state_graph.eval_state(parent_state)
+        return self.env_ctx.state_graph.eval_state(parent_state, self.env_ctx)
 
     def eval_own_state(
         self,
@@ -3302,6 +3309,38 @@ class StateNode(Generic[ValueType]):
         self,
     ) -> ValueType:
         raise NotImplementedError()
+
+
+########################################################################################################################
+
+
+class NodeFactory(Generic[ValueType]):
+
+    def create_state_node(
+        self,
+        env_ctx: EnvContext,
+    ) -> StateNode[ValueType]:
+        raise NotImplementedError()
+
+
+def trivial_factory(state_node_class: type[StateNode]) -> type[StateNode]:
+    """
+    Class decorator that makes a `StateNode` class act like a factory for itself.
+
+    In other words, the creation of this DAG node does not depend on `GraphCoordinates`.
+    """
+
+    def create_state_node(
+        self,
+        env_ctx: EnvContext,
+    ) -> StateNode:
+        return self
+
+    state_node_class.create_state_node = create_state_node
+    return state_node_class
+
+
+########################################################################################################################
 
 
 class AbstractCachingStateNode(StateNode[ValueType]):
@@ -3403,6 +3442,7 @@ class AbstractOverriddenFieldCachingStateNode(AbstractCachingStateNode[ValueType
 
 
 # noinspection PyPep8Naming
+@trivial_factory
 class Bootstrapper_state_input_py_exec_var_loaded(
     AbstractCachingStateNode[StateStride]
 ):
@@ -3410,15 +3450,11 @@ class Bootstrapper_state_input_py_exec_var_loaded(
     def __init__(
         self,
         env_ctx: EnvContext,
-        state_name: str | None = None,
     ):
         super().__init__(
             env_ctx=env_ctx,
             parent_states=[],
-            state_name=if_none(
-                state_name,
-                EnvState.state_input_py_exec_var_loaded.name,
-            ),
+            state_name=EnvState.state_input_py_exec_var_loaded.name,
         )
 
     def _eval_state_once(
@@ -3435,6 +3471,7 @@ class Bootstrapper_state_input_py_exec_var_loaded(
 
 
 # noinspection PyPep8Naming
+@trivial_factory
 class Bootstrapper_state_input_stderr_log_level_var_loaded(
     AbstractCachingStateNode[int]
 ):
@@ -3442,17 +3479,13 @@ class Bootstrapper_state_input_stderr_log_level_var_loaded(
     def __init__(
         self,
         env_ctx: EnvContext,
-        state_name: str | None = None,
     ):
         super().__init__(
             env_ctx=env_ctx,
             parent_states=[
                 EnvState.state_input_py_exec_var_loaded.name,
             ],
-            state_name=if_none(
-                state_name,
-                EnvState.state_input_stderr_log_level_var_loaded.name,
-            ),
+            state_name=EnvState.state_input_stderr_log_level_var_loaded.name,
         )
 
     def _eval_state_once(
@@ -3495,20 +3528,17 @@ class Bootstrapper_state_input_stderr_log_level_var_loaded(
 
 
 # noinspection PyPep8Naming
+@trivial_factory
 class Bootstrapper_state_input_do_install_var_loaded(AbstractCachingStateNode[bool]):
 
     def __init__(
         self,
         env_ctx: EnvContext,
-        state_name: str | None = None,
     ):
         super().__init__(
             env_ctx=env_ctx,
             parent_states=[],
-            state_name=if_none(
-                state_name,
-                EnvState.state_input_do_install_var_loaded.name,
-            ),
+            state_name=EnvState.state_input_do_install_var_loaded.name,
         )
 
     def _eval_state_once(
@@ -3524,6 +3554,7 @@ class Bootstrapper_state_input_do_install_var_loaded(AbstractCachingStateNode[bo
 
 
 # noinspection PyPep8Naming
+@trivial_factory
 class Bootstrapper_state_default_stderr_log_handler_configured(
     AbstractCachingStateNode[logging.Handler]
 ):
@@ -3531,17 +3562,13 @@ class Bootstrapper_state_default_stderr_log_handler_configured(
     def __init__(
         self,
         env_ctx: EnvContext,
-        state_name: str | None = None,
     ):
         super().__init__(
             env_ctx=env_ctx,
             parent_states=[
                 EnvState.state_input_stderr_log_level_var_loaded.name,
             ],
-            state_name=if_none(
-                state_name,
-                EnvState.state_default_stderr_log_handler_configured.name,
-            ),
+            state_name=EnvState.state_default_stderr_log_handler_configured.name,
         )
 
     def _eval_state_once(
@@ -3563,20 +3590,17 @@ class Bootstrapper_state_default_stderr_log_handler_configured(
 
 
 # noinspection PyPep8Naming
+@trivial_factory
 class Bootstrapper_state_args_parsed(AbstractCachingStateNode[argparse.Namespace]):
 
     def __init__(
         self,
         env_ctx: EnvContext,
-        state_name: str | None = None,
     ):
         super().__init__(
             env_ctx=env_ctx,
             parent_states=[],
-            state_name=if_none(
-                state_name,
-                EnvState.state_args_parsed.name,
-            ),
+            state_name=EnvState.state_args_parsed.name,
         )
 
     def _eval_state_once(
@@ -3603,6 +3627,7 @@ class Bootstrapper_state_args_parsed(AbstractCachingStateNode[argparse.Namespace
 
 
 # noinspection PyPep8Naming
+@trivial_factory
 class Bootstrapper_state_input_stderr_log_level_eval_finalized(
     AbstractCachingStateNode[int]
 ):
@@ -3614,7 +3639,6 @@ class Bootstrapper_state_input_stderr_log_level_eval_finalized(
     def __init__(
         self,
         env_ctx: EnvContext,
-        state_name: str | None = None,
     ):
         super().__init__(
             env_ctx=env_ctx,
@@ -3623,10 +3647,7 @@ class Bootstrapper_state_input_stderr_log_level_eval_finalized(
                 EnvState.state_default_stderr_log_handler_configured.name,
                 EnvState.state_args_parsed.name,
             ],
-            state_name=if_none(
-                state_name,
-                EnvState.state_input_stderr_log_level_eval_finalized.name,
-            ),
+            state_name=EnvState.state_input_stderr_log_level_eval_finalized.name,
         )
 
     def _eval_state_once(
@@ -3700,22 +3721,19 @@ class Bootstrapper_state_input_stderr_log_level_eval_finalized(
 
 
 # noinspection PyPep8Naming
+@trivial_factory
 class Bootstrapper_state_input_exec_mode_arg_loaded(AbstractCachingStateNode[ExecMode]):
 
     def __init__(
         self,
         env_ctx: EnvContext,
-        state_name: str | None = None,
     ):
         super().__init__(
             env_ctx=env_ctx,
             parent_states=[
                 EnvState.state_args_parsed.name,
             ],
-            state_name=if_none(
-                state_name,
-                EnvState.state_input_exec_mode_arg_loaded.name,
-            ),
+            state_name=EnvState.state_input_exec_mode_arg_loaded.name,
         )
 
     def _eval_state_once(
@@ -3730,10 +3748,12 @@ class Bootstrapper_state_input_exec_mode_arg_loaded(AbstractCachingStateNode[Exe
                 ParsedArg.name_exec_mode.value,
             )
         )
+        self.env_ctx.graph_coordinates.exec_mode = state_input_exec_mode_arg_loaded
         return state_input_exec_mode_arg_loaded
 
 
 # noinspection PyPep8Naming
+@trivial_factory
 class Bootstrapper_state_input_final_state_eval_finalized(
     AbstractCachingStateNode[str]
 ):
@@ -3741,7 +3761,6 @@ class Bootstrapper_state_input_final_state_eval_finalized(
     def __init__(
         self,
         env_ctx: EnvContext,
-        state_name: str | None = None,
     ):
         super().__init__(
             env_ctx=env_ctx,
@@ -3749,10 +3768,7 @@ class Bootstrapper_state_input_final_state_eval_finalized(
                 EnvState.state_args_parsed.name,
                 EnvState.state_input_exec_mode_arg_loaded.name,
             ],
-            state_name=if_none(
-                state_name,
-                EnvState.state_input_final_state_eval_finalized.name,
-            ),
+            state_name=EnvState.state_input_final_state_eval_finalized.name,
         )
 
     def _eval_state_once(
@@ -3786,6 +3802,7 @@ class Bootstrapper_state_input_final_state_eval_finalized(
 
 
 # noinspection PyPep8Naming
+@trivial_factory
 class Bootstrapper_state_exec_mode_executed(AbstractCachingStateNode[bool]):
     """
     This is a special node - it traverses ALL nodes.
@@ -3796,7 +3813,6 @@ class Bootstrapper_state_exec_mode_executed(AbstractCachingStateNode[bool]):
     def __init__(
         self,
         env_ctx: EnvContext,
-        state_name: str | None = None,
     ):
         super().__init__(
             env_ctx=env_ctx,
@@ -3805,10 +3821,7 @@ class Bootstrapper_state_exec_mode_executed(AbstractCachingStateNode[bool]):
                 EnvState.state_input_exec_mode_arg_loaded.name,
                 EnvState.state_input_final_state_eval_finalized.name,
             ],
-            state_name=if_none(
-                state_name,
-                EnvState.state_exec_mode_executed.name,
-            ),
+            state_name=EnvState.state_exec_mode_executed.name,
         )
 
     def _eval_state_once(
@@ -3828,9 +3841,10 @@ class Bootstrapper_state_exec_mode_executed(AbstractCachingStateNode[bool]):
             EnvState.state_input_exec_mode_arg_loaded.name
         )
 
-        state_node: StateNode = self.env_ctx.state_graph.state_nodes[
-            state_input_final_state_eval_finalized
-        ]
+        state_node: StateNode = self.env_ctx.state_graph.get_state_node(
+            state_input_final_state_eval_finalized,
+            self.env_ctx,
+        )
 
         selected_strategy: RunStrategy
         if state_input_exec_mode_arg_loaded is None:
@@ -3843,9 +3857,10 @@ class Bootstrapper_state_exec_mode_executed(AbstractCachingStateNode[bool]):
             selected_strategy = ExitCodeReporter(self.env_ctx)
         elif state_input_exec_mode_arg_loaded == ExecMode.mode_config:
             selected_strategy = ExitCodeReporter(self.env_ctx)
-            state_node = self.env_ctx.state_graph.state_nodes[
-                EnvState.state_effective_config_data_printed.name
-            ]
+            state_node = self.env_ctx.state_graph.get_state_node(
+                EnvState.state_effective_config_data_printed.name,
+                self.env_ctx,
+            )
         else:
             raise ValueError(
                 f"cannot handle exec mode [{state_input_exec_mode_arg_loaded}]"
@@ -3857,20 +3872,17 @@ class Bootstrapper_state_exec_mode_executed(AbstractCachingStateNode[bool]):
 
 
 # noinspection PyPep8Naming
+@trivial_factory
 class Bootstrapper_state_input_start_id_var_loaded(AbstractCachingStateNode[str]):
 
     def __init__(
         self,
         env_ctx: EnvContext,
-        state_name: str | None = None,
     ):
         super().__init__(
             env_ctx=env_ctx,
             parent_states=[],
-            state_name=if_none(
-                state_name,
-                EnvState.state_input_start_id_var_loaded.name,
-            ),
+            state_name=EnvState.state_input_start_id_var_loaded.name,
         )
 
     def _eval_state_once(
@@ -3883,6 +3895,7 @@ class Bootstrapper_state_input_start_id_var_loaded(AbstractCachingStateNode[str]
 
 
 # noinspection PyPep8Naming
+@trivial_factory
 class Bootstrapper_state_input_proto_code_file_abs_path_var_loaded(
     AbstractCachingStateNode[str]
 ):
@@ -3890,15 +3903,11 @@ class Bootstrapper_state_input_proto_code_file_abs_path_var_loaded(
     def __init__(
         self,
         env_ctx: EnvContext,
-        state_name: str | None = None,
     ):
         super().__init__(
             env_ctx=env_ctx,
             parent_states=[],
-            state_name=if_none(
-                state_name,
-                EnvState.state_input_proto_code_file_abs_path_var_loaded.name,
-            ),
+            state_name=EnvState.state_input_proto_code_file_abs_path_var_loaded.name,
         )
 
     def _eval_state_once(
@@ -3921,6 +3930,7 @@ class Bootstrapper_state_input_proto_code_file_abs_path_var_loaded(
 
 
 # noinspection PyPep8Naming
+@trivial_factory
 class Bootstrapper_state_stride_py_arbitrary_reached(
     AbstractCachingStateNode[StateStride]
 ):
@@ -3931,7 +3941,6 @@ class Bootstrapper_state_stride_py_arbitrary_reached(
     def __init__(
         self,
         env_ctx: EnvContext,
-        state_name: str | None = None,
     ):
         super().__init__(
             env_ctx=env_ctx,
@@ -3939,10 +3948,7 @@ class Bootstrapper_state_stride_py_arbitrary_reached(
                 EnvState.state_input_exec_mode_arg_loaded.name,
                 EnvState.state_input_start_id_var_loaded.name,
             ],
-            state_name=if_none(
-                state_name,
-                EnvState.state_stride_py_arbitrary_reached.name,
-            ),
+            state_name=EnvState.state_stride_py_arbitrary_reached.name,
         )
 
     def _eval_state_once(
@@ -4013,11 +4019,11 @@ class Bootstrapper_state_stride_py_arbitrary_reached(
 
 
 # noinspection PyPep8Naming
+@trivial_factory
 class Bootstrapper_state_proto_code_file_abs_path_inited(AbstractCachingStateNode[str]):
     def __init__(
         self,
         env_ctx: EnvContext,
-        state_name: str | None = None,
     ):
         super().__init__(
             env_ctx=env_ctx,
@@ -4026,10 +4032,7 @@ class Bootstrapper_state_proto_code_file_abs_path_inited(AbstractCachingStateNod
                 EnvState.state_input_proto_code_file_abs_path_var_loaded.name,
                 EnvState.state_stride_py_arbitrary_reached.name,
             ],
-            state_name=if_none(
-                state_name,
-                EnvState.state_proto_code_file_abs_path_inited.name,
-            ),
+            state_name=EnvState.state_proto_code_file_abs_path_inited.name,
         )
 
     def _eval_state_once(
@@ -4124,6 +4127,7 @@ class Bootstrapper_state_proto_code_file_abs_path_inited(AbstractCachingStateNod
 
 
 # noinspection PyPep8Naming
+@trivial_factory
 class Bootstrapper_state_primer_conf_file_abs_path_inited(
     AbstractCachingStateNode[str]
 ):
@@ -4131,17 +4135,13 @@ class Bootstrapper_state_primer_conf_file_abs_path_inited(
     def __init__(
         self,
         env_ctx: EnvContext,
-        state_name: str | None = None,
     ):
         super().__init__(
             env_ctx=env_ctx,
             parent_states=[
                 EnvState.state_proto_code_file_abs_path_inited.name,
             ],
-            state_name=if_none(
-                state_name,
-                EnvState.state_primer_conf_file_abs_path_inited.name,
-            ),
+            state_name=EnvState.state_primer_conf_file_abs_path_inited.name,
         )
 
     def _eval_state_once(
@@ -4191,12 +4191,12 @@ class Bootstrapper_state_primer_conf_file_abs_path_inited(
 
 
 # noinspection PyPep8Naming
+@trivial_factory
 class Bootstrapper_state_primer_conf_file_data_loaded(AbstractCachingStateNode[dict]):
 
     def __init__(
         self,
         env_ctx: EnvContext,
-        state_name: str | None = None,
     ):
         super().__init__(
             env_ctx=env_ctx,
@@ -4206,10 +4206,7 @@ class Bootstrapper_state_primer_conf_file_data_loaded(AbstractCachingStateNode[d
                 EnvState.state_proto_code_file_abs_path_inited.name,
                 EnvState.state_primer_conf_file_abs_path_inited.name,
             ],
-            state_name=if_none(
-                state_name,
-                EnvState.state_primer_conf_file_data_loaded.name,
-            ),
+            state_name=EnvState.state_primer_conf_file_data_loaded.name,
         )
 
     def _eval_state_once(
@@ -4271,12 +4268,12 @@ class Bootstrapper_state_primer_conf_file_data_loaded(AbstractCachingStateNode[d
 
 
 # noinspection PyPep8Naming
+@trivial_factory
 class Bootstrapper_state_ref_root_dir_abs_path_inited(AbstractCachingStateNode[str]):
 
     def __init__(
         self,
         env_ctx: EnvContext,
-        state_name: str | None = None,
     ):
         super().__init__(
             env_ctx=env_ctx,
@@ -4284,10 +4281,7 @@ class Bootstrapper_state_ref_root_dir_abs_path_inited(AbstractCachingStateNode[s
                 EnvState.state_proto_code_file_abs_path_inited.name,
                 EnvState.state_primer_conf_file_data_loaded.name,
             ],
-            state_name=if_none(
-                state_name,
-                EnvState.state_ref_root_dir_abs_path_inited.name,
-            ),
+            state_name=EnvState.state_ref_root_dir_abs_path_inited.name,
         )
 
     def _eval_state_once(
@@ -4332,12 +4326,12 @@ class Bootstrapper_state_ref_root_dir_abs_path_inited(AbstractCachingStateNode[s
 
 
 # noinspection PyPep8Naming
+@trivial_factory
 class Bootstrapper_state_global_conf_dir_abs_path_inited(AbstractCachingStateNode[str]):
 
     def __init__(
         self,
         env_ctx: EnvContext,
-        state_name: str | None = None,
     ):
         super().__init__(
             env_ctx=env_ctx,
@@ -4345,10 +4339,7 @@ class Bootstrapper_state_global_conf_dir_abs_path_inited(AbstractCachingStateNod
                 EnvState.state_primer_conf_file_data_loaded.name,
                 EnvState.state_ref_root_dir_abs_path_inited.name,
             ],
-            state_name=if_none(
-                state_name,
-                EnvState.state_global_conf_dir_abs_path_inited.name,
-            ),
+            state_name=EnvState.state_global_conf_dir_abs_path_inited.name,
         )
 
     def _eval_state_once(
@@ -4386,6 +4377,7 @@ class Bootstrapper_state_global_conf_dir_abs_path_inited(AbstractCachingStateNod
 
 
 # noinspection PyPep8Naming
+@trivial_factory
 class Bootstrapper_state_global_conf_file_abs_path_inited(
     AbstractCachingStateNode[str]
 ):
@@ -4393,7 +4385,6 @@ class Bootstrapper_state_global_conf_file_abs_path_inited(
     def __init__(
         self,
         env_ctx: EnvContext,
-        state_name: str | None = None,
     ):
         super().__init__(
             env_ctx=env_ctx,
@@ -4401,10 +4392,7 @@ class Bootstrapper_state_global_conf_file_abs_path_inited(
                 EnvState.state_primer_conf_file_abs_path_inited.name,
                 EnvState.state_global_conf_dir_abs_path_inited.name,
             ],
-            state_name=if_none(
-                state_name,
-                EnvState.state_global_conf_file_abs_path_inited.name,
-            ),
+            state_name=EnvState.state_global_conf_file_abs_path_inited.name,
         )
 
     def _eval_state_once(
@@ -4429,12 +4417,12 @@ class Bootstrapper_state_global_conf_file_abs_path_inited(
 
 
 # noinspection PyPep8Naming
+@trivial_factory
 class Bootstrapper_state_client_conf_file_data_loaded(AbstractCachingStateNode[dict]):
 
     def __init__(
         self,
         env_ctx: EnvContext,
-        state_name: str | None = None,
     ):
         super().__init__(
             env_ctx=env_ctx,
@@ -4443,10 +4431,7 @@ class Bootstrapper_state_client_conf_file_data_loaded(AbstractCachingStateNode[d
                 EnvState.state_input_exec_mode_arg_loaded.name,
                 EnvState.state_global_conf_file_abs_path_inited.name,
             ],
-            state_name=if_none(
-                state_name,
-                EnvState.state_client_conf_file_data_loaded.name,
-            ),
+            state_name=EnvState.state_client_conf_file_data_loaded.name,
         )
 
     def _eval_state_once(
@@ -4485,6 +4470,7 @@ class Bootstrapper_state_client_conf_file_data_loaded(AbstractCachingStateNode[d
 
 
 # noinspection PyPep8Naming
+@trivial_factory
 class Bootstrapper_state_selected_env_dir_rel_path_inited(
     AbstractCachingStateNode[str]
 ):
@@ -4492,7 +4478,6 @@ class Bootstrapper_state_selected_env_dir_rel_path_inited(
     def __init__(
         self,
         env_ctx: EnvContext,
-        state_name: str | None = None,
     ):
         super().__init__(
             env_ctx=env_ctx,
@@ -4501,10 +4486,7 @@ class Bootstrapper_state_selected_env_dir_rel_path_inited(
                 EnvState.state_ref_root_dir_abs_path_inited.name,
                 EnvState.state_client_conf_file_data_loaded.name,
             ],
-            state_name=if_none(
-                state_name,
-                EnvState.state_selected_env_dir_rel_path_inited.name,
-            ),
+            state_name=EnvState.state_selected_env_dir_rel_path_inited.name,
         )
 
     def _eval_state_once(
@@ -4619,6 +4601,7 @@ class Bootstrapper_state_selected_env_dir_rel_path_inited(
 
 
 # noinspection PyPep8Naming
+@trivial_factory
 class Bootstrapper_state_local_conf_symlink_abs_path_inited(
     AbstractCachingStateNode[str]
 ):
@@ -4626,7 +4609,6 @@ class Bootstrapper_state_local_conf_symlink_abs_path_inited(
     def __init__(
         self,
         env_ctx: EnvContext,
-        state_name: str | None = None,
     ):
         super().__init__(
             env_ctx=env_ctx,
@@ -4636,10 +4618,7 @@ class Bootstrapper_state_local_conf_symlink_abs_path_inited(
                 EnvState.state_client_conf_file_data_loaded.name,
                 EnvState.state_selected_env_dir_rel_path_inited.name,
             ],
-            state_name=if_none(
-                state_name,
-                EnvState.state_local_conf_symlink_abs_path_inited.name,
-            ),
+            state_name=EnvState.state_local_conf_symlink_abs_path_inited.name,
         )
 
     def _eval_state_once(
@@ -4730,12 +4709,12 @@ class Bootstrapper_state_local_conf_symlink_abs_path_inited(
 
 
 # noinspection PyPep8Naming
+@trivial_factory
 class Bootstrapper_state_local_conf_file_abs_path_inited(AbstractCachingStateNode[str]):
 
     def __init__(
         self,
         env_ctx: EnvContext,
-        state_name: str | None = None,
     ):
         super().__init__(
             env_ctx=env_ctx,
@@ -4743,10 +4722,7 @@ class Bootstrapper_state_local_conf_file_abs_path_inited(AbstractCachingStateNod
                 EnvState.state_primer_conf_file_abs_path_inited.name,
                 EnvState.state_local_conf_symlink_abs_path_inited.name,
             ],
-            state_name=if_none(
-                state_name,
-                EnvState.state_local_conf_file_abs_path_inited.name,
-            ),
+            state_name=EnvState.state_local_conf_file_abs_path_inited.name,
         )
 
     def _eval_state_once(
@@ -4771,12 +4747,12 @@ class Bootstrapper_state_local_conf_file_abs_path_inited(AbstractCachingStateNod
 
 
 # noinspection PyPep8Naming
+@trivial_factory
 class Bootstrapper_state_env_conf_file_data_loaded(AbstractCachingStateNode[dict]):
 
     def __init__(
         self,
         env_ctx: EnvContext,
-        state_name: str | None = None,
     ):
         super().__init__(
             env_ctx=env_ctx,
@@ -4785,10 +4761,7 @@ class Bootstrapper_state_env_conf_file_data_loaded(AbstractCachingStateNode[dict
                 EnvState.state_input_exec_mode_arg_loaded.name,
                 EnvState.state_local_conf_file_abs_path_inited.name,
             ],
-            state_name=if_none(
-                state_name,
-                EnvState.state_env_conf_file_data_loaded.name,
-            ),
+            state_name=EnvState.state_env_conf_file_data_loaded.name,
         )
 
     def _eval_state_once(
@@ -4828,6 +4801,7 @@ class Bootstrapper_state_env_conf_file_data_loaded(AbstractCachingStateNode[dict
 
 
 # noinspection PyPep8Naming
+@trivial_factory
 class Bootstrapper_required_python_version_inited(
     AbstractOverriddenFieldCachingStateNode[str]
 ):
@@ -4835,7 +4809,6 @@ class Bootstrapper_required_python_version_inited(
     def __init__(
         self,
         env_ctx: EnvContext,
-        state_name: str | None = None,
     ):
         super().__init__(
             env_ctx=env_ctx,
@@ -4844,10 +4817,7 @@ class Bootstrapper_required_python_version_inited(
                 EnvState.state_client_conf_file_data_loaded.name,
                 EnvState.state_env_conf_file_data_loaded.name,
             ],
-            state_name=if_none(
-                state_name,
-                EnvState.state_required_python_version_inited.name,
-            ),
+            state_name=EnvState.state_required_python_version_inited.name,
         )
 
     def _eval_state_once(
@@ -4896,6 +4866,7 @@ class Bootstrapper_required_python_version_inited(
 
 
 # noinspection PyPep8Naming
+@trivial_factory
 class Bootstrapper_state_python_selector_file_abs_path_inited(
     AbstractOverriddenFieldCachingStateNode[str]
 ):
@@ -4903,7 +4874,6 @@ class Bootstrapper_state_python_selector_file_abs_path_inited(
     def __init__(
         self,
         env_ctx: EnvContext,
-        state_name: str | None = None,
     ):
         super().__init__(
             env_ctx=env_ctx,
@@ -4912,10 +4882,7 @@ class Bootstrapper_state_python_selector_file_abs_path_inited(
                 EnvState.state_client_conf_file_data_loaded.name,
                 EnvState.state_env_conf_file_data_loaded.name,
             ],
-            state_name=if_none(
-                state_name,
-                EnvState.state_python_selector_file_abs_path_inited.name,
-            ),
+            state_name=EnvState.state_python_selector_file_abs_path_inited.name,
         )
 
     def _eval_state_once(
@@ -4945,6 +4912,7 @@ class Bootstrapper_state_python_selector_file_abs_path_inited(
 
 
 # noinspection PyPep8Naming
+@trivial_factory
 class Bootstrapper_state_selected_python_file_abs_path_inited(
     AbstractCachingStateNode[str]
 ):
@@ -4952,7 +4920,6 @@ class Bootstrapper_state_selected_python_file_abs_path_inited(
     def __init__(
         self,
         env_ctx: EnvContext,
-        state_name: str | None = None,
     ):
         super().__init__(
             env_ctx=env_ctx,
@@ -4962,10 +4929,7 @@ class Bootstrapper_state_selected_python_file_abs_path_inited(
                 EnvState.state_required_python_version_inited.name,
                 EnvState.state_python_selector_file_abs_path_inited.name,
             ],
-            state_name=if_none(
-                state_name,
-                EnvState.state_selected_python_file_abs_path_inited.name,
-            ),
+            state_name=EnvState.state_selected_python_file_abs_path_inited.name,
         )
 
     def _eval_state_once(
@@ -4995,6 +4959,7 @@ class Bootstrapper_state_selected_python_file_abs_path_inited(
 
 
 # noinspection PyPep8Naming
+@trivial_factory
 class Bootstrapper_state_local_venv_dir_abs_path_inited(
     AbstractOverriddenFieldCachingStateNode[str]
 ):
@@ -5002,7 +4967,6 @@ class Bootstrapper_state_local_venv_dir_abs_path_inited(
     def __init__(
         self,
         env_ctx: EnvContext,
-        state_name: str | None = None,
     ):
         super().__init__(
             env_ctx=env_ctx,
@@ -5011,10 +4975,7 @@ class Bootstrapper_state_local_venv_dir_abs_path_inited(
                 EnvState.state_client_conf_file_data_loaded.name,
                 EnvState.state_env_conf_file_data_loaded.name,
             ],
-            state_name=if_none(
-                state_name,
-                EnvState.state_local_venv_dir_abs_path_inited.name,
-            ),
+            state_name=EnvState.state_local_venv_dir_abs_path_inited.name,
         )
 
     def _eval_state_once(
@@ -5043,6 +5004,7 @@ class Bootstrapper_state_local_venv_dir_abs_path_inited(
 
 
 # noinspection PyPep8Naming
+@trivial_factory
 class Bootstrapper_state_local_log_dir_abs_path_inited(
     AbstractOverriddenFieldCachingStateNode[str]
 ):
@@ -5050,7 +5012,6 @@ class Bootstrapper_state_local_log_dir_abs_path_inited(
     def __init__(
         self,
         env_ctx: EnvContext,
-        state_name: str | None = None,
     ):
         super().__init__(
             env_ctx=env_ctx,
@@ -5059,10 +5020,7 @@ class Bootstrapper_state_local_log_dir_abs_path_inited(
                 EnvState.state_client_conf_file_data_loaded.name,
                 EnvState.state_env_conf_file_data_loaded.name,
             ],
-            state_name=if_none(
-                state_name,
-                EnvState.state_local_log_dir_abs_path_inited.name,
-            ),
+            state_name=EnvState.state_local_log_dir_abs_path_inited.name,
         )
 
     def _eval_state_once(
@@ -5091,6 +5049,7 @@ class Bootstrapper_state_local_log_dir_abs_path_inited(
 
 
 # noinspection PyPep8Naming
+@trivial_factory
 class Bootstrapper_state_local_tmp_dir_abs_path_inited(
     AbstractOverriddenFieldCachingStateNode[str]
 ):
@@ -5098,7 +5057,6 @@ class Bootstrapper_state_local_tmp_dir_abs_path_inited(
     def __init__(
         self,
         env_ctx: EnvContext,
-        state_name: str | None = None,
     ):
         super().__init__(
             env_ctx=env_ctx,
@@ -5107,10 +5065,7 @@ class Bootstrapper_state_local_tmp_dir_abs_path_inited(
                 EnvState.state_client_conf_file_data_loaded.name,
                 EnvState.state_env_conf_file_data_loaded.name,
             ],
-            state_name=if_none(
-                state_name,
-                EnvState.state_local_tmp_dir_abs_path_inited.name,
-            ),
+            state_name=EnvState.state_local_tmp_dir_abs_path_inited.name,
         )
 
     def _eval_state_once(
@@ -5139,6 +5094,7 @@ class Bootstrapper_state_local_tmp_dir_abs_path_inited(
 
 
 # noinspection PyPep8Naming
+@trivial_factory
 class Bootstrapper_state_local_cache_dir_abs_path_inited(
     AbstractOverriddenFieldCachingStateNode[str]
 ):
@@ -5146,7 +5102,6 @@ class Bootstrapper_state_local_cache_dir_abs_path_inited(
     def __init__(
         self,
         env_ctx: EnvContext,
-        state_name: str | None = None,
     ):
         super().__init__(
             env_ctx=env_ctx,
@@ -5155,10 +5110,7 @@ class Bootstrapper_state_local_cache_dir_abs_path_inited(
                 EnvState.state_client_conf_file_data_loaded.name,
                 EnvState.state_env_conf_file_data_loaded.name,
             ],
-            state_name=if_none(
-                state_name,
-                EnvState.state_local_cache_dir_abs_path_inited.name,
-            ),
+            state_name=EnvState.state_local_cache_dir_abs_path_inited.name,
         )
 
     def _eval_state_once(
@@ -5187,6 +5139,7 @@ class Bootstrapper_state_local_cache_dir_abs_path_inited(
 
 
 # noinspection PyPep8Naming
+@trivial_factory
 class Bootstrapper_state_venv_driver_inited(
     AbstractOverriddenFieldCachingStateNode[VenvDriverType]
 ):
@@ -5194,7 +5147,6 @@ class Bootstrapper_state_venv_driver_inited(
     def __init__(
         self,
         env_ctx: EnvContext,
-        state_name: str | None = None,
     ):
         super().__init__(
             env_ctx=env_ctx,
@@ -5203,10 +5155,7 @@ class Bootstrapper_state_venv_driver_inited(
                 EnvState.state_env_conf_file_data_loaded.name,
                 EnvState.state_selected_python_file_abs_path_inited.name,
             ],
-            state_name=if_none(
-                state_name,
-                EnvState.state_venv_driver_inited.name,
-            ),
+            state_name=EnvState.state_venv_driver_inited.name,
         )
 
     def _eval_state_once(
@@ -5255,6 +5204,7 @@ class Bootstrapper_state_venv_driver_inited(
 
 
 # noinspection PyPep8Naming
+@trivial_factory
 class Bootstrapper_state_project_descriptors_inited(
     AbstractOverriddenFieldCachingStateNode[list]
 ):
@@ -5262,7 +5212,6 @@ class Bootstrapper_state_project_descriptors_inited(
     def __init__(
         self,
         env_ctx: EnvContext,
-        state_name: str | None = None,
     ):
         super().__init__(
             env_ctx=env_ctx,
@@ -5270,10 +5219,7 @@ class Bootstrapper_state_project_descriptors_inited(
                 EnvState.state_client_conf_file_data_loaded.name,
                 EnvState.state_env_conf_file_data_loaded.name,
             ],
-            state_name=if_none(
-                state_name,
-                EnvState.state_project_descriptors_inited.name,
-            ),
+            state_name=EnvState.state_project_descriptors_inited.name,
         )
 
     def _eval_state_once(
@@ -5289,6 +5235,7 @@ class Bootstrapper_state_project_descriptors_inited(
 
 
 # noinspection PyPep8Naming
+@trivial_factory
 class Bootstrapper_state_install_specs_inited(
     AbstractOverriddenFieldCachingStateNode[list]
 ):
@@ -5296,7 +5243,6 @@ class Bootstrapper_state_install_specs_inited(
     def __init__(
         self,
         env_ctx: EnvContext,
-        state_name: str | None = None,
     ):
         super().__init__(
             env_ctx=env_ctx,
@@ -5304,10 +5250,7 @@ class Bootstrapper_state_install_specs_inited(
                 EnvState.state_client_conf_file_data_loaded.name,
                 EnvState.state_env_conf_file_data_loaded.name,
             ],
-            state_name=if_none(
-                state_name,
-                EnvState.state_install_specs_inited.name,
-            ),
+            state_name=EnvState.state_install_specs_inited.name,
         )
 
     def _eval_state_once(
@@ -5323,6 +5266,7 @@ class Bootstrapper_state_install_specs_inited(
 
 
 # noinspection PyPep8Naming
+@trivial_factory
 class Bootstrapper_state_derived_conf_data_loaded(AbstractCachingStateNode[dict]):
     """
     Implements: FT_00_22_19_59.derived_config.md
@@ -5331,7 +5275,6 @@ class Bootstrapper_state_derived_conf_data_loaded(AbstractCachingStateNode[dict]
     def __init__(
         self,
         env_ctx: EnvContext,
-        state_name: str | None = None,
     ):
         self.derived_data_env_states: list[str] = [
             # ===
@@ -5383,10 +5326,7 @@ class Bootstrapper_state_derived_conf_data_loaded(AbstractCachingStateNode[dict]
         super().__init__(
             env_ctx=env_ctx,
             parent_states=parent_states,
-            state_name=if_none(
-                state_name,
-                EnvState.state_derived_conf_data_loaded.name,
-            ),
+            state_name=EnvState.state_derived_conf_data_loaded.name,
         )
 
     def _eval_state_once(
@@ -5417,6 +5357,7 @@ class Bootstrapper_state_derived_conf_data_loaded(AbstractCachingStateNode[dict]
 
 
 # noinspection PyPep8Naming
+@trivial_factory
 class Bootstrapper_state_effective_config_data_printed(AbstractCachingStateNode[int]):
     """
     Implements: FT_19_44_42_19.effective_config.md
@@ -5425,17 +5366,13 @@ class Bootstrapper_state_effective_config_data_printed(AbstractCachingStateNode[
     def __init__(
         self,
         env_ctx: EnvContext,
-        state_name: str | None = None,
     ):
         super().__init__(
             env_ctx=env_ctx,
             parent_states=[
                 EnvState.state_derived_conf_data_loaded.name,
             ],
-            state_name=if_none(
-                state_name,
-                EnvState.state_effective_config_data_printed.name,
-            ),
+            state_name=EnvState.state_effective_config_data_printed.name,
         )
 
     def _eval_state_once(
@@ -5448,6 +5385,7 @@ class Bootstrapper_state_effective_config_data_printed(AbstractCachingStateNode[
 
 
 # noinspection PyPep8Naming
+@trivial_factory
 class Bootstrapper_state_default_file_log_handler_configured(
     AbstractCachingStateNode[logging.Handler]
 ):
@@ -5455,7 +5393,6 @@ class Bootstrapper_state_default_file_log_handler_configured(
     def __init__(
         self,
         env_ctx: EnvContext,
-        state_name: str | None = None,
     ):
         super().__init__(
             env_ctx=env_ctx,
@@ -5465,10 +5402,7 @@ class Bootstrapper_state_default_file_log_handler_configured(
                 EnvState.state_input_start_id_var_loaded.name,
                 EnvState.state_local_log_dir_abs_path_inited.name,
             ],
-            state_name=if_none(
-                state_name,
-                EnvState.state_default_file_log_handler_configured.name,
-            ),
+            state_name=EnvState.state_default_file_log_handler_configured.name,
         )
 
     def _eval_state_once(
@@ -5501,7 +5435,7 @@ class Bootstrapper_state_default_file_log_handler_configured(
 
 
 # noinspection PyPep8Naming
-class Bootstrapper_state_stride_py_required_reached(
+class Bootstrapper_state_stride_py_required_reached_not_mode_start(
     AbstractCachingStateNode[StateStride]
 ):
     """
@@ -5513,7 +5447,6 @@ class Bootstrapper_state_stride_py_required_reached(
     def __init__(
         self,
         env_ctx: EnvContext,
-        state_name: str | None = None,
     ):
         super().__init__(
             env_ctx=env_ctx,
@@ -5528,10 +5461,7 @@ class Bootstrapper_state_stride_py_required_reached(
                 EnvState.state_local_tmp_dir_abs_path_inited.name,
                 EnvState.state_default_file_log_handler_configured.name,
             ],
-            state_name=if_none(
-                state_name,
-                EnvState.state_stride_py_required_reached.name,
-            ),
+            state_name=EnvState.state_stride_py_required_reached.name,
         )
 
     def _eval_state_once(
@@ -5548,12 +5478,6 @@ class Bootstrapper_state_stride_py_required_reached(
         state_input_exec_mode_arg_loaded: ExecMode = self.eval_parent_state(
             EnvState.state_input_exec_mode_arg_loaded.name
         )
-
-        if state_input_exec_mode_arg_loaded == ExecMode.mode_start:
-            # The only reason for `EnvState.state_stride_py_required_reached`
-            # is to use the required `python` to create a `venv`.
-            # Skip it as `venv` is supposed to be ready in `ExecMode.mode_start`:
-            return self.env_ctx.set_max_stride(state_stride_py_required_reached)
 
         # TODO: Unused, but plugged in to form complete DAG: consider adding intermediate state to plug it in:
         state_default_file_log_handler_configured = self.eval_parent_state(
@@ -5620,6 +5544,69 @@ class Bootstrapper_state_stride_py_required_reached(
 
 
 # noinspection PyPep8Naming
+class Bootstrapper_state_stride_py_required_reached_mode_start(
+    AbstractCachingStateNode[StateStride]
+):
+    def __init__(
+        self,
+        env_ctx: EnvContext,
+    ):
+        super().__init__(
+            env_ctx=env_ctx,
+            parent_states=[
+                EnvState.state_args_parsed.name,
+                EnvState.state_input_exec_mode_arg_loaded.name,
+                EnvState.state_input_start_id_var_loaded.name,
+                EnvState.state_proto_code_file_abs_path_inited.name,
+                EnvState.state_local_conf_file_abs_path_inited.name,
+                EnvState.state_selected_python_file_abs_path_inited.name,
+                EnvState.state_local_venv_dir_abs_path_inited.name,
+                EnvState.state_local_tmp_dir_abs_path_inited.name,
+                EnvState.state_default_file_log_handler_configured.name,
+            ],
+            state_name=EnvState.state_stride_py_required_reached.name,
+        )
+
+    def _eval_state_once(
+        self,
+    ) -> ValueType:
+
+        state_stride_py_required_reached: StateStride = StateStride.stride_py_required
+
+        if self.env_ctx.has_stride_reached(
+            next_stride=state_stride_py_required_reached,
+        ):
+            return self.env_ctx.set_max_stride(state_stride_py_required_reached)
+
+        return self.env_ctx.set_max_stride(state_stride_py_required_reached)
+
+
+# noinspection PyPep8Naming
+class Factory_state_stride_py_required_reached(NodeFactory[StateStride]):
+
+    def __init__(
+        self,
+        env_ctx: EnvContext,
+    ):
+        pass
+
+    def create_state_node(
+        self,
+        env_ctx: EnvContext,
+    ) -> StateNode[ValueType]:
+        assert env_ctx.graph_coordinates.exec_mode is not None
+
+        # The only reason for `EnvState.state_stride_py_required_reached`
+        # is to use the required `python` to create a `venv`.
+        if env_ctx.graph_coordinates.exec_mode == ExecMode.mode_start:
+            # Skip it as `venv` is supposed to be ready in `ExecMode.mode_start`:
+            return Bootstrapper_state_stride_py_required_reached_mode_start(env_ctx)
+        else:
+            return Bootstrapper_state_stride_py_required_reached_not_mode_start(env_ctx)
+
+
+# noinspection PyPep8Naming
+@trivial_factory
 class Bootstrapper_state_reinstall_triggered(AbstractCachingStateNode[bool]):
     """
     Removes current `venv` dir and `constraints.txt` file (to trigger their re-creation subsequently).
@@ -5628,7 +5615,6 @@ class Bootstrapper_state_reinstall_triggered(AbstractCachingStateNode[bool]):
     def __init__(
         self,
         env_ctx: EnvContext,
-        state_name: str | None = None,
     ):
         super().__init__(
             env_ctx=env_ctx,
@@ -5642,10 +5628,7 @@ class Bootstrapper_state_reinstall_triggered(AbstractCachingStateNode[bool]):
                 EnvState.state_local_tmp_dir_abs_path_inited.name,
                 EnvState.state_stride_py_required_reached.name,
             ],
-            state_name=if_none(
-                state_name,
-                EnvState.state_reinstall_triggered.name,
-            ),
+            state_name=EnvState.state_reinstall_triggered.name,
         )
 
     def _eval_state_once(
@@ -5729,11 +5712,11 @@ class Bootstrapper_state_reinstall_triggered(AbstractCachingStateNode[bool]):
 
 
 # noinspection PyPep8Naming
+@trivial_factory
 class Bootstrapper_state_venv_driver_prepared(AbstractCachingStateNode[VenvDriverBase]):
     def __init__(
         self,
         env_ctx: EnvContext,
-        state_name: str | None = None,
     ):
         super().__init__(
             env_ctx=env_ctx,
@@ -5746,10 +5729,7 @@ class Bootstrapper_state_venv_driver_prepared(AbstractCachingStateNode[VenvDrive
                 EnvState.state_venv_driver_inited.name,
                 EnvState.state_reinstall_triggered.name,
             ],
-            state_name=if_none(
-                state_name,
-                EnvState.state_venv_driver_prepared.name,
-            ),
+            state_name=EnvState.state_venv_driver_prepared.name,
         )
 
     def _eval_state_once(
@@ -5811,6 +5791,7 @@ class Bootstrapper_state_venv_driver_prepared(AbstractCachingStateNode[VenvDrive
 
 
 # noinspection PyPep8Naming
+@trivial_factory
 class Bootstrapper_state_stride_py_venv_reached(AbstractCachingStateNode[StateStride]):
     """
     Creates `venv` and switches to `python` from there.
@@ -5819,7 +5800,6 @@ class Bootstrapper_state_stride_py_venv_reached(AbstractCachingStateNode[StateSt
     def __init__(
         self,
         env_ctx: EnvContext,
-        state_name: str | None = None,
     ):
         super().__init__(
             env_ctx=env_ctx,
@@ -5834,10 +5814,7 @@ class Bootstrapper_state_stride_py_venv_reached(AbstractCachingStateNode[StateSt
                 EnvState.state_reinstall_triggered.name,
                 EnvState.state_venv_driver_prepared.name,
             ],
-            state_name=if_none(
-                state_name,
-                EnvState.state_stride_py_venv_reached.name,
-            ),
+            state_name=EnvState.state_stride_py_venv_reached.name,
         )
 
     def _eval_state_once(
@@ -5948,12 +5925,12 @@ class Bootstrapper_state_stride_py_venv_reached(AbstractCachingStateNode[StateSt
 
 
 # noinspection PyPep8Naming
+@trivial_factory
 class Bootstrapper_state_protoprimer_package_installed(AbstractCachingStateNode[bool]):
 
     def __init__(
         self,
         env_ctx: EnvContext,
-        state_name: str | None = None,
     ):
         super().__init__(
             env_ctx=env_ctx,
@@ -5968,10 +5945,7 @@ class Bootstrapper_state_protoprimer_package_installed(AbstractCachingStateNode[
                 EnvState.state_venv_driver_prepared.name,
                 EnvState.state_stride_py_venv_reached.name,
             ],
-            state_name=if_none(
-                state_name,
-                EnvState.state_protoprimer_package_installed.name,
-            ),
+            state_name=EnvState.state_protoprimer_package_installed.name,
         )
 
     def _eval_state_once(
@@ -6119,6 +6093,7 @@ class Bootstrapper_state_protoprimer_package_installed(AbstractCachingStateNode[
 
 
 # noinspection PyPep8Naming
+@trivial_factory
 class Bootstrapper_state_version_constraints_generated(AbstractCachingStateNode[bool]):
     """
     Implements UC_44_82_07_30.requirements_lock.md.
@@ -6127,7 +6102,6 @@ class Bootstrapper_state_version_constraints_generated(AbstractCachingStateNode[
     def __init__(
         self,
         env_ctx: EnvContext,
-        state_name: str | None = None,
     ):
         super().__init__(
             env_ctx=env_ctx,
@@ -6137,10 +6111,7 @@ class Bootstrapper_state_version_constraints_generated(AbstractCachingStateNode[
                 EnvState.state_venv_driver_prepared.name,
                 EnvState.state_protoprimer_package_installed.name,
             ],
-            state_name=if_none(
-                state_name,
-                EnvState.state_version_constraints_generated.name,
-            ),
+            state_name=EnvState.state_version_constraints_generated.name,
         )
 
     def _eval_state_once(
@@ -6184,6 +6155,7 @@ class Bootstrapper_state_version_constraints_generated(AbstractCachingStateNode[
 
 
 # noinspection PyPep8Naming
+@trivial_factory
 class Bootstrapper_state_stride_deps_updated_reached(
     AbstractCachingStateNode[StateStride]
 ):
@@ -6191,7 +6163,6 @@ class Bootstrapper_state_stride_deps_updated_reached(
     def __init__(
         self,
         env_ctx: EnvContext,
-        state_name: str | None = None,
     ):
         super().__init__(
             env_ctx=env_ctx,
@@ -6203,10 +6174,7 @@ class Bootstrapper_state_stride_deps_updated_reached(
                 EnvState.state_local_venv_dir_abs_path_inited.name,
                 EnvState.state_version_constraints_generated.name,
             ],
-            state_name=if_none(
-                state_name,
-                EnvState.state_stride_deps_updated_reached.name,
-            ),
+            state_name=EnvState.state_stride_deps_updated_reached.name,
         )
 
     def _eval_state_once(
@@ -6261,6 +6229,7 @@ class Bootstrapper_state_stride_deps_updated_reached(
 
 
 # noinspection PyPep8Naming
+@trivial_factory
 class Bootstrapper_state_proto_code_updated(AbstractCachingStateNode[bool]):
     """
     Return `True` if content of the `proto_kernel` has changed.
@@ -6271,7 +6240,6 @@ class Bootstrapper_state_proto_code_updated(AbstractCachingStateNode[bool]):
     def __init__(
         self,
         env_ctx: EnvContext,
-        state_name: str | None = None,
     ):
         super().__init__(
             env_ctx=env_ctx,
@@ -6280,10 +6248,7 @@ class Bootstrapper_state_proto_code_updated(AbstractCachingStateNode[bool]):
                 EnvState.state_proto_code_file_abs_path_inited.name,
                 EnvState.state_stride_deps_updated_reached.name,
             ],
-            state_name=if_none(
-                state_name,
-                EnvState.state_proto_code_updated.name,
-            ),
+            state_name=EnvState.state_proto_code_updated.name,
         )
 
     def _eval_state_once(
@@ -6374,6 +6339,7 @@ class Bootstrapper_state_proto_code_updated(AbstractCachingStateNode[bool]):
 
 
 # noinspection PyPep8Naming
+@trivial_factory
 class Bootstrapper_state_stride_src_updated_reached(
     AbstractCachingStateNode[StateStride]
 ):
@@ -6381,7 +6347,6 @@ class Bootstrapper_state_stride_src_updated_reached(
     def __init__(
         self,
         env_ctx: EnvContext,
-        state_name: str | None = None,
     ):
         super().__init__(
             env_ctx=env_ctx,
@@ -6393,10 +6358,7 @@ class Bootstrapper_state_stride_src_updated_reached(
                 EnvState.state_local_venv_dir_abs_path_inited.name,
                 EnvState.state_proto_code_updated.name,
             ],
-            state_name=if_none(
-                state_name,
-                EnvState.state_stride_src_updated_reached.name,
-            ),
+            state_name=EnvState.state_stride_src_updated_reached.name,
         )
 
     def _eval_state_once(
@@ -6445,6 +6407,7 @@ class Bootstrapper_state_stride_src_updated_reached(
 
 
 # noinspection PyPep8Naming
+@trivial_factory
 class Bootstrapper_state_command_executed(AbstractCachingStateNode[int]):
     """
     If `ParsedArg.name_command`, this state replaces the current process with a shell executing the given command.
@@ -6455,26 +6418,29 @@ class Bootstrapper_state_command_executed(AbstractCachingStateNode[int]):
         env_ctx: EnvContext,
         parent_states: list[str] | None = None,
         state_name: str | None = None,
+        start_interactive_shell: bool = False,
     ):
         super().__init__(
             env_ctx=env_ctx,
-            parent_states=if_none(
-                parent_states,
-                [
+            parent_states=(
+                parent_states
+                if parent_states is not None
+                else [
                     EnvState.state_default_stderr_log_handler_configured.name,
                     EnvState.state_args_parsed.name,
                     EnvState.state_local_venv_dir_abs_path_inited.name,
                     EnvState.state_local_cache_dir_abs_path_inited.name,
                     EnvState.state_stride_src_updated_reached.name,
-                ],
+                ]
             ),
-            state_name=if_none(
-                state_name,
-                EnvState.state_command_executed.name,
+            state_name=(
+                state_name
+                if state_name is not None
+                else EnvState.state_command_executed.name
             ),
         )
 
-        self.start_interactive_shell: bool = False
+        self.start_interactive_shell: bool = start_interactive_shell
 
     def _eval_state_once(
         self,
@@ -6665,7 +6631,7 @@ class EnvState(enum.Enum):
     )
 
     # restart: `StateStride.stride_py_arbitrary` -> `StateStride.stride_py_required`:
-    state_stride_py_required_reached = Bootstrapper_state_stride_py_required_reached
+    state_stride_py_required_reached = Factory_state_stride_py_required_reached
 
     state_reinstall_triggered = Bootstrapper_state_reinstall_triggered
 
@@ -6724,42 +6690,55 @@ class StateGraph:
         self,
     ):
         self.state_nodes: dict[str, StateNode] = {}
+        self.state_factories: dict[str, NodeFactory] = {}
 
-    def register_node(
+    def register_factory(
         self,
-        state_node: StateNode,
+        state_name: str,
+        state_factory: NodeFactory,
         # TODO: TODO_60_63_68_81.refactor_DAG_builder.md:
         #       This use_case may become obsolete if we use "state name" -> "impl factory" naming
         #       where the factory cannot be replaced (currently, it is "state name" -> "impl class" directly).
         replace_existing: bool = False,
-    ) -> StateNode | None:
-        state_name: str = state_node.get_state_name()
-        if state_name in self.state_nodes:
+    ) -> NodeFactory | None:
+        if state_name in self.state_factories:
             if replace_existing:
                 # See: UC_27_40_17_59.replace_by_new_and_use_old.md:
-                existing_node = self.state_nodes[state_name]
-                self.state_nodes[state_name] = state_node
-                return existing_node
+                existing_factory = self.state_factories[state_name]
+                self.state_factories[state_name] = state_factory
+                return existing_factory
             else:
                 raise AssertionError(
-                    f"[{StateNode.__name__}] for [{state_name}] is already registered."
+                    f"[{NodeFactory.__name__}] for [{state_name}] is already registered."
                 )
         else:
-            self.state_nodes[state_name] = state_node
+            self.state_factories[state_name] = state_factory
             return None
+
+    def get_state_factory(
+        self,
+        state_name: str,
+    ) -> NodeFactory:
+        return self.state_factories[state_name]
 
     def get_state_node(
         self,
         state_name: str,
+        env_ctx: EnvContext,
     ) -> StateNode | None:
+        if state_name not in self.state_nodes:
+            self.state_nodes[state_name] = self.state_factories[
+                state_name
+            ].create_state_node(env_ctx)
         return self.state_nodes[state_name]
 
     def eval_state(
         self,
         state_name: str,
+        env_ctx: EnvContext,
     ) -> Any:
         try:
-            state_node = self.state_nodes[state_name]
+            state_node = self.get_state_node(state_name, env_ctx)
         except KeyError:
             logger.error(f"`state_name` [{state_name}] is not registered.")
             raise
@@ -6839,21 +6818,24 @@ class EnvContext:
     def __init__(
         self,
     ):
+        self.graph_coordinates = GraphCoordinates()
+
         self.state_graph: StateGraph = StateGraph()
 
         self.state_stride: StateStride = StateStride.stride_py_unknown
 
+        # TODO: TODO_60_63_68_81.refactor_DAG_builder.md: should it even be here?
         # TODO: Do not set it on `EnvContext` - use bootstrap-able values:
         self.final_state: str = TargetState.target_proto_bootstrap_completed.value.name
 
-        self._build_default_graph()
+        self._register_graph_node_factories()
 
-    def _build_default_graph(self):
+    def _register_graph_node_factories(self):
         """
         Registers all defined `EnvState`-s.
         """
         for env_state in EnvState:
-            self.state_graph.register_node(env_state.value(self))
+            self.state_graph.register_factory(env_state.name, env_state.value(self))
 
     def get_stride(self) -> StateStride:
         return self.state_stride
@@ -6889,7 +6871,8 @@ class EnvContext:
 
         state_default_stderr_log_handler_configured: logging.Handler = (
             self.state_graph.eval_state(
-                EnvState.state_default_stderr_log_handler_configured.name
+                EnvState.state_default_stderr_log_handler_configured.name,
+                self,
             )
         )
 
@@ -7450,16 +7433,6 @@ def insert_every_n_lines(
     )
 
 
-def if_none(
-    given_value: ValueType | None,
-    default_value: ValueType,
-) -> ValueType:
-    if given_value is None:
-        return default_value
-    else:
-        return given_value
-
-
 def is_venv() -> bool:
     # NOTE: `VIRTUAL_ENV` is not asserted because it is only set for `shell` by `source`-ing `venv/bin/activate`.
     #       Most of the commands avoid using `shell` (that is the goal for `protoprimer`).
@@ -7758,7 +7731,7 @@ def get_derived_config(
     env_ctx = EnvContext()
 
     state_derived_conf_data_loaded: dict = env_ctx.state_graph.eval_state(
-        EnvState.state_derived_conf_data_loaded.name
+        EnvState.state_derived_conf_data_loaded.name, env_ctx
     )
 
     return state_derived_conf_data_loaded

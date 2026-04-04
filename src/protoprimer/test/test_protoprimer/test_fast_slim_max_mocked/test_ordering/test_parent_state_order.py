@@ -5,6 +5,8 @@ import pytest
 from protoprimer.primer_kernel import (
     EnvContext,
     EnvState,
+    ExecMode,
+    StartMode,
     StateNode,
 )
 
@@ -23,11 +25,18 @@ class TestParentStateOrdering:
     It also helps to keep line history consistent with ordering.
     """
 
+    @pytest.mark.parametrize("exec_mode", list(ExecMode))
+    @pytest.mark.parametrize("start_mode", list(StartMode))
     # noinspection PyPep8Naming
-    def test_EnvState_parent_order(self) -> None:
+    def test_EnvState_parent_order(
+        self, exec_mode: ExecMode, start_mode: StartMode
+    ) -> None:
         # given:
-        env_context_instance = EnvContext()
-        state_graph_instance = env_context_instance.state_graph
+        env_ctx = EnvContext()
+        env_ctx.graph_coordinates.exec_mode = exec_mode
+        env_ctx.graph_coordinates.start_mode = start_mode
+
+        state_graph_instance = env_ctx.state_graph
 
         env_state_name_to_ordinal = {
             env_state.name: index for index, env_state in enumerate(EnvState)
@@ -37,7 +46,7 @@ class TestParentStateOrdering:
 
         # when:
         for env_state in EnvState:
-            state_node = state_graph_instance.get_state_node(env_state.name)
+            state_node = state_graph_instance.get_state_node(env_state.name, env_ctx)
             assert (
                 state_node is not None
             ), f"`{StateNode.__name__}` for [{env_state.name}] not found"

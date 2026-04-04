@@ -5,6 +5,8 @@ import pytest
 from protoprimer.primer_kernel import (
     EnvContext,
     EnvState,
+    ExecMode,
+    StartMode,
     StateNode,
 )
 from test_protoprimer.test_fast_slim_max_mocked.misc_tools.code_utils import (
@@ -21,9 +23,24 @@ def _report_violations(
 
 class TestEnvStateOrdering:
 
-    def test_env_state_topological_sort(self) -> None:
-        env_context_instance = EnvContext()
-        state_graph_instance = env_context_instance.state_graph
+    @pytest.mark.parametrize(
+        "exec_mode",
+        list(ExecMode),
+    )
+    @pytest.mark.parametrize(
+        "start_mode",
+        list(StartMode),
+    )
+    def test_env_state_topological_sort(
+        self,
+        exec_mode: ExecMode,
+        start_mode: StartMode,
+    ) -> None:
+        self.env_ctx = EnvContext()
+        self.env_ctx.graph_coordinates.exec_mode = exec_mode
+        self.env_ctx.graph_coordinates.start_mode = start_mode
+
+        state_graph_instance = self.env_ctx.state_graph
 
         # Create a mapping from the state name to its ordinal position in the enum:
         env_state_name_to_ordinal = {
@@ -33,7 +50,9 @@ class TestEnvStateOrdering:
         violations = []
         # Verify that for each state, its parents appear before it in the enum definition:
         for env_state in EnvState:
-            state_node = state_graph_instance.get_state_node(env_state.name)
+            state_node = state_graph_instance.get_state_node(
+                env_state.name, self.env_ctx
+            )
             assert (
                 state_node is not None
             ), f"`{StateNode.__name__}` for [{env_state.name}] not found"
@@ -52,9 +71,24 @@ class TestEnvStateOrdering:
 
         _report_violations(violations)
 
-    def test_bootstrapper_class_definition_order(self) -> None:
-        env_context_instance = EnvContext()
-        state_graph_instance = env_context_instance.state_graph
+    @pytest.mark.parametrize(
+        "exec_mode",
+        list(ExecMode),
+    )
+    @pytest.mark.parametrize(
+        "start_mode",
+        list(StartMode),
+    )
+    def test_bootstrapper_class_definition_order(
+        self,
+        exec_mode: ExecMode,
+        start_mode: StartMode,
+    ) -> None:
+        self.env_ctx = EnvContext()
+        self.env_ctx.graph_coordinates.exec_mode = exec_mode
+        self.env_ctx.graph_coordinates.start_mode = start_mode
+
+        state_graph_instance = self.env_ctx.state_graph
 
         # Create a mapping from the state name to the line number of its implementation class:
         state_name_to_line_number = {
@@ -66,7 +100,9 @@ class TestEnvStateOrdering:
         def_violations = []
         # Verify that for each state, its implementation class is defined after its parents:
         for env_state in EnvState:
-            state_node = state_graph_instance.get_state_node(env_state.name)
+            state_node = state_graph_instance.get_state_node(
+                env_state.name, self.env_ctx
+            )
             assert (
                 state_node is not None
             ), f"`{StateNode.__name__}` for [{env_state.name}] not found"
