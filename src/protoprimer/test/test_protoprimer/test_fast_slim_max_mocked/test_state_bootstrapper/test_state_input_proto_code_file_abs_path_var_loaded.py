@@ -5,7 +5,7 @@ from unittest.mock import (
 
 from local_test.base_test_class import BasePyfakefsTestClass
 from local_test.mock_verifier import (
-    assert_parent_states_mocked,
+    assert_parent_factories_mocked,
 )
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer.primer_kernel import (
@@ -37,13 +37,13 @@ class ThisTestClass(BasePyfakefsTestClass):
         self,
     ):
         # given:
-        assert_parent_states_mocked(
+        assert_parent_factories_mocked(
             self.env_ctx,
             EnvState.state_input_proto_code_file_abs_path_var_loaded.name,
         )
         # when:
         state_value = self.env_ctx.state_graph.eval_state(
-            EnvState.state_input_proto_code_file_abs_path_var_loaded.name
+            EnvState.state_input_proto_code_file_abs_path_var_loaded.name, self.env_ctx
         )
         # then:
         self.assertIsNone(state_value)
@@ -57,14 +57,15 @@ class ThisTestClass(BasePyfakefsTestClass):
         self,
     ):
         # given:
-        assert_parent_states_mocked(
+        assert_parent_factories_mocked(
             self.env_ctx,
             EnvState.state_input_proto_code_file_abs_path_var_loaded.name,
         )
         # when/then:
         with self.assertRaises(AssertionError):
             self.env_ctx.state_graph.eval_state(
-                EnvState.state_input_proto_code_file_abs_path_var_loaded.name
+                EnvState.state_input_proto_code_file_abs_path_var_loaded.name,
+                self.env_ctx,
             )
 
     @patch.dict(
@@ -76,14 +77,15 @@ class ThisTestClass(BasePyfakefsTestClass):
         self,
     ):
         # given:
-        assert_parent_states_mocked(
+        assert_parent_factories_mocked(
             self.env_ctx,
             EnvState.state_input_proto_code_file_abs_path_var_loaded.name,
         )
         # when/then:
         with self.assertRaises(AssertionError):
             self.env_ctx.state_graph.eval_state(
-                EnvState.state_input_proto_code_file_abs_path_var_loaded.name
+                EnvState.state_input_proto_code_file_abs_path_var_loaded.name,
+                self.env_ctx,
             )
 
     @patch.dict(
@@ -96,13 +98,13 @@ class ThisTestClass(BasePyfakefsTestClass):
     ):
         # given:
         self.fs.create_file("/abs/path/exists")
-        assert_parent_states_mocked(
+        assert_parent_factories_mocked(
             self.env_ctx,
             EnvState.state_input_proto_code_file_abs_path_var_loaded.name,
         )
         # when:
         state_value = self.env_ctx.state_graph.eval_state(
-            EnvState.state_input_proto_code_file_abs_path_var_loaded.name
+            EnvState.state_input_proto_code_file_abs_path_var_loaded.name, self.env_ctx
         )
         # then:
         self.assertEqual("/abs/path/exists", state_value)

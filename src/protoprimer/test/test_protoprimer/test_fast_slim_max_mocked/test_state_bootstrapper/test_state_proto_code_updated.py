@@ -4,7 +4,7 @@ from unittest.mock import patch
 import protoprimer
 from local_test.base_test_class import BasePyfakefsTestClass
 from local_test.mock_verifier import (
-    assert_parent_states_mocked,
+    assert_parent_factories_mocked,
 )
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
@@ -31,13 +31,13 @@ class ThisTestClass(BasePyfakefsTestClass):
         assert_test_module_name_embeds_str(EnvState.state_proto_code_updated.name)
 
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_proto_code_file_abs_path_inited.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_proto_code_file_abs_path_inited.__name__}.create_state_node"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_stride_deps_updated_reached.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_stride_deps_updated_reached.__name__}.create_state_node"
     )
     @patch(
-        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.create_state_node"
     )
     @patch(
         f"{primer_kernel.__name__}.{EnvContext.__name__}.{EnvContext.get_stride.__name__}"
@@ -52,7 +52,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # given:
 
-        assert_parent_states_mocked(
+        assert_parent_factories_mocked(
             self.env_ctx,
             EnvState.state_proto_code_updated.name,
         )
@@ -76,18 +76,22 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
         mock_get_stride.return_value = StateStride.stride_deps_updated
 
-        mock_state_stride_deps_updated_reached.return_value = (
+        mock_state_stride_deps_updated_reached.return_value.eval_own_state.return_value = (
             StateStride.stride_deps_updated
         )
 
-        mock_state_proto_code_file_abs_path_inited.return_value = (
+        mock_state_proto_code_file_abs_path_inited.return_value.eval_own_state.return_value = (
             proto_code_abs_file_path
         )
-        mock_state_input_exec_mode_arg_loaded.return_value = ExecMode.mode_prime
+        mock_state_input_exec_mode_arg_loaded.return_value.eval_own_state.return_value = (
+            ExecMode.mode_prime
+        )
 
         # when:
 
-        self.env_ctx.state_graph.eval_state(EnvState.state_proto_code_updated.name)
+        self.env_ctx.state_graph.eval_state(
+            EnvState.state_proto_code_updated.name, self.env_ctx
+        )
 
         # then:
 
@@ -110,16 +114,16 @@ class ThisTestClass(BasePyfakefsTestClass):
         return_value=True,
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_proto_code_file_abs_path_inited.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_proto_code_file_abs_path_inited.__name__}.create_state_node"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_stride_deps_updated_reached.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_stride_deps_updated_reached.__name__}.create_state_node"
     )
     @patch(
         f"{primer_kernel.__name__}.{EnvContext.__name__}.{EnvContext.get_stride.__name__}"
     )
     @patch(
-        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.create_state_node"
     )
     def test_import_error_when_protoprimer_is_missing(
         self,
@@ -130,7 +134,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_is_venv,
     ):
         # given:
-        assert_parent_states_mocked(
+        assert_parent_factories_mocked(
             self.env_ctx,
             EnvState.state_proto_code_updated.name,
         )
@@ -138,14 +142,18 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         fake_path = "/fake/path"
         self.fs.create_file(fake_path)
-        mock_state_proto_code_file_abs_path_inited.return_value = fake_path
-        mock_state_input_exec_mode_arg_loaded.return_value = ExecMode.mode_prime
+        mock_state_proto_code_file_abs_path_inited.return_value.eval_own_state.return_value = (
+            fake_path
+        )
+        mock_state_input_exec_mode_arg_loaded.return_value.eval_own_state.return_value = (
+            ExecMode.mode_prime
+        )
 
         # when:
         with patch.dict("sys.modules", {"protoprimer": None}):
             with self.assertLogs(primer_kernel.logger, level="WARNING") as cm:
                 result = self.env_ctx.state_graph.eval_state(
-                    EnvState.state_proto_code_updated.name
+                    EnvState.state_proto_code_updated.name, self.env_ctx
                 )
 
         # then:

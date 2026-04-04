@@ -10,13 +10,16 @@ from protoprimer.primer_kernel import (
     EnvContext,
     EnvState,
     TargetState,
+    trivial_factory,
     ValueType,
 )
+
 
 logger = logging.getLogger()
 
 
 # noinspection PyPep8Naming
+@trivial_factory
 class Bootstrapper_state_pre_commit_configured(AbstractCachingStateNode[int]):
 
     state_pre_commit_configured = "state_pre_commit_configured"

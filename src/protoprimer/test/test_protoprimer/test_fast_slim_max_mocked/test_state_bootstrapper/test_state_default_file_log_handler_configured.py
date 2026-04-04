@@ -4,7 +4,7 @@ from unittest.mock import patch
 
 from local_test.base_test_class import BasePyfakefsTestClass
 from local_test.fat_mocked_helper import clean_up_pyfakefs_file_log_handlers
-from local_test.mock_verifier import assert_parent_states_mocked
+from local_test.mock_verifier import assert_parent_factories_mocked
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
@@ -40,16 +40,16 @@ class ThisTestClass(BasePyfakefsTestClass):
 
     @patch("sys.argv", ["/path/to/script.py"])
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.create_state_node"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.create_state_node"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_local_log_dir_abs_path_inited.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_local_log_dir_abs_path_inited.__name__}.create_state_node"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_input_stderr_log_level_eval_finalized.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_input_stderr_log_level_eval_finalized.__name__}.create_state_node"
     )
     def test_success_creation(
         self,
@@ -59,19 +59,27 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_input_start_id_var_loaded,
     ):
         # given:
-        assert_parent_states_mocked(
+        assert_parent_factories_mocked(
             self.env_ctx,
             EnvState.state_default_file_log_handler_configured.name,
         )
-        mock_state_input_start_id_var_loaded.return_value = self.mock_start_id
-        mock_state_args_parsed.return_value = primer_kernel.argparse.Namespace()
-        mock_state_local_log_dir_abs_path_inited.return_value = self.mock_log_dir
-        mock_state_input_stderr_log_level_eval_finalized.return_value = logging.INFO
+        mock_state_input_start_id_var_loaded.return_value.eval_own_state.return_value = (
+            self.mock_start_id
+        )
+        mock_state_args_parsed.return_value.eval_own_state.return_value = (
+            primer_kernel.argparse.Namespace()
+        )
+        mock_state_local_log_dir_abs_path_inited.return_value.eval_own_state.return_value = (
+            self.mock_log_dir
+        )
+        mock_state_input_stderr_log_level_eval_finalized.return_value.eval_own_state.return_value = (
+            logging.INFO
+        )
         self.fs.create_dir(self.mock_log_dir)
 
         # when:
         file_handler = self.env_ctx.state_graph.eval_state(
-            EnvState.state_default_file_log_handler_configured.name
+            EnvState.state_default_file_log_handler_configured.name, self.env_ctx
         )
 
         # then:
@@ -93,16 +101,16 @@ class ThisTestClass(BasePyfakefsTestClass):
 
     @patch("sys.argv", ["/path/to/script.py"])
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.create_state_node"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.create_state_node"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_local_log_dir_abs_path_inited.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_local_log_dir_abs_path_inited.__name__}.create_state_node"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_input_stderr_log_level_eval_finalized.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_input_stderr_log_level_eval_finalized.__name__}.create_state_node"
     )
     def test_log_level_lower_than_default(
         self,
@@ -112,20 +120,28 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_input_start_id_var_loaded,
     ):
         # given:
-        assert_parent_states_mocked(
+        assert_parent_factories_mocked(
             self.env_ctx,
             EnvState.state_default_file_log_handler_configured.name,
         )
-        mock_state_input_start_id_var_loaded.return_value = self.mock_start_id
-        mock_state_args_parsed.return_value = primer_kernel.argparse.Namespace()
-        mock_state_local_log_dir_abs_path_inited.return_value = self.mock_log_dir
+        mock_state_input_start_id_var_loaded.return_value.eval_own_state.return_value = (
+            self.mock_start_id
+        )
+        mock_state_args_parsed.return_value.eval_own_state.return_value = (
+            primer_kernel.argparse.Namespace()
+        )
+        mock_state_local_log_dir_abs_path_inited.return_value.eval_own_state.return_value = (
+            self.mock_log_dir
+        )
         # Stderr log level is lower (more verbose) than the default file log level (INFO)
-        mock_state_input_stderr_log_level_eval_finalized.return_value = logging.DEBUG
+        mock_state_input_stderr_log_level_eval_finalized.return_value.eval_own_state.return_value = (
+            logging.DEBUG
+        )
         self.fs.create_dir(self.mock_log_dir)
 
         # when:
         file_handler = self.env_ctx.state_graph.eval_state(
-            EnvState.state_default_file_log_handler_configured.name
+            EnvState.state_default_file_log_handler_configured.name, self.env_ctx
         )
 
         # then:
@@ -134,16 +150,16 @@ class ThisTestClass(BasePyfakefsTestClass):
 
     @patch("sys.argv", ["/path/to/script.py"])
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.create_state_node"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.create_state_node"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_local_log_dir_abs_path_inited.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_local_log_dir_abs_path_inited.__name__}.create_state_node"
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_input_stderr_log_level_eval_finalized.__name__}.eval_own_state"
+        f"{primer_kernel.__name__}.{Bootstrapper_state_input_stderr_log_level_eval_finalized.__name__}.create_state_node"
     )
     def test_log_level_higher_than_default(
         self,
@@ -153,20 +169,28 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_input_start_id_var_loaded,
     ):
         # given:
-        assert_parent_states_mocked(
+        assert_parent_factories_mocked(
             self.env_ctx,
             EnvState.state_default_file_log_handler_configured.name,
         )
-        mock_state_input_start_id_var_loaded.return_value = self.mock_start_id
-        mock_state_args_parsed.return_value = primer_kernel.argparse.Namespace()
-        mock_state_local_log_dir_abs_path_inited.return_value = self.mock_log_dir
+        mock_state_input_start_id_var_loaded.return_value.eval_own_state.return_value = (
+            self.mock_start_id
+        )
+        mock_state_args_parsed.return_value.eval_own_state.return_value = (
+            primer_kernel.argparse.Namespace()
+        )
+        mock_state_local_log_dir_abs_path_inited.return_value.eval_own_state.return_value = (
+            self.mock_log_dir
+        )
         # Stderr log level is higher (less verbose) than the default file log level (INFO)
-        mock_state_input_stderr_log_level_eval_finalized.return_value = logging.WARNING
+        mock_state_input_stderr_log_level_eval_finalized.return_value.eval_own_state.return_value = (
+            logging.WARNING
+        )
         self.fs.create_dir(self.mock_log_dir)
 
         # when:
         file_handler = self.env_ctx.state_graph.eval_state(
-            EnvState.state_default_file_log_handler_configured.name
+            EnvState.state_default_file_log_handler_configured.name, self.env_ctx
         )
 
         # then:

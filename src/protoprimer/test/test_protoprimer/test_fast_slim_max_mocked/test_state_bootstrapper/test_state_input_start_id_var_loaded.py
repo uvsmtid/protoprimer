@@ -5,7 +5,7 @@ from unittest.mock import (
 
 from local_test.base_test_class import BasePyfakefsTestClass
 from local_test.mock_verifier import (
-    assert_parent_states_mocked,
+    assert_parent_factories_mocked,
 )
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
@@ -41,13 +41,13 @@ class ThisTestClass(BasePyfakefsTestClass):
     ):
         # given:
         mock_get_default_start_id.return_value = "default_start_id"
-        assert_parent_states_mocked(
+        assert_parent_factories_mocked(
             self.env_ctx,
             EnvState.state_input_start_id_var_loaded.name,
         )
         # when:
         state_value = self.env_ctx.state_graph.eval_state(
-            EnvState.state_input_start_id_var_loaded.name
+            EnvState.state_input_start_id_var_loaded.name, self.env_ctx
         )
         # then:
         self.assertEqual(
@@ -64,13 +64,13 @@ class ThisTestClass(BasePyfakefsTestClass):
         self,
     ):
         # given:
-        assert_parent_states_mocked(
+        assert_parent_factories_mocked(
             self.env_ctx,
             EnvState.state_input_start_id_var_loaded.name,
         )
         # when:
         state_value = self.env_ctx.state_graph.eval_state(
-            EnvState.state_input_start_id_var_loaded.name
+            EnvState.state_input_start_id_var_loaded.name, self.env_ctx
         )
         # then:
         self.assertEqual("explicit_start_id", state_value)

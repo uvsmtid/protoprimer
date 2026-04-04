@@ -3,7 +3,7 @@ from unittest.mock import patch
 
 import pytest
 
-from local_test.mock_verifier import assert_parent_states_mocked
+from local_test.mock_verifier import assert_parent_factories_mocked
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
@@ -34,10 +34,10 @@ def test_relationship():
 
 
 @patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_primer_conf_file_abs_path_inited.__name__}.eval_own_state"
+    f"{primer_kernel.__name__}.{Bootstrapper_state_primer_conf_file_abs_path_inited.__name__}.create_state_node"
 )
 @patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_global_conf_dir_abs_path_inited.__name__}.eval_own_state"
+    f"{primer_kernel.__name__}.{Bootstrapper_state_global_conf_dir_abs_path_inited.__name__}.create_state_node"
 )
 def test_success_when_field_present(
     mock_state_global_conf_dir_abs_path_inited,
@@ -47,17 +47,17 @@ def test_success_when_field_present(
 ):
     # given:
 
-    assert_parent_states_mocked(
+    assert_parent_factories_mocked(
         env_ctx,
         EnvState.state_global_conf_file_abs_path_inited.name,
     )
 
-    mock_state_global_conf_dir_abs_path_inited.return_value = os.path.join(
+    mock_state_global_conf_dir_abs_path_inited.return_value.eval_own_state.return_value = os.path.join(
         mock_ref_root,
         ConfConstPrimer.default_client_conf_dir_rel_path,
     )
 
-    mock_state_primer_conf_file_abs_path_inited.return_value = os.path.join(
+    mock_state_primer_conf_file_abs_path_inited.return_value.eval_own_state.return_value = os.path.join(
         mock_ref_root,
         ConfConstPrimer.default_client_conf_dir_rel_path,
         "some_basename.json",
@@ -65,12 +65,12 @@ def test_success_when_field_present(
 
     client_conf_abs_path = os.path.join(
         mock_ref_root,
-        mock_state_primer_conf_file_abs_path_inited.return_value,
+        mock_state_primer_conf_file_abs_path_inited.return_value.eval_own_state.return_value,
     )
 
     # when:
     state_global_conf_file_abs_path_inited = env_ctx.state_graph.eval_state(
-        EnvState.state_global_conf_file_abs_path_inited.name
+        EnvState.state_global_conf_file_abs_path_inited.name, env_ctx
     )
 
     # then:

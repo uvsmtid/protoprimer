@@ -3,17 +3,18 @@ from unittest.mock import MagicMock
 from protoprimer.primer_kernel import (
     EnvContext,
     EnvState,
+    StateNode,
 )
 
 
-def assert_parent_states_mocked(
+def assert_parent_factories_mocked(
     # TODO: pass `StateGraph`.
     env_ctx: EnvContext,
     state_name: str,
     # UC_27_40_17_59.replace_by_new_and_use_old.md:
     is_replaced_impl: bool = False,
 ) -> None:
-    final_state_node = env_ctx.state_graph.get_state_node(state_name)
+    final_state_node = env_ctx.state_graph.get_state_node(state_name, env_ctx)
     assert final_state_node is not None
 
     expected_mocked_state_names = set(final_state_node.get_parent_states())
@@ -24,10 +25,14 @@ def assert_parent_states_mocked(
         expected_mocked_state_names.add(state_name)
 
     for env_state_item in EnvState:
-        bootstrapper_class = env_state_item.value
-        eval_method = getattr(bootstrapper_class, "eval_own_state")
+        state_factory = env_ctx.state_graph.get_state_factory(env_state_item.name)
+        factory_class = state_factory.__class__
+        create_method = getattr(factory_class, "create_state_node", None)
 
-        is_mocked = isinstance(eval_method, MagicMock)
+        if create_method:
+            is_mocked = isinstance(create_method, MagicMock)
+        else:
+            is_mocked = False
 
         effective_state_name = env_state_item.name
 

@@ -9,6 +9,7 @@ from protoprimer.primer_kernel import (
     app_main,
     EnvContext,
     TargetState,
+    trivial_factory,
     ValueType,
 )
 
@@ -20,6 +21,7 @@ def custom_main():
 
 
 # noinspection PyPep8Naming
+@trivial_factory
 class Bootstrapper_state_hello_world_printed(AbstractCachingStateNode[int]):
 
     # TODO: Make it simpler: can this be simplified?
@@ -60,7 +62,10 @@ def customize_env_context():
 
     env_ctx = EnvContext()
 
-    env_ctx.state_graph.register_node(Bootstrapper_state_hello_world_printed(env_ctx))
+    env_ctx.state_graph.register_factory(
+        CustomEnvState.state_hello_world_printed.name,
+        Bootstrapper_state_hello_world_printed(env_ctx),
+    )
 
     env_ctx.final_state = CustomEnvState.state_hello_world_printed.name
 
