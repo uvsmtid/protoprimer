@@ -22,4 +22,4 @@ def import_proto_kernel(proto_kernel_rel_path):
 
 if __name__ == "__main__":
     proto_kernel = import_proto_kernel("./proto_code/proto_kernel.py")
-    proto_kernel.app_starter("local_repo.cmd_gcloud_artifact_repo:main")
+    proto_kernel.start_app("local_repo.cmd_gcloud_artifact_repo:main")

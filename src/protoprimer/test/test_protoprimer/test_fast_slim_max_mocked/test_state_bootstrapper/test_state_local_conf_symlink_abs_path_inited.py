@@ -2,7 +2,7 @@ import os
 import sys
 from unittest.mock import patch
 
-from local_repo.cmd_bootstrap_env import customize_env_context
+from local_repo.cmd_prime_env import customize_env_context
 from local_test.base_test_class import BasePyfakefsTestClass
 from local_test.mock_verifier import (
     assert_parent_factories_mocked,

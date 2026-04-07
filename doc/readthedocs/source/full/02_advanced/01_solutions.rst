@@ -1,4 +1,4 @@
-Problems
+Solutions
 ================================================================================
 
 .. stub_include_start
@@ -6,12 +6,14 @@ Problems
 Ultimate goal
 ********************************************************************************
 
-``protoprimer`` must help eliminate manuals:
+``protoprimer`` must replace **manuals** with **unreproducible** results:
 
 *   no (conditional) steps for an author to write
 *   no mistakes for a user to make
 
-First problems
+... **saving human time** for both authors and users.
+
+First solutions
 ********************************************************************************
 
 To eliminate manuals, ``protoprimer`` has to be both:
@@ -25,9 +27,8 @@ That brings the first problems:
 
 *   Being a **one-liner**, it must "just run" (without asking to install anything).
 
-Elaborated constraints
+More solutions
 ********************************************************************************
-
 
 *   No dependencies.
 
@@ -69,7 +70,7 @@ Elaborated constraints
 
     *   No conflicts with existing system-wide or user-private tools.
 
-    *   Each repo clone is also isolated (specifically, every two clones are independent).
+    *   Each repo clone is also isolated (specifically, any two clones are independent).
 
 *   Automatic environment-specific configuration.
 
@@ -84,13 +85,13 @@ Elaborated constraints
 
 *   Avoid shebang size limitation.
 
-    Typical shebang size is 128 chars - it does not work for `venv`-s with long paths.
+    Typical shebang length is 128 chars - this does not work for ``venv``-s with long paths.
 
     Instead ``protoprimer`` uses dynamic import to make it work generically for any path.
 
 *   Unrestricted choices.
 
-    *   It must provide choice for underlying tooling.
+    *   It must provide a choice for underlying tooling.
 
     *   The underlying tooling must also be usable independently of ``protoprimer``.
 

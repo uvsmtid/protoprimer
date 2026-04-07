@@ -22,4 +22,4 @@ def import_proto_kernel(proto_kernel_rel_path):
 
 if __name__ == "__main__":
     proto_kernel = import_proto_kernel("./proto_code/proto_kernel.py")
-    proto_kernel.env_bootstrapper("local_repo.cmd_bootstrap_env:custom_main")
+    proto_kernel.boot_env("local_repo.cmd_prime_env:custom_main")

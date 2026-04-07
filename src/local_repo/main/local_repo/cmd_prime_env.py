@@ -7,7 +7,7 @@ from neoprimer.pre_commit import (
     Bootstrapper_state_pre_commit_configured,
 )
 from protoprimer.primer_kernel import (
-    app_main,
+    proto_main,
     EnvContext,
 )
 
@@ -15,7 +15,7 @@ logger = logging.getLogger()
 
 
 def custom_main():
-    app_main(customize_env_context)
+    proto_main(customize_env_context)
 
 
 class CustomEnvState(enum.Enum):

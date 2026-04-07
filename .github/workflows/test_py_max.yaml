@@ -36,7 +36,7 @@ jobs:
 
             -   run: |
                     ${{ github.workspace }}/prime -vvv --env dst/test_python_max
-                    ${{ github.workspace }}/cmd/bootstrap_env -vvv --env dst/test_python_max
+                    ${{ github.workspace }}/cmd/prime_env -vvv --env dst/test_python_max
 
             -   name: ensure git has no local changes and untracked files
                 run: |

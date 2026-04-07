@@ -6,8 +6,8 @@ import subprocess
 import sys
 
 from local_doc import (
-    cmd_app_starter,
-    cmd_env_bootstrapper,
+    cmd_start_app,
+    cmd_boot_env,
 )
 from local_test.case_condition import is_min_python
 from local_test.integrated_helper import (
@@ -37,11 +37,11 @@ from protoprimer.primer_kernel import (
 from protoprimer.proto_generator import generate_entry_script_content
 
 
-def test_python_from_arbitrary_venv_with_app_starter(
+def test_python_from_arbitrary_venv_with_start_app(
     tmp_path: pathlib.Path,
 ):
     """
-    Run the `env_bootstrapper` then `app_starter` from within an arbitrary virtual environment.
+    Run the `boot_env` then `start_app` from within an arbitrary virtual environment.
     """
 
     # given:
@@ -105,77 +105,77 @@ def test_python_from_arbitrary_venv_with_app_starter(
         project_dir_abs_path,
     )
 
-    # === create `env_bootstrapper` entry script
+    # === create `boot_env` entry script
 
-    env_bootstrapper_script_abs_path = ref_root_abs_path / "env_bootstrapper"
-    env_bootstrapper_script_content = generate_entry_script_content(
+    boot_env_script_abs_path = ref_root_abs_path / "boot_env"
+    boot_env_script_content = generate_entry_script_content(
         ExecMode.mode_prime.value,
         str(proto_kernel_abs_path),
-        str(env_bootstrapper_script_abs_path),
-        f"{cmd_env_bootstrapper.__name__}",
-        f"{cmd_env_bootstrapper.custom_main.__name__}",
+        str(boot_env_script_abs_path),
+        f"{cmd_boot_env.__name__}",
+        f"{cmd_boot_env.custom_main.__name__}",
         {},
     )
-    with open(env_bootstrapper_script_abs_path, "w") as f:
-        f.write(env_bootstrapper_script_content)
-    env_bootstrapper_script_abs_path.chmod(
-        env_bootstrapper_script_abs_path.stat().st_mode | stat.S_IEXEC
+    with open(boot_env_script_abs_path, "w") as f:
+        f.write(boot_env_script_content)
+    boot_env_script_abs_path.chmod(
+        boot_env_script_abs_path.stat().st_mode | stat.S_IEXEC
     )
 
-    # === create `app_starter` entry script
+    # === create `start_app` entry script
 
-    app_starter_script_abs_path = ref_root_abs_path / "app_starter"
-    app_starter_script_content = generate_entry_script_content(
+    start_app_script_abs_path = ref_root_abs_path / "start_app"
+    start_app_script_content = generate_entry_script_content(
         ExecMode.mode_start.value,
         str(proto_kernel_abs_path),
-        str(app_starter_script_abs_path),
-        f"{cmd_app_starter.__name__}",
-        f"{cmd_app_starter.custom_main.__name__}",
+        str(start_app_script_abs_path),
+        f"{cmd_start_app.__name__}",
+        f"{cmd_start_app.custom_main.__name__}",
         {},
     )
-    with open(app_starter_script_abs_path, "w") as f:
-        f.write(app_starter_script_content)
-    app_starter_script_abs_path.chmod(
-        app_starter_script_abs_path.stat().st_mode | stat.S_IEXEC
+    with open(start_app_script_abs_path, "w") as f:
+        f.write(start_app_script_content)
+    start_app_script_abs_path.chmod(
+        start_app_script_abs_path.stat().st_mode | stat.S_IEXEC
     )
 
-    # === run `env_bootstrapper`
+    # === run `boot_env`
     # See FT_75_87_82_46.entry_script.md
 
-    command_args_env_bootstrapper = [
+    command_args_boot_env = [
         str(arbitrary_venv_python),
-        str(env_bootstrapper_script_abs_path),
+        str(boot_env_script_abs_path),
     ]
 
-    sub_proc_env_bootstrapper = subprocess.run(
-        command_args_env_bootstrapper,
+    sub_proc_boot_env = subprocess.run(
+        command_args_boot_env,
         capture_output=True,
         text=True,
         check=True,
     )
-    assert "Hello, world!" in sub_proc_env_bootstrapper.stdout
+    assert "Hello, world!" in sub_proc_boot_env.stdout
 
-    # === run `app_starter`
+    # === run `start_app`
     # See FT_75_87_82_46.entry_script.md
 
-    command_args_app_starter = [
+    command_args_start_app = [
         str(arbitrary_venv_python),
-        str(app_starter_script_abs_path),
+        str(start_app_script_abs_path),
     ]
 
     # when:
-    sub_proc_app_starter = subprocess.run(
-        command_args_app_starter,
+    sub_proc_start_app = subprocess.run(
+        command_args_start_app,
         capture_output=True,
         text=True,
         check=True,
     )
 
     # then:
-    assert "Hello, world!" in sub_proc_app_starter.stdout
+    assert "Hello, world!" in sub_proc_start_app.stdout
 
 
-def test_python_from_required_venv_with_app_starter(
+def test_python_from_required_venv_with_start_app(
     tmp_path: pathlib.Path,
 ):
     """
@@ -273,71 +273,71 @@ def test_python_from_required_venv_with_app_starter(
         project_dir_abs_path,
     )
 
-    # === create `env_bootstrapper` entry script
+    # === create `boot_env` entry script
 
-    env_bootstrapper_script_abs_path = ref_root_abs_path / "env_bootstrapper"
-    env_bootstrapper_script_content = generate_entry_script_content(
+    boot_env_script_abs_path = ref_root_abs_path / "boot_env"
+    boot_env_script_content = generate_entry_script_content(
         ExecMode.mode_prime.value,
         str(proto_kernel_abs_path),
-        str(env_bootstrapper_script_abs_path),
-        f"{cmd_env_bootstrapper.__name__}",
-        f"{cmd_env_bootstrapper.custom_main.__name__}",
+        str(boot_env_script_abs_path),
+        f"{cmd_boot_env.__name__}",
+        f"{cmd_boot_env.custom_main.__name__}",
         {},
     )
-    with open(env_bootstrapper_script_abs_path, "w") as f:
-        f.write(env_bootstrapper_script_content)
-    env_bootstrapper_script_abs_path.chmod(
-        env_bootstrapper_script_abs_path.stat().st_mode | stat.S_IEXEC
+    with open(boot_env_script_abs_path, "w") as f:
+        f.write(boot_env_script_content)
+    boot_env_script_abs_path.chmod(
+        boot_env_script_abs_path.stat().st_mode | stat.S_IEXEC
     )
 
-    # === create `app_starter` entry script
+    # === create `start_app` entry script
 
-    app_starter_script_abs_path = ref_root_abs_path / "app_starter"
-    app_starter_script_content = generate_entry_script_content(
+    start_app_script_abs_path = ref_root_abs_path / "start_app"
+    start_app_script_content = generate_entry_script_content(
         ExecMode.mode_start.value,
         str(proto_kernel_abs_path),
-        str(app_starter_script_abs_path),
-        f"{cmd_app_starter.__name__}",
-        f"{cmd_app_starter.custom_main.__name__}",
+        str(start_app_script_abs_path),
+        f"{cmd_start_app.__name__}",
+        f"{cmd_start_app.custom_main.__name__}",
         {},
     )
-    with open(app_starter_script_abs_path, "w") as f:
-        f.write(app_starter_script_content)
-    app_starter_script_abs_path.chmod(
-        app_starter_script_abs_path.stat().st_mode | stat.S_IEXEC
+    with open(start_app_script_abs_path, "w") as f:
+        f.write(start_app_script_content)
+    start_app_script_abs_path.chmod(
+        start_app_script_abs_path.stat().st_mode | stat.S_IEXEC
     )
 
-    # === run `env_bootstrapper`
+    # === run `boot_env`
     # See FT_75_87_82_46.entry_script.md
 
-    command_args_env_bootstrapper = [
+    command_args_boot_env = [
         str(required_venv_python),
-        str(env_bootstrapper_script_abs_path),
+        str(boot_env_script_abs_path),
     ]
 
-    sub_proc_env_bootstrapper = subprocess.run(
-        command_args_env_bootstrapper,
+    sub_proc_boot_env = subprocess.run(
+        command_args_boot_env,
         capture_output=True,
         text=True,
         check=True,
     )
-    assert "Hello, world!" in sub_proc_env_bootstrapper.stdout
+    assert "Hello, world!" in sub_proc_boot_env.stdout
 
-    # === run `app_starter`
+    # === run `start_app`
     # See FT_75_87_82_46.entry_script.md
 
-    command_args_app_starter = [
+    command_args_start_app = [
         str(required_venv_python),
-        str(app_starter_script_abs_path),
+        str(start_app_script_abs_path),
     ]
 
     # when:
-    sub_proc_app_starter = subprocess.run(
-        command_args_app_starter,
+    sub_proc_start_app = subprocess.run(
+        command_args_start_app,
         capture_output=True,
         text=True,
         check=True,
     )
 
     # then:
-    assert "Hello, world!" in sub_proc_app_starter.stdout
+    assert "Hello, world!" in sub_proc_start_app.stdout

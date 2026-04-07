@@ -58,7 +58,7 @@ from typing import (
 
 # The release process ensures that content in this file matches the version below while tagging the release commit
 # (otherwise, if the file comes from a different commit, the version is irrelevant):
-__version__ = "0.9.0"
+__version__ = "0.10.0"
 
 logger: logging.Logger = logging.getLogger()
 
@@ -68,7 +68,7 @@ ValueType = TypeVar("ValueType")
 DataValueType = TypeVar("DataValueType")
 
 
-def app_main(
+def proto_main(
     configure_env_context: typing.Callable[[], EnvContext] | None = None,
 ):
     # Avoid `NameError` (not associated with a value in enclosing scope) for the last `except`:
@@ -356,30 +356,30 @@ class PrimerRuntime(enum.Enum):
 
 
 
-class StartMode(enum.Enum):
+class EntryFunc(enum.Enum):
     """
     Specifies how `proto_kernel` was started (which API was the entry point).
 
-    See FT_25_62_13_55.start_mode.md
+    See FT_25_62_13_55.entry_func.md
 
     TODO: TODO_60_63_68_81.refactor_DAG_builder.md:
           make use of this enum.
     """
 
-    # Start via `env_bootstrapper` call:
-    mode_env_bootstrapper = "env_bootstrapper"
+    # Start via `boot_env` call:
+    func_boot_env = "boot_env"
 
-    # Start via `app_starter` call:
-    mode_app_starter = "app_starter"
+    # Start via `start_app` call:
+    func_start_app = "start_app"
 
     # A lib function call (e.g. `get_derived_config`):
-    mode_lib_invoker = "lib_invoker"
+    func_lib = "lib"
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
 
-    # Direct CLI execution via (e.g.) `./proto_kernel.py`:
-    mode_main_executor = "main_executor"
+    # Direct CLI execution via (e.g.) `./proto_kernel.py` executing `__main__` section:
+    func_main = "main"
 
 
 class ExecMode(enum.Enum):
@@ -390,10 +390,10 @@ class ExecMode(enum.Enum):
     """
 
     # TODO: TODO_31_76_38_60.exec_mode_for_shell.md: rename to "boot"
-    # FT_58_74_37_70.starter_vs_bootstrapper.md / "env bootstrapper"
+    # FT_58_74_37_70.boot_vs_start.md / "env bootstrapper"
     mode_prime = "prime"
 
-    # FT_58_74_37_70.starter_vs_bootstrapper.md / "app starter"
+    # FT_58_74_37_70.boot_vs_start.md / "app starter"
     mode_start = "start"
 
     # TODO: TODO_31_76_38_60.exec_mode_for_shell.md: rename to "reset"
@@ -423,7 +423,7 @@ class GraphCoordinates:
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
-        self.start_mode: StartMode | None = None
+        self.entry_func: EntryFunc | None = None
         self.exec_mode: ExecMode | None = None
 
 
@@ -471,7 +471,7 @@ class EnvVar(enum.Enum):
 
     var_PROTOPRIMER_EXEC_MODE = "PROTOPRIMER_EXEC_MODE"
 
-    # FT_58_74_37_70.starter_vs_bootstrapper.md
+    # FT_58_74_37_70.boot_vs_start.md
     # Selects the main function to run, for example, "sup_module.sub_module:some_main".
     var_PROTOPRIMER_MAIN_FUNC = "PROTOPRIMER_MAIN_FUNC"
 
@@ -8906,7 +8906,7 @@ def get_derived_config(
     return state_derived_conf_data_loaded
 
 
-def env_bootstrapper(
+def boot_env(
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
@@ -8914,10 +8914,10 @@ def env_bootstrapper(
 ):
     """
     This is a helper function for an FT_75_87_82_46 entry script
-    which implements FT_58_74_37_70.starter_vs_bootstrapper.md / env bootstrapper.
+    which implements FT_58_74_37_70.boot_vs_start.md / env bootstrapper.
 
     It bootstraps `venv` from nothing.
-    The majority of the entry scripts are supposed to use the `app_starter` function instead
+    The majority of the entry scripts are supposed to use the `start_app` function instead
     (which only starts the specified `venv_main_func` assuming `venv` has already been bootstrapped).
     """
     _start_main(
@@ -8926,7 +8926,7 @@ def env_bootstrapper(
     )
 
 
-def app_starter(
+def start_app(
     venv_main_func: str,
 ):
     """
@@ -8934,11 +8934,11 @@ def app_starter(
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
     This is a helper function for an FT_75_87_82_46 entry script
-    which implements FT_58_74_37_70.starter_vs_bootstrapper.md / app starter.
+    which implements FT_58_74_37_70.boot_vs_start.md / app starter.
 
     The function fails if `venv` is not created.
     In that case, the user must trigger the bootstrap manually
-    (via a script which calls `env_bootstrapper` function).
+    (via a script which calls `boot_env` function).
     """
     _start_main(
         ExecMode.mode_start,
@@ -8984,7 +8984,7 @@ def _start_main(
         )
     ]
 
-    selected_main = app_main
+    selected_main = proto_main
     try:
         # NOTE: `state_stride_src_updated_reached` forces restart with this `StateStride`:
         if curr_py_exec.value >= StateStride.stride_src_updated.value:
@@ -8995,7 +8995,7 @@ def _start_main(
             venv_module = importlib.import_module(
                 f"{ConfConstGeneral.name_protoprimer_package}.{ConfConstGeneral.name_primer_kernel_module}"
             )
-            selected_main = getattr(venv_module, "app_main")
+            selected_main = getattr(venv_module, "proto_main")
     except ImportError:
         if curr_py_exec.value >= StateStride.stride_src_updated.value:
             raise AssertionError(
@@ -9010,6 +9010,6 @@ def _start_main(
 
 
 if __name__ == "__main__":
-    app_main()
+    proto_main()
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########

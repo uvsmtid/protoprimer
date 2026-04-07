@@ -6,7 +6,7 @@ from protoprimer.primer_kernel import (
     EnvContext,
     EnvState,
     ExecMode,
-    StartMode,
+    EntryFunc,
     StateNode,
 )
 
@@ -26,15 +26,15 @@ class TestParentStateOrdering:
     """
 
     @pytest.mark.parametrize("exec_mode", list(ExecMode))
-    @pytest.mark.parametrize("start_mode", list(StartMode))
+    @pytest.mark.parametrize("entry_func", list(EntryFunc))
     # noinspection PyPep8Naming
     def test_EnvState_parent_order(
-        self, exec_mode: ExecMode, start_mode: StartMode
+        self, exec_mode: ExecMode, entry_func: EntryFunc
     ) -> None:
         # given:
         env_ctx = EnvContext()
         env_ctx.graph_coordinates.exec_mode = exec_mode
-        env_ctx.graph_coordinates.start_mode = start_mode
+        env_ctx.graph_coordinates.entry_func = entry_func
 
         state_graph_instance = env_ctx.state_graph
 

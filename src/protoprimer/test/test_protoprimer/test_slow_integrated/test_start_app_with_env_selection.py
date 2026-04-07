@@ -3,7 +3,7 @@ import stat
 import subprocess
 import sys
 
-from local_doc import cmd_app_starter
+from local_doc import cmd_start_app
 from local_test.fat_mocked_helper import run_primer_main
 from local_test.integrated_helper import (
     create_conf_client_file,
@@ -27,9 +27,9 @@ from protoprimer.primer_kernel import (
 from protoprimer.proto_generator import generate_entry_script_content
 
 
-def test_app_starter_from_env_default(tmp_path: pathlib.Path):
+def test_start_app_from_env_default(tmp_path: pathlib.Path):
     """
-    *   Bootstrap env without args -> picks `ConfConstClient.common_env_name` as configured.
+    *   Boot env without args -> picks `ConfConstClient.common_env_name` as configured.
     *   Start app -> picks `ConfConstClient.common_env_name` as specified.
     """
 
@@ -109,21 +109,21 @@ def test_app_starter_from_env_default(tmp_path: pathlib.Path):
     default_venv_abs_path = ref_root_abs_path / default_venv_rel_path
     special_venv_abs_path = ref_root_abs_path / special_venv_rel_path
 
-    # === create `app_starter` entry script
+    # === create `start_app` entry script
 
-    app_starter_script_abs_path = ref_root_abs_path / "app_starter"
-    app_starter_script_content = generate_entry_script_content(
+    start_app_script_abs_path = ref_root_abs_path / "start_app"
+    start_app_script_content = generate_entry_script_content(
         ExecMode.mode_start.value,
         str(proto_kernel_abs_path),
-        str(app_starter_script_abs_path),
-        f"{cmd_app_starter.__name__}",
-        f"{cmd_app_starter.custom_main.__name__}",
+        str(start_app_script_abs_path),
+        f"{cmd_start_app.__name__}",
+        f"{cmd_start_app.custom_main.__name__}",
         {},
     )
-    with open(app_starter_script_abs_path, "w") as f:
-        f.write(app_starter_script_content)
-    app_starter_script_abs_path.chmod(
-        app_starter_script_abs_path.stat().st_mode | stat.S_IEXEC
+    with open(start_app_script_abs_path, "w") as f:
+        f.write(start_app_script_content)
+    start_app_script_abs_path.chmod(
+        start_app_script_abs_path.stat().st_mode | stat.S_IEXEC
     )
 
     # when:
@@ -146,29 +146,29 @@ def test_app_starter_from_env_default(tmp_path: pathlib.Path):
     # when:
     # start without args
 
-    # === run `app_starter`
+    # === run `start_app`
     # See FT_75_87_82_46.entry_script.md
 
-    command_args_app_starter = [
+    command_args_start_app = [
         str(arbitrary_venv_python),
-        str(app_starter_script_abs_path),
+        str(start_app_script_abs_path),
     ]
 
     # when:
-    sub_proc_app_starter = subprocess.run(
-        command_args_app_starter,
+    sub_proc_start_app = subprocess.run(
+        command_args_start_app,
         capture_output=True,
         text=True,
         check=True,
     )
 
     # then:
-    assert "Hello, world!" in sub_proc_app_starter.stdout
+    assert "Hello, world!" in sub_proc_start_app.stdout
 
 
 def test_app_started_from_env_special(tmp_path: pathlib.Path):
     """
-    *   Bootstrap with override `SyntaxArg.arg_env` -> picks `special_env` as specified.
+    *   Boot with override `SyntaxArg.arg_env` -> picks `special_env` as specified.
     *   Start app -> still picks `special_env` as configured (not `ConfConstClient.common_env_name`).
     """
 
@@ -248,21 +248,21 @@ def test_app_started_from_env_special(tmp_path: pathlib.Path):
     default_venv_abs_path = ref_root_abs_path / default_venv_rel_path
     special_venv_abs_path = ref_root_abs_path / special_venv_rel_path
 
-    # === create `app_starter` entry script
+    # === create `start_app` entry script
 
-    app_starter_script_abs_path = ref_root_abs_path / "app_starter"
-    app_starter_script_content = generate_entry_script_content(
+    start_app_script_abs_path = ref_root_abs_path / "start_app"
+    start_app_script_content = generate_entry_script_content(
         ExecMode.mode_start.value,
         str(proto_kernel_abs_path),
-        str(app_starter_script_abs_path),
-        f"{cmd_app_starter.__name__}",
-        f"{cmd_app_starter.custom_main.__name__}",
+        str(start_app_script_abs_path),
+        f"{cmd_start_app.__name__}",
+        f"{cmd_start_app.custom_main.__name__}",
         {},
     )
-    with open(app_starter_script_abs_path, "w") as f:
-        f.write(app_starter_script_content)
-    app_starter_script_abs_path.chmod(
-        app_starter_script_abs_path.stat().st_mode | stat.S_IEXEC
+    with open(start_app_script_abs_path, "w") as f:
+        f.write(start_app_script_content)
+    start_app_script_abs_path.chmod(
+        start_app_script_abs_path.stat().st_mode | stat.S_IEXEC
     )
 
     # when:
@@ -288,24 +288,24 @@ def test_app_started_from_env_special(tmp_path: pathlib.Path):
     # when:
     # start without args
 
-    # === run `app_starter`
+    # === run `start_app`
     # See FT_75_87_82_46.entry_script.md
 
-    command_args_app_starter = [
+    command_args_start_app = [
         str(arbitrary_venv_python),
-        str(app_starter_script_abs_path),
+        str(start_app_script_abs_path),
     ]
 
     # when:
-    sub_proc_app_starter = subprocess.run(
-        command_args_app_starter,
+    sub_proc_start_app = subprocess.run(
+        command_args_start_app,
         capture_output=True,
         text=True,
         check=True,
     )
 
     # then:
-    assert "Hello, world!" in sub_proc_app_starter.stdout
+    assert "Hello, world!" in sub_proc_start_app.stdout
 
 
 def test_app_started_with_symlink_to_env_special_but_config_to_env_common(
@@ -393,21 +393,21 @@ def test_app_started_with_symlink_to_env_special_but_config_to_env_common(
     default_venv_abs_path = ref_root_abs_path / default_venv_rel_path
     special_venv_abs_path = ref_root_abs_path / special_venv_rel_path
 
-    # === create `app_starter` entry script
+    # === create `start_app` entry script
 
-    app_starter_script_abs_path = ref_root_abs_path / "app_starter"
-    app_starter_script_content = generate_entry_script_content(
+    start_app_script_abs_path = ref_root_abs_path / "start_app"
+    start_app_script_content = generate_entry_script_content(
         ExecMode.mode_start.value,
         str(proto_kernel_abs_path),
-        str(app_starter_script_abs_path),
-        f"{cmd_app_starter.__name__}",
-        f"{cmd_app_starter.custom_main.__name__}",
+        str(start_app_script_abs_path),
+        f"{cmd_start_app.__name__}",
+        f"{cmd_start_app.custom_main.__name__}",
         {},
     )
-    with open(app_starter_script_abs_path, "w") as f:
-        f.write(app_starter_script_content)
-    app_starter_script_abs_path.chmod(
-        app_starter_script_abs_path.stat().st_mode | stat.S_IEXEC
+    with open(start_app_script_abs_path, "w") as f:
+        f.write(start_app_script_content)
+    start_app_script_abs_path.chmod(
+        start_app_script_abs_path.stat().st_mode | stat.S_IEXEC
     )
 
     # when:
@@ -443,21 +443,21 @@ def test_app_started_with_symlink_to_env_special_but_config_to_env_common(
     # when:
     # start without args
 
-    # === run `app_starter`
+    # === run `start_app`
     # See FT_75_87_82_46.entry_script.md
 
-    command_args_app_starter = [
+    command_args_start_app = [
         str(arbitrary_venv_python),
-        str(app_starter_script_abs_path),
+        str(start_app_script_abs_path),
     ]
 
     # when:
-    sub_proc_app_starter = subprocess.run(
-        command_args_app_starter,
+    sub_proc_start_app = subprocess.run(
+        command_args_start_app,
         capture_output=True,
         text=True,
         check=True,
     )
 
     # then:
-    assert "Hello, world!" in sub_proc_app_starter.stdout
+    assert "Hello, world!" in sub_proc_start_app.stdout

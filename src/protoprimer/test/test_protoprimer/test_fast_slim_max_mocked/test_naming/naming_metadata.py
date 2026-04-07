@@ -231,16 +231,5 @@ def verify_naming_convention(
     abstract_meta: AbstractMeta,
 ):
 
-    if True:
-        expected_name = "_".join(abstract_meta.get_name_components())
-        assert abstract_meta.get_name() == expected_name
-        return
-    given_name = abstract_meta.get_name()
-    ret_val: enum.Enum | None = verify_name_enum_order_in_name(
-        abstract_meta.get_category().value.name_enums,
-        abstract_meta.get_name(),
-    )
-    if ret_val is not None:
-        raise AssertionError(
-            f"name [{given_name}] of category [{abstract_meta.get_category().name}] does not contain value from enum [{ret_val.__name__}] in the naming order [{'_'.join(naming_order)}]"
-        )
+    expected_name = "_".join(abstract_meta.get_name_components())
+    assert abstract_meta.get_name() == expected_name

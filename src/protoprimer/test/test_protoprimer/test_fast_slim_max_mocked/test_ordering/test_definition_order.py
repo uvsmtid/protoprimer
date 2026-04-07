@@ -6,7 +6,7 @@ from protoprimer.primer_kernel import (
     EnvContext,
     EnvState,
     ExecMode,
-    StartMode,
+    EntryFunc,
     StateNode,
 )
 from test_protoprimer.test_fast_slim_max_mocked.misc_tools.code_utils import (
@@ -28,17 +28,17 @@ class TestEnvStateOrdering:
         list(ExecMode),
     )
     @pytest.mark.parametrize(
-        "start_mode",
-        list(StartMode),
+        "entry_func",
+        list(EntryFunc),
     )
     def test_env_state_topological_sort(
         self,
         exec_mode: ExecMode,
-        start_mode: StartMode,
+        entry_func: EntryFunc,
     ) -> None:
         self.env_ctx = EnvContext()
         self.env_ctx.graph_coordinates.exec_mode = exec_mode
-        self.env_ctx.graph_coordinates.start_mode = start_mode
+        self.env_ctx.graph_coordinates.entry_func = entry_func
 
         state_graph_instance = self.env_ctx.state_graph
 
@@ -76,17 +76,17 @@ class TestEnvStateOrdering:
         list(ExecMode),
     )
     @pytest.mark.parametrize(
-        "start_mode",
-        list(StartMode),
+        "entry_func",
+        list(EntryFunc),
     )
     def test_bootstrapper_class_definition_order(
         self,
         exec_mode: ExecMode,
-        start_mode: StartMode,
+        entry_func: EntryFunc,
     ) -> None:
         self.env_ctx = EnvContext()
         self.env_ctx.graph_coordinates.exec_mode = exec_mode
-        self.env_ctx.graph_coordinates.start_mode = start_mode
+        self.env_ctx.graph_coordinates.entry_func = entry_func
 
         state_graph_instance = self.env_ctx.state_graph
 

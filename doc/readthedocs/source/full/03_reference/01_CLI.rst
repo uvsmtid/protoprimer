@@ -1,6 +1,6 @@
 CLI
 ================================================================================
 
-NOTE: CLI is only for `env_bootstrapper`.
+NOTE: CLI is only for `boot_env`.
 
 TODO

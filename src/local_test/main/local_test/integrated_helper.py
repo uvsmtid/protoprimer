@@ -316,6 +316,21 @@ def create_conf_env_file(
                         project_dir_rel_path
                     ),
                     ConfField.field_install_extras.value: [],
+                    ConfField.field_install_group.value: "whatever_group_main",
+                },
+            ],
+            ConfField.field_install_specs.value: [
+                {
+                    "whatever_group_main": {
+                        ConfField.field_extra_command_args.value: [
+                            # This is to avoid picking up a stale build during editable installation.
+                            # For example, this:
+                            # ./src/neoprimer/build/
+                            # instead of this:
+                            # ./src/neoprimer/main/
+                            "--no-cache-dir",
+                        ],
+                    },
                 },
             ],
         }

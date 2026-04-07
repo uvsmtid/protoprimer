@@ -22,7 +22,7 @@ jobs:
             -   uses: actions/checkout@v4
 
             -   run: "${{ github.workspace }}/prime"
-            -   run: "${{ github.workspace }}/cmd/bootstrap_env"
+            -   run: "${{ github.workspace }}/cmd/prime_env"
 
             -   name: ensure git has no local changes and untracked files
                 run: |
