@@ -81,7 +81,7 @@ def skip_test_slow_integrated(
 @contextmanager
 def set_protoprimer_debug_log_level():
     """
-    Set debug level (especially for `app_starter` which cannot take args for `protoprimer`).
+    Set debug level (especially for `start_app` which cannot take args for `protoprimer`).
     """
     with mock_and_restore_environ():
         os.environ[EnvVar.var_PROTOPRIMER_STDERR_LOG_LEVEL.value] = "debug"

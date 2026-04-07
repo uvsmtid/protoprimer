@@ -1,4 +1,4 @@
-# FT_93_57_03_75.app_vs_lib.md: see also `cmd_env_bootstrapper.py`
+# FT_93_57_03_75.app_vs_lib.md: see also `cmd_boot_env.py`
 from __future__ import annotations
 
 

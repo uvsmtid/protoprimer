@@ -4,8 +4,8 @@ import subprocess
 
 import pytest
 
-from local_repo import cmd_bootstrap_env
-from local_repo.cmd_bootstrap_env import custom_main
+from local_repo import cmd_prime_env
+from local_repo.cmd_prime_env import custom_main
 from local_repo.sub_proc_util import get_command_code
 from local_test.case_condition import git_is_not_available
 from local_test.integrated_helper import (
@@ -28,9 +28,9 @@ from protoprimer.proto_generator import generate_entry_script_content
 
 
 @pytest.mark.skipif(git_is_not_available(), reason="git command is not available")
-def test_bootstrap_env(tmp_path: pathlib.Path):
+def test_prime_env(tmp_path: pathlib.Path):
     """
-    Runs local custom `./cmd/bootstrap_env` and checks that it installs `pre-commit`.
+    Runs local custom `./cmd/prime_env` and checks that it installs `pre-commit`.
     """
 
     # given:
@@ -80,18 +80,18 @@ def test_bootstrap_env(tmp_path: pathlib.Path):
 
     # ===
 
-    bootstrap_env_script_abs_path = ref_root_abs_path / "bootstrap_env"
-    bootstrap_env_script_content = generate_entry_script_content(
+    prime_env_script_abs_path = ref_root_abs_path / "prime_env"
+    prime_env_script_content = generate_entry_script_content(
         ExecMode.mode_prime.value,
         str(proto_kernel_abs_path),
-        str(bootstrap_env_script_abs_path),
-        f"{cmd_bootstrap_env.__name__}",
+        str(prime_env_script_abs_path),
+        f"{cmd_prime_env.__name__}",
         f"{custom_main.__name__}",
     )
-    with open(bootstrap_env_script_abs_path, "w") as f:
-        f.write(bootstrap_env_script_content)
-    bootstrap_env_script_abs_path.chmod(
-        bootstrap_env_script_abs_path.stat().st_mode | stat.S_IEXEC
+    with open(prime_env_script_abs_path, "w") as f:
+        f.write(prime_env_script_content)
+    prime_env_script_abs_path.chmod(
+        prime_env_script_abs_path.stat().st_mode | stat.S_IEXEC
     )
 
     # ===
@@ -123,7 +123,7 @@ def test_bootstrap_env(tmp_path: pathlib.Path):
             "git",
             "config",
             "user.name",
-            f"{test_bootstrap_env.__name__}",
+            f"{test_prime_env.__name__}",
         ],
         check=True,
         cwd=ref_root_abs_path,
@@ -133,7 +133,7 @@ def test_bootstrap_env(tmp_path: pathlib.Path):
             "git",
             "config",
             "user.email",
-            f"{test_bootstrap_env.__name__}@example.com",
+            f"{test_prime_env.__name__}@example.com",
         ],
         check=True,
         cwd=ref_root_abs_path,
@@ -159,7 +159,7 @@ def test_bootstrap_env(tmp_path: pathlib.Path):
     )
 
     # when:
-    get_command_code("./bootstrap_env")
+    get_command_code("./prime_env")
 
     # then:
     venv_dir = ref_root_abs_path / ConfConstEnv.default_dir_rel_path_venv

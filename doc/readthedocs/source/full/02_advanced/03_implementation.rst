@@ -7,7 +7,7 @@ To bootstrap, ``protoprimer`` restarts itself:
 
 *   takes off with a **wild** ``python`` version (whatever is in the ``PATH`` env var)
 *   switches in-flight to the **required** ``python`` version
-*   hands over inside a comfy isolated ``venv`` with all dependencies pinned
+*   hands over inside a comfy isolated ``venv`` with all dependencies **pinned**
 
 Who wants to re-implement that?
 

@@ -1,6 +1,6 @@
 API
 ================================================================================
 
-NOTE: API is only for `app_starter`.
+NOTE: API is only for `start_app`.
 
 TODO

@@ -308,7 +308,7 @@ graph LR;
     ```py
     # ./some_script.py
     # ...
-    proto_kernel.app_starter("some_module:some_main")
+    proto_kernel.start_app("some_module:some_main")
     ```
 
     ```sh
@@ -350,9 +350,9 @@ With some config, the copy can be moved (under any directory, under any name).
 
 Although it is possible to run the copy directly, it is more flexible to use entry scripts (wrappers):
 
-*   Entry script [`./prime`][local_prime] relies on the `env_bootstrapper` function (to prepare the `venv`).
+*   Entry script [`./prime`][local_prime] relies on the `boot_env` function (to prepare the `venv`).
 
-*   Entry scripts in the [`./cmd`][cmd_dir] dir mostly rely on the `app_starter` function (to start code from the `venv`).
+*   Entry scripts in the [`./cmd`][cmd_dir] dir mostly rely on the `start_app` function (to start code from the `venv`).
 
 </details>
 
@@ -388,20 +388,20 @@ Bootstrap into an interactive `shell` with an activated `venv`:
 ./cmd/venv_shell
 ```
 
-See how `env_bootstrapper` works via this entry script:
+See how `boot_env` works via this entry script:
 
 ```py
-# ./cmd/env_bootstrapper:
+# ./cmd/boot_env:
 # ...
-proto_kernel.env_bootstrapper("local_doc.cmd_env_bootstrapper:custom_main")
+proto_kernel.boot_env("local_doc.cmd_boot_env:custom_main")
 ```
 
-See how `app_starter` works via this entry script:
+See how `start_app` works via this entry script:
 
 ```py
-# ./cmd/app_starter:
+# ./cmd/start_app:
 # ...
-proto_kernel.app_starter("local_doc.cmd_app_starter:custom_main")
+proto_kernel.start_app("local_doc.cmd_start_app:custom_main")
 ```
 
 <!--
@@ -651,7 +651,7 @@ TODO: Add a section explaining how commands can be run inside and outside `venv`
 -->
 
 <!--
-TODO: Add a section on debugging both `env_bootstrapper` and `app_starter`.
+TODO: Add a section on debugging both `boot_env` and `start_app`.
 -->
 
 ## Reproducible `venv`: version pinning
@@ -743,7 +743,7 @@ which:
 
 ## How to extend and customize it?
 
-TODO: FT_93_57_03_75.app_vs_lib.md: Explain examples `./cmd/env_bootstrapper` and `./cmd/app_starter`
+TODO: FT_93_57_03_75.app_vs_lib.md: Explain examples `./cmd/boot_env` and `./cmd/start_app`
 
 -->
 

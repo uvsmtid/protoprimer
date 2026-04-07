@@ -4,7 +4,7 @@ import logging
 
 from neoprimer.venv_shell import Bootstrapper_state_activated_venv_shell_started
 from protoprimer.primer_kernel import (
-    app_main,
+    proto_main,
     EnvContext,
 )
 
@@ -12,7 +12,7 @@ logger = logging.getLogger()
 
 
 def custom_main():
-    app_main(customize_env_context)
+    proto_main(customize_env_context)
 
 
 def customize_env_context():

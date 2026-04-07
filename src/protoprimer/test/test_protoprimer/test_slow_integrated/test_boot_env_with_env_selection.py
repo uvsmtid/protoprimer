@@ -22,7 +22,7 @@ from protoprimer.primer_kernel import (
 )
 
 
-def test_env_bootstrap_with_env_selection_default_to_special(tmp_path: pathlib.Path):
+def test_boot_env_with_env_selection_default_to_special(tmp_path: pathlib.Path):
     """
     *   Bootstrap without args -> picks `ConfConstClient.common_env_name` as configured.
     *   Bootstrap with override `SyntaxArg.arg_env` -> picks `special_env` as specified.
@@ -138,7 +138,7 @@ def test_env_bootstrap_with_env_selection_default_to_special(tmp_path: pathlib.P
     assert special_venv_abs_path.exists()
 
 
-def test_env_bootstrap_with_env_selection_special_to_default(tmp_path: pathlib.Path):
+def test_boot_env_with_env_selection_special_to_default(tmp_path: pathlib.Path):
     """
     *   Bootstrap with override `SyntaxArg.arg_env` -> picks `special_env` as specified.
     *   Bootstrap without args -> still picks `special_env` as configured.
@@ -254,7 +254,7 @@ def test_env_bootstrap_with_env_selection_special_to_default(tmp_path: pathlib.P
     assert special_venv_abs_path.exists()
 
 
-def test_env_bootstrap_with_symlink_to_env_special_but_config_to_env_common(
+def test_boot_env_with_symlink_to_env_special_but_config_to_env_common(
     tmp_path: pathlib.Path,
 ):
     """

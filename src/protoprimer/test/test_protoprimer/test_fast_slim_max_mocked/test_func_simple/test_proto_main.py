@@ -8,14 +8,14 @@ import pytest
 import protoprimer.primer_kernel
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer.primer_kernel import (
-    app_main,
+    proto_main,
     TargetState,
 )
 
 
 def test_relationship():
     assert_test_module_name_embeds_str(
-        app_main.__name__,
+        proto_main.__name__,
     )
 
 
@@ -33,7 +33,7 @@ def test_main_success(
     mock_env_ctx_instance.state_graph.eval_state.return_value = True
 
     # when:
-    app_main()
+    proto_main()
 
     # then:
     mock_ensure_min_python_version.assert_called_once()
@@ -60,7 +60,7 @@ def test_main_assertion_error(
 
     # when/then:
     with pytest.raises(AssertionError):
-        app_main()
+        proto_main()
 
     # then:
     mock_ensure_min_python_version.assert_called_once()
@@ -87,7 +87,7 @@ def test_main_system_exit(
 
     # when/then:
     with pytest.raises(SystemExit):
-        app_main()
+        proto_main()
 
     # then:
     mock_ensure_min_python_version.assert_called_once()
@@ -116,7 +116,7 @@ def test_main_generic_exception(
 
     # when/then:
     with pytest.raises(Exception, match="Test Exception"):
-        app_main()
+        proto_main()
 
     # then:
     mock_ensure_min_python_version.assert_called_once()
@@ -141,7 +141,7 @@ def test_main_with_configure_env_context(
     mock_env_ctx_instance.state_graph.eval_state.return_value = True
 
     # when:
-    app_main(configure_env_context=mock_configure_env_context)
+    proto_main(configure_env_context=mock_configure_env_context)
 
     # then:
     mock_ensure_min_python_version.assert_called_once()
@@ -167,7 +167,7 @@ def test_main_atexit_on_success(
     mock_env_ctx_instance.state_graph.eval_state.return_value = True
 
     # when:
-    app_main()
+    proto_main()
 
     # then:
     mock_atexit_register.assert_called_once()
@@ -193,7 +193,7 @@ def test_main_system_exit_0(
 
     # when/then:
     with pytest.raises(SystemExit):
-        app_main()
+        proto_main()
 
     # then:
     mock_atexit_register.assert_called_once()
@@ -219,7 +219,7 @@ def test_main_system_exit_none(
 
     # when/then:
     with pytest.raises(SystemExit):
-        app_main()
+        proto_main()
 
     # then:
     mock_atexit_register.assert_called_once()
