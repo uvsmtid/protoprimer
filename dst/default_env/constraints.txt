@@ -23,8 +23,12 @@ jeepney==0.9.0
 jinja2==3.1.6
 keyring==25.7.0
 keyrings-google-artifactregistry-auth==1.1.2
+markdown-it-py==4.0.0
 markupsafe==3.0.3
+mdit-py-plugins==0.5.0
+mdurl==0.1.2
 more-itertools==10.8.0
+myst-parser==5.0.0
 nodeenv==1.10.0
 packaging==26.0
 platformdirs==4.9.4
