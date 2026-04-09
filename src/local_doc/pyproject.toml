@@ -23,6 +23,7 @@ dependencies = [
     "sphinx-rtd-theme",
     "sphinxcontrib-googleanalytics",
     "sphinxcontrib-mermaid",
+    "myst-parser",
 ]
 
 [tool.setuptools.packages.find]

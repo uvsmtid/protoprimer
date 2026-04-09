@@ -1,0 +1,5 @@
+# CLI
+
+NOTE: CLI is only for `boot_env`.
+
+TODO

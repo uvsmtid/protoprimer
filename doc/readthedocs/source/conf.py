@@ -55,7 +55,13 @@ extensions = [
     "sphinx.ext.intersphinx",
     "sphinxcontrib.googleanalytics",
     "sphinxcontrib.mermaid",
+    "myst_parser",
 ]
+
+source_suffix = {
+    ".rst": "restructuredtext",
+    ".md": "markdown",
+}
 
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3/", None),
