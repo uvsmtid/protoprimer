@@ -13,39 +13,86 @@
 
 ## Why?
 
-Because this escalates quickly:
+Because more than one step is an **error-prone boring manual**.
 
-*   You may think *"I can create a `venv` manually"*, **but**:
+<details class="indented">
+<summary>This is a non-trivial "chicken and egg" problem:</summary>
 
-    *   that `venv` has to be created by **every** user
+<br/>
 
-    *   **everyone** has to `activate` it **every** time
+<details>
 
-    And how to ensure the **required** `python` version to create the `venv`?
+<summary>0. You may have a project in any lang:</summary>
 
-*   You may think *"I can use `uv` to ensure the `python` version"*, **but**:
+> C++, Java, Go, *Script, Rust, Haskel, ...
 
-    *   you and your users have to **install** the `uv` executable first
+**Next:** you may still need to automate with something else...
 
-    *   users will be **exposed** to `uv` args like:
+</details>
 
-        ```bash
-        uv pip install -e path/to/project_1 path/to/project_2
-        ```
+<br/>
 
-    And you still need to constrain dependency versions for **reproducibility**.
+<details>
+<summary>1. Thought: <em>"What is the best glue for automation, if not <code>python</code>?"</em></summary>
 
-*   You may think *"I can use `requirements.txt` to control versions"*, **but**:
+*   readable, testable, modular, cross-platform, ...
+*   huge mind-share, gazillion of packages, ...
 
-    *   `requirements.txt` may need to depend on the target environment (dev, prod) x (macOS, Linux)
+**Next:** you need an isolated `venv` for dependencies.
 
-    *   that does not select the `python` version
+</details>
 
-    And you may still want to extend the bootstrap sequence to configure additional tools.
+<details>
+<summary>2. Thought: <em>"I can create a <code>venv</code> manually"</em></summary>
 
-Eventually, manual mistakes turn that into **partially complete unreproducible mess**.
+*   that `venv` has to be created by **every** user
+*   **everyone** has to `activate` it **every** time
 
-And **newly pushed updates** may amplify it for everyone (facepalm).
+**Next:** you need to ensure the **required** `python` for `venv` creation.
+
+</details>
+
+<details>
+<summary>3. Thought: <em>"I can use <code>uv</code> to ensure the <strong>required</strong> <code>python</code> version"</em></summary>
+
+*   **everyone** has to install the `uv` executable first
+*   **everyone** has to be exposed to `uv` args like:
+
+```bash
+uv pip install --editable path/to/project_1
+uv pip install --editable path/to/project_2
+...
+```
+
+**Next:** this is just the tip of the iceberg you may want to automate away.
+
+</details>
+
+<details>
+<summary>4. Thought: <em>"I can wrap all into a <code>shell</code>-script"</em></summary>
+
+*   to distinguish an initial bootstrap from a subsequent update
+*   to load env-specific configuration
+
+**Next:** `shell` is untestable, non-modular, platform-dependent, cryptic, ...
+
+</details>
+
+<details>
+<summary>5. Thought: <em>"I can avoid <strong>unpredictable</strong> <code>shell</code> with another lang"</em></summary>
+
+*   the lang has to be cross-platform
+*   the lang has to be as ubiquitous as `shell` (even more)
+
+**Next:** you are in a cycle back to **point 1** for `python`.
+
+</details>
+
+You need to break that 5-to-1 loop.
+
+</details>
+
+An entry script must **handle unpredictable conditions** to solve that.
 
 ## How?
 

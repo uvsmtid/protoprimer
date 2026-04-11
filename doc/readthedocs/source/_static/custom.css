@@ -1,0 +1,46 @@
+
+/* Use `monospace` everywhere: */
+* {
+    font-family: "Roboto Mono", "Courier New", monospace !important;
+    color: black !important;
+    hyphens: none !important;
+    overflow-wrap: anywhere;
+}
+
+/* Keep bullet lists indented on narrow viewports: */
+ul, ol {
+    padding-left: 1.5em !important;
+    box-sizing: border-box;
+}
+
+/* Increase space before/after header: */
+h1, h2, h3, h4, h5, h6 {
+    margin-top: 1em !important;
+    margin-bottom: 1em !important;
+}
+
+/* Indent content inside open <details> (opt-in via class): */
+details.indented[open] {
+    padding-left: 1em;
+}
+details.indented[open] > summary {
+    margin-left: -1em;
+}
+
+/* Custom [+]/[-] marker for <details>/<summary>: */
+summary {
+    list-style: none;
+}
+summary::-webkit-details-marker {
+    display: none;
+}
+summary::before {
+    content: "[+] ";
+    font-weight: bold;
+    color: red;
+}
+details[open] > summary::before {
+    content: "[-] ";
+    font-weight: bold;
+    color: red;
+}

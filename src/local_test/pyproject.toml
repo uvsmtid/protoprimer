@@ -22,6 +22,7 @@ dependencies = [
     "coverage",
     "tomli",
     "tomli_w",
+    "cliff",
 ]
 
 [tool.setuptools.packages.find]
