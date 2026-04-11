@@ -6,93 +6,127 @@
 
 ### Ultimate goal
 
-`protoprimer` must replace **manuals** for (git repo) bootstraps and updates:
+<details><summary></summary>
+
+`protoprimer` replaces **manuals** for bootstraps and updates:
 
 *   no (conditional) steps for an author to write
 *   no mistakes for a user to make
 
-... **saving human time** for both authors and users.
+... **saving human time** for both authors and users **repeatedly**.
 
-### First solutions
+</details>
 
-To eliminate manuals, `protoprimer` has to be both:
+### First challenges
 
-*   arg-less
-*   one-liner
+<details><summary></summary>
 
-That brings the first problems to solve:
+To eliminate manuals, `protoprimer` has to solve both:
 
-*   Being **arg-less** requires environment-specific configurations to handle differences.
+*   Being **arg-less**:
 
-*   Being a **one-liner**, it must "just run" (without asking to install anything).
+    requires environment-specific configurations to handle differences.
 
-### Extra challenges
+*   Being a **one-liner**:
 
-*   No dependencies.
+    it must "just run" (without asking to install anything).
 
-    Because it starts without a `venv`, it must depend only on the `python` standard library.
+</details>
 
-*   Hosted by the target repo.
+### Multiple constrains
 
-    The `protoprimer` core must be a copy available in the repo clone (hosted by that repo).
+<details><summary></summary>
 
-*   A (text) script, not a binary.
-
-    To evolve and be auditable (security), it must be distributed as source code.
-
-*   Limited size -> limited functionality.
-
-*   Private infrastructure support.
-
-    % See: FT_17_41_51_83.private_artifact_repo.md
-
-    Bootstrap should allow authn/authz for intranet artifact repositories and other resources.
-
-*   Wild `python` version.
+*   Compatible with wild `python` version.
 
     % See: FT_84_11_73_28.supported_python_versions.md
 
-    The `protoprimer` core must be compatible even with "extinct dinosaur" `python` versions.
+    Be abele to run even with "extinct dinosaur" `python` versions.
 
-*   Required `python` version.
+*   No dependencies.
+
+    It starts without a `venv`.
+
+    Therefore, it must depend only on the standard `python` library.
+
+*   A copy hosted by the target repo.
+
+    It has to be available immediately after cloning the repo.
+
+    Therefore, it must be hosted by the repo as a stand-alone copy.
+
+*   A (text) script, not a binary.
+
+    Changes have to be auditable in the repo (for security).
+
+    Therefore, it must be distributed as source code (text).
+
+*   Single file, limited size.
+
+    To keep the approach sane:
+    *   it should be a single file, not multiple
+    *   the size should be in kilobytes, not megabytes
+
+</details>
+
+### Primary features
+
+<details><summary></summary>
+
+*   Switch to required `python` version.
 
     *   Getting a required dependency version in a `venv` is **trivial**.
 
     *   Provisioning the required `python` version is **not**.
 
-        The required `python` version must be installed and swapped in-flight (while running that **one-liner**).
+        The required `python` version must be installed first.
 
-*   Isolation per repo clone.
+        Then, it is swapped in-flight (while running that **one-liner**).
+
+*   Support monorepos.
+
+    This requires support for any directory structure.
+
+*   Automatic environment-specific configuration.
+
+    Without user input (arg-less one-liner):
+
+    *   not only does **everything** have to be found inside the configuration
+
+    *   one of the multiple configurations must be automatically selected
+
+*   Support private infrastructure.
+
+    % See: FT_17_41_51_83.private_artifact_repo.md
+
+    It should allow authn/authz to access intranet artifact repositories.
+
+*   Isolate per repo clone.
 
     *   No system-wide or user-local configuration should require changes.
 
     *   No conflicts with existing system-wide or user-private tools.
 
-    *   Each repo clone is also isolated (specifically, any two clones are independent).
+    *   Updating any two repo clones should not affect each other.
 
-*   Automatic environment-specific configuration.
+*   Support dynamic `import` to avoid shebang length limitation.
 
-    Without user input (**arg-less one-liner**):
+    To run scripts in `venv`, shebang can be used.
 
-    *   not only does **everything** have to be found inside the configuration
-    *   one of the multiple configurations must be automatically selected (based on the current environment)
+    A typical shebang length is 128 chars.
 
-*   No fixed configuration paths.
+    Therefore, a `venv` with long paths cannot be accessed via shebang.
 
-    Support monorepos with any directory structure.
+    Instead, support dynamic `import` with any path length.
 
-*   Avoid shebang size limitation.
+*   Unrestricted options to delegate.
 
-    Typical shebang length is 128 chars - this does not work for `venv`-s with long paths.
+    *   It must be possible to pass control to any tools.
 
-    Instead `protoprimer` uses dynamic import to make it work generically for any path.
+    *   The tools must also be usable independently of `protoprimer`.
 
-*   Unrestricted choices.
+    After all, `protoprimer` must only bootstrap - the rest is delegated.
 
-    *   It must provide a choice for underlying tooling.
-
-    *   The underlying tooling must also be usable independently of `protoprimer`.
-
-    After all, `protoprimer` only bootstraps.
+</details>
 
 % stub_include_stop

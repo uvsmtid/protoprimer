@@ -96,6 +96,10 @@ html_baseurl = f"{base_url}/{rtd_version_name}/"
 # html_theme = "alabaster"
 html_theme = "alabaster"
 
+html_static_path = ["_static"]
+
+html_css_files = ["custom.css"]
+
 # -- Options for EPUB output
 epub_show_urls = "footnote"
 
@@ -108,7 +112,12 @@ googleanalytics_id = "G-7359VQM37J"
 # Set this to `False` to hide the "View page source" link:
 html_show_sourcelink = False
 
+# Do not replace `...` with a single char:
+smartquotes = False
+
 github_url = "https://github.com/uvsmtid/protoprimer"
+
+html_favicon = "_static/protoprimer.logo.16x16.png"
 
 html_context = {
     # Integrate GitHub for `html_theme = "sphinx_rtd_theme"`:
