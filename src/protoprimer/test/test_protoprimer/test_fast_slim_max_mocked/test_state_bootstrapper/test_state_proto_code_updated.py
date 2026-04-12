@@ -84,7 +84,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             proto_code_abs_file_path
         )
         mock_state_input_exec_mode_arg_loaded.return_value.eval_own_state.return_value = (
-            ExecMode.mode_prime
+            ExecMode.mode_boot
         )
 
         # when:
@@ -146,7 +146,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             fake_path
         )
         mock_state_input_exec_mode_arg_loaded.return_value.eval_own_state.return_value = (
-            ExecMode.mode_prime
+            ExecMode.mode_boot
         )
 
         # when:

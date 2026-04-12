@@ -15,7 +15,7 @@ def test_relationship():
     assert_test_module_name_embeds_another_module_name(test_instant_scenario.__name__)
 
 
-def test_wrapped_prime_in_mock_env(fs: FakeFilesystem):
+def test_wrapped_boot_in_mock_env(fs: FakeFilesystem):
     mock_test_dir = fs.create_dir("/mock_test_dir")
 
     with fat_mock_wrapper(fs):

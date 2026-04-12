@@ -10,8 +10,8 @@ Want a **one-liner** to bootstrap isolated envs for every repo clone?
 
 This invokes `protoprimer` - an **arg-less** stand-alone script that switches:
 
-*   from **chaos**: regardless of conditions it was invoked in by a user
-*   into **order**: reproduces populated `venv` with the **required** `python` version
+*   from **chaos** (the many conditions in which a user may invoke it)
+*   into **order** (an env-specific `venv` with the **required** `python` version)
 
 <br/>
 
@@ -20,9 +20,9 @@ This invokes `protoprimer` - an **arg-less** stand-alone script that switches:
 Then, <code>protoprimer</code> transfers control to custom steps for <strong>anything</strong> else:
 </summary>
 
-*   verify env vars
+*   verify the env conditions (local, cloud)
 *   install `git` hooks
-*   configure other SDK-s
+*   configure other SDKs
 *   ... [you name it]
 
 </details>

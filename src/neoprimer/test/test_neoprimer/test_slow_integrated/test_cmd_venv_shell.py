@@ -114,7 +114,7 @@ def test_venv_shell_no_update(tmp_path: pathlib.Path):
 
     venv_shell_script_abs_path = ref_root_abs_path / "venv_shell"
     venv_shell_script_content = generate_entry_script_content(
-        ExecMode.mode_prime.value,
+        ExecMode.mode_boot.value,
         str(proto_kernel_abs_path),
         str(venv_shell_script_abs_path),
         f"{cmd_venv_shell.__name__}",
@@ -206,7 +206,7 @@ def test_venv_shell_command_execution(tmp_path: pathlib.Path):
 
     venv_shell_script_abs_path = ref_root_abs_path / "venv_shell"
     venv_shell_script_content = generate_entry_script_content(
-        ExecMode.mode_prime.value,
+        ExecMode.mode_boot.value,
         str(proto_kernel_abs_path),
         str(venv_shell_script_abs_path),
         f"{cmd_venv_shell.__name__}",
@@ -225,7 +225,7 @@ def test_venv_shell_command_execution(tmp_path: pathlib.Path):
 
     # when:
     get_command_code(
-        f'./venv_shell {ExecMode.mode_prime.value} {SyntaxArg.arg_command} "touch {output_file}"'
+        f'./venv_shell {ExecMode.mode_boot.value} {SyntaxArg.arg_command} "touch {output_file}"'
     )
 
     # then:

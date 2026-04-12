@@ -40,7 +40,7 @@ def test_relationship():
     f"{primer_kernel.__name__}.{Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.create_state_node"
 )
 @patch(f"{primer_kernel.__name__}.{ExitCodeReporter.__name__}.execute_strategy")
-def test_exec_mode_prime(
+def test_exec_mode_boot(
     mock_exit_code_reporter_execute_strategy,
     mock_state_input_exec_mode_arg_loaded,
     mock_state_input_stderr_log_level_eval_finalized,
@@ -55,7 +55,7 @@ def test_exec_mode_prime(
     )
 
     mock_state_input_exec_mode_arg_loaded.return_value.eval_own_state.return_value = (
-        ExecMode.mode_prime
+        ExecMode.mode_boot
     )
     mock_state_input_stderr_log_level_eval_finalized.return_value.eval_own_state.return_value = (
         0

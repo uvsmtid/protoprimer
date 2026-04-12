@@ -30,7 +30,7 @@ class TestTargetDependencies:
         # given:
 
         env_context_instance = EnvContext()
-        env_context_instance.graph_coordinates.exec_mode = ExecMode.mode_prime
+        env_context_instance.graph_coordinates.exec_mode = ExecMode.mode_boot
         state_graph_instance = env_context_instance.state_graph
         final_state_name = EnvState.state_command_executed.name
 
@@ -71,7 +71,7 @@ class TestTargetDependencies:
         # given:
 
         env_context_instance = EnvContext()
-        env_context_instance.graph_coordinates.exec_mode = ExecMode.mode_prime
+        env_context_instance.graph_coordinates.exec_mode = ExecMode.mode_boot
         state_graph_instance = env_context_instance.state_graph
         final_state_name = TargetState.target_exec_mode_executed.value.name
 

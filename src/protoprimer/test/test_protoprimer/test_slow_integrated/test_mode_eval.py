@@ -19,12 +19,12 @@ from protoprimer.primer_kernel import (
 
 
 def test_relationship():
-    assert_test_module_name_embeds_str(ExecMode.mode_config.value)
+    assert_test_module_name_embeds_str(ExecMode.mode_eval.value)
 
 
-def test_mode_config_with_min_layout(tmp_path: Path):
+def test_mode_eval_with_min_layout(tmp_path: Path):
 
-    assert_test_func_name_embeds_str(ExecMode.mode_config.value)
+    assert_test_func_name_embeds_str(ExecMode.mode_eval.value)
 
     # given:
 
@@ -39,7 +39,7 @@ def test_mode_config_with_min_layout(tmp_path: Path):
     run_primer_main(
         [
             str(proto_kernel_abs_path),
-            ExecMode.mode_config.value,
+            ExecMode.mode_eval.value,
         ]
     )
 
@@ -50,9 +50,9 @@ def test_mode_config_with_min_layout(tmp_path: Path):
     assert not os.path.exists(ref_root_abs_path / TopDir.dir_cache.value)
 
 
-def test_mode_config_with_max_layout(tmp_path: Path):
+def test_mode_eval_with_max_layout(tmp_path: Path):
 
-    assert_test_func_name_embeds_str(ExecMode.mode_config.value)
+    assert_test_func_name_embeds_str(ExecMode.mode_eval.value)
 
     # given:
 
@@ -67,7 +67,7 @@ def test_mode_config_with_max_layout(tmp_path: Path):
     run_primer_main(
         [
             str(proto_kernel_abs_path),
-            ExecMode.mode_config.value,
+            ExecMode.mode_eval.value,
         ]
     )
 

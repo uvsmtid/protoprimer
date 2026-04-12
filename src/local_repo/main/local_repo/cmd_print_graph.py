@@ -26,7 +26,7 @@ def custom_main():
     #       After Phase 2, this code should not exists.
     #       Instead arg_parser should obtain `GraphCoordinates`
     #       to print the required portion of the graph.
-    env_ctx.graph_coordinates.exec_mode = ExecMode.mode_config
+    env_ctx.graph_coordinates.exec_mode = ExecMode.mode_eval
 
     env_ctx.final_state = TargetState.target_proto_bootstrap_completed.value.name
 

@@ -47,7 +47,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.{Bootstrapper_state_proto_code_file_abs_path_inited.__name__}.eval_own_state"
     )
     @patch(f"{primer_kernel.__name__}.os.execve")
-    def test_prime_switches_from_py_exec_stride_py_unknown(
+    def test_boot_switches_from_py_exec_stride_py_unknown(
         self,
         mock_execve,
         mock_state_proto_code_file_abs_path_inited,

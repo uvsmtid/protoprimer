@@ -1,3 +1,10 @@
+"""
+See: FT_78_72_23_04.backward_compatibility.md
+
+This test was originally focused on testing just `argparse` configuration.
+See `test_via_cliff.py` which was created specifically to ensure backward compatibility.
+"""
+
 import io
 from contextlib import redirect_stdout
 
@@ -17,31 +24,31 @@ def test_parse_args_defaults():
     args = parse_args([])
 
     # then:
-    assert getattr(args, ParsedArg.name_exec_mode.value) == ExecMode.mode_prime.value
+    assert getattr(args, ParsedArg.name_exec_mode.value) == ExecMode.mode_boot.value
     assert getattr(args, ParsedArg.name_final_state.value) is None
     assert getattr(args, SyntaxArg.dest_quiet) == 0
     assert getattr(args, SyntaxArg.dest_verbose) == 0
 
 
-def test_parse_args_upgrade():
+def test_parse_args_reset():
     # when:
-    args = parse_args([ExecMode.mode_upgrade.value])
+    args = parse_args([ExecMode.mode_reset.value])
 
     # then:
-    assert getattr(args, ParsedArg.name_exec_mode.value) == ExecMode.mode_upgrade.value
+    assert getattr(args, ParsedArg.name_exec_mode.value) == ExecMode.mode_reset.value
 
 
 def test_parse_args_command():
     cmd = "ls -l"
 
     # when:
-    args = parse_args([ExecMode.mode_prime.value, SyntaxArg.arg_command, cmd])
+    args = parse_args([ExecMode.mode_boot.value, SyntaxArg.arg_command, cmd])
 
     # then:
     assert getattr(args, ParsedArg.name_command.value) == cmd
 
     # when: short arg
-    args_c = parse_args([ExecMode.mode_prime.value, SyntaxArg.arg_c, cmd])
+    args_c = parse_args([ExecMode.mode_boot.value, SyntaxArg.arg_c, cmd])
 
     # then: short arg
     assert getattr(args_c, ParsedArg.name_command.value) == cmd
@@ -51,42 +58,33 @@ def test_parse_args_env():
     env_dir = "/path/to/env"
 
     # when: long arg
-    args = parse_args([ExecMode.mode_prime.value, SyntaxArg.arg_env, env_dir])
+    args = parse_args([ExecMode.mode_boot.value, SyntaxArg.arg_env, env_dir])
 
     # then: long arg
     assert getattr(args, ParsedArg.name_selected_env_dir.value) == env_dir
 
     # when: short arg
-    args_e = parse_args([ExecMode.mode_prime.value, SyntaxArg.arg_e, env_dir])
+    args_e = parse_args([ExecMode.mode_boot.value, SyntaxArg.arg_e, env_dir])
 
     # then: short arg
     assert getattr(args_e, ParsedArg.name_selected_env_dir.value) == env_dir
 
 
 def test_parse_args_exec_mode():
-    # when: prime mode
-    args_prime = parse_args([ExecMode.mode_prime.value])
+    # when: boot mode
+    args_prime = parse_args([ExecMode.mode_boot.value])
 
-    # then: prime mode
+    # then: boot mode
     assert (
-        getattr(args_prime, ParsedArg.name_exec_mode.value) == ExecMode.mode_prime.value
+        getattr(args_prime, ParsedArg.name_exec_mode.value) == ExecMode.mode_boot.value
     )
 
-    # when: config mode
-    args_config = parse_args([ExecMode.mode_config.value])
+    # when: eval mode
+    args_config = parse_args([ExecMode.mode_eval.value])
 
-    # then: config mode
+    # then: eval mode
     assert (
-        getattr(args_config, ParsedArg.name_exec_mode.value)
-        == ExecMode.mode_config.value
-    )
-
-    # when: check mode
-    args_check = parse_args([ExecMode.mode_check.value])
-
-    # then: check mode
-    assert (
-        getattr(args_check, ParsedArg.name_exec_mode.value) == ExecMode.mode_check.value
+        getattr(args_config, ParsedArg.name_exec_mode.value) == ExecMode.mode_eval.value
     )
 
 
@@ -127,7 +125,7 @@ def test_parse_args_final_state():
     state = "some_state"
 
     # when:
-    args = parse_args([ExecMode.mode_prime.value, SyntaxArg.arg_final_state, state])
+    args = parse_args([ExecMode.mode_boot.value, SyntaxArg.arg_final_state, state])
 
     # then:
     assert getattr(args, ParsedArg.name_final_state.value) == state
@@ -139,7 +137,7 @@ def test_parse_args_final_state():
         (
             [],
             {
-                ParsedArg.name_exec_mode.value: ExecMode.mode_prime.value,
+                ParsedArg.name_exec_mode.value: ExecMode.mode_boot.value,
                 ParsedArg.name_selected_env_dir.value: None,
                 SyntaxArg.dest_quiet: 0,
                 SyntaxArg.dest_verbose: 0,
@@ -148,9 +146,9 @@ def test_parse_args_final_state():
             },
         ),
         (
-            ["prime"],
+            ["boot"],
             {
-                ParsedArg.name_exec_mode.value: ExecMode.mode_prime.value,
+                ParsedArg.name_exec_mode.value: ExecMode.mode_boot.value,
                 ParsedArg.name_selected_env_dir.value: None,
                 ParsedArg.name_final_state.value: None,
                 SyntaxArg.dest_quiet: 0,
@@ -159,9 +157,9 @@ def test_parse_args_final_state():
             },
         ),
         (
-            ["prime", "--final_state", "some_state"],
+            ["boot", "--final_state", "some_state"],
             {
-                ParsedArg.name_exec_mode.value: ExecMode.mode_prime.value,
+                ParsedArg.name_exec_mode.value: ExecMode.mode_boot.value,
                 ParsedArg.name_selected_env_dir.value: None,
                 ParsedArg.name_final_state.value: "some_state",
                 SyntaxArg.dest_quiet: 0,
@@ -170,33 +168,25 @@ def test_parse_args_final_state():
             },
         ),
         (
-            ["upgrade"],
+            ["reset"],
             {
-                ParsedArg.name_exec_mode.value: "upgrade",
+                ParsedArg.name_exec_mode.value: "reset",
                 SyntaxArg.dest_quiet: 0,
                 SyntaxArg.dest_verbose: 0,
             },
         ),
         (
-            ["config"],
+            ["eval"],
             {
-                ParsedArg.name_exec_mode.value: "config",
+                ParsedArg.name_exec_mode.value: "eval",
                 SyntaxArg.dest_quiet: 0,
                 SyntaxArg.dest_verbose: 0,
             },
         ),
         (
-            ["check"],
+            ["-q", "boot"],
             {
-                ParsedArg.name_exec_mode.value: "check",
-                SyntaxArg.dest_quiet: 0,
-                SyntaxArg.dest_verbose: 0,
-            },
-        ),
-        (
-            ["-q", "prime"],
-            {
-                ParsedArg.name_exec_mode.value: ExecMode.mode_prime.value,
+                ParsedArg.name_exec_mode.value: ExecMode.mode_boot.value,
                 ParsedArg.name_selected_env_dir.value: None,
                 ParsedArg.name_final_state.value: None,
                 SyntaxArg.dest_quiet: 1,
@@ -205,9 +195,9 @@ def test_parse_args_final_state():
             },
         ),
         (
-            ["prime", "-v"],
+            ["boot", "-v"],
             {
-                ParsedArg.name_exec_mode.value: ExecMode.mode_prime.value,
+                ParsedArg.name_exec_mode.value: ExecMode.mode_boot.value,
                 ParsedArg.name_selected_env_dir.value: None,
                 ParsedArg.name_final_state.value: None,
                 SyntaxArg.dest_quiet: 0,
@@ -216,9 +206,9 @@ def test_parse_args_final_state():
             },
         ),
         (
-            ["prime", "-q"],
+            ["boot", "-q"],
             {
-                ParsedArg.name_exec_mode.value: ExecMode.mode_prime.value,
+                ParsedArg.name_exec_mode.value: ExecMode.mode_boot.value,
                 ParsedArg.name_selected_env_dir.value: None,
                 ParsedArg.name_final_state.value: None,
                 SyntaxArg.dest_quiet: 1,
@@ -227,9 +217,9 @@ def test_parse_args_final_state():
             },
         ),
         (
-            ["-vvv", "prime"],
+            ["-vvv", "boot"],
             {
-                ParsedArg.name_exec_mode.value: ExecMode.mode_prime.value,
+                ParsedArg.name_exec_mode.value: ExecMode.mode_boot.value,
                 ParsedArg.name_selected_env_dir.value: None,
                 ParsedArg.name_final_state.value: None,
                 SyntaxArg.dest_quiet: 0,
@@ -238,9 +228,9 @@ def test_parse_args_final_state():
             },
         ),
         (
-            ["prime", "--env", "some/path"],
+            ["boot", "--env", "some/path"],
             {
-                ParsedArg.name_exec_mode.value: ExecMode.mode_prime.value,
+                ParsedArg.name_exec_mode.value: ExecMode.mode_boot.value,
                 ParsedArg.name_selected_env_dir.value: "some/path",
                 ParsedArg.name_final_state.value: None,
                 SyntaxArg.dest_quiet: 0,
@@ -251,7 +241,7 @@ def test_parse_args_final_state():
         (
             ["--env", "some/path"],
             {
-                ParsedArg.name_exec_mode.value: ExecMode.mode_prime.value,
+                ParsedArg.name_exec_mode.value: ExecMode.mode_boot.value,
                 ParsedArg.name_selected_env_dir.value: "some/path",
                 ParsedArg.name_final_state.value: None,
                 SyntaxArg.dest_quiet: 0,
@@ -262,7 +252,7 @@ def test_parse_args_final_state():
         (
             ["--env", "default_env"],
             {
-                ParsedArg.name_exec_mode.value: ExecMode.mode_prime.value,
+                ParsedArg.name_exec_mode.value: ExecMode.mode_boot.value,
                 ParsedArg.name_selected_env_dir.value: "default_env",
                 ParsedArg.name_final_state.value: None,
                 SyntaxArg.dest_quiet: 0,
@@ -280,9 +270,8 @@ def test_argparse_subcommands_parametrized(test_argv, expected_dict):
 @pytest.mark.parametrize(
     "test_argv",
     [
-        ["upgrade", "--final_state", "some_state"],
-        ["config", "--final_state", "some_state"],
-        ["check", "--final_state", "some_state"],
+        ["reset", "--final_state", "some_state"],
+        ["eval", "--final_state", "some_state"],
     ],
 )
 def test_argparse_invalid_final_state(test_argv):
@@ -293,9 +282,8 @@ def test_argparse_invalid_final_state(test_argv):
 @pytest.mark.parametrize(
     "test_argv",
     [
-        ["upgrade", "--env", "some/path"],
-        ["config", "--env", "some/path"],
-        ["check", "--env", "some/path"],
+        ["reset", "--env", "some/path"],
+        ["eval", "--env", "some/path"],
     ],
 )
 def test_argparse_invalid_env(test_argv):
@@ -316,20 +304,16 @@ def test_main_help_contains_subcommand_descriptions():
     normalized_output = normalize_space(output)
 
     assert (
-        normalize_space("prime Prime the environment to make it ready to use.")
+        normalize_space("boot Bootstrap the environment to make it ready to use.")
         in normalized_output
     )
     assert (
         normalize_space(
-            "upgrade Re-create `venv`, re-install dependencies, and re-pin versions."
+            "reset Re-create `venv`, re-install dependencies, and re-pin versions."
         )
         in normalized_output
     )
-    assert normalize_space("config Print effective config.") in normalized_output
-    assert (
-        normalize_space("check Check the environment configuration.")
-        in normalized_output
-    )
+    assert normalize_space("eval Print effective config.") in normalized_output
 
 
 def test_subcommand_help_formatting():

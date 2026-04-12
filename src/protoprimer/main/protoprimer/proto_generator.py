@@ -26,7 +26,7 @@ def generate_entry_script_content(
 
     if exec_mode == "start":
         entry_func = "start_app"
-    elif exec_mode == "prime":
+    elif exec_mode == "boot":
         entry_func = "boot_env"
     else:
         raise AssertionError(f"Unrecognized `exec_mode` [{exec_mode}]")

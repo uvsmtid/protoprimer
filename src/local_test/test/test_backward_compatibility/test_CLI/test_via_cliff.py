@@ -2,6 +2,8 @@
 See: FT_78_72_23_04.backward_compatibility.md
 
 Ensuring the stable CLI with `cliff`.
+
+See also `test_parse_args.py` to test for various `argparse` configurations.
 """
 
 import argparse
@@ -12,9 +14,9 @@ from cliff.commandmanager import CommandManager
 from protoprimer import primer_kernel
 
 
-class Prime(Command):
+class Boot(Command):
     """
-    Prime the environment to make it ready to use.
+    Bootstrap the environment to make it ready to use.
     """
 
     def get_parser(self, prog_name):
@@ -43,7 +45,7 @@ class Prime(Command):
         pass
 
 
-class Upgrade(Command):
+class Reset(Command):
     """
     Re-create `venv`, re-install dependencies, and re-pin versions.
     """
@@ -52,7 +54,7 @@ class Upgrade(Command):
         pass
 
 
-class Config(Command):
+class Eval(Command):
     """
     Print effective config.
     """
@@ -77,9 +79,9 @@ class SpecApp(App):
 
     def __init__(self):
         cmd_manager = CommandManager("test_via_cliff")
-        cmd_manager.add_command("prime", Prime)
-        cmd_manager.add_command("upgrade", Upgrade)
-        cmd_manager.add_command("config", Config)
+        cmd_manager.add_command("boot", Boot)
+        cmd_manager.add_command("reset", Reset)
+        cmd_manager.add_command("eval", Eval)
         cmd_manager.add_command("check", Check)
         super().__init__(
             description="Spec App",
@@ -171,7 +173,7 @@ def test_cli_structure_compatibility():
     # then:
     # Subcommand options must match the spec exactly (bidirectional):
 
-    for subcommand in ["prime", "upgrade", "config", "check"]:
+    for subcommand in ["boot", "reset", "eval"]:
         actual_subparser = subparsers_action.choices[subcommand]
         actual_sub_data = extract_parser_data(actual_subparser)
 
@@ -199,13 +201,13 @@ def test_cli_structure_compatibility():
 @pytest.mark.parametrize(
     "argv, expected_dest, expected_val",
     [
-        (["-q", "prime"], "stderr_log_level_quiet", 1),
-        (["prime", "-q"], "stderr_log_level_quiet", 1),
-        (["-v", "-v", "upgrade"], "stderr_log_level_verbose", 2),
-        (["prime", "-e", "my_env"], "selected_env_dir", "my_env"),
-        (["prime", "--env", "my_env"], "selected_env_dir", "my_env"),
-        (["prime", "-c", "my_cmd"], "run_command", "my_cmd"),
-        (["prime", "--command", "my_cmd"], "run_command", "my_cmd"),
+        (["-q", "boot"], "stderr_log_level_quiet", 1),
+        (["boot", "-q"], "stderr_log_level_quiet", 1),
+        (["-v", "-v", "reset"], "stderr_log_level_verbose", 2),
+        (["boot", "-e", "my_env"], "selected_env_dir", "my_env"),
+        (["boot", "--env", "my_env"], "selected_env_dir", "my_env"),
+        (["boot", "-c", "my_cmd"], "run_command", "my_cmd"),
+        (["boot", "--command", "my_cmd"], "run_command", "my_cmd"),
     ],
 )
 def test_parse_args_behavior(argv, expected_dest, expected_val):
@@ -228,7 +230,7 @@ def test_parse_args_behavior(argv, expected_dest, expected_val):
 
 def test_default_subcommand():
     """
-    Verify that `prime` is the default subcommand when none is provided.
+    Verify that `boot` is the default subcommand when none is provided.
     """
 
     # given:
@@ -241,5 +243,5 @@ def test_default_subcommand():
 
     # then:
 
-    assert parsed_args.exec_mode == "prime"
+    assert parsed_args.exec_mode == "boot"
     assert parsed_args.stderr_log_level_quiet == 1

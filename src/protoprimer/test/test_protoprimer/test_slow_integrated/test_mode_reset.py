@@ -25,7 +25,7 @@ from protoprimer.primer_kernel import (
 )
 
 
-def test_upgrade(tmp_path: pathlib.Path):
+def test_reset(tmp_path: pathlib.Path):
 
     # given:
 
@@ -92,7 +92,7 @@ def test_upgrade(tmp_path: pathlib.Path):
     run_primer_main(
         [
             str(proto_kernel_abs_path),
-            ExecMode.mode_prime.value,
+            ExecMode.mode_boot.value,
             SyntaxArg.arg_v,
             SyntaxArg.arg_v,
         ]
@@ -118,7 +118,7 @@ def test_upgrade(tmp_path: pathlib.Path):
     run_primer_main(
         [
             str(proto_kernel_abs_path),
-            ExecMode.mode_upgrade.value,
+            ExecMode.mode_reset.value,
             SyntaxArg.arg_v,
             SyntaxArg.arg_v,
         ]

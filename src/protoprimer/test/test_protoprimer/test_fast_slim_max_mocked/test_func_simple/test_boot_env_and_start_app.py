@@ -36,7 +36,7 @@ class TestStartMain:
     @patch.dict(os.environ, {}, clear=True)
     def test_invalid_main_func_format(self):
         with pytest.raises(ValueError):
-            _start_main(ExecMode.mode_prime, "invalid_format")
+            _start_main(ExecMode.mode_boot, "invalid_format")
 
     @patch.dict(
         os.environ,
@@ -51,7 +51,7 @@ class TestStartMain:
         self.mock_import_module.return_value = mock_module
 
         # when
-        _start_main(ExecMode.mode_prime, "my_module:my_func")
+        _start_main(ExecMode.mode_boot, "my_module:my_func")
 
         # then
         self.mock_import_module.assert_called_once_with("my_module")
@@ -71,7 +71,7 @@ class TestStartMain:
         self.mock_import_module.return_value = mock_module
 
         # when
-        _start_main(ExecMode.mode_prime, "my_module:my_func")
+        _start_main(ExecMode.mode_boot, "my_module:my_func")
 
         # then
         self.mock_import_module.assert_called_once_with("protoprimer.primer_kernel")
@@ -89,7 +89,7 @@ class TestStartMain:
 
         # when/then
         with pytest.raises(AssertionError):
-            _start_main(ExecMode.mode_prime, "my_module:my_func")
+            _start_main(ExecMode.mode_boot, "my_module:my_func")
 
     @patch.dict(
         os.environ,
@@ -101,7 +101,7 @@ class TestStartMain:
         self.mock_import_module.side_effect = ImportError
 
         # when
-        _start_main(ExecMode.mode_prime, "my_module:my_func")
+        _start_main(ExecMode.mode_boot, "my_module:my_func")
 
         # then
         self.mock_proto_main.assert_called_once()
@@ -113,7 +113,7 @@ class TestStartMain:
     )
     def test_default_case(self):
         # when
-        _start_main(ExecMode.mode_prime, "my_module:my_func")
+        _start_main(ExecMode.mode_boot, "my_module:my_func")
 
         # then
         self.mock_import_module.assert_not_called()
@@ -153,7 +153,7 @@ class TestBootEnvAndStartApp:
         # then
         assert (
             os.environ[EnvVar.var_PROTOPRIMER_EXEC_MODE.value]
-            == ExecMode.mode_prime.value
+            == ExecMode.mode_boot.value
         )
         assert os.environ[EnvVar.var_PROTOPRIMER_MAIN_FUNC.value] == main_func
         self.mock_proto_main.assert_called_once()

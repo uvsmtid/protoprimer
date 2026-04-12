@@ -21,7 +21,7 @@ class ThisTestClass(BaseTestClass):
     def test_last_repeated_named_arg_overrides_previous(self):
         # given:
         test_args = [
-            "prime",
+            "boot",
             SyntaxArg.arg_env,
             "first",
             SyntaxArg.arg_env,
