@@ -79,7 +79,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             pin_versions_impl
         )
         mock_state_input_exec_mode_arg_loaded.return_value.eval_own_state.return_value = (
-            "prime"
+            "boot"
         )
 
         # when:
@@ -129,7 +129,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             mock_client_conf_env_dir
         )
         mock_state_input_exec_mode_arg_loaded.return_value.eval_own_state.return_value = (
-            "prime"
+            "boot"
         )
         # when:
         self.env_ctx.state_graph.eval_state(

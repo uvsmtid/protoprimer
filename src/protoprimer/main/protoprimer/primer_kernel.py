@@ -330,20 +330,21 @@ class ExecMode(enum.Enum):
     See FT_11_27_29_83.exec_mode.md
     """
 
-    # TODO: TODO_31_76_38_60.exec_mode_for_shell.md: rename to "boot"
-    # FT_58_74_37_70.boot_vs_start.md / "env bootstrapper"
-    mode_prime = "prime"
+    # FT_85_17_35_21.boot_env.md
+    mode_boot = "boot"
 
-    # FT_58_74_37_70.boot_vs_start.md / "app starter"
+    # FT_05_08_64_67.start_app.md
     mode_start = "start"
 
-    # TODO: TODO_31_76_38_60.exec_mode_for_shell.md: rename to "reset"
-    # See UC_61_12_90_59.upgrade_venv.md
-    mode_upgrade = "upgrade"
+    # FT_42_03_79_73.reset_env.md
+    # UC_61_12_90_59.upgrade_venv.md
+    mode_reset = "reset"
 
-    # TODO: rename to "conf" or "resolve" (because it is what it does)?
-    mode_config = "config"
+    # FT_00_22_19_59.derived_config.md
+    mode_eval = "eval"
 
+    # TODO: TODO_73_71_31_84.exec_mode_check_or_info.md: maybe merge `info` and `check` use cases?
+    #       If we specify which `StateStride` or which `EnvState` to check things for, it might be useful.
     # TODO: implement? It must find its application to check things before `venv`.
     mode_check = "check"
 
@@ -363,7 +364,7 @@ class GraphCoordinates:
 
 
 # TODO: TODO_31_76_38_60.exec_mode_for_shell.md: remove "reinstall" together with "command"
-#       "reinstall" has already been renamed to "upgrade" and "command" will be gone with `ExecMode.run_mode`.
+#       "reinstall" has already been renamed to "upgrade" then to "reset" and "command" will be gone with `ExecMode.run_mode`.
 class CommandAction(enum.Enum):
 
     action_reinstall = "reinstall"
@@ -505,6 +506,7 @@ class PathName(enum.Enum):
 
     path_required_python = "required_python"
 
+    # TODO: TODO_41_10_50_01.implement_env_selector.md: What is the FT (feature_topic)?
     path_python_selector = "python_selector"
 
     path_selected_python = "selected_python"
@@ -569,6 +571,7 @@ class SelectorFunc(enum.Enum):
     Lists selector functions (called from standalone `python` scripts).
     """
 
+    # TODO: TODO_41_10_50_01.implement_env_selector.md: What is the FT (feature_topic)?
     # A function of this signature:
     # def select_python_file_abs_path(required_version: tuple[int, int, int]) -> str | None:
     select_python_file_abs_path = "select_python_file_abs_path"
@@ -591,9 +594,11 @@ class ConfField(enum.Enum):
     ####################################################################################################################
     # `ConfLeap.leap_client`-specific
 
+    # FT_92_51_35_07.local_env_link.md: symlink name:
     # state_local_conf_symlink_abs_path_inited:
     field_local_conf_symlink_rel_path = f"{PathName.path_local_conf.value}_{FilesystemObject.fs_object_symlink.value}_{PathType.path_rel.value}"
 
+    # FT_92_51_35_07.local_env_link.md: default symlink target:
     # state_selected_env_dir_rel_path_inited:
     field_default_env_dir_rel_path = f"{PathName.path_default_env.value}_{FilesystemObject.fs_object_dir.value}_{PathType.path_rel.value}"
 
@@ -610,6 +615,7 @@ class ConfField(enum.Enum):
         f"{PathName.path_required_python.value}_{ValueName.value_version.value}"
     )
 
+    # TODO: TODO_41_10_50_01.implement_env_selector.md: What is the FT (feature_topic)?
     # state_python_selector_file_abs_path_inited:
     field_python_selector_file_rel_path = f"{PathName.path_python_selector.value}_{FilesystemObject.fs_object_file.value}_{PathType.path_rel.value}"
 
@@ -1152,6 +1158,7 @@ fi
         )
 
         # When `os.execve` is mocked:
+        # noinspection PyUnreachableCode
         return 0
 
 
@@ -1209,8 +1216,11 @@ def _get_shell_driver(
     if shell_abs_path is None:
         # TODO: Implement `ShellDriverSh` using `/bin/sh` instead:
         logger.warning(f"env var `{var_shell}` is not set - assuming `bash` as default")
+
         # TODO: How will work on Windows without `shutil`? And without POSIX shell?
+        # noinspection PyDeprecation
         shell_abs_path = shutil.which("bash")
+
         shell_driver_type = ShellDriverBash
     elif os.path.basename(shell_abs_path) == ShellType.shell_bash.value:
         shell_driver_type = ShellDriverBash
@@ -1470,17 +1480,17 @@ def _create_parent_argparser():
 def _create_child_argparser(
     parent_argparsers,
 ):
-    def create_prime_parser(sub_command_parsers):
-        sub_command_desc = "Prime the environment to make it ready to use."
-        parser_prime = sub_command_parsers.add_parser(
-            ExecMode.mode_prime.value,
+    def _create_boot_parser(sub_command_parsers):
+        sub_command_desc = "Bootstrap the environment to make it ready to use."
+        parser_boot = sub_command_parsers.add_parser(
+            ExecMode.mode_boot.value,
             help=sub_command_desc,
             description=sub_command_desc,
         )
-        parser_prime.set_defaults(
-            exec_mode=ExecMode.mode_prime.value,
+        parser_boot.set_defaults(
+            exec_mode=ExecMode.mode_boot.value,
         )
-        parser_prime.add_argument(
+        parser_boot.add_argument(
             SyntaxArg.arg_e,
             SyntaxArg.arg_env,
             type=str,
@@ -1489,11 +1499,11 @@ def _create_child_argparser(
             metavar=ParsedArg.name_selected_env_dir.value,
             help=(
                 f"Path to the env-specific config dir. "
-                f"If specified, `{ExecMode.mode_prime.value}` exec mode creates the symlink to that dir. "
+                f"If specified, `{ExecMode.mode_boot.value}` exec mode creates the symlink to that dir. "
                 f"If not specified, the existing symlink is reused. "
             ),
         )
-        parser_prime.add_argument(
+        parser_boot.add_argument(
             SyntaxArg.arg_c,
             SyntaxArg.arg_command,
             type=str,
@@ -1501,7 +1511,7 @@ def _create_child_argparser(
             metavar=ParsedArg.name_command.value,
             help="Command to execute after the bootstrap.",
         )
-        parser_prime.add_argument(
+        parser_boot.add_argument(
             # TODO: Remove this arg - it does not support any strong use case:
             # TODO: Use "env_state" as `dest` and `metavar`, but `--state` as option name:
             SyntaxArg.arg_final_state,
@@ -1517,31 +1527,31 @@ def _create_child_argparser(
             help=f"Select final `{EnvState.__name__}` name.",
         )
 
-    def create_upgrade_parser(sub_command_parsers):
+    def _create_reset_parser(sub_command_parsers):
         sub_command_desc = (
             "Re-create `venv`, re-install dependencies, and re-pin versions."
         )
-        parser_upgrade = sub_command_parsers.add_parser(
-            ExecMode.mode_upgrade.value,
+        parser_reset = sub_command_parsers.add_parser(
+            ExecMode.mode_reset.value,
             help=sub_command_desc,
             description=sub_command_desc,
         )
-        parser_upgrade.set_defaults(
-            exec_mode=ExecMode.mode_upgrade.value,
+        parser_reset.set_defaults(
+            exec_mode=ExecMode.mode_reset.value,
         )
 
-    def create_config_parser(sub_command_parsers):
+    def _create_eval_parser(sub_command_parsers):
         sub_command_desc = "Print effective config."
-        parser_config = sub_command_parsers.add_parser(
-            ExecMode.mode_config.value,
+        parser_eval = sub_command_parsers.add_parser(
+            ExecMode.mode_eval.value,
             help=sub_command_desc,
             description=sub_command_desc,
         )
-        parser_config.set_defaults(
-            exec_mode=ExecMode.mode_config.value,
+        parser_eval.set_defaults(
+            exec_mode=ExecMode.mode_eval.value,
         )
 
-    def create_check_parser(sub_command_parsers):
+    def _create_check_parser(sub_command_parsers):
         sub_command_desc = "Check the environment configuration."
         parser_check = sub_command_parsers.add_parser(
             ExecMode.mode_check.value,
@@ -1554,7 +1564,7 @@ def _create_child_argparser(
 
     child_argparser = CustomArgumentParser(
         description=(
-            f"The earliest [{PrimerRuntime.runtime_proto.value}] environment bootstrapper [{KeyWord.key_primer.value}]."
+            f"The early [{PrimerRuntime.runtime_proto.value}] environment bootstrapper [{KeyWord.key_primer.value}]."
         ),
         parents=parent_argparsers,
         epilog=f"Version: {__version__} | {ConfConstGeneral.name_protoprimer_site_link} | {pathlib.Path(__file__).resolve()}",
@@ -1563,15 +1573,19 @@ def _create_child_argparser(
     child_argparsers = child_argparser.add_subparsers(
         dest=ParsedArg.name_exec_mode.value,
         title="Exec modes",
-        description=f"Select one of the following sub-commands as an exec mode (default: `{ExecMode.mode_prime.value}`).",
+        description=f"Select one of the following sub-commands as an exec mode (default: `{ExecMode.mode_boot.value}`).",
         metavar="exec_mode",
     )
     child_argparsers.required = False
 
-    create_prime_parser(child_argparsers)
-    create_upgrade_parser(child_argparsers)
-    create_config_parser(child_argparsers)
-    create_check_parser(child_argparsers)
+    _create_boot_parser(child_argparsers)
+    _create_reset_parser(child_argparsers)
+    _create_eval_parser(child_argparsers)
+
+    # TODO: TODO_73_71_31_84.exec_mode_check_or_info.md: implement
+    if False:
+        # noinspection PyUnreachableCode
+        _create_check_parser(child_argparsers)
 
     return child_argparser
 
@@ -1582,8 +1596,8 @@ def parse_args(remaining_argv=None) -> argparse.Namespace:
 
     This function uses a two-phase parsing to allow common options
     which can be placed anywhere:
-    * ... -q prime (option before sub-command)
-    * ... prime -q (option after sub-command)
+    * ... -q boot (option before sub-command `ExecMode.mode_boot`)
+    * ... boot -q (option after sub-command `ExecMode.mode_boot`)
 
     See also: FT_62_88_55_10.CLI_compatibility.md
     """
@@ -1609,9 +1623,9 @@ def parse_args(remaining_argv=None) -> argparse.Namespace:
         and SyntaxArg.arg_help not in remaining_argv
     ):
         try:
-            # Try to parse with `prime` as the default sub-command:
+            # Try to parse with `ExecMode.mode_boot` as the default sub-command:
             parsed_args = child_argparser.parse_args(
-                [ExecMode.mode_prime.value] + remaining_argv,
+                [ExecMode.mode_boot.value] + remaining_argv,
                 namespace=argparse.Namespace(**vars(parsed_args)),
             )
         except ValueError:
@@ -2272,7 +2286,7 @@ class AbstractConfLeapNodeBuilder(ConfigBuilderVisitor):
         kwargs.pop("orig_data", None)
         kwargs.pop("node_name", None)
         kwargs.pop("node_indent", None)
-        field_node: AbstractConfigNode = node_class(
+        field_node: AbstractDictNode = node_class(
             node_name=field_name,
             node_indent=dict_node.node_indent + AbstractConfigNode.indent_size,
             is_present=(field_name in dict_node.orig_data),
@@ -3786,7 +3800,7 @@ class Bootstrapper_state_input_final_state_eval_finalized(
         state_input_final_state_eval_finalized = getattr(
             state_args_parsed,
             ParsedArg.name_final_state.value,
-            # NOTE: The value is only set for `ExecMode.mode_prime`, otherwise, this default is used:
+            # NOTE: The value is only set for `ExecMode.mode_boot`, otherwise, this default is used:
             None,
         )
 
@@ -3849,13 +3863,13 @@ class Bootstrapper_state_exec_mode_executed(AbstractCachingStateNode[bool]):
         selected_strategy: RunStrategy
         if state_input_exec_mode_arg_loaded is None:
             raise ValueError(f"exec mode is not defined")
-        elif state_input_exec_mode_arg_loaded == ExecMode.mode_prime:
+        elif state_input_exec_mode_arg_loaded == ExecMode.mode_boot:
             selected_strategy = ExitCodeReporter(self.env_ctx)
         elif state_input_exec_mode_arg_loaded == ExecMode.mode_start:
             selected_strategy = ExitCodeReporter(self.env_ctx)
-        elif state_input_exec_mode_arg_loaded == ExecMode.mode_upgrade:
+        elif state_input_exec_mode_arg_loaded == ExecMode.mode_reset:
             selected_strategy = ExitCodeReporter(self.env_ctx)
-        elif state_input_exec_mode_arg_loaded == ExecMode.mode_config:
+        elif state_input_exec_mode_arg_loaded == ExecMode.mode_eval:
             selected_strategy = ExitCodeReporter(self.env_ctx)
             state_node = self.env_ctx.state_graph.get_state_node(
                 EnvState.state_effective_config_data_printed.name,
@@ -4307,7 +4321,7 @@ class Bootstrapper_state_ref_root_dir_abs_path_inited(AbstractCachingStateNode[s
         state_ref_root_dir_abs_path_inited: str
         if field_client_dir_rel_path is None:
             warn_once_at_state_stride(
-                f"Field `{ConfField.field_ref_root_dir_rel_path.value}` is [{field_client_dir_rel_path}] - use [{ExecMode.mode_config.value}] sub-command for description.",
+                f"Field `{ConfField.field_ref_root_dir_rel_path.value}` is [{field_client_dir_rel_path}] - use [{ExecMode.mode_eval.value}] sub-command for description.",
                 self.env_ctx.get_stride(),
             )
             state_ref_root_dir_abs_path_inited = proto_code_dir_abs_path
@@ -4539,7 +4553,7 @@ class Bootstrapper_state_selected_env_dir_rel_path_inited(
         env_conf_dir_any_path: str | None = getattr(
             state_args_parsed,
             ParsedArg.name_selected_env_dir.value,
-            # NOTE: The value is only set for `ExecMode.mode_prime`, otherwise, this default is used:
+            # NOTE: The value is only set for `ExecMode.mode_boot`, otherwise, this default is used:
             None,
         )
         if env_conf_dir_any_path is None:
@@ -4555,7 +4569,7 @@ class Bootstrapper_state_selected_env_dir_rel_path_inited(
             )
             if field_default_env_dir_rel_path is None:
                 warn_once_at_state_stride(
-                    f"Field `{ConfField.field_default_env_dir_rel_path.value}` is [{field_default_env_dir_rel_path}] - use [{ExecMode.mode_config.value}] sub-command for description.",
+                    f"Field `{ConfField.field_default_env_dir_rel_path.value}` is [{field_default_env_dir_rel_path}] - use [{ExecMode.mode_eval.value}] sub-command for description.",
                     self.env_ctx.get_stride(),
                 )
                 return None
@@ -4778,6 +4792,7 @@ class Bootstrapper_state_env_conf_file_data_loaded(AbstractCachingStateNode[dict
             # TODO: Be able to detect min scenario and avoid warning:
             # TODO: Still warn when required for some fields:
             if False:
+                # noinspection PyUnreachableCode
                 warn_once_at_state_stride(
                     missing_conf_file_message(state_local_conf_file_abs_path_inited),
                     self.env_ctx.get_stride(),
@@ -5657,7 +5672,7 @@ class Bootstrapper_state_reinstall_triggered(AbstractCachingStateNode[bool]):
             EnvState.state_args_parsed.name
         )
 
-        do_reinstall: bool = state_args_parsed.exec_mode == ExecMode.mode_upgrade.value
+        do_reinstall: bool = state_args_parsed.exec_mode == ExecMode.mode_reset.value
 
         state_stride_py_required_reached: StateStride = self.eval_parent_state(
             EnvState.state_stride_py_required_reached.name
@@ -5894,7 +5909,7 @@ class Bootstrapper_state_stride_py_venv_reached(AbstractCachingStateNode[StateSt
             if state_input_exec_mode_arg_loaded == ExecMode.mode_start:
                 # The `venv` is supposed to be ready in `ExecMode.mode_start`:
                 raise AssertionError(
-                    f"`venv` [{state_local_venv_dir_abs_path_inited}] is supposed to be ready in `ExecMode` [{state_input_exec_mode_arg_loaded.name}] execute `ExecMode` [{ExecMode.mode_prime.name}] to prepare it."
+                    f"`venv` [{state_local_venv_dir_abs_path_inited}] is supposed to be ready in `ExecMode` [{state_input_exec_mode_arg_loaded.name}] execute `ExecMode` [{ExecMode.mode_boot.name}] to prepare it."
                 )
             else:
                 state_venv_driver_prepared.create_venv(
@@ -5912,7 +5927,7 @@ class Bootstrapper_state_stride_py_venv_reached(AbstractCachingStateNode[StateSt
                     state_local_venv_dir_abs_path_inited,
                 ):
                     raise AssertionError(
-                        f"`venv` [{state_local_venv_dir_abs_path_inited}] was not created by this driver [{state_venv_driver_prepared.get_type().name}] retry with [{CommandAction.action_reinstall.value}]"
+                        f"`venv` [{state_local_venv_dir_abs_path_inited}] was not created by this driver [{state_venv_driver_prepared.get_type().name}] retry with [{ExecMode.mode_reset.value}] sub-command."
                     )
 
         return switch_python(
@@ -6270,7 +6285,7 @@ class Bootstrapper_state_proto_code_updated(AbstractCachingStateNode[bool]):
 
         if state_input_exec_mode_arg_loaded == ExecMode.mode_start:
             # The only reason for `EnvState.state_proto_code_updated`
-            # is to update sources, but that has to be done in `ExecMode.mode_prime`.
+            # is to update sources, but that has to be done in `ExecMode.mode_boot`.
             # Skip:
             return False
 
@@ -6585,6 +6600,7 @@ class EnvState(enum.Enum):
 
     state_required_python_version_inited = Bootstrapper_required_python_version_inited
 
+    # TODO: TODO_41_10_50_01.implement_env_selector.md: What is the FT (feature_topic)?
     state_python_selector_file_abs_path_inited = (
         Bootstrapper_state_python_selector_file_abs_path_inited
     )
@@ -7142,7 +7158,7 @@ def rename_to_moved_state_name(state_name: str) -> str:
 def missing_conf_file_message(
     file_abs_path: str,
 ) -> str:
-    return f"File [{file_abs_path}] does not exist - use [{ExecMode.mode_config.value}] sub-command for description."
+    return f"File [{file_abs_path}] does not exist - use [{ExecMode.mode_eval.value}] sub-command for description."
 
 
 def warn_once_at_state_stride(
@@ -7168,7 +7184,7 @@ def can_print_effective_config(
         state_node.env_ctx.get_stride().value
         # `StateStride.stride_py_arbitrary` ensures that the path to `proto_code` is outside `venv`:
         == StateStride.stride_py_arbitrary.value
-        and state_input_exec_mode_arg_loaded == ExecMode.mode_config
+        and state_input_exec_mode_arg_loaded == ExecMode.mode_eval
     )
 
 
@@ -7253,7 +7269,9 @@ def switch_python(
         argv=exec_argv,
         env=required_environ,
     )
+
     # When `os.execve` is mocked:
+    # noinspection PyUnreachableCode
     return next_py_exec
 
 
@@ -7555,6 +7573,7 @@ def select_python_file_abs_path(
     Run the `python` selector script specified in `ConfField.field_python_selector_file_rel_path`.
     """
 
+    # TODO: TODO_41_10_50_01.implement_env_selector.md: What is the FT (feature_topic)?
     # TODO: There is `ConfField.field_python_selector_file_rel_path` - why is there hardcoded `python_selector_module`?
     # TODO: Implement local repo example with `python_selector_module`:
     # TODO: use constants:
@@ -7625,8 +7644,11 @@ def search_python_file_abs_path_by_basename(
     ]
     for python_basename in python_basenames:
         logger.debug(f"trying `python_basename` [{python_basename}]")
+
         # TODO: This will not work on Windows:
+        # noinspection PyDeprecation
         python_abs_path = shutil.which(python_basename)
+
         if python_abs_path is not None:
             try:
                 logger.debug(
@@ -7741,15 +7763,15 @@ def boot_env(
     venv_main_func: str,
 ):
     """
-    This is a helper function for an FT_75_87_82_46 entry script
-    which implements FT_58_74_37_70.boot_vs_start.md / env bootstrapper.
+    This is a helper function for an FT_75_87_82_46.entry_script.md
+    which implements FT_85_17_35_21.boot_env.md.
 
     It bootstraps `venv` from nothing.
     The majority of the entry scripts are supposed to use the `start_app` function instead
     (which only starts the specified `venv_main_func` assuming `venv` has already been bootstrapped).
     """
     _start_main(
-        ExecMode.mode_prime,
+        ExecMode.mode_boot,
         venv_main_func,
     )
 
@@ -7758,8 +7780,8 @@ def start_app(
     venv_main_func: str,
 ):
     """
-    This is a helper function for an FT_75_87_82_46 entry script
-    which implements FT_58_74_37_70.boot_vs_start.md / app starter.
+    This is a helper function for an FT_75_87_82_46.entry_script.md
+    which implements FT_05_08_64_67.start_app.md.
 
     The function fails if `venv` is not created.
     In that case, the user must trigger the bootstrap manually

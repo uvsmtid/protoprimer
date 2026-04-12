@@ -145,11 +145,11 @@ class ThisTestClass(BasePyfakefsTestClass):
             True
         )
         parsed_args = argparse.Namespace(
-            **{ParsedArg.name_exec_mode.value: ExecMode.mode_prime.value},
+            **{ParsedArg.name_exec_mode.value: ExecMode.mode_boot.value},
         )
         mock_state_args_parsed.return_value.eval_own_state.return_value = parsed_args
         mock_state_input_exec_mode_arg_loaded.return_value.eval_own_state.return_value = (
-            ExecMode.mode_prime
+            ExecMode.mode_boot
         )
         # when:
         self.env_ctx.state_graph.eval_state(
@@ -397,11 +397,11 @@ class ThisTestClass(BasePyfakefsTestClass):
             False
         )
         parsed_args = argparse.Namespace(
-            **{ParsedArg.name_exec_mode.value: ExecMode.mode_prime.value},
+            **{ParsedArg.name_exec_mode.value: ExecMode.mode_boot.value},
         )
         mock_state_args_parsed.return_value.eval_own_state.return_value = parsed_args
         mock_state_input_exec_mode_arg_loaded.return_value.eval_own_state.return_value = (
-            ExecMode.mode_prime
+            ExecMode.mode_boot
         )
         # when:
         self.env_ctx.state_graph.eval_state(
@@ -503,10 +503,10 @@ class ThisTestClass(BasePyfakefsTestClass):
             True
         )
         mock_state_args_parsed.return_value.eval_own_state.return_value = (
-            argparse.Namespace(exec_mode=ExecMode.mode_prime.value)
+            argparse.Namespace(exec_mode=ExecMode.mode_boot.value)
         )
         mock_state_input_exec_mode_arg_loaded.return_value.eval_own_state.return_value = (
-            ExecMode.mode_prime
+            ExecMode.mode_boot
         )
 
         # when:
@@ -633,11 +633,11 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
 
         parsed_args = argparse.Namespace(
-            **{ParsedArg.name_exec_mode.value: ExecMode.mode_prime.value},
+            **{ParsedArg.name_exec_mode.value: ExecMode.mode_boot.value},
         )
         mock_state_args_parsed.return_value.eval_own_state.return_value = parsed_args
         mock_state_input_exec_mode_arg_loaded.return_value.eval_own_state.return_value = (
-            ExecMode.mode_prime
+            ExecMode.mode_boot
         )
 
         # when:

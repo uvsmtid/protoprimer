@@ -90,7 +90,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.env_ctx.state_stride = StateStride.stride_py_unknown
 
         mock_state_input_exec_mode_arg_loaded.return_value.eval_own_state.return_value = (
-            ExecMode.mode_prime
+            ExecMode.mode_boot
         )
         mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = (
             "/path/to/venv"
@@ -173,7 +173,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.env_ctx.state_stride = StateStride.stride_src_updated
 
         mock_state_input_exec_mode_arg_loaded.return_value.eval_own_state.return_value = (
-            ExecMode.mode_prime
+            ExecMode.mode_boot
         )
         mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = (
             "/path/to/venv"

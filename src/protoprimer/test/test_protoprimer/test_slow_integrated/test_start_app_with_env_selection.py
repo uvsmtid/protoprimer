@@ -273,7 +273,7 @@ def test_app_started_from_env_special(tmp_path: pathlib.Path):
             str(proto_kernel_abs_path),
             SyntaxArg.arg_v,
             SyntaxArg.arg_v,
-            ExecMode.mode_prime.value,
+            ExecMode.mode_boot.value,
             SyntaxArg.arg_env,
             special_env_dir_name,
         ]
@@ -418,7 +418,7 @@ def test_app_started_with_symlink_to_env_special_but_config_to_env_common(
             str(proto_kernel_abs_path),
             SyntaxArg.arg_v,
             SyntaxArg.arg_v,
-            ExecMode.mode_prime.value,
+            ExecMode.mode_boot.value,
             SyntaxArg.arg_env,
             special_env_dir_name,
         ]

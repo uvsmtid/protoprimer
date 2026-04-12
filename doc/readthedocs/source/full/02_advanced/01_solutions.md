@@ -25,7 +25,7 @@ To eliminate manuals, `protoprimer` has to solve both:
 
 *   Being **arg-less**:
 
-    requires environment-specific configurations to handle differences.
+    it requires environment-specific configurations to handle differences.
 
 *   Being a **one-liner**:
 
@@ -33,15 +33,15 @@ To eliminate manuals, `protoprimer` has to solve both:
 
 </details>
 
-### Multiple constrains
+### Multiple constraints
 
 <details><summary></summary>
 
-*   Compatible with wild `python` version.
+*   Compatible with a wild `python` version.
 
     % See: FT_84_11_73_28.supported_python_versions.md
 
-    Be abele to run even with "extinct dinosaur" `python` versions.
+    Be able to run even with "extinct dinosaur" `python` versions.
 
 *   No dependencies.
 
@@ -91,9 +91,9 @@ To eliminate manuals, `protoprimer` has to solve both:
 
     Without user input (arg-less one-liner):
 
-    *   not only does **everything** have to be found inside the configuration
+    *   not only must **all settings** come from configuration
 
-    *   one of the multiple configurations must be automatically selected
+    *   but one of the multiple configurations must be auto-selected
 
 *   Support private infrastructure.
 
@@ -113,7 +113,7 @@ To eliminate manuals, `protoprimer` has to solve both:
 
     To run scripts in `venv`, shebang can be used.
 
-    A typical shebang length is 128 chars.
+    The shebang length limit is typically 128 chars.
 
     Therefore, a `venv` with long paths cannot be accessed via shebang.
 

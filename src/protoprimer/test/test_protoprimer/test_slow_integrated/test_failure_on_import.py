@@ -64,7 +64,7 @@ def test_failure_on_import(tmp_path: pathlib.Path):
     non_existing_function = "non_existing_function"
     entry_script_abs_path = ref_root_abs_path / "test_entry_script"
     entry_script_content = generate_entry_script_content(
-        ExecMode.mode_prime.value,
+        ExecMode.mode_boot.value,
         str(proto_kernel_abs_path),
         str(entry_script_abs_path),
         f"{non_existing_module}",

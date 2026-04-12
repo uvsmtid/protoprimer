@@ -109,7 +109,7 @@ def test_python_from_arbitrary_venv_with_start_app(
 
     boot_env_script_abs_path = ref_root_abs_path / "boot_env"
     boot_env_script_content = generate_entry_script_content(
-        ExecMode.mode_prime.value,
+        ExecMode.mode_boot.value,
         str(proto_kernel_abs_path),
         str(boot_env_script_abs_path),
         f"{cmd_boot_env.__name__}",
@@ -277,7 +277,7 @@ def test_python_from_required_venv_with_start_app(
 
     boot_env_script_abs_path = ref_root_abs_path / "boot_env"
     boot_env_script_content = generate_entry_script_content(
-        ExecMode.mode_prime.value,
+        ExecMode.mode_boot.value,
         str(proto_kernel_abs_path),
         str(boot_env_script_abs_path),
         f"{cmd_boot_env.__name__}",

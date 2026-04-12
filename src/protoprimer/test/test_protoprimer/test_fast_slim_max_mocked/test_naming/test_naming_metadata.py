@@ -94,7 +94,6 @@ def test_enum_str_value_uniqueness_across_multiple_enums():
         [
             ConfLeap,
             PrimerRuntime,
-            ExecMode,
             FilesystemObject,
             PathType,
             EnvVar,

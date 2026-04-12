@@ -145,7 +145,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         # given:
 
         mock_state_input_exec_mode_arg_loaded.return_value.eval_own_state.return_value = (
-            ExecMode.mode_prime
+            ExecMode.mode_boot
         )
 
         assert_parent_factories_mocked(
@@ -223,7 +223,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         # given:
 
         mock_state_input_exec_mode_arg_loaded.return_value.eval_own_state.return_value = (
-            ExecMode.mode_prime
+            ExecMode.mode_boot
         )
 
         assert_parent_factories_mocked(
@@ -307,7 +307,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         # given:
 
         mock_state_input_exec_mode_arg_loaded.return_value.eval_own_state.return_value = (
-            ExecMode.mode_prime
+            ExecMode.mode_boot
         )
 
         assert_parent_factories_mocked(
@@ -386,7 +386,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         # given:
 
         mock_state_input_exec_mode_arg_loaded.return_value.eval_own_state.return_value = (
-            ExecMode.mode_prime
+            ExecMode.mode_boot
         )
 
         assert_parent_factories_mocked(
@@ -465,7 +465,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         # given:
 
         mock_state_input_exec_mode_arg_loaded.return_value.eval_own_state.return_value = (
-            ExecMode.mode_prime
+            ExecMode.mode_boot
         )
 
         assert_parent_factories_mocked(
@@ -544,7 +544,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         # given:
 
         mock_state_input_exec_mode_arg_loaded.return_value.eval_own_state.return_value = (
-            ExecMode.mode_prime
+            ExecMode.mode_boot
         )
 
         assert_parent_factories_mocked(
@@ -621,7 +621,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     ):
         # given:
         mock_state_input_exec_mode_arg_loaded.return_value.eval_own_state.return_value = (
-            ExecMode.mode_prime
+            ExecMode.mode_boot
         )
         assert_parent_factories_mocked(
             self.env_ctx,

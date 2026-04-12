@@ -17,7 +17,7 @@ def test_generate_entry_script_content_no_env_vars():
     # when:
 
     generated_content = generate_entry_script_content(
-        ExecMode.mode_prime.value,
+        ExecMode.mode_boot.value,
         "/dummy/path/proto_kernel.py",
         "/dummy/path/entry.py",
         module_name,
@@ -40,7 +40,7 @@ def test_generate_entry_script_content_with_env_vars():
     # when:
 
     generated_content = generate_entry_script_content(
-        ExecMode.mode_prime.value,
+        ExecMode.mode_boot.value,
         "/dummy/path/proto_kernel.py",
         "/dummy/path/entry.py",
         module_name,

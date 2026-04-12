@@ -93,7 +93,7 @@ def test_stride_py_required_to_next_stride_deps_updated(
 
     mock_get_path_to_curr_python.return_value = "/path/to/venv/bin/python"
     mock_state_input_exec_mode_arg_loaded.return_value.eval_own_state.return_value = (
-        ExecMode.mode_prime
+        ExecMode.mode_boot
     )
     mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = (
         "/path/to/venv"
@@ -177,7 +177,7 @@ def test_stride_deps_updated_to_same_stride_deps_updated(
         "path/to/whatever"
     )
     mock_state_input_exec_mode_arg_loaded.return_value.eval_own_state.return_value = (
-        ExecMode.mode_prime
+        ExecMode.mode_boot
     )
     mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = (
         "/path/to/venv"

@@ -88,7 +88,7 @@ def test_reinstall_true(
     mock_state_args_parsed.return_value.eval_own_state.return_value = (
         argparse.Namespace(
             **{
-                ParsedArg.name_exec_mode.value: ExecMode.mode_upgrade.value,
+                ParsedArg.name_exec_mode.value: ExecMode.mode_reset.value,
             }
         )
     )
@@ -177,7 +177,7 @@ def test_reinstall_false(
     mock_state_args_parsed.return_value.eval_own_state.return_value = (
         argparse.Namespace(
             **{
-                ParsedArg.name_exec_mode.value: ExecMode.mode_prime.value,
+                ParsedArg.name_exec_mode.value: ExecMode.mode_boot.value,
             }
         )
     )

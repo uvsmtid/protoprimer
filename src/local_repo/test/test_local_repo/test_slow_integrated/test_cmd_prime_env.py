@@ -82,7 +82,7 @@ def test_prime_env(tmp_path: pathlib.Path):
 
     prime_env_script_abs_path = ref_root_abs_path / "prime_env"
     prime_env_script_content = generate_entry_script_content(
-        ExecMode.mode_prime.value,
+        ExecMode.mode_boot.value,
         str(proto_kernel_abs_path),
         str(prime_env_script_abs_path),
         f"{cmd_prime_env.__name__}",

@@ -67,11 +67,11 @@ def test_instant_scenario(tmp_path: Path):
     assert os.path.exists(ref_root_abs_path / TopDir.dir_venv.value)
 
     # when:
-    # re-run in config mode - it should not fail:
+    # re-run in eval mode - it should not fail:
 
     run_primer_main(
         [
             str(proto_kernel_abs_path),
-            ExecMode.mode_config.value,
+            ExecMode.mode_eval.value,
         ]
     )
