@@ -16,9 +16,7 @@ def _get_line_number_from_source(
     Helper function to get the line number of an object (enum item or class)
     in its source file based on a search pattern.
     """
-    source_file_path = inspect.getsourcefile(
-        given_obj.__class__ if isinstance(given_obj, enum.Enum) else given_obj
-    )
+    source_file_path = inspect.getsourcefile(given_obj.__class__ if isinstance(given_obj, enum.Enum) else given_obj)
     if not source_file_path:
         raise ValueError(f"Could not find source file for `{obj_name}` [{given_obj}]")
 
@@ -30,9 +28,7 @@ def _get_line_number_from_source(
             if search_pattern in source_line:
                 return i + 1
 
-    raise ValueError(
-        f"Could not find `{obj_name}` [{given_obj}] with any of patterns [{search_patterns}] in source file [{source_file_path}]"
-    )
+    raise ValueError(f"Could not find `{obj_name}` [{given_obj}] with any of patterns [{search_patterns}] in source file [{source_file_path}]")
 
 
 def get_enum_item_line_number(

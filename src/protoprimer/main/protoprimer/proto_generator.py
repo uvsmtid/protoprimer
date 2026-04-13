@@ -21,6 +21,7 @@ def generate_entry_script_content(
             [
                 f'    os.environ["{var_name}"] = "{var_value}"'
                 for var_name, var_value in env_vars.items()
+                #
             ]
         )
 

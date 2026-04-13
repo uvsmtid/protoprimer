@@ -28,9 +28,7 @@ class TestParentStateOrdering:
     @pytest.mark.parametrize("exec_mode", list(ExecMode))
     @pytest.mark.parametrize("entry_func", list(EntryFunc))
     # noinspection PyPep8Naming
-    def test_EnvState_parent_order(
-        self, exec_mode: ExecMode, entry_func: EntryFunc
-    ) -> None:
+    def test_EnvState_parent_order(self, exec_mode: ExecMode, entry_func: EntryFunc) -> None:
         # given:
         env_ctx = EnvContext()
         env_ctx.graph_coordinates.exec_mode = exec_mode
@@ -38,18 +36,14 @@ class TestParentStateOrdering:
 
         state_graph_instance = env_ctx.state_graph
 
-        env_state_name_to_ordinal = {
-            env_state.name: index for index, env_state in enumerate(EnvState)
-        }
+        env_state_name_to_ordinal = {env_state.name: index for index, env_state in enumerate(EnvState)}
 
         violations = []
 
         # when:
         for env_state in EnvState:
             state_node = state_graph_instance.get_state_node(env_state.name, env_ctx)
-            assert (
-                state_node is not None
-            ), f"`{StateNode.__name__}` for [{env_state.name}] not found"
+            assert state_node is not None, f"`{StateNode.__name__}` for [{env_state.name}] not found"
 
             parent_states = state_node.get_parent_states()
             if len(parent_states) <= 1:
@@ -59,8 +53,6 @@ class TestParentStateOrdering:
 
             # then:
             if parent_ordinals != sorted(parent_ordinals):
-                violations.append(
-                    f"In `{env_state.name}`, parents [{parent_states}] with ordinals [{parent_ordinals}] are not sorted."
-                )
+                violations.append(f"In `{env_state.name}`, parents [{parent_states}] with ordinals [{parent_ordinals}] are not sorted.")
 
         _report_violations(violations)

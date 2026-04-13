@@ -60,9 +60,7 @@ def test_format_stderr_info_verbosity():
     formatted_log = formatter.format(record)
 
     # then
-    expected_msg = (
-        "12:00:00.000Z pid:12345 INFO py:test_exec s:test_stride Test message"
-    )
+    expected_msg = "12:00:00.000Z pid:12345 INFO py:test_exec s:test_stride Test message"
     expected_color = StderrLogFormatter.color_set.get("INFO")
     expected = f"{expected_color}{expected_msg}{TermColor.reset_style.value}"
     assert formatted_log == expected

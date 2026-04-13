@@ -43,23 +43,6 @@ def test_eval_parents():
     state_node._eval_state_once.assert_called_once()
 
 
-def test_no_eval_parents():
-    # given:
-    mock_env_ctx = MagicMock()
-    parent_states = ["parent1"]
-    state_node = AbstractCachingStateNode(
-        mock_env_ctx, parent_states, "my_state", auto_bootstrap_parents=False
-    )
-    state_node._eval_state_once = MagicMock(return_value="my_value")
-
-    # when:
-    state_node.eval_own_state()
-
-    # then:
-    mock_env_ctx.state_graph.eval_state.assert_not_called()
-    state_node._eval_state_once.assert_called_once()
-
-
 def test_eval_state_once_raises_not_implemented_error():
     # given:
     state_node = AbstractCachingStateNode(MagicMock(), [], "my_state")

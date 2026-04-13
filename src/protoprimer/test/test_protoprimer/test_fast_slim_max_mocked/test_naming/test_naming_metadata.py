@@ -35,9 +35,7 @@ def verify_enum_string_uniqueness(
         seen_values.add(enum_item.value)
 
     if value_duplicates:
-        raise AssertionError(
-            f"Duplicate string values found in enum [{enum_type.__name__}]: {list(value_duplicates)}"
-        )
+        raise AssertionError(f"Duplicate string values found in enum [{enum_type.__name__}]: {list(value_duplicates)}")
 
 
 def check_enum_string_uniqueness_across_all(enum_types: List[Type[enum.Enum]]):
@@ -61,14 +59,9 @@ def check_enum_string_uniqueness_across_all(enum_types: List[Type[enum.Enum]]):
     if cross_enum_duplicates:
         error_messages = []
         for enum_value, enum_names in cross_enum_duplicates.items():
-            error_messages.append(
-                f"Value '{enum_value}' is repeated in enums: {', '.join(enum_names)}"
-            )
+            error_messages.append(f"Value '{enum_value}' is repeated in enums: {', '.join(enum_names)}")
 
-        raise AssertionError(
-            "Duplicate string values found across different enums:\n"
-            + "\n".join(error_messages)
-        )
+        raise AssertionError("Duplicate string values found across different enums:\n" + "\n".join(error_messages))
 
 
 def test_relationship():

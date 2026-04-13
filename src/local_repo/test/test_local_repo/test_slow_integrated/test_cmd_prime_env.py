@@ -39,9 +39,7 @@ def test_prime_env(tmp_path: pathlib.Path):
 
     # ===
 
-    proto_code_dir_abs_path = (
-        ref_root_abs_path / ConfConstInput.default_proto_conf_dir_rel_path
-    )
+    proto_code_dir_abs_path = ref_root_abs_path / ConfConstInput.default_proto_conf_dir_rel_path
     proto_kernel_abs_path = create_plain_proto_code(proto_code_dir_abs_path)
     create_conf_primer_file(
         ref_root_abs_path,
@@ -55,9 +53,7 @@ def test_prime_env(tmp_path: pathlib.Path):
 
     # ===
 
-    conf_env_dir_abs_path = (
-        ref_root_abs_path / ConfConstClient.default_default_env_dir_rel_path
-    )
+    conf_env_dir_abs_path = ref_root_abs_path / ConfConstClient.default_default_env_dir_rel_path
 
     create_conf_env_file(
         ref_root_abs_path,
@@ -67,9 +63,7 @@ def test_prime_env(tmp_path: pathlib.Path):
 
     # ===
 
-    conf_client_dir_abs_path = (
-        ref_root_abs_path / ConfConstPrimer.default_client_conf_dir_rel_path
-    )
+    conf_client_dir_abs_path = ref_root_abs_path / ConfConstPrimer.default_client_conf_dir_rel_path
 
     create_conf_client_file(
         ref_root_abs_path,
@@ -90,9 +84,7 @@ def test_prime_env(tmp_path: pathlib.Path):
     )
     with open(prime_env_script_abs_path, "w") as f:
         f.write(prime_env_script_content)
-    prime_env_script_abs_path.chmod(
-        prime_env_script_abs_path.stat().st_mode | stat.S_IEXEC
-    )
+    prime_env_script_abs_path.chmod(prime_env_script_abs_path.stat().st_mode | stat.S_IEXEC)
 
     # ===
 

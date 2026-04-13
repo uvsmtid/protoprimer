@@ -39,12 +39,8 @@ def test_start_app_from_env_default(tmp_path: pathlib.Path):
 
     # === create `ConfLeap.leap_primer`
 
-    proto_code_dir_abs_path = (
-        ref_root_abs_path / ConfConstInput.default_proto_conf_dir_rel_path
-    )
-    proto_kernel_abs_path: pathlib.Path = create_plain_proto_code(
-        proto_code_dir_abs_path
-    )
+    proto_code_dir_abs_path = ref_root_abs_path / ConfConstInput.default_proto_conf_dir_rel_path
+    proto_kernel_abs_path: pathlib.Path = create_plain_proto_code(proto_code_dir_abs_path)
     create_conf_primer_file(
         ref_root_abs_path,
         proto_code_dir_abs_path,
@@ -58,9 +54,7 @@ def test_start_app_from_env_default(tmp_path: pathlib.Path):
         str(arbitrary_venv_dir),
     )
     venv_driver.create_venv(str(arbitrary_venv_dir))
-    arbitrary_venv_python = (
-        arbitrary_venv_dir / ConfConstGeneral.file_rel_path_venv_python
-    )
+    arbitrary_venv_python = arbitrary_venv_dir / ConfConstGeneral.file_rel_path_venv_python
 
     # === create `pyproject.toml`
 
@@ -93,9 +87,7 @@ def test_start_app_from_env_default(tmp_path: pathlib.Path):
 
     # === create `ConfLeap.leap_client` / `ConfConstClient.common_env_name`
 
-    conf_client_dir_abs_path = (
-        ref_root_abs_path / ConfConstPrimer.default_client_conf_dir_rel_path
-    )
+    conf_client_dir_abs_path = ref_root_abs_path / ConfConstPrimer.default_client_conf_dir_rel_path
 
     create_conf_client_file(
         ref_root_abs_path,
@@ -122,9 +114,7 @@ def test_start_app_from_env_default(tmp_path: pathlib.Path):
     )
     with open(start_app_script_abs_path, "w") as f:
         f.write(start_app_script_content)
-    start_app_script_abs_path.chmod(
-        start_app_script_abs_path.stat().st_mode | stat.S_IEXEC
-    )
+    start_app_script_abs_path.chmod(start_app_script_abs_path.stat().st_mode | stat.S_IEXEC)
 
     # when:
     # bootstrap with `ConfConstClient.common_env_name`
@@ -178,12 +168,8 @@ def test_app_started_from_env_special(tmp_path: pathlib.Path):
 
     # === create `ConfLeap.leap_primer`
 
-    proto_code_dir_abs_path = (
-        ref_root_abs_path / ConfConstInput.default_proto_conf_dir_rel_path
-    )
-    proto_kernel_abs_path: pathlib.Path = create_plain_proto_code(
-        proto_code_dir_abs_path
-    )
+    proto_code_dir_abs_path = ref_root_abs_path / ConfConstInput.default_proto_conf_dir_rel_path
+    proto_kernel_abs_path: pathlib.Path = create_plain_proto_code(proto_code_dir_abs_path)
     create_conf_primer_file(
         ref_root_abs_path,
         proto_code_dir_abs_path,
@@ -197,9 +183,7 @@ def test_app_started_from_env_special(tmp_path: pathlib.Path):
         str(arbitrary_venv_dir),
     )
     venv_driver.create_venv(str(arbitrary_venv_dir))
-    arbitrary_venv_python = (
-        arbitrary_venv_dir / ConfConstGeneral.file_rel_path_venv_python
-    )
+    arbitrary_venv_python = arbitrary_venv_dir / ConfConstGeneral.file_rel_path_venv_python
 
     # === create `pyproject.toml`
 
@@ -232,9 +216,7 @@ def test_app_started_from_env_special(tmp_path: pathlib.Path):
 
     # === create `ConfLeap.leap_client` / `special_env`
 
-    conf_client_dir_abs_path = (
-        ref_root_abs_path / ConfConstPrimer.default_client_conf_dir_rel_path
-    )
+    conf_client_dir_abs_path = ref_root_abs_path / ConfConstPrimer.default_client_conf_dir_rel_path
 
     create_conf_client_file(
         ref_root_abs_path,
@@ -261,9 +243,7 @@ def test_app_started_from_env_special(tmp_path: pathlib.Path):
     )
     with open(start_app_script_abs_path, "w") as f:
         f.write(start_app_script_content)
-    start_app_script_abs_path.chmod(
-        start_app_script_abs_path.stat().st_mode | stat.S_IEXEC
-    )
+    start_app_script_abs_path.chmod(start_app_script_abs_path.stat().st_mode | stat.S_IEXEC)
 
     # when:
     # bootstrap with `special_env`
@@ -323,12 +303,8 @@ def test_app_started_with_symlink_to_env_special_but_config_to_env_common(
 
     # === create `ConfLeap.leap_primer`
 
-    proto_code_dir_abs_path = (
-        ref_root_abs_path / ConfConstInput.default_proto_conf_dir_rel_path
-    )
-    proto_kernel_abs_path: pathlib.Path = create_plain_proto_code(
-        proto_code_dir_abs_path
-    )
+    proto_code_dir_abs_path = ref_root_abs_path / ConfConstInput.default_proto_conf_dir_rel_path
+    proto_kernel_abs_path: pathlib.Path = create_plain_proto_code(proto_code_dir_abs_path)
     create_conf_primer_file(
         ref_root_abs_path,
         proto_code_dir_abs_path,
@@ -342,9 +318,7 @@ def test_app_started_with_symlink_to_env_special_but_config_to_env_common(
         str(arbitrary_venv_dir),
     )
     venv_driver.create_venv(str(arbitrary_venv_dir))
-    arbitrary_venv_python = (
-        arbitrary_venv_dir / ConfConstGeneral.file_rel_path_venv_python
-    )
+    arbitrary_venv_python = arbitrary_venv_dir / ConfConstGeneral.file_rel_path_venv_python
 
     # === create `pyproject.toml`
 
@@ -377,9 +351,7 @@ def test_app_started_with_symlink_to_env_special_but_config_to_env_common(
 
     # === create `ConfLeap.leap_client` / `special_env`
 
-    conf_client_dir_abs_path = (
-        ref_root_abs_path / ConfConstPrimer.default_client_conf_dir_rel_path
-    )
+    conf_client_dir_abs_path = ref_root_abs_path / ConfConstPrimer.default_client_conf_dir_rel_path
 
     create_conf_client_file(
         ref_root_abs_path,
@@ -406,9 +378,7 @@ def test_app_started_with_symlink_to_env_special_but_config_to_env_common(
     )
     with open(start_app_script_abs_path, "w") as f:
         f.write(start_app_script_content)
-    start_app_script_abs_path.chmod(
-        start_app_script_abs_path.stat().st_mode | stat.S_IEXEC
-    )
+    start_app_script_abs_path.chmod(start_app_script_abs_path.stat().st_mode | stat.S_IEXEC)
 
     # when:
     # bootstrap with `special_env`

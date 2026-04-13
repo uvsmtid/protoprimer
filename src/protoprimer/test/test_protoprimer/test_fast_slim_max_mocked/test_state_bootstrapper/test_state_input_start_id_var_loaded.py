@@ -25,9 +25,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
     # noinspection PyMethodMayBeStatic
     def test_relationship(self):
-        assert_test_module_name_embeds_str(
-            EnvState.state_input_start_id_var_loaded.name
-        )
+        assert_test_module_name_embeds_str(EnvState.state_input_start_id_var_loaded.name)
 
     @patch.dict(
         f"{os.__name__}.environ",
@@ -46,9 +44,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             EnvState.state_input_start_id_var_loaded.name,
         )
         # when:
-        state_value = self.env_ctx.state_graph.eval_state(
-            EnvState.state_input_start_id_var_loaded.name, self.env_ctx
-        )
+        state_value = self.env_ctx.state_graph.eval_state(EnvState.state_input_start_id_var_loaded.name, self.env_ctx)
         # then:
         self.assertEqual(
             "default_start_id",
@@ -69,8 +65,6 @@ class ThisTestClass(BasePyfakefsTestClass):
             EnvState.state_input_start_id_var_loaded.name,
         )
         # when:
-        state_value = self.env_ctx.state_graph.eval_state(
-            EnvState.state_input_start_id_var_loaded.name, self.env_ctx
-        )
+        state_value = self.env_ctx.state_graph.eval_state(EnvState.state_input_start_id_var_loaded.name, self.env_ctx)
         # then:
         self.assertEqual("explicit_start_id", state_value)

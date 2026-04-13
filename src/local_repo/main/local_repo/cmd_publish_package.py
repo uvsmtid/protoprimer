@@ -32,9 +32,7 @@ logger: logging.Logger = logging.getLogger()
 def custom_main():
     publish_package(
         # TODO: FT_93_57_03_75.app_vs_lib.md: Get ref_root from `protoprimer` config (as a lib) instead:
-        client_dir=os.path.dirname(
-            os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
-        )
+        client_dir=os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))))
     )
 
 
@@ -191,9 +189,7 @@ def _publish_package(
                 file=sys.stderr,
             )
         else:
-            raise RuntimeError(
-                f"current HEAD is not in {git_main_remote}/{git_main_branch}"
-            )
+            raise RuntimeError(f"current HEAD is not in {git_main_remote}/{git_main_branch}")
     else:
         print(
             f"INFO: current HEAD is in {git_main_remote}/{git_main_branch}",
@@ -271,9 +267,7 @@ def _publish_package(
     # This will prompt for login credentials:
     if repository_url:
         # See: FT_17_41_51_83.private_artifact_repo.md:
-        get_command_code(
-            f"{twine_command_path} upload --verbose --repository-url {repository_url} {dist_file}"
-        )
+        get_command_code(f"{twine_command_path} upload --verbose --repository-url {repository_url} {dist_file}")
     else:
         get_command_code(f"{twine_command_path} upload --verbose {dist_file}")
 
@@ -284,8 +278,6 @@ def _publish_package(
     # Equivalent of: sed --in-place
     with open(version_file_path, "r") as f:
         content = f.read()
-    new_content = content.replace(
-        distrib_version, f"TODO_INCREASE_VERSION.{distrib_version}"
-    )
+    new_content = content.replace(distrib_version, f"TODO_INCREASE_VERSION.{distrib_version}")
     with open(version_file_path, "w") as f:
         f.write(new_content)

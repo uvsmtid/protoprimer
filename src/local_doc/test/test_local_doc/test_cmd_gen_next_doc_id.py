@@ -15,9 +15,7 @@ def test_get_prefix_and_ids_happy_path() -> None:
     ]
 
     # when:
-    doc_prefix, existing_ids, num_id_parts = cmd_gen_next_doc_id.get_prefix_and_ids(
-        file_names_list
-    )
+    doc_prefix, existing_ids, num_id_parts = cmd_gen_next_doc_id.get_prefix_and_ids(file_names_list)
 
     # then:
     assert doc_prefix == "PR"
@@ -35,9 +33,7 @@ def test_get_prefix_and_ids_mixed_prefixes(mock_logger: MagicMock) -> None:
     ]
 
     # when:
-    doc_prefix, existing_ids, num_id_parts = cmd_gen_next_doc_id.get_prefix_and_ids(
-        file_names_list
-    )
+    doc_prefix, existing_ids, num_id_parts = cmd_gen_next_doc_id.get_prefix_and_ids(file_names_list)
 
     # then:
     assert doc_prefix == "PR"
@@ -56,9 +52,7 @@ def test_get_prefix_and_ids_inconsistent_id_lengths(mock_logger: MagicMock) -> N
     ]
 
     # when:
-    doc_prefix, existing_ids, num_id_parts = cmd_gen_next_doc_id.get_prefix_and_ids(
-        file_names_list
-    )
+    doc_prefix, existing_ids, num_id_parts = cmd_gen_next_doc_id.get_prefix_and_ids(file_names_list)
 
     # then:
     assert doc_prefix == "PR"
@@ -76,9 +70,7 @@ def test_get_prefix_and_ids_no_valid_files() -> None:
     ]
 
     # when:
-    doc_prefix, existing_ids, num_id_parts = cmd_gen_next_doc_id.get_prefix_and_ids(
-        file_names_list
-    )
+    doc_prefix, existing_ids, num_id_parts = cmd_gen_next_doc_id.get_prefix_and_ids(file_names_list)
 
     # then:
     assert doc_prefix is None
@@ -91,9 +83,7 @@ def test_get_prefix_and_ids_empty_list() -> None:
     file_names_list: list[str] = []
 
     # when:
-    doc_prefix, existing_ids, num_id_parts = cmd_gen_next_doc_id.get_prefix_and_ids(
-        file_names_list
-    )
+    doc_prefix, existing_ids, num_id_parts = cmd_gen_next_doc_id.get_prefix_and_ids(file_names_list)
 
     # then:
     assert doc_prefix is None
@@ -171,9 +161,7 @@ def test_generate_next_id_user_scenario(mock_choice: MagicMock) -> None:
         "FT_93_57_03_75.app_vs_lib.md",
         "FT_99_89_51_06.venv_shell.md",
     ]
-    _, existing_ids, num_id_parts = cmd_gen_next_doc_id.get_prefix_and_ids(
-        file_names_list
-    )
+    _, existing_ids, num_id_parts = cmd_gen_next_doc_id.get_prefix_and_ids(file_names_list)
 
     # Let's say it picks '5' for the first digit.
     # Then for the second digit, it looks at IDs starting with 5: "57...", "59...".
@@ -220,9 +208,7 @@ def test_main_success(
         "PR_03_04.txt",
     ]
     mock_os.path.isfile.return_value = True
-    mock_argparse.ArgumentParser.return_value.parse_args.return_value = MagicMock(
-        doc_dir="dummy_dir"
-    )
+    mock_argparse.ArgumentParser.return_value.parse_args.return_value = MagicMock(doc_dir="dummy_dir")
 
     # when:
     cmd_gen_next_doc_id.gen_next_doc_id()
@@ -236,14 +222,10 @@ def test_main_success(
 @patch(f"{cmd_gen_next_doc_id.__name__}.os")
 @patch(f"{cmd_gen_next_doc_id.__name__}.argparse")
 @patch(f"{cmd_gen_next_doc_id.__name__}.logger")
-def test_main_dir_not_found(
-    mock_logger: MagicMock, mock_argparse: MagicMock, mock_os: MagicMock
-) -> None:
+def test_main_dir_not_found(mock_logger: MagicMock, mock_argparse: MagicMock, mock_os: MagicMock) -> None:
     # given:
     mock_os.path.isdir.return_value = False
-    mock_argparse.ArgumentParser.return_value.parse_args.return_value = MagicMock(
-        doc_dir="non_existent_dir"
-    )
+    mock_argparse.ArgumentParser.return_value.parse_args.return_value = MagicMock(doc_dir="non_existent_dir")
 
     # when:
     cmd_gen_next_doc_id.gen_next_doc_id()

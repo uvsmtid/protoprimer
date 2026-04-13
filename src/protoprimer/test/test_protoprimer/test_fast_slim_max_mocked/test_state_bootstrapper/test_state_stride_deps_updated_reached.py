@@ -30,26 +30,14 @@ def test_relationship():
     assert_test_module_name_embeds_str(EnvState.state_stride_deps_updated_reached.name)
 
 
-@patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.create_state_node"
-)
-@patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.create_state_node"
-)
+@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.get_path_to_curr_python")
 @patch(f"{primer_kernel.__name__}.switch_python")
-@patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_proto_code_file_abs_path_inited.__name__}.create_state_node"
-)
-@patch(
-    f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node"
-)
-@patch(
-    f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.create_state_node"
-)
-@patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_version_constraints_generated.__name__}.create_state_node"
-)
+@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_version_constraints_generated.__name__}.create_state_node")
 def test_stride_py_required_to_next_stride_deps_updated(
     mock_state_version_constraints_generated,
     mock_state_input_exec_mode_arg_loaded,
@@ -69,41 +57,27 @@ def test_stride_py_required_to_next_stride_deps_updated(
         EnvState.state_stride_deps_updated_reached.name,
     )
 
-    mock_state_args_parsed.return_value.eval_own_state.return_value = (
-        argparse.Namespace(
-            **{
-                ParsedArg.name_reinstall.value: False,
-            }
-        )
+    mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(
+        **{
+            ParsedArg.name_reinstall.value: False,
+        }
     )
-    mock_state_input_start_id_var_loaded.return_value.eval_own_state.return_value = (
-        "mock_start_id"
-    )
+    mock_state_input_start_id_var_loaded.return_value.eval_own_state.return_value = "mock_start_id"
 
-    mock_state_version_constraints_generated.return_value.eval_own_state.return_value = (
-        True
-    )
+    mock_state_version_constraints_generated.return_value.eval_own_state.return_value = True
 
     env_ctx.state_stride = StateStride.stride_py_required
     mock_switch_python.return_value = StateStride.stride_deps_updated
 
-    mock_state_proto_code_file_abs_path_inited.return_value.eval_own_state.return_value = (
-        "path/to/whatever"
-    )
+    mock_state_proto_code_file_abs_path_inited.return_value.eval_own_state.return_value = "path/to/whatever"
 
     mock_get_path_to_curr_python.return_value = "/path/to/venv/bin/python"
-    mock_state_input_exec_mode_arg_loaded.return_value.eval_own_state.return_value = (
-        ExecMode.mode_boot
-    )
-    mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = (
-        "/path/to/venv"
-    )
+    mock_state_input_exec_mode_arg_loaded.return_value.eval_own_state.return_value = ExecMode.mode_boot
+    mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = "/path/to/venv"
 
     # when:
 
-    state_value = env_ctx.state_graph.eval_state(
-        EnvState.state_stride_deps_updated_reached.name, env_ctx
-    )
+    state_value = env_ctx.state_graph.eval_state(EnvState.state_stride_deps_updated_reached.name, env_ctx)
 
     # then:
 
@@ -118,24 +92,12 @@ def test_stride_py_required_to_next_stride_deps_updated(
     assert state_value == StateStride.stride_deps_updated
 
 
-@patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.create_state_node"
-)
-@patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.create_state_node"
-)
-@patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_proto_code_file_abs_path_inited.__name__}.create_state_node"
-)
-@patch(
-    f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node"
-)
-@patch(
-    f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.create_state_node"
-)
-@patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_version_constraints_generated.__name__}.create_state_node"
-)
+@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_version_constraints_generated.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.get_path_to_curr_python")
 def test_stride_deps_updated_to_same_stride_deps_updated(
     mock_switch_python,
@@ -155,39 +117,25 @@ def test_stride_deps_updated_to_same_stride_deps_updated(
         EnvState.state_stride_deps_updated_reached.name,
     )
 
-    mock_state_args_parsed.return_value.eval_own_state.return_value = (
-        argparse.Namespace(
-            **{
-                ParsedArg.name_reinstall.value: False,
-            }
-        )
+    mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(
+        **{
+            ParsedArg.name_reinstall.value: False,
+        }
     )
-    mock_state_input_start_id_var_loaded.return_value.eval_own_state.return_value = (
-        "mock_start_id"
-    )
-    mock_state_version_constraints_generated.return_value.eval_own_state.return_value = (
-        True
-    )
+    mock_state_input_start_id_var_loaded.return_value.eval_own_state.return_value = "mock_start_id"
+    mock_state_version_constraints_generated.return_value.eval_own_state.return_value = True
 
     py_exec = StateStride.stride_deps_updated
 
     env_ctx.state_stride = py_exec
 
-    mock_state_proto_code_file_abs_path_inited.return_value.eval_own_state.return_value = (
-        "path/to/whatever"
-    )
-    mock_state_input_exec_mode_arg_loaded.return_value.eval_own_state.return_value = (
-        ExecMode.mode_boot
-    )
-    mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = (
-        "/path/to/venv"
-    )
+    mock_state_proto_code_file_abs_path_inited.return_value.eval_own_state.return_value = "path/to/whatever"
+    mock_state_input_exec_mode_arg_loaded.return_value.eval_own_state.return_value = ExecMode.mode_boot
+    mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = "/path/to/venv"
 
     # when:
 
-    state_value = env_ctx.state_graph.eval_state(
-        EnvState.state_stride_deps_updated_reached.name, env_ctx
-    )
+    state_value = env_ctx.state_graph.eval_state(EnvState.state_stride_deps_updated_reached.name, env_ctx)
 
     # then:
 

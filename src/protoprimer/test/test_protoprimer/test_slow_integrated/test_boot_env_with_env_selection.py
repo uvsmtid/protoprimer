@@ -34,12 +34,8 @@ def test_boot_env_with_env_selection_default_to_special(tmp_path: pathlib.Path):
 
     # === create `ConfLeap.leap_primer`
 
-    proto_code_dir_abs_path = (
-        ref_root_abs_path / ConfConstInput.default_proto_conf_dir_rel_path
-    )
-    proto_kernel_abs_path: pathlib.Path = create_plain_proto_code(
-        proto_code_dir_abs_path
-    )
+    proto_code_dir_abs_path = ref_root_abs_path / ConfConstInput.default_proto_conf_dir_rel_path
+    proto_kernel_abs_path: pathlib.Path = create_plain_proto_code(proto_code_dir_abs_path)
     create_conf_primer_file(
         ref_root_abs_path,
         proto_code_dir_abs_path,
@@ -76,9 +72,7 @@ def test_boot_env_with_env_selection_default_to_special(tmp_path: pathlib.Path):
 
     # === create `ConfLeap.leap_client` / `ConfConstClient.common_env_name`
 
-    conf_client_dir_abs_path = (
-        ref_root_abs_path / ConfConstPrimer.default_client_conf_dir_rel_path
-    )
+    conf_client_dir_abs_path = ref_root_abs_path / ConfConstPrimer.default_client_conf_dir_rel_path
 
     create_conf_client_file(
         ref_root_abs_path,
@@ -113,9 +107,7 @@ def test_boot_env_with_env_selection_default_to_special(tmp_path: pathlib.Path):
     # remove `ConfConstClient.common_env_name`
 
     shutil.rmtree(default_venv_abs_path)
-    os.remove(
-        ref_root_abs_path / ConfConstClient.default_dir_rel_path_leap_env_link_name
-    )
+    os.remove(ref_root_abs_path / ConfConstClient.default_dir_rel_path_leap_env_link_name)
 
     # when:
     # bootstrap with `special_env` (override via CLI args):
@@ -150,12 +142,8 @@ def test_boot_env_with_env_selection_special_to_default(tmp_path: pathlib.Path):
 
     # === create `ConfLeap.leap_primer`
 
-    proto_code_dir_abs_path = (
-        ref_root_abs_path / ConfConstInput.default_proto_conf_dir_rel_path
-    )
-    proto_kernel_abs_path: pathlib.Path = create_plain_proto_code(
-        proto_code_dir_abs_path
-    )
+    proto_code_dir_abs_path = ref_root_abs_path / ConfConstInput.default_proto_conf_dir_rel_path
+    proto_kernel_abs_path: pathlib.Path = create_plain_proto_code(proto_code_dir_abs_path)
     create_conf_primer_file(
         ref_root_abs_path,
         proto_code_dir_abs_path,
@@ -192,9 +180,7 @@ def test_boot_env_with_env_selection_special_to_default(tmp_path: pathlib.Path):
 
     # === create `ConfLeap.leap_client` / `special_env`
 
-    conf_client_dir_abs_path = (
-        ref_root_abs_path / ConfConstPrimer.default_client_conf_dir_rel_path
-    )
+    conf_client_dir_abs_path = ref_root_abs_path / ConfConstPrimer.default_client_conf_dir_rel_path
 
     create_conf_client_file(
         ref_root_abs_path,
@@ -232,9 +218,7 @@ def test_boot_env_with_env_selection_special_to_default(tmp_path: pathlib.Path):
     # remove `special_env`
 
     shutil.rmtree(special_venv_abs_path)
-    os.remove(
-        ref_root_abs_path / ConfConstClient.default_dir_rel_path_leap_env_link_name
-    )
+    os.remove(ref_root_abs_path / ConfConstClient.default_dir_rel_path_leap_env_link_name)
 
     # when:
     # bootstrap without args
@@ -270,12 +254,8 @@ def test_boot_env_with_symlink_to_env_special_but_config_to_env_common(
 
     # === create `ConfLeap.leap_primer`
 
-    proto_code_dir_abs_path = (
-        ref_root_abs_path / ConfConstInput.default_proto_conf_dir_rel_path
-    )
-    proto_kernel_abs_path: pathlib.Path = create_plain_proto_code(
-        proto_code_dir_abs_path
-    )
+    proto_code_dir_abs_path = ref_root_abs_path / ConfConstInput.default_proto_conf_dir_rel_path
+    proto_kernel_abs_path: pathlib.Path = create_plain_proto_code(proto_code_dir_abs_path)
     create_conf_primer_file(
         ref_root_abs_path,
         proto_code_dir_abs_path,
@@ -312,9 +292,7 @@ def test_boot_env_with_symlink_to_env_special_but_config_to_env_common(
 
     # === create `ConfLeap.leap_client` / `special_env`
 
-    conf_client_dir_abs_path = (
-        ref_root_abs_path / ConfConstPrimer.default_client_conf_dir_rel_path
-    )
+    conf_client_dir_abs_path = ref_root_abs_path / ConfConstPrimer.default_client_conf_dir_rel_path
 
     create_conf_client_file(
         ref_root_abs_path,

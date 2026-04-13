@@ -46,11 +46,7 @@ def assert_parent_factories_mocked(
 
         if effective_state_name not in expected_mocked_state_names:
             # If the state is not expected to be mocked, it must not be mocked:
-            assert (
-                not is_mocked
-            ), f"State [{env_state_item.name}] is mocked but is not an expected parent of [{state_name}]."
+            assert not is_mocked, f"State [{env_state_item.name}] is mocked but is not an expected parent of [{state_name}]."
         else:
             # If the state is expected to be mocked, it must be mocked:
-            assert (
-                is_mocked
-            ), f"Parent state [{env_state_item.name}] is not mocked as expected."
+            assert is_mocked, f"Parent state [{env_state_item.name}] is not mocked as expected."

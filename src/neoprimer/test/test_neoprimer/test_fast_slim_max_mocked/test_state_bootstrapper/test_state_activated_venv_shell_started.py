@@ -32,30 +32,16 @@ class ThisTestClass(BasePyfakefsTestClass):
 
     # noinspection PyMethodMayBeStatic
     def test_relationship(self):
-        assert_test_module_name_embeds_str(
-            Bootstrapper_state_activated_venv_shell_started.state_activated_venv_shell_started
-        )
+        assert_test_module_name_embeds_str(Bootstrapper_state_activated_venv_shell_started.state_activated_venv_shell_started)
 
     @patch("sys.argv", [""])
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_default_stderr_log_handler_configured.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_local_cache_dir_abs_path_inited.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_stride_src_updated_reached.__name__}.create_state_node"
-    )
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_default_stderr_log_handler_configured.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_cache_dir_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_stride_src_updated_reached.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.write_text_file")
-    @patch(
-        f"{primer_kernel.__name__}.{EnvContext.__name__}.{EnvContext.get_stride.__name__}"
-    )
+    @patch(f"{primer_kernel.__name__}.{EnvContext.__name__}.{EnvContext.get_stride.__name__}")
     @patch(f"{primer_kernel.__name__}.os.execve")
     @patch.dict(os.environ, {"SHELL": "/path/to/bash"})
     def test_start_bash_shell_with_activated_venv(
@@ -77,15 +63,11 @@ class ThisTestClass(BasePyfakefsTestClass):
             Bootstrapper_state_activated_venv_shell_started.state_activated_venv_shell_started,
         )
 
-        mock_create_state_default_stderr_log_handler_configured.return_value.eval_own_state.return_value.level = (
-            logging.INFO
-        )
-        mock_create_state_args_parsed.return_value.eval_own_state.return_value = (
-            argparse.Namespace(
-                **{
-                    ParsedArg.name_command.value: None,
-                }
-            )
+        mock_create_state_default_stderr_log_handler_configured.return_value.eval_own_state.return_value.level = logging.INFO
+        mock_create_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(
+            **{
+                ParsedArg.name_command.value: None,
+            }
         )
 
         mock_client_dir = "/mock_client_dir"
@@ -94,17 +76,11 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         mock_get_stride.return_value = StateStride.stride_src_updated
 
-        mock_create_state_stride_src_updated_reached.return_value.eval_own_state.return_value = (
-            StateStride.stride_src_updated
-        )
+        mock_create_state_stride_src_updated_reached.return_value.eval_own_state.return_value = StateStride.stride_src_updated
 
-        mock_create_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = (
-            mock_client_dir
-        )
+        mock_create_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = mock_client_dir
         cache_dir = os.path.join(mock_client_dir, "cache")
-        mock_create_state_local_cache_dir_abs_path_inited.return_value.eval_own_state.return_value = (
-            cache_dir
-        )
+        mock_create_state_local_cache_dir_abs_path_inited.return_value.eval_own_state.return_value = cache_dir
         expected_venv_activate_path = os.path.join(
             mock_create_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value,
             ConfConstGeneral.file_rel_path_venv_activate,
@@ -138,25 +114,13 @@ fi
         )
 
     @patch("sys.argv", [""])
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_default_stderr_log_handler_configured.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_local_cache_dir_abs_path_inited.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_stride_src_updated_reached.__name__}.create_state_node"
-    )
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_default_stderr_log_handler_configured.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_cache_dir_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_stride_src_updated_reached.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.write_text_file")
-    @patch(
-        f"{primer_kernel.__name__}.{EnvContext.__name__}.{EnvContext.get_stride.__name__}"
-    )
+    @patch(f"{primer_kernel.__name__}.{EnvContext.__name__}.{EnvContext.get_stride.__name__}")
     @patch(f"{primer_kernel.__name__}.os.execve")
     @patch.dict(os.environ, {"SHELL": "/path/to/zsh"})
     def test_start_zsh_shell_with_activated_venv(
@@ -178,15 +142,11 @@ fi
             Bootstrapper_state_activated_venv_shell_started.state_activated_venv_shell_started,
         )
 
-        mock_create_state_default_stderr_log_handler_configured.return_value.eval_own_state.return_value.level = (
-            logging.INFO
-        )
-        mock_create_state_args_parsed.return_value.eval_own_state.return_value = (
-            argparse.Namespace(
-                **{
-                    ParsedArg.name_command.value: None,
-                }
-            )
+        mock_create_state_default_stderr_log_handler_configured.return_value.eval_own_state.return_value.level = logging.INFO
+        mock_create_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(
+            **{
+                ParsedArg.name_command.value: None,
+            }
         )
 
         mock_client_dir = "/mock_client_dir"
@@ -195,17 +155,11 @@ fi
 
         mock_get_stride.return_value = StateStride.stride_src_updated
 
-        mock_create_state_stride_src_updated_reached.return_value.eval_own_state.return_value = (
-            StateStride.stride_src_updated
-        )
+        mock_create_state_stride_src_updated_reached.return_value.eval_own_state.return_value = StateStride.stride_src_updated
 
-        mock_create_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = (
-            mock_client_dir
-        )
+        mock_create_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = mock_client_dir
         cache_dir = os.path.join(mock_client_dir, "cache")
-        mock_create_state_local_cache_dir_abs_path_inited.return_value.eval_own_state.return_value = (
-            cache_dir
-        )
+        mock_create_state_local_cache_dir_abs_path_inited.return_value.eval_own_state.return_value = cache_dir
         expected_venv_activate_path = os.path.join(
             mock_create_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value,
             ConfConstGeneral.file_rel_path_venv_activate,

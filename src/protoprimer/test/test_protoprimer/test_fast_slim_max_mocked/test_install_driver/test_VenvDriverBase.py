@@ -114,9 +114,7 @@ def test_venv_driver_base_create_venv_impl_raises_not_implemented_error():
 
 @patch.object(VenvDriverConcrete, "get_install_dependencies_cmd")
 @patch(f"{subprocess.__name__}.check_call")
-def test_venv_driver_base_install_dependencies_no_extras(
-    mock_check_call, mock_get_cmd_base
-):
+def test_venv_driver_base_install_dependencies_no_extras(mock_check_call, mock_get_cmd_base):
     # given:
     driver = VenvDriverConcrete()
     mock_get_cmd_base.return_value = ["base", "command"]

@@ -33,6 +33,7 @@ def topological_sort(
     node_statuses: dict[str, VisitState] = {
         node_name: VisitState.unvisited_node
         for node_name in state_graph.state_factories
+        #
     }
 
     def depth_first_search(node_name: str):
@@ -44,9 +45,7 @@ def topological_sort(
 
         for parent_name in curr_node.get_parent_states():
             if parent_name not in state_graph.state_factories:
-                raise ValueError(
-                    f"`{StateNode.__name__}` [{parent_name}] not found in graph"
-                )
+                raise ValueError(f"`{StateNode.__name__}` [{parent_name}] not found in graph")
             if node_statuses[parent_name] == VisitState.being_visited:
                 raise ValueError("cycle detected in graph")
             if node_statuses[parent_name] == VisitState.unvisited_node:
@@ -89,9 +88,7 @@ def get_transitive_dependencies(
 
         for parent_name in curr_node.get_parent_states():
             if parent_name not in state_graph.state_factories:
-                raise ValueError(
-                    f"`{StateNode.__name__}` [{parent_name}] not found in graph"
-                )
+                raise ValueError(f"`{StateNode.__name__}` [{parent_name}] not found in graph")
             if parent_name not in visited_nodes:
                 depth_first_search(parent_name)
         if node_name != state_name:

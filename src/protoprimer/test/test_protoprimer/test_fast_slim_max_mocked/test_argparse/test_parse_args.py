@@ -75,17 +75,13 @@ def test_parse_args_exec_mode():
     args_prime = parse_args([ExecMode.mode_boot.value])
 
     # then: boot mode
-    assert (
-        getattr(args_prime, ParsedArg.name_exec_mode.value) == ExecMode.mode_boot.value
-    )
+    assert getattr(args_prime, ParsedArg.name_exec_mode.value) == ExecMode.mode_boot.value
 
     # when: eval mode
     args_config = parse_args([ExecMode.mode_eval.value])
 
     # then: eval mode
-    assert (
-        getattr(args_config, ParsedArg.name_exec_mode.value) == ExecMode.mode_eval.value
-    )
+    assert getattr(args_config, ParsedArg.name_exec_mode.value) == ExecMode.mode_eval.value
 
 
 def test_parse_args_log_level():
@@ -306,12 +302,12 @@ def test_main_help_contains_subcommand_descriptions():
     assert (
         normalize_space("boot Bootstrap the environment to make it ready to use.")
         in normalized_output
+        #
     )
     assert (
-        normalize_space(
-            "reset Re-create `venv`, re-install dependencies, and re-pin versions."
-        )
+        normalize_space("reset Re-create `venv`, re-install dependencies, and re-pin versions.")
         in normalized_output
+        #
     )
     assert normalize_space("eval Print effective config.") in normalized_output
 

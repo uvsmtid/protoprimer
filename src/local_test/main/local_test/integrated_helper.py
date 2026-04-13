@@ -43,9 +43,7 @@ def convert_test_python_version(python_version_str: str) -> str:
     Use this function only as an input to generate test config files.
     """
 
-    python_version_tuple: tuple[int, int, int] = parse_python_version(
-        python_version_str
-    )
+    python_version_tuple: tuple[int, int, int] = parse_python_version(python_version_str)
 
     (
         major_version,
@@ -57,9 +55,7 @@ def convert_test_python_version(python_version_str: str) -> str:
     if (3, 14) <= (major_version, minor_version) < (3, 15):
         python_version_tuple = (3, 14, 0)
 
-    return (
-        f"{python_version_tuple[0]}.{python_version_tuple[1]}.{python_version_tuple[2]}"
-    )
+    return f"{python_version_tuple[0]}.{python_version_tuple[1]}.{python_version_tuple[2]}"
 
 
 def switch_to_ref_root_abs_path(tmp_path: pathlib.Path) -> pathlib.Path:
@@ -125,9 +121,7 @@ def create_test_pyproject_toml(
     local_test_project_dir = protoprimer_project_dir.parent / "local_test"
     neoprimer_project_dir = protoprimer_project_dir.parent / "neoprimer"
 
-    pyproject_file_abs_path = (
-        project_dir_abs_path / ConfConstClient.default_pyproject_toml_basename
-    )
+    pyproject_file_abs_path = project_dir_abs_path / ConfConstClient.default_pyproject_toml_basename
 
     toml_data = {
         "project": {
@@ -205,9 +199,7 @@ def create_conf_primer_file(
         ConfField.field_global_conf_dir_rel_path.value: ConfConstPrimer.default_client_conf_dir_rel_path,
     }
 
-    conf_primer_file_abs_path = (
-        proto_code_dir_abs_path / ConfConstInput.default_file_basename_conf_primer
-    )
+    conf_primer_file_abs_path = proto_code_dir_abs_path / ConfConstInput.default_file_basename_conf_primer
 
     write_json_file(
         str(conf_primer_file_abs_path),
@@ -252,9 +244,7 @@ def create_conf_client_file(
         ConfField.field_default_env_dir_rel_path.value: str(conf_env_dir_rel_path),
         ConfField.field_project_descriptors.value: [
             {
-                ConfField.field_build_root_dir_rel_path.value: str(
-                    project_dir_rel_path
-                ),
+                ConfField.field_build_root_dir_rel_path.value: str(project_dir_rel_path),
                 ConfField.field_install_extras.value: [],
             },
         ],
@@ -262,9 +252,7 @@ def create_conf_client_file(
 
     conf_client_dir_abs_path.mkdir(parents=True, exist_ok=True)
 
-    conf_client_file_abs_path = (
-        conf_client_dir_abs_path / ConfConstPrimer.default_file_basename_leap_client
-    )
+    conf_client_file_abs_path = conf_client_dir_abs_path / ConfConstPrimer.default_file_basename_leap_client
 
     write_json_file(
         str(conf_client_file_abs_path),
@@ -296,9 +284,7 @@ def create_conf_env_file(
     if python_selector_rel_path is not None:
         env_conf_data.update(
             {
-                ConfField.field_python_selector_file_rel_path.value: str(
-                    python_selector_rel_path
-                ),
+                ConfField.field_python_selector_file_rel_path.value: str(python_selector_rel_path),
             }
         )
 
@@ -312,9 +298,7 @@ def create_conf_env_file(
             # ConfField.field_venv_driver.value: VenvDriverType.venv_pip.name,
             ConfField.field_project_descriptors.value: [
                 {
-                    ConfField.field_build_root_dir_rel_path.value: str(
-                        project_dir_rel_path
-                    ),
+                    ConfField.field_build_root_dir_rel_path.value: str(project_dir_rel_path),
                     ConfField.field_install_extras.value: [],
                     ConfField.field_install_group.value: "whatever_group_main",
                 },
@@ -338,9 +322,7 @@ def create_conf_env_file(
 
     conf_env_dir_abs_path.mkdir(parents=True, exist_ok=True)
 
-    conf_env_file_abs_path = (
-        conf_env_dir_abs_path / ConfConstClient.default_file_basename_leap_env
-    )
+    conf_env_file_abs_path = conf_env_dir_abs_path / ConfConstClient.default_file_basename_leap_env
 
     write_json_file(
         str(conf_env_file_abs_path),
@@ -390,9 +372,7 @@ def create_max_layout(tmp_path: Path) -> Tuple[Path, Path, Path]:
 
     # === create `ConfLeap.leap_primer`
 
-    proto_code_dir_abs_path = (
-        ref_root_abs_path / ConfConstInput.default_proto_conf_dir_rel_path
-    )
+    proto_code_dir_abs_path = ref_root_abs_path / ConfConstInput.default_proto_conf_dir_rel_path
     proto_kernel_abs_path: Path = create_plain_proto_code(proto_code_dir_abs_path)
     create_conf_primer_file(
         ref_root_abs_path,
@@ -406,9 +386,7 @@ def create_max_layout(tmp_path: Path) -> Tuple[Path, Path, Path]:
 
     # === create `ConfLeap.leap_env` / `default_env`
 
-    conf_env_dir_abs_path = (
-        ref_root_abs_path / ConfConstClient.default_default_env_dir_rel_path
-    )
+    conf_env_dir_abs_path = ref_root_abs_path / ConfConstClient.default_default_env_dir_rel_path
 
     create_conf_env_file(
         ref_root_abs_path,
@@ -418,9 +396,7 @@ def create_max_layout(tmp_path: Path) -> Tuple[Path, Path, Path]:
 
     # === create `ConfLeap.leap_client`
 
-    conf_client_dir_abs_path = (
-        ref_root_abs_path / ConfConstPrimer.default_client_conf_dir_rel_path
-    )
+    conf_client_dir_abs_path = ref_root_abs_path / ConfConstPrimer.default_client_conf_dir_rel_path
 
     create_conf_client_file(
         ref_root_abs_path,

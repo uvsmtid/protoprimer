@@ -99,9 +99,7 @@ def fat_mock_wrapper(
         given_packages: List[str],
     ):
         # Translate: "./venv/bin/python" -> "./venv/"
-        venv_dir_abs_path = os.path.dirname(
-            os.path.dirname(selected_python_file_abs_path)
-        )
+        venv_dir_abs_path = os.path.dirname(os.path.dirname(selected_python_file_abs_path))
         if "uv" in given_packages:
             fs.create_file(
                 os.path.join(venv_dir_abs_path, ConfConstGeneral.file_rel_path_venv_uv),
@@ -109,9 +107,7 @@ def fat_mock_wrapper(
             )
 
     with ExitStack() as exit_stack:
-        exit_stack.enter_context(
-            patch("shutil.which", side_effect=mock_shutil_which_python)
-        )
+        exit_stack.enter_context(patch("shutil.which", side_effect=mock_shutil_which_python))
         exit_stack.enter_context(patch("sys.exit", side_effect=_mock_exit))
         exit_stack.enter_context(patch("os.execv", side_effect=_mock_execv))
         exit_stack.enter_context(patch("os.execve", side_effect=_mock_execve))
@@ -120,9 +116,7 @@ def fat_mock_wrapper(
             exit_stack.enter_context(
                 patch(
                     "subprocess.run",
-                    return_value=subprocess.CompletedProcess(
-                        args=[], returncode=0, stdout=proc_mock_run_stdout, stderr=""
-                    ),
+                    return_value=subprocess.CompletedProcess(args=[], returncode=0, stdout=proc_mock_run_stdout, stderr=""),
                 )
             )
         exit_stack.enter_context(

@@ -20,6 +20,7 @@ class NamingTestBase:
                 test_enum_item.name[len(self.enum_prefix) :]
                 if test_enum_item.name.startswith(self.enum_prefix)
                 else test_enum_item.name
+                #
             ) in test_enum_item.value.extract_prod_item_value_name()
 
     def test_enum_items_are_assigned_correctly(self):
@@ -39,13 +40,9 @@ class NamingTestBase:
         # prod_enum -> test_enum:
         for prod_enum_name in prod_enum_names:
             if prod_enum_name not in test_enum_names:
-                raise AssertionError(
-                    f"`{self.prod_enum.__name__}`: prod [{prod_enum_name}] not in test"
-                )
+                raise AssertionError(f"`{self.prod_enum.__name__}`: prod [{prod_enum_name}] not in test")
 
         # test_enum -> prod_enum:
         for test_enum_name in test_enum_names:
             if test_enum_name not in prod_enum_names:
-                raise AssertionError(
-                    f"`{self.prod_enum.__name__}`: test [{test_enum_name}] not in prod"
-                )
+                raise AssertionError(f"`{self.prod_enum.__name__}`: test [{test_enum_name}] not in prod")

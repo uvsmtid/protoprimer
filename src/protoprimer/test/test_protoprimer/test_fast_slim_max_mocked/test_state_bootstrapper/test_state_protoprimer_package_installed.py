@@ -38,44 +38,22 @@ class ThisTestClass(BasePyfakefsTestClass):
 
     # noinspection PyMethodMayBeStatic
     def test_relationship(self):
-        assert_test_module_name_embeds_str(
-            EnvState.state_protoprimer_package_installed.name
-        )
+        assert_test_module_name_embeds_str(EnvState.state_protoprimer_package_installed.name)
 
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_ref_root_dir_abs_path_inited.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_stride_py_venv_reached.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_project_descriptors_inited.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_install_specs_inited.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_input_do_install_var_loaded.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.create_state_node"
-    )
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_stride_py_venv_reached.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_project_descriptors_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_install_specs_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_do_install_var_loaded.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.create_state_node")
     @patch.dict(
         os.environ,
         {EnvVar.var_PROTOPRIMER_PY_EXEC.value: StateStride.stride_py_venv.name},
     )
-    @patch(
-        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_venv_driver_prepared.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{EnvContext.__name__}.{EnvContext.get_stride.__name__}"
-    )
+    @patch(f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_venv_driver_prepared.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{EnvContext.__name__}.{EnvContext.get_stride.__name__}")
     def test_default_install(
         self,
         mock_get_stride,
@@ -98,17 +76,11 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_client_ref_root_dir = "/mock_client_ref_root_dir"
         self.fs.create_dir(mock_client_ref_root_dir)
         os.chdir(mock_client_ref_root_dir)
-        mock_state_stride_py_venv_reached.return_value.eval_own_state.return_value = (
-            StateStride.stride_py_venv
-        )
-        mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = (
-            mock_client_ref_root_dir
-        )
+        mock_state_stride_py_venv_reached.return_value.eval_own_state.return_value = StateStride.stride_py_venv
+        mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = mock_client_ref_root_dir
         mock_client_conf_env_dir = "/mock_client_conf_env_dir"
         self.fs.create_dir(mock_client_conf_env_dir)
-        mock_state_local_conf_symlink_abs_path_inited.return_value.eval_own_state.return_value = (
-            mock_client_conf_env_dir
-        )
+        mock_state_local_conf_symlink_abs_path_inited.return_value.eval_own_state.return_value = mock_client_conf_env_dir
         project_descriptors: list[dict] = []
         for project_name in [
             "local_repo",
@@ -131,30 +103,20 @@ class ThisTestClass(BasePyfakefsTestClass):
             self.fs.create_file(project_toml)
             project_descriptors.append(
                 {
-                    ConfField.field_build_root_dir_rel_path.value: str(
-                        project_rel_path
-                    ),
+                    ConfField.field_build_root_dir_rel_path.value: str(project_rel_path),
                     ConfField.field_install_extras.value: [],
                 }
             )
-        mock_state_project_descriptors_inited.return_value.eval_own_state.return_value = (
-            project_descriptors
-        )
+        mock_state_project_descriptors_inited.return_value.eval_own_state.return_value = project_descriptors
         mock_state_install_specs_inited.return_value.eval_own_state.return_value = []
-        mock_state_input_do_install_var_loaded.return_value.eval_own_state.return_value = (
-            True
-        )
+        mock_state_input_do_install_var_loaded.return_value.eval_own_state.return_value = True
         parsed_args = argparse.Namespace(
             **{ParsedArg.name_exec_mode.value: ExecMode.mode_boot.value},
         )
         mock_state_args_parsed.return_value.eval_own_state.return_value = parsed_args
-        mock_state_input_exec_mode_arg_loaded.return_value.eval_own_state.return_value = (
-            ExecMode.mode_boot
-        )
+        mock_state_input_exec_mode_arg_loaded.return_value.eval_own_state.return_value = ExecMode.mode_boot
         # when:
-        self.env_ctx.state_graph.eval_state(
-            EnvState.state_protoprimer_package_installed.name, self.env_ctx
-        )
+        self.env_ctx.state_graph.eval_state(EnvState.state_protoprimer_package_installed.name, self.env_ctx)
         # then:
         mock_state_venv_driver_prepared.return_value.eval_own_state.return_value.install_dependencies.assert_called()
         mock_state_venv_driver_prepared.return_value.eval_own_state.return_value.install_dependencies.assert_any_call(
@@ -168,40 +130,20 @@ class ThisTestClass(BasePyfakefsTestClass):
             [],
         )
 
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_ref_root_dir_abs_path_inited.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_stride_py_venv_reached.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_project_descriptors_inited.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_install_specs_inited.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_input_do_install_var_loaded.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.create_state_node"
-    )
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_stride_py_venv_reached.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_project_descriptors_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_install_specs_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_do_install_var_loaded.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.create_state_node")
     @patch.dict(
         os.environ,
         {EnvVar.var_PROTOPRIMER_PY_EXEC.value: StateStride.stride_py_venv.name},
     )
-    @patch(
-        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_venv_driver_prepared.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{EnvContext.__name__}.{EnvContext.get_stride.__name__}"
-    )
+    @patch(f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_venv_driver_prepared.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{EnvContext.__name__}.{EnvContext.get_stride.__name__}")
     def test_reinstall(
         self,
         mock_get_stride,
@@ -224,17 +166,11 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_client_ref_root_dir = "/mock_client_ref_root_dir"
         self.fs.create_dir(mock_client_ref_root_dir)
         os.chdir(mock_client_ref_root_dir)
-        mock_state_stride_py_venv_reached.return_value.eval_own_state.return_value = (
-            StateStride.stride_py_venv
-        )
-        mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = (
-            mock_client_ref_root_dir
-        )
+        mock_state_stride_py_venv_reached.return_value.eval_own_state.return_value = StateStride.stride_py_venv
+        mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = mock_client_ref_root_dir
         mock_client_conf_env_dir = "/mock_client_conf_env_dir"
         self.fs.create_dir(mock_client_conf_env_dir)
-        mock_state_local_conf_symlink_abs_path_inited.return_value.eval_own_state.return_value = (
-            mock_client_conf_env_dir
-        )
+        mock_state_local_conf_symlink_abs_path_inited.return_value.eval_own_state.return_value = mock_client_conf_env_dir
         project_descriptors: list[dict] = []
         for project_name in [
             "local_repo",
@@ -257,30 +193,20 @@ class ThisTestClass(BasePyfakefsTestClass):
             self.fs.create_file(project_toml)
             project_descriptors.append(
                 {
-                    ConfField.field_build_root_dir_rel_path.value: str(
-                        project_rel_path
-                    ),
+                    ConfField.field_build_root_dir_rel_path.value: str(project_rel_path),
                     ConfField.field_install_extras.value: [],
                 }
             )
-        mock_state_project_descriptors_inited.return_value.eval_own_state.return_value = (
-            project_descriptors
-        )
+        mock_state_project_descriptors_inited.return_value.eval_own_state.return_value = project_descriptors
         mock_state_install_specs_inited.return_value.eval_own_state.return_value = []
-        mock_state_input_do_install_var_loaded.return_value.eval_own_state.return_value = (
-            True
-        )
+        mock_state_input_do_install_var_loaded.return_value.eval_own_state.return_value = True
         parsed_args = argparse.Namespace(
             **{ParsedArg.name_exec_mode.value: CommandAction.action_reinstall.value},
         )
         mock_state_args_parsed.return_value.eval_own_state.return_value = parsed_args
-        mock_state_input_exec_mode_arg_loaded.return_value.eval_own_state.return_value = (
-            CommandAction.action_reinstall
-        )
+        mock_state_input_exec_mode_arg_loaded.return_value.eval_own_state.return_value = CommandAction.action_reinstall
         # when:
-        self.env_ctx.state_graph.eval_state(
-            EnvState.state_protoprimer_package_installed.name, self.env_ctx
-        )
+        self.env_ctx.state_graph.eval_state(EnvState.state_protoprimer_package_installed.name, self.env_ctx)
         # then:
         mock_state_venv_driver_prepared.return_value.eval_own_state.return_value.install_dependencies.assert_called()
         mock_state_venv_driver_prepared.return_value.eval_own_state.return_value.install_dependencies.assert_any_call(
@@ -294,40 +220,20 @@ class ThisTestClass(BasePyfakefsTestClass):
             [],
         )
 
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_ref_root_dir_abs_path_inited.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_stride_py_venv_reached.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_project_descriptors_inited.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_install_specs_inited.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_input_do_install_var_loaded.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.create_state_node"
-    )
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_stride_py_venv_reached.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_project_descriptors_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_install_specs_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_do_install_var_loaded.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.create_state_node")
     @patch.dict(
         os.environ,
         {EnvVar.var_PROTOPRIMER_PY_EXEC.value: StateStride.stride_py_venv.name},
     )
-    @patch(
-        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_venv_driver_prepared.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{EnvContext.__name__}.{EnvContext.get_stride.__name__}"
-    )
+    @patch(f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_venv_driver_prepared.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{EnvContext.__name__}.{EnvContext.get_stride.__name__}")
     def test_no_install_triggered(
         self,
         mock_get_stride,
@@ -350,17 +256,11 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_client_ref_root_dir = "/mock_client_ref_root_dir"
         self.fs.create_dir(mock_client_ref_root_dir)
         os.chdir(mock_client_ref_root_dir)
-        mock_state_stride_py_venv_reached.return_value.eval_own_state.return_value = (
-            StateStride.stride_py_venv
-        )
-        mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = (
-            mock_client_ref_root_dir
-        )
+        mock_state_stride_py_venv_reached.return_value.eval_own_state.return_value = StateStride.stride_py_venv
+        mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = mock_client_ref_root_dir
         mock_client_conf_env_dir = "/mock_client_conf_env_dir"
         self.fs.create_dir(mock_client_conf_env_dir)
-        mock_state_local_conf_symlink_abs_path_inited.return_value.eval_own_state.return_value = (
-            mock_client_conf_env_dir
-        )
+        mock_state_local_conf_symlink_abs_path_inited.return_value.eval_own_state.return_value = mock_client_conf_env_dir
         project_descriptors: list[dict] = []
         for project_name in [
             "local_repo",
@@ -383,67 +283,37 @@ class ThisTestClass(BasePyfakefsTestClass):
             self.fs.create_file(project_toml)
             project_descriptors.append(
                 {
-                    ConfField.field_build_root_dir_rel_path.value: str(
-                        project_rel_path
-                    ),
+                    ConfField.field_build_root_dir_rel_path.value: str(project_rel_path),
                     ConfField.field_install_extras.value: [],
                 }
             )
-        mock_state_project_descriptors_inited.return_value.eval_own_state.return_value = (
-            project_descriptors
-        )
+        mock_state_project_descriptors_inited.return_value.eval_own_state.return_value = project_descriptors
         mock_state_install_specs_inited.return_value.eval_own_state.return_value = []
-        mock_state_input_do_install_var_loaded.return_value.eval_own_state.return_value = (
-            False
-        )
+        mock_state_input_do_install_var_loaded.return_value.eval_own_state.return_value = False
         parsed_args = argparse.Namespace(
             **{ParsedArg.name_exec_mode.value: ExecMode.mode_boot.value},
         )
         mock_state_args_parsed.return_value.eval_own_state.return_value = parsed_args
-        mock_state_input_exec_mode_arg_loaded.return_value.eval_own_state.return_value = (
-            ExecMode.mode_boot
-        )
+        mock_state_input_exec_mode_arg_loaded.return_value.eval_own_state.return_value = ExecMode.mode_boot
         # when:
-        self.env_ctx.state_graph.eval_state(
-            EnvState.state_protoprimer_package_installed.name, self.env_ctx
-        )
+        self.env_ctx.state_graph.eval_state(EnvState.state_protoprimer_package_installed.name, self.env_ctx)
         # then:
         mock_state_venv_driver_prepared.return_value.eval_own_state.return_value.install_dependencies.assert_not_called()
 
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_ref_root_dir_abs_path_inited.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_stride_py_venv_reached.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_project_descriptors_inited.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_install_specs_inited.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_input_do_install_var_loaded.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.create_state_node"
-    )
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_stride_py_venv_reached.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_project_descriptors_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_install_specs_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_do_install_var_loaded.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.create_state_node")
     @patch.dict(
         os.environ,
         {EnvVar.var_PROTOPRIMER_PY_EXEC.value: StateStride.stride_py_venv.name},
     )
-    @patch(
-        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_venv_driver_prepared.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{EnvContext.__name__}.{EnvContext.get_stride.__name__}"
-    )
+    @patch(f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_venv_driver_prepared.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{EnvContext.__name__}.{EnvContext.get_stride.__name__}")
     def test_grouped_install(
         self,
         mock_get_stride,
@@ -466,17 +336,11 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_client_ref_root_dir = "/mock_client_ref_root_dir"
         self.fs.create_dir(mock_client_ref_root_dir)
         os.chdir(mock_client_ref_root_dir)
-        mock_state_stride_py_venv_reached.return_value.eval_own_state.return_value = (
-            StateStride.stride_py_venv
-        )
-        mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = (
-            mock_client_ref_root_dir
-        )
+        mock_state_stride_py_venv_reached.return_value.eval_own_state.return_value = StateStride.stride_py_venv
+        mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = mock_client_ref_root_dir
         mock_client_conf_env_dir = "/mock_client_conf_env_dir"
         self.fs.create_dir(mock_client_conf_env_dir)
-        mock_state_local_conf_symlink_abs_path_inited.return_value.eval_own_state.return_value = (
-            mock_client_conf_env_dir
-        )
+        mock_state_local_conf_symlink_abs_path_inited.return_value.eval_own_state.return_value = mock_client_conf_env_dir
 
         project_descriptors = [
             {
@@ -492,27 +356,17 @@ class ThisTestClass(BasePyfakefsTestClass):
                 # missing group -> None
             },
         ]
-        mock_state_project_descriptors_inited.return_value.eval_own_state.return_value = (
-            project_descriptors
-        )
+        mock_state_project_descriptors_inited.return_value.eval_own_state.return_value = project_descriptors
         mock_state_install_specs_inited.return_value.eval_own_state.return_value = [
             {"group1": {ConfField.field_extra_command_args.value: ["--group_1-arg"]}},
             {"group2": {}},
         ]
-        mock_state_input_do_install_var_loaded.return_value.eval_own_state.return_value = (
-            True
-        )
-        mock_state_args_parsed.return_value.eval_own_state.return_value = (
-            argparse.Namespace(exec_mode=ExecMode.mode_boot.value)
-        )
-        mock_state_input_exec_mode_arg_loaded.return_value.eval_own_state.return_value = (
-            ExecMode.mode_boot
-        )
+        mock_state_input_do_install_var_loaded.return_value.eval_own_state.return_value = True
+        mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(exec_mode=ExecMode.mode_boot.value)
+        mock_state_input_exec_mode_arg_loaded.return_value.eval_own_state.return_value = ExecMode.mode_boot
 
         # when:
-        self.env_ctx.state_graph.eval_state(
-            EnvState.state_protoprimer_package_installed.name, self.env_ctx
-        )
+        self.env_ctx.state_graph.eval_state(EnvState.state_protoprimer_package_installed.name, self.env_ctx)
 
         # then:
         from unittest.mock import call
@@ -548,40 +402,20 @@ class ThisTestClass(BasePyfakefsTestClass):
             any_order=False,
         )
 
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_ref_root_dir_abs_path_inited.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_stride_py_venv_reached.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_project_descriptors_inited.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_install_specs_inited.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_input_do_install_var_loaded.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.create_state_node"
-    )
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_stride_py_venv_reached.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_project_descriptors_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_install_specs_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_do_install_var_loaded.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.create_state_node")
     @patch.dict(
         os.environ,
         {EnvVar.var_PROTOPRIMER_PY_EXEC.value: StateStride.stride_py_venv.name},
     )
-    @patch(
-        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_venv_driver_prepared.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{EnvContext.__name__}.{EnvContext.get_stride.__name__}"
-    )
+    @patch(f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_venv_driver_prepared.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{EnvContext.__name__}.{EnvContext.get_stride.__name__}")
     def test_nothing_to_install(
         self,
         mock_get_stride,
@@ -607,44 +441,30 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.fs.create_dir(mock_client_dir)
         os.chdir(mock_client_dir)
 
-        mock_state_stride_py_venv_reached.return_value.eval_own_state.return_value = (
-            StateStride.stride_py_venv
-        )
+        mock_state_stride_py_venv_reached.return_value.eval_own_state.return_value = StateStride.stride_py_venv
 
-        mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = (
-            mock_client_dir
-        )
+        mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = mock_client_dir
 
         mock_client_conf_env_dir = "/mock_client_conf_env_dir"
         self.fs.create_dir(mock_client_conf_env_dir)
-        mock_state_local_conf_symlink_abs_path_inited.return_value.eval_own_state.return_value = (
-            mock_client_conf_env_dir
-        )
+        mock_state_local_conf_symlink_abs_path_inited.return_value.eval_own_state.return_value = mock_client_conf_env_dir
 
         project_descriptors: list[dict] = []
 
-        mock_state_project_descriptors_inited.return_value.eval_own_state.return_value = (
-            project_descriptors
-        )
+        mock_state_project_descriptors_inited.return_value.eval_own_state.return_value = project_descriptors
         mock_state_install_specs_inited.return_value.eval_own_state.return_value = []
 
-        mock_state_input_do_install_var_loaded.return_value.eval_own_state.return_value = (
-            True
-        )
+        mock_state_input_do_install_var_loaded.return_value.eval_own_state.return_value = True
 
         parsed_args = argparse.Namespace(
             **{ParsedArg.name_exec_mode.value: ExecMode.mode_boot.value},
         )
         mock_state_args_parsed.return_value.eval_own_state.return_value = parsed_args
-        mock_state_input_exec_mode_arg_loaded.return_value.eval_own_state.return_value = (
-            ExecMode.mode_boot
-        )
+        mock_state_input_exec_mode_arg_loaded.return_value.eval_own_state.return_value = ExecMode.mode_boot
 
         # when:
 
-        self.env_ctx.state_graph.eval_state(
-            EnvState.state_protoprimer_package_installed.name, self.env_ctx
-        )
+        self.env_ctx.state_graph.eval_state(EnvState.state_protoprimer_package_installed.name, self.env_ctx)
 
         # then:
 

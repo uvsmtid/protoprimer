@@ -25,12 +25,8 @@ def test_relationship():
     assert_test_module_name_embeds_str(EnvState.state_project_descriptors_inited.name)
 
 
-@patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.create_state_node"
-)
-@patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_env_conf_file_data_loaded.__name__}.create_state_node"
-)
+@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_env_conf_file_data_loaded.__name__}.create_state_node")
 def test_stride_py_venv(
     mock_state_env_conf_file_data_loaded,
     mock_state_client_conf_file_data_loaded,
@@ -54,9 +50,7 @@ def test_stride_py_venv(
         },
     ]
 
-    mock_state_client_conf_file_data_loaded.return_value.eval_own_state.return_value = (
-        {}
-    )
+    mock_state_client_conf_file_data_loaded.return_value.eval_own_state.return_value = {}
 
     mock_state_env_conf_file_data_loaded.return_value.eval_own_state.return_value = {
         ConfField.field_project_descriptors.value: project_descriptors,
@@ -64,9 +58,7 @@ def test_stride_py_venv(
 
     # when:
 
-    state_value: str = env_ctx.state_graph.eval_state(
-        EnvState.state_project_descriptors_inited.name, env_ctx
-    )
+    state_value: str = env_ctx.state_graph.eval_state(EnvState.state_project_descriptors_inited.name, env_ctx)
 
     # then:
 

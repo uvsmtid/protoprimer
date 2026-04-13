@@ -33,22 +33,12 @@ class ThisTestClass(BasePyfakefsTestClass):
 
     # noinspection PyMethodMayBeStatic
     def test_relationship(self):
-        assert_test_module_name_embeds_str(
-            EnvState.state_local_conf_symlink_abs_path_inited.name
-        )
+        assert_test_module_name_embeds_str(EnvState.state_local_conf_symlink_abs_path_inited.name)
 
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_ref_root_dir_abs_path_inited.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_selected_env_dir_rel_path_inited.__name__}.create_state_node"
-    )
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_selected_env_dir_rel_path_inited.__name__}.create_state_node")
     def test_success_when_conf_symlink_exists_and_target_dst_dir_unspecified(
         self,
         mock_state_selected_env_dir_rel_path_inited,
@@ -59,9 +49,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # given:
 
-        mock_state_input_exec_mode_arg_loaded.return_value.eval_own_state.return_value = (
-            ExecMode.mode_start
-        )
+        mock_state_input_exec_mode_arg_loaded.return_value.eval_own_state.return_value = ExecMode.mode_start
 
         assert_parent_factories_mocked(
             self.env_ctx,
@@ -77,18 +65,12 @@ class ThisTestClass(BasePyfakefsTestClass):
             ConfField.field_global_conf_dir_rel_path.value: ConfConstPrimer.default_client_conf_dir_rel_path,
         }
         write_json_file(
-            os.path.join(
-                mock_client_dir, ConfConstInput.default_file_basename_conf_primer
-            ),
+            os.path.join(mock_client_dir, ConfConstInput.default_file_basename_conf_primer),
             primer_conf_data,
         )
 
-        mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = (
-            mock_client_dir
-        )
-        mock_state_client_conf_file_data_loaded.return_value.eval_own_state.return_value = {
-            ConfField.field_local_conf_symlink_rel_path.value: ConfConstClient.default_dir_rel_path_leap_env_link_name
-        }
+        mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = mock_client_dir
+        mock_state_client_conf_file_data_loaded.return_value.eval_own_state.return_value = {ConfField.field_local_conf_symlink_rel_path.value: ConfConstClient.default_dir_rel_path_leap_env_link_name}
 
         state_local_conf_symlink_abs_path_inited = os.path.join(
             mock_client_dir,
@@ -107,33 +89,21 @@ class ThisTestClass(BasePyfakefsTestClass):
             client_script_basename,
         ]
 
-        mock_state_selected_env_dir_rel_path_inited.return_value.eval_own_state.return_value = (
-            mock_target_dir
-        )
+        mock_state_selected_env_dir_rel_path_inited.return_value.eval_own_state.return_value = mock_target_dir
 
         # when:
 
         with patch.object(sys, "argv", test_args):
-            self.env_ctx.state_graph.eval_state(
-                EnvState.state_local_conf_symlink_abs_path_inited.name, self.env_ctx
-            )
+            self.env_ctx.state_graph.eval_state(EnvState.state_local_conf_symlink_abs_path_inited.name, self.env_ctx)
 
         # then:
 
         # no exception happens
 
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_ref_root_dir_abs_path_inited.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_selected_env_dir_rel_path_inited.__name__}.create_state_node"
-    )
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_selected_env_dir_rel_path_inited.__name__}.create_state_node")
     def test_success_when_conf_symlink_exists_and_target_dst_dir_matches(
         self,
         mock_state_selected_env_dir_rel_path_inited,
@@ -144,9 +114,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # given:
 
-        mock_state_input_exec_mode_arg_loaded.return_value.eval_own_state.return_value = (
-            ExecMode.mode_boot
-        )
+        mock_state_input_exec_mode_arg_loaded.return_value.eval_own_state.return_value = ExecMode.mode_boot
 
         assert_parent_factories_mocked(
             self.env_ctx,
@@ -162,17 +130,11 @@ class ThisTestClass(BasePyfakefsTestClass):
             ConfField.field_global_conf_dir_rel_path.value: ConfConstPrimer.default_client_conf_dir_rel_path,
         }
         write_json_file(
-            os.path.join(
-                mock_client_dir, ConfConstInput.default_file_basename_conf_primer
-            ),
+            os.path.join(mock_client_dir, ConfConstInput.default_file_basename_conf_primer),
             primer_conf_data,
         )
-        mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = (
-            mock_client_dir
-        )
-        mock_state_client_conf_file_data_loaded.return_value.eval_own_state.return_value = {
-            ConfField.field_local_conf_symlink_rel_path.value: ConfConstClient.default_dir_rel_path_leap_env_link_name
-        }
+        mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = mock_client_dir
+        mock_state_client_conf_file_data_loaded.return_value.eval_own_state.return_value = {ConfField.field_local_conf_symlink_rel_path.value: ConfConstClient.default_dir_rel_path_leap_env_link_name}
 
         state_local_conf_symlink_abs_path_inited = os.path.join(
             mock_client_dir,
@@ -186,32 +148,20 @@ class ThisTestClass(BasePyfakefsTestClass):
             state_local_conf_symlink_abs_path_inited,
             target_dst_dir_path,
         )
-        mock_state_selected_env_dir_rel_path_inited.return_value.eval_own_state.return_value = (
-            target_dst_dir_path
-        )
+        mock_state_selected_env_dir_rel_path_inited.return_value.eval_own_state.return_value = target_dst_dir_path
 
         # when:
 
-        self.env_ctx.state_graph.eval_state(
-            EnvState.state_local_conf_symlink_abs_path_inited.name, self.env_ctx
-        )
+        self.env_ctx.state_graph.eval_state(EnvState.state_local_conf_symlink_abs_path_inited.name, self.env_ctx)
 
         # then:
 
         # no exception happens
 
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_ref_root_dir_abs_path_inited.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_selected_env_dir_rel_path_inited.__name__}.create_state_node"
-    )
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_selected_env_dir_rel_path_inited.__name__}.create_state_node")
     def test_failure_when_conf_symlink_exists_but_target_dst_dir_mismatches(
         self,
         mock_state_selected_env_dir_rel_path_inited,
@@ -222,9 +172,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # given:
 
-        mock_state_input_exec_mode_arg_loaded.return_value.eval_own_state.return_value = (
-            ExecMode.mode_boot
-        )
+        mock_state_input_exec_mode_arg_loaded.return_value.eval_own_state.return_value = ExecMode.mode_boot
 
         assert_parent_factories_mocked(
             self.env_ctx,
@@ -240,9 +188,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             ConfField.field_global_conf_dir_rel_path.value: ConfConstPrimer.default_client_conf_dir_rel_path,
         }
         write_json_file(
-            os.path.join(
-                mock_client_dir, ConfConstInput.default_file_basename_conf_primer
-            ),
+            os.path.join(mock_client_dir, ConfConstInput.default_file_basename_conf_primer),
             primer_conf_data,
         )
         actual_target_dir = os.path.join(
@@ -251,17 +197,9 @@ class ThisTestClass(BasePyfakefsTestClass):
         expected_target_dir = os.path.join(
             "expected_target_dir",
         )
-        state_local_conf_symlink_abs_path_inited = os.path.join(
-            mock_client_dir, "lconf"
-        )
-        mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = (
-            mock_client_dir
-        )
-        mock_state_client_conf_file_data_loaded.return_value.eval_own_state.return_value = {
-            ConfField.field_local_conf_symlink_rel_path.value: os.path.basename(
-                state_local_conf_symlink_abs_path_inited
-            )
-        }
+        state_local_conf_symlink_abs_path_inited = os.path.join(mock_client_dir, "lconf")
+        mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = mock_client_dir
+        mock_state_client_conf_file_data_loaded.return_value.eval_own_state.return_value = {ConfField.field_local_conf_symlink_rel_path.value: os.path.basename(state_local_conf_symlink_abs_path_inited)}
         self.fs.create_dir(actual_target_dir)
         self.fs.create_dir(expected_target_dir)
         self.fs.create_symlink(
@@ -269,33 +207,21 @@ class ThisTestClass(BasePyfakefsTestClass):
             actual_target_dir,
         )
 
-        mock_state_selected_env_dir_rel_path_inited.return_value.eval_own_state.return_value = (
-            expected_target_dir
-        )
+        mock_state_selected_env_dir_rel_path_inited.return_value.eval_own_state.return_value = expected_target_dir
 
         # when:
 
         with self.assertRaises(AssertionError) as ctx:
-            self.env_ctx.state_graph.eval_state(
-                EnvState.state_local_conf_symlink_abs_path_inited.name, self.env_ctx
-            )
+            self.env_ctx.state_graph.eval_state(EnvState.state_local_conf_symlink_abs_path_inited.name, self.env_ctx)
 
         # then:
 
         self.assertIn("not the same as the provided target", str(ctx.exception))
 
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_ref_root_dir_abs_path_inited.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_selected_env_dir_rel_path_inited.__name__}.create_state_node"
-    )
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_selected_env_dir_rel_path_inited.__name__}.create_state_node")
     def test_failure_when_conf_symlink_is_not_directory(
         self,
         mock_state_selected_env_dir_rel_path_inited,
@@ -306,9 +232,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # given:
 
-        mock_state_input_exec_mode_arg_loaded.return_value.eval_own_state.return_value = (
-            ExecMode.mode_boot
-        )
+        mock_state_input_exec_mode_arg_loaded.return_value.eval_own_state.return_value = ExecMode.mode_boot
 
         assert_parent_factories_mocked(
             self.env_ctx,
@@ -324,20 +248,14 @@ class ThisTestClass(BasePyfakefsTestClass):
             ConfField.field_global_conf_dir_rel_path.value: ConfConstPrimer.default_client_conf_dir_rel_path,
         }
         write_json_file(
-            os.path.join(
-                mock_client_dir, ConfConstInput.default_file_basename_conf_primer
-            ),
+            os.path.join(mock_client_dir, ConfConstInput.default_file_basename_conf_primer),
             primer_conf_data,
         )
         mock_not_a_dir = os.path.join(
             "file",
         )
-        mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = (
-            mock_client_dir
-        )
-        mock_state_client_conf_file_data_loaded.return_value.eval_own_state.return_value = {
-            ConfField.field_local_conf_symlink_rel_path.value: ConfConstClient.default_dir_rel_path_leap_env_link_name
-        }
+        mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = mock_client_dir
+        mock_state_client_conf_file_data_loaded.return_value.eval_own_state.return_value = {ConfField.field_local_conf_symlink_rel_path.value: ConfConstClient.default_dir_rel_path_leap_env_link_name}
 
         state_local_conf_symlink_abs_path_inited = os.path.join(
             mock_client_dir,
@@ -348,33 +266,21 @@ class ThisTestClass(BasePyfakefsTestClass):
             state_local_conf_symlink_abs_path_inited,
             mock_not_a_dir,
         )
-        mock_state_selected_env_dir_rel_path_inited.return_value.eval_own_state.return_value = (
-            mock_not_a_dir
-        )
+        mock_state_selected_env_dir_rel_path_inited.return_value.eval_own_state.return_value = mock_not_a_dir
 
         # when:
 
         with self.assertRaises(AssertionError) as ctx:
-            self.env_ctx.state_graph.eval_state(
-                EnvState.state_local_conf_symlink_abs_path_inited.name, self.env_ctx
-            )
+            self.env_ctx.state_graph.eval_state(EnvState.state_local_conf_symlink_abs_path_inited.name, self.env_ctx)
 
         # then:
 
         self.assertIn("is not a directory", str(ctx.exception))
 
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_ref_root_dir_abs_path_inited.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_selected_env_dir_rel_path_inited.__name__}.create_state_node"
-    )
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_selected_env_dir_rel_path_inited.__name__}.create_state_node")
     def test_failure_when_conf_is_not_symlink(
         self,
         mock_state_selected_env_dir_rel_path_inited,
@@ -385,9 +291,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # given:
 
-        mock_state_input_exec_mode_arg_loaded.return_value.eval_own_state.return_value = (
-            ExecMode.mode_boot
-        )
+        mock_state_input_exec_mode_arg_loaded.return_value.eval_own_state.return_value = ExecMode.mode_boot
 
         assert_parent_factories_mocked(
             self.env_ctx,
@@ -403,18 +307,12 @@ class ThisTestClass(BasePyfakefsTestClass):
             ConfField.field_global_conf_dir_rel_path.value: ConfConstPrimer.default_client_conf_dir_rel_path,
         }
         write_json_file(
-            os.path.join(
-                mock_client_dir, ConfConstInput.default_file_basename_conf_primer
-            ),
+            os.path.join(mock_client_dir, ConfConstInput.default_file_basename_conf_primer),
             primer_conf_data,
         )
 
-        mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = (
-            mock_client_dir
-        )
-        mock_state_client_conf_file_data_loaded.return_value.eval_own_state.return_value = {
-            ConfField.field_local_conf_symlink_rel_path.value: ConfConstClient.default_dir_rel_path_leap_env_link_name
-        }
+        mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = mock_client_dir
+        mock_state_client_conf_file_data_loaded.return_value.eval_own_state.return_value = {ConfField.field_local_conf_symlink_rel_path.value: ConfConstClient.default_dir_rel_path_leap_env_link_name}
 
         state_local_conf_symlink_abs_path_inited = os.path.join(
             mock_client_dir,
@@ -426,34 +324,22 @@ class ThisTestClass(BasePyfakefsTestClass):
             client_script_basename,
         ]
 
-        mock_state_selected_env_dir_rel_path_inited.return_value.eval_own_state.return_value = (
-            "some_dir"
-        )
+        mock_state_selected_env_dir_rel_path_inited.return_value.eval_own_state.return_value = "some_dir"
 
         # when:
 
         with patch.object(sys, "argv", test_args):
             with self.assertRaises(AssertionError) as ctx:
-                self.env_ctx.state_graph.eval_state(
-                    EnvState.state_local_conf_symlink_abs_path_inited.name, self.env_ctx
-                )
+                self.env_ctx.state_graph.eval_state(EnvState.state_local_conf_symlink_abs_path_inited.name, self.env_ctx)
 
         # then:
 
         self.assertIn("is not a symlink", str(ctx.exception))
 
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_ref_root_dir_abs_path_inited.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_selected_env_dir_rel_path_inited.__name__}.create_state_node"
-    )
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_selected_env_dir_rel_path_inited.__name__}.create_state_node")
     def test_success_when_conf_symlink_is_created_if_it_is_missing_and_target_dir_is_given(
         self,
         mock_state_selected_env_dir_rel_path_inited,
@@ -464,9 +350,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # given:
 
-        mock_state_input_exec_mode_arg_loaded.return_value.eval_own_state.return_value = (
-            ExecMode.mode_boot
-        )
+        mock_state_input_exec_mode_arg_loaded.return_value.eval_own_state.return_value = ExecMode.mode_boot
 
         assert_parent_factories_mocked(
             self.env_ctx,
@@ -482,20 +366,14 @@ class ThisTestClass(BasePyfakefsTestClass):
             ConfField.field_global_conf_dir_rel_path.value: ConfConstPrimer.default_client_conf_dir_rel_path,
         }
         write_json_file(
-            os.path.join(
-                mock_client_dir, ConfConstInput.default_file_basename_conf_primer
-            ),
+            os.path.join(mock_client_dir, ConfConstInput.default_file_basename_conf_primer),
             primer_conf_data,
         )
         target_dst_dir_path = os.path.join(
             "target_dir",
         )
-        mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = (
-            mock_client_dir
-        )
-        mock_state_client_conf_file_data_loaded.return_value.eval_own_state.return_value = {
-            ConfField.field_local_conf_symlink_rel_path.value: ConfConstClient.default_dir_rel_path_leap_env_link_name
-        }
+        mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = mock_client_dir
+        mock_state_client_conf_file_data_loaded.return_value.eval_own_state.return_value = {ConfField.field_local_conf_symlink_rel_path.value: ConfConstClient.default_dir_rel_path_leap_env_link_name}
 
         state_local_conf_symlink_abs_path_inited = os.path.join(
             mock_client_dir,
@@ -503,15 +381,11 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
         self.fs.create_dir(target_dst_dir_path)
 
-        mock_state_selected_env_dir_rel_path_inited.return_value.eval_own_state.return_value = (
-            target_dst_dir_path
-        )
+        mock_state_selected_env_dir_rel_path_inited.return_value.eval_own_state.return_value = target_dst_dir_path
 
         # when:
 
-        self.env_ctx.state_graph.eval_state(
-            EnvState.state_local_conf_symlink_abs_path_inited.name, self.env_ctx
-        )
+        self.env_ctx.state_graph.eval_state(EnvState.state_local_conf_symlink_abs_path_inited.name, self.env_ctx)
 
         # then:
 
@@ -521,18 +395,10 @@ class ThisTestClass(BasePyfakefsTestClass):
             target_dst_dir_path,
         )
 
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_ref_root_dir_abs_path_inited.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_selected_env_dir_rel_path_inited.__name__}.create_state_node"
-    )
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_selected_env_dir_rel_path_inited.__name__}.create_state_node")
     def test_success_when_conf_symlink_is_created_with_normalized_target(
         self,
         mock_state_selected_env_dir_rel_path_inited,
@@ -543,9 +409,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # given:
 
-        mock_state_input_exec_mode_arg_loaded.return_value.eval_own_state.return_value = (
-            ExecMode.mode_boot
-        )
+        mock_state_input_exec_mode_arg_loaded.return_value.eval_own_state.return_value = ExecMode.mode_boot
 
         assert_parent_factories_mocked(
             self.env_ctx,
@@ -561,20 +425,14 @@ class ThisTestClass(BasePyfakefsTestClass):
             ConfField.field_global_conf_dir_rel_path.value: ConfConstPrimer.default_client_conf_dir_rel_path,
         }
         write_json_file(
-            os.path.join(
-                mock_client_dir, ConfConstInput.default_file_basename_conf_primer
-            ),
+            os.path.join(mock_client_dir, ConfConstInput.default_file_basename_conf_primer),
             primer_conf_data,
         )
 
         target_dst_dir_path_non_normalized = "target_dir/"
         target_dst_dir_path_normalized = "target_dir"
-        mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = (
-            mock_client_dir
-        )
-        mock_state_client_conf_file_data_loaded.return_value.eval_own_state.return_value = {
-            ConfField.field_local_conf_symlink_rel_path.value: ConfConstClient.default_dir_rel_path_leap_env_link_name
-        }
+        mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = mock_client_dir
+        mock_state_client_conf_file_data_loaded.return_value.eval_own_state.return_value = {ConfField.field_local_conf_symlink_rel_path.value: ConfConstClient.default_dir_rel_path_leap_env_link_name}
 
         state_local_conf_symlink_abs_path_inited = os.path.join(
             mock_client_dir,
@@ -582,15 +440,11 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
         self.fs.create_dir(target_dst_dir_path_normalized)
 
-        mock_state_selected_env_dir_rel_path_inited.return_value.eval_own_state.return_value = (
-            target_dst_dir_path_non_normalized
-        )
+        mock_state_selected_env_dir_rel_path_inited.return_value.eval_own_state.return_value = target_dst_dir_path_non_normalized
 
         # when:
 
-        self.env_ctx.state_graph.eval_state(
-            EnvState.state_local_conf_symlink_abs_path_inited.name, self.env_ctx
-        )
+        self.env_ctx.state_graph.eval_state(EnvState.state_local_conf_symlink_abs_path_inited.name, self.env_ctx)
 
         # then:
 
@@ -600,18 +454,10 @@ class ThisTestClass(BasePyfakefsTestClass):
             target_dst_dir_path_normalized,
         )
 
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_ref_root_dir_abs_path_inited.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_selected_env_dir_rel_path_inited.__name__}.create_state_node"
-    )
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_selected_env_dir_rel_path_inited.__name__}.create_state_node")
     def test_success_when_local_env_conf_dir_is_none(
         self,
         mock_state_selected_env_dir_rel_path_inited,
@@ -620,29 +466,19 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_input_exec_mode_arg_loaded,
     ):
         # given:
-        mock_state_input_exec_mode_arg_loaded.return_value.eval_own_state.return_value = (
-            ExecMode.mode_boot
-        )
+        mock_state_input_exec_mode_arg_loaded.return_value.eval_own_state.return_value = ExecMode.mode_boot
         assert_parent_factories_mocked(
             self.env_ctx,
             EnvState.state_local_conf_symlink_abs_path_inited.name,
         )
 
         mock_ref_root = "/mock_ref_root"
-        mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = (
-            mock_ref_root
-        )
-        mock_state_selected_env_dir_rel_path_inited.return_value.eval_own_state.return_value = (
-            None
-        )
-        mock_state_client_conf_file_data_loaded.return_value.eval_own_state.return_value = (
-            {}
-        )  # Not used in this branch
+        mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = mock_ref_root
+        mock_state_selected_env_dir_rel_path_inited.return_value.eval_own_state.return_value = None
+        mock_state_client_conf_file_data_loaded.return_value.eval_own_state.return_value = {}  # Not used in this branch
 
         # when:
-        result = self.env_ctx.state_graph.eval_state(
-            EnvState.state_local_conf_symlink_abs_path_inited.name, self.env_ctx
-        )
+        result = self.env_ctx.state_graph.eval_state(EnvState.state_local_conf_symlink_abs_path_inited.name, self.env_ctx)
 
         # then:
         self.assertEqual(result, mock_ref_root)

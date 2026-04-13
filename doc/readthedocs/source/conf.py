@@ -106,6 +106,7 @@ epub_show_urls = "footnote"
 root_doc = "index"
 
 html_show_copyright = False
+html_show_sphinx = False
 
 googleanalytics_id = "G-7359VQM37J"
 
@@ -132,7 +133,7 @@ html_theme_options = {
     # Integrate GitHub for `html_theme = "alabaster"`:
     "github_user": "uvsmtid",
     "github_repo": "protoprimer",
-    "github_banner": True,
+    "github_banner": False,
     # ===
     # If using `sphinx_rtd_theme`:
     "collapse_navigation": False,

@@ -13,6 +13,14 @@ ul, ol {
     box-sizing: border-box;
 }
 
+/* Scale logo image inside h1 to match text height: */
+h1 img {
+    height: 1.2em;
+    vertical-align: middle;
+    margin-right: 0.2em;
+    image-rendering: pixelated;
+}
+
 /* Increase space before/after header: */
 h1, h2, h3, h4, h5, h6 {
     margin-top: 1em !important;
@@ -21,10 +29,17 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Indent content inside open <details> (opt-in via class): */
 details.indented[open] {
-    padding-left: 1em;
+    padding-left: 2em;
 }
 details.indented[open] > summary {
-    margin-left: -1em;
+    margin-left: -2em;
+}
+
+/* Style <summary> inside ## Details section to look like h3: */
+section#details > details > summary {
+    font-size: 150%;
+    margin-top: 1em;
+    margin-bottom: 1em;
 }
 
 /* Custom [+]/[-] marker for <details>/<summary>: */

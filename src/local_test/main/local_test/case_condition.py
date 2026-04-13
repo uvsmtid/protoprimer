@@ -32,9 +32,7 @@ def any_to_bool(v) -> bool:
             return False
         else:
             return str_to_bool(v)
-    raise argparse.ArgumentTypeError(
-        f"Unable to convert type [{type(v)}] to [{bool.__name__}]."
-    )
+    raise argparse.ArgumentTypeError(f"Unable to convert type [{type(v)}] to [{bool.__name__}].")
 
 
 is_integ_run = any_to_bool(os.environ.get(integ_env_var))
@@ -54,6 +52,7 @@ def skip_test_slow_integrated(
     reason_text = (
         f"Tests under `{parent_dir_abs_path}` skipped by default. "
         f"Run with environment variable `{integ_env_var}` set to `true` to enable. "
+        #
     )
 
     if not is_integ_run:
@@ -74,6 +73,7 @@ def skip_test_slow_integrated(
             if (
                 resolved_parent_path == resolved_test_path
                 or resolved_parent_path in resolved_test_path.parents
+                #
             ):
                 pytest_item.add_marker(skip_int_marker)
 

@@ -4,7 +4,7 @@
    :keywords: bootstrap, venv, install, python, required, version
 ```
 
-# [`protoprimer`][protoprimer_github]
+# ![logo](/_static/protoprimer.logo.16x16.png) [`protoprimer`][protoprimer_github]
 
 ```{include} /full/01_basic/01_intro.md
 :start-after: stub_include_start
@@ -76,15 +76,22 @@ This demands logic to handle flexibility:
 *   to load env-specific configuration and respect it
 *   to distinguish an initial bootstrap from a subsequent update
 
-**Next:** `shell` is untestable, non-modular, platform-dependent, cryptic, ...
+**Next:** `shell` is:
+*   untestable
+*   non-modular
+*   platform-dependent
+*   cryptic
+*   ...
 
 </details>
 
 <details>
-<summary>5. Thought: <em>"I can avoid <strong>unpredictable</strong> <code>shell</code> with another lang"</em></summary>
+<summary>5. Thought: <em>"I can avoid <strong>inconvenient</strong> <code>shell</code> with another lang"</em></summary>
 
-*   the lang has to be cross-platform
-*   the lang has to be at least as ubiquitous as `shell`, if not more
+the lang has to be:
+*   cross-platform
+*   ubiquitous (like `shell`)
+*   require no explicit compilation
 
 **Next:** you are in a cycle back to **point 1** for `python`.
 
@@ -96,7 +103,7 @@ You need to break that 5-to-1 loop.
 
 The entry script must **self-handle early chaotic conditions**.
 
-In other words, it must become **both** "the chicken and the egg".
+In other words, it must become **both** "the chicken **and** the egg".
 
 ## How?
 
@@ -105,17 +112,19 @@ In other words, it must become **both** "the chicken and the egg".
 :end-before: stub_include_stop
 ```
 
+## Flexibility
+
+The iterative restart handles initial conditions for all:
+
+*   a **single-package repo** with a lone library
+
+*   a **multi-lang monorepo** with arbitrary directory structure
+
 ## Use cases
 
-The iterative restart is flexible enough to handle initial conditions for all:
+You can:
 
-*   a single-package repo with a lone library
-
-*   a multi-lang monorepo with arbitrary directory structure
-
-The main use cases are:
-
-*   Bootstrap an environment:
+*   **Bootstrap an environment:**
 
     This case is the most involved and the main focus for `protoprimer`.
 
@@ -123,7 +132,7 @@ The main use cases are:
 
     % See FT_85_17_35_21.boot_env.md
 
-*   Start an application:
+*   **Start an application:**
 
     This case is used to start applications without explicit `venv` activation.
 
@@ -137,5 +146,11 @@ The main use cases are:
 :start-after: stub_include_start
 :end-before: stub_include_stop
 ```
+
+<div style="text-align: center; margin-top: 8em; margin-bottom: 8em;">
+
+[View on GitHub][protoprimer_github]
+
+</div>
 
 [protoprimer_github]: https://github.com/uvsmtid/protoprimer

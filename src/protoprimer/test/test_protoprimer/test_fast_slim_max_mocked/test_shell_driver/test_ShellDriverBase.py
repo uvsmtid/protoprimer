@@ -104,7 +104,7 @@ def test_run_shell(mock_configure, mock_write, mock_execve):
     mock_log_handler = MagicMock()
     mock_log_handler.level = logging.INFO
     # when:
-    driver.run_shell("echo hello", mock_log_handler, "/fake/venv")
+    driver.run_shell(False, "echo hello", mock_log_handler, "/fake/venv")
     # then:
     mock_write.assert_called_once_with("/fake/venv")
     mock_configure.assert_called_once_with(True)

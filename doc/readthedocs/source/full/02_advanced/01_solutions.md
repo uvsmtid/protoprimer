@@ -4,9 +4,7 @@
 
 % stub_include_start
 
-### Ultimate goal
-
-<details><summary></summary>
+<details><summary>Ultimate goal</summary>
 
 `protoprimer` replaces **manuals** for bootstraps and updates:
 
@@ -17,9 +15,7 @@
 
 </details>
 
-### First challenges
-
-<details><summary></summary>
+<details><summary>First challenges</summary>
 
 To eliminate manuals, `protoprimer` has to solve both:
 
@@ -33,9 +29,7 @@ To eliminate manuals, `protoprimer` has to solve both:
 
 </details>
 
-### Multiple constraints
-
-<details><summary></summary>
+<details><summary>Multiple constraints</summary>
 
 *   Compatible with a wild `python` version.
 
@@ -69,9 +63,7 @@ To eliminate manuals, `protoprimer` has to solve both:
 
 </details>
 
-### Primary features
-
-<details><summary></summary>
+<details><summary>Primary features</summary>
 
 *   Switch to required `python` version.
 
@@ -83,9 +75,11 @@ To eliminate manuals, `protoprimer` has to solve both:
 
         Then, it is swapped in-flight (while running that **one-liner**).
 
-*   Support monorepos.
+*   Support monorepos:
 
-    This requires support for any directory structure.
+    *   any directory structure
+    *   multiple `venv`-s
+    *   partial bootstrap (per subdirectory)
 
 *   Automatic environment-specific configuration.
 

@@ -54,9 +54,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
     # noinspection PyMethodMayBeStatic
     def test_relationship(self):
-        assert_test_module_name_embeds_str(
-            EnvState.state_stride_py_required_reached.name
-        )
+        assert_test_module_name_embeds_str(EnvState.state_stride_py_required_reached.name)
 
     def test_assumptions_used_in_other_tests(self):
         self.assertNotEqual(
@@ -67,44 +65,24 @@ class ThisTestClass(BasePyfakefsTestClass):
     ####################################################################################################################
     @patch.dict(
         os.environ,
-        {
-            primer_kernel.EnvVar.var_PROTOPRIMER_PY_EXEC.value: StateStride.stride_py_arbitrary.name
-        },
+        {primer_kernel.EnvVar.var_PROTOPRIMER_PY_EXEC.value: StateStride.stride_py_arbitrary.name},
         clear=True,
     )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_local_tmp_dir_abs_path_inited.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_default_file_log_handler_configured.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_proto_code_file_abs_path_inited.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_file_abs_path_inited.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_selected_python_file_abs_path_inited.__name__}.create_state_node"
-    )
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_tmp_dir_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_default_file_log_handler_configured.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_file_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_selected_python_file_abs_path_inited.__name__}.create_state_node")
     @patch(
         f"{primer_kernel.__name__}.get_path_to_curr_python",
         return_value=test_python_abs_path,
     )
     @patch(f"{primer_kernel.__name__}.os.execve")
     @patch(f"{primer_kernel.__name__}.subprocess.check_call")
-    @patch(
-        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.create_state_node"
-    )
+    @patch(f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.create_state_node")
     def test_success_on_arbitrary_py_exec_outside_venv(
         self,
         mock_input_exec_mode_arg_loaded,
@@ -129,39 +107,25 @@ class ThisTestClass(BasePyfakefsTestClass):
             EnvState.state_stride_py_required_reached.name,
         )
 
-        mock_state_args_parsed.return_value.eval_own_state.return_value = (
-            argparse.Namespace(
-                **{
-                    ParsedArg.name_reinstall.value: False,
-                }
-            )
+        mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(
+            **{
+                ParsedArg.name_reinstall.value: False,
+            }
         )
-        mock_state_input_start_id_var_loaded.return_value.eval_own_state.return_value = (
-            "mock_start_id"
-        )
-        mock_state_proto_code_file_abs_path_inited.return_value.eval_own_state.return_value = (
-            "any/path"
-        )
+        mock_state_input_start_id_var_loaded.return_value.eval_own_state.return_value = "mock_start_id"
+        mock_state_proto_code_file_abs_path_inited.return_value.eval_own_state.return_value = "any/path"
 
         # Make sure `path_to_curr_python` != `configured python`:
-        mock_state_selected_python_file_abs_path_inited.return_value.eval_own_state.return_value = (
-            "/a/different/python"
-        )
+        mock_state_selected_python_file_abs_path_inited.return_value.eval_own_state.return_value = "/a/different/python"
 
         # Make sure `is_sub_path` is false:
-        mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = (
-            "/not/the/parent/of/current/python"
-        )
+        mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = "/not/the/parent/of/current/python"
 
-        mock_state_local_conf_file_abs_path_inited.return_value.eval_own_state.return_value = (
-            "any/path"
-        )
+        mock_state_local_conf_file_abs_path_inited.return_value.eval_own_state.return_value = "any/path"
 
         # when:
 
-        self.env_ctx.state_graph.eval_state(
-            EnvState.state_stride_py_required_reached.name, self.env_ctx
-        )
+        self.env_ctx.state_graph.eval_state(EnvState.state_stride_py_required_reached.name, self.env_ctx)
 
         # then:
 
@@ -172,44 +136,24 @@ class ThisTestClass(BasePyfakefsTestClass):
 
     @patch.dict(
         os.environ,
-        {
-            primer_kernel.EnvVar.var_PROTOPRIMER_PY_EXEC.value: StateStride.stride_py_required.name
-        },
+        {primer_kernel.EnvVar.var_PROTOPRIMER_PY_EXEC.value: StateStride.stride_py_required.name},
         clear=True,
     )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_local_tmp_dir_abs_path_inited.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_default_file_log_handler_configured.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_proto_code_file_abs_path_inited.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_file_abs_path_inited.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_selected_python_file_abs_path_inited.__name__}.create_state_node"
-    )
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_tmp_dir_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_default_file_log_handler_configured.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_file_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_selected_python_file_abs_path_inited.__name__}.create_state_node")
     @patch(
         f"{primer_kernel.__name__}.get_path_to_curr_python",
         return_value=test_python_abs_path,
     )
     @patch(f"{primer_kernel.__name__}.os.execve")
     @patch(f"{primer_kernel.__name__}.subprocess.check_call")
-    @patch(
-        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.create_state_node"
-    )
+    @patch(f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.create_state_node")
     def test_skip_if_py_exec_is_already_required(
         self,
         mock_input_exec_mode_arg_loaded,
@@ -230,9 +174,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.env_ctx.state_stride = StateStride.stride_py_required
 
         # when:
-        actual_result = self.env_ctx.state_graph.eval_state(
-            EnvState.state_stride_py_required_reached.name, self.env_ctx
-        )
+        actual_result = self.env_ctx.state_graph.eval_state(EnvState.state_stride_py_required_reached.name, self.env_ctx)
 
         # then:
         self.assertEqual(
@@ -245,44 +187,24 @@ class ThisTestClass(BasePyfakefsTestClass):
 
     @patch.dict(
         os.environ,
-        {
-            primer_kernel.EnvVar.var_PROTOPRIMER_PY_EXEC.value: StateStride.stride_py_arbitrary.name
-        },
+        {primer_kernel.EnvVar.var_PROTOPRIMER_PY_EXEC.value: StateStride.stride_py_arbitrary.name},
         clear=True,
     )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_local_tmp_dir_abs_path_inited.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_default_file_log_handler_configured.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_proto_code_file_abs_path_inited.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_file_abs_path_inited.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_selected_python_file_abs_path_inited.__name__}.create_state_node"
-    )
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_tmp_dir_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_default_file_log_handler_configured.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_file_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_selected_python_file_abs_path_inited.__name__}.create_state_node")
     @patch(
         f"{primer_kernel.__name__}.get_path_to_curr_python",
         return_value=non_default_file_abs_path_python,
     )
     @patch(f"{primer_kernel.__name__}.os.execve")
     @patch(f"{primer_kernel.__name__}.subprocess.check_call")
-    @patch(
-        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.create_state_node"
-    )
+    @patch(f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.create_state_node")
     def test_success_if_correct_python_is_already_used(
         self,
         mock_input_exec_mode_arg_loaded,
@@ -300,17 +222,11 @@ class ThisTestClass(BasePyfakefsTestClass):
     ):
         # given:
         self.env_ctx.graph_coordinates.exec_mode = ExecMode.mode_boot
-        mock_state_selected_python_file_abs_path_inited.return_value.eval_own_state.return_value = (
-            non_default_file_abs_path_python
-        )
-        mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = (
-            non_default_dir_abs_path_venv
-        )
+        mock_state_selected_python_file_abs_path_inited.return_value.eval_own_state.return_value = non_default_file_abs_path_python
+        mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = non_default_dir_abs_path_venv
 
         # when:
-        actual_result = self.env_ctx.state_graph.eval_state(
-            EnvState.state_stride_py_required_reached.name, self.env_ctx
-        )
+        actual_result = self.env_ctx.state_graph.eval_state(EnvState.state_stride_py_required_reached.name, self.env_ctx)
 
         # then:
         self.assertEqual(

@@ -28,9 +28,7 @@ def customize_env_context():
     )
 
     # NOTE: It runs instead of `EnvState.state_command_executed` but also supports the `--command` arg.
-    env_ctx.final_state = (
-        Bootstrapper_state_activated_venv_shell_started.state_activated_venv_shell_started
-    )
+    env_ctx.final_state = Bootstrapper_state_activated_venv_shell_started.state_activated_venv_shell_started
 
     return env_ctx
 

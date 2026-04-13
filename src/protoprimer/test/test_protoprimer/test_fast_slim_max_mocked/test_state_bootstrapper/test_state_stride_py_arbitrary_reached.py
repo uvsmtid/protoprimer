@@ -42,12 +42,8 @@ def test_relationship():
 @patch(f"{primer_kernel.__name__}.get_path_to_curr_python")
 @patch(f"{primer_kernel.__name__}.get_path_to_base_python")
 @patch(f"{primer_kernel.__name__}.switch_python")
-@patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.create_state_node"
-)
-@patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.create_state_node"
-)
+@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.create_state_node")
 def test_py_exec_stride_py_unknown_in_venv(
     mock_state_input_exec_mode_arg_loaded,
     mock_state_input_start_id_var_loaded,
@@ -64,9 +60,7 @@ def test_py_exec_stride_py_unknown_in_venv(
         EnvState.state_stride_py_arbitrary_reached.name,
     )
 
-    mock_state_input_start_id_var_loaded.return_value.eval_own_state.return_value = (
-        "mock_start_id"
-    )
+    mock_state_input_start_id_var_loaded.return_value.eval_own_state.return_value = "mock_start_id"
 
     mock_get_path_to_curr_python.return_value = "/path/to/venv/bin/python"
     mock_get_path_to_base_python.return_value = "/usr/bin/python"
@@ -75,9 +69,7 @@ def test_py_exec_stride_py_unknown_in_venv(
 
     # when:
 
-    state_value = env_ctx.state_graph.eval_state(
-        EnvState.state_stride_py_arbitrary_reached.name, env_ctx
-    )
+    state_value = env_ctx.state_graph.eval_state(EnvState.state_stride_py_arbitrary_reached.name, env_ctx)
 
     # then:
 
@@ -111,12 +103,8 @@ def test_py_exec_stride_py_unknown_in_venv(
 @patch(f"{primer_kernel.__name__}.get_path_to_curr_python")
 @patch(f"{primer_kernel.__name__}.get_path_to_base_python")
 @patch(f"{primer_kernel.__name__}.switch_python")
-@patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.create_state_node"
-)
-@patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.create_state_node"
-)
+@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.create_state_node")
 def test_py_exec_stride_py_unknown_not_in_venv(
     mock_state_input_exec_mode_arg_loaded,
     mock_state_input_start_id_var_loaded,
@@ -133,9 +121,7 @@ def test_py_exec_stride_py_unknown_not_in_venv(
         EnvState.state_stride_py_arbitrary_reached.name,
     )
 
-    mock_state_input_start_id_var_loaded.return_value.eval_own_state.return_value = (
-        "mock_start_id"
-    )
+    mock_state_input_start_id_var_loaded.return_value.eval_own_state.return_value = "mock_start_id"
 
     mock_get_path_to_curr_python.return_value = "/usr/bin/python"
     mock_get_path_to_base_python.return_value = "/usr/bin/python"
@@ -144,9 +130,7 @@ def test_py_exec_stride_py_unknown_not_in_venv(
 
     # when:
 
-    state_value = env_ctx.state_graph.eval_state(
-        EnvState.state_stride_py_arbitrary_reached.name, env_ctx
-    )
+    state_value = env_ctx.state_graph.eval_state(EnvState.state_stride_py_arbitrary_reached.name, env_ctx)
 
     # then:
 

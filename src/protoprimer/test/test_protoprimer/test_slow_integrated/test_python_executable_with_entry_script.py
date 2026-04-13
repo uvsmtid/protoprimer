@@ -58,18 +58,12 @@ def test_python_from_arbitrary_venv_with_start_app(
         state_local_venv_dir_abs_path_inited=str(arbitrary_venv_dir),
     )
     venv_driver.create_venv(str(arbitrary_venv_dir))
-    arbitrary_venv_python = (
-        arbitrary_venv_dir / ConfConstGeneral.file_rel_path_venv_python
-    )
+    arbitrary_venv_python = arbitrary_venv_dir / ConfConstGeneral.file_rel_path_venv_python
 
     # === create `ConfLeap.leap_primer`
 
-    proto_code_dir_abs_path = (
-        ref_root_abs_path / ConfConstInput.default_proto_conf_dir_rel_path
-    )
-    proto_kernel_abs_path: pathlib.Path = create_plain_proto_code(
-        proto_code_dir_abs_path
-    )
+    proto_code_dir_abs_path = ref_root_abs_path / ConfConstInput.default_proto_conf_dir_rel_path
+    proto_kernel_abs_path: pathlib.Path = create_plain_proto_code(proto_code_dir_abs_path)
     create_conf_primer_file(
         ref_root_abs_path,
         proto_code_dir_abs_path,
@@ -82,9 +76,7 @@ def test_python_from_arbitrary_venv_with_start_app(
 
     # === create `ConfLeap.leap_env` / `default_env`
 
-    conf_env_dir_abs_path = (
-        ref_root_abs_path / ConfConstClient.default_default_env_dir_rel_path
-    )
+    conf_env_dir_abs_path = ref_root_abs_path / ConfConstClient.default_default_env_dir_rel_path
 
     create_conf_env_file(
         ref_root_abs_path,
@@ -94,9 +86,7 @@ def test_python_from_arbitrary_venv_with_start_app(
 
     # === create `ConfLeap.leap_client`
 
-    conf_client_dir_abs_path = (
-        ref_root_abs_path / ConfConstPrimer.default_client_conf_dir_rel_path
-    )
+    conf_client_dir_abs_path = ref_root_abs_path / ConfConstPrimer.default_client_conf_dir_rel_path
 
     create_conf_client_file(
         ref_root_abs_path,
@@ -118,9 +108,7 @@ def test_python_from_arbitrary_venv_with_start_app(
     )
     with open(boot_env_script_abs_path, "w") as f:
         f.write(boot_env_script_content)
-    boot_env_script_abs_path.chmod(
-        boot_env_script_abs_path.stat().st_mode | stat.S_IEXEC
-    )
+    boot_env_script_abs_path.chmod(boot_env_script_abs_path.stat().st_mode | stat.S_IEXEC)
 
     # === create `start_app` entry script
 
@@ -135,9 +123,7 @@ def test_python_from_arbitrary_venv_with_start_app(
     )
     with open(start_app_script_abs_path, "w") as f:
         f.write(start_app_script_content)
-    start_app_script_abs_path.chmod(
-        start_app_script_abs_path.stat().st_mode | stat.S_IEXEC
-    )
+    start_app_script_abs_path.chmod(start_app_script_abs_path.stat().st_mode | stat.S_IEXEC)
 
     # === run `boot_env`
     # See FT_75_87_82_46.entry_script.md
@@ -200,26 +186,18 @@ def test_python_from_required_venv_with_start_app(
         )
     else:
         venv_driver = VenvDriverUv(
-            required_python_version=convert_test_python_version(
-                platform.python_version()
-            ),
+            required_python_version=convert_test_python_version(platform.python_version()),
             selected_python_file_abs_path=sys.executable,
             state_local_venv_dir_abs_path_inited=str(required_venv_dir_abs_path),
-            state_local_cache_dir_abs_path_inited=str(
-                ref_root_abs_path / KeyWord.key_var.value / KeyWord.key_cache.value
-            ),
+            state_local_cache_dir_abs_path_inited=str(ref_root_abs_path / KeyWord.key_var.value / KeyWord.key_cache.value),
         )
     venv_driver.create_venv(str(required_venv_dir_abs_path))
-    required_venv_python = (
-        required_venv_dir_abs_path / ConfConstGeneral.file_rel_path_venv_python
-    )
+    required_venv_python = required_venv_dir_abs_path / ConfConstGeneral.file_rel_path_venv_python
 
     # === create `python` selector (see FT_72_45_12_06.python_executable.md)
 
     python_version: str = f"{sys.version_info.major}.{sys.version_info.minor}"
-    python_selector_rel_path: pathlib.Path = pathlib.Path(
-        f"test_python_selector_py{python_version}.py"
-    )
+    python_selector_rel_path: pathlib.Path = pathlib.Path(f"test_python_selector_py{python_version}.py")
     create_test_python_selector(
         ref_root_abs_path,
         python_selector_rel_path,
@@ -228,9 +206,7 @@ def test_python_from_required_venv_with_start_app(
 
     # === create `ConfLeap.leap_primer`
 
-    proto_code_dir_abs_path = (
-        ref_root_abs_path / ConfConstInput.default_proto_conf_dir_rel_path
-    )
+    proto_code_dir_abs_path = ref_root_abs_path / ConfConstInput.default_proto_conf_dir_rel_path
     proto_kernel_abs_path = create_plain_proto_code(proto_code_dir_abs_path)
     create_conf_primer_file(
         ref_root_abs_path,
@@ -244,13 +220,9 @@ def test_python_from_required_venv_with_start_app(
 
     # === create `ConfLeap.leap_env` / `default_env`
 
-    conf_env_dir_abs_path = (
-        ref_root_abs_path / ConfConstClient.default_default_env_dir_rel_path
-    )
+    conf_env_dir_abs_path = ref_root_abs_path / ConfConstClient.default_default_env_dir_rel_path
 
-    base_python_executable = os.path.join(
-        sys.base_prefix, ConfConstGeneral.file_rel_path_venv_python
-    )
+    base_python_executable = os.path.join(sys.base_prefix, ConfConstGeneral.file_rel_path_venv_python)
     create_conf_env_file(
         ref_root_abs_path,
         conf_env_dir_abs_path,
@@ -262,9 +234,7 @@ def test_python_from_required_venv_with_start_app(
 
     # === create `ConfLeap.leap_client`
 
-    conf_client_dir_abs_path = (
-        ref_root_abs_path / ConfConstPrimer.default_client_conf_dir_rel_path
-    )
+    conf_client_dir_abs_path = ref_root_abs_path / ConfConstPrimer.default_client_conf_dir_rel_path
 
     create_conf_client_file(
         ref_root_abs_path,
@@ -286,9 +256,7 @@ def test_python_from_required_venv_with_start_app(
     )
     with open(boot_env_script_abs_path, "w") as f:
         f.write(boot_env_script_content)
-    boot_env_script_abs_path.chmod(
-        boot_env_script_abs_path.stat().st_mode | stat.S_IEXEC
-    )
+    boot_env_script_abs_path.chmod(boot_env_script_abs_path.stat().st_mode | stat.S_IEXEC)
 
     # === create `start_app` entry script
 
@@ -303,9 +271,7 @@ def test_python_from_required_venv_with_start_app(
     )
     with open(start_app_script_abs_path, "w") as f:
         f.write(start_app_script_content)
-    start_app_script_abs_path.chmod(
-        start_app_script_abs_path.stat().st_mode | stat.S_IEXEC
-    )
+    start_app_script_abs_path.chmod(start_app_script_abs_path.stat().st_mode | stat.S_IEXEC)
 
     # === run `boot_env`
     # See FT_75_87_82_46.entry_script.md

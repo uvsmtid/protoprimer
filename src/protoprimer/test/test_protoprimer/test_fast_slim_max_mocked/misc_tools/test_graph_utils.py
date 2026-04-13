@@ -58,12 +58,8 @@ class TestTopologicalSort:
 
         @trivial_factory
         class DummyStateNode(StateNode):
-            def __init__(
-                self, env_context_param, parent_states_param, state_name_param
-            ):
-                super().__init__(
-                    env_context_param, parent_states_param, state_name_param
-                )
+            def __init__(self, env_context_param, parent_states_param, state_name_param):
+                super().__init__(env_context_param, parent_states_param, state_name_param)
 
             def _eval_own_state(self):
                 return None
@@ -73,18 +69,10 @@ class TestTopologicalSort:
         node_c_instance = DummyStateNode(env_context_instance, ["A"], "C")
         node_d_instance = DummyStateNode(env_context_instance, ["B", "C"], "D")
 
-        state_graph_instance.register_factory(
-            node_a_instance.get_state_name(), node_a_instance
-        )
-        state_graph_instance.register_factory(
-            node_b_instance.get_state_name(), node_b_instance
-        )
-        state_graph_instance.register_factory(
-            node_c_instance.get_state_name(), node_c_instance
-        )
-        state_graph_instance.register_factory(
-            node_d_instance.get_state_name(), node_d_instance
-        )
+        state_graph_instance.register_factory(node_a_instance.get_state_name(), node_a_instance)
+        state_graph_instance.register_factory(node_b_instance.get_state_name(), node_b_instance)
+        state_graph_instance.register_factory(node_c_instance.get_state_name(), node_c_instance)
+        state_graph_instance.register_factory(node_d_instance.get_state_name(), node_d_instance)
 
         # when:
         sorted_nodes = topological_sort(state_graph_instance, env_context_instance)
@@ -106,12 +94,8 @@ class TestTopologicalSort:
 
         @trivial_factory
         class DummyStateNode(StateNode):
-            def __init__(
-                self, env_context_param, parent_states_param, state_name_param
-            ):
-                super().__init__(
-                    env_context_param, parent_states_param, state_name_param
-                )
+            def __init__(self, env_context_param, parent_states_param, state_name_param):
+                super().__init__(env_context_param, parent_states_param, state_name_param)
 
             def _eval_own_state(self):
                 return None
@@ -123,24 +107,12 @@ class TestTopologicalSort:
         node_b_instance = DummyStateNode(env_context_instance, ["D"], "B")
         node_a_instance = DummyStateNode(env_context_instance, ["B", "C"], "A")
 
-        state_graph_instance.register_factory(
-            node_f_instance.get_state_name(), node_f_instance
-        )
-        state_graph_instance.register_factory(
-            node_e_instance.get_state_name(), node_e_instance
-        )
-        state_graph_instance.register_factory(
-            node_d_instance.get_state_name(), node_d_instance
-        )
-        state_graph_instance.register_factory(
-            node_c_instance.get_state_name(), node_c_instance
-        )
-        state_graph_instance.register_factory(
-            node_b_instance.get_state_name(), node_b_instance
-        )
-        state_graph_instance.register_factory(
-            node_a_instance.get_state_name(), node_a_instance
-        )
+        state_graph_instance.register_factory(node_f_instance.get_state_name(), node_f_instance)
+        state_graph_instance.register_factory(node_e_instance.get_state_name(), node_e_instance)
+        state_graph_instance.register_factory(node_d_instance.get_state_name(), node_d_instance)
+        state_graph_instance.register_factory(node_c_instance.get_state_name(), node_c_instance)
+        state_graph_instance.register_factory(node_b_instance.get_state_name(), node_b_instance)
+        state_graph_instance.register_factory(node_a_instance.get_state_name(), node_a_instance)
 
         # when:
         sorted_nodes = topological_sort(state_graph_instance, env_context_instance)
@@ -166,12 +138,8 @@ class TestTopologicalSort:
 
         @trivial_factory
         class DummyStateNode(StateNode):
-            def __init__(
-                self, env_context_param, parent_states_param, state_name_param
-            ):
-                super().__init__(
-                    env_context_param, parent_states_param, state_name_param
-                )
+            def __init__(self, env_context_param, parent_states_param, state_name_param):
+                super().__init__(env_context_param, parent_states_param, state_name_param)
 
             def _eval_own_state(self):
                 return None
@@ -179,12 +147,8 @@ class TestTopologicalSort:
         node_a_instance = DummyStateNode(env_context_instance, ["B"], "A")
         node_b_instance = DummyStateNode(env_context_instance, ["A"], "B")
 
-        state_graph_instance.register_factory(
-            node_a_instance.get_state_name(), node_a_instance
-        )
-        state_graph_instance.register_factory(
-            node_b_instance.get_state_name(), node_b_instance
-        )
+        state_graph_instance.register_factory(node_a_instance.get_state_name(), node_a_instance)
+        state_graph_instance.register_factory(node_b_instance.get_state_name(), node_b_instance)
 
         # when:
         # then:
@@ -200,21 +164,15 @@ class TestTopologicalSort:
 
         @trivial_factory
         class DummyStateNode(StateNode):
-            def __init__(
-                self, env_context_param, parent_states_param, state_name_param
-            ):
-                super().__init__(
-                    env_context_param, parent_states_param, state_name_param
-                )
+            def __init__(self, env_context_param, parent_states_param, state_name_param):
+                super().__init__(env_context_param, parent_states_param, state_name_param)
 
             def _eval_own_state(self):
                 return None
 
         node_a_instance = DummyStateNode(env_context_instance, ["A"], "A")
 
-        state_graph_instance.register_factory(
-            node_a_instance.get_state_name(), node_a_instance
-        )
+        state_graph_instance.register_factory(node_a_instance.get_state_name(), node_a_instance)
 
         # when:
         # then:
@@ -230,20 +188,14 @@ class TestTopologicalSort:
 
         @trivial_factory
         class DummyStateNode(StateNode):
-            def __init__(
-                self, env_context_param, parent_states_param, state_name_param
-            ):
-                super().__init__(
-                    env_context_param, parent_states_param, state_name_param
-                )
+            def __init__(self, env_context_param, parent_states_param, state_name_param):
+                super().__init__(env_context_param, parent_states_param, state_name_param)
 
             def _eval_own_state(self):
                 return None
 
         node_a_instance = DummyStateNode(env_context_instance, ["B"], "A")
-        state_graph_instance.register_factory(
-            node_a_instance.get_state_name(), node_a_instance
-        )
+        state_graph_instance.register_factory(node_a_instance.get_state_name(), node_a_instance)
 
         # when:
         # then:
@@ -264,12 +216,8 @@ class TestGetTransitiveDependencies:
 
         @trivial_factory
         class DummyStateNode(StateNode):
-            def __init__(
-                self, env_context_param, parent_states_param, state_name_param
-            ):
-                super().__init__(
-                    env_context_param, parent_states_param, state_name_param
-                )
+            def __init__(self, env_context_param, parent_states_param, state_name_param):
+                super().__init__(env_context_param, parent_states_param, state_name_param)
 
             def _eval_own_state(self):
                 return None
@@ -279,24 +227,14 @@ class TestGetTransitiveDependencies:
         node_c_instance = DummyStateNode(env_context_instance, ["A"], "C")
         node_d_instance = DummyStateNode(env_context_instance, ["B", "C"], "D")
 
-        state_graph_instance.register_factory(
-            node_a_instance.get_state_name(), node_a_instance
-        )
-        state_graph_instance.register_factory(
-            node_b_instance.get_state_name(), node_b_instance
-        )
-        state_graph_instance.register_factory(
-            node_c_instance.get_state_name(), node_c_instance
-        )
-        state_graph_instance.register_factory(
-            node_d_instance.get_state_name(), node_d_instance
-        )
+        state_graph_instance.register_factory(node_a_instance.get_state_name(), node_a_instance)
+        state_graph_instance.register_factory(node_b_instance.get_state_name(), node_b_instance)
+        state_graph_instance.register_factory(node_c_instance.get_state_name(), node_c_instance)
+        state_graph_instance.register_factory(node_d_instance.get_state_name(), node_d_instance)
 
         # when:
 
-        trans_dependencies = get_transitive_dependencies(
-            state_graph_instance, "D", env_context_instance
-        )
+        trans_dependencies = get_transitive_dependencies(state_graph_instance, "D", env_context_instance)
 
         # then:
 
@@ -313,12 +251,8 @@ class TestGetTransitiveDependencies:
 
         @trivial_factory
         class DummyStateNode(StateNode):
-            def __init__(
-                self, env_context_param, parent_states_param, state_name_param
-            ):
-                super().__init__(
-                    env_context_param, parent_states_param, state_name_param
-                )
+            def __init__(self, env_context_param, parent_states_param, state_name_param):
+                super().__init__(env_context_param, parent_states_param, state_name_param)
 
             def _eval_own_state(self):
                 return None
@@ -330,30 +264,16 @@ class TestGetTransitiveDependencies:
         node_b_instance = DummyStateNode(env_context_instance, ["D"], "B")
         node_a_instance = DummyStateNode(env_context_instance, ["B", "C"], "A")
 
-        state_graph_instance.register_factory(
-            node_f_instance.get_state_name(), node_f_instance
-        )
-        state_graph_instance.register_factory(
-            node_e_instance.get_state_name(), node_e_instance
-        )
-        state_graph_instance.register_factory(
-            node_d_instance.get_state_name(), node_d_instance
-        )
-        state_graph_instance.register_factory(
-            node_c_instance.get_state_name(), node_c_instance
-        )
-        state_graph_instance.register_factory(
-            node_b_instance.get_state_name(), node_b_instance
-        )
-        state_graph_instance.register_factory(
-            node_a_instance.get_state_name(), node_a_instance
-        )
+        state_graph_instance.register_factory(node_f_instance.get_state_name(), node_f_instance)
+        state_graph_instance.register_factory(node_e_instance.get_state_name(), node_e_instance)
+        state_graph_instance.register_factory(node_d_instance.get_state_name(), node_d_instance)
+        state_graph_instance.register_factory(node_c_instance.get_state_name(), node_c_instance)
+        state_graph_instance.register_factory(node_b_instance.get_state_name(), node_b_instance)
+        state_graph_instance.register_factory(node_a_instance.get_state_name(), node_a_instance)
 
         # when:
 
-        trans_dependencies = get_transitive_dependencies(
-            state_graph_instance, "A", env_context_instance
-        )
+        trans_dependencies = get_transitive_dependencies(state_graph_instance, "A", env_context_instance)
 
         # then:
 
@@ -370,26 +290,18 @@ class TestGetTransitiveDependencies:
 
         @trivial_factory
         class DummyStateNode(StateNode):
-            def __init__(
-                self, env_context_param, parent_states_param, state_name_param
-            ):
-                super().__init__(
-                    env_context_param, parent_states_param, state_name_param
-                )
+            def __init__(self, env_context_param, parent_states_param, state_name_param):
+                super().__init__(env_context_param, parent_states_param, state_name_param)
 
             def _eval_own_state(self):
                 return None
 
         node_a_instance = DummyStateNode(env_context_instance, [], "A")
-        state_graph_instance.register_factory(
-            node_a_instance.get_state_name(), node_a_instance
-        )
+        state_graph_instance.register_factory(node_a_instance.get_state_name(), node_a_instance)
 
         # when:
 
-        trans_dependencies = get_transitive_dependencies(
-            state_graph_instance, "A", env_context_instance
-        )
+        trans_dependencies = get_transitive_dependencies(state_graph_instance, "A", env_context_instance)
 
         # then:
 

@@ -64,14 +64,8 @@ def test_mode_boot(tmp_path: Path):
     lconf_dir = ref_root_abs_path / ConfDst.dst_local.value
 
     # TODO: Unify names for default conf files:
-    conf_primer_file = (
-        ref_root_abs_path
-        / ConfConstGeneral.name_proto_code
-        / ConfConstInput.default_file_basename_conf_primer
-    )
-    conf_client_file = (
-        ref_root_abs_path / ConfConstPrimer.default_client_conf_file_rel_path
-    )
+    conf_primer_file = ref_root_abs_path / ConfConstGeneral.name_proto_code / ConfConstInput.default_file_basename_conf_primer
+    conf_client_file = ref_root_abs_path / ConfConstPrimer.default_client_conf_file_rel_path
     conf_env_file = ref_root_abs_path / ConfConstClient.default_env_conf_file_rel_path
 
     assert os.path.isdir(gconf_dir) and not os.path.islink(gconf_dir)
