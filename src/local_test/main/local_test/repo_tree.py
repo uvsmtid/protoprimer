@@ -27,9 +27,7 @@ def change_to_known_repo_path(path_from_repo_root="."):
             curr_dir_abs_path = os.path.abspath(os.getcwd())
             # Fail when walking up does not change dir (we are in the system root):
             if curr_dir_abs_path == os.path.dirname(curr_dir_abs_path):
-                raise RuntimeError(
-                    f"cannot reach repo root walking up from the given start path: {start_dir_abs_path}"
-                )
+                raise RuntimeError(f"cannot reach repo root walking up from the given start path: {start_dir_abs_path}")
 
         # Desired path:
         os.chdir(path_from_repo_root)

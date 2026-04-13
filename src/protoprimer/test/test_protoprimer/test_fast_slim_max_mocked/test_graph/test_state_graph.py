@@ -41,9 +41,7 @@ class TestStateGraph(unittest.TestCase):
         self.graph.register_factory("A", factory1)
 
         # when:
-        returned_factory = self.graph.register_factory(
-            "A", factory2, replace_existing=True
-        )
+        returned_factory = self.graph.register_factory("A", factory2, replace_existing=True)
 
         # then:
         self.assertEqual(self.graph.state_factories["A"], factory2)

@@ -30,24 +30,16 @@ class ThisTestClass(BasePyfakefsTestClass):
 
     # noinspection PyMethodMayBeStatic
     def test_relationship(self):
-        assert_test_module_name_embeds_str(
-            Bootstrapper_state_pre_commit_configured.state_pre_commit_configured
-        )
+        assert_test_module_name_embeds_str(Bootstrapper_state_pre_commit_configured.state_pre_commit_configured)
 
     @patch(f"{pre_commit.__name__}.subprocess.check_call")
     @patch(f"{pre_commit.__name__}.subprocess.check_output")
     @patch(f"{primer_kernel.__name__}.os.execve")
     @patch("sys.argv", [""])
     @patch(f"{primer_kernel.__name__}.is_venv", return_value=False)
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_command_executed.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_global_conf_file_abs_path_inited.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_ref_root_dir_abs_path_inited.__name__}.create_state_node"
-    )
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_command_executed.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_global_conf_file_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
     def test_state_evaluation(
         self,
         mock_create_state_ref_root_dir_abs_path_inited,
@@ -60,9 +52,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     ):
         # given:
 
-        mock_create_state_command_executed.return_value.eval_own_state.return_value = (
-            True
-        )
+        mock_create_state_command_executed.return_value.eval_own_state.return_value = True
 
         assert_parent_factories_mocked(
             self.env_ctx,
@@ -72,13 +62,9 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_client_conf_path = "/gconf/proto_kernel.json"
         self.fs.create_dir("/gconf")
         write_json_file(mock_client_conf_path, {})
-        mock_create_state_global_conf_file_abs_path_inited.return_value.eval_own_state.return_value = (
-            mock_client_conf_path
-        )
+        mock_create_state_global_conf_file_abs_path_inited.return_value.eval_own_state.return_value = mock_client_conf_path
         mock_ref_root_dir = "/test/project"
-        mock_create_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = (
-            mock_ref_root_dir
-        )
+        mock_create_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = mock_ref_root_dir
 
         client_conf_dir_path = "/gconf"
         pre_commit_conf_file_path = os.path.join(

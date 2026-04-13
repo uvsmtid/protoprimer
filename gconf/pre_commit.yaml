@@ -35,6 +35,10 @@ repos:
         hooks:
         -   id: black
             args: [
+                # Use "unlimited" line:
+                # Apply "Magic Comma", or "Trailing Comment", or "fmt: off"
+                # to enforce line breaks in specific places.
+                "--line-length", "999",
                 "--force-exclude",
                 "cmd/proto_code/proto_kernel.py",
             ]

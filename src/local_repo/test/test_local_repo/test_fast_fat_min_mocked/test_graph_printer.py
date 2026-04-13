@@ -168,6 +168,7 @@ class ThisTestClass(BaseTestClass):
         # then:
         stdout_text = fake_stdout.getvalue()
         self.assertEqual(
+            ""  #
             "graph TD\n"
             '    subgraph "graph_input"\n'
             "        A\n"

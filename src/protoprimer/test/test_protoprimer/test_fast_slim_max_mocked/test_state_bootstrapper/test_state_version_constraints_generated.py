@@ -28,22 +28,12 @@ class ThisTestClass(BasePyfakefsTestClass):
 
     # noinspection PyMethodMayBeStatic
     def test_relationship(self):
-        assert_test_module_name_embeds_str(
-            EnvState.state_version_constraints_generated.name
-        )
+        assert_test_module_name_embeds_str(EnvState.state_version_constraints_generated.name)
 
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_protoprimer_package_installed.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_venv_driver_prepared.__name__}.create_state_node"
-    )
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_protoprimer_package_installed.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_venv_driver_prepared.__name__}.create_state_node")
     def test_constraints_generated(
         self,
         mock_state_venv_driver_prepared,
@@ -60,14 +50,10 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
         self.fs.reset()
         self.env_ctx = EnvContext()
-        mock_state_protoprimer_package_installed.return_value.eval_own_state.return_value = (
-            True
-        )
+        mock_state_protoprimer_package_installed.return_value.eval_own_state.return_value = True
         mock_client_conf_env_dir = "/mock_client_conf_env_dir"
         self.fs.create_dir(mock_client_conf_env_dir)
-        mock_state_local_conf_symlink_abs_path_inited.return_value.eval_own_state.return_value = (
-            mock_client_conf_env_dir
-        )
+        mock_state_local_conf_symlink_abs_path_inited.return_value.eval_own_state.return_value = mock_client_conf_env_dir
 
         def pin_versions_impl(
             selected_python_file_abs_path,
@@ -75,17 +61,11 @@ class ThisTestClass(BasePyfakefsTestClass):
         ):
             self.fs.create_file(constraints_file_abs_path)
 
-        mock_state_venv_driver_prepared.return_value.eval_own_state.return_value.pin_versions.side_effect = (
-            pin_versions_impl
-        )
-        mock_state_input_exec_mode_arg_loaded.return_value.eval_own_state.return_value = (
-            "boot"
-        )
+        mock_state_venv_driver_prepared.return_value.eval_own_state.return_value.pin_versions.side_effect = pin_versions_impl
+        mock_state_input_exec_mode_arg_loaded.return_value.eval_own_state.return_value = "boot"
 
         # when:
-        self.env_ctx.state_graph.eval_state(
-            EnvState.state_version_constraints_generated.name, self.env_ctx
-        )
+        self.env_ctx.state_graph.eval_state(EnvState.state_version_constraints_generated.name, self.env_ctx)
         # then:
         constraints_txt_path = os.path.join(
             mock_client_conf_env_dir,
@@ -94,18 +74,10 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.assertTrue(os.path.exists(constraints_txt_path))
         mock_state_venv_driver_prepared.return_value.eval_own_state.return_value.pin_versions.assert_called_once()
 
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_protoprimer_package_installed.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.create_state_node"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_venv_driver_prepared.__name__}.create_state_node"
-    )
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_protoprimer_package_installed.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_venv_driver_prepared.__name__}.create_state_node")
     def test_generation_skipped(
         self,
         mock_state_venv_driver_prepared,
@@ -120,21 +92,13 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
         self.fs.reset()
         self.env_ctx = EnvContext()
-        mock_state_protoprimer_package_installed.return_value.eval_own_state.return_value = (
-            False
-        )
+        mock_state_protoprimer_package_installed.return_value.eval_own_state.return_value = False
         mock_client_conf_env_dir = "/mock_client_conf_env_dir"
         self.fs.create_dir(mock_client_conf_env_dir)
-        mock_state_local_conf_symlink_abs_path_inited.return_value.eval_own_state.return_value = (
-            mock_client_conf_env_dir
-        )
-        mock_state_input_exec_mode_arg_loaded.return_value.eval_own_state.return_value = (
-            "boot"
-        )
+        mock_state_local_conf_symlink_abs_path_inited.return_value.eval_own_state.return_value = mock_client_conf_env_dir
+        mock_state_input_exec_mode_arg_loaded.return_value.eval_own_state.return_value = "boot"
         # when:
-        self.env_ctx.state_graph.eval_state(
-            EnvState.state_version_constraints_generated.name, self.env_ctx
-        )
+        self.env_ctx.state_graph.eval_state(EnvState.state_version_constraints_generated.name, self.env_ctx)
         # then:
         constraints_txt_path = os.path.join(
             mock_client_conf_env_dir,

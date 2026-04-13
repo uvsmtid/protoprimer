@@ -24,9 +24,7 @@ def test_stride_py_arbitrary():
     mock_env_ctx.set_max_stride.side_effect = lambda x: x
 
     # when:
-    result = Bootstrapper_state_input_py_exec_var_loaded(
-        mock_env_ctx
-    )._eval_state_once()
+    result = Bootstrapper_state_input_py_exec_var_loaded(mock_env_ctx)._eval_state_once()
 
     # then:
     assert result == StateStride.stride_py_arbitrary
@@ -39,9 +37,7 @@ def test_py_exec_stride_py_unknown():
     mock_env_ctx.set_max_stride.side_effect = lambda x: x
 
     # when:
-    result = Bootstrapper_state_input_py_exec_var_loaded(
-        mock_env_ctx
-    )._eval_state_once()
+    result = Bootstrapper_state_input_py_exec_var_loaded(mock_env_ctx)._eval_state_once()
 
     # then:
     assert result == StateStride.stride_py_unknown

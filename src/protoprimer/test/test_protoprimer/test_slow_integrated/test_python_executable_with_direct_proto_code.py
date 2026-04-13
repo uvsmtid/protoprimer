@@ -55,18 +55,12 @@ def test_python_from_arbitrary_venv(
         state_local_venv_dir_abs_path_inited=str(arbitrary_venv_dir),
     )
     venv_driver.create_venv(str(arbitrary_venv_dir))
-    arbitrary_venv_python = (
-        arbitrary_venv_dir / ConfConstGeneral.file_rel_path_venv_python
-    )
+    arbitrary_venv_python = arbitrary_venv_dir / ConfConstGeneral.file_rel_path_venv_python
 
     # === create `ConfLeap.leap_primer`
 
-    proto_code_dir_abs_path = (
-        ref_root_abs_path / ConfConstInput.default_proto_conf_dir_rel_path
-    )
-    proto_kernel_abs_path: pathlib.Path = create_plain_proto_code(
-        proto_code_dir_abs_path
-    )
+    proto_code_dir_abs_path = ref_root_abs_path / ConfConstInput.default_proto_conf_dir_rel_path
+    proto_kernel_abs_path: pathlib.Path = create_plain_proto_code(proto_code_dir_abs_path)
     create_conf_primer_file(
         ref_root_abs_path,
         proto_code_dir_abs_path,
@@ -79,9 +73,7 @@ def test_python_from_arbitrary_venv(
 
     # === create `ConfLeap.leap_env` / `default_env`
 
-    conf_env_dir_abs_path = (
-        ref_root_abs_path / ConfConstClient.default_default_env_dir_rel_path
-    )
+    conf_env_dir_abs_path = ref_root_abs_path / ConfConstClient.default_default_env_dir_rel_path
 
     create_conf_env_file(
         ref_root_abs_path,
@@ -91,9 +83,7 @@ def test_python_from_arbitrary_venv(
 
     # === create `ConfLeap.leap_client`
 
-    conf_client_dir_abs_path = (
-        ref_root_abs_path / ConfConstPrimer.default_client_conf_dir_rel_path
-    )
+    conf_client_dir_abs_path = ref_root_abs_path / ConfConstPrimer.default_client_conf_dir_rel_path
 
     create_conf_client_file(
         ref_root_abs_path,
@@ -142,25 +132,17 @@ def test_python_from_required_venv(
         )
     else:
         venv_driver = VenvDriverUv(
-            required_python_version=convert_test_python_version(
-                platform.python_version()
-            ),
+            required_python_version=convert_test_python_version(platform.python_version()),
             selected_python_file_abs_path=sys.executable,
             state_local_venv_dir_abs_path_inited=str(required_venv_dir_abs_path),
-            state_local_cache_dir_abs_path_inited=str(
-                ref_root_abs_path / KeyWord.key_var.value / KeyWord.key_cache.value
-            ),
+            state_local_cache_dir_abs_path_inited=str(ref_root_abs_path / KeyWord.key_var.value / KeyWord.key_cache.value),
         )
     venv_driver.create_venv(str(required_venv_dir_abs_path))
-    required_venv_python = (
-        required_venv_dir_abs_path / ConfConstGeneral.file_rel_path_venv_python
-    )
+    required_venv_python = required_venv_dir_abs_path / ConfConstGeneral.file_rel_path_venv_python
 
     # === create `ConfLeap.leap_primer`
 
-    proto_code_dir_abs_path = (
-        ref_root_abs_path / ConfConstInput.default_proto_conf_dir_rel_path
-    )
+    proto_code_dir_abs_path = ref_root_abs_path / ConfConstInput.default_proto_conf_dir_rel_path
     create_plain_proto_code(proto_code_dir_abs_path)
     create_conf_primer_file(
         ref_root_abs_path,
@@ -174,13 +156,9 @@ def test_python_from_required_venv(
 
     # === create `ConfLeap.leap_env` / `default_env`
 
-    conf_env_dir_abs_path = (
-        ref_root_abs_path / ConfConstClient.default_default_env_dir_rel_path
-    )
+    conf_env_dir_abs_path = ref_root_abs_path / ConfConstClient.default_default_env_dir_rel_path
 
-    base_python_executable = os.path.join(
-        sys.base_prefix, ConfConstGeneral.file_rel_path_venv_python
-    )
+    base_python_executable = os.path.join(sys.base_prefix, ConfConstGeneral.file_rel_path_venv_python)
     create_conf_env_file(
         ref_root_abs_path,
         conf_env_dir_abs_path,
@@ -192,9 +170,7 @@ def test_python_from_required_venv(
 
     # === create `ConfLeap.leap_client`
 
-    conf_client_dir_abs_path = (
-        ref_root_abs_path / ConfConstPrimer.default_client_conf_dir_rel_path
-    )
+    conf_client_dir_abs_path = ref_root_abs_path / ConfConstPrimer.default_client_conf_dir_rel_path
 
     create_conf_client_file(
         ref_root_abs_path,
@@ -209,6 +185,7 @@ def test_python_from_required_venv(
         ref_root_abs_path
         / ConfConstGeneral.name_proto_code
         / ConfConstGeneral.default_proto_code_basename
+        #
     )
     command_args = [
         str(required_venv_python),

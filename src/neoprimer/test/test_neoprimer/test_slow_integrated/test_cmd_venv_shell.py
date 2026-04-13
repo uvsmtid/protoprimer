@@ -39,9 +39,7 @@ def test_venv_shell_no_update(tmp_path: pathlib.Path):
 
     # ===
 
-    proto_code_dir_abs_path = (
-        ref_root_abs_path / ConfConstInput.default_proto_conf_dir_rel_path
-    )
+    proto_code_dir_abs_path = ref_root_abs_path / ConfConstInput.default_proto_conf_dir_rel_path
     proto_kernel_abs_path = create_plain_proto_code(proto_code_dir_abs_path)
     create_conf_primer_file(
         ref_root_abs_path,
@@ -62,9 +60,7 @@ def test_venv_shell_no_update(tmp_path: pathlib.Path):
 
     # ===
 
-    conf_env_dir_abs_path = (
-        ref_root_abs_path / ConfConstClient.default_default_env_dir_rel_path
-    )
+    conf_env_dir_abs_path = ref_root_abs_path / ConfConstClient.default_default_env_dir_rel_path
 
     create_conf_env_file(
         ref_root_abs_path,
@@ -74,9 +70,7 @@ def test_venv_shell_no_update(tmp_path: pathlib.Path):
 
     # ===
 
-    conf_client_dir_abs_path = (
-        ref_root_abs_path / ConfConstPrimer.default_client_conf_dir_rel_path
-    )
+    conf_client_dir_abs_path = ref_root_abs_path / ConfConstPrimer.default_client_conf_dir_rel_path
 
     create_conf_client_file(
         ref_root_abs_path,
@@ -98,16 +92,9 @@ def test_venv_shell_no_update(tmp_path: pathlib.Path):
 
     # then:
 
-    venv_pip: str = str(
-        ref_root_abs_path
-        / ConfConstEnv.default_dir_rel_path_venv
-        / "bin"
-        / ConfConstGeneral.name_pip_package
-    )
+    venv_pip: str = str(ref_root_abs_path / ConfConstEnv.default_dir_rel_path_venv / "bin" / ConfConstGeneral.name_pip_package)
     pip_freeze_output_install = get_command_output(f"{venv_pip} freeze")
-    package_version_install = extract_package_version(
-        pip_freeze_output_install, package_name
-    )
+    package_version_install = extract_package_version(pip_freeze_output_install, package_name)
     assert f"{package_name}==5.7.4" in pip_freeze_output_install
 
     # given:
@@ -125,9 +112,7 @@ def test_venv_shell_no_update(tmp_path: pathlib.Path):
     )
     with open(venv_shell_script_abs_path, "w") as f:
         f.write(venv_shell_script_content)
-    venv_shell_script_abs_path.chmod(
-        venv_shell_script_abs_path.stat().st_mode | stat.S_IEXEC
-    )
+    venv_shell_script_abs_path.chmod(venv_shell_script_abs_path.stat().st_mode | stat.S_IEXEC)
 
     # when:
     # Run the interactive shell and pipe "exit 42" to its `stdin` to make it terminate with a specific exit code.
@@ -158,9 +143,7 @@ def test_venv_shell_command_execution(tmp_path: pathlib.Path):
 
     # ===
 
-    proto_code_dir_abs_path = (
-        ref_root_abs_path / ConfConstInput.default_proto_conf_dir_rel_path
-    )
+    proto_code_dir_abs_path = ref_root_abs_path / ConfConstInput.default_proto_conf_dir_rel_path
     proto_kernel_abs_path = create_plain_proto_code(proto_code_dir_abs_path)
     create_conf_primer_file(
         ref_root_abs_path,
@@ -174,9 +157,7 @@ def test_venv_shell_command_execution(tmp_path: pathlib.Path):
 
     # ===
 
-    conf_env_dir_abs_path = (
-        ref_root_abs_path / ConfConstClient.default_default_env_dir_rel_path
-    )
+    conf_env_dir_abs_path = ref_root_abs_path / ConfConstClient.default_default_env_dir_rel_path
 
     create_conf_env_file(
         ref_root_abs_path,
@@ -186,9 +167,7 @@ def test_venv_shell_command_execution(tmp_path: pathlib.Path):
 
     # ===
 
-    conf_client_dir_abs_path = (
-        ref_root_abs_path / ConfConstPrimer.default_client_conf_dir_rel_path
-    )
+    conf_client_dir_abs_path = ref_root_abs_path / ConfConstPrimer.default_client_conf_dir_rel_path
 
     create_conf_client_file(
         ref_root_abs_path,
@@ -217,16 +196,12 @@ def test_venv_shell_command_execution(tmp_path: pathlib.Path):
     )
     with open(venv_shell_script_abs_path, "w") as f:
         f.write(venv_shell_script_content)
-    venv_shell_script_abs_path.chmod(
-        venv_shell_script_abs_path.stat().st_mode | stat.S_IEXEC
-    )
+    venv_shell_script_abs_path.chmod(venv_shell_script_abs_path.stat().st_mode | stat.S_IEXEC)
     output_file = ref_root_abs_path / "test_file.txt"
     assert not output_file.exists()
 
     # when:
-    get_command_code(
-        f'./venv_shell {ExecMode.mode_boot.value} {SyntaxArg.arg_command} "touch {output_file}"'
-    )
+    get_command_code(f'./venv_shell {ExecMode.mode_boot.value} {SyntaxArg.arg_command} "touch {output_file}"')
 
     # then:
     assert output_file.exists()

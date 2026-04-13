@@ -23,17 +23,11 @@ def env_ctx():
 
 
 def test_relationship():
-    assert_test_module_name_embeds_str(
-        EnvState.state_local_conf_file_abs_path_inited.name
-    )
+    assert_test_module_name_embeds_str(EnvState.state_local_conf_file_abs_path_inited.name)
 
 
-@patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_primer_conf_file_abs_path_inited.__name__}.create_state_node"
-)
-@patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node"
-)
+@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_primer_conf_file_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
 def test_success(
     mock_state_local_conf_symlink_abs_path_inited,
     mock_state_primer_conf_file_abs_path_inited,
@@ -54,14 +48,10 @@ def test_success(
         mock_client_dir,
         ConfConstClient.default_dir_rel_path_leap_env_link_name,
     )
-    mock_state_primer_conf_file_abs_path_inited.return_value.eval_own_state.return_value = (
-        "protoprimer.json"
-    )
+    mock_state_primer_conf_file_abs_path_inited.return_value.eval_own_state.return_value = "protoprimer.json"
 
     # when:
-    state_local_conf_file_abs_path_inited = env_ctx.state_graph.eval_state(
-        EnvState.state_local_conf_file_abs_path_inited.name, env_ctx
-    )
+    state_local_conf_file_abs_path_inited = env_ctx.state_graph.eval_state(EnvState.state_local_conf_file_abs_path_inited.name, env_ctx)
 
     # then:
     expected_path = os.path.join(

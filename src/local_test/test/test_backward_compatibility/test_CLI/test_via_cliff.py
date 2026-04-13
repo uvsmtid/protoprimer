@@ -117,9 +117,7 @@ def extract_parser_data(parser: argparse.ArgumentParser):
     """
     parser_data = {}
     for parser_action in parser._actions:
-        if isinstance(
-            parser_action, (argparse._HelpAction, argparse._SubParsersAction)
-        ):
+        if isinstance(parser_action, (argparse._HelpAction, argparse._SubParsersAction)):
             continue
         # We use sorted option strings as key to identify the option:
         option_key = tuple(sorted(parser_action.option_strings))
@@ -152,9 +150,7 @@ def test_cli_structure_compatibility():
         ("--quiet", "-q"),
         ("--verbose", "-v"),
     ]
-    subparsers_action = next(
-        a for a in actual_parser._actions if isinstance(a, argparse._SubParsersAction)
-    )
+    subparsers_action = next(a for a in actual_parser._actions if isinstance(a, argparse._SubParsersAction))
 
     # when:
 
@@ -177,9 +173,7 @@ def test_cli_structure_compatibility():
         actual_subparser = subparsers_action.choices[subcommand]
         actual_sub_data = extract_parser_data(actual_subparser)
 
-        cmd_factory, cmd_name, search_args = spec_app.command_manager.find_command(
-            [subcommand]
-        )
+        cmd_factory, cmd_name, search_args = spec_app.command_manager.find_command([subcommand])
         cmd_instance = cmd_factory(spec_app, None, cmd_name=subcommand)
         expected_subparser = cmd_instance.get_parser("test")
         expected_sub_data = extract_parser_data(expected_subparser)

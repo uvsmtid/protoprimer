@@ -34,12 +34,8 @@ def test_relationship():
     assert_test_module_name_embeds_str(EnvState.state_ref_root_dir_abs_path_inited.name)
 
 
-@patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_proto_code_file_abs_path_inited.__name__}.create_state_node"
-)
-@patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_primer_conf_file_data_loaded.__name__}.create_state_node"
-)
+@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_primer_conf_file_data_loaded.__name__}.create_state_node")
 def test_success_when_field_present(
     mock_state_primer_conf_file_data_loaded,
     state_proto_code_file_abs_path_inited,
@@ -51,36 +47,24 @@ def test_success_when_field_present(
         env_ctx,
         EnvState.state_ref_root_dir_abs_path_inited.name,
     )
-    state_proto_code_file_abs_path_inited.return_value.eval_own_state.return_value = (
-        mock_proto_code_dir
-    )
+    state_proto_code_file_abs_path_inited.return_value.eval_own_state.return_value = mock_proto_code_dir
 
     ref_root_rel_path = "../../ref_root"
-    ref_root_abs_path = os.path.normpath(
-        os.path.join(os.path.dirname(mock_proto_code_dir), ref_root_rel_path)
-    )
+    ref_root_abs_path = os.path.normpath(os.path.join(os.path.dirname(mock_proto_code_dir), ref_root_rel_path))
 
     primer_conf_data = {ConfField.field_ref_root_dir_rel_path.value: ref_root_rel_path}
-    mock_state_primer_conf_file_data_loaded.return_value.eval_own_state.return_value = (
-        primer_conf_data
-    )
+    mock_state_primer_conf_file_data_loaded.return_value.eval_own_state.return_value = primer_conf_data
 
     # when:
-    result = env_ctx.state_graph.eval_state(
-        EnvState.state_ref_root_dir_abs_path_inited.name, env_ctx
-    )
+    result = env_ctx.state_graph.eval_state(EnvState.state_ref_root_dir_abs_path_inited.name, env_ctx)
 
     # then:
     assert result == ref_root_abs_path
 
 
 @patch(f"{primer_kernel.__name__}.EnvContext.get_stride")
-@patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_proto_code_file_abs_path_inited.__name__}.create_state_node"
-)
-@patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_primer_conf_file_data_loaded.__name__}.create_state_node"
-)
+@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_primer_conf_file_data_loaded.__name__}.create_state_node")
 def test_warning_when_field_missing(
     mock_state_primer_conf_file_data_loaded,
     state_proto_code_file_abs_path_inited,
@@ -94,24 +78,15 @@ def test_warning_when_field_missing(
         env_ctx,
         EnvState.state_ref_root_dir_abs_path_inited.name,
     )
-    state_proto_code_file_abs_path_inited.return_value.eval_own_state.return_value = (
-        mock_proto_code_dir
-    )
+    state_proto_code_file_abs_path_inited.return_value.eval_own_state.return_value = mock_proto_code_dir
 
-    mock_state_primer_conf_file_data_loaded.return_value.eval_own_state.return_value = (
-        {}
-    )
+    mock_state_primer_conf_file_data_loaded.return_value.eval_own_state.return_value = {}
     mock_get_stride.return_value = StateStride.stride_py_arbitrary
 
     # when:
     caplog.set_level(WARNING)
-    result = env_ctx.state_graph.eval_state(
-        EnvState.state_ref_root_dir_abs_path_inited.name, env_ctx
-    )
+    result = env_ctx.state_graph.eval_state(EnvState.state_ref_root_dir_abs_path_inited.name, env_ctx)
 
     # then:
     assert result == os.path.dirname(mock_proto_code_dir)
-    assert (
-        f"Field `{ConfField.field_ref_root_dir_rel_path.value}` is [None] - use [{ExecMode.mode_eval.value}] sub-command for description."
-        in caplog.text
-    )
+    assert f"Field `{ConfField.field_ref_root_dir_rel_path.value}` is [None] - use [{ExecMode.mode_eval.value}] sub-command for description." in caplog.text

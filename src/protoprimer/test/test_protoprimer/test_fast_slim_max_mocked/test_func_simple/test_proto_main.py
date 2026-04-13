@@ -110,9 +110,7 @@ def test_main_generic_exception(
     # given:
     mock_env_ctx_instance = MagicMock()
     mock_env_context.return_value = mock_env_ctx_instance
-    mock_env_ctx_instance.state_graph.eval_state.side_effect = Exception(
-        "Test Exception"
-    )
+    mock_env_ctx_instance.state_graph.eval_state.side_effect = Exception("Test Exception")
 
     # when/then:
     with pytest.raises(Exception, match="Test Exception"):

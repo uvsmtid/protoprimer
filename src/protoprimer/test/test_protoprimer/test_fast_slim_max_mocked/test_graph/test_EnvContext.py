@@ -87,9 +87,7 @@ class TestEnvContext(BasePyfakefsTestClass):
         self.fs.create_file("/tmp/venv/uv.venv/bin/uv", contents="foo")
         # when:
         env_ctx = EnvContext()
-        venv_driver = env_ctx.state_graph.eval_state(
-            EnvState.state_venv_driver_prepared.name, env_ctx
-        )
+        venv_driver = env_ctx.state_graph.eval_state(EnvState.state_venv_driver_prepared.name, env_ctx)
         # then:
         if is_min_python():
             assert isinstance(venv_driver, VenvDriverPip)
@@ -151,9 +149,7 @@ class TestEnvContext(BasePyfakefsTestClass):
         self.fs.create_file("/tmp/venv/uv.venv/bin/uv", contents="foo")
         # when:
         env_ctx = EnvContext()
-        venv_driver = env_ctx.state_graph.eval_state(
-            EnvState.state_venv_driver_prepared.name, env_ctx
-        )
+        venv_driver = env_ctx.state_graph.eval_state(EnvState.state_venv_driver_prepared.name, env_ctx)
         # then:
         if is_min_python():
             assert isinstance(venv_driver, VenvDriverPip)
@@ -212,8 +208,6 @@ class TestEnvContext(BasePyfakefsTestClass):
         # given:
         # when:
         env_ctx = EnvContext()
-        venv_driver = env_ctx.state_graph.eval_state(
-            EnvState.state_venv_driver_prepared.name, env_ctx
-        )
+        venv_driver = env_ctx.state_graph.eval_state(EnvState.state_venv_driver_prepared.name, env_ctx)
         # then:
         assert isinstance(venv_driver, VenvDriverPip)

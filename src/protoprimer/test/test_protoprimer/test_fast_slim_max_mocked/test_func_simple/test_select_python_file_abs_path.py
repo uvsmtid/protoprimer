@@ -33,9 +33,7 @@ def test_select_python_finds_executable_which_returns_its_version(
 
     mock_selector_module = MagicMock()
     mock_import_proto_module.return_value = mock_selector_module
-    mock_external_selector_func = getattr(
-        mock_selector_module, SelectorFunc.select_python_file_abs_path.value
-    )
+    mock_external_selector_func = getattr(mock_selector_module, SelectorFunc.select_python_file_abs_path.value)
     expected_path = "/path/to/python3.8"
     mock_external_selector_func.return_value = expected_path
 
@@ -52,9 +50,7 @@ def test_select_python_finds_executable_which_returns_its_version(
     # then:
 
     assert result_path == expected_path
-    mock_import_proto_module.assert_called_once_with(
-        "python_selector_module", selector_script_path
-    )
+    mock_import_proto_module.assert_called_once_with("python_selector_module", selector_script_path)
     mock_external_selector_func.assert_called_once_with(required_version)
     mock_get_python_version.assert_called_once_with(expected_path)
 
@@ -75,9 +71,7 @@ def test_select_python_cannot_find_executable_which_returns_its_version(
 
     mock_selector_module = MagicMock()
     mock_import_proto_module.return_value = mock_selector_module
-    mock_external_selector_func = getattr(
-        mock_selector_module, SelectorFunc.select_python_file_abs_path.value
-    )
+    mock_external_selector_func = getattr(mock_selector_module, SelectorFunc.select_python_file_abs_path.value)
     selected_path = "/path/to/nonexistent_python"
     mock_external_selector_func.return_value = selected_path
 
@@ -100,9 +94,7 @@ def test_select_python_cannot_find_executable_which_returns_its_version(
     assert "failed without returning its version" in caplog.text
 
     # Verify mocks were called correctly:
-    mock_import_proto_module.assert_called_once_with(
-        "python_selector_module", selector_script_path
-    )
+    mock_import_proto_module.assert_called_once_with("python_selector_module", selector_script_path)
     mock_external_selector_func.assert_called_once_with(required_version)
     mock_get_python_version.assert_called_once_with(selected_path)
 
@@ -134,8 +126,6 @@ def test_select_python_finds_no_matching_version(mock_import_proto_module):
 
     assert result_path is None
 
-    mock_import_proto_module.assert_called_once_with(
-        "python_selector_module", selector_script_path
-    )
+    mock_import_proto_module.assert_called_once_with("python_selector_module", selector_script_path)
 
     mock_external_selector_func.assert_called_once_with(required_version)

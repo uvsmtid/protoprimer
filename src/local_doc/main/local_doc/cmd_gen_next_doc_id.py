@@ -26,6 +26,7 @@ def gen_next_doc_id() -> None:
         file_entry
         for file_entry in os.listdir(parsed_arguments.doc_dir)
         if os.path.isfile(os.path.join(parsed_arguments.doc_dir, file_entry))
+        #
     ]
 
     if not file_names_list:
@@ -48,9 +49,7 @@ def gen_next_doc_id() -> None:
         return
 
     if not existing_ids:
-        logger.warning(
-            f"No valid file ids found in {parsed_arguments.doc_dir}, will generate a new one."
-        )
+        logger.warning(f"No valid file ids found in {parsed_arguments.doc_dir}, will generate a new one.")
 
     new_id_segment_list: tuple[str, ...] = generate_next_id(
         existing_ids,
@@ -71,6 +70,7 @@ def init_arg_parser():
         description=(
             "Generate a new documentation file id based on existing files in a directory "
             "using Lexicographical Frequency Minimization with randomization."
+            #
         ),
     )
     arg_parser_instance.add_argument(
@@ -125,15 +125,11 @@ def get_prefix_and_ids(
             num_id_parts = len(id_parts_tuple)
 
         if file_prefix_str != doc_prefix:
-            logger.warning(
-                f"Skipping file `{file_name_str}` with mismatched prefix. Expected `{doc_prefix}`, found `{file_prefix_str}`."
-            )
+            logger.warning(f"Skipping file `{file_name_str}` with mismatched prefix. Expected `{doc_prefix}`, found `{file_prefix_str}`.")
             continue
 
         if len(id_parts_tuple) != num_id_parts:
-            logger.warning(
-                f"Skipping file `{file_name_str}` with inconsistent id length. Expected {num_id_parts} parts, found {len(id_parts_tuple)}."
-            )
+            logger.warning(f"Skipping file `{file_name_str}` with inconsistent id length. Expected {num_id_parts} parts, found {len(id_parts_tuple)}.")
             continue
 
         existing_ids.add(id_parts_tuple)
@@ -193,16 +189,12 @@ def generate_next_id(
                 freq_map[digit] += 1
 
             min_freq = min(freq_map.values())
-            least_frequent_digits = [
-                digit for digit, freq in freq_map.items() if freq == min_freq
-            ]
+            least_frequent_digits = [digit for digit, freq in freq_map.items() if freq == min_freq]
 
             chosen_digit = random.choice(least_frequent_digits)
             new_id_digits.append(chosen_digit)
 
-            candidate_id_strings = [
-                id_str for id_str in candidate_id_strings if id_str[i] == chosen_digit
-            ]
+            candidate_id_strings = [id_str for id_str in candidate_id_strings if id_str[i] == chosen_digit]
 
         new_id_str = "".join(new_id_digits)
 

@@ -28,17 +28,11 @@ def mock_ref_root(fs):
 
 
 def test_relationship():
-    assert_test_module_name_embeds_str(
-        EnvState.state_global_conf_file_abs_path_inited.name
-    )
+    assert_test_module_name_embeds_str(EnvState.state_global_conf_file_abs_path_inited.name)
 
 
-@patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_primer_conf_file_abs_path_inited.__name__}.create_state_node"
-)
-@patch(
-    f"{primer_kernel.__name__}.{Bootstrapper_state_global_conf_dir_abs_path_inited.__name__}.create_state_node"
-)
+@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_primer_conf_file_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_global_conf_dir_abs_path_inited.__name__}.create_state_node")
 def test_success_when_field_present(
     mock_state_global_conf_dir_abs_path_inited,
     mock_state_primer_conf_file_abs_path_inited,
@@ -69,9 +63,7 @@ def test_success_when_field_present(
     )
 
     # when:
-    state_global_conf_file_abs_path_inited = env_ctx.state_graph.eval_state(
-        EnvState.state_global_conf_file_abs_path_inited.name, env_ctx
-    )
+    state_global_conf_file_abs_path_inited = env_ctx.state_graph.eval_state(EnvState.state_global_conf_file_abs_path_inited.name, env_ctx)
 
     # then:
     assert state_global_conf_file_abs_path_inited == client_conf_abs_path

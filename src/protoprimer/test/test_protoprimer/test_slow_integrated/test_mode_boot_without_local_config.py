@@ -44,9 +44,7 @@ def test_mode_boot_without_local_config(tmp_path: Path):
 
     # delete local config:
 
-    env_local_config_abs_path = (
-        ref_root_abs_path / ConfConstClient.default_env_conf_file_rel_path
-    )
+    env_local_config_abs_path = ref_root_abs_path / ConfConstClient.default_env_conf_file_rel_path
     assert os.path.isfile(env_local_config_abs_path)
     env_local_config_abs_path.unlink()
 

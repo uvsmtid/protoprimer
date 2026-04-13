@@ -43,30 +43,26 @@ class TestEnvStateOrdering:
         state_graph_instance = self.env_ctx.state_graph
 
         # Create a mapping from the state name to its ordinal position in the enum:
-        env_state_name_to_ordinal = {
-            env_state.name: index for index, env_state in enumerate(EnvState)
-        }
+        env_state_name_to_ordinal = {env_state.name: index for index, env_state in enumerate(EnvState)}
 
         violations = []
         # Verify that for each state, its parents appear before it in the enum definition:
         for env_state in EnvState:
-            state_node = state_graph_instance.get_state_node(
-                env_state.name, self.env_ctx
-            )
-            assert (
-                state_node is not None
-            ), f"`{StateNode.__name__}` for [{env_state.name}] not found"
+            state_node = state_graph_instance.get_state_node(env_state.name, self.env_ctx)
+            assert state_node is not None, f"`{StateNode.__name__}` for [{env_state.name}] not found"
 
             for parent_state_name in state_node.get_parent_states():
                 if not (
                     env_state_name_to_ordinal[parent_state_name]
                     < env_state_name_to_ordinal[env_state.name]
+                    #
                 ):
                     violations.append(
                         f"enum item definition order violation: "
                         f"[{parent_state_name}] "
                         f"should come before "
                         f"[{env_state.name}]"
+                        #
                     )
 
         _report_violations(violations)
@@ -94,18 +90,15 @@ class TestEnvStateOrdering:
         state_name_to_line_number = {
             env_state.name: get_class_line_number(env_state.value)
             for env_state in EnvState
+            #
         }
 
         # then:
         def_violations = []
         # Verify that for each state, its implementation class is defined after its parents:
         for env_state in EnvState:
-            state_node = state_graph_instance.get_state_node(
-                env_state.name, self.env_ctx
-            )
-            assert (
-                state_node is not None
-            ), f"`{StateNode.__name__}` for [{env_state.name}] not found"
+            state_node = state_graph_instance.get_state_node(env_state.name, self.env_ctx)
+            assert state_node is not None, f"`{StateNode.__name__}` for [{env_state.name}] not found"
 
             for parent_state_name in state_node.get_parent_states():
                 parent_line_number = state_name_to_line_number[parent_state_name]
@@ -116,6 +109,7 @@ class TestEnvStateOrdering:
                         f"[{parent_state_name}][line {parent_line_number}] "
                         f"should come before "
                         f"[{env_state.name}][line {child_line_number}] "
+                        #
                     )
 
         _report_violations(def_violations)
@@ -135,6 +129,7 @@ class TestEnvStateOrdering:
                     f"[{curr_env_state.name}][line {curr_line_number}] "
                     f"is defined before the class for the preceding enum item "
                     f"[{prev_env_state.name}][line {prev_line_number}] "
+                    #
                 )
             prev_line_number = curr_line_number
             prev_env_state = curr_env_state

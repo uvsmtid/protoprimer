@@ -32,9 +32,7 @@ def test_get_venv_type_for_pip(fs):
     # given:
     venv_path = "/fake_venv"
     fs.create_dir(venv_path)
-    fs.create_file(
-        os.path.join(venv_path, "pyvenv.cfg"), contents="some other config\n"
-    )
+    fs.create_file(os.path.join(venv_path, "pyvenv.cfg"), contents="some other config\n")
 
     # when:
     result = get_venv_type(venv_path)

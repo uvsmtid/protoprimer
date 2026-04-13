@@ -8,9 +8,7 @@ from argparse import ArgumentParser
 
 
 def init_arg_parser() -> ArgumentParser:
-    arg_parser = argparse.ArgumentParser(
-        description="Manage Google Cloud Artifact Registry repositories."
-    )
+    arg_parser = argparse.ArgumentParser(description="Manage Google Cloud Artifact Registry repositories.")
     sub_parsers = arg_parser.add_subparsers(dest="command")
 
     # ===

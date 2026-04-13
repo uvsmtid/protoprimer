@@ -8,9 +8,7 @@ from protoprimer.primer_kernel import (
 
 # noinspection PyPep8Naming
 @trivial_factory
-class Bootstrapper_state_activated_venv_shell_started(
-    Bootstrapper_state_command_executed
-):
+class Bootstrapper_state_activated_venv_shell_started(Bootstrapper_state_command_executed):
 
     state_activated_venv_shell_started = "state_activated_venv_shell_started"
 

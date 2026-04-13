@@ -8,7 +8,7 @@ Want a **one-liner** to bootstrap isolated envs for every repo clone?
 ./prime
 ```
 
-This invokes `protoprimer` - an **arg-less** stand-alone script that switches:
+Invoke `protoprimer` - an **arg-less** stand-alone script that switches:
 
 *   from **chaos** (the many conditions in which a user may invoke it)
 *   into **order** (an env-specific `venv` with the **required** `python` version)

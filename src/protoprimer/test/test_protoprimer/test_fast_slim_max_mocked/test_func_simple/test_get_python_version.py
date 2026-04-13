@@ -25,9 +25,7 @@ def test_get_python_version(mock_check_output):
     expected_version_tuple = (3, 9, 5)
 
     # when:
-    python_version: tuple[int, int, int] = get_python_version(
-        path_to_python=path_to_python
-    )
+    python_version: tuple[int, int, int] = get_python_version(path_to_python=path_to_python)
 
     # then:
     assert python_version == expected_version_tuple

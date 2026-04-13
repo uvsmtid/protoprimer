@@ -48,13 +48,9 @@ class TestTargetDependencies:
         all_env_state_names = {env_state.name for env_state in EnvState}
         missing_dependencies = all_env_state_names - all_dependencies
 
-        allowed_missing_dependencies = set(
-            self.some_state_exec_mode_executed_dependencies
-        )
+        allowed_missing_dependencies = set(self.some_state_exec_mode_executed_dependencies)
         allowed_missing_dependencies.add(EnvState.state_derived_conf_data_loaded.name)
-        allowed_missing_dependencies.add(
-            EnvState.state_effective_config_data_printed.name
-        )
+        allowed_missing_dependencies.add(EnvState.state_effective_config_data_printed.name)
 
         missing_dependencies -= allowed_missing_dependencies
 
@@ -63,6 +59,7 @@ class TestTargetDependencies:
         assert not missing_dependencies, (
             f"The following `{EnvState.__name__}` members are not dependencies of "
             f"[{final_state_name}]: {sorted(list(missing_dependencies))}"
+            #
         )
 
     def test_dependencies_of_state_exec_mode_executed(
@@ -88,9 +85,7 @@ class TestTargetDependencies:
 
         # another set which is supposed to be equal:
         all_dependencies_with_extra = set(all_dependencies_only)
-        all_dependencies_with_extra.update(
-            self.some_state_exec_mode_executed_dependencies
-        )
+        all_dependencies_with_extra.update(self.some_state_exec_mode_executed_dependencies)
 
         # then:
 

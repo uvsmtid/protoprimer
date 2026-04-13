@@ -45,9 +45,7 @@ class ThisTestClass(TestCase):
 
         # Find the description from the "About" section:
         about_section = parsed_html.find("p", class_="f4 tmp-my-3")
-        github_description = (
-            about_section.get_text(strip=True) if about_section else None
-        )
+        github_description = about_section.get_text(strip=True) if about_section else None
 
         assert github_description is not None
 

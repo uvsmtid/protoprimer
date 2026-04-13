@@ -114,6 +114,4 @@ def test_any_to_bool_invalid_type(input_value):
         any_to_bool(input_value)
 
     # then:
-    assert f"Unable to convert type [{type(input_value)}] to [{bool.__name__}]" in str(
-        exc_info.value
-    )
+    assert f"Unable to convert type [{type(input_value)}] to [{bool.__name__}]" in str(exc_info.value)

@@ -24,9 +24,7 @@ def custom_main():
     source_branch_name: str = get_command_output(f"git rev-parse --abbrev-ref HEAD")
 
     if not source_branch_name or source_branch_name == "HEAD":
-        raise RuntimeError(
-            f"Could not determine branch name. Are you in a detached HEAD state?"
-        )
+        raise RuntimeError(f"Could not determine branch name. Are you in a detached HEAD state?")
 
     # Fail on uncommitted changes:
     get_command_code(f"git diff --exit-code")
@@ -38,19 +36,13 @@ def custom_main():
 
     # Fail if `squashed_tag` is already present in the branch name:
     if squashed_tag in source_branch_name:
-        raise RuntimeError(
-            f"`squashed_tag` [{squashed_tag}] is already part of the `source_branch_name` [{source_branch_name}]"
-        )
+        raise RuntimeError(f"`squashed_tag` [{squashed_tag}] is already part of the `source_branch_name` [{source_branch_name}]")
 
     # Fail if the previously squashed branch still exists (it has to be removed manually):
-    existing_branches: str = get_command_output(
-        f"git for-each-ref --format='%(refname:short)' refs/heads/"
-    )
+    existing_branches: str = get_command_output(f"git for-each-ref --format='%(refname:short)' refs/heads/")
     squash_branch_prefix = f"{source_branch_name}.{squashed_tag}"
     if squash_branch_prefix in existing_branches:
-        raise RuntimeError(
-            f"A branch prefixed with [{squash_branch_prefix}] already exists. Please remove it manually."
-        )
+        raise RuntimeError(f"A branch prefixed with [{squash_branch_prefix}] already exists. Please remove it manually.")
 
     # Abbreviated commit id:
     git_short_commit = get_command_output(f"git rev-parse --short HEAD")
@@ -91,6 +83,7 @@ def init_arg_parser():
         description=(
             "Squash commits of the current branch against the target branch and "
             "push that commit to the remote as the current branch. "
+            #
         ),
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )

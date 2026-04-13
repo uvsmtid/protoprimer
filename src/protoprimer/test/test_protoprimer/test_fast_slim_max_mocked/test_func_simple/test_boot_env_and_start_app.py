@@ -29,9 +29,7 @@ class TestStartMain:
     @pytest.fixture(autouse=True)
     def setup_mocks(self, mocker):
         self.mock_proto_main = mocker.patch("protoprimer.primer_kernel.proto_main")
-        self.mock_import_module = mocker.patch(
-            "protoprimer.primer_kernel.importlib.import_module"
-        )
+        self.mock_import_module = mocker.patch("protoprimer.primer_kernel.importlib.import_module")
 
     @patch.dict(os.environ, {}, clear=True)
     def test_invalid_main_func_format(self):
@@ -125,10 +123,7 @@ class TestStartMain:
         _start_main(ExecMode.mode_start, "my_module:my_func")
 
         # then
-        assert (
-            os.environ[EnvVar.var_PROTOPRIMER_EXEC_MODE.value]
-            == ExecMode.mode_start.value
-        )
+        assert os.environ[EnvVar.var_PROTOPRIMER_EXEC_MODE.value] == ExecMode.mode_start.value
         assert os.environ[EnvVar.var_PROTOPRIMER_MAIN_FUNC.value] == "my_module:my_func"
         self.mock_proto_main.assert_called_once()
 
@@ -138,9 +133,7 @@ class TestBootEnvAndStartApp:
     @pytest.fixture(autouse=True)
     def setup_mocks(self, mocker):
         self.mock_proto_main = mocker.patch("protoprimer.primer_kernel.proto_main")
-        self.mock_import_module = mocker.patch(
-            "protoprimer.primer_kernel.importlib.import_module"
-        )
+        self.mock_import_module = mocker.patch("protoprimer.primer_kernel.importlib.import_module")
 
     @patch.dict(os.environ, {}, clear=True)
     def test_boot_env(self):
@@ -151,10 +144,7 @@ class TestBootEnvAndStartApp:
         boot_env(main_func)
 
         # then
-        assert (
-            os.environ[EnvVar.var_PROTOPRIMER_EXEC_MODE.value]
-            == ExecMode.mode_boot.value
-        )
+        assert os.environ[EnvVar.var_PROTOPRIMER_EXEC_MODE.value] == ExecMode.mode_boot.value
         assert os.environ[EnvVar.var_PROTOPRIMER_MAIN_FUNC.value] == main_func
         self.mock_proto_main.assert_called_once()
         self.mock_import_module.assert_not_called()  # _start_main calls proto_main by default if stride is not high enough
@@ -168,10 +158,7 @@ class TestBootEnvAndStartApp:
         start_app(main_func)
 
         # then
-        assert (
-            os.environ[EnvVar.var_PROTOPRIMER_EXEC_MODE.value]
-            == ExecMode.mode_start.value
-        )
+        assert os.environ[EnvVar.var_PROTOPRIMER_EXEC_MODE.value] == ExecMode.mode_start.value
         assert os.environ[EnvVar.var_PROTOPRIMER_MAIN_FUNC.value] == main_func
         self.mock_proto_main.assert_called_once()
         self.mock_import_module.assert_not_called()  # _start_main calls proto_main by default if stride is not high enough

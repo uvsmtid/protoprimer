@@ -20,9 +20,7 @@ def test_get_python_version():
 
     # when:
 
-    python_version: tuple[int, int, int] = get_python_version(
-        path_to_python=sys.executable
-    )
+    python_version: tuple[int, int, int] = get_python_version(path_to_python=sys.executable)
 
     # then:
 

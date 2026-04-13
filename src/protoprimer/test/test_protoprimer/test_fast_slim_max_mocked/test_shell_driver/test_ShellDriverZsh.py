@@ -105,9 +105,7 @@ def test_get_shell_driver_no_shell_env(mock_warning, mock_which):
     driver = _get_shell_driver("/fake/cache")
 
     # then:
-    mock_warning.assert_called_once_with(
-        "env var `SHELL` is not set - assuming `bash` as default"
-    )
+    mock_warning.assert_called_once_with("env var `SHELL` is not set - assuming `bash` as default")
     assert isinstance(driver, ShellDriverBash)
     assert driver.shell_abs_path == "/bin/bash"
 
@@ -123,9 +121,7 @@ def test_get_shell_driver_no_shell_env_no_bash(mock_warning, mock_which):
     driver = _get_shell_driver("/fake/cache")
 
     # then:
-    mock_warning.assert_called_once_with(
-        "env var `SHELL` is not set - assuming `bash` as default"
-    )
+    mock_warning.assert_called_once_with("env var `SHELL` is not set - assuming `bash` as default")
     assert isinstance(driver, ShellDriverBash)
     assert driver.shell_abs_path is None
 

@@ -40,12 +40,8 @@ class ThisTestClass(BasePyfakefsTestClass):
         new=mock_get_python_version_by_current,
     )
     @patch(f"{primer_kernel.__name__}.probe_python_file_abs_path")
-    @patch(
-        f"{primer_kernel.__name__}.get_default_start_id", return_value="mock_start_id"
-    )
-    @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_proto_code_file_abs_path_inited.__name__}.eval_own_state"
-    )
+    @patch(f"{primer_kernel.__name__}.get_default_start_id", return_value="mock_start_id")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_proto_code_file_abs_path_inited.__name__}.eval_own_state")
     @patch(f"{primer_kernel.__name__}.os.execve")
     def test_boot_switches_from_py_exec_stride_py_unknown(
         self,
@@ -69,9 +65,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             "default_env",
         )
         self.fs.create_dir(default_env_dir_rel_path)
-        self.fs.create_dir(
-            os.path.dirname(ConfConstPrimer.default_client_conf_file_rel_path)
-        )
+        self.fs.create_dir(os.path.dirname(ConfConstPrimer.default_client_conf_file_rel_path))
 
         primer_conf_data = {
             ConfField.field_ref_root_dir_rel_path.value: ".",
@@ -117,9 +111,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             ConfConstGeneral.default_proto_code_basename,
         )
         self.fs.create_file(state_proto_code_file_abs_path_inited)
-        mock_state_proto_code_file_abs_path_inited.return_value = (
-            state_proto_code_file_abs_path_inited
-        )
+        mock_state_proto_code_file_abs_path_inited.return_value = state_proto_code_file_abs_path_inited
 
         script_basename = os.path.basename(os.path.abspath(__file__))
 
