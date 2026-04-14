@@ -23,12 +23,12 @@ def customize_env_context():
     env_ctx = EnvContext()
 
     env_ctx.state_graph.register_factory(
-        Bootstrapper_state_activated_venv_shell_started.state_activated_venv_shell_started,
+        Bootstrapper_state_activated_venv_shell_started._state_name(),
         Bootstrapper_state_activated_venv_shell_started(env_ctx),
     )
 
     # NOTE: It runs instead of `EnvState.state_command_executed` but also supports the `--command` arg.
-    env_ctx.final_state = Bootstrapper_state_activated_venv_shell_started.state_activated_venv_shell_started
+    env_ctx.final_state = Bootstrapper_state_activated_venv_shell_started._state_name()
 
     return env_ctx
 

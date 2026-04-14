@@ -12,7 +12,9 @@ FT_84_11_73_28.supported_python_versions.md: see above.
 TODO: Use links to FC/UC docs under `./doc` (when ready) from this readme to navigate to details.
 -->
 
-# `protoprimer`
+# <code><a href="https://protoprimer.readthedocs.io/"><img src="doc/readthedocs/source/_static/protoprimer.logo.svg" alt="logo" style="width: 11ch; height: auto;"></a></code>
+
+# [`protoprimer`][protoprimer_readthedocs]
 
 Want your users to run software straight from a `git` repo with a single, zero-argument, healing command?
 
@@ -750,6 +752,8 @@ TODO: FT_93_57_03_75.app_vs_lib.md: Explain examples `./cmd/boot_env` and `./cmd
 ---
 
 [readme.md]: readme.md
+
+[protoprimer_readthedocs]: https://protoprimer.readthedocs.io/
 
 [pyapp_project]: https://github.com/ofek/pyapp
 

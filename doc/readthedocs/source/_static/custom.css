@@ -13,6 +13,12 @@ ul, ol {
     box-sizing: border-box;
 }
 
+/* No underline on logo link in h1: */
+h1 a:has(img) {
+    text-decoration: none !important;
+    border-bottom: none !important;
+}
+
 /* Scale logo image inside h1 to match text height: */
 h1 img {
     height: 1.2em;

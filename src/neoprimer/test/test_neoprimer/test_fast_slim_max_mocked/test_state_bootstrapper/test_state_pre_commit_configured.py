@@ -30,7 +30,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
     # noinspection PyMethodMayBeStatic
     def test_relationship(self):
-        assert_test_module_name_embeds_str(Bootstrapper_state_pre_commit_configured.state_pre_commit_configured)
+        assert_test_module_name_embeds_str(Bootstrapper_state_pre_commit_configured._state_name())
 
     @patch(f"{pre_commit.__name__}.subprocess.check_call")
     @patch(f"{pre_commit.__name__}.subprocess.check_output")
@@ -56,7 +56,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         assert_parent_factories_mocked(
             self.env_ctx,
-            Bootstrapper_state_pre_commit_configured.state_pre_commit_configured,
+            Bootstrapper_state_pre_commit_configured._state_name(),
         )
 
         mock_client_conf_path = "/gconf/proto_kernel.json"
@@ -74,7 +74,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # when:
         state_value = self.env_ctx.state_graph.eval_state(
-            Bootstrapper_state_pre_commit_configured.state_pre_commit_configured,
+            Bootstrapper_state_pre_commit_configured._state_name(),
             self.env_ctx,
         )
 

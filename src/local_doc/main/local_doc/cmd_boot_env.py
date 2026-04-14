@@ -24,20 +24,12 @@ def custom_main():
 @trivial_factory
 class Bootstrapper_state_hello_world_printed(AbstractCachingStateNode[int]):
 
-    # TODO: Make it simpler: can this be simplified?
-    #       Need to find a way to simplify specifying the state name and their dependencies.
-
-    def __init__(
-        self,
-        env_ctx: EnvContext,
-    ):
-        super().__init__(
-            env_ctx=env_ctx,
-            parent_states=[
-                TargetState.target_proto_bootstrap_completed.value.name,
-            ],
-            state_name=CustomEnvState.state_hello_world_printed.name,
-        )
+    _parent_states = staticmethod(
+        lambda: [
+            TargetState.target_proto_bootstrap_completed.value.name,
+        ]
+    )
+    _state_name = staticmethod(lambda: CustomEnvState.state_hello_world_printed.name)
 
     def _eval_state_once(
         self,
