@@ -4,7 +4,7 @@
    :keywords: bootstrap, venv, install, python, required, version
 ```
 
-# ![logo](/_static/protoprimer.logo.16x16.png) [`protoprimer`][protoprimer_github]
+# [![logo](/_static/protoprimer.logo.16x16.png)][protoprimer_github] [`protoprimer`][protoprimer_github]
 
 ```{include} /full/01_basic/01_intro.md
 :start-after: stub_include_start
@@ -114,7 +114,7 @@ In other words, it must become **both** "the chicken **and** the egg".
 
 ## Flexibility
 
-The iterative restart handles initial conditions for all:
+The environment detection and config discovery are handled for all:
 
 *   a **single-package repo** with a lone library
 

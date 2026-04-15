@@ -35,6 +35,7 @@ import typing
 from types import CodeType
 from typing import (
     Any,
+    Callable,
     Generic,
     TypeVar,
 )
@@ -149,44 +150,25 @@ class TermColor(enum.Enum):
     back_dark_yellow = "\033[43m"
     back_dark_blue = "\033[44m"
 
-    back_light_gray = "\033[47m"
-
-    back_bright_red = "\033[101m"
-    back_bright_green = "\033[102m"
-    back_bright_yellow = "\033[103m"
-
     fore_dark_black = "\033[30m"
     fore_dark_red = "\033[31m"
     fore_dark_green = "\033[32m"
     fore_dark_yellow = "\033[33m"
-    fore_dark_blue = "\033[34m"
-    fore_dark_magenta = "\033[35m"
     fore_dark_cyan = "\033[36m"
-    fore_dark_gray = "\033[90m"
 
-    fore_bright_gray = "\033[37m"
-    fore_bright_red = "\033[91m"
     fore_bright_green = "\033[92m"
     fore_bright_yellow = "\033[93m"
     fore_bright_blue = "\033[94m"
-    fore_bright_magenta = "\033[95m"
-    fore_bright_cyan = "\033[96m"
     fore_bright_white = "\033[97m"
 
     fore_bold_dark_red = "\033[1;31m"
 
     # Semantic colors:
 
-    field_name = f"{fore_bright_magenta}"
-    field_description = f"{fore_bright_cyan}"
-    field_review = f"{fore_bright_green}"
-    error_text = f"{back_bright_yellow}{fore_dark_red}"
-
     config_comment = f"{fore_bright_green}"
     config_missing = f"{fore_bright_blue}"
     config_unused = f"{fore_bright_yellow}"
 
-    no_style = ""
     reset_style = "\033[0m"
 
 
@@ -3325,17 +3307,17 @@ def trivial_factory(state_node_class: type[StateNode]) -> type[StateNode]:
 
 
 class AbstractCachingStateNode(StateNode[ValueType]):
+    _parent_states: Callable[[], list[str]] = staticmethod(lambda: [])
+    _state_name: Callable[[], str]
 
     def __init__(
         self,
         env_ctx: EnvContext,
-        parent_states: list[str],
-        state_name: str,
     ):
         super().__init__(
             env_ctx=env_ctx,
-            parent_states=parent_states,
-            state_name=state_name,
+            parent_states=self._parent_states(),
+            state_name=self._state_name(),
         )
         self.is_cached: bool = False
         self.cached_value: ValueType | None = None
@@ -3369,24 +3351,6 @@ class AbstractOverriddenFieldCachingStateNode(AbstractCachingStateNode[ValueType
     See: FT_00_22_19_59.derived_config.md
     """
 
-    def __init__(
-        self,
-        env_ctx: EnvContext,
-        parent_states: list[str],
-        state_name: str,
-    ):
-        super().__init__(
-            env_ctx=env_ctx,
-            parent_states=parent_states,
-            state_name=state_name,
-        )
-        # FT_00_22_19_59.derived_config.md: requires values from both files:
-        assert (
-            EnvState.state_client_conf_file_data_loaded.name in parent_states
-            and EnvState.state_env_conf_file_data_loaded.name in parent_states
-            #
-        )
-
     def _get_overridden_value_or_default(
         self,
         field_name: str,
@@ -3416,15 +3380,7 @@ class AbstractOverriddenFieldCachingStateNode(AbstractCachingStateNode[ValueType
 @trivial_factory
 class Bootstrapper_state_input_py_exec_var_loaded(AbstractCachingStateNode[StateStride]):
 
-    def __init__(
-        self,
-        env_ctx: EnvContext,
-    ):
-        super().__init__(
-            env_ctx=env_ctx,
-            parent_states=[],
-            state_name=EnvState.state_input_py_exec_var_loaded.name,
-        )
+    _state_name = staticmethod(lambda: EnvState.state_input_py_exec_var_loaded.name)
 
     def _eval_state_once(
         self,
@@ -3443,17 +3399,12 @@ class Bootstrapper_state_input_py_exec_var_loaded(AbstractCachingStateNode[State
 @trivial_factory
 class Bootstrapper_state_input_stderr_log_level_var_loaded(AbstractCachingStateNode[int]):
 
-    def __init__(
-        self,
-        env_ctx: EnvContext,
-    ):
-        super().__init__(
-            env_ctx=env_ctx,
-            parent_states=[
-                EnvState.state_input_py_exec_var_loaded.name,
-            ],
-            state_name=EnvState.state_input_stderr_log_level_var_loaded.name,
-        )
+    _parent_states = staticmethod(
+        lambda: [
+            EnvState.state_input_py_exec_var_loaded.name,
+        ]
+    )
+    _state_name = staticmethod(lambda: EnvState.state_input_stderr_log_level_var_loaded.name)
 
     def _eval_state_once(
         self,
@@ -3494,15 +3445,7 @@ class Bootstrapper_state_input_stderr_log_level_var_loaded(AbstractCachingStateN
 @trivial_factory
 class Bootstrapper_state_input_do_install_var_loaded(AbstractCachingStateNode[bool]):
 
-    def __init__(
-        self,
-        env_ctx: EnvContext,
-    ):
-        super().__init__(
-            env_ctx=env_ctx,
-            parent_states=[],
-            state_name=EnvState.state_input_do_install_var_loaded.name,
-        )
+    _state_name = staticmethod(lambda: EnvState.state_input_do_install_var_loaded.name)
 
     def _eval_state_once(
         self,
@@ -3520,17 +3463,12 @@ class Bootstrapper_state_input_do_install_var_loaded(AbstractCachingStateNode[bo
 @trivial_factory
 class Bootstrapper_state_default_stderr_log_handler_configured(AbstractCachingStateNode[logging.Handler]):
 
-    def __init__(
-        self,
-        env_ctx: EnvContext,
-    ):
-        super().__init__(
-            env_ctx=env_ctx,
-            parent_states=[
-                EnvState.state_input_stderr_log_level_var_loaded.name,
-            ],
-            state_name=EnvState.state_default_stderr_log_handler_configured.name,
-        )
+    _parent_states = staticmethod(
+        lambda: [
+            EnvState.state_input_stderr_log_level_var_loaded.name,
+        ]
+    )
+    _state_name = staticmethod(lambda: EnvState.state_default_stderr_log_handler_configured.name)
 
     def _eval_state_once(
         self,
@@ -3552,15 +3490,7 @@ class Bootstrapper_state_default_stderr_log_handler_configured(AbstractCachingSt
 @trivial_factory
 class Bootstrapper_state_args_parsed(AbstractCachingStateNode[argparse.Namespace]):
 
-    def __init__(
-        self,
-        env_ctx: EnvContext,
-    ):
-        super().__init__(
-            env_ctx=env_ctx,
-            parent_states=[],
-            state_name=EnvState.state_args_parsed.name,
-        )
+    _state_name = staticmethod(lambda: EnvState.state_args_parsed.name)
 
     def _eval_state_once(
         self,
@@ -3590,19 +3520,14 @@ class Bootstrapper_state_input_stderr_log_level_eval_finalized(AbstractCachingSt
     To control the default log level, see `EnvVar.var_PROTOPRIMER_STDERR_LOG_LEVEL`.
     """
 
-    def __init__(
-        self,
-        env_ctx: EnvContext,
-    ):
-        super().__init__(
-            env_ctx=env_ctx,
-            parent_states=[
-                EnvState.state_input_stderr_log_level_var_loaded.name,
-                EnvState.state_default_stderr_log_handler_configured.name,
-                EnvState.state_args_parsed.name,
-            ],
-            state_name=EnvState.state_input_stderr_log_level_eval_finalized.name,
-        )
+    _parent_states = staticmethod(
+        lambda: [
+            EnvState.state_input_stderr_log_level_var_loaded.name,
+            EnvState.state_default_stderr_log_handler_configured.name,
+            EnvState.state_args_parsed.name,
+        ]
+    )
+    _state_name = staticmethod(lambda: EnvState.state_input_stderr_log_level_eval_finalized.name)
 
     def _eval_state_once(
         self,
@@ -3670,17 +3595,12 @@ class Bootstrapper_state_input_stderr_log_level_eval_finalized(AbstractCachingSt
 @trivial_factory
 class Bootstrapper_state_input_exec_mode_arg_loaded(AbstractCachingStateNode[ExecMode]):
 
-    def __init__(
-        self,
-        env_ctx: EnvContext,
-    ):
-        super().__init__(
-            env_ctx=env_ctx,
-            parent_states=[
-                EnvState.state_args_parsed.name,
-            ],
-            state_name=EnvState.state_input_exec_mode_arg_loaded.name,
-        )
+    _parent_states = staticmethod(
+        lambda: [
+            EnvState.state_args_parsed.name,
+        ]
+    )
+    _state_name = staticmethod(lambda: EnvState.state_input_exec_mode_arg_loaded.name)
 
     def _eval_state_once(
         self,
@@ -3700,18 +3620,13 @@ class Bootstrapper_state_input_exec_mode_arg_loaded(AbstractCachingStateNode[Exe
 @trivial_factory
 class Bootstrapper_state_input_final_state_eval_finalized(AbstractCachingStateNode[str]):
 
-    def __init__(
-        self,
-        env_ctx: EnvContext,
-    ):
-        super().__init__(
-            env_ctx=env_ctx,
-            parent_states=[
-                EnvState.state_args_parsed.name,
-                EnvState.state_input_exec_mode_arg_loaded.name,
-            ],
-            state_name=EnvState.state_input_final_state_eval_finalized.name,
-        )
+    _parent_states = staticmethod(
+        lambda: [
+            EnvState.state_args_parsed.name,
+            EnvState.state_input_exec_mode_arg_loaded.name,
+        ]
+    )
+    _state_name = staticmethod(lambda: EnvState.state_input_final_state_eval_finalized.name)
 
     def _eval_state_once(
         self,
@@ -3746,19 +3661,14 @@ class Bootstrapper_state_exec_mode_executed(AbstractCachingStateNode[bool]):
     BUT: It does not depend on ALL nodes - instead, it uses an exec mode strategy implementation.
     """
 
-    def __init__(
-        self,
-        env_ctx: EnvContext,
-    ):
-        super().__init__(
-            env_ctx=env_ctx,
-            parent_states=[
-                EnvState.state_input_stderr_log_level_eval_finalized.name,
-                EnvState.state_input_exec_mode_arg_loaded.name,
-                EnvState.state_input_final_state_eval_finalized.name,
-            ],
-            state_name=EnvState.state_exec_mode_executed.name,
-        )
+    _parent_states = staticmethod(
+        lambda: [
+            EnvState.state_input_stderr_log_level_eval_finalized.name,
+            EnvState.state_input_exec_mode_arg_loaded.name,
+            EnvState.state_input_final_state_eval_finalized.name,
+        ]
+    )
+    _state_name = staticmethod(lambda: EnvState.state_exec_mode_executed.name)
 
     def _eval_state_once(
         self,
@@ -3803,15 +3713,7 @@ class Bootstrapper_state_exec_mode_executed(AbstractCachingStateNode[bool]):
 @trivial_factory
 class Bootstrapper_state_input_start_id_var_loaded(AbstractCachingStateNode[str]):
 
-    def __init__(
-        self,
-        env_ctx: EnvContext,
-    ):
-        super().__init__(
-            env_ctx=env_ctx,
-            parent_states=[],
-            state_name=EnvState.state_input_start_id_var_loaded.name,
-        )
+    _state_name = staticmethod(lambda: EnvState.state_input_start_id_var_loaded.name)
 
     def _eval_state_once(
         self,
@@ -3826,15 +3728,7 @@ class Bootstrapper_state_input_start_id_var_loaded(AbstractCachingStateNode[str]
 @trivial_factory
 class Bootstrapper_state_input_proto_code_file_abs_path_var_loaded(AbstractCachingStateNode[str]):
 
-    def __init__(
-        self,
-        env_ctx: EnvContext,
-    ):
-        super().__init__(
-            env_ctx=env_ctx,
-            parent_states=[],
-            state_name=EnvState.state_input_proto_code_file_abs_path_var_loaded.name,
-        )
+    _state_name = staticmethod(lambda: EnvState.state_input_proto_code_file_abs_path_var_loaded.name)
 
     def _eval_state_once(
         self,
@@ -3858,18 +3752,13 @@ class Bootstrapper_state_stride_py_arbitrary_reached(AbstractCachingStateNode[St
     Implements UC_90_98_17_93.run_under_venv.md.
     """
 
-    def __init__(
-        self,
-        env_ctx: EnvContext,
-    ):
-        super().__init__(
-            env_ctx=env_ctx,
-            parent_states=[
-                EnvState.state_input_exec_mode_arg_loaded.name,
-                EnvState.state_input_start_id_var_loaded.name,
-            ],
-            state_name=EnvState.state_stride_py_arbitrary_reached.name,
-        )
+    _parent_states = staticmethod(
+        lambda: [
+            EnvState.state_input_exec_mode_arg_loaded.name,
+            EnvState.state_input_start_id_var_loaded.name,
+        ]
+    )
+    _state_name = staticmethod(lambda: EnvState.state_stride_py_arbitrary_reached.name)
 
     def _eval_state_once(
         self,
@@ -3933,19 +3822,14 @@ class Bootstrapper_state_stride_py_arbitrary_reached(AbstractCachingStateNode[St
 # noinspection PyPep8Naming
 @trivial_factory
 class Bootstrapper_state_proto_code_file_abs_path_inited(AbstractCachingStateNode[str]):
-    def __init__(
-        self,
-        env_ctx: EnvContext,
-    ):
-        super().__init__(
-            env_ctx=env_ctx,
-            parent_states=[
-                EnvState.state_input_exec_mode_arg_loaded.name,
-                EnvState.state_input_proto_code_file_abs_path_var_loaded.name,
-                EnvState.state_stride_py_arbitrary_reached.name,
-            ],
-            state_name=EnvState.state_proto_code_file_abs_path_inited.name,
-        )
+    _parent_states = staticmethod(
+        lambda: [
+            EnvState.state_input_exec_mode_arg_loaded.name,
+            EnvState.state_input_proto_code_file_abs_path_var_loaded.name,
+            EnvState.state_stride_py_arbitrary_reached.name,
+        ]
+    )
+    _state_name = staticmethod(lambda: EnvState.state_proto_code_file_abs_path_inited.name)
 
     def _eval_state_once(
         self,
@@ -4005,17 +3889,12 @@ class Bootstrapper_state_proto_code_file_abs_path_inited(AbstractCachingStateNod
 @trivial_factory
 class Bootstrapper_state_primer_conf_file_abs_path_inited(AbstractCachingStateNode[str]):
 
-    def __init__(
-        self,
-        env_ctx: EnvContext,
-    ):
-        super().__init__(
-            env_ctx=env_ctx,
-            parent_states=[
-                EnvState.state_proto_code_file_abs_path_inited.name,
-            ],
-            state_name=EnvState.state_primer_conf_file_abs_path_inited.name,
-        )
+    _parent_states = staticmethod(
+        lambda: [
+            EnvState.state_proto_code_file_abs_path_inited.name,
+        ]
+    )
+    _state_name = staticmethod(lambda: EnvState.state_primer_conf_file_abs_path_inited.name)
 
     def _eval_state_once(
         self,
@@ -4061,20 +3940,15 @@ class Bootstrapper_state_primer_conf_file_abs_path_inited(AbstractCachingStateNo
 @trivial_factory
 class Bootstrapper_state_primer_conf_file_data_loaded(AbstractCachingStateNode[dict]):
 
-    def __init__(
-        self,
-        env_ctx: EnvContext,
-    ):
-        super().__init__(
-            env_ctx=env_ctx,
-            parent_states=[
-                EnvState.state_input_stderr_log_level_eval_finalized.name,
-                EnvState.state_input_exec_mode_arg_loaded.name,
-                EnvState.state_proto_code_file_abs_path_inited.name,
-                EnvState.state_primer_conf_file_abs_path_inited.name,
-            ],
-            state_name=EnvState.state_primer_conf_file_data_loaded.name,
-        )
+    _parent_states = staticmethod(
+        lambda: [
+            EnvState.state_input_stderr_log_level_eval_finalized.name,
+            EnvState.state_input_exec_mode_arg_loaded.name,
+            EnvState.state_proto_code_file_abs_path_inited.name,
+            EnvState.state_primer_conf_file_abs_path_inited.name,
+        ]
+    )
+    _state_name = staticmethod(lambda: EnvState.state_primer_conf_file_data_loaded.name)
 
     def _eval_state_once(
         self,
@@ -4130,18 +4004,13 @@ class Bootstrapper_state_primer_conf_file_data_loaded(AbstractCachingStateNode[d
 @trivial_factory
 class Bootstrapper_state_ref_root_dir_abs_path_inited(AbstractCachingStateNode[str]):
 
-    def __init__(
-        self,
-        env_ctx: EnvContext,
-    ):
-        super().__init__(
-            env_ctx=env_ctx,
-            parent_states=[
-                EnvState.state_proto_code_file_abs_path_inited.name,
-                EnvState.state_primer_conf_file_data_loaded.name,
-            ],
-            state_name=EnvState.state_ref_root_dir_abs_path_inited.name,
-        )
+    _parent_states = staticmethod(
+        lambda: [
+            EnvState.state_proto_code_file_abs_path_inited.name,
+            EnvState.state_primer_conf_file_data_loaded.name,
+        ]
+    )
+    _state_name = staticmethod(lambda: EnvState.state_ref_root_dir_abs_path_inited.name)
 
     def _eval_state_once(
         self,
@@ -4180,18 +4049,13 @@ class Bootstrapper_state_ref_root_dir_abs_path_inited(AbstractCachingStateNode[s
 @trivial_factory
 class Bootstrapper_state_global_conf_dir_abs_path_inited(AbstractCachingStateNode[str]):
 
-    def __init__(
-        self,
-        env_ctx: EnvContext,
-    ):
-        super().__init__(
-            env_ctx=env_ctx,
-            parent_states=[
-                EnvState.state_primer_conf_file_data_loaded.name,
-                EnvState.state_ref_root_dir_abs_path_inited.name,
-            ],
-            state_name=EnvState.state_global_conf_dir_abs_path_inited.name,
-        )
+    _parent_states = staticmethod(
+        lambda: [
+            EnvState.state_primer_conf_file_data_loaded.name,
+            EnvState.state_ref_root_dir_abs_path_inited.name,
+        ]
+    )
+    _state_name = staticmethod(lambda: EnvState.state_global_conf_dir_abs_path_inited.name)
 
     def _eval_state_once(
         self,
@@ -4225,18 +4089,13 @@ class Bootstrapper_state_global_conf_dir_abs_path_inited(AbstractCachingStateNod
 @trivial_factory
 class Bootstrapper_state_global_conf_file_abs_path_inited(AbstractCachingStateNode[str]):
 
-    def __init__(
-        self,
-        env_ctx: EnvContext,
-    ):
-        super().__init__(
-            env_ctx=env_ctx,
-            parent_states=[
-                EnvState.state_primer_conf_file_abs_path_inited.name,
-                EnvState.state_global_conf_dir_abs_path_inited.name,
-            ],
-            state_name=EnvState.state_global_conf_file_abs_path_inited.name,
-        )
+    _parent_states = staticmethod(
+        lambda: [
+            EnvState.state_primer_conf_file_abs_path_inited.name,
+            EnvState.state_global_conf_dir_abs_path_inited.name,
+        ]
+    )
+    _state_name = staticmethod(lambda: EnvState.state_global_conf_file_abs_path_inited.name)
 
     def _eval_state_once(
         self,
@@ -4259,19 +4118,14 @@ class Bootstrapper_state_global_conf_file_abs_path_inited(AbstractCachingStateNo
 @trivial_factory
 class Bootstrapper_state_client_conf_file_data_loaded(AbstractCachingStateNode[dict]):
 
-    def __init__(
-        self,
-        env_ctx: EnvContext,
-    ):
-        super().__init__(
-            env_ctx=env_ctx,
-            parent_states=[
-                EnvState.state_input_stderr_log_level_eval_finalized.name,
-                EnvState.state_input_exec_mode_arg_loaded.name,
-                EnvState.state_global_conf_file_abs_path_inited.name,
-            ],
-            state_name=EnvState.state_client_conf_file_data_loaded.name,
-        )
+    _parent_states = staticmethod(
+        lambda: [
+            EnvState.state_input_stderr_log_level_eval_finalized.name,
+            EnvState.state_input_exec_mode_arg_loaded.name,
+            EnvState.state_global_conf_file_abs_path_inited.name,
+        ]
+    )
+    _state_name = staticmethod(lambda: EnvState.state_client_conf_file_data_loaded.name)
 
     def _eval_state_once(
         self,
@@ -4308,19 +4162,14 @@ class Bootstrapper_state_client_conf_file_data_loaded(AbstractCachingStateNode[d
 @trivial_factory
 class Bootstrapper_state_selected_env_dir_rel_path_inited(AbstractCachingStateNode[str]):
 
-    def __init__(
-        self,
-        env_ctx: EnvContext,
-    ):
-        super().__init__(
-            env_ctx=env_ctx,
-            parent_states=[
-                EnvState.state_args_parsed.name,
-                EnvState.state_ref_root_dir_abs_path_inited.name,
-                EnvState.state_client_conf_file_data_loaded.name,
-            ],
-            state_name=EnvState.state_selected_env_dir_rel_path_inited.name,
-        )
+    _parent_states = staticmethod(
+        lambda: [
+            EnvState.state_args_parsed.name,
+            EnvState.state_ref_root_dir_abs_path_inited.name,
+            EnvState.state_client_conf_file_data_loaded.name,
+        ]
+    )
+    _state_name = staticmethod(lambda: EnvState.state_selected_env_dir_rel_path_inited.name)
 
     def _eval_state_once(
         self,
@@ -4415,20 +4264,15 @@ class Bootstrapper_state_selected_env_dir_rel_path_inited(AbstractCachingStateNo
 @trivial_factory
 class Bootstrapper_state_local_conf_symlink_abs_path_inited(AbstractCachingStateNode[str]):
 
-    def __init__(
-        self,
-        env_ctx: EnvContext,
-    ):
-        super().__init__(
-            env_ctx=env_ctx,
-            parent_states=[
-                EnvState.state_input_exec_mode_arg_loaded.name,
-                EnvState.state_ref_root_dir_abs_path_inited.name,
-                EnvState.state_client_conf_file_data_loaded.name,
-                EnvState.state_selected_env_dir_rel_path_inited.name,
-            ],
-            state_name=EnvState.state_local_conf_symlink_abs_path_inited.name,
-        )
+    _parent_states = staticmethod(
+        lambda: [
+            EnvState.state_input_exec_mode_arg_loaded.name,
+            EnvState.state_ref_root_dir_abs_path_inited.name,
+            EnvState.state_client_conf_file_data_loaded.name,
+            EnvState.state_selected_env_dir_rel_path_inited.name,
+        ]
+    )
+    _state_name = staticmethod(lambda: EnvState.state_local_conf_symlink_abs_path_inited.name)
 
     def _eval_state_once(
         self,
@@ -4505,18 +4349,13 @@ class Bootstrapper_state_local_conf_symlink_abs_path_inited(AbstractCachingState
 @trivial_factory
 class Bootstrapper_state_local_conf_file_abs_path_inited(AbstractCachingStateNode[str]):
 
-    def __init__(
-        self,
-        env_ctx: EnvContext,
-    ):
-        super().__init__(
-            env_ctx=env_ctx,
-            parent_states=[
-                EnvState.state_primer_conf_file_abs_path_inited.name,
-                EnvState.state_local_conf_symlink_abs_path_inited.name,
-            ],
-            state_name=EnvState.state_local_conf_file_abs_path_inited.name,
-        )
+    _parent_states = staticmethod(
+        lambda: [
+            EnvState.state_primer_conf_file_abs_path_inited.name,
+            EnvState.state_local_conf_symlink_abs_path_inited.name,
+        ]
+    )
+    _state_name = staticmethod(lambda: EnvState.state_local_conf_file_abs_path_inited.name)
 
     def _eval_state_once(
         self,
@@ -4539,19 +4378,14 @@ class Bootstrapper_state_local_conf_file_abs_path_inited(AbstractCachingStateNod
 @trivial_factory
 class Bootstrapper_state_env_conf_file_data_loaded(AbstractCachingStateNode[dict]):
 
-    def __init__(
-        self,
-        env_ctx: EnvContext,
-    ):
-        super().__init__(
-            env_ctx=env_ctx,
-            parent_states=[
-                EnvState.state_input_stderr_log_level_eval_finalized.name,
-                EnvState.state_input_exec_mode_arg_loaded.name,
-                EnvState.state_local_conf_file_abs_path_inited.name,
-            ],
-            state_name=EnvState.state_env_conf_file_data_loaded.name,
-        )
+    _parent_states = staticmethod(
+        lambda: [
+            EnvState.state_input_stderr_log_level_eval_finalized.name,
+            EnvState.state_input_exec_mode_arg_loaded.name,
+            EnvState.state_local_conf_file_abs_path_inited.name,
+        ]
+    )
+    _state_name = staticmethod(lambda: EnvState.state_env_conf_file_data_loaded.name)
 
     def _eval_state_once(
         self,
@@ -4590,19 +4424,14 @@ class Bootstrapper_state_env_conf_file_data_loaded(AbstractCachingStateNode[dict
 @trivial_factory
 class Bootstrapper_required_python_version_inited(AbstractOverriddenFieldCachingStateNode[str]):
 
-    def __init__(
-        self,
-        env_ctx: EnvContext,
-    ):
-        super().__init__(
-            env_ctx=env_ctx,
-            parent_states=[
-                EnvState.state_ref_root_dir_abs_path_inited.name,
-                EnvState.state_client_conf_file_data_loaded.name,
-                EnvState.state_env_conf_file_data_loaded.name,
-            ],
-            state_name=EnvState.state_required_python_version_inited.name,
-        )
+    _parent_states = staticmethod(
+        lambda: [
+            EnvState.state_ref_root_dir_abs_path_inited.name,
+            EnvState.state_client_conf_file_data_loaded.name,
+            EnvState.state_env_conf_file_data_loaded.name,
+        ]
+    )
+    _state_name = staticmethod(lambda: EnvState.state_required_python_version_inited.name)
 
     def _eval_state_once(
         self,
@@ -4635,19 +4464,14 @@ class Bootstrapper_required_python_version_inited(AbstractOverriddenFieldCaching
 @trivial_factory
 class Bootstrapper_state_python_selector_file_abs_path_inited(AbstractOverriddenFieldCachingStateNode[str]):
 
-    def __init__(
-        self,
-        env_ctx: EnvContext,
-    ):
-        super().__init__(
-            env_ctx=env_ctx,
-            parent_states=[
-                EnvState.state_ref_root_dir_abs_path_inited.name,
-                EnvState.state_client_conf_file_data_loaded.name,
-                EnvState.state_env_conf_file_data_loaded.name,
-            ],
-            state_name=EnvState.state_python_selector_file_abs_path_inited.name,
-        )
+    _parent_states = staticmethod(
+        lambda: [
+            EnvState.state_ref_root_dir_abs_path_inited.name,
+            EnvState.state_client_conf_file_data_loaded.name,
+            EnvState.state_env_conf_file_data_loaded.name,
+        ]
+    )
+    _state_name = staticmethod(lambda: EnvState.state_python_selector_file_abs_path_inited.name)
 
     def _eval_state_once(
         self,
@@ -4675,20 +4499,15 @@ class Bootstrapper_state_python_selector_file_abs_path_inited(AbstractOverridden
 @trivial_factory
 class Bootstrapper_state_selected_python_file_abs_path_inited(AbstractCachingStateNode[str]):
 
-    def __init__(
-        self,
-        env_ctx: EnvContext,
-    ):
-        super().__init__(
-            env_ctx=env_ctx,
-            parent_states=[
-                EnvState.state_ref_root_dir_abs_path_inited.name,
-                EnvState.state_client_conf_file_data_loaded.name,
-                EnvState.state_required_python_version_inited.name,
-                EnvState.state_python_selector_file_abs_path_inited.name,
-            ],
-            state_name=EnvState.state_selected_python_file_abs_path_inited.name,
-        )
+    _parent_states = staticmethod(
+        lambda: [
+            EnvState.state_ref_root_dir_abs_path_inited.name,
+            EnvState.state_client_conf_file_data_loaded.name,
+            EnvState.state_required_python_version_inited.name,
+            EnvState.state_python_selector_file_abs_path_inited.name,
+        ]
+    )
+    _state_name = staticmethod(lambda: EnvState.state_selected_python_file_abs_path_inited.name)
 
     def _eval_state_once(
         self,
@@ -4712,19 +4531,14 @@ class Bootstrapper_state_selected_python_file_abs_path_inited(AbstractCachingSta
 @trivial_factory
 class Bootstrapper_state_local_venv_dir_abs_path_inited(AbstractOverriddenFieldCachingStateNode[str]):
 
-    def __init__(
-        self,
-        env_ctx: EnvContext,
-    ):
-        super().__init__(
-            env_ctx=env_ctx,
-            parent_states=[
-                EnvState.state_ref_root_dir_abs_path_inited.name,
-                EnvState.state_client_conf_file_data_loaded.name,
-                EnvState.state_env_conf_file_data_loaded.name,
-            ],
-            state_name=EnvState.state_local_venv_dir_abs_path_inited.name,
-        )
+    _parent_states = staticmethod(
+        lambda: [
+            EnvState.state_ref_root_dir_abs_path_inited.name,
+            EnvState.state_client_conf_file_data_loaded.name,
+            EnvState.state_env_conf_file_data_loaded.name,
+        ]
+    )
+    _state_name = staticmethod(lambda: EnvState.state_local_venv_dir_abs_path_inited.name)
 
     def _eval_state_once(
         self,
@@ -4751,19 +4565,14 @@ class Bootstrapper_state_local_venv_dir_abs_path_inited(AbstractOverriddenFieldC
 @trivial_factory
 class Bootstrapper_state_local_log_dir_abs_path_inited(AbstractOverriddenFieldCachingStateNode[str]):
 
-    def __init__(
-        self,
-        env_ctx: EnvContext,
-    ):
-        super().__init__(
-            env_ctx=env_ctx,
-            parent_states=[
-                EnvState.state_ref_root_dir_abs_path_inited.name,
-                EnvState.state_client_conf_file_data_loaded.name,
-                EnvState.state_env_conf_file_data_loaded.name,
-            ],
-            state_name=EnvState.state_local_log_dir_abs_path_inited.name,
-        )
+    _parent_states = staticmethod(
+        lambda: [
+            EnvState.state_ref_root_dir_abs_path_inited.name,
+            EnvState.state_client_conf_file_data_loaded.name,
+            EnvState.state_env_conf_file_data_loaded.name,
+        ]
+    )
+    _state_name = staticmethod(lambda: EnvState.state_local_log_dir_abs_path_inited.name)
 
     def _eval_state_once(
         self,
@@ -4790,19 +4599,14 @@ class Bootstrapper_state_local_log_dir_abs_path_inited(AbstractOverriddenFieldCa
 @trivial_factory
 class Bootstrapper_state_local_tmp_dir_abs_path_inited(AbstractOverriddenFieldCachingStateNode[str]):
 
-    def __init__(
-        self,
-        env_ctx: EnvContext,
-    ):
-        super().__init__(
-            env_ctx=env_ctx,
-            parent_states=[
-                EnvState.state_ref_root_dir_abs_path_inited.name,
-                EnvState.state_client_conf_file_data_loaded.name,
-                EnvState.state_env_conf_file_data_loaded.name,
-            ],
-            state_name=EnvState.state_local_tmp_dir_abs_path_inited.name,
-        )
+    _parent_states = staticmethod(
+        lambda: [
+            EnvState.state_ref_root_dir_abs_path_inited.name,
+            EnvState.state_client_conf_file_data_loaded.name,
+            EnvState.state_env_conf_file_data_loaded.name,
+        ]
+    )
+    _state_name = staticmethod(lambda: EnvState.state_local_tmp_dir_abs_path_inited.name)
 
     def _eval_state_once(
         self,
@@ -4829,19 +4633,14 @@ class Bootstrapper_state_local_tmp_dir_abs_path_inited(AbstractOverriddenFieldCa
 @trivial_factory
 class Bootstrapper_state_local_cache_dir_abs_path_inited(AbstractOverriddenFieldCachingStateNode[str]):
 
-    def __init__(
-        self,
-        env_ctx: EnvContext,
-    ):
-        super().__init__(
-            env_ctx=env_ctx,
-            parent_states=[
-                EnvState.state_ref_root_dir_abs_path_inited.name,
-                EnvState.state_client_conf_file_data_loaded.name,
-                EnvState.state_env_conf_file_data_loaded.name,
-            ],
-            state_name=EnvState.state_local_cache_dir_abs_path_inited.name,
-        )
+    _parent_states = staticmethod(
+        lambda: [
+            EnvState.state_ref_root_dir_abs_path_inited.name,
+            EnvState.state_client_conf_file_data_loaded.name,
+            EnvState.state_env_conf_file_data_loaded.name,
+        ]
+    )
+    _state_name = staticmethod(lambda: EnvState.state_local_cache_dir_abs_path_inited.name)
 
     def _eval_state_once(
         self,
@@ -4868,19 +4667,14 @@ class Bootstrapper_state_local_cache_dir_abs_path_inited(AbstractOverriddenField
 @trivial_factory
 class Bootstrapper_state_venv_driver_inited(AbstractOverriddenFieldCachingStateNode[VenvDriverType]):
 
-    def __init__(
-        self,
-        env_ctx: EnvContext,
-    ):
-        super().__init__(
-            env_ctx=env_ctx,
-            parent_states=[
-                EnvState.state_client_conf_file_data_loaded.name,
-                EnvState.state_env_conf_file_data_loaded.name,
-                EnvState.state_selected_python_file_abs_path_inited.name,
-            ],
-            state_name=EnvState.state_venv_driver_inited.name,
-        )
+    _parent_states = staticmethod(
+        lambda: [
+            EnvState.state_client_conf_file_data_loaded.name,
+            EnvState.state_env_conf_file_data_loaded.name,
+            EnvState.state_selected_python_file_abs_path_inited.name,
+        ]
+    )
+    _state_name = staticmethod(lambda: EnvState.state_venv_driver_inited.name)
 
     def _eval_state_once(
         self,
@@ -4925,18 +4719,13 @@ class Bootstrapper_state_venv_driver_inited(AbstractOverriddenFieldCachingStateN
 @trivial_factory
 class Bootstrapper_state_project_descriptors_inited(AbstractOverriddenFieldCachingStateNode[list]):
 
-    def __init__(
-        self,
-        env_ctx: EnvContext,
-    ):
-        super().__init__(
-            env_ctx=env_ctx,
-            parent_states=[
-                EnvState.state_client_conf_file_data_loaded.name,
-                EnvState.state_env_conf_file_data_loaded.name,
-            ],
-            state_name=EnvState.state_project_descriptors_inited.name,
-        )
+    _parent_states = staticmethod(
+        lambda: [
+            EnvState.state_client_conf_file_data_loaded.name,
+            EnvState.state_env_conf_file_data_loaded.name,
+        ]
+    )
+    _state_name = staticmethod(lambda: EnvState.state_project_descriptors_inited.name)
 
     def _eval_state_once(
         self,
@@ -4954,18 +4743,13 @@ class Bootstrapper_state_project_descriptors_inited(AbstractOverriddenFieldCachi
 @trivial_factory
 class Bootstrapper_state_install_specs_inited(AbstractOverriddenFieldCachingStateNode[list]):
 
-    def __init__(
-        self,
-        env_ctx: EnvContext,
-    ):
-        super().__init__(
-            env_ctx=env_ctx,
-            parent_states=[
-                EnvState.state_client_conf_file_data_loaded.name,
-                EnvState.state_env_conf_file_data_loaded.name,
-            ],
-            state_name=EnvState.state_install_specs_inited.name,
-        )
+    _parent_states = staticmethod(
+        lambda: [
+            EnvState.state_client_conf_file_data_loaded.name,
+            EnvState.state_env_conf_file_data_loaded.name,
+        ]
+    )
+    _state_name = staticmethod(lambda: EnvState.state_install_specs_inited.name)
 
     def _eval_state_once(
         self,
@@ -4985,6 +4769,8 @@ class Bootstrapper_state_derived_conf_data_loaded(AbstractCachingStateNode[dict]
     """
     Implements: FT_00_22_19_59.derived_config.md
     """
+
+    _state_name = staticmethod(lambda: EnvState.state_derived_conf_data_loaded.name)
 
     def __init__(
         self,
@@ -5035,11 +4821,8 @@ class Bootstrapper_state_derived_conf_data_loaded(AbstractCachingStateNode[dict]
             key=lambda parent_state: [enum_item.name for enum_item in EnvState].index(parent_state),
         )
 
-        super().__init__(
-            env_ctx=env_ctx,
-            parent_states=parent_states,
-            state_name=EnvState.state_derived_conf_data_loaded.name,
-        )
+        self._parent_states = lambda: parent_states
+        super().__init__(env_ctx=env_ctx)
 
     def _eval_state_once(
         self,
@@ -5073,17 +4856,12 @@ class Bootstrapper_state_effective_config_data_printed(AbstractCachingStateNode[
     Implements: FT_19_44_42_19.effective_config.md
     """
 
-    def __init__(
-        self,
-        env_ctx: EnvContext,
-    ):
-        super().__init__(
-            env_ctx=env_ctx,
-            parent_states=[
-                EnvState.state_derived_conf_data_loaded.name,
-            ],
-            state_name=EnvState.state_effective_config_data_printed.name,
-        )
+    _parent_states = staticmethod(
+        lambda: [
+            EnvState.state_derived_conf_data_loaded.name,
+        ]
+    )
+    _state_name = staticmethod(lambda: EnvState.state_effective_config_data_printed.name)
 
     def _eval_state_once(
         self,
@@ -5098,20 +4876,15 @@ class Bootstrapper_state_effective_config_data_printed(AbstractCachingStateNode[
 @trivial_factory
 class Bootstrapper_state_default_file_log_handler_configured(AbstractCachingStateNode[logging.Handler]):
 
-    def __init__(
-        self,
-        env_ctx: EnvContext,
-    ):
-        super().__init__(
-            env_ctx=env_ctx,
-            parent_states=[
-                EnvState.state_args_parsed.name,
-                EnvState.state_input_stderr_log_level_eval_finalized.name,
-                EnvState.state_input_start_id_var_loaded.name,
-                EnvState.state_local_log_dir_abs_path_inited.name,
-            ],
-            state_name=EnvState.state_default_file_log_handler_configured.name,
-        )
+    _parent_states = staticmethod(
+        lambda: [
+            EnvState.state_args_parsed.name,
+            EnvState.state_input_stderr_log_level_eval_finalized.name,
+            EnvState.state_input_start_id_var_loaded.name,
+            EnvState.state_local_log_dir_abs_path_inited.name,
+        ]
+    )
+    _state_name = staticmethod(lambda: EnvState.state_default_file_log_handler_configured.name)
 
     def _eval_state_once(
         self,
@@ -5144,25 +4917,20 @@ class Bootstrapper_state_stride_py_required_reached_not_mode_start(AbstractCachi
     The `python` interpreter required by the client is saved into `field_selected_python_file_abs_path`.
     """
 
-    def __init__(
-        self,
-        env_ctx: EnvContext,
-    ):
-        super().__init__(
-            env_ctx=env_ctx,
-            parent_states=[
-                EnvState.state_args_parsed.name,
-                EnvState.state_input_exec_mode_arg_loaded.name,
-                EnvState.state_input_start_id_var_loaded.name,
-                EnvState.state_proto_code_file_abs_path_inited.name,
-                EnvState.state_local_conf_file_abs_path_inited.name,
-                EnvState.state_selected_python_file_abs_path_inited.name,
-                EnvState.state_local_venv_dir_abs_path_inited.name,
-                EnvState.state_local_tmp_dir_abs_path_inited.name,
-                EnvState.state_default_file_log_handler_configured.name,
-            ],
-            state_name=EnvState.state_stride_py_required_reached.name,
-        )
+    _parent_states = staticmethod(
+        lambda: [
+            EnvState.state_args_parsed.name,
+            EnvState.state_input_exec_mode_arg_loaded.name,
+            EnvState.state_input_start_id_var_loaded.name,
+            EnvState.state_proto_code_file_abs_path_inited.name,
+            EnvState.state_local_conf_file_abs_path_inited.name,
+            EnvState.state_selected_python_file_abs_path_inited.name,
+            EnvState.state_local_venv_dir_abs_path_inited.name,
+            EnvState.state_local_tmp_dir_abs_path_inited.name,
+            EnvState.state_default_file_log_handler_configured.name,
+        ]
+    )
+    _state_name = staticmethod(lambda: EnvState.state_stride_py_required_reached.name)
 
     def _eval_state_once(
         self,
@@ -5223,25 +4991,20 @@ class Bootstrapper_state_stride_py_required_reached_not_mode_start(AbstractCachi
 
 # noinspection PyPep8Naming
 class Bootstrapper_state_stride_py_required_reached_mode_start(AbstractCachingStateNode[StateStride]):
-    def __init__(
-        self,
-        env_ctx: EnvContext,
-    ):
-        super().__init__(
-            env_ctx=env_ctx,
-            parent_states=[
-                EnvState.state_args_parsed.name,
-                EnvState.state_input_exec_mode_arg_loaded.name,
-                EnvState.state_input_start_id_var_loaded.name,
-                EnvState.state_proto_code_file_abs_path_inited.name,
-                EnvState.state_local_conf_file_abs_path_inited.name,
-                EnvState.state_selected_python_file_abs_path_inited.name,
-                EnvState.state_local_venv_dir_abs_path_inited.name,
-                EnvState.state_local_tmp_dir_abs_path_inited.name,
-                EnvState.state_default_file_log_handler_configured.name,
-            ],
-            state_name=EnvState.state_stride_py_required_reached.name,
-        )
+    _parent_states = staticmethod(
+        lambda: [
+            EnvState.state_args_parsed.name,
+            EnvState.state_input_exec_mode_arg_loaded.name,
+            EnvState.state_input_start_id_var_loaded.name,
+            EnvState.state_proto_code_file_abs_path_inited.name,
+            EnvState.state_local_conf_file_abs_path_inited.name,
+            EnvState.state_selected_python_file_abs_path_inited.name,
+            EnvState.state_local_venv_dir_abs_path_inited.name,
+            EnvState.state_local_tmp_dir_abs_path_inited.name,
+            EnvState.state_default_file_log_handler_configured.name,
+        ]
+    )
+    _state_name = staticmethod(lambda: EnvState.state_stride_py_required_reached.name)
 
     def _eval_state_once(
         self,
@@ -5288,24 +5051,19 @@ class Bootstrapper_state_reinstall_triggered(AbstractCachingStateNode[bool]):
     Removes current `venv` dir and `constraints.txt` file (to trigger their re-creation subsequently).
     """
 
-    def __init__(
-        self,
-        env_ctx: EnvContext,
-    ):
-        super().__init__(
-            env_ctx=env_ctx,
-            parent_states=[
-                EnvState.state_args_parsed.name,
-                EnvState.state_input_exec_mode_arg_loaded.name,
-                EnvState.state_input_start_id_var_loaded.name,
-                EnvState.state_proto_code_file_abs_path_inited.name,
-                EnvState.state_local_conf_symlink_abs_path_inited.name,
-                EnvState.state_local_venv_dir_abs_path_inited.name,
-                EnvState.state_local_tmp_dir_abs_path_inited.name,
-                EnvState.state_stride_py_required_reached.name,
-            ],
-            state_name=EnvState.state_reinstall_triggered.name,
-        )
+    _parent_states = staticmethod(
+        lambda: [
+            EnvState.state_args_parsed.name,
+            EnvState.state_input_exec_mode_arg_loaded.name,
+            EnvState.state_input_start_id_var_loaded.name,
+            EnvState.state_proto_code_file_abs_path_inited.name,
+            EnvState.state_local_conf_symlink_abs_path_inited.name,
+            EnvState.state_local_venv_dir_abs_path_inited.name,
+            EnvState.state_local_tmp_dir_abs_path_inited.name,
+            EnvState.state_stride_py_required_reached.name,
+        ]
+    )
+    _state_name = staticmethod(lambda: EnvState.state_reinstall_triggered.name)
 
     def _eval_state_once(
         self,
@@ -5367,23 +5125,18 @@ class Bootstrapper_state_reinstall_triggered(AbstractCachingStateNode[bool]):
 # noinspection PyPep8Naming
 @trivial_factory
 class Bootstrapper_state_venv_driver_prepared(AbstractCachingStateNode[VenvDriverBase]):
-    def __init__(
-        self,
-        env_ctx: EnvContext,
-    ):
-        super().__init__(
-            env_ctx=env_ctx,
-            parent_states=[
-                EnvState.state_input_exec_mode_arg_loaded.name,
-                EnvState.state_required_python_version_inited.name,
-                EnvState.state_selected_python_file_abs_path_inited.name,
-                EnvState.state_local_venv_dir_abs_path_inited.name,
-                EnvState.state_local_cache_dir_abs_path_inited.name,
-                EnvState.state_venv_driver_inited.name,
-                EnvState.state_reinstall_triggered.name,
-            ],
-            state_name=EnvState.state_venv_driver_prepared.name,
-        )
+    _parent_states = staticmethod(
+        lambda: [
+            EnvState.state_input_exec_mode_arg_loaded.name,
+            EnvState.state_required_python_version_inited.name,
+            EnvState.state_selected_python_file_abs_path_inited.name,
+            EnvState.state_local_venv_dir_abs_path_inited.name,
+            EnvState.state_local_cache_dir_abs_path_inited.name,
+            EnvState.state_venv_driver_inited.name,
+            EnvState.state_reinstall_triggered.name,
+        ]
+    )
+    _state_name = staticmethod(lambda: EnvState.state_venv_driver_prepared.name)
 
     def _eval_state_once(
         self,
@@ -5436,25 +5189,20 @@ class Bootstrapper_state_stride_py_venv_reached(AbstractCachingStateNode[StateSt
     Creates `venv` and switches to `python` from there.
     """
 
-    def __init__(
-        self,
-        env_ctx: EnvContext,
-    ):
-        super().__init__(
-            env_ctx=env_ctx,
-            parent_states=[
-                EnvState.state_args_parsed.name,
-                EnvState.state_input_exec_mode_arg_loaded.name,
-                EnvState.state_input_start_id_var_loaded.name,
-                EnvState.state_proto_code_file_abs_path_inited.name,
-                EnvState.state_local_conf_file_abs_path_inited.name,
-                EnvState.state_selected_python_file_abs_path_inited.name,
-                EnvState.state_local_venv_dir_abs_path_inited.name,
-                EnvState.state_reinstall_triggered.name,
-                EnvState.state_venv_driver_prepared.name,
-            ],
-            state_name=EnvState.state_stride_py_venv_reached.name,
-        )
+    _parent_states = staticmethod(
+        lambda: [
+            EnvState.state_args_parsed.name,
+            EnvState.state_input_exec_mode_arg_loaded.name,
+            EnvState.state_input_start_id_var_loaded.name,
+            EnvState.state_proto_code_file_abs_path_inited.name,
+            EnvState.state_local_conf_file_abs_path_inited.name,
+            EnvState.state_selected_python_file_abs_path_inited.name,
+            EnvState.state_local_venv_dir_abs_path_inited.name,
+            EnvState.state_reinstall_triggered.name,
+            EnvState.state_venv_driver_prepared.name,
+        ]
+    )
+    _state_name = staticmethod(lambda: EnvState.state_stride_py_venv_reached.name)
 
     def _eval_state_once(
         self,
@@ -5543,25 +5291,20 @@ class Bootstrapper_state_stride_py_venv_reached(AbstractCachingStateNode[StateSt
 @trivial_factory
 class Bootstrapper_state_protoprimer_package_installed(AbstractCachingStateNode[bool]):
 
-    def __init__(
-        self,
-        env_ctx: EnvContext,
-    ):
-        super().__init__(
-            env_ctx=env_ctx,
-            parent_states=[
-                EnvState.state_input_do_install_var_loaded.name,
-                EnvState.state_args_parsed.name,
-                EnvState.state_input_exec_mode_arg_loaded.name,
-                EnvState.state_ref_root_dir_abs_path_inited.name,
-                EnvState.state_local_conf_symlink_abs_path_inited.name,
-                EnvState.state_project_descriptors_inited.name,
-                EnvState.state_install_specs_inited.name,
-                EnvState.state_venv_driver_prepared.name,
-                EnvState.state_stride_py_venv_reached.name,
-            ],
-            state_name=EnvState.state_protoprimer_package_installed.name,
-        )
+    _parent_states = staticmethod(
+        lambda: [
+            EnvState.state_input_do_install_var_loaded.name,
+            EnvState.state_args_parsed.name,
+            EnvState.state_input_exec_mode_arg_loaded.name,
+            EnvState.state_ref_root_dir_abs_path_inited.name,
+            EnvState.state_local_conf_symlink_abs_path_inited.name,
+            EnvState.state_project_descriptors_inited.name,
+            EnvState.state_install_specs_inited.name,
+            EnvState.state_venv_driver_prepared.name,
+            EnvState.state_stride_py_venv_reached.name,
+        ]
+    )
+    _state_name = staticmethod(lambda: EnvState.state_protoprimer_package_installed.name)
 
     def _eval_state_once(
         self,
@@ -5696,20 +5439,15 @@ class Bootstrapper_state_version_constraints_generated(AbstractCachingStateNode[
     Implements UC_44_82_07_30.requirements_lock.md.
     """
 
-    def __init__(
-        self,
-        env_ctx: EnvContext,
-    ):
-        super().__init__(
-            env_ctx=env_ctx,
-            parent_states=[
-                EnvState.state_input_exec_mode_arg_loaded.name,
-                EnvState.state_local_conf_symlink_abs_path_inited.name,
-                EnvState.state_venv_driver_prepared.name,
-                EnvState.state_protoprimer_package_installed.name,
-            ],
-            state_name=EnvState.state_version_constraints_generated.name,
-        )
+    _parent_states = staticmethod(
+        lambda: [
+            EnvState.state_input_exec_mode_arg_loaded.name,
+            EnvState.state_local_conf_symlink_abs_path_inited.name,
+            EnvState.state_venv_driver_prepared.name,
+            EnvState.state_protoprimer_package_installed.name,
+        ]
+    )
+    _state_name = staticmethod(lambda: EnvState.state_version_constraints_generated.name)
 
     def _eval_state_once(
         self,
@@ -5747,22 +5485,17 @@ class Bootstrapper_state_version_constraints_generated(AbstractCachingStateNode[
 @trivial_factory
 class Bootstrapper_state_stride_deps_updated_reached(AbstractCachingStateNode[StateStride]):
 
-    def __init__(
-        self,
-        env_ctx: EnvContext,
-    ):
-        super().__init__(
-            env_ctx=env_ctx,
-            parent_states=[
-                EnvState.state_args_parsed.name,
-                EnvState.state_input_exec_mode_arg_loaded.name,
-                EnvState.state_input_start_id_var_loaded.name,
-                EnvState.state_proto_code_file_abs_path_inited.name,
-                EnvState.state_local_venv_dir_abs_path_inited.name,
-                EnvState.state_version_constraints_generated.name,
-            ],
-            state_name=EnvState.state_stride_deps_updated_reached.name,
-        )
+    _parent_states = staticmethod(
+        lambda: [
+            EnvState.state_args_parsed.name,
+            EnvState.state_input_exec_mode_arg_loaded.name,
+            EnvState.state_input_start_id_var_loaded.name,
+            EnvState.state_proto_code_file_abs_path_inited.name,
+            EnvState.state_local_venv_dir_abs_path_inited.name,
+            EnvState.state_version_constraints_generated.name,
+        ]
+    )
+    _state_name = staticmethod(lambda: EnvState.state_stride_deps_updated_reached.name)
 
     def _eval_state_once(
         self,
@@ -5814,19 +5547,14 @@ class Bootstrapper_state_proto_code_updated(AbstractCachingStateNode[bool]):
     TODO: UC_52_87_82_92.conditional_auto_update.md
     """
 
-    def __init__(
-        self,
-        env_ctx: EnvContext,
-    ):
-        super().__init__(
-            env_ctx=env_ctx,
-            parent_states=[
-                EnvState.state_input_exec_mode_arg_loaded.name,
-                EnvState.state_proto_code_file_abs_path_inited.name,
-                EnvState.state_stride_deps_updated_reached.name,
-            ],
-            state_name=EnvState.state_proto_code_updated.name,
-        )
+    _parent_states = staticmethod(
+        lambda: [
+            EnvState.state_input_exec_mode_arg_loaded.name,
+            EnvState.state_proto_code_file_abs_path_inited.name,
+            EnvState.state_stride_deps_updated_reached.name,
+        ]
+    )
+    _state_name = staticmethod(lambda: EnvState.state_proto_code_updated.name)
 
     def _eval_state_once(
         self,
@@ -5904,22 +5632,17 @@ class Bootstrapper_state_proto_code_updated(AbstractCachingStateNode[bool]):
 @trivial_factory
 class Bootstrapper_state_stride_src_updated_reached(AbstractCachingStateNode[StateStride]):
 
-    def __init__(
-        self,
-        env_ctx: EnvContext,
-    ):
-        super().__init__(
-            env_ctx=env_ctx,
-            parent_states=[
-                EnvState.state_args_parsed.name,
-                EnvState.state_input_exec_mode_arg_loaded.name,
-                EnvState.state_input_start_id_var_loaded.name,
-                EnvState.state_proto_code_file_abs_path_inited.name,
-                EnvState.state_local_venv_dir_abs_path_inited.name,
-                EnvState.state_proto_code_updated.name,
-            ],
-            state_name=EnvState.state_stride_src_updated_reached.name,
-        )
+    _parent_states = staticmethod(
+        lambda: [
+            EnvState.state_args_parsed.name,
+            EnvState.state_input_exec_mode_arg_loaded.name,
+            EnvState.state_input_start_id_var_loaded.name,
+            EnvState.state_proto_code_file_abs_path_inited.name,
+            EnvState.state_local_venv_dir_abs_path_inited.name,
+            EnvState.state_proto_code_updated.name,
+        ]
+    )
+    _state_name = staticmethod(lambda: EnvState.state_stride_src_updated_reached.name)
 
     def _eval_state_once(
         self,
@@ -5963,30 +5686,16 @@ class Bootstrapper_state_command_executed(AbstractCachingStateNode[int]):
     If `ParsedArg.name_command`, this state replaces the current process with a shell executing the given command.
     """
 
-    def __init__(
-        self,
-        env_ctx: EnvContext,
-        parent_states: list[str] | None = None,
-        state_name: str | None = None,
-        start_interactive_shell: bool = False,
-    ):
-        super().__init__(
-            env_ctx=env_ctx,
-            parent_states=(
-                parent_states
-                if parent_states is not None
-                else [
-                    EnvState.state_default_stderr_log_handler_configured.name,
-                    EnvState.state_args_parsed.name,
-                    EnvState.state_local_venv_dir_abs_path_inited.name,
-                    EnvState.state_local_cache_dir_abs_path_inited.name,
-                    EnvState.state_stride_src_updated_reached.name,
-                ]
-            ),
-            state_name=(state_name if state_name is not None else EnvState.state_command_executed.name),
-        )
-
-        self.start_interactive_shell: bool = start_interactive_shell
+    _parent_states = staticmethod(
+        lambda: [
+            EnvState.state_default_stderr_log_handler_configured.name,
+            EnvState.state_args_parsed.name,
+            EnvState.state_local_venv_dir_abs_path_inited.name,
+            EnvState.state_local_cache_dir_abs_path_inited.name,
+            EnvState.state_stride_src_updated_reached.name,
+        ]
+    )
+    _state_name = staticmethod(lambda: EnvState.state_command_executed.name)
 
     def _eval_state_once(
         self,
@@ -6013,7 +5722,7 @@ class Bootstrapper_state_command_executed(AbstractCachingStateNode[int]):
         shell_driver: ShellDriverBase = _get_shell_driver(state_local_cache_dir_abs_path_inited)
 
         return shell_driver.run_shell(
-            self.start_interactive_shell,
+            False,
             command_line,
             state_default_stderr_log_handler_configured,
             state_local_venv_dir_abs_path_inited,

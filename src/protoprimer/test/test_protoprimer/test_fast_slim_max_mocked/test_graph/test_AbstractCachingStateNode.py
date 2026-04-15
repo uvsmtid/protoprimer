@@ -12,10 +12,18 @@ def test_relationship():
     assert_test_module_name_embeds_str(AbstractCachingStateNode.__name__)
 
 
+def _make_state_node(mock_env_ctx, parent_states, state_name):
+    class ConcreteStateNode(AbstractCachingStateNode):
+        _state_name = staticmethod(lambda: state_name)
+        _parent_states = staticmethod(lambda: parent_states)
+
+    return ConcreteStateNode(mock_env_ctx)
+
+
 def test_caching():
     # given:
     mock_env_ctx = MagicMock()
-    state_node = AbstractCachingStateNode(mock_env_ctx, [], "my_state")
+    state_node = _make_state_node(mock_env_ctx, [], "my_state")
     state_node._eval_state_once = MagicMock(return_value="my_value")
 
     # when:
@@ -32,7 +40,7 @@ def test_eval_parents():
     # given:
     mock_env_ctx = MagicMock()
     parent_states = ["parent1"]
-    state_node = AbstractCachingStateNode(mock_env_ctx, parent_states, "my_state")
+    state_node = _make_state_node(mock_env_ctx, parent_states, "my_state")
     state_node._eval_state_once = MagicMock(return_value="my_value")
 
     # when:
@@ -45,7 +53,7 @@ def test_eval_parents():
 
 def test_eval_state_once_raises_not_implemented_error():
     # given:
-    state_node = AbstractCachingStateNode(MagicMock(), [], "my_state")
+    state_node = _make_state_node(MagicMock(), [], "my_state")
 
     # when/then:
     with pytest.raises(NotImplementedError):

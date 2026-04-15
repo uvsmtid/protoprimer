@@ -7,7 +7,7 @@ cffi==2.0.0
 cfgv==3.5.0
 charset-normalizer==3.4.7
 cliff==4.13.3
-cmd2==3.4.0
+cmd2==3.5.0
 coverage==7.13.5
 cryptography==46.0.7
 distlib==0.4.0
@@ -41,7 +41,7 @@ prettytable==3.17.0
 pyasn1==0.6.3
 pyasn1-modules==0.4.2
 pycparser==3.0
-pyfakefs==6.1.6
+pyfakefs==6.2.0
 pygments==2.20.0
 pyperclip==1.11.0
 pytest==9.0.3
@@ -74,5 +74,5 @@ tomli==2.4.1
 tomli-w==1.2.0
 typing-extensions==4.15.0
 urllib3==2.6.3
-virtualenv==21.2.1
+virtualenv==21.2.3
 wcwidth==0.6.0

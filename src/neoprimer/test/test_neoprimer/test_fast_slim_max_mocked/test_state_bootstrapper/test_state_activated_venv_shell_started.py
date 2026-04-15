@@ -32,7 +32,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
     # noinspection PyMethodMayBeStatic
     def test_relationship(self):
-        assert_test_module_name_embeds_str(Bootstrapper_state_activated_venv_shell_started.state_activated_venv_shell_started)
+        assert_test_module_name_embeds_str(Bootstrapper_state_activated_venv_shell_started._state_name())
 
     @patch("sys.argv", [""])
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.create_state_node")
@@ -60,7 +60,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         assert_parent_factories_mocked(
             self.env_ctx,
-            Bootstrapper_state_activated_venv_shell_started.state_activated_venv_shell_started,
+            Bootstrapper_state_activated_venv_shell_started._state_name(),
         )
 
         mock_create_state_default_stderr_log_handler_configured.return_value.eval_own_state.return_value.level = logging.INFO
@@ -89,7 +89,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         # when:
 
         self.env_ctx.state_graph.eval_state(
-            Bootstrapper_state_activated_venv_shell_started.state_activated_venv_shell_started,
+            Bootstrapper_state_activated_venv_shell_started._state_name(),
             self.env_ctx,
         )
 
@@ -139,7 +139,7 @@ fi
 
         assert_parent_factories_mocked(
             self.env_ctx,
-            Bootstrapper_state_activated_venv_shell_started.state_activated_venv_shell_started,
+            Bootstrapper_state_activated_venv_shell_started._state_name(),
         )
 
         mock_create_state_default_stderr_log_handler_configured.return_value.eval_own_state.return_value.level = logging.INFO
@@ -168,7 +168,7 @@ fi
         # when:
 
         self.env_ctx.state_graph.eval_state(
-            Bootstrapper_state_activated_venv_shell_started.state_activated_venv_shell_started,
+            Bootstrapper_state_activated_venv_shell_started._state_name(),
             self.env_ctx,
         )
 

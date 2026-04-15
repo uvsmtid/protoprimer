@@ -22,21 +22,15 @@ logger = logging.getLogger()
 @trivial_factory
 class Bootstrapper_state_pre_commit_configured(AbstractCachingStateNode[int]):
 
-    state_pre_commit_configured = "state_pre_commit_configured"
+    _state_name = staticmethod(lambda: "state_pre_commit_configured")
 
-    def __init__(
-        self,
-        env_ctx: EnvContext,
-    ):
-        super().__init__(
-            env_ctx=env_ctx,
-            parent_states=[
-                TargetState.target_proto_bootstrap_completed.value.name,
-                EnvState.state_global_conf_file_abs_path_inited.name,
-                EnvState.state_ref_root_dir_abs_path_inited.name,
-            ],
-            state_name=self.state_pre_commit_configured,
-        )
+    _parent_states = staticmethod(
+        lambda: [
+            TargetState.target_proto_bootstrap_completed.value.name,
+            EnvState.state_global_conf_file_abs_path_inited.name,
+            EnvState.state_ref_root_dir_abs_path_inited.name,
+        ]
+    )
 
     def _eval_state_once(
         self,
