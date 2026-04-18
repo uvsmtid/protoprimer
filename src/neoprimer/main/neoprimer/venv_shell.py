@@ -2,13 +2,12 @@ import argparse
 import logging
 
 from protoprimer.primer_kernel import (
+    _get_shell_driver,
     AbstractCachingStateNode,
-    EnvContext,
     EnvState,
     ParsedArg,
     ShellDriverBase,
     StateStride,
-    _get_shell_driver,
     trivial_factory,
 )
 

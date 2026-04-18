@@ -3,13 +3,15 @@ from __future__ import annotations
 import copy
 
 from local_test.config_node import build_root_node
-from protoprimer import primer_kernel
-from protoprimer.primer_kernel import (
+from neoprimer import conf_renderer
+from neoprimer.conf_renderer import (
     AbstractDictNode,
     AbstractListNode,
     AbstractRootNode,
     AbstractValueNode,
     RenderConfigVisitor,
+)
+from protoprimer.primer_kernel import (
     TermColor,
 )
 
@@ -445,7 +447,7 @@ some_var = (
 
 def test_abstract_config_visitor():
     # Create an instance of the visitor
-    visitor = primer_kernel.AbstractConfigVisitor()
+    visitor = conf_renderer.AbstractConfigVisitor()
 
     # Create a sample config structure
     config_data = copy.deepcopy(common_sample)

@@ -1,11 +1,13 @@
 from __future__ import annotations
 
 from local_test.name_assertion import assert_test_module_name_embeds_str
+from neoprimer.conf_renderer import (
+    RenderConfigVisitor,
+    RootNode_primer,
+)
 from protoprimer.primer_kernel import (
     ConfConstPrimer,
     ConfField,
-    RenderConfigVisitor,
-    RootNode_primer,
     TermColor,
 )
 

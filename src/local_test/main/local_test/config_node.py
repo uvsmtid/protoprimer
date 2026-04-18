@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from protoprimer.primer_kernel import (
+from neoprimer.conf_renderer import (
     AbstractConfigNode,
     AbstractRootNode,
     ConfigBuilderVisitor,

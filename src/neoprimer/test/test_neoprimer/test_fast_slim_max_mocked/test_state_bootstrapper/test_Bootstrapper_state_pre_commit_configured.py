@@ -30,7 +30,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
     # noinspection PyMethodMayBeStatic
     def test_relationship(self):
-        assert_test_module_name_embeds_str(Bootstrapper_state_pre_commit_configured._state_name())
+        assert_test_module_name_embeds_str(Bootstrapper_state_pre_commit_configured.__name__)
 
     @patch(f"{pre_commit.__name__}.subprocess.check_call")
     @patch(f"{pre_commit.__name__}.subprocess.check_output")

@@ -7,13 +7,11 @@ import sys
 
 from protoprimer.primer_kernel import (
     AbstractCachingStateNode,
-    EnvContext,
     EnvState,
     TargetState,
     trivial_factory,
     ValueType,
 )
-
 
 logger = logging.getLogger()
 
@@ -56,7 +54,7 @@ class Bootstrapper_state_pre_commit_configured(AbstractCachingStateNode[int]):
         if not is_git_repo:
             return 0
 
-        state_global_conf_file_abs_path_inited = self.eval_parent_state(EnvState.state_global_conf_file_abs_path_inited.name)
+        state_global_conf_file_abs_path_inited: str = self.eval_parent_state(EnvState.state_global_conf_file_abs_path_inited.name)
         client_conf_dir_path = os.path.dirname(state_global_conf_file_abs_path_inited)
         pre_commit_conf_file_path = os.path.join(
             client_conf_dir_path,
