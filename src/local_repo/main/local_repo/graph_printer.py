@@ -160,8 +160,8 @@ class StateMeta(enum.Enum):
         env_state=EnvState.state_derived_conf_data_loaded,
         sub_graph=None,
     )
-    state_effective_config_data_printed = StateNodeMeta(
-        env_state=EnvState.state_effective_config_data_printed,
+    state_effective_conf_data_printed = StateNodeMeta(
+        env_state=EnvState.state_effective_conf_data_printed,
         sub_graph=SubGraph.graph_config,
     )
     state_default_file_log_handler_configured = StateNodeMeta(

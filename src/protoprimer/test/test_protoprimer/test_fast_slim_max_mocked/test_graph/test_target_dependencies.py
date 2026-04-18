@@ -50,17 +50,18 @@ class TestTargetDependencies:
 
         allowed_missing_dependencies = set(self.some_state_exec_mode_executed_dependencies)
         allowed_missing_dependencies.add(EnvState.state_derived_conf_data_loaded.name)
-        allowed_missing_dependencies.add(EnvState.state_effective_config_data_printed.name)
+        allowed_missing_dependencies.add(EnvState.state_effective_conf_data_printed.name)
 
         missing_dependencies -= allowed_missing_dependencies
 
         # then:
 
-        assert not missing_dependencies, (
-            f"The following `{EnvState.__name__}` members are not dependencies of "
-            f"[{final_state_name}]: {sorted(list(missing_dependencies))}"
-            #
-        )
+        if missing_dependencies:
+            raise AssertionError(
+                f"The following `{EnvState.__name__}` members are not dependencies of "
+                f"[{final_state_name}]: {sorted(list(missing_dependencies))}"
+                #
+            )
 
     def test_dependencies_of_state_exec_mode_executed(
         self,
