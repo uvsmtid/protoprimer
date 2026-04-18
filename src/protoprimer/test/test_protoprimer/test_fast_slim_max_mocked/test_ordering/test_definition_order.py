@@ -49,7 +49,8 @@ class TestEnvStateOrdering:
         # Verify that for each state, its parents appear before it in the enum definition:
         for env_state in EnvState:
             state_node = state_graph_instance.get_state_node(env_state.name, self.env_ctx)
-            assert state_node is not None, f"`{StateNode.__name__}` for [{env_state.name}] not found"
+            if state_node is None:
+                raise AssertionError(f"`{StateNode.__name__}` for [{env_state.name}] not found")
 
             for parent_state_name in state_node.get_parent_states():
                 if not (
@@ -98,7 +99,8 @@ class TestEnvStateOrdering:
         # Verify that for each state, its implementation class is defined after its parents:
         for env_state in EnvState:
             state_node = state_graph_instance.get_state_node(env_state.name, self.env_ctx)
-            assert state_node is not None, f"`{StateNode.__name__}` for [{env_state.name}] not found"
+            if state_node is None:
+                raise AssertionError(f"`{StateNode.__name__}` for [{env_state.name}] not found")
 
             for parent_state_name in state_node.get_parent_states():
                 parent_line_number = state_name_to_line_number[parent_state_name]

@@ -84,11 +84,13 @@ else:
 
 base_url = "https://protoprimer.readthedocs.io"
 
-# Get the version name (e.g., "latest", "stable", "v1.0"):
-rtd_version_name = os.environ.get("READTHEDOCS_VERSION")
+# `READTHEDOCS_CANONICAL_URL` reflects the URL versioning scheme configured in the project settings:
+# * `multiple_versions_with_translations` (includes language, e.g. `.../en/latest/`)
+# * `multiple_versions_without_translations` (e.g. `.../latest/`)
+rtd_canonical_url = os.environ.get("READTHEDOCS_CANONICAL_URL")
 
 # The URL structure configured in the `protoprimer` project:
-html_baseurl = f"{base_url}/{rtd_version_name}/"
+html_baseurl = rtd_canonical_url
 
 # -- Options for HTML output
 

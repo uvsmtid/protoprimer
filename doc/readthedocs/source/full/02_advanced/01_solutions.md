@@ -4,6 +4,28 @@
 
 % stub_include_start
 
+<details><summary>Use cases</summary>
+
+You can:
+
+*   **Bootstrap an environment:**
+
+    This case is the most involved and the main focus for `protoprimer`.
+
+    Everything discussed so far relates to bootstrapping.
+
+    % See FT_85_17_35_21.boot_env.md
+
+*   **Start an application:**
+
+    This case is used to start applications without explicit `venv` activation.
+
+    The goal is also to avoid the 128-char shebang length limit.
+
+    % See FT_05_08_64_67.start_app.md
+
+</details>
+
 <details><summary>Ultimate goal</summary>
 
 `protoprimer` replaces **manuals** for bootstraps and updates:
@@ -26,6 +48,16 @@ To eliminate manuals, `protoprimer` has to solve both:
 *   Being a **one-liner**:
 
     it must "just run" (without asking to install anything).
+
+</details>
+
+<details><summary>Repo flexibility</summary>
+
+The environment detection and config discovery are handled for all:
+
+*   a **single-package repo** with a lone library
+
+*   a **multi-lang monorepo** with arbitrary directory structure
 
 </details>
 

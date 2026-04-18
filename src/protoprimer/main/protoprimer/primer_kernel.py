@@ -1,15 +1,24 @@
 #!/usr/bin/env python3
+#
+#
+#
+#
+# placeholder for: FT_56_85_65_41.generated_boilerplate.md
+#
+#
+#
+#
+#
 # A bootstrap script that starts with a **wild** `python` version
 # to invoke code from a configured `venv` using the **required** `python` version.
+# Documentation: https://protoprimer.readthedocs.io/
 # Source: https://github.com/uvsmtid/protoprimer
 # SPDX-License-Identifier: MIT
 # Copyright (C) 2025 Alexey Pakseykin
-"""
-
-TODO: TODO_91_75_37_57.implement_shebang_update.md / FT_02_89_37_65.shebang_line.md and update this comment:
-The script must be run with Python 3.
-Ensure that `python3` is in the `PATH` for shebang to work.
-"""
+#
+# TODO: TODO_91_75_37_57.implement_shebang_update.md / FT_02_89_37_65.shebang_line.md
+#       Be able to generate any shebang for `proto_code`.
+#
 
 from __future__ import annotations
 
@@ -32,7 +41,6 @@ import subprocess
 import sys
 import types
 import typing
-from types import CodeType
 from typing import (
     Any,
     Callable,
@@ -74,15 +82,28 @@ def proto_main(
         )
         assert state_exec_mode_executed
         atexit.register(lambda: env_ctx.print_exit_line(0))
+
+    except subprocess.CalledProcessError as subproc_error:
+        # Convert the list of arguments into a single shell-escaped string:
+        if isinstance(subproc_error.cmd, list):
+            executable_str = shlex.join(subproc_error.cmd)
+        else:
+            executable_str = subproc_error.cmd
+        exit_code = subproc_error.returncode
+        # NOTE: orig `exit_code` is only part of the message, but `RuntimError` will exit with 1:
+        atexit.register(lambda: env_ctx.print_exit_line(1))
+        raise RuntimeError(f"command failed with `exit_code` [{exit_code}]:\n{executable_str}") from subproc_error
+
     except SystemExit as sys_exit:
-        exit_code: int = sys_exit.code
-        if exit_code is None or exit_code == 0:
+        if sys_exit.code is None or sys_exit.code == 0:
             atexit.register(lambda: env_ctx.print_exit_line(0))
         else:
+            exit_code: int = sys_exit.code if isinstance(sys_exit.code, int) else 1
             atexit.register(lambda: env_ctx.print_exit_line(exit_code))
         # We only catch `SystemExit` to print the status line.
         # The actual exit code is already in-flight with `SystemExit`, propagate it:
         raise
+
     except:
         atexit.register(lambda: env_ctx.print_exit_line(1))
         raise
@@ -206,7 +227,6 @@ class KeyWord(enum.Enum):
     key_stderr = "stderr"
     key_handler = "handler"
     key_data = "data"
-    key_config = "config"
     key_package = "package"
     key_constraints = "constraints"
     key_main = "main"
@@ -266,6 +286,8 @@ class ConfLeap(enum.Enum):
     # surrogate: no associated config file:
     leap_derived = f"{KeyWord.key_derived.value}"
 
+    # TODO: Consolidate `leap_global` and `leap_local` are not really `ConfLeap`-s.
+    #       Instead, see `leap_client` and `leap_env`.
     leap_global = f"{KeyWord.key_global.value}"
     leap_local = f"{KeyWord.key_local.value}"
 
@@ -1262,6 +1284,9 @@ class ConfConstGeneral:
 
     log_section_delimiter = "=" * 5
 
+    min_lines_between_generated_boilerplate = 20
+
+    # FT_56_85_65_41.generated_boilerplate.md
     func_get_proto_code_generated_boilerplate_single_header = lambda module_obj: (
         f"""
 ################################################################################
@@ -1276,6 +1301,7 @@ class ConfConstGeneral:
 """
     )
 
+    # FT_56_85_65_41.generated_boilerplate.md
     func_get_proto_code_generated_boilerplate_multiple_body = lambda module_obj: (
         f"""
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
@@ -1450,6 +1476,7 @@ def _create_child_argparser(
                 #
             ),
         )
+
         parser_boot.add_argument(
             SyntaxArg.arg_c,
             SyntaxArg.arg_command,
@@ -3214,7 +3241,8 @@ class ExitCodeReporter(RunStrategy):
         """
         # NOTE: The `EnvContext.final_state` must return `int` with this strategy:
         exit_code: int = state_node.eval_own_state()
-        assert type(exit_code) is int, "`exit_code` must be an `int`"
+        if type(exit_code) is not int:
+            raise AssertionError("`exit_code` must be an `int`")
         sys.exit(exit_code)
 
 
@@ -3698,7 +3726,7 @@ class Bootstrapper_state_exec_mode_executed(AbstractCachingStateNode[bool]):
         elif state_input_exec_mode_arg_loaded == ExecMode.mode_eval:
             selected_strategy = ExitCodeReporter(self.env_ctx)
             state_node = self.env_ctx.state_graph.get_state_node(
-                EnvState.state_effective_config_data_printed.name,
+                EnvState.state_effective_conf_data_printed.name,
                 self.env_ctx,
             )
         else:
@@ -4851,7 +4879,7 @@ class Bootstrapper_state_derived_conf_data_loaded(AbstractCachingStateNode[dict]
 
 # noinspection PyPep8Naming
 @trivial_factory
-class Bootstrapper_state_effective_config_data_printed(AbstractCachingStateNode[int]):
+class Bootstrapper_state_effective_conf_data_printed(AbstractCachingStateNode[int]):
     """
     Implements: FT_19_44_42_19.effective_config.md
     """
@@ -4861,7 +4889,7 @@ class Bootstrapper_state_effective_config_data_printed(AbstractCachingStateNode[
             EnvState.state_derived_conf_data_loaded.name,
         ]
     )
-    _state_name = staticmethod(lambda: EnvState.state_effective_config_data_printed.name)
+    _state_name = staticmethod(lambda: EnvState.state_effective_conf_data_printed.name)
 
     def _eval_state_once(
         self,
@@ -5607,16 +5635,17 @@ class Bootstrapper_state_proto_code_updated(AbstractCachingStateNode[bool]):
         )
 
         # Update body:
-        proto_code_text_periodic = insert_every_n_lines(
+        proto_code_text_with_body = _replace_multiple_body_in_empty_lines(
             input_text=primer_kernel_text,
-            insert_text=generated_content_multiple_body,
-            every_n=20,
+            boilerplate_text=generated_content_multiple_body,
+            min_lines_between=ConfConstGeneral.min_lines_between_generated_boilerplate,
         )
 
         # Update header:
-        file_lines = proto_code_text_periodic.splitlines()
-        file_lines.insert(1, generated_content_single_header)
-        proto_code_text_new = "\n".join(file_lines)
+        proto_code_text_new = _replace_single_header_in_empty_lines(
+            input_text=proto_code_text_with_body,
+            boilerplate_text=generated_content_single_header,
+        )
 
         logger.debug(f"writing `primer_kernel_abs_path` [{primer_kernel_abs_path}] over `state_proto_code_file_abs_path_inited` [{state_proto_code_file_abs_path_inited}]")
         write_text_file(
@@ -5826,7 +5855,7 @@ class EnvState(enum.Enum):
     # `ConfLeap.leap_derived`:
     state_derived_conf_data_loaded = Bootstrapper_state_derived_conf_data_loaded
 
-    state_effective_config_data_printed = Bootstrapper_state_effective_config_data_printed
+    state_effective_conf_data_printed = Bootstrapper_state_effective_conf_data_printed
 
     state_default_file_log_handler_configured = Bootstrapper_state_default_file_log_handler_configured
 
@@ -5919,7 +5948,7 @@ class StateGraph:
         self,
         state_name: str,
         env_ctx: EnvContext,
-    ) -> StateNode | None:
+    ) -> StateNode:
         if state_name not in self.state_nodes:
             self.state_nodes[state_name] = self.state_factories[state_name].create_state_node(env_ctx)
         return self.state_nodes[state_name]
@@ -6053,7 +6082,8 @@ class EnvContext:
         """
         Print a color-coded status message to stderr.
         """
-        assert type(exit_code) is int, "`exit_code` must be an `int`"
+        if type(exit_code) is not int:
+            raise AssertionError("`exit_code` must be an `int`")
 
         state_default_stderr_log_handler_configured: logging.Handler = self.state_graph.eval_state(
             EnvState.state_default_stderr_log_handler_configured.name,
@@ -6559,36 +6589,49 @@ def write_text_file(
         file_obj.write(file_data)
 
 
-def insert_every_n_lines(
+def _is_blank_line(line: str) -> bool:
+    stripped = line.strip()
+    return stripped == "" or stripped == "#"
+
+
+def _replace_single_header_in_empty_lines(
     input_text: str,
-    insert_text: str,
-    every_n: int,
+    boilerplate_text: str,
 ) -> str:
     """
-    Insert `insert_text` into `input_text` after `every_n` lines.
-
-    Original use case: add boilerplate text indicating generated content throughout entire file.
+    FT_56_85_65_41.generated_boilerplate.md
     """
-    input_lines: list[str] = input_text.splitlines()
-    output_text = []
+    input_lines = input_text.splitlines()
+    boilerplate_lines = boilerplate_text.strip("\n").splitlines()
+    boilerplate_height = len(boilerplate_lines)
+    output_lines = input_lines[:1] + boilerplate_lines + input_lines[1 + boilerplate_height :]
+    return "\n".join(output_lines) + "\n"
 
-    for line_n, text_line in enumerate(input_lines, 1):
-        output_text.append(text_line)
-        if line_n % every_n == 0:
-            output_text.append(insert_text)
 
-    return (
-        "\n".join(output_text)
-        +
-        # Add new line to ensure line of the `output_text` is not modified:
-        "\n"
-        +
-        # This extra banner fixes the issue of fighting `pre-commit` plugins
-        # when the previous new line is a trailing one
-        # (trailing line is normally removed by `pre-commit`):
-        f"{insert_text}"
-        + "\n"
-    )
+def _replace_multiple_body_in_empty_lines(
+    input_text: str,
+    boilerplate_text: str,
+    min_lines_between: int,
+) -> str:
+    """
+    FT_56_85_65_41.generated_boilerplate.md
+    """
+    input_lines = input_text.splitlines()
+    boilerplate_line = boilerplate_text.strip("\n").splitlines()
+    output_lines = []
+    lines_since_last = 0
+    line_i = 0
+    while line_i < len(input_lines):
+        input_line = input_lines[line_i]
+        if lines_since_last >= min_lines_between and _is_blank_line(input_line):
+            output_lines.extend(boilerplate_line)
+            lines_since_last = 0
+            line_i += 1
+        else:
+            output_lines.append(input_line)
+            lines_since_last += 1
+            line_i += 1
+    return "\n".join(output_lines) + "\n"
 
 
 def is_venv() -> bool:

@@ -476,13 +476,13 @@ class StateName(enum.Enum):
         ],
     )
 
-    state_effective_config_data_printed = StateMeta(
-        env_state=EnvState.state_effective_config_data_printed,
+    state_effective_conf_data_printed = StateMeta(
+        env_state=EnvState.state_effective_conf_data_printed,
         name_category=NameCategory.category_state_mutation,
         name_components=[
             KeyWord.key_state.value,
             KeyWord.key_effective.value,
-            KeyWord.key_config.value,
+            KeyWord.key_conf.value,
             KeyWord.key_data.value,
             KeyWord.key_printed.value,
         ],
