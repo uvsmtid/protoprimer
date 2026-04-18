@@ -2,10 +2,12 @@ from __future__ import annotations
 
 from local_test.integrated_helper import test_python_version
 from local_test.name_assertion import assert_test_module_name_embeds_str
-from protoprimer.primer_kernel import (
-    ConfField,
+from neoprimer.conf_renderer import (
     RenderConfigVisitor,
     RootNode_env,
+)
+from protoprimer.primer_kernel import (
+    ConfField,
     TermColor,
 )
 
