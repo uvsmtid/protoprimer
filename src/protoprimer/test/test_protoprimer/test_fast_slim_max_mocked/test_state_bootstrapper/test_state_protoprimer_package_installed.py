@@ -144,7 +144,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_venv_driver_prepared.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{EnvContext.__name__}.{EnvContext.get_stride.__name__}")
-    def test_reinstall(
+    def test_reboot(
         self,
         mock_get_stride,
         mock_state_venv_driver_prepared,
@@ -201,10 +201,10 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_install_specs_inited.return_value.eval_own_state.return_value = []
         mock_state_input_do_install_var_loaded.return_value.eval_own_state.return_value = True
         parsed_args = argparse.Namespace(
-            **{ParsedArg.name_exec_mode.value: CommandAction.action_reinstall.value},
+            **{ParsedArg.name_exec_mode.value: ExecMode.mode_reboot.value},
         )
         mock_state_args_parsed.return_value.eval_own_state.return_value = parsed_args
-        mock_state_input_exec_mode_arg_loaded.return_value.eval_own_state.return_value = CommandAction.action_reinstall
+        mock_state_input_exec_mode_arg_loaded.return_value.eval_own_state.return_value = ExecMode.mode_reboot
         # when:
         self.env_ctx.state_graph.eval_state(EnvState.state_protoprimer_package_installed.name, self.env_ctx)
         # then:

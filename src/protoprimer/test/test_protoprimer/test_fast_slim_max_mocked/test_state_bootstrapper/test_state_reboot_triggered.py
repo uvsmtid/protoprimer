@@ -34,7 +34,7 @@ def env_ctx():
 
 
 def test_relationship():
-    assert_test_module_name_embeds_str(EnvState.state_reinstall_triggered.name)
+    assert_test_module_name_embeds_str(EnvState.state_reboot_triggered.name)
 
 
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.create_state_node")
@@ -48,7 +48,7 @@ def test_relationship():
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.create_state_node")
-def test_reinstall_true(
+def test_reboot_true(
     mock_state_input_exec_mode_arg_loaded,
     mock_state_proto_code_file_abs_path_inited,
     mock_state_args_parsed,
@@ -67,11 +67,11 @@ def test_reinstall_true(
 
     assert_parent_factories_mocked(
         env_ctx,
-        EnvState.state_reinstall_triggered.name,
+        EnvState.state_reboot_triggered.name,
     )
     mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(
         **{
-            ParsedArg.name_exec_mode.value: ExecMode.mode_reset.value,
+            ParsedArg.name_exec_mode.value: ExecMode.mode_reboot.value,
         }
     )
     mock_state_input_start_id_var_loaded.return_value.eval_own_state.return_value = "mock_start_id"
@@ -86,7 +86,7 @@ def test_reinstall_true(
     mock_os_path_exists.return_value = True
 
     # when:
-    state_value = env_ctx.state_graph.eval_state(EnvState.state_reinstall_triggered.name, env_ctx)
+    state_value = env_ctx.state_graph.eval_state(EnvState.state_reboot_triggered.name, env_ctx)
 
     # then:
     assert state_value is True
@@ -105,7 +105,7 @@ def test_reinstall_true(
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.create_state_node")
-def test_reinstall_false(
+def test_reboot_false(
     mock_state_input_exec_mode_arg_loaded,
     mock_state_proto_code_file_abs_path_inited,
     mock_state_args_parsed,
@@ -122,7 +122,7 @@ def test_reinstall_false(
     # given:
     assert_parent_factories_mocked(
         env_ctx,
-        EnvState.state_reinstall_triggered.name,
+        EnvState.state_reboot_triggered.name,
     )
     mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(
         **{
@@ -135,7 +135,7 @@ def test_reinstall_false(
     env_ctx.state_stride = py_exec
 
     # when:
-    state_value = env_ctx.state_graph.eval_state(EnvState.state_reinstall_triggered.name, env_ctx)
+    state_value = env_ctx.state_graph.eval_state(EnvState.state_reboot_triggered.name, env_ctx)
 
     # then:
     assert state_value is False
@@ -154,7 +154,7 @@ def test_reinstall_false(
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.create_state_node")
-def test_reinstall_true_but_py_exec_not_required(
+def test_reboot_true_but_py_exec_not_required(
     mock_state_input_exec_mode_arg_loaded,
     mock_state_proto_code_file_abs_path_inited,
     mock_state_args_parsed,
@@ -171,11 +171,11 @@ def test_reinstall_true_but_py_exec_not_required(
     # given:
     assert_parent_factories_mocked(
         env_ctx,
-        EnvState.state_reinstall_triggered.name,
+        EnvState.state_reboot_triggered.name,
     )
     mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(
         **{
-            ParsedArg.name_exec_mode.value: CommandAction.action_reinstall.value,
+            ParsedArg.name_exec_mode.value: ExecMode.mode_reboot.value,
         }
     )
     mock_state_input_start_id_var_loaded.return_value.eval_own_state.return_value = "mock_start_id"
@@ -185,7 +185,7 @@ def test_reinstall_true_but_py_exec_not_required(
     env_ctx.state_stride = py_exec
 
     # when:
-    state_value = env_ctx.state_graph.eval_state(EnvState.state_reinstall_triggered.name, env_ctx)
+    state_value = env_ctx.state_graph.eval_state(EnvState.state_reboot_triggered.name, env_ctx)
 
     # then:
     assert state_value is False

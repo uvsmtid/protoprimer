@@ -10,6 +10,7 @@ from protoprimer.primer_kernel import (
     ConfConstGeneral,
     ConfLeap,
     EnvState,
+    ExecMode,
     FilesystemObject,
     KeyWord,
     PathName,
@@ -498,12 +499,12 @@ class StateName(enum.Enum):
         ],
     )
 
-    state_reinstall_triggered = StateMeta(
-        env_state=EnvState.state_reinstall_triggered,
+    state_reboot_triggered = StateMeta(
+        env_state=EnvState.state_reboot_triggered,
         name_category=NameCategory.category_state_mutation,
         name_components=[
             KeyWord.key_state.value,
-            CommandAction.action_reinstall.value,
+            ExecMode.mode_reboot.value,
             KeyWord.key_triggered.value,
         ],
     )

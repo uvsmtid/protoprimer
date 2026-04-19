@@ -15,7 +15,6 @@ from protoprimer.primer_kernel import (
     Bootstrapper_state_version_constraints_generated,
     EnvContext,
     EnvState,
-    ParsedArg,
     ExecMode,
     StateStride,
 )
@@ -57,11 +56,7 @@ def test_stride_py_required_to_next_stride_deps_updated(
         EnvState.state_stride_deps_updated_reached.name,
     )
 
-    mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(
-        **{
-            ParsedArg.name_reinstall.value: False,
-        }
-    )
+    mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace()
     mock_state_input_start_id_var_loaded.return_value.eval_own_state.return_value = "mock_start_id"
 
     mock_state_version_constraints_generated.return_value.eval_own_state.return_value = True
@@ -117,11 +112,7 @@ def test_stride_deps_updated_to_same_stride_deps_updated(
         EnvState.state_stride_deps_updated_reached.name,
     )
 
-    mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(
-        **{
-            ParsedArg.name_reinstall.value: False,
-        }
-    )
+    mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace()
     mock_state_input_start_id_var_loaded.return_value.eval_own_state.return_value = "mock_start_id"
     mock_state_version_constraints_generated.return_value.eval_own_state.return_value = True
 

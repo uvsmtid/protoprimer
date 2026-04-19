@@ -14,7 +14,6 @@ from protoprimer.primer_kernel import (
     Bootstrapper_state_proto_code_updated,
     EnvContext,
     EnvState,
-    ParsedArg,
     ExecMode,
     StateStride,
 )
@@ -56,11 +55,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             EnvState.state_stride_src_updated_reached.name,
         )
 
-        mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(
-            **{
-                ParsedArg.name_reinstall.value: False,
-            }
-        )
+        mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace()
         mock_state_input_start_id_var_loaded.return_value.eval_own_state.return_value = "mock_start_id"
 
         mock_state_proto_code_file_abs_path_inited.return_value.eval_own_state.return_value = "path/to/whatever"
@@ -115,11 +110,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             EnvState.state_stride_src_updated_reached.name,
         )
 
-        mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(
-            **{
-                ParsedArg.name_reinstall.value: False,
-            }
-        )
+        mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace()
         mock_state_input_start_id_var_loaded.return_value.eval_own_state.return_value = "mock_start_id"
 
         mock_state_proto_code_file_abs_path_inited.return_value.eval_own_state.return_value = "path/to/whatever"

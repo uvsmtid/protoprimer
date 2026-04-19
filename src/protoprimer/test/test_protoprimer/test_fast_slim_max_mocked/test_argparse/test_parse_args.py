@@ -32,10 +32,10 @@ def test_parse_args_defaults():
 
 def test_parse_args_reset():
     # when:
-    args = parse_args([ExecMode.mode_reset.value])
+    args = parse_args([ExecMode.mode_reboot.value])
 
     # then:
-    assert getattr(args, ParsedArg.name_exec_mode.value) == ExecMode.mode_reset.value
+    assert getattr(args, ParsedArg.name_exec_mode.value) == ExecMode.mode_reboot.value
 
 
 def test_parse_args_command():
@@ -164,9 +164,9 @@ def test_parse_args_final_state():
             },
         ),
         (
-            ["reset"],
+            ["reboot"],
             {
-                ParsedArg.name_exec_mode.value: "reset",
+                ParsedArg.name_exec_mode.value: "reboot",
                 SyntaxArg.dest_quiet: 0,
                 SyntaxArg.dest_verbose: 0,
             },
@@ -266,7 +266,7 @@ def test_argparse_subcommands_parametrized(test_argv, expected_dict):
 @pytest.mark.parametrize(
     "test_argv",
     [
-        ["reset", "--final_state", "some_state"],
+        ["reboot", "--final_state", "some_state"],
         ["eval", "--final_state", "some_state"],
     ],
 )
@@ -278,7 +278,7 @@ def test_argparse_invalid_final_state(test_argv):
 @pytest.mark.parametrize(
     "test_argv",
     [
-        ["reset", "--env", "some/path"],
+        ["reboot", "--env", "some/path"],
         ["eval", "--env", "some/path"],
     ],
 )
@@ -300,16 +300,16 @@ def test_main_help_contains_subcommand_descriptions():
     normalized_output = normalize_space(output)
 
     assert (
-        normalize_space("boot Bootstrap the environment to make it ready to use.")
+        normalize_space("boot Bootstrap whatever is missing in the environment.")
         in normalized_output
         #
     )
     assert (
-        normalize_space("reset Re-create `venv`, re-install dependencies, and re-pin versions.")
+        normalize_space("reboot Bootstrap from scratch: re-create `venv`, re-install dependencies, re-pin versions, ...")
         in normalized_output
         #
     )
-    assert normalize_space("eval Print effective config.") in normalized_output
+    assert normalize_space("eval Evaluate effective config (print it on `stdout`).") in normalized_output
 
 
 def test_subcommand_help_formatting():
