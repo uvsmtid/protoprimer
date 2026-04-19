@@ -25,7 +25,7 @@ from protoprimer.primer_kernel import (
 )
 
 
-def test_reset(tmp_path: pathlib.Path):
+def test_mode_reboot(tmp_path: pathlib.Path):
 
     # given:
 
@@ -105,7 +105,7 @@ def test_reset(tmp_path: pathlib.Path):
     run_primer_main(
         [
             str(proto_kernel_abs_path),
-            ExecMode.mode_reset.value,
+            ExecMode.mode_reboot.value,
             SyntaxArg.arg_v,
             SyntaxArg.arg_v,
         ]
@@ -113,10 +113,10 @@ def test_reset(tmp_path: pathlib.Path):
 
     # then:
 
-    pip_freeze_output_reinstall = get_command_output(f"{venv_pip} freeze")
+    pip_freeze_output_reboot = get_command_output(f"{venv_pip} freeze")
 
-    package_version_reinstall = extract_package_version(
-        pip_freeze_output_reinstall,
+    package_version_reboot = extract_package_version(
+        pip_freeze_output_reboot,
         package_name,
     )
-    assert package_version_install < package_version_reinstall
+    assert package_version_install < package_version_reboot

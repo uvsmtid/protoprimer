@@ -172,8 +172,8 @@ class StateMeta(enum.Enum):
         env_state=EnvState.state_stride_py_required_reached,
         sub_graph=SubGraph.graph_runtime,
     )
-    state_reinstall_triggered = StateNodeMeta(
-        env_state=EnvState.state_reinstall_triggered,
+    state_reboot_triggered = StateNodeMeta(
+        env_state=EnvState.state_reboot_triggered,
         sub_graph=SubGraph.graph_runtime,
     )
     state_venv_driver_prepared = StateNodeMeta(

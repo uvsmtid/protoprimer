@@ -19,7 +19,7 @@ from protoprimer.primer_kernel import (
     Bootstrapper_state_local_conf_file_abs_path_inited,
     Bootstrapper_state_local_venv_dir_abs_path_inited,
     Bootstrapper_state_proto_code_file_abs_path_inited,
-    Bootstrapper_state_reinstall_triggered,
+    Bootstrapper_state_reboot_triggered,
     Bootstrapper_state_selected_python_file_abs_path_inited,
     Bootstrapper_state_venv_driver_prepared,
     ConfConstEnv,
@@ -27,7 +27,6 @@ from protoprimer.primer_kernel import (
     EnvContext,
     EnvState,
     EnvVar,
-    ParsedArg,
     StateStride,
 )
 
@@ -72,7 +71,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch.dict(f"{os.__name__}.environ", {}, clear=True)
     @patch.object(sys, "argv", ["/path/to/script.py", "--some-arg"])
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_reinstall_triggered.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_reboot_triggered.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_file_abs_path_inited.__name__}.create_state_node")
@@ -98,7 +97,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_local_conf_file_abs_path_inited,
         mock_state_proto_code_file_abs_path_inited,
         mock_state_args_parsed,
-        mock_state_reinstall_triggered,
+        mock_state_reboot_triggered,
         mock_state_input_start_id_var_loaded,
     ):
 
@@ -109,13 +108,9 @@ class ThisTestClass(BasePyfakefsTestClass):
             EnvState.state_stride_py_venv_reached.name,
         )
 
-        mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(
-            **{
-                ParsedArg.name_reinstall.value: False,
-            }
-        )
+        mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace()
         mock_state_input_start_id_var_loaded.return_value.eval_own_state.return_value = "mock_start_id"
-        mock_state_reinstall_triggered.return_value.eval_own_state.return_value = False
+        mock_state_reboot_triggered.return_value.eval_own_state.return_value = False
         mock_state_proto_code_file_abs_path_inited.return_value.eval_own_state.return_value = state_proto_code_file_abs_path_inited
         mock_state_selected_python_file_abs_path_inited.return_value.eval_own_state.return_value = test_python_abs_path
         mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = os.path.join(mock_client_dir, ConfConstEnv.default_dir_rel_path_venv)
@@ -158,7 +153,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     ####################################################################################################################
     @patch.dict(f"{os.__name__}.environ", {}, clear=True)
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_reinstall_triggered.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_reboot_triggered.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_file_abs_path_inited.__name__}.create_state_node")
@@ -182,7 +177,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_local_conf_file_abs_path_inited,
         mock_state_proto_code_file_abs_path_inited,
         mock_state_args_parsed,
-        mock_state_reinstall_triggered,
+        mock_state_reboot_triggered,
         mock_state_input_start_id_var_loaded,
     ):
 
@@ -193,13 +188,9 @@ class ThisTestClass(BasePyfakefsTestClass):
             EnvState.state_stride_py_venv_reached.name,
         )
 
-        mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(
-            **{
-                ParsedArg.name_reinstall.value: False,
-            }
-        )
+        mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace()
         mock_state_input_start_id_var_loaded.return_value.eval_own_state.return_value = "mock_start_id"
-        mock_state_reinstall_triggered.return_value.eval_own_state.return_value = False
+        mock_state_reboot_triggered.return_value.eval_own_state.return_value = False
         mock_state_proto_code_file_abs_path_inited.return_value.eval_own_state.return_value = state_proto_code_file_abs_path_inited
 
         mock_state_selected_python_file_abs_path_inited.return_value.eval_own_state.return_value = test_python_abs_path
@@ -222,7 +213,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     ####################################################################################################################
     @patch.dict(f"{os.__name__}.environ", {}, clear=True)
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_reinstall_triggered.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_reboot_triggered.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_file_abs_path_inited.__name__}.create_state_node")
@@ -247,7 +238,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_local_conf_file_abs_path_inited,
         mock_state_proto_code_file_abs_path_inited,
         mock_state_args_parsed,
-        mock_state_reinstall_triggered,
+        mock_state_reboot_triggered,
         mock_state_input_start_id_var_loaded,
     ):
 
@@ -258,13 +249,9 @@ class ThisTestClass(BasePyfakefsTestClass):
             EnvState.state_stride_py_venv_reached.name,
         )
 
-        mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(
-            **{
-                ParsedArg.name_reinstall.value: False,
-            }
-        )
+        mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace()
         mock_state_input_start_id_var_loaded.return_value.eval_own_state.return_value = "mock_start_id"
-        mock_state_reinstall_triggered.return_value.eval_own_state.return_value = False
+        mock_state_reboot_triggered.return_value.eval_own_state.return_value = False
         mock_state_proto_code_file_abs_path_inited.return_value.eval_own_state.return_value = state_proto_code_file_abs_path_inited
 
         mock_state_selected_python_file_abs_path_inited.return_value.eval_own_state.return_value = test_python_abs_path
@@ -288,7 +275,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch.dict(f"{os.__name__}.environ", {}, clear=True)
     @patch.object(sys, "argv", ["/path/to/script.py", "--some-arg"])
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_reinstall_triggered.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_reboot_triggered.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_file_abs_path_inited.__name__}.create_state_node")
@@ -314,7 +301,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_local_conf_file_abs_path_inited,
         mock_state_proto_code_file_abs_path_inited,
         mock_state_args_parsed,
-        mock_state_reinstall_triggered,
+        mock_state_reboot_triggered,
         mock_state_input_start_id_var_loaded,
     ):
 
@@ -325,13 +312,9 @@ class ThisTestClass(BasePyfakefsTestClass):
             EnvState.state_stride_py_venv_reached.name,
         )
 
-        mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(
-            **{
-                ParsedArg.name_reinstall.value: False,
-            }
-        )
+        mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace()
         mock_state_input_start_id_var_loaded.return_value.eval_own_state.return_value = "mock_start_id"
-        mock_state_reinstall_triggered.return_value.eval_own_state.return_value = False
+        mock_state_reboot_triggered.return_value.eval_own_state.return_value = False
         mock_state_proto_code_file_abs_path_inited.return_value.eval_own_state.return_value = state_proto_code_file_abs_path_inited
 
         mock_state_selected_python_file_abs_path_inited.return_value.eval_own_state.return_value = non_default_file_abs_path_python
@@ -355,7 +338,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch.dict(f"{os.__name__}.environ", {}, clear=True)
     @patch.object(sys, "argv", ["/path/to/script.py", "--some-arg"])
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_reinstall_triggered.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_reboot_triggered.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_file_abs_path_inited.__name__}.create_state_node")
@@ -381,7 +364,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_local_conf_file_abs_path_inited,
         mock_state_proto_code_file_abs_path_inited,
         mock_state_args_parsed,
-        mock_state_reinstall_triggered,
+        mock_state_reboot_triggered,
         mock_state_input_start_id_var_loaded,
     ):
 
@@ -392,13 +375,9 @@ class ThisTestClass(BasePyfakefsTestClass):
             EnvState.state_stride_py_venv_reached.name,
         )
 
-        mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(
-            **{
-                ParsedArg.name_reinstall.value: False,
-            }
-        )
+        mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace()
         mock_state_input_start_id_var_loaded.return_value.eval_own_state.return_value = "mock_start_id"
-        mock_state_reinstall_triggered.return_value.eval_own_state.return_value = False
+        mock_state_reboot_triggered.return_value.eval_own_state.return_value = False
         mock_state_proto_code_file_abs_path_inited.return_value.eval_own_state.return_value = state_proto_code_file_abs_path_inited
 
         mock_state_selected_python_file_abs_path_inited.return_value.eval_own_state.return_value = test_python_abs_path
@@ -443,7 +422,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch.dict(f"{os.__name__}.environ", {}, clear=True)
     @patch.object(sys, "argv", ["/path/to/script.py", "--some-arg"])
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_reinstall_triggered.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_reboot_triggered.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_file_abs_path_inited.__name__}.create_state_node")
@@ -469,7 +448,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_local_conf_file_abs_path_inited,
         mock_state_proto_code_file_abs_path_inited,
         mock_state_args_parsed,
-        mock_state_reinstall_triggered,
+        mock_state_reboot_triggered,
         mock_state_input_start_id_var_loaded,
     ):
 
@@ -480,13 +459,9 @@ class ThisTestClass(BasePyfakefsTestClass):
             EnvState.state_stride_py_venv_reached.name,
         )
 
-        mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(
-            **{
-                ParsedArg.name_reinstall.value: False,
-            }
-        )
+        mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace()
         mock_state_input_start_id_var_loaded.return_value.eval_own_state.return_value = "mock_start_id"
-        mock_state_reinstall_triggered.return_value.eval_own_state.return_value = False
+        mock_state_reboot_triggered.return_value.eval_own_state.return_value = False
         mock_state_proto_code_file_abs_path_inited.return_value.eval_own_state.return_value = state_proto_code_file_abs_path_inited
 
         mock_state_selected_python_file_abs_path_inited.return_value.eval_own_state.return_value = non_default_file_abs_path_python
@@ -529,7 +504,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch.dict(f"{os.__name__}.environ", {}, clear=True)
     @patch.object(sys, "argv", ["/path/to/script.py", "--some-arg"])
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_reinstall_triggered.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_reboot_triggered.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_file_abs_path_inited.__name__}.create_state_node")
@@ -555,7 +530,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_local_conf_file_abs_path_inited,
         mock_state_proto_code_file_abs_path_inited,
         mock_state_args_parsed,
-        mock_state_reinstall_triggered,
+        mock_state_reboot_triggered,
         mock_state_input_start_id_var_loaded,
     ):
 
@@ -566,13 +541,9 @@ class ThisTestClass(BasePyfakefsTestClass):
             EnvState.state_stride_py_venv_reached.name,
         )
 
-        mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(
-            **{
-                ParsedArg.name_reinstall.value: False,
-            }
-        )
+        mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace()
         mock_state_input_start_id_var_loaded.return_value.eval_own_state.return_value = "mock_start_id"
-        mock_state_reinstall_triggered.return_value.eval_own_state.return_value = False
+        mock_state_reboot_triggered.return_value.eval_own_state.return_value = False
         mock_state_proto_code_file_abs_path_inited.return_value.eval_own_state.return_value = "any/path"
 
         # Important: it should be `StateStride.stride_py_arbitrary` for this test case:
@@ -620,7 +591,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     )
     @patch.object(sys, "argv", ["/path/to/script.py", "--some-arg"])
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_reinstall_triggered.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_reboot_triggered.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_file_abs_path_inited.__name__}.create_state_node")
@@ -643,7 +614,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_local_conf_file_abs_path_inited,
         mock_state_proto_code_file_abs_path_inited,
         mock_state_args_parsed,
-        mock_state_reinstall_triggered,
+        mock_state_reboot_triggered,
         mock_state_input_start_id_var_loaded,
     ):
 
@@ -672,7 +643,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch.object(sys, "argv", ["/path/to/script.py", "--some-arg"])
     @patch(f"{primer_kernel.__name__}.logger.info")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_reinstall_triggered.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_reboot_triggered.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_file_abs_path_inited.__name__}.create_state_node")
@@ -698,7 +669,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_local_conf_file_abs_path_inited,
         mock_state_proto_code_file_abs_path_inited,
         mock_state_args_parsed,
-        mock_state_reinstall_triggered,
+        mock_state_reboot_triggered,
         mock_state_input_start_id_var_loaded,
         mock_logger_info,
     ):
@@ -710,13 +681,9 @@ class ThisTestClass(BasePyfakefsTestClass):
             EnvState.state_stride_py_venv_reached.name,
         )
 
-        mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(
-            **{
-                ParsedArg.name_reinstall.value: False,
-            }
-        )
+        mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace()
         mock_state_input_start_id_var_loaded.return_value.eval_own_state.return_value = "mock_start_id"
-        mock_state_reinstall_triggered.return_value.eval_own_state.return_value = False
+        mock_state_reboot_triggered.return_value.eval_own_state.return_value = False
         mock_state_proto_code_file_abs_path_inited.return_value.eval_own_state.return_value = state_proto_code_file_abs_path_inited
 
         mock_state_selected_python_file_abs_path_inited.return_value.eval_own_state.return_value = test_python_abs_path
@@ -759,7 +726,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     ####################################################################################################################
     @patch.dict(f"{os.__name__}.environ", {}, clear=True)
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_reinstall_triggered.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_reboot_triggered.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_file_abs_path_inited.__name__}.create_state_node")
@@ -787,7 +754,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_local_conf_file_abs_path_inited,
         mock_state_proto_code_file_abs_path_inited,
         mock_state_args_parsed,
-        mock_state_reinstall_triggered,
+        mock_state_reboot_triggered,
         mock_state_input_start_id_var_loaded,
     ):
         # given:
@@ -796,13 +763,9 @@ class ThisTestClass(BasePyfakefsTestClass):
             EnvState.state_stride_py_venv_reached.name,
         )
 
-        mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(
-            **{
-                ParsedArg.name_reinstall.value: False,
-            }
-        )
+        mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace()
         mock_state_input_start_id_var_loaded.return_value.eval_own_state.return_value = "mock_start_id"
-        mock_state_reinstall_triggered.return_value.eval_own_state.return_value = False
+        mock_state_reboot_triggered.return_value.eval_own_state.return_value = False
         mock_state_proto_code_file_abs_path_inited.return_value.eval_own_state.return_value = state_proto_code_file_abs_path_inited
 
         mock_state_selected_python_file_abs_path_inited.return_value.eval_own_state.return_value = test_python_abs_path

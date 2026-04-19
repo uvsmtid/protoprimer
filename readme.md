@@ -372,10 +372,10 @@ Bootstrap (special env):
 ./prime --env dst/special_env
 ```
 
-Reset: re-create venv, re-solve and re-install deps, re-pin versions:
+Reboot: re-create venv, re-solve and re-install deps, re-pin versions:
 
 ```sh
-./prime reset
+./prime reboot
 ```
 
 Review the effective config:
@@ -688,7 +688,7 @@ The content of `constraints.txt` captures one of the possible outcomes of the de
 To re-create the `venv`, re-install the deps, and re-pin the versions, run:
 
 ```sh
-./prime reset
+./prime reboot
 ```
 
 <details>
@@ -698,7 +698,7 @@ To re-create the `venv`, re-install the deps, and re-pin the versions, run:
 
 *   **Full** (auto): upgrade all dependency versions (respecting version ranges specified in `pyproject.toml`).
 
-    The `reset` sub-command automates the removal of the old `constraints.txt` file (to repopulate it).
+    The `reboot` sub-command automates the removal of the old `constraints.txt` file (to repopulate it).
 
     A missing `constraints.txt` allows re-capturing a new outcome of the dependency resolution for all dependencies.
 

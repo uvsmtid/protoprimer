@@ -59,15 +59,6 @@ class ArgName(enum.Enum):
         ],
     )
 
-    name_reinstall = ArgMeta(
-        command_arg=ParsedArg.name_reinstall,
-        name_category=NameCategory.category_named_arg_action,
-        name_components=[
-            KeyWord.key_do.value,
-            CommandAction.action_reinstall.value,
-        ],
-    )
-
     name_command = ArgMeta(
         command_arg=ParsedArg.name_command,
         name_category=NameCategory.category_named_arg_action,

@@ -17,7 +17,7 @@ from protoprimer.primer_kernel import (
     Bootstrapper_state_env_conf_file_data_loaded,
     Bootstrapper_state_local_cache_dir_abs_path_inited,
     Bootstrapper_state_local_venv_dir_abs_path_inited,
-    Bootstrapper_state_reinstall_triggered,
+    Bootstrapper_state_reboot_triggered,
     Bootstrapper_state_selected_python_file_abs_path_inited,
     EnvContext,
     EnvState,
@@ -52,7 +52,7 @@ class TestEnvContext(BasePyfakefsTestClass):
         return_value="/usr/bin/python",
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_reinstall_triggered.__name__}.{StateNode.eval_own_state.__name__}",
+        f"{primer_kernel.__name__}.{Bootstrapper_state_reboot_triggered.__name__}.{StateNode.eval_own_state.__name__}",
         return_value=False,
     )
     @patch(
@@ -79,7 +79,7 @@ class TestEnvContext(BasePyfakefsTestClass):
         mock_state_local_cache_dir_abs_path_inited,
         mock_state_env_conf_file_data_loaded,
         mock_state_client_conf_file_data_loaded,
-        mock_state_reinstall_triggered,
+        mock_state_reboot_triggered,
         mock_state_selected_python_file_abs_path_inited,
         mock_state_required_python_version_inited,
     ):
@@ -114,7 +114,7 @@ class TestEnvContext(BasePyfakefsTestClass):
         return_value="/usr/bin/python",
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_reinstall_triggered.__name__}.{StateNode.eval_own_state.__name__}",
+        f"{primer_kernel.__name__}.{Bootstrapper_state_reboot_triggered.__name__}.{StateNode.eval_own_state.__name__}",
         return_value=False,
     )
     @patch(
@@ -141,7 +141,7 @@ class TestEnvContext(BasePyfakefsTestClass):
         mock_state_local_cache_dir_abs_path_inited,
         mock_state_env_conf_file_data_loaded,
         mock_state_client_conf_file_data_loaded,
-        mock_state_reinstall_triggered,
+        mock_state_reboot_triggered,
         mock_state_selected_python_file_abs_path_inited,
         mock_state_required_python_version_inited,
     ):
@@ -176,7 +176,7 @@ class TestEnvContext(BasePyfakefsTestClass):
         return_value="/usr/bin/python",
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_reinstall_triggered.__name__}.{StateNode.eval_own_state.__name__}",
+        f"{primer_kernel.__name__}.{Bootstrapper_state_reboot_triggered.__name__}.{StateNode.eval_own_state.__name__}",
         return_value=False,
     )
     @patch(
@@ -201,7 +201,7 @@ class TestEnvContext(BasePyfakefsTestClass):
         mock_state_local_cache_dir_abs_path_inited,
         mock_state_env_conf_file_data_loaded,
         mock_state_client_conf_file_data_loaded,
-        mock_state_reinstall_triggered,
+        mock_state_reboot_triggered,
         mock_state_selected_python_file_abs_path_inited,
         mock_state_required_python_version_inited,
     ):

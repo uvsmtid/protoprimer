@@ -50,7 +50,7 @@ from typing import (
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 # The release process ensures that content in this file matches the version below while tagging the release commit
 # (otherwise, if the file comes from a different commit, the version is irrelevant):
-__version__ = "0.10.0"
+__version__ = "0.11.0"
 
 logger: logging.Logger = logging.getLogger()
 
@@ -338,9 +338,9 @@ class ExecMode(enum.Enum):
     # FT_05_08_64_67.start_app.md
     mode_start = "start"
 
-    # FT_42_03_79_73.reset_env.md
+    # FT_42_03_79_73.reboot_env.md
     # UC_61_12_90_59.upgrade_venv.md
-    mode_reset = "reset"
+    mode_reboot = "reboot"
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     # FT_00_22_19_59.derived_config.md
     mode_eval = "eval"
@@ -365,11 +365,8 @@ class GraphCoordinates:
         self.exec_mode: ExecMode | None = None
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
-# TODO: TODO_31_76_38_60.exec_mode_for_shell.md: remove "reinstall" together with "command"
-#       "reinstall" has already been renamed to "upgrade" then to "reset" and "command" will be gone with `ExecMode.run_mode`.
+# TODO: TODO_31_76_38_60.exec_mode_for_shell.md: remove "command" (when replaced by `shell_mode` or `run_mode`):
 class CommandAction(enum.Enum):
-
-    action_reinstall = "reinstall"
 
     action_command = "command"
 
@@ -384,10 +381,10 @@ class FilesystemObject(enum.Enum):
 
 
 class PathType(enum.Enum):
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     # If both paths are possible (absolute or relative):
     path_any = "any_path"
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     # Relative path:
     path_rel = "rel_path"
 
@@ -406,11 +403,15 @@ class EnvVar(enum.Enum):
     # FT_58_74_37_70.boot_vs_start.md
     # Selects the main function to run, for example, "sup_module.sub_module:some_main".
     var_PROTOPRIMER_MAIN_FUNC = "PROTOPRIMER_MAIN_FUNC"
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-    var_PROTOPRIMER_STDERR_LOG_LEVEL = "PROTOPRIMER_STDERR_LOG_LEVEL"
 
+    var_PROTOPRIMER_STDERR_LOG_LEVEL = "PROTOPRIMER_STDERR_LOG_LEVEL"
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     var_PROTOPRIMER_PY_EXEC = "PROTOPRIMER_PY_EXEC"
 
+    # TODO: TODO_28_48_19_20.api_to_traverse_config_when_primed.md:
+    #       This is to be removed - it is only used by
+    #       `conf_eval` and `venv_shell` which can be switched to `start_app`
+    #       as soon as config can be accessed via API.
     var_PROTOPRIMER_DO_INSTALL = "PROTOPRIMER_DO_INSTALL"
 
     var_PROTOPRIMER_PROTO_CODE = "PROTOPRIMER_PROTO_CODE"
@@ -426,8 +427,8 @@ class EnvVar(enum.Enum):
     """
     See: FT_83_60_72_19.test_perimeter.md / test_fast_fat_min_mocked
     """
-
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
 class ConfDst(enum.Enum):
     """
     See FT_23_37_64_44.conf_dst.md
@@ -447,9 +448,9 @@ class ValueName(enum.Enum):
     value_stderr_log_level = "stderr_log_level"
 
     value_do_install = "do_install"
-
-    value_exec_mode = "exec_mode"
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+    value_exec_mode = "exec_mode"
+
     value_final_state = "final_state"
 
     value_py_exec = "py_exec"
@@ -469,9 +470,9 @@ class ValueName(enum.Enum):
     value_extra_command_args = "extra_command_args"
 
     value_venv_driver = "venv_driver"
-
-    value_python = "python"
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+    value_python = "python"
+
     value_version = "version"
 
 
@@ -528,19 +529,17 @@ class ParsedArg(enum.Enum):
 
     name_selected_env_dir = f"{PathName.path_selected_env.value}_{FilesystemObject.fs_object_dir.value}"
 
-    name_reinstall = f"{KeyWord.key_do.value}_{CommandAction.action_reinstall.value}"
-
     name_command = f"{KeyWord.key_run.value}_{CommandAction.action_command.value}"
 
     name_exec_mode = str(ValueName.value_exec_mode.value)
 
     name_final_state = str(ValueName.value_final_state.value)
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
 
 class LogLevel(enum.Enum):
     name_quiet = "quiet"
     name_verbose = "verbose"
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
 class SyntaxArg:
 
@@ -559,10 +558,10 @@ class SyntaxArg:
     arg_v = f"-{LogLevel.name_verbose.value[0]}"
     arg_verbose = f"--{LogLevel.name_verbose.value}"
     dest_verbose = f"{ValueName.value_stderr_log_level.value}_{LogLevel.name_verbose.value}"
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     arg_e = f"-{KeyWord.key_env.value[0]}"
     arg_env = f"--{KeyWord.key_env.value}"
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
 class SelectorFunc(enum.Enum):
     """
@@ -582,10 +581,10 @@ class ConfField(enum.Enum):
 
     ####################################################################################################################
     # `ConfLeap.leap_primer`-specific
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     # state_ref_root_dir_abs_path_inited:
     field_ref_root_dir_rel_path = f"{PathName.path_ref_root.value}_{FilesystemObject.fs_object_dir.value}_{PathType.path_rel.value}"
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     # state_global_conf_dir_abs_path_inited
     field_global_conf_dir_rel_path = f"{PathName.path_global_conf.value}_{FilesystemObject.fs_object_dir.value}_{PathType.path_rel.value}"
 
@@ -604,10 +603,10 @@ class ConfField(enum.Enum):
     # `ConfLeap.leap_env`-specific
 
     # None at the moment.
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     ####################################################################################################################
     # Common overridable `global` and `local` fields: FT_23_37_64_44.conf_dst.md
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     # state_required_python_version_inited:
     field_required_python_version = f"{PathName.path_required_python.value}_{ValueName.value_version.value}"
 
@@ -625,11 +624,11 @@ class ConfField(enum.Enum):
     # TODO: combine by parent dir (~ `./var`):
     # state_local_tmp_dir_abs_path_inited:
     field_local_tmp_dir_rel_path = f"{PathName.path_local_tmp.value}_{FilesystemObject.fs_object_dir.value}_{PathType.path_rel.value}"
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     # TODO: combine by parent dir (~ `./var`):
     # state_local_cache_dir_abs_path_inited:
     field_local_cache_dir_rel_path = f"{PathName.path_local_cache.value}_{FilesystemObject.fs_object_dir.value}_{PathType.path_rel.value}"
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     # state_venv_driver_inited:
     field_venv_driver = f"{ValueName.value_venv_driver.value}"
 
@@ -646,12 +645,12 @@ class ConfField(enum.Enum):
 
     # child of `field_project_descriptors`:
     field_install_extras = f"{ValueName.value_install_extras.value}"
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     # child of `field_project_descriptors`:
     field_install_group = f"{ValueName.value_install_group.value}"
 
     ####################################################################################################################
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     # child of `field_install_specs`:
     field_extra_command_args = f"{ValueName.value_extra_command_args.value}"
 
@@ -671,14 +670,14 @@ class VenvDriverBase:
         local_venv_dir_abs_path: str,
     ) -> bool:
         return self.get_type() == get_venv_type(local_venv_dir_abs_path)
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     def create_venv(
         self,
         local_venv_dir_abs_path: str,
     ) -> None:
         logger.info(f"creating `venv` [{local_venv_dir_abs_path}]")
         self._create_venv_impl(local_venv_dir_abs_path)
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     def _create_venv_impl(
         self,
         local_venv_dir_abs_path: str,
@@ -692,7 +691,7 @@ class VenvDriverBase:
     ):
         """
         Install packages (which are not necessarily listed in any of the `pyproject.toml` files).
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
         This is against UC_78_58_06_54.no_stray_packages.md (in relation to the main `venv`),
         but it is required for separate non-main `venv`-s created for tools (like `uv`).
         """
@@ -700,7 +699,7 @@ class VenvDriverBase:
             selected_python_file_abs_path,
         )
         sub_proc_args.extend(given_packages)
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
         logger.info(f"installing packages: {' '.join(sub_proc_args)}")
 
         subprocess.check_call(sub_proc_args)
@@ -715,14 +714,14 @@ class VenvDriverBase:
     ) -> None:
         """
         Install each project from the `project_descriptors`.
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
         The assumption is that they use `pyproject.toml`.
 
         See also:
         *   UC_78_58_06_54.no_stray_packages.md
         *   FT_46_37_27_11.editable_install.md
         """
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
         editable_project_install_args = []
         for project_descriptor in project_descriptors:
             project_build_root_dir_rel_path = project_descriptor[ConfField.field_build_root_dir_rel_path.value]
@@ -736,7 +735,7 @@ class VenvDriverBase:
                 install_extras = project_descriptor[ConfField.field_install_extras.value]
             else:
                 install_extras = []
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
             editable_project_install_args.append("--editable")
             if len(install_extras) > 0:
                 editable_project_install_args.append(f"{project_build_root_dir_abs_path}[{','.join(install_extras)}]")
@@ -753,11 +752,11 @@ class VenvDriverBase:
             ]
         )
         sub_proc_args.extend(extra_command_args)
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
         sub_proc_args.extend(editable_project_install_args)
 
         logger.info(f"installing projects: {' '.join(sub_proc_args)}")
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
         env_vars = os.environ.copy()
 
         # Adding `venv/bin` is required for `uv` to access `keyring`.
@@ -774,7 +773,7 @@ class VenvDriverBase:
         venv_python_file_abs_path: str,
     ) -> list[str]:
         raise NotImplementedError()
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     def pin_versions(
         self,
         venv_python_file_abs_path: str,
@@ -786,7 +785,7 @@ class VenvDriverBase:
                 self._get_pin_versions_cmd(venv_python_file_abs_path),
                 stdout=f,
             )
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     def _get_pin_versions_cmd(
         self,
         venv_python_file_abs_path: str,
@@ -795,7 +794,7 @@ class VenvDriverBase:
 
 
 class VenvDriverPip(VenvDriverBase):
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     def __init__(
         self,
         required_python_version: str,
@@ -810,7 +809,7 @@ class VenvDriverPip(VenvDriverBase):
         self,
     ) -> VenvDriverType:
         return VenvDriverType.venv_pip
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     def _create_venv_impl(
         self,
         # TODO: Do we need this arg if we have `state_local_venv_dir_abs_path_inited`?
@@ -1422,6 +1421,12 @@ class ConfConstEnv:
 
 
 class CustomArgumentParser(argparse.ArgumentParser):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for action in self._actions:
+            if isinstance(action, argparse._HelpAction):
+                action.help = "Show this help message and exit."
+
     def error(self, message):
         raise ValueError(message)
 
@@ -1435,7 +1440,7 @@ def _create_parent_argparser():
         action="count",
         dest=SyntaxArg.dest_quiet,
         default=0,
-        help="decrease log verbosity level",
+        help="Decrease log verbosity level.",
     )
     parent_argparser.add_argument(
         # See: FT_38_73_38_52.log_verbosity.md
@@ -1444,7 +1449,7 @@ def _create_parent_argparser():
         action="count",
         dest=SyntaxArg.dest_verbose,
         default=0,
-        help="increase log verbosity level",
+        help="Increase log verbosity level.",
     )
     return parent_argparser
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
@@ -1453,7 +1458,7 @@ def _create_child_argparser(
     parent_argparsers,
 ):
     def _create_boot_parser(sub_command_parsers):
-        sub_command_desc = "Bootstrap the environment to make it ready to use."
+        sub_command_desc = "Bootstrap whatever is missing in the environment."
         parser_boot = sub_command_parsers.add_parser(
             ExecMode.mode_boot.value,
             help=sub_command_desc,
@@ -1502,18 +1507,18 @@ def _create_child_argparser(
         )
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     def _create_reset_parser(sub_command_parsers):
-        sub_command_desc = "Re-create `venv`, re-install dependencies, and re-pin versions."
+        sub_command_desc = "Bootstrap from scratch: re-create `venv`, re-install dependencies, re-pin versions, ..."
         parser_reset = sub_command_parsers.add_parser(
-            ExecMode.mode_reset.value,
+            ExecMode.mode_reboot.value,
             help=sub_command_desc,
             description=sub_command_desc,
         )
         parser_reset.set_defaults(
-            exec_mode=ExecMode.mode_reset.value,
+            exec_mode=ExecMode.mode_reboot.value,
         )
 
     def _create_eval_parser(sub_command_parsers):
-        sub_command_desc = "Print effective config."
+        sub_command_desc = "Evaluate effective config (print it on `stdout`)."
         parser_eval = sub_command_parsers.add_parser(
             ExecMode.mode_eval.value,
             help=sub_command_desc,
@@ -1543,7 +1548,7 @@ def _create_child_argparser(
     child_argparsers = child_argparser.add_subparsers(
         dest=ParsedArg.name_exec_mode.value,
         title="Exec modes",
-        description=f"Select one of the following sub-commands as an exec mode (default: `{ExecMode.mode_boot.value}`).",
+        description=f"Select one of the following sub-commands (default: `{ExecMode.mode_boot.value}`):",
         metavar="exec_mode",
     )
     child_argparsers.required = False
@@ -2155,7 +2160,7 @@ class Bootstrapper_state_exec_mode_executed(AbstractCachingStateNode[bool]):
             selected_strategy = ExitCodeReporter(self.env_ctx)
         elif state_input_exec_mode_arg_loaded == ExecMode.mode_start:
             selected_strategy = ExitCodeReporter(self.env_ctx)
-        elif state_input_exec_mode_arg_loaded == ExecMode.mode_reset:
+        elif state_input_exec_mode_arg_loaded == ExecMode.mode_reboot:
             selected_strategy = ExitCodeReporter(self.env_ctx)
         elif state_input_exec_mode_arg_loaded == ExecMode.mode_eval:
             selected_strategy = ExitCodeReporter(self.env_ctx)
@@ -3504,7 +3509,7 @@ class Factory_state_stride_py_required_reached(NodeFactory[StateStride]):
 
 # noinspection PyPep8Naming
 @trivial_factory
-class Bootstrapper_state_reinstall_triggered(AbstractCachingStateNode[bool]):
+class Bootstrapper_state_reboot_triggered(AbstractCachingStateNode[bool]):
     """
     Removes current `venv` dir and `constraints.txt` file (to trigger their re-creation subsequently).
     """
@@ -3521,7 +3526,7 @@ class Bootstrapper_state_reinstall_triggered(AbstractCachingStateNode[bool]):
             EnvState.state_stride_py_required_reached.name,
         ]
     )
-    _state_name = staticmethod(lambda: EnvState.state_reinstall_triggered.name)
+    _state_name = staticmethod(lambda: EnvState.state_reboot_triggered.name)
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     def _eval_state_once(
         self,
@@ -3532,7 +3537,7 @@ class Bootstrapper_state_reinstall_triggered(AbstractCachingStateNode[bool]):
         state_input_exec_mode_arg_loaded: ExecMode = self.eval_parent_state(EnvState.state_input_exec_mode_arg_loaded.name)
 
         if state_input_exec_mode_arg_loaded == ExecMode.mode_start:
-            # The only reason for `EnvState.state_reinstall_triggered`
+            # The only reason for `EnvState.state_reboot_triggered`
             # is to destroy `venv` to recreate it later.
             # Skip it as `venv` is supposed to be ready in `ExecMode.mode_start`:
             return False
@@ -3541,15 +3546,15 @@ class Bootstrapper_state_reinstall_triggered(AbstractCachingStateNode[bool]):
 
         state_args_parsed: argparse.Namespace = self.eval_parent_state(EnvState.state_args_parsed.name)
 
-        do_reinstall: bool = state_args_parsed.exec_mode == ExecMode.mode_reset.value
+        reboot_env: bool = state_args_parsed.exec_mode == ExecMode.mode_reboot.value
 
         state_stride_py_required_reached: StateStride = self.eval_parent_state(EnvState.state_stride_py_required_reached.name)
         assert self.env_ctx.get_stride().value >= StateStride.stride_py_required.value
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
         state_proto_code_file_abs_path_inited: str = self.eval_parent_state(EnvState.state_proto_code_file_abs_path_inited.name)
 
-        # Reinstall can only happen outside `venv`:
-        if not (do_reinstall and state_stride_py_required_reached == StateStride.stride_py_required):
+        # Reboot can only happen outside `venv` (to delete it):
+        if not (reboot_env and state_stride_py_required_reached == StateStride.stride_py_required):
             return False
 
         state_local_venv_dir_abs_path_inited = self.eval_parent_state(EnvState.state_local_venv_dir_abs_path_inited.name)
@@ -3591,7 +3596,7 @@ class Bootstrapper_state_venv_driver_prepared(AbstractCachingStateNode[VenvDrive
             EnvState.state_local_venv_dir_abs_path_inited.name,
             EnvState.state_local_cache_dir_abs_path_inited.name,
             EnvState.state_venv_driver_inited.name,
-            EnvState.state_reinstall_triggered.name,
+            EnvState.state_reboot_triggered.name,
         ]
     )
     _state_name = staticmethod(lambda: EnvState.state_venv_driver_prepared.name)
@@ -3656,7 +3661,7 @@ class Bootstrapper_state_stride_py_venv_reached(AbstractCachingStateNode[StateSt
             EnvState.state_local_conf_file_abs_path_inited.name,
             EnvState.state_selected_python_file_abs_path_inited.name,
             EnvState.state_local_venv_dir_abs_path_inited.name,
-            EnvState.state_reinstall_triggered.name,
+            EnvState.state_reboot_triggered.name,
             EnvState.state_venv_driver_prepared.name,
         ]
     )
@@ -3683,7 +3688,7 @@ class Bootstrapper_state_stride_py_venv_reached(AbstractCachingStateNode[StateSt
 
         state_input_start_id_var_loaded: str = self.eval_parent_state(EnvState.state_input_start_id_var_loaded.name)
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-        state_reinstall_triggered: bool = self.eval_parent_state(EnvState.state_reinstall_triggered.name)
+        state_reboot_triggered: bool = self.eval_parent_state(EnvState.state_reboot_triggered.name)
 
         state_proto_code_file_abs_path_inited: str = self.eval_parent_state(EnvState.state_proto_code_file_abs_path_inited.name)
 
@@ -3734,7 +3739,7 @@ class Bootstrapper_state_stride_py_venv_reached(AbstractCachingStateNode[StateSt
                 if not state_venv_driver_prepared.is_mine_venv(
                     state_local_venv_dir_abs_path_inited,
                 ):
-                    raise AssertionError(f"`venv` [{state_local_venv_dir_abs_path_inited}] was not created by this driver [{state_venv_driver_prepared.get_type().name}] retry with [{ExecMode.mode_reset.value}] sub-command.")
+                    raise AssertionError(f"`venv` [{state_local_venv_dir_abs_path_inited}] was not created by this driver [{state_venv_driver_prepared.get_type().name}] retry with [{ExecMode.mode_reboot.value}] sub-command.")
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
         return switch_python(
             curr_python_path=state_selected_python_file_abs_path_inited,
@@ -3793,11 +3798,11 @@ class Bootstrapper_state_protoprimer_package_installed(AbstractCachingStateNode[
 
         state_venv_driver_prepared: VenvDriverBase = self.eval_parent_state(EnvState.state_venv_driver_prepared.name)
 
-        do_reinstall: bool = state_args_parsed.exec_mode == CommandAction.action_reinstall.value
+        reboot_env: bool = state_args_parsed.exec_mode == ExecMode.mode_reboot.value
 
         do_install: bool = (
             state_stride_py_venv_reached.value == StateStride.stride_py_venv.value
-            and (do_reinstall or state_input_do_install_var_loaded)
+            and (reboot_env or state_input_do_install_var_loaded)
             #
         )
 
@@ -4292,7 +4297,7 @@ class EnvState(enum.Enum):
     # restart: `StateStride.stride_py_arbitrary` -> `StateStride.stride_py_required`:
     state_stride_py_required_reached = Factory_state_stride_py_required_reached
 
-    state_reinstall_triggered = Bootstrapper_state_reinstall_triggered
+    state_reboot_triggered = Bootstrapper_state_reboot_triggered
 
     state_venv_driver_prepared = Bootstrapper_state_venv_driver_prepared
 
