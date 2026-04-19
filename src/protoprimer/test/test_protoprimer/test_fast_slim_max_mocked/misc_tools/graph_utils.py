@@ -39,7 +39,7 @@ def topological_sort(
     def depth_first_search(node_name: str):
         node_statuses[node_name] = VisitState.being_visited
 
-        curr_node: StateNode = state_graph.get_state_node(node_name, env_ctx)
+        curr_node: StateNode = state_graph.get_state_node(node_name)
         if curr_node is None:
             raise ValueError(f"`{StateNode.__name__}` [{node_name}] not found in graph")
 
@@ -82,7 +82,7 @@ def get_transitive_dependencies(
 
     def depth_first_search(node_name: str):
         visited_nodes.add(node_name)
-        curr_node: StateNode = state_graph.get_state_node(node_name, env_ctx)
+        curr_node: StateNode = state_graph.get_state_node(node_name)
         if curr_node is None:
             raise ValueError(f"`{StateNode.__name__}` [{node_name}] not found in graph")
 

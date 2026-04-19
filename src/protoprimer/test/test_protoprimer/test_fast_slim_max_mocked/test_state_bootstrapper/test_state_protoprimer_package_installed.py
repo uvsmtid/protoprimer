@@ -116,7 +116,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_args_parsed.return_value.eval_own_state.return_value = parsed_args
         mock_state_input_exec_mode_arg_loaded.return_value.eval_own_state.return_value = ExecMode.mode_boot
         # when:
-        self.env_ctx.state_graph.eval_state(EnvState.state_protoprimer_package_installed.name, self.env_ctx)
+        self.env_ctx.state_graph.eval_state(EnvState.state_protoprimer_package_installed.name)
         # then:
         mock_state_venv_driver_prepared.return_value.eval_own_state.return_value.install_dependencies.assert_called()
         mock_state_venv_driver_prepared.return_value.eval_own_state.return_value.install_dependencies.assert_any_call(
@@ -206,7 +206,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_args_parsed.return_value.eval_own_state.return_value = parsed_args
         mock_state_input_exec_mode_arg_loaded.return_value.eval_own_state.return_value = ExecMode.mode_reboot
         # when:
-        self.env_ctx.state_graph.eval_state(EnvState.state_protoprimer_package_installed.name, self.env_ctx)
+        self.env_ctx.state_graph.eval_state(EnvState.state_protoprimer_package_installed.name)
         # then:
         mock_state_venv_driver_prepared.return_value.eval_own_state.return_value.install_dependencies.assert_called()
         mock_state_venv_driver_prepared.return_value.eval_own_state.return_value.install_dependencies.assert_any_call(
@@ -296,7 +296,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_args_parsed.return_value.eval_own_state.return_value = parsed_args
         mock_state_input_exec_mode_arg_loaded.return_value.eval_own_state.return_value = ExecMode.mode_boot
         # when:
-        self.env_ctx.state_graph.eval_state(EnvState.state_protoprimer_package_installed.name, self.env_ctx)
+        self.env_ctx.state_graph.eval_state(EnvState.state_protoprimer_package_installed.name)
         # then:
         mock_state_venv_driver_prepared.return_value.eval_own_state.return_value.install_dependencies.assert_not_called()
 
@@ -366,7 +366,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_input_exec_mode_arg_loaded.return_value.eval_own_state.return_value = ExecMode.mode_boot
 
         # when:
-        self.env_ctx.state_graph.eval_state(EnvState.state_protoprimer_package_installed.name, self.env_ctx)
+        self.env_ctx.state_graph.eval_state(EnvState.state_protoprimer_package_installed.name)
 
         # then:
         from unittest.mock import call
@@ -464,7 +464,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # when:
 
-        self.env_ctx.state_graph.eval_state(EnvState.state_protoprimer_package_installed.name, self.env_ctx)
+        self.env_ctx.state_graph.eval_state(EnvState.state_protoprimer_package_installed.name)
 
         # then:
 

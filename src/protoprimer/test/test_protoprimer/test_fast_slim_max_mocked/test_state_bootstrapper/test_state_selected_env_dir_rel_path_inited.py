@@ -64,7 +64,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(**{primer_kernel.ParsedArg.name_selected_env_dir.value: arg_value})
 
         # when:
-        state_selected_env_dir_rel_path_inited = self.env_ctx.state_graph.eval_state(EnvState.state_selected_env_dir_rel_path_inited.name, self.env_ctx)
+        state_selected_env_dir_rel_path_inited = self.env_ctx.state_graph.eval_state(EnvState.state_selected_env_dir_rel_path_inited.name)
 
         # then:
         self.assertEqual(state_selected_env_dir_rel_path_inited, arg_value)
@@ -99,7 +99,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(**{primer_kernel.ParsedArg.name_selected_env_dir.value: arg_value})
 
         # when:
-        state_selected_env_dir_rel_path_inited = self.env_ctx.state_graph.eval_state(EnvState.state_selected_env_dir_rel_path_inited.name, self.env_ctx)
+        state_selected_env_dir_rel_path_inited = self.env_ctx.state_graph.eval_state(EnvState.state_selected_env_dir_rel_path_inited.name)
 
         # then:
         self.assertEqual(state_selected_env_dir_rel_path_inited, arg_value)
@@ -130,7 +130,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_client_conf_file_data_loaded.return_value.eval_own_state.return_value = client_conf_file_data
 
         # when:
-        state_selected_env_dir_rel_path_inited = self.env_ctx.state_graph.eval_state(EnvState.state_selected_env_dir_rel_path_inited.name, self.env_ctx)
+        state_selected_env_dir_rel_path_inited = self.env_ctx.state_graph.eval_state(EnvState.state_selected_env_dir_rel_path_inited.name)
 
         # then:
         self.assertEqual(state_selected_env_dir_rel_path_inited, "my_env_dir")
@@ -164,7 +164,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         # when:
 
         with self.assertLogs(primer_kernel.logger, level=WARNING) as log_dst:
-            self.env_ctx.state_graph.eval_state(EnvState.state_selected_env_dir_rel_path_inited.name, self.env_ctx)
+            self.env_ctx.state_graph.eval_state(EnvState.state_selected_env_dir_rel_path_inited.name)
 
         # then:
 
@@ -200,7 +200,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # when:
         with self.assertRaises(AssertionError) as ctx:
-            self.env_ctx.state_graph.eval_state(EnvState.state_selected_env_dir_rel_path_inited.name, self.env_ctx)
+            self.env_ctx.state_graph.eval_state(EnvState.state_selected_env_dir_rel_path_inited.name)
 
         # then:
         self.assertIn("is relative to neither", str(ctx.exception))
@@ -231,7 +231,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # when:
         with self.assertRaises(AssertionError) as ctx:
-            self.env_ctx.state_graph.eval_state(EnvState.state_selected_env_dir_rel_path_inited.name, self.env_ctx)
+            self.env_ctx.state_graph.eval_state(EnvState.state_selected_env_dir_rel_path_inited.name)
 
         # then:
         self.assertIn("must be a relative path", str(ctx.exception))
@@ -261,7 +261,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # when:
         with self.assertRaises(AssertionError) as ctx:
-            self.env_ctx.state_graph.eval_state(EnvState.state_selected_env_dir_rel_path_inited.name, self.env_ctx)
+            self.env_ctx.state_graph.eval_state(EnvState.state_selected_env_dir_rel_path_inited.name)
 
         # then:
         self.assertIn("is not under", str(ctx.exception))
@@ -291,7 +291,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(**{primer_kernel.ParsedArg.name_selected_env_dir.value: arg_value_abs})
 
         # when:
-        result = self.env_ctx.state_graph.eval_state(EnvState.state_selected_env_dir_rel_path_inited.name, self.env_ctx)
+        result = self.env_ctx.state_graph.eval_state(EnvState.state_selected_env_dir_rel_path_inited.name)
 
         # then:
         self.assertEqual(result, arg_value_rel)
@@ -322,7 +322,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # when:
         with self.assertRaises(AssertionError) as ctx:
-            self.env_ctx.state_graph.eval_state(EnvState.state_selected_env_dir_rel_path_inited.name, self.env_ctx)
+            self.env_ctx.state_graph.eval_state(EnvState.state_selected_env_dir_rel_path_inited.name)
 
         # then:
         self.assertIn("is relative to neither", str(ctx.exception))
@@ -354,7 +354,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_client_conf_file_data_loaded.return_value.eval_own_state.return_value = client_conf_file_data
 
         # when:
-        result = self.env_ctx.state_graph.eval_state(EnvState.state_selected_env_dir_rel_path_inited.name, self.env_ctx)
+        result = self.env_ctx.state_graph.eval_state(EnvState.state_selected_env_dir_rel_path_inited.name)
 
         # then:
         self.assertEqual(result, "symlink_to_dir")
@@ -384,7 +384,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # when:
         with self.assertRaises(AssertionError) as ctx:
-            self.env_ctx.state_graph.eval_state(EnvState.state_selected_env_dir_rel_path_inited.name, self.env_ctx)
+            self.env_ctx.state_graph.eval_state(EnvState.state_selected_env_dir_rel_path_inited.name)
 
         # then:
         self.assertIn(
@@ -427,7 +427,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(**{primer_kernel.ParsedArg.name_selected_env_dir.value: arg_value})
 
         # when:
-        result = self.env_ctx.state_graph.eval_state(EnvState.state_selected_env_dir_rel_path_inited.name, self.env_ctx)
+        result = self.env_ctx.state_graph.eval_state(EnvState.state_selected_env_dir_rel_path_inited.name)
 
         # then:
         self.assertEqual(result, os.path.join("subdir", arg_value))

@@ -42,7 +42,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             EnvState.state_input_do_install_var_loaded.name,
         )
         # when:
-        state_value = self.env_ctx.state_graph.eval_state(EnvState.state_input_do_install_var_loaded.name, self.env_ctx)
+        state_value = self.env_ctx.state_graph.eval_state(EnvState.state_input_do_install_var_loaded.name)
         # then:
         self.assertEqual(
             primer_kernel.str_to_bool(ConfConstInput.default_PROTOPRIMER_DO_INSTALL),
@@ -63,7 +63,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             EnvState.state_input_do_install_var_loaded.name,
         )
         # when:
-        state_value = self.env_ctx.state_graph.eval_state(EnvState.state_input_do_install_var_loaded.name, self.env_ctx)
+        state_value = self.env_ctx.state_graph.eval_state(EnvState.state_input_do_install_var_loaded.name)
         # then:
         self.assertEqual(True, state_value)
 
@@ -81,6 +81,6 @@ class ThisTestClass(BasePyfakefsTestClass):
             EnvState.state_input_do_install_var_loaded.name,
         )
         # when:
-        state_value = self.env_ctx.state_graph.eval_state(EnvState.state_input_do_install_var_loaded.name, self.env_ctx)
+        state_value = self.env_ctx.state_graph.eval_state(EnvState.state_input_do_install_var_loaded.name)
         # then:
         self.assertEqual(False, state_value)

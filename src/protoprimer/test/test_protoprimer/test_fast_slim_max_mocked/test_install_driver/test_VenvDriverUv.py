@@ -63,6 +63,7 @@ def test_create_venv(mock_subprocess_check_call, mock_exists, mock_isfile):
             [
                 "/tmp/cache/venv/uv.venv/bin/uv",
                 "venv",
+                "--seed",
                 "--python",
                 "3.10",
                 venv_dir_abs_path,

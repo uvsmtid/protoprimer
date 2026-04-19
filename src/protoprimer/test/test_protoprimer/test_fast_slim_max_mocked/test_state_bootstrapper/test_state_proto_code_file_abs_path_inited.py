@@ -56,7 +56,7 @@ def test_stride_py_arbitrary_not_in_venv(
 
     # when:
 
-    state_value: str = env_ctx.state_graph.eval_state(EnvState.state_proto_code_file_abs_path_inited.name, env_ctx)
+    state_value: str = env_ctx.state_graph.eval_state(EnvState.state_proto_code_file_abs_path_inited.name)
 
     # then:
 
@@ -88,7 +88,7 @@ def test_stride_py_venv(
 
     # when:
 
-    state_value: str = env_ctx.state_graph.eval_state(EnvState.state_proto_code_file_abs_path_inited.name, env_ctx)
+    state_value: str = env_ctx.state_graph.eval_state(EnvState.state_proto_code_file_abs_path_inited.name)
 
     # then:
 
@@ -119,6 +119,6 @@ def test_stride_py_venv_no_arg(
     # when/then:
 
     with pytest.raises(AssertionError) as exc_info:
-        env_ctx.state_graph.eval_state(EnvState.state_proto_code_file_abs_path_inited.name, env_ctx)
+        env_ctx.state_graph.eval_state(EnvState.state_proto_code_file_abs_path_inited.name)
 
     assert "is not specified at" in str(exc_info.value)

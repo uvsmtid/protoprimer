@@ -90,7 +90,6 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         self.env_ctx.state_graph.eval_state(
             Bootstrapper_state_activated_venv_shell_started._state_name(),
-            self.env_ctx,
         )
 
         # then:
@@ -169,7 +168,6 @@ fi
 
         self.env_ctx.state_graph.eval_state(
             Bootstrapper_state_activated_venv_shell_started._state_name(),
-            self.env_ctx,
         )
 
         # then:

@@ -107,7 +107,6 @@ def test_state_evaluation(
 
     result = env_ctx.state_graph.eval_state(
         Bootstrapper_state_derived_conf_data_loaded_rendered._state_name(),
-        env_ctx,
     )
 
     # then:

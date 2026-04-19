@@ -44,7 +44,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             EnvState.state_input_start_id_var_loaded.name,
         )
         # when:
-        state_value = self.env_ctx.state_graph.eval_state(EnvState.state_input_start_id_var_loaded.name, self.env_ctx)
+        state_value = self.env_ctx.state_graph.eval_state(EnvState.state_input_start_id_var_loaded.name)
         # then:
         self.assertEqual(
             "default_start_id",
@@ -65,6 +65,6 @@ class ThisTestClass(BasePyfakefsTestClass):
             EnvState.state_input_start_id_var_loaded.name,
         )
         # when:
-        state_value = self.env_ctx.state_graph.eval_state(EnvState.state_input_start_id_var_loaded.name, self.env_ctx)
+        state_value = self.env_ctx.state_graph.eval_state(EnvState.state_input_start_id_var_loaded.name)
         # then:
         self.assertEqual("explicit_start_id", state_value)

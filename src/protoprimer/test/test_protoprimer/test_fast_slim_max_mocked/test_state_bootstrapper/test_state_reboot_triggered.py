@@ -86,7 +86,7 @@ def test_reboot_true(
     mock_os_path_exists.return_value = True
 
     # when:
-    state_value = env_ctx.state_graph.eval_state(EnvState.state_reboot_triggered.name, env_ctx)
+    state_value = env_ctx.state_graph.eval_state(EnvState.state_reboot_triggered.name)
 
     # then:
     assert state_value is True
@@ -135,7 +135,7 @@ def test_reboot_false(
     env_ctx.state_stride = py_exec
 
     # when:
-    state_value = env_ctx.state_graph.eval_state(EnvState.state_reboot_triggered.name, env_ctx)
+    state_value = env_ctx.state_graph.eval_state(EnvState.state_reboot_triggered.name)
 
     # then:
     assert state_value is False
@@ -185,7 +185,7 @@ def test_reboot_true_but_py_exec_not_required(
     env_ctx.state_stride = py_exec
 
     # when:
-    state_value = env_ctx.state_graph.eval_state(EnvState.state_reboot_triggered.name, env_ctx)
+    state_value = env_ctx.state_graph.eval_state(EnvState.state_reboot_triggered.name)
 
     # then:
     assert state_value is False

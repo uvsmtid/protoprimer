@@ -75,7 +75,6 @@ class ThisTestClass(BasePyfakefsTestClass):
         # when:
         state_value = self.env_ctx.state_graph.eval_state(
             Bootstrapper_state_pre_commit_configured._state_name(),
-            self.env_ctx,
         )
 
         # then:

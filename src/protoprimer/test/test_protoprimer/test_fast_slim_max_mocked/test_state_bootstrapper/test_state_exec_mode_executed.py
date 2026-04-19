@@ -57,7 +57,7 @@ def test_exec_mode_boot(
 
     # when:
 
-    state_value = env_ctx.state_graph.eval_state(EnvState.state_exec_mode_executed.name, env_ctx)
+    state_value = env_ctx.state_graph.eval_state(EnvState.state_exec_mode_executed.name)
 
     # then:
 
@@ -91,7 +91,7 @@ def test_exec_mode_none(
 
     # when/then:
     with pytest.raises(ValueError, match="exec mode is not defined"):
-        env_ctx.state_graph.eval_state(EnvState.state_exec_mode_executed.name, env_ctx)
+        env_ctx.state_graph.eval_state(EnvState.state_exec_mode_executed.name)
 
 
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_final_state_eval_finalized.__name__}.create_state_node")
@@ -119,4 +119,4 @@ def test_exec_mode_invalid(
 
     # when/then:
     with pytest.raises(ValueError, match="cannot handle exec mode"):
-        env_ctx.state_graph.eval_state(EnvState.state_exec_mode_executed.name, env_ctx)
+        env_ctx.state_graph.eval_state(EnvState.state_exec_mode_executed.name)

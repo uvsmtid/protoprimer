@@ -33,7 +33,6 @@ def test_state_evaluation(
 
     result = env_ctx.state_graph.eval_state(
         Bootstrapper_state_all_conf_data_rendered._state_name(),
-        env_ctx,
     )
 
     # then:

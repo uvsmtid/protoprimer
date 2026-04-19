@@ -25,19 +25,47 @@ from local_repo.sub_proc_util import (
     get_command_code,
     get_command_output,
 )
+from protoprimer.primer_kernel import (
+    TopDir,
+    configure_default_file_log_handler,
+    configure_default_stderr_log_handler,
+    reconfigure_file_log_handler,
+    reconfigure_stderr_log_handler,
+)
 
 logger: logging.Logger = logging.getLogger()
 
 
 def custom_main():
     publish_package(
-        # TODO: FT_93_57_03_75.app_vs_lib.md: Get ref_root from `protoprimer` config (as a lib) instead:
-        client_dir=os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))))
+        # TODO: TODO_28_48_19_20.api_to_traverse_config_when_primed.md:
+        #       Get ref_root from `protoprimer` config (as a lib) instead:
+        client_dir=os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(str(__file__)))))),
+        script_basename=os.path.basename(sys.argv[0]),
     )
 
 
-def publish_package(client_dir: str):
+def publish_package(
+    client_dir: str,
+    script_basename: str,
+):
     parsed_args = init_arg_parser().parse_args()
+
+    # UC_81_50_97_17.reuse_logger.md:
+    if reconfigure_stderr_log_handler(logging.INFO) is None:
+        configure_default_stderr_log_handler(logging.INFO)
+
+    if reconfigure_file_log_handler(logging.INFO) is None:
+        configure_default_file_log_handler(
+            # TODO: TODO_28_48_19_20.api_to_traverse_config_when_primed.md:
+            #       Get `log` directory from `protoprimer` config:
+            log_file_abs_path=os.path.join(
+                client_dir,
+                TopDir.dir_log.value,
+                f"{script_basename}.log",
+            ),
+            log_level=logging.INFO,
+        )
 
     logger.info(f"client_dir: {client_dir}")
 
@@ -45,7 +73,9 @@ def publish_package(client_dir: str):
         client_dir=client_dir,
         package_name=parsed_args.package_name,
         repository_url=parsed_args.repository_url,
-        no_tag=parsed_args.no_tag,
+        no_tag=parsed_args.no_tag or parsed_args.dry_run,
+        allow_dirty=parsed_args.allow_dirty,
+        dry_run=parsed_args.dry_run,
     )
 
 
@@ -80,6 +110,18 @@ def init_arg_parser():
         default=False,
         help="Do not create or push git tag.",
     )
+    arg_parser.add_argument(
+        "--allow_dirty",
+        action="store_true",
+        default=False,
+        help="Allow publishing with uncommitted changes.",
+    )
+    arg_parser.add_argument(
+        "--dry_run",
+        action="store_true",
+        default=False,
+        help="Build package but skip upload and tagging (implies --no_tag).",
+    )
     return arg_parser
 
 
@@ -104,7 +146,7 @@ def create_and_push_tag(
             # Append `.final` for the non-dev (release) version to make a tag:
             git_tag = f"{git_tag}.final"
 
-        print(f"INFO: next git_tag: {git_tag}", file=sys.stderr)
+        logger.info(f"next git_tag: {git_tag}")
 
         # Note:
         # *   unsigned unannotated tags appear "Verified" in GitHub
@@ -119,9 +161,9 @@ def create_and_push_tag(
 
     # Push to remote only if it is a non-dev version:
     if is_dev_version:
-        print(f"WARN: tag is not pushed to remote: {git_tag}", file=sys.stderr)
+        logger.warning(f"tag is not pushed to remote: {git_tag}")
     else:
-        print(f"INFO: tag is about to be pushed to remote: {git_tag}", file=sys.stderr)
+        logger.info(f"tag is about to be pushed to remote: {git_tag}")
         get_command_code(f'git push "{git_main_remote}" "{git_tag}"')
 
 
@@ -130,21 +172,32 @@ def _publish_package(
     package_name: str,
     repository_url: Optional[str],
     no_tag: bool,
+    allow_dirty: bool,
+    dry_run: bool,
 ):
     # Switch to `@/` to avoid creating temporary dirs somewhere else:
     os.chdir(client_dir)
 
     # Ensure all changes are committed:
     # https://stackoverflow.com/a/3879077/441652
-    get_command_code("git update-index --refresh")
-    if get_command_code("git diff-index --quiet HEAD --", fail_on_error=False) != 0:
-        raise RuntimeError("uncommitted changes")
+    if not allow_dirty:
+        get_command_code("git update-index --refresh")
+        if get_command_code("git diff-index --quiet HEAD --", fail_on_error=False) != 0:
+            raise RuntimeError("uncommitted changes")
+
+    package_name_to_dir: dict[str, str] = {
+        DistribPackage.package_neoprimer.value: "neoprimer",
+        DistribPackage.package_protoprimer.value: "protoprimer",
+        DistribPackage.package_dummy_private.value: "dummy_private",
+    }
+
+    package_dir_basename = package_name_to_dir[package_name]
 
     # Get the version of distribution:
     distrib_version = None
     version_file_path = os.path.join(
         client_dir,
-        f"src/{package_name}/pyproject.toml",
+        f"src/{package_dir_basename}/pyproject.toml",
     )
     with open(version_file_path, "r") as f:
         match = re.search(r"^version\s*=\s*['\"]([^'\"]*)['\"]", f.read(), re.M)
@@ -154,21 +207,20 @@ def _publish_package(
     if not distrib_version:
         raise RuntimeError(f"Could not find version in {version_file_path}")
 
-    # TODO: use logging:
-    print(f"INFO: `distrib_version` [{distrib_version}]", file=sys.stderr)
+    logger.info(f"`distrib_version` [{distrib_version}]")
 
     # Determine if it is a dev version (which relaxes many checks):
     is_dev_version: bool
     if re.match(r"^\d+\.\d+\.\d+\.dev\d+$", distrib_version):
-        print(f"INFO: dev version pattern: {distrib_version}", file=sys.stderr)
+        logger.info(f"dev version pattern: {distrib_version}")
         is_dev_version = True
     elif re.match(r"^\d+\.\d+\.\d+$", distrib_version):
-        print(f"INFO: release version pattern: {distrib_version}", file=sys.stderr)
+        logger.info(f"release version pattern: {distrib_version}")
         is_dev_version = False
     else:
         raise RuntimeError(f"unrecognized version pattern: {distrib_version}")
 
-    print(f"INFO: is_dev_version: {is_dev_version}", file=sys.stderr)
+    logger.info(f"is_dev_version: {is_dev_version}")
 
     # Fetch from upstream:
     git_main_remote = "origin"
@@ -183,23 +235,16 @@ def _publish_package(
         )
         != 0
     ):
-        if is_dev_version:
-            print(
-                f"WARN: current HEAD is not in {git_main_remote}/{git_main_branch}",
-                file=sys.stderr,
-            )
+        if dry_run or package_name == DistribPackage.package_dummy_private.value:
+            logger.warning(f"current HEAD is not in {git_main_remote}/{git_main_branch}")
         else:
             raise RuntimeError(f"current HEAD is not in {git_main_remote}/{git_main_branch}")
     else:
-        print(
-            f"INFO: current HEAD is in {git_main_remote}/{git_main_branch}",
-            file=sys.stderr,
-        )
-
-    git_tag = get_command_output("git describe --tags")
-    print(f"INFO: curr git_tag: {git_tag}", file=sys.stderr)
+        logger.info(f"current HEAD is in {git_main_remote}/{git_main_branch}")
 
     if not no_tag:
+        git_tag = get_command_output("git describe --tags")
+        logger.info(f"curr git_tag: {git_tag}")
         assert isinstance(distrib_version, str)
         create_and_push_tag(
             distrib_version,
@@ -212,7 +257,7 @@ def _publish_package(
     # Switch to `build_dir`:
     build_dir = os.path.join(
         client_dir,
-        f"src/{package_name}",
+        f"src/{package_dir_basename}",
     )
     os.chdir(build_dir)
 
@@ -224,6 +269,8 @@ def _publish_package(
     if os.path.exists(dist_dir):
         shutil.rmtree(dist_dir)
 
+    logger.info(f"Python version: {sys.version}")
+
     # Create temporary `venv` for the build tools (do not pollute `venv` used for the project):
     build_venv_path = os.path.join(
         build_dir,
@@ -231,7 +278,10 @@ def _publish_package(
     )
     if os.path.exists(build_venv_path):
         shutil.rmtree(build_venv_path)
-    venv_builder = venv.EnvBuilder(with_pip=True)
+    venv_builder = venv.EnvBuilder(
+        with_pip=True,
+        symlinks=True,
+    )
     venv_builder.create(build_venv_path)
 
     build_pip_path = os.path.join(
@@ -264,20 +314,24 @@ def _publish_package(
         dist_dir,
         f"{package_name}-{distrib_version}.tar.gz",
     )
-    # This will prompt for login credentials:
-    if repository_url:
-        # See: FT_17_41_51_83.private_artifact_repo.md:
-        get_command_code(f"{twine_command_path} upload --verbose --repository-url {repository_url} {dist_file}")
+    if dry_run:
+        logger.info(f"dry_run: skipping upload of {dist_file}")
     else:
-        get_command_code(f"{twine_command_path} upload --verbose {dist_file}")
+        # This will prompt for login credentials:
+        if repository_url:
+            # See: FT_17_41_51_83.private_artifact_repo.md:
+            get_command_code(f"{twine_command_path} upload --verbose --repository-url {repository_url} {dist_file}")
+        else:
+            get_command_code(f"{twine_command_path} upload --verbose {dist_file}")
 
     # Switch back to `client_dir`:
     os.chdir(client_dir)
 
-    # Change the version to non-release-able to force the user to change it later:
-    # Equivalent of: sed --in-place
-    with open(version_file_path, "r") as f:
-        content = f.read()
-    new_content = content.replace(distrib_version, f"TODO_INCREASE_VERSION.{distrib_version}")
-    with open(version_file_path, "w") as f:
-        f.write(new_content)
+    if not dry_run:
+        # Change the version to non-release-able to force the user to change it later:
+        # Equivalent of: sed --in-place
+        with open(version_file_path, "r") as f:
+            content = f.read()
+        new_content = content.replace(distrib_version, f"TODO_INCREASE_VERSION.{distrib_version}")
+        with open(version_file_path, "w") as f:
+            f.write(new_content)

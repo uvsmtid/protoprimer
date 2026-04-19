@@ -63,7 +63,7 @@ def test_eval_parent_state():
 
     # then:
     assert result == "parent_value"
-    mock_env_ctx.state_graph.eval_state.assert_called_once_with("parent1", mock_env_ctx)
+    mock_env_ctx.state_graph.eval_state.assert_called_once_with("parent1")
 
 
 def test_eval_parent_state_not_declared():

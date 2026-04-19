@@ -14,7 +14,7 @@ def assert_parent_factories_mocked(
     # UC_27_40_17_59.replace_by_new_and_use_old.md:
     is_replaced_impl: bool = False,
 ) -> None:
-    final_state_node = env_ctx.state_graph.get_state_node(state_name, env_ctx)
+    final_state_node = env_ctx.state_graph.get_state_node(state_name)
     assert final_state_node is not None
 
     expected_mocked_state_names = set(final_state_node.get_parent_states())

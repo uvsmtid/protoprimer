@@ -56,7 +56,7 @@ def test_success_when_field_present(
     mock_state_primer_conf_file_data_loaded.return_value.eval_own_state.return_value = primer_conf_data
 
     # when:
-    result = env_ctx.state_graph.eval_state(EnvState.state_ref_root_dir_abs_path_inited.name, env_ctx)
+    result = env_ctx.state_graph.eval_state(EnvState.state_ref_root_dir_abs_path_inited.name)
 
     # then:
     assert result == ref_root_abs_path
@@ -85,7 +85,7 @@ def test_warning_when_field_missing(
 
     # when:
     caplog.set_level(WARNING)
-    result = env_ctx.state_graph.eval_state(EnvState.state_ref_root_dir_abs_path_inited.name, env_ctx)
+    result = env_ctx.state_graph.eval_state(EnvState.state_ref_root_dir_abs_path_inited.name)
 
     # then:
     assert result == os.path.dirname(mock_proto_code_dir)

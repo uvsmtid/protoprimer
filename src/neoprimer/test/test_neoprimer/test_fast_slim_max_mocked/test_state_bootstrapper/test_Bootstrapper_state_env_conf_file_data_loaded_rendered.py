@@ -60,7 +60,6 @@ def test_conf_file_exists(
 
     state_value = env_ctx.state_graph.eval_state(
         Bootstrapper_state_env_conf_file_data_loaded_rendered._state_name(),
-        env_ctx,
     )
 
     # then:
@@ -99,7 +98,6 @@ def test_conf_file_missing(
 
     state_value = env_ctx.state_graph.eval_state(
         Bootstrapper_state_env_conf_file_data_loaded_rendered._state_name(),
-        env_ctx,
     )
 
     # then:
@@ -137,5 +135,4 @@ def test_conf_file_malformed(
     with pytest.raises(json.decoder.JSONDecodeError):
         env_ctx.state_graph.eval_state(
             Bootstrapper_state_env_conf_file_data_loaded_rendered._state_name(),
-            env_ctx,
         )

@@ -73,7 +73,7 @@ class TestStateGraph(unittest.TestCase):
         self.graph.register_factory("A", factory)
 
         # when:
-        retrieved_node = self.graph.get_state_node("A", self.env_ctx)
+        retrieved_node = self.graph.get_state_node("A")
 
         # then:
         self.assertEqual(retrieved_node, node)
@@ -84,7 +84,7 @@ class TestStateGraph(unittest.TestCase):
 
         # when/then:
         with self.assertRaises(KeyError):
-            self.graph.get_state_node("A", self.env_ctx)
+            self.graph.get_state_node("A")
 
     def test_eval_state(self):
         # given:
@@ -96,7 +96,7 @@ class TestStateGraph(unittest.TestCase):
         self.graph.register_factory("A", factory)
 
         # when:
-        value = self.graph.eval_state("A", self.env_ctx)
+        value = self.graph.eval_state("A")
 
         # then:
         self.assertEqual(value, "value_A")
@@ -108,4 +108,4 @@ class TestStateGraph(unittest.TestCase):
 
         # when/then:
         with self.assertRaises(KeyError):
-            self.graph.eval_state("A", self.env_ctx)
+            self.graph.eval_state("A")

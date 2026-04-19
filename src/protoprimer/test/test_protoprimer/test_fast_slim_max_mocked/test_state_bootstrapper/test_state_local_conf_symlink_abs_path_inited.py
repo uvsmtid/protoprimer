@@ -94,7 +94,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         # when:
 
         with patch.object(sys, "argv", test_args):
-            self.env_ctx.state_graph.eval_state(EnvState.state_local_conf_symlink_abs_path_inited.name, self.env_ctx)
+            self.env_ctx.state_graph.eval_state(EnvState.state_local_conf_symlink_abs_path_inited.name)
 
         # then:
 
@@ -152,7 +152,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # when:
 
-        self.env_ctx.state_graph.eval_state(EnvState.state_local_conf_symlink_abs_path_inited.name, self.env_ctx)
+        self.env_ctx.state_graph.eval_state(EnvState.state_local_conf_symlink_abs_path_inited.name)
 
         # then:
 
@@ -212,7 +212,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         # when:
 
         with self.assertRaises(AssertionError) as ctx:
-            self.env_ctx.state_graph.eval_state(EnvState.state_local_conf_symlink_abs_path_inited.name, self.env_ctx)
+            self.env_ctx.state_graph.eval_state(EnvState.state_local_conf_symlink_abs_path_inited.name)
 
         # then:
 
@@ -271,7 +271,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         # when:
 
         with self.assertRaises(AssertionError) as ctx:
-            self.env_ctx.state_graph.eval_state(EnvState.state_local_conf_symlink_abs_path_inited.name, self.env_ctx)
+            self.env_ctx.state_graph.eval_state(EnvState.state_local_conf_symlink_abs_path_inited.name)
 
         # then:
 
@@ -330,7 +330,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         with patch.object(sys, "argv", test_args):
             with self.assertRaises(AssertionError) as ctx:
-                self.env_ctx.state_graph.eval_state(EnvState.state_local_conf_symlink_abs_path_inited.name, self.env_ctx)
+                self.env_ctx.state_graph.eval_state(EnvState.state_local_conf_symlink_abs_path_inited.name)
 
         # then:
 
@@ -385,7 +385,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # when:
 
-        self.env_ctx.state_graph.eval_state(EnvState.state_local_conf_symlink_abs_path_inited.name, self.env_ctx)
+        self.env_ctx.state_graph.eval_state(EnvState.state_local_conf_symlink_abs_path_inited.name)
 
         # then:
 
@@ -444,7 +444,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # when:
 
-        self.env_ctx.state_graph.eval_state(EnvState.state_local_conf_symlink_abs_path_inited.name, self.env_ctx)
+        self.env_ctx.state_graph.eval_state(EnvState.state_local_conf_symlink_abs_path_inited.name)
 
         # then:
 
@@ -478,7 +478,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_client_conf_file_data_loaded.return_value.eval_own_state.return_value = {}  # Not used in this branch
 
         # when:
-        result = self.env_ctx.state_graph.eval_state(EnvState.state_local_conf_symlink_abs_path_inited.name, self.env_ctx)
+        result = self.env_ctx.state_graph.eval_state(EnvState.state_local_conf_symlink_abs_path_inited.name)
 
         # then:
         self.assertEqual(result, mock_ref_root)
