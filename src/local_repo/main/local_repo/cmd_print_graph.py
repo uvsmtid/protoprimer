@@ -32,11 +32,10 @@ def custom_main():
 
     # Ensure all nodes are initialized (populated into `state_graph.state_nodes`):
     for env_state in EnvState:
-        env_ctx.state_graph.get_state_node(env_state.name, env_ctx)
+        env_ctx.state_graph.get_state_node(env_state.name)
 
     state_node: StateNode = env_ctx.state_graph.get_state_node(
         env_ctx.final_state,
-        env_ctx,
     )
 
     if parsed_args.mermaid:

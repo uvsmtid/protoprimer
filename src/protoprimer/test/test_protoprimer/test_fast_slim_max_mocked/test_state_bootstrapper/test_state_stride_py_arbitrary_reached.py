@@ -69,7 +69,7 @@ def test_py_exec_stride_py_unknown_in_venv(
 
     # when:
 
-    state_value = env_ctx.state_graph.eval_state(EnvState.state_stride_py_arbitrary_reached.name, env_ctx)
+    state_value = env_ctx.state_graph.eval_state(EnvState.state_stride_py_arbitrary_reached.name)
 
     # then:
 
@@ -130,7 +130,7 @@ def test_py_exec_stride_py_unknown_not_in_venv(
 
     # when:
 
-    state_value = env_ctx.state_graph.eval_state(EnvState.state_stride_py_arbitrary_reached.name, env_ctx)
+    state_value = env_ctx.state_graph.eval_state(EnvState.state_stride_py_arbitrary_reached.name)
 
     # then:
 

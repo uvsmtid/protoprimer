@@ -101,7 +101,7 @@ You need to break that 5-to-1 loop.
 
 </details>
 
-The entry script must **self-handle early chaotic conditions**.
+The entry script must **self-handle early chaotic conditions** to survive.
 
 In other words, it must become **both** "the chicken **and** the egg".
 

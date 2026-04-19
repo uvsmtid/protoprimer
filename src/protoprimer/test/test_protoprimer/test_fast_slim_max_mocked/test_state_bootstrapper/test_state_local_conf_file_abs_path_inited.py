@@ -51,7 +51,7 @@ def test_success(
     mock_state_primer_conf_file_abs_path_inited.return_value.eval_own_state.return_value = "protoprimer.json"
 
     # when:
-    state_local_conf_file_abs_path_inited = env_ctx.state_graph.eval_state(EnvState.state_local_conf_file_abs_path_inited.name, env_ctx)
+    state_local_conf_file_abs_path_inited = env_ctx.state_graph.eval_state(EnvState.state_local_conf_file_abs_path_inited.name)
 
     # then:
     expected_path = os.path.join(

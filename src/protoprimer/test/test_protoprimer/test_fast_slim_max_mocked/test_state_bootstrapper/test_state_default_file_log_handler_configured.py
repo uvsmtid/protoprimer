@@ -14,7 +14,7 @@ from protoprimer.primer_kernel import (
     Bootstrapper_state_local_log_dir_abs_path_inited,
     EnvContext,
     EnvState,
-    FileLogFormatter,
+    _PrimerFileLogFormatter,
     StateStrideFilter,
 )
 
@@ -60,7 +60,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.fs.create_dir(self.mock_log_dir)
 
         # when:
-        file_handler = self.env_ctx.state_graph.eval_state(EnvState.state_default_file_log_handler_configured.name, self.env_ctx)
+        file_handler = self.env_ctx.state_graph.eval_state(EnvState.state_default_file_log_handler_configured.name)
 
         # then:
         self.assertIsInstance(file_handler, logging.FileHandler)
@@ -70,7 +70,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.assertTrue(self.fs.exists(expected_log_file))
 
         self.assertEqual(file_handler.level, logging.INFO)
-        self.assertIsInstance(file_handler.formatter, FileLogFormatter)
+        self.assertIsInstance(file_handler.formatter, _PrimerFileLogFormatter)
 
         self.assertTrue(any(isinstance(f, StateStrideFilter) for f in file_handler.filters))
         self.assertIn(file_handler, logging.getLogger().handlers)
@@ -100,7 +100,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.fs.create_dir(self.mock_log_dir)
 
         # when:
-        file_handler = self.env_ctx.state_graph.eval_state(EnvState.state_default_file_log_handler_configured.name, self.env_ctx)
+        file_handler = self.env_ctx.state_graph.eval_state(EnvState.state_default_file_log_handler_configured.name)
 
         # then:
         # File log level should be set to the more verbose level
@@ -131,7 +131,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.fs.create_dir(self.mock_log_dir)
 
         # when:
-        file_handler = self.env_ctx.state_graph.eval_state(EnvState.state_default_file_log_handler_configured.name, self.env_ctx)
+        file_handler = self.env_ctx.state_graph.eval_state(EnvState.state_default_file_log_handler_configured.name)
 
         # then:
         # File log level should remain at the default (INFO)

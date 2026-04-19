@@ -58,7 +58,7 @@ def test_stride_py_venv(
 
     # when:
 
-    state_value: str = env_ctx.state_graph.eval_state(EnvState.state_project_descriptors_inited.name, env_ctx)
+    state_value: str = env_ctx.state_graph.eval_state(EnvState.state_project_descriptors_inited.name)
 
     # then:
 

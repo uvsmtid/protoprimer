@@ -42,7 +42,7 @@ class TestParentStateOrdering:
 
         # when:
         for env_state in EnvState:
-            state_node = state_graph_instance.get_state_node(env_state.name, env_ctx)
+            state_node = state_graph_instance.get_state_node(env_state.name)
             if state_node is None:
                 raise AssertionError(f"`{StateNode.__name__}` for [{env_state.name}] not found")
 

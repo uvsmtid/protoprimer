@@ -20,7 +20,7 @@ from protoprimer.primer_kernel import (
     EnvContext,
     EnvState,
     EnvVar,
-    StderrLogFormatter,
+    _PrimerStderrLogFormatter,
     SyntaxArg,
 )
 
@@ -33,7 +33,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.env_ctx = EnvContext()
         self.stderr_handler = logging.StreamHandler(sys.stderr)
         self.stderr_handler.setFormatter(
-            StderrLogFormatter(
+            _PrimerStderrLogFormatter(
                 verbosity_level=logging.WARNING,
             )
         )
@@ -66,7 +66,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
         mock_state_args_parsed.return_value.eval_own_state.return_value = parsed_args
         # when:
-        state_value = self.env_ctx.state_graph.eval_state(EnvState.state_input_stderr_log_level_eval_finalized.name, self.env_ctx)
+        state_value = self.env_ctx.state_graph.eval_state(EnvState.state_input_stderr_log_level_eval_finalized.name)
         # then:
         self.assertEqual(logging.INFO, state_value)
 
@@ -97,7 +97,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
         mock_state_args_parsed.return_value.eval_own_state.return_value = parsed_args
         # when:
-        state_value = self.env_ctx.state_graph.eval_state(EnvState.state_input_stderr_log_level_eval_finalized.name, self.env_ctx)
+        state_value = self.env_ctx.state_graph.eval_state(EnvState.state_input_stderr_log_level_eval_finalized.name)
         # then:
         self.assertEqual(logging.WARNING, state_value)
 
@@ -128,7 +128,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
         mock_state_args_parsed.return_value.eval_own_state.return_value = parsed_args
         # when:
-        state_value = self.env_ctx.state_graph.eval_state(EnvState.state_input_stderr_log_level_eval_finalized.name, self.env_ctx)
+        state_value = self.env_ctx.state_graph.eval_state(EnvState.state_input_stderr_log_level_eval_finalized.name)
         # then:
         self.assertEqual(logging.ERROR, state_value)
 
@@ -159,7 +159,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
         mock_state_args_parsed.return_value.eval_own_state.return_value = parsed_args
         # when:
-        state_value = self.env_ctx.state_graph.eval_state(EnvState.state_input_stderr_log_level_eval_finalized.name, self.env_ctx)
+        state_value = self.env_ctx.state_graph.eval_state(EnvState.state_input_stderr_log_level_eval_finalized.name)
         # then:
         self.assertEqual(logging.CRITICAL, state_value)
 
@@ -190,7 +190,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
         mock_state_args_parsed.return_value.eval_own_state.return_value = parsed_args
         # when:
-        state_value = self.env_ctx.state_graph.eval_state(EnvState.state_input_stderr_log_level_eval_finalized.name, self.env_ctx)
+        state_value = self.env_ctx.state_graph.eval_state(EnvState.state_input_stderr_log_level_eval_finalized.name)
         # then:
         self.assertEqual(80, state_value)
 
@@ -221,7 +221,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
         mock_state_args_parsed.return_value.eval_own_state.return_value = parsed_args
         # when:
-        state_value = self.env_ctx.state_graph.eval_state(EnvState.state_input_stderr_log_level_eval_finalized.name, self.env_ctx)
+        state_value = self.env_ctx.state_graph.eval_state(EnvState.state_input_stderr_log_level_eval_finalized.name)
         # then:
         self.assertEqual(logging.INFO, state_value)
 
@@ -252,7 +252,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
         mock_state_args_parsed.return_value.eval_own_state.return_value = parsed_args
         # when:
-        state_value = self.env_ctx.state_graph.eval_state(EnvState.state_input_stderr_log_level_eval_finalized.name, self.env_ctx)
+        state_value = self.env_ctx.state_graph.eval_state(EnvState.state_input_stderr_log_level_eval_finalized.name)
         # then:
         self.assertEqual(logging.DEBUG, state_value)
 
@@ -283,7 +283,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
         mock_state_args_parsed.return_value.eval_own_state.return_value = parsed_args
         # when:
-        state_value = self.env_ctx.state_graph.eval_state(EnvState.state_input_stderr_log_level_eval_finalized.name, self.env_ctx)
+        state_value = self.env_ctx.state_graph.eval_state(EnvState.state_input_stderr_log_level_eval_finalized.name)
         # then:
         self.assertEqual(logging.NOTSET, state_value)
 
@@ -314,7 +314,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
         mock_state_args_parsed.return_value.eval_own_state.return_value = parsed_args
         # when:
-        state_value = self.env_ctx.state_graph.eval_state(EnvState.state_input_stderr_log_level_eval_finalized.name, self.env_ctx)
+        state_value = self.env_ctx.state_graph.eval_state(EnvState.state_input_stderr_log_level_eval_finalized.name)
         # then:
         self.assertEqual(logging.NOTSET, state_value)
 
@@ -345,7 +345,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
         mock_state_args_parsed.return_value.eval_own_state.return_value = parsed_args
         # when:
-        state_value = self.env_ctx.state_graph.eval_state(EnvState.state_input_stderr_log_level_eval_finalized.name, self.env_ctx)
+        state_value = self.env_ctx.state_graph.eval_state(EnvState.state_input_stderr_log_level_eval_finalized.name)
         # then:
         self.assertEqual(logging.ERROR, state_value)
 
@@ -381,7 +381,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # when:
 
-        state_value = self.env_ctx.state_graph.eval_state(EnvState.state_input_stderr_log_level_eval_finalized.name, self.env_ctx)
+        state_value = self.env_ctx.state_graph.eval_state(EnvState.state_input_stderr_log_level_eval_finalized.name)
 
         # then:
 

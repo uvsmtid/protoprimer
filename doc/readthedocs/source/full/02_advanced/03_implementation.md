@@ -12,6 +12,8 @@ To bootstrap, `protoprimer` **restarts**, iteratively preparing the environment:
 
 *   Lands inside a comfy isolated `venv` with all dependencies **pinned**.
 
-    > The custom steps take over here.
+    > The custom steps **take over** here.
+
+The "chicken-egg" can fly **reliably** because **any** `python` is **trivial** to satisfy.
 
 % stub_include_stop

@@ -40,7 +40,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             EnvState.state_input_proto_code_file_abs_path_var_loaded.name,
         )
         # when:
-        state_value = self.env_ctx.state_graph.eval_state(EnvState.state_input_proto_code_file_abs_path_var_loaded.name, self.env_ctx)
+        state_value = self.env_ctx.state_graph.eval_state(EnvState.state_input_proto_code_file_abs_path_var_loaded.name)
         # then:
         self.assertIsNone(state_value)
 
@@ -61,7 +61,6 @@ class ThisTestClass(BasePyfakefsTestClass):
         with self.assertRaises(AssertionError):
             self.env_ctx.state_graph.eval_state(
                 EnvState.state_input_proto_code_file_abs_path_var_loaded.name,
-                self.env_ctx,
             )
 
     @patch.dict(
@@ -81,7 +80,6 @@ class ThisTestClass(BasePyfakefsTestClass):
         with self.assertRaises(AssertionError):
             self.env_ctx.state_graph.eval_state(
                 EnvState.state_input_proto_code_file_abs_path_var_loaded.name,
-                self.env_ctx,
             )
 
     @patch.dict(
@@ -99,6 +97,6 @@ class ThisTestClass(BasePyfakefsTestClass):
             EnvState.state_input_proto_code_file_abs_path_var_loaded.name,
         )
         # when:
-        state_value = self.env_ctx.state_graph.eval_state(EnvState.state_input_proto_code_file_abs_path_var_loaded.name, self.env_ctx)
+        state_value = self.env_ctx.state_graph.eval_state(EnvState.state_input_proto_code_file_abs_path_var_loaded.name)
         # then:
         self.assertEqual("/abs/path/exists", state_value)

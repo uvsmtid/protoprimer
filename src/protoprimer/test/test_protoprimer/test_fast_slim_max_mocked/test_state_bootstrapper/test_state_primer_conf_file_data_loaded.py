@@ -54,7 +54,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # when:
 
-        state_value = self.env_ctx.state_graph.eval_state(EnvState.state_primer_conf_file_data_loaded.name, self.env_ctx)
+        state_value = self.env_ctx.state_graph.eval_state(EnvState.state_primer_conf_file_data_loaded.name)
 
         # then:
 
@@ -89,7 +89,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         # when:
 
         with self.assertLogs(primer_kernel.logger, level=WARNING) as log_dst:
-            state_value = self.env_ctx.state_graph.eval_state(EnvState.state_primer_conf_file_data_loaded.name, self.env_ctx)
+            state_value = self.env_ctx.state_graph.eval_state(EnvState.state_primer_conf_file_data_loaded.name)
 
         # then:
 
@@ -121,4 +121,4 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # when/then:
         with self.assertRaises(json.decoder.JSONDecodeError):
-            self.env_ctx.state_graph.eval_state(EnvState.state_primer_conf_file_data_loaded.name, self.env_ctx)
+            self.env_ctx.state_graph.eval_state(EnvState.state_primer_conf_file_data_loaded.name)

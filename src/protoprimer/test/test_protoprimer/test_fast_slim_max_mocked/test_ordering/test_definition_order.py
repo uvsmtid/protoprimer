@@ -48,7 +48,7 @@ class TestEnvStateOrdering:
         violations = []
         # Verify that for each state, its parents appear before it in the enum definition:
         for env_state in EnvState:
-            state_node = state_graph_instance.get_state_node(env_state.name, self.env_ctx)
+            state_node = state_graph_instance.get_state_node(env_state.name)
             if state_node is None:
                 raise AssertionError(f"`{StateNode.__name__}` for [{env_state.name}] not found")
 
@@ -98,7 +98,7 @@ class TestEnvStateOrdering:
         def_violations = []
         # Verify that for each state, its implementation class is defined after its parents:
         for env_state in EnvState:
-            state_node = state_graph_instance.get_state_node(env_state.name, self.env_ctx)
+            state_node = state_graph_instance.get_state_node(env_state.name)
             if state_node is None:
                 raise AssertionError(f"`{StateNode.__name__}` for [{env_state.name}] not found")
 

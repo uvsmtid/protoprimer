@@ -63,7 +63,7 @@ def test_success_when_field_present(
     )
 
     # when:
-    state_global_conf_file_abs_path_inited = env_ctx.state_graph.eval_state(EnvState.state_global_conf_file_abs_path_inited.name, env_ctx)
+    state_global_conf_file_abs_path_inited = env_ctx.state_graph.eval_state(EnvState.state_global_conf_file_abs_path_inited.name)
 
     # then:
     assert state_global_conf_file_abs_path_inited == client_conf_abs_path

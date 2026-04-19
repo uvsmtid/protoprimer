@@ -47,7 +47,7 @@ def test_python_selection(
     mock_probe_python_file_abs_path.return_value = "/usr/bin/python3.10"
 
     # when
-    result = env_ctx.state_graph.eval_state(EnvState.state_selected_python_file_abs_path_inited.name, env_ctx)
+    result = env_ctx.state_graph.eval_state(EnvState.state_selected_python_file_abs_path_inited.name)
 
     # then
     mock_probe_python_file_abs_path.assert_called_once_with("python3.10", parse_python_version("3.10"))

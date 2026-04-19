@@ -120,7 +120,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # when:
 
-        self.env_ctx.state_graph.eval_state(EnvState.state_stride_py_required_reached.name, self.env_ctx)
+        self.env_ctx.state_graph.eval_state(EnvState.state_stride_py_required_reached.name)
 
         # then:
 
@@ -169,7 +169,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.env_ctx.state_stride = StateStride.stride_py_required
 
         # when:
-        actual_result = self.env_ctx.state_graph.eval_state(EnvState.state_stride_py_required_reached.name, self.env_ctx)
+        actual_result = self.env_ctx.state_graph.eval_state(EnvState.state_stride_py_required_reached.name)
 
         # then:
         self.assertEqual(
@@ -221,7 +221,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = non_default_dir_abs_path_venv
 
         # when:
-        actual_result = self.env_ctx.state_graph.eval_state(EnvState.state_stride_py_required_reached.name, self.env_ctx)
+        actual_result = self.env_ctx.state_graph.eval_state(EnvState.state_stride_py_required_reached.name)
 
         # then:
         self.assertEqual(

@@ -47,7 +47,7 @@ def test_eval_parents():
     state_node.eval_own_state()
 
     # then:
-    mock_env_ctx.state_graph.eval_state.assert_called_once_with("parent1", mock_env_ctx)
+    mock_env_ctx.state_graph.eval_state.assert_called_once_with("parent1")
     state_node._eval_state_once.assert_called_once()
 
 

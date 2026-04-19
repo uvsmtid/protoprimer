@@ -62,7 +62,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         # when:
 
         self.assertTrue(os.path.isfile(state_global_conf_file_abs_path_inited))
-        self.env_ctx.state_graph.eval_state(EnvState.state_client_conf_file_data_loaded.name, self.env_ctx)
+        self.env_ctx.state_graph.eval_state(EnvState.state_client_conf_file_data_loaded.name)
 
         # then:
 
@@ -102,7 +102,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         # when:
 
         with self.assertLogs(primer_kernel.logger, level=WARNING) as log_dst:
-            self.env_ctx.state_graph.eval_state(EnvState.state_client_conf_file_data_loaded.name, self.env_ctx)
+            self.env_ctx.state_graph.eval_state(EnvState.state_client_conf_file_data_loaded.name)
 
         # then:
 

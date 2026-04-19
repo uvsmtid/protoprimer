@@ -117,13 +117,10 @@ def test_get_shell_driver_no_shell_env_no_bash(mock_warning, mock_which):
     # given:
     mock_which.return_value = None
 
-    # when:
-    driver = _get_shell_driver("/fake/cache")
-
-    # then:
+    # when/then:
+    with pytest.raises(AssertionError):
+        _get_shell_driver("/fake/cache")
     mock_warning.assert_called_once_with("env var `SHELL` is not set - assuming `bash` as default")
-    assert isinstance(driver, ShellDriverBash)
-    assert driver.shell_abs_path is None
 
 
 def test_get_shell_driver_unknown_shell():
