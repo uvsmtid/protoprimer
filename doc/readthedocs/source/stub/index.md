@@ -125,4 +125,38 @@ In other words, it must become **both** "the chicken **and** the egg".
 
 </div>
 
+<!--
+
+TODO: Put it somewhere: or is it already obvious?
+
+## Why `proto*`?
+
+`proto` = early, when nothing exists yet.
+
+`protoprimer` design aims to survive with **minimal pre-conditions**:
+
+*   no pre-installed dependencies
+*   no pre-initialized `venv`
+*   no required `python` version in `PATH`
+*   no special shell config
+*   no user CLI args to guess (by default)
+*   ...
+*   just naked `python` (relatively omnipresent) + [a stand-alone copy][FT_90_65_67_62.proto_code.md] of `protoprimer`.
+
+##
+
+Those early bootstrap steps:
+*   distinguish (A) global repo-wide and (B) local environment-specific configuration
+*   office-friendly: supporting limited permissions, mirrors for package indexes, proxies, etc.
+*   respect flexible repo filesystem layouts - from min to max (choices made by the target client repo)
+*   init `venv`, install the necessary dependencies, pin package versions
+*   switch initial arbitrary OS-picked `python` binary from the `PATH` to the required version
+*   propagate param overrides: config fields - env vars - CLI args
+*   delegate to client-specific modules to do the rest\
+    (**to run more interesting stuff**)
+
+</details>
+
+-->
+
 [protoprimer_github]: https://github.com/uvsmtid/protoprimer

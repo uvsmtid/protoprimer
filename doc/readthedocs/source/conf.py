@@ -39,6 +39,7 @@ __version__ = proto_kernel.__version__
 # -- Project information
 
 project = "protoprimer"
+html_title = "bootstrap repo env"
 
 # any `X.Y.Z.devN`:
 release = __version__
