@@ -682,7 +682,7 @@ class AbstractConfLeapNodeBuilder(ConfigBuilderVisitor):
         dict_node: AbstractDictNode,
         conf_leap: ConfLeap,
     ):
-        # Common overridable `global` and `local` fields: FT_23_37_64_44.conf_dst.md
+        # Common overridable `global` and `local` fields: FT_23_37_64_44.global_vs_local.md
 
         self._create_used_dict_field(
             dict_node=dict_node,

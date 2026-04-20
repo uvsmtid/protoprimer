@@ -51,7 +51,7 @@ from typing import (
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 # The release process ensures that content in this file matches the version below while tagging the release commit
 # (otherwise, if the file comes from a different commit, the version is irrelevant):
-__version__ = "0.11.0"
+__version__ = "0.11.1"
 
 logger: logging.Logger = logging.getLogger()
 
@@ -270,12 +270,12 @@ class ConfLeap(enum.Enum):
     leap_primer = f"{KeyWord.key_primer.value}"
 
     # TODO: Rename, use `global` instead:
-    #       FT_23_37_64_44.conf_dst.md
+    #       FT_23_37_64_44.global_vs_local.md
     #       FT_89_41_35_82.conf_leap.md
     leap_client = f"{KeyWord.key_client.value}"
 
     # TODO: Remove, use `local` instead:
-    #       FT_23_37_64_44.conf_dst.md
+    #       FT_23_37_64_44.global_vs_local.md
     #       FT_89_41_35_82.conf_leap.md
     leap_env = f"{KeyWord.key_env.value}"
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
@@ -427,7 +427,7 @@ class EnvVar(enum.Enum):
 
 class ConfDst(enum.Enum):
     """
-    See FT_23_37_64_44.conf_dst.md
+    See FT_23_37_64_44.global_vs_local.md
 
     TODO: Is this supposed to be called conf src (instead of `conf dst`)?
     """
@@ -601,7 +601,7 @@ class ConfField(enum.Enum):
     # None at the moment.
 
     ####################################################################################################################
-    # Common overridable `global` and `local` fields: FT_23_37_64_44.conf_dst.md
+    # Common overridable `global` and `local` fields: FT_23_37_64_44.global_vs_local.md
 
     # state_required_python_version_inited:
     field_required_python_version = f"{PathName.path_required_python.value}_{ValueName.value_version.value}"
@@ -1801,7 +1801,7 @@ class AbstractOverriddenFieldCachingStateNode(AbstractCachingStateNode[ValueType
         default_field_value: DataValueType,
     ) -> DataValueType:
         """
-        Implements config overrides: FT_23_37_64_44.conf_dst.md
+        Implements config overrides: FT_23_37_64_44.global_vs_local.md
         """
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
         state_client_conf_file_data_loaded: dict = self.eval_parent_state(EnvState.state_client_conf_file_data_loaded.name)
