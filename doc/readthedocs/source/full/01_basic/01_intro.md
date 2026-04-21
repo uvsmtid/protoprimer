@@ -13,16 +13,19 @@ Invoke `protoprimer` - an **arg-less** stand-alone script that switches:
 *   from **chaos** (the many conditions in which a user may invoke it)
 *   into **order** (an env-specific `venv` with the **required** `python` version)
 
-<br/>
-
+Eventually, `protoprimer` transfers control to custom steps for **anything** else...
 <details>
 <summary>
-Then, <code>protoprimer</code> transfers control to custom steps for <strong>anything</strong> else:
 </summary>
 
-*   verify the env conditions (local, cloud)
+*   provision other SDKs
+
+*   verify system/user config (local, cloud)
+
 *   install `git` hooks
-*   configure other SDKs
+
+*   generate env-specific code
+
 *   ... [you name it]
 
 </details>

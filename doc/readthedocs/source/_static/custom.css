@@ -48,6 +48,11 @@ section#details > details > summary {
     margin-bottom: 1em;
 }
 
+/* Increase spacing for summaries in ## Why? section: */
+section#why details > summary {
+    margin-top: 1em;
+}
+
 /* Custom [+]/[-] marker for <details>/<summary>: */
 summary {
     list-style: none;

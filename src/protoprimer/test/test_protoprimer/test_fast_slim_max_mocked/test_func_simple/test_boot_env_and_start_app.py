@@ -11,6 +11,7 @@ from local_test.name_assertion import assert_test_module_name_embeds_str
 # noinspection PyProtectedMember
 from protoprimer.primer_kernel import (
     _start_main,
+    proto_main,
     start_app,
     boot_env,
     EnvVar,
@@ -29,6 +30,7 @@ class TestStartMain:
     @pytest.fixture(autouse=True)
     def setup_mocks(self, mocker):
         self.mock_proto_main = mocker.patch("protoprimer.primer_kernel.proto_main")
+        self.mock_proto_main.__name__ = proto_main.__name__
         self.mock_import_module = mocker.patch("protoprimer.primer_kernel.importlib.import_module")
 
     @patch.dict(os.environ, {}, clear=True)

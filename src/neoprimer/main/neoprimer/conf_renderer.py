@@ -666,7 +666,7 @@ class AbstractConfLeapNodeBuilder(ConfigBuilderVisitor):
         kwargs.pop("orig_data", None)
         kwargs.pop("node_name", None)
         kwargs.pop("node_indent", None)
-        field_node: AbstractDictNode = node_class(
+        field_node: AbstractConfigNode = node_class(
             node_name=field_name,
             node_indent=dict_node.node_indent + AbstractConfigNode.indent_size,
             is_present=(field_name in dict_node.orig_data),
