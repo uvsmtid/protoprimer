@@ -15,14 +15,14 @@
 
 More than one manual step is **tedious and error-prone**.
 
+Plus, the **single-step** bootstrap is a non-trivial "chicken and egg" problem!
+
 <details class="indented">
-<summary>Yet achieving the <strong>single-step</strong> bootstrap is a "chicken and egg" problem:</summary>
+<summary>[formal proof]</summary>
 
-<br/>
+<details class="indented">
 
-<details>
-
-<summary>0. Premise: You may have a project in any lang.</summary>
+<summary>0. You may have a project in any lang.</summary>
 
 > C++, Java, Go, JS/TS, Rust, Haskell, ...
 
@@ -30,10 +30,9 @@ More than one manual step is **tedious and error-prone**.
 
 </details>
 
-<br/>
+<details class="indented">
 
-<details>
-<summary>1. Thought: <em>"What is the best glue for automation, if not <code>python</code>?"</em></summary>
+<summary>1. <em>"What is the <strong>best</strong> glue for automation, if not <code>python</code>?"</em></summary>
 
 *   readable, testable, modular, cross-platform, ...
 *   huge mind-share, gazillion of packages, ...
@@ -42,8 +41,8 @@ More than one manual step is **tedious and error-prone**.
 
 </details>
 
-<details>
-<summary>2. Thought: <em>"I can create a <code>venv</code> manually"</em></summary>
+<details class="indented">
+<summary>2. <em>"I can <strong>manage</strong> a <code>venv</code> everywhere"</em></summary>
 
 *   that `venv` has to be created by **every** user
 *   **everyone** has to `activate` it **every** time
@@ -52,8 +51,8 @@ More than one manual step is **tedious and error-prone**.
 
 </details>
 
-<details>
-<summary>3. Thought: <em>"I can use <code>uv</code> to ensure the <strong>required</strong> <code>python</code> version"</em></summary>
+<details class="indented">
+<summary>3. <em>"I can use <code>uv</code> to ensure the <strong>required</strong> <code>python</code> version"</em></summary>
 
 *   **everyone** has to install the `uv` executable first
 *   **everyone** has to know `uv` args like:
@@ -64,12 +63,12 @@ uv pip install --editable path/to/project_2
 ...
 ```
 
-**Next:** `uv` reproduces `venv`, but steps may go beyond that scope.
+**Next:** `uv` reproduces `venv`, but steps may go **beyond** that.
 
 </details>
 
-<details>
-<summary>4. Thought: <em>"I can wrap it all into a <code>shell</code>-script"</em></summary>
+<details class="indented">
+<summary>4. <em>"I can <strong>wrap</strong> it all into a <code>shell</code> script"</em></summary>
 
 This demands logic to handle flexibility:
 
@@ -85,8 +84,8 @@ This demands logic to handle flexibility:
 
 </details>
 
-<details>
-<summary>5. Thought: <em>"I can avoid <strong>inconvenient</strong> <code>shell</code> with another lang"</em></summary>
+<details class="indented">
+<summary>5. <em>"I can replace <code>shell</code> with a <strong>better</strong> lang, but which one?"</em></summary>
 
 the lang has to be:
 *   cross-platform
@@ -101,7 +100,7 @@ You need to break that 5-to-1 loop.
 
 </details>
 
-The entry script must **self-handle early chaotic conditions** to survive.
+The entry script must **evolve through chaos** to survive.
 
 In other words, it must become **both** "the chicken **and** the egg".
 
@@ -112,12 +111,18 @@ In other words, it must become **both** "the chicken **and** the egg".
 :end-before: stub_include_stop
 ```
 
+<!--
+
+TODO: Move those sections into main `readme.md`, itemize them with links to `FC_` docs (`fature_topic`-s).
+
 ## Details
 
 ```{include} /full/02_advanced/01_solutions.md
 :start-after: stub_include_start
 :end-before: stub_include_stop
 ```
+
+-->
 
 <div style="text-align: center; margin-top: 8em; margin-bottom: 8em;">
 

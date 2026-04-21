@@ -1,0 +1,26 @@
+#!/usr/bin/env python3
+# FT_66_02_54_56.context_isolation.md
+
+
+def import_proto_kernel(proto_kernel_rel_path):
+    """
+    `protoprimer` entry script boilerplate function to import `proto_kernel`.
+    """
+    import os
+    import importlib.util
+
+    module_spec = importlib.util.spec_from_file_location(
+        "proto_kernel",
+        os.path.join(
+            os.path.dirname(__file__),
+            proto_kernel_rel_path,
+        ),
+    )
+    loaded_proto_kernel = importlib.util.module_from_spec(module_spec)
+    module_spec.loader.exec_module(loaded_proto_kernel)
+    return loaded_proto_kernel
+
+
+if __name__ == "__main__":
+    proto_kernel = import_proto_kernel("./proto_code/proto_kernel.py")
+    proto_kernel.start_app("local_test.cmd_check_context_isolation:custom_main")

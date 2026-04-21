@@ -15,7 +15,6 @@ from protoprimer.primer_kernel import (
     PathName,
     PathType,
     PrimerRuntime,
-    ExecMode,
     ValueName,
 )
 from test_protoprimer.test_fast_slim_max_mocked.test_naming import naming_metadata

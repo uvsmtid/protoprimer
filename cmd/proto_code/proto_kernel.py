@@ -46,6 +46,7 @@ from typing import (
     Any,
     Callable,
     Generic,
+    MutableMapping,
     TypeVar,
 )
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
@@ -1010,12 +1011,15 @@ class ShellType(enum.Enum):
     shell_zsh = "zsh"
 
 
-def remove_protoprimer_env_vars(env_vars: dict[str, str]) -> dict[str, str]:
+def remove_protoprimer_env_vars(env_vars: MutableMapping[str, str]) -> MutableMapping[str, str]:
+    """
+    FT_66_02_54_56.context_isolation.md
+    """
     for env_var in EnvVar:
         env_vars.pop(env_var.value, None)
     return env_vars
-
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
 class ShellDriverBase:
 
     def __init__(
@@ -1035,10 +1039,10 @@ class ShellDriverBase:
 
     def get_type(self) -> ShellType:
         raise NotImplementedError()
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     def get_init_file_basename(self):
         raise NotImplementedError()
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     def get_init_file_abs_path(self):
         return os.path.join(
             os.path.join(
@@ -5335,10 +5339,13 @@ def _start_main(
         if curr_py_exec.value >= StateStride.stride_src_updated.value:
             venv_module = importlib.import_module(module_name)
             selected_main = getattr(venv_module, func_name)
+            if exec_mode == ExecMode.mode_start:
+                remove_protoprimer_env_vars(os.environ)
         elif curr_py_exec.value >= StateStride.stride_deps_updated.value:
+            # TODO: It may not work in instant cases when `protoprimer` is not a dependency.
             # Switch from running `proto_code` to installed `venv` code:
             venv_module = importlib.import_module(f"{ConfConstGeneral.name_protoprimer_package}.{ConfConstGeneral.name_primer_kernel_module}")
-            selected_main = getattr(venv_module, "proto_main")
+            selected_main = getattr(venv_module, proto_main.__name__)
     except ImportError:
         if curr_py_exec.value >= StateStride.stride_src_updated.value:
             raise AssertionError(
