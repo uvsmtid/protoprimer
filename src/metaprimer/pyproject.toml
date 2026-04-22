@@ -4,12 +4,12 @@ requires = ["setuptools>=42"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "neoprimer"
-version = "0.1.1"
+name = "metaprimer"
+version = "0.0.0"
 authors = [
     { name = "uvsmtid", email = "uvsmtid@gmail.com" },
 ]
-description = "TODO"
+description = "bootstrap beyond protoprimer"
 readme = "readme.md"
 # FT_84_11_73_28.supported_python_versions.md:
 requires-python = ">=3.7"
@@ -32,8 +32,8 @@ dependencies = [
 extra = []
 
 [project.urls]
-Homepage = "https://github.com/uvsmtid/neoprimer"
-Repository = "https://github.com/uvsmtid/neoprimer"
+Homepage = "https://github.com/uvsmtid/metaprimer"
+Repository = "https://github.com/uvsmtid/metaprimer"
 
 [tool]
 
@@ -41,4 +41,4 @@ Repository = "https://github.com/uvsmtid/neoprimer"
 where = ["./main"]
 
 [tool.setuptools.package-dir]
-neoprimer = "./main/neoprimer"
+metaprimer = "./main/metaprimer"

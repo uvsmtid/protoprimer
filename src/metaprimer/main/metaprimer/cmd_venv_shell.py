@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 
-from neoprimer.venv_shell import Bootstrapper_state_activated_venv_shell_started
+from metaprimer.venv_shell import Bootstrapper_state_activated_venv_shell_started
 from protoprimer.primer_kernel import (
     proto_main,
     EnvContext,

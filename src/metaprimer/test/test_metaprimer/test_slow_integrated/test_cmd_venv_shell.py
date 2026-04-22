@@ -16,8 +16,8 @@ from local_test.integrated_helper import (
     test_pyproject_src_dir_rel_path,
 )
 from local_test.package_version_verifier import extract_package_version
-from neoprimer import cmd_venv_shell
-from neoprimer.cmd_venv_shell import custom_main
+from metaprimer import cmd_venv_shell
+from metaprimer.cmd_venv_shell import custom_main
 from protoprimer.primer_kernel import (
     ConfConstClient,
     ConfConstEnv,

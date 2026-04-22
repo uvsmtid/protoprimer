@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from neoprimer.conf_renderer import (
+from metaprimer.conf_renderer import (
     AbstractConfigNode,
     AbstractRootNode,
     ConfigBuilderVisitor,

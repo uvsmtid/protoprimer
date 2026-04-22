@@ -34,7 +34,7 @@
             "install_group": "install_main"
         },
         {
-            "build_root_dir_rel_path": "src/neoprimer",
+            "build_root_dir_rel_path": "src/metaprimer",
             "install_extras": [],
             "install_group": "install_main"
         },

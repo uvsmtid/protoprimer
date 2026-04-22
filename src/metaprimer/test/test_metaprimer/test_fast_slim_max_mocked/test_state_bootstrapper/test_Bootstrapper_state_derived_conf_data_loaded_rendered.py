@@ -2,9 +2,9 @@ from unittest.mock import patch
 
 from local_test.mock_verifier import assert_parent_factories_mocked
 from local_test.name_assertion import assert_test_module_name_embeds_str
-from neoprimer import conf_renderer
-from neoprimer.cmd_eval_conf import customize_env_context
-from neoprimer.conf_renderer import (
+from metaprimer import conf_renderer
+from metaprimer.cmd_eval_conf import customize_env_context
+from metaprimer.conf_renderer import (
     Bootstrapper_state_derived_conf_data_loaded_rendered,
     Bootstrapper_state_env_conf_file_data_loaded_rendered,
 )

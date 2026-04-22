@@ -43,7 +43,7 @@ run `pytest` for all directories.
 [local_repo]: ../../src/local_repo
 [local_test]: ../../src/local_test
 [protoprimer]: ../../src/protoprimer
-[neoprimer]: ../../src/neoprimer
+[metaprimer]: ../../src/metaprimer
 
 [src]: ../../src
 [cmd]: ../../cmd

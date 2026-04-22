@@ -85,7 +85,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         for project_name in [
             "local_repo",
             "local_test",
-            "neoprimer",
+            "metaprimer",
             "protoprimer",
         ]:
             project_rel_path = os.path.join(
@@ -175,7 +175,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         for project_name in [
             "local_repo",
             "local_test",
-            "neoprimer",
+            "metaprimer",
             "protoprimer",
         ]:
             project_rel_path = os.path.join(
@@ -265,7 +265,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         for project_name in [
             "local_repo",
             "local_test",
-            "neoprimer",
+            "metaprimer",
             "protoprimer",
         ]:
             project_rel_path = os.path.join(

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 
-from neoprimer.conf_renderer import (
+from metaprimer.conf_renderer import (
     Bootstrapper_state_all_conf_data_rendered,
     Bootstrapper_state_client_conf_file_data_loaded_rendered,
     Bootstrapper_state_derived_conf_data_loaded_rendered,

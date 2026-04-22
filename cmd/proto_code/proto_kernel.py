@@ -52,7 +52,7 @@ from typing import (
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 # The release process ensures that content in this file matches the version below while tagging the release commit
 # (otherwise, if the file comes from a different commit, the version is irrelevant):
-__version__ = "0.11.1"
+__version__ = "0.11.2"
 
 logger: logging.Logger = logging.getLogger()
 
@@ -296,7 +296,7 @@ class PrimerRuntime(enum.Enum):
 
     runtime_proto = "proto"
 
-    runtime_neo = "neo"
+    runtime_meta = "meta"
 
 
 class EntryFunc(enum.Enum):
@@ -1011,7 +1011,7 @@ class ShellType(enum.Enum):
     shell_zsh = "zsh"
 
 
-def remove_protoprimer_env_vars(env_vars: MutableMapping[str, str]) -> MutableMapping[str, str]:
+def remove_protoprimer_env_vars(env_vars: MutableMapping[str, str]) -> None:
     """
     FT_66_02_54_56.context_isolation.md
     """
@@ -1207,9 +1207,11 @@ def _get_shell_driver(
     else:
         raise ValueError(f"env var `{var_shell}` has unknown value [{shell_abs_path}]")
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+    shell_env_vars = os.environ.copy()
+    remove_protoprimer_env_vars(shell_env_vars)
     return shell_driver_type(
         shell_abs_path=shell_abs_path,
-        shell_env_vars=remove_protoprimer_env_vars(os.environ.copy()),
+        shell_env_vars=shell_env_vars,
         cache_dir_abs_path=cache_dir_abs_path,
         activate_venv=activate_venv,
     )
@@ -4164,7 +4166,7 @@ class TargetState(enum.Enum):
     # When all config files loaded:
     target_config_loaded = EnvState.state_venv_driver_inited
 
-    # The final state before switching to `PrimerRuntime.runtime_neo`:
+    # The final state before switching to `PrimerRuntime.runtime_meta`:
     target_proto_bootstrap_completed = EnvState.state_command_executed
 
 
@@ -5247,9 +5249,9 @@ def log_python_context(log_level: int = logging.INFO):
     )
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
-def get_import_error_hint(neo_main_module: str) -> str:
+def get_import_error_hint(meta_main_module: str) -> str:
     # See: UC_78_58_06_54.no_stray_packages.md
-    return f"Is `{neo_main_module}` a (transitive) dependency of any `{ConfConstClient.default_pyproject_toml_basename}` being installed?"
+    return f"Is `{meta_main_module}` a (transitive) dependency of any `{ConfConstClient.default_pyproject_toml_basename}` being installed?"
 
 
 def get_derived_config(proto_kernel_abs_path: str) -> dict:

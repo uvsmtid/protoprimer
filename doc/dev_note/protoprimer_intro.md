@@ -1,5 +1,5 @@
 
-<--
+<!--
 
 TODO: Save it somewhere.
 This is an old `protoprimer` used in the main `readme.md` before the intro on https://protoprimer.readthedocs.io/
@@ -263,7 +263,7 @@ In turn, once bootstrapped, `python` code may springboard other toolchains:
 [local_repo]: ../../src/local_repo
 [local_test]: ../../src/local_test
 [protoprimer]: ../../src/protoprimer
-[neoprimer]: ../../src/neoprimer
+[metaprimer]: ../../src/metaprimer
 
 [src_dir]: ../../src
 [cmd_dir]: ../../cmd
@@ -278,7 +278,7 @@ In turn, once bootstrapped, `python` code may springboard other toolchains:
 [systemd_wiki]: https://en.wikipedia.org/wiki/Systemd
 
 [constraints.txt]: dst/default_env/constraints.txt
-[pyproject.toml]: src/neoprimer/pyproject.toml
+[pyproject.toml]: src/metaprimer/pyproject.toml
 
 [protoprimer_extensions]: #protoprimer-extensions
 [protoprimer_motivation]: #protoprimer-motivation

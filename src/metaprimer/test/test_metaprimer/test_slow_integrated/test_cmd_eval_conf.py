@@ -18,8 +18,8 @@ from local_test.integrated_helper import (
     switch_to_ref_root_abs_path,
     test_pyproject_src_dir_rel_path,
 )
-from neoprimer import cmd_eval_conf
-from neoprimer.cmd_eval_conf import custom_main
+from metaprimer import cmd_eval_conf
+from metaprimer.cmd_eval_conf import custom_main
 from protoprimer.primer_kernel import (
     ConfConstClient,
     ConfConstInput,

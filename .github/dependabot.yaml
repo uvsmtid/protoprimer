@@ -10,7 +10,7 @@ updates:
         directories:
             -   "src/local_repo"
             -   "src/local_test"
-            -   "src/neoprimer"
+            -   "src/metaprimer"
             -   "src/protoprimer"
         # https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file#scheduleinterval
         schedule:

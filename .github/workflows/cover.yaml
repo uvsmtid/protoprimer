@@ -37,7 +37,7 @@ jobs:
 
                 run: |
                     ${{ github.workspace }}/venv/bin/coverage erase         --rcfile=${{ github.workspace }}/gconf/coveragerc.ini
-                    ${{ github.workspace }}/venv/bin/coverage run           --rcfile=${{ github.workspace }}/gconf/coveragerc.ini --module pytest ${{ github.workspace }}/src/neoprimer/test/
+                    ${{ github.workspace }}/venv/bin/coverage run           --rcfile=${{ github.workspace }}/gconf/coveragerc.ini --module pytest ${{ github.workspace }}/src/metaprimer/test/
                     ${{ github.workspace }}/venv/bin/coverage run           --rcfile=${{ github.workspace }}/gconf/coveragerc.ini --module pytest ${{ github.workspace }}/src/protoprimer/test/
                     ${{ github.workspace }}/venv/bin/coverage combine       --rcfile=${{ github.workspace }}/gconf/coveragerc.ini
 

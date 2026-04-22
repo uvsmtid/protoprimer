@@ -113,7 +113,7 @@ In other words, it must become **both** "the chicken **and** the egg".
 
 <!--
 
-TODO: Move those sections into main `readme.md`, itemize them with links to `FC_` docs (`fature_topic`-s).
+TODO: Move those sections into main `readme.md`, itemize them with links to `FC_` docs (`feature_topic`-s).
 
 ## Details
 
