@@ -119,7 +119,7 @@ def create_test_pyproject_toml(
     local_doc_project_dir = protoprimer_project_dir.parent / "local_doc"
     local_repo_project_dir = protoprimer_project_dir.parent / "local_repo"
     local_test_project_dir = protoprimer_project_dir.parent / "local_test"
-    neoprimer_project_dir = protoprimer_project_dir.parent / "neoprimer"
+    metaprimer_project_dir = protoprimer_project_dir.parent / "metaprimer"
 
     pyproject_file_abs_path = project_dir_abs_path / ConfConstClient.default_pyproject_toml_basename
 
@@ -131,7 +131,7 @@ def create_test_pyproject_toml(
                 f"local_doc @ file://{local_doc_project_dir}",
                 f"local_repo @ file://{local_repo_project_dir}",
                 f"local_test @ file://{local_test_project_dir}",
-                f"neoprimer @ file://{neoprimer_project_dir}",
+                f"metaprimer @ file://{metaprimer_project_dir}",
                 f"protoprimer @ file://{protoprimer_project_dir}",
             ]
             + extra_dependencies,
@@ -309,9 +309,9 @@ def create_conf_env_file(
                         ConfField.field_extra_command_args.value: [
                             # This is to avoid picking up a stale build during editable installation.
                             # For example, this:
-                            # ./src/neoprimer/build/
+                            # ./src/metaprimer/build/
                             # instead of this:
-                            # ./src/neoprimer/main/
+                            # ./src/metaprimer/main/
                             "--no-cache-dir",
                         ],
                     },

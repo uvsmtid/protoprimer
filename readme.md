@@ -172,7 +172,7 @@ graph LR;
 [local_repo]: src/local_repo
 [local_test]: src/local_test
 [protoprimer]: src/protoprimer
-[neoprimer]: src/neoprimer
+[metaprimer]: src/metaprimer
 
 [src_dir]: src
 [cmd_dir]: cmd
@@ -187,7 +187,7 @@ graph LR;
 [systemd_wiki]: https://en.wikipedia.org/wiki/Systemd
 
 [constraints.txt]: dst/default_env/constraints.txt
-[pyproject.toml]: src/neoprimer/pyproject.toml
+[pyproject.toml]: src/metaprimer/pyproject.toml
 
 [getting_started]: #protoprimer-getting-started
 

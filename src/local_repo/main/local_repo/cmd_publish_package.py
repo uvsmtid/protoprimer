@@ -81,7 +81,7 @@ def publish_package(
 
 class DistribPackage(enum.Enum):
 
-    package_neoprimer = "neoprimer"
+    package_metaprimer = "metaprimer"
     package_protoprimer = "protoprimer"
     package_dummy_private = "dummy_private"
 
@@ -186,7 +186,7 @@ def _publish_package(
             raise RuntimeError("uncommitted changes")
 
     package_name_to_dir: dict[str, str] = {
-        DistribPackage.package_neoprimer.value: "neoprimer",
+        DistribPackage.package_metaprimer.value: "metaprimer",
         DistribPackage.package_protoprimer.value: "protoprimer",
         DistribPackage.package_dummy_private.value: "dummy_private",
     }
@@ -235,7 +235,7 @@ def _publish_package(
         )
         != 0
     ):
-        if dry_run or package_name == DistribPackage.package_dummy_private.value:
+        if dry_run or package_name == DistribPackage.package_dummy_private.value or is_dev_version:
             logger.warning(f"current HEAD is not in {git_main_remote}/{git_main_branch}")
         else:
             raise RuntimeError(f"current HEAD is not in {git_main_remote}/{git_main_branch}")

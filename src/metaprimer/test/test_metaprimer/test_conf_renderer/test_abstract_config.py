@@ -3,8 +3,8 @@ from __future__ import annotations
 import copy
 
 from local_test.config_node import build_root_node
-from neoprimer import conf_renderer
-from neoprimer.conf_renderer import (
+from metaprimer import conf_renderer
+from metaprimer.conf_renderer import (
     AbstractDictNode,
     AbstractListNode,
     AbstractRootNode,

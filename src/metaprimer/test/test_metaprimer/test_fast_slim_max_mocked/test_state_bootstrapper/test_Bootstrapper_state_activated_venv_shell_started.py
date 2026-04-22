@@ -7,8 +7,8 @@ from unittest.mock import patch
 from local_test.base_test_class import BasePyfakefsTestClass
 from local_test.mock_verifier import assert_parent_factories_mocked
 from local_test.name_assertion import assert_test_module_name_embeds_str
-from neoprimer.cmd_venv_shell import customize_env_context
-from neoprimer.venv_shell import Bootstrapper_state_activated_venv_shell_started
+from metaprimer.cmd_venv_shell import customize_env_context
+from metaprimer.venv_shell import Bootstrapper_state_activated_venv_shell_started
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     Bootstrapper_state_args_parsed,

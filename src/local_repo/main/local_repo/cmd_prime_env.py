@@ -3,7 +3,7 @@ from __future__ import annotations
 import enum
 import logging
 
-from neoprimer.pre_commit import (
+from metaprimer.pre_commit import (
     Bootstrapper_state_pre_commit_configured,
 )
 from protoprimer.primer_kernel import (

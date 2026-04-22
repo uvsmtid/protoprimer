@@ -20,7 +20,7 @@ def custom_main():
         "coverage erase         --rcfile=./gconf/coveragerc.ini",
     )
     get_command_code(
-        "coverage run           --rcfile=./gconf/coveragerc.ini --module pytest ./src/neoprimer/test/",
+        "coverage run           --rcfile=./gconf/coveragerc.ini --module pytest ./src/metaprimer/test/",
     )
     get_command_code(
         "coverage run           --rcfile=./gconf/coveragerc.ini --module pytest ./src/protoprimer/test/",

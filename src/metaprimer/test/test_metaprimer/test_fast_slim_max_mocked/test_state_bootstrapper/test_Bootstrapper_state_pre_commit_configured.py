@@ -8,8 +8,8 @@ from local_test.mock_verifier import (
     assert_parent_factories_mocked,
 )
 from local_test.name_assertion import assert_test_module_name_embeds_str
-from neoprimer import pre_commit
-from neoprimer.pre_commit import (
+from metaprimer import pre_commit
+from metaprimer.pre_commit import (
     Bootstrapper_state_pre_commit_configured,
 )
 from protoprimer import primer_kernel
