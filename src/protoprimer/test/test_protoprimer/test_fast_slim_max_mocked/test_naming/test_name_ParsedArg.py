@@ -68,11 +68,11 @@ class ArgName(enum.Enum):
         ],
     )
 
-    name_exec_mode = ArgMeta(
-        command_arg=ParsedArg.name_exec_mode,
+    name_sub_command = ArgMeta(
+        command_arg=ParsedArg.name_sub_command,
         name_category=NameCategory.category_named_arg_value,
         name_components=[
-            ValueName.value_exec_mode.value,
+            ValueName.value_sub_command.value,
         ],
     )
 

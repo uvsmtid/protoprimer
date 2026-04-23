@@ -76,8 +76,8 @@ def proto_main(configure_env_context: typing.Callable[[], EnvContext] | None = N
         #       Do not call `state_graph.eval_state` directly.
         #       Evaluate state via child state (to check that this is eligible).
         #       But... What is the child state here?
-        state_exec_mode_executed: bool = env_ctx.state_graph.eval_state(TargetState.target_exec_mode_executed.value.name)
-        assert state_exec_mode_executed
+        state_sub_command_executed: bool = env_ctx.state_graph.eval_state(TargetState.target_sub_command_executed.value.name)
+        assert state_sub_command_executed
         atexit.register(lambda: env_ctx.print_exit_line(0))
 
     except subprocess.CalledProcessError as subproc_error:
@@ -220,7 +220,6 @@ class KeyWord(enum.Enum):
     key_id = "id"
     key_state = "state"
     key_args = "args"
-    key_mode = "mode"
     key_stderr = "stderr"
     key_handler = "handler"
     key_data = "data"
@@ -309,10 +308,10 @@ class EntryFunc(enum.Enum):
           make use of this enum.
     """
 
-    # Start via `boot_env` call:
+    # FT_85_17_35_21.boot_env.md
     func_boot_env = "boot_env"
 
-    # Start via `start_app` call:
+    # FT_05_08_64_67.start_app.md
     func_start_app = "start_app"
 
     # A lib function call (e.g. `get_derived_config`):
@@ -322,30 +321,30 @@ class EntryFunc(enum.Enum):
     func_main = "main"
 
 
-class ExecMode(enum.Enum):
+class SubCommand(enum.Enum):
     """
-    Various modes the script can be run in.
+    Various sub commands the script can be run with.
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-    See FT_11_27_29_83.exec_mode.md
+    See FT_11_27_29_83.sub_command.md
     """
 
-    # FT_85_17_35_21.boot_env.md
-    mode_boot = "boot"
+    command_boot = "boot"
 
-    # FT_05_08_64_67.start_app.md
-    mode_start = "start"
+    # TODO: This is not used yet. It should call "some_module:some_main".
+    command_start = "start"
 
     # FT_42_03_79_73.reboot_env.md
     # UC_61_12_90_59.upgrade_venv.md
-    mode_reboot = "reboot"
+    command_reboot = "reboot"
 
     # FT_00_22_19_59.derived_config.md
-    mode_eval = "eval"
+    # FT_19_44_42_19.effective_config.md
+    command_eval = "eval"
 
-    # TODO: TODO_73_71_31_84.exec_mode_check_or_info.md: maybe merge `info` and `check` use cases?
+    # TODO: TODO_73_71_31_84.sub_command_check_or_info.md: maybe merge `info` and `check` use cases?
     #       If we specify which `StateStride` or which `EnvState` to check things for, it might be useful.
     # TODO: implement? It must find its application to check things before `venv`.
-    mode_check = "check"
+    command_check = "check"
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
 class GraphCoordinates:
@@ -359,10 +358,10 @@ class GraphCoordinates:
 
     def __init__(self):
         self.entry_func: EntryFunc | None = None
-        self.exec_mode: ExecMode | None = None
+        self.sub_command: SubCommand | None = None
 
 
-# TODO: TODO_31_76_38_60.exec_mode_for_shell.md: remove "command" (when replaced by `shell_mode` or `run_mode`):
+# TODO: TODO_31_76_38_60.sub_command_for_shell.md: remove "command" (when replaced by `shell_mode` or `run_mode`):
 class CommandAction(enum.Enum):
 
     action_command = "command"
@@ -394,8 +393,8 @@ class EnvVar(enum.Enum):
     See FT_08_92_69_92.env_var.md
     """
 
-    # FT_11_27_29_83.exec_mode.md
-    var_PROTOPRIMER_EXEC_MODE = "PROTOPRIMER_EXEC_MODE"
+    # FT_11_27_29_83.sub_command.md
+    var_PROTOPRIMER_SUB_COMMAND = "PROTOPRIMER_SUB_COMMAND"
 
     # FT_58_74_37_70.boot_vs_start.md
     # Selects the main function to run, for example, "sup_module.sub_module:some_main".
@@ -446,7 +445,7 @@ class ValueName(enum.Enum):
 
     value_do_install = "do_install"
 
-    value_exec_mode = "exec_mode"
+    value_sub_command = "sub_command"
 
     value_final_state = "final_state"
 
@@ -528,7 +527,7 @@ class ParsedArg(enum.Enum):
 
     name_command = f"{KeyWord.key_run.value}_{CommandAction.action_command.value}"
 
-    name_exec_mode = str(ValueName.value_exec_mode.value)
+    name_sub_command = str(ValueName.value_sub_command.value)
 
     name_final_state = str(ValueName.value_final_state.value)
 
@@ -1461,11 +1460,11 @@ def _create_child_argparser(parent_argparsers):
     def _create_boot_parser(sub_command_parsers):
         sub_command_desc = "Bootstrap whatever is missing in the environment."
         parser_boot = sub_command_parsers.add_parser(
-            ExecMode.mode_boot.value,
+            SubCommand.command_boot.value,
             help=sub_command_desc,
             description=sub_command_desc,
         )
-        parser_boot.set_defaults(exec_mode=ExecMode.mode_boot.value)
+        parser_boot.set_defaults(sub_command=SubCommand.command_boot.value)
         parser_boot.add_argument(
             SyntaxArg.arg_e,
             SyntaxArg.arg_env,
@@ -1475,7 +1474,7 @@ def _create_child_argparser(parent_argparsers):
             metavar=ParsedArg.name_selected_env_dir.value,
             help=(
                 f"Path to the env-specific config dir. "
-                f"If specified, `{ExecMode.mode_boot.value}` exec mode creates the symlink to that dir. "
+                f"If specified, `{SubCommand.command_boot.value}` sub command creates the symlink to that dir. "
                 f"If not specified, the existing symlink is reused. "
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
             ),
@@ -1508,29 +1507,29 @@ def _create_child_argparser(parent_argparsers):
     def _create_reset_parser(sub_command_parsers):
         sub_command_desc = "Bootstrap from scratch: re-create `venv`, re-install dependencies, re-pin versions, ..."
         parser_reset = sub_command_parsers.add_parser(
-            ExecMode.mode_reboot.value,
+            SubCommand.command_reboot.value,
             help=sub_command_desc,
             description=sub_command_desc,
         )
-        parser_reset.set_defaults(exec_mode=ExecMode.mode_reboot.value)
+        parser_reset.set_defaults(sub_command=SubCommand.command_reboot.value)
 
     def _create_eval_parser(sub_command_parsers):
         sub_command_desc = "Evaluate effective config (print it on `stdout`)."
         parser_eval = sub_command_parsers.add_parser(
-            ExecMode.mode_eval.value,
+            SubCommand.command_eval.value,
             help=sub_command_desc,
             description=sub_command_desc,
         )
-        parser_eval.set_defaults(exec_mode=ExecMode.mode_eval.value)
+        parser_eval.set_defaults(sub_command=SubCommand.command_eval.value)
 
     def _create_check_parser(sub_command_parsers):
         sub_command_desc = "Check the environment configuration."
         parser_check = sub_command_parsers.add_parser(
-            ExecMode.mode_check.value,
+            SubCommand.command_check.value,
             help=sub_command_desc,
             description=sub_command_desc,
         )
-        parser_check.set_defaults(exec_mode=ExecMode.mode_check.value)
+        parser_check.set_defaults(sub_command=SubCommand.command_check.value)
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     child_argparser = CustomArgumentParser(
         description=(f"The early [{PrimerRuntime.runtime_proto.value}] environment bootstrapper [{KeyWord.key_primer.value}]."),
@@ -1539,10 +1538,10 @@ def _create_child_argparser(parent_argparsers):
     )
 
     child_argparsers = child_argparser.add_subparsers(
-        dest=ParsedArg.name_exec_mode.value,
-        title="Exec modes",
-        description=f"Select one of the following sub-commands (default: `{ExecMode.mode_boot.value}`):",
-        metavar="exec_mode",
+        dest=ParsedArg.name_sub_command.value,
+        title="Sub commands",
+        description=f"Select one of the following sub commands (default: `{SubCommand.command_boot.value}`):",
+        metavar="sub_command",
     )
     child_argparsers.required = False
 
@@ -1550,7 +1549,7 @@ def _create_child_argparser(parent_argparsers):
     _create_reset_parser(child_argparsers)
     _create_eval_parser(child_argparsers)
 
-    # TODO: TODO_73_71_31_84.exec_mode_check_or_info.md: implement
+    # TODO: TODO_73_71_31_84.sub_command_check_or_info.md: implement
     # noinspection PyUnreachableCode
     if False:
         _create_check_parser(child_argparsers)
@@ -1560,12 +1559,12 @@ def _create_child_argparser(parent_argparsers):
 
 def parse_args(remaining_argv=None) -> argparse.Namespace:
     """
-    Parse CLI args by creating parent and child (sub-command) parsers.
+    Parse CLI args by creating parent and child (sub command) parsers.
 
     This function uses a two-phase parsing to allow common options
     which can be placed anywhere:
-    * ... -q boot (option before sub-command `ExecMode.mode_boot`)
-    * ... boot -q (option after sub-command `ExecMode.mode_boot`)
+    * ... -q boot (option before sub command `SubCommand.command_boot`)
+    * ... boot -q (option after sub command `SubCommand.command_boot`)
 
     See also: FT_62_88_55_10.CLI_compatibility.md
     """
@@ -1580,7 +1579,7 @@ def parse_args(remaining_argv=None) -> argparse.Namespace:
         remaining_argv,
     ) = parent_argparser.parse_known_args(remaining_argv)
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-    # Phase 2: parse sub-command args:
+    # Phase 2: parse sub command args:
     child_argparser = _create_child_argparser(
         parent_argparsers=[
             parent_argparser,
@@ -1592,14 +1591,14 @@ def parse_args(remaining_argv=None) -> argparse.Namespace:
         #
     ):
         try:
-            # Try to parse with `ExecMode.mode_boot` as the default sub-command:
+            # Try to parse with `SubCommand.command_boot` as the default sub command:
             parsed_args = child_argparser.parse_args(
-                [ExecMode.mode_boot.value] + remaining_argv,
+                [SubCommand.command_boot.value] + remaining_argv,
                 namespace=argparse.Namespace(**vars(parsed_args)),
             )
         except ValueError:
-            # If that fails, it might be because another sub-command was specified.
-            # In that case, parse without any default sub-command.
+            # If that fails, it might be because another sub command was specified.
+            # In that case, parse without any default sub command.
             try:
                 parsed_args = child_argparser.parse_args(
                     remaining_argv,
@@ -1633,8 +1632,8 @@ def str_to_bool(v: str) -> bool:
 class RunStrategy:
     """
     See related:
-    *   `ExecMode`
-    *   FT_11_27_29_83.exec_mode.md
+    *   `SubCommand`
+    *   FT_11_27_29_83.sub_command.md
 
     TODO: TODO_60_63_68_81.refactor_DAG_builder.md:
           Currently, `RunStrategy` is degenerated into single implementation `ExitCodeReporter`.
@@ -1932,16 +1931,16 @@ class Bootstrapper_state_args_parsed(AbstractCachingStateNode[argparse.Namespace
 
     def _eval_state_once(self) -> ValueType:
         """
-        Parse the args. In case of `EnvVar.var_PROTOPRIMER_EXEC_MODE` == `ExecMode.mode_start`, skip parsing.
+        Parse the args. In case of `EnvVar.var_PROTOPRIMER_SUB_COMMAND` == `SubCommand.command_start`, skip parsing.
         """
         state_args_parsed: argparse.Namespace
-        if os.environ.get(EnvVar.var_PROTOPRIMER_EXEC_MODE.value, None) == ExecMode.mode_start.value:
-            # Pretend there is no args except `ExecMode.mode_start`:
+        if os.environ.get(EnvVar.var_PROTOPRIMER_SUB_COMMAND.value, None) == SubCommand.command_start.value:
+            # Pretend there is no args except `SubCommand.command_start`:
             state_args_parsed = parse_args([])
             setattr(
                 state_args_parsed,
-                ParsedArg.name_exec_mode.value,
-                ExecMode.mode_start.value,
+                ParsedArg.name_sub_command.value,
+                SubCommand.command_start.value,
             )
         else:
             state_args_parsed = parse_args()
@@ -2025,25 +2024,25 @@ class Bootstrapper_state_input_stderr_log_level_eval_finalized(AbstractCachingSt
 
 # noinspection PyPep8Naming
 @trivial_factory
-class Bootstrapper_state_input_exec_mode_arg_loaded(AbstractCachingStateNode[ExecMode]):
+class Bootstrapper_state_input_sub_command_arg_loaded(AbstractCachingStateNode[SubCommand]):
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     _parent_states = staticmethod(
         lambda: [
             EnvState.state_args_parsed.name,
         ]
     )
-    _state_name = staticmethod(lambda: EnvState.state_input_exec_mode_arg_loaded.name)
+    _state_name = staticmethod(lambda: EnvState.state_input_sub_command_arg_loaded.name)
 
     def _eval_state_once(self) -> ValueType:
         state_args_parsed: argparse.Namespace = self.eval_parent_state(EnvState.state_args_parsed.name)
-        state_input_exec_mode_arg_loaded: ExecMode = ExecMode(
+        state_input_sub_command_arg_loaded: SubCommand = SubCommand(
             getattr(
                 state_args_parsed,
-                ParsedArg.name_exec_mode.value,
+                ParsedArg.name_sub_command.value,
             )
         )
-        self.env_ctx.graph_coordinates.exec_mode = state_input_exec_mode_arg_loaded
-        return state_input_exec_mode_arg_loaded
+        self.env_ctx.graph_coordinates.sub_command = state_input_sub_command_arg_loaded
+        return state_input_sub_command_arg_loaded
 
 
 # noinspection PyPep8Naming
@@ -2053,7 +2052,7 @@ class Bootstrapper_state_input_final_state_eval_finalized(AbstractCachingStateNo
     _parent_states = staticmethod(
         lambda: [
             EnvState.state_args_parsed.name,
-            EnvState.state_input_exec_mode_arg_loaded.name,
+            EnvState.state_input_sub_command_arg_loaded.name,
         ]
     )
     _state_name = staticmethod(lambda: EnvState.state_input_final_state_eval_finalized.name)
@@ -2061,13 +2060,13 @@ class Bootstrapper_state_input_final_state_eval_finalized(AbstractCachingStateNo
     def _eval_state_once(self) -> ValueType:
         state_args_parsed: argparse.Namespace = self.eval_parent_state(EnvState.state_args_parsed.name)
 
-        state_input_exec_mode_arg_loaded: ExecMode = self.eval_parent_state(EnvState.state_input_exec_mode_arg_loaded.name)
+        state_input_sub_command_arg_loaded: SubCommand = self.eval_parent_state(EnvState.state_input_sub_command_arg_loaded.name)
 
         state_input_final_state_eval_finalized: str | None
         state_input_final_state_eval_finalized = getattr(
             state_args_parsed,
             ParsedArg.name_final_state.value,
-            # NOTE: The value is only set for `ExecMode.mode_boot`, otherwise, this default is used:
+            # NOTE: The value is only set for `SubCommand.command_boot`, otherwise, this default is used:
             None,
         )
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
@@ -2082,21 +2081,21 @@ class Bootstrapper_state_input_final_state_eval_finalized(AbstractCachingStateNo
 
 # noinspection PyPep8Naming
 @trivial_factory
-class Bootstrapper_state_exec_mode_executed(AbstractCachingStateNode[bool]):
+class Bootstrapper_state_sub_command_executed(AbstractCachingStateNode[bool]):
     """
     This is a special node - it traverses ALL nodes.
 
-    BUT: It does not depend on ALL nodes - instead, it uses an exec mode strategy implementation.
+    BUT: It does not depend on ALL nodes - instead, it uses a sub command strategy implementation.
     """
 
     _parent_states = staticmethod(
         lambda: [
             EnvState.state_input_stderr_log_level_eval_finalized.name,
-            EnvState.state_input_exec_mode_arg_loaded.name,
+            EnvState.state_input_sub_command_arg_loaded.name,
             EnvState.state_input_final_state_eval_finalized.name,
         ]
     )
-    _state_name = staticmethod(lambda: EnvState.state_exec_mode_executed.name)
+    _state_name = staticmethod(lambda: EnvState.state_sub_command_executed.name)
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     def _eval_state_once(self) -> ValueType:
 
@@ -2105,24 +2104,24 @@ class Bootstrapper_state_exec_mode_executed(AbstractCachingStateNode[bool]):
 
         state_input_final_state_eval_finalized: str = self.eval_parent_state(EnvState.state_input_final_state_eval_finalized.name)
 
-        state_input_exec_mode_arg_loaded: ExecMode = self.eval_parent_state(EnvState.state_input_exec_mode_arg_loaded.name)
+        state_input_sub_command_arg_loaded: SubCommand = self.eval_parent_state(EnvState.state_input_sub_command_arg_loaded.name)
 
         state_node: StateNode = self.env_ctx.state_graph.get_state_node(state_input_final_state_eval_finalized)
 
         selected_strategy: RunStrategy
-        if state_input_exec_mode_arg_loaded is None:
-            raise ValueError(f"exec mode is not defined")
-        elif state_input_exec_mode_arg_loaded == ExecMode.mode_boot:
+        if state_input_sub_command_arg_loaded is None:
+            raise ValueError(f"sub command is not defined")
+        elif state_input_sub_command_arg_loaded == SubCommand.command_boot:
             selected_strategy = ExitCodeReporter(self.env_ctx)
-        elif state_input_exec_mode_arg_loaded == ExecMode.mode_start:
+        elif state_input_sub_command_arg_loaded == SubCommand.command_start:
             selected_strategy = ExitCodeReporter(self.env_ctx)
-        elif state_input_exec_mode_arg_loaded == ExecMode.mode_reboot:
+        elif state_input_sub_command_arg_loaded == SubCommand.command_reboot:
             selected_strategy = ExitCodeReporter(self.env_ctx)
-        elif state_input_exec_mode_arg_loaded == ExecMode.mode_eval:
+        elif state_input_sub_command_arg_loaded == SubCommand.command_eval:
             selected_strategy = ExitCodeReporter(self.env_ctx)
             state_node = self.env_ctx.state_graph.get_state_node(EnvState.state_effective_conf_data_printed.name)
         else:
-            raise ValueError(f"cannot handle exec mode [{state_input_exec_mode_arg_loaded}]")
+            raise ValueError(f"cannot handle sub command [{state_input_sub_command_arg_loaded}]")
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
         selected_strategy.execute_strategy(state_node)
 
@@ -2170,7 +2169,7 @@ class Bootstrapper_state_stride_py_arbitrary_reached(AbstractCachingStateNode[St
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     _parent_states = staticmethod(
         lambda: [
-            EnvState.state_input_exec_mode_arg_loaded.name,
+            EnvState.state_input_sub_command_arg_loaded.name,
             EnvState.state_input_start_id_var_loaded.name,
         ]
     )
@@ -2180,19 +2179,19 @@ class Bootstrapper_state_stride_py_arbitrary_reached(AbstractCachingStateNode[St
 
         state_stride_py_arbitrary_reached: StateStride = StateStride.stride_py_arbitrary
 
-        state_input_exec_mode_arg_loaded: ExecMode = self.eval_parent_state(EnvState.state_input_exec_mode_arg_loaded.name)
+        state_input_sub_command_arg_loaded: SubCommand = self.eval_parent_state(EnvState.state_input_sub_command_arg_loaded.name)
 
         if self.env_ctx.has_stride_reached(next_stride=state_stride_py_arbitrary_reached):
             return self.env_ctx.set_max_stride(state_stride_py_arbitrary_reached)
 
         if (
             (os.environ.get(EnvVar.var_PROTOPRIMER_PROTO_CODE.value, None) is not None)
-            and state_input_exec_mode_arg_loaded == ExecMode.mode_start
+            and state_input_sub_command_arg_loaded == SubCommand.command_start
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
         ):
             # The only reason for `EnvState.state_stride_py_arbitrary_reached`
             # is to obtain `proto_code` abs path in `EnvState.state_proto_code_file_abs_path_inited`.
-            # Skip `python` switching for `ExecMode.mode_start` as the env var already set:
+            # Skip `python` switching for `SubCommand.command_start` as the env var already set:
             return self.env_ctx.set_max_stride(state_stride_py_arbitrary_reached)
 
         state_input_start_id_var_loaded: str = self.eval_parent_state(EnvState.state_input_start_id_var_loaded.name)
@@ -2239,7 +2238,7 @@ class Bootstrapper_state_stride_py_arbitrary_reached(AbstractCachingStateNode[St
 class Bootstrapper_state_proto_code_file_abs_path_inited(AbstractCachingStateNode[str]):
     _parent_states = staticmethod(
         lambda: [
-            EnvState.state_input_exec_mode_arg_loaded.name,
+            EnvState.state_input_sub_command_arg_loaded.name,
             EnvState.state_input_proto_code_file_abs_path_var_loaded.name,
             EnvState.state_stride_py_arbitrary_reached.name,
         ]
@@ -2250,7 +2249,7 @@ class Bootstrapper_state_proto_code_file_abs_path_inited(AbstractCachingStateNod
 
         state_stride_py_arbitrary_reached: StateStride = self.eval_parent_state(EnvState.state_stride_py_arbitrary_reached.name)
 
-        state_input_exec_mode_arg_loaded: ExecMode = self.eval_parent_state(EnvState.state_input_exec_mode_arg_loaded.name)
+        state_input_sub_command_arg_loaded: SubCommand = self.eval_parent_state(EnvState.state_input_sub_command_arg_loaded.name)
 
         state_input_proto_code_file_abs_path_var_loaded: str | None = self.eval_parent_state(EnvState.state_input_proto_code_file_abs_path_var_loaded.name)
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
@@ -2265,7 +2264,7 @@ class Bootstrapper_state_proto_code_file_abs_path_inited(AbstractCachingStateNod
         else:
             log_python_context()
             if os.environ.get(EnvVar.var_PROTOPRIMER_MOCKED_RESTART.value, None) is None:
-                if state_input_exec_mode_arg_loaded != ExecMode.mode_start:
+                if state_input_sub_command_arg_loaded != SubCommand.command_start:
                     if self.env_ctx.get_stride().value == StateStride.stride_py_arbitrary.value:
                         state_proto_code_file_abs_path_inited = os.path.abspath(__file__)
                     else:
@@ -2283,7 +2282,7 @@ class Bootstrapper_state_proto_code_file_abs_path_inited(AbstractCachingStateNod
                                 if is_venv():
                                     logger.warning(f"`sys.executable` [{sys.executable}] for [{StateStride.stride_py_required.name}] evaluated from config should ideally be outside `venv`")
                 else:
-                    # `ExecMode.mode_start` relies only on the `EnvVar.var_PROTOPRIMER_PROTO_CODE` env var:
+                    # `SubCommand.command_start` relies only on the `EnvVar.var_PROTOPRIMER_PROTO_CODE` env var:
                     assert state_input_proto_code_file_abs_path_var_loaded is not None
                     state_proto_code_file_abs_path_inited = state_input_proto_code_file_abs_path_var_loaded
             else:
@@ -2352,7 +2351,7 @@ class Bootstrapper_state_primer_conf_file_data_loaded(AbstractCachingStateNode[d
     _parent_states = staticmethod(
         lambda: [
             EnvState.state_input_stderr_log_level_eval_finalized.name,
-            EnvState.state_input_exec_mode_arg_loaded.name,
+            EnvState.state_input_sub_command_arg_loaded.name,
             EnvState.state_proto_code_file_abs_path_inited.name,
             EnvState.state_primer_conf_file_abs_path_inited.name,
         ]
@@ -2429,7 +2428,7 @@ class Bootstrapper_state_ref_root_dir_abs_path_inited(AbstractCachingStateNode[s
         state_ref_root_dir_abs_path_inited: str
         if field_client_dir_rel_path is None:
             warn_once_at_state_stride(
-                f"Field `{ConfField.field_ref_root_dir_rel_path.value}` is [{field_client_dir_rel_path}] - use [{ExecMode.mode_eval.value}] sub-command for description.",
+                f"Field `{ConfField.field_ref_root_dir_rel_path.value}` is [{field_client_dir_rel_path}] - use [{SubCommand.command_eval.value}] sub command for description.",
                 self.env_ctx.get_stride(),
             )
             state_ref_root_dir_abs_path_inited = proto_code_dir_abs_path
@@ -2514,7 +2513,7 @@ class Bootstrapper_state_client_conf_file_data_loaded(AbstractCachingStateNode[d
     _parent_states = staticmethod(
         lambda: [
             EnvState.state_input_stderr_log_level_eval_finalized.name,
-            EnvState.state_input_exec_mode_arg_loaded.name,
+            EnvState.state_input_sub_command_arg_loaded.name,
             EnvState.state_global_conf_file_abs_path_inited.name,
         ]
     )
@@ -2595,7 +2594,7 @@ class Bootstrapper_state_selected_env_dir_rel_path_inited(AbstractCachingStateNo
         env_conf_dir_any_path: str | None = getattr(
             state_args_parsed,
             ParsedArg.name_selected_env_dir.value,
-            # NOTE: The value is only set for `ExecMode.mode_boot`, otherwise, this default is used:
+            # NOTE: The value is only set for `SubCommand.command_boot`, otherwise, this default is used:
             None,
         )
         if env_conf_dir_any_path is None:
@@ -2604,7 +2603,7 @@ class Bootstrapper_state_selected_env_dir_rel_path_inited(AbstractCachingStateNo
             field_default_env_dir_rel_path: str | None = state_client_conf_file_data_loaded.get(ConfField.field_default_env_dir_rel_path.value, None)
             if field_default_env_dir_rel_path is None:
                 warn_once_at_state_stride(
-                    f"Field `{ConfField.field_default_env_dir_rel_path.value}` is [{field_default_env_dir_rel_path}] - use [{ExecMode.mode_eval.value}] sub-command for description.",
+                    f"Field `{ConfField.field_default_env_dir_rel_path.value}` is [{field_default_env_dir_rel_path}] - use [{SubCommand.command_eval.value}] sub command for description.",
                     self.env_ctx.get_stride(),
                 )
                 return None
@@ -2651,7 +2650,7 @@ class Bootstrapper_state_local_conf_symlink_abs_path_inited(AbstractCachingState
 
     _parent_states = staticmethod(
         lambda: [
-            EnvState.state_input_exec_mode_arg_loaded.name,
+            EnvState.state_input_sub_command_arg_loaded.name,
             EnvState.state_ref_root_dir_abs_path_inited.name,
             EnvState.state_client_conf_file_data_loaded.name,
             EnvState.state_selected_env_dir_rel_path_inited.name,
@@ -2661,7 +2660,7 @@ class Bootstrapper_state_local_conf_symlink_abs_path_inited(AbstractCachingState
 
     def _eval_state_once(self) -> ValueType:
 
-        state_input_exec_mode_arg_loaded: ExecMode = self.eval_parent_state(EnvState.state_input_exec_mode_arg_loaded.name)
+        state_input_sub_command_arg_loaded: SubCommand = self.eval_parent_state(EnvState.state_input_sub_command_arg_loaded.name)
 
         state_ref_root_dir_abs_path_inited: str = self.eval_parent_state(EnvState.state_ref_root_dir_abs_path_inited.name)
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
@@ -2692,7 +2691,7 @@ class Bootstrapper_state_local_conf_symlink_abs_path_inited(AbstractCachingState
         if os.path.exists(state_local_conf_symlink_abs_path_inited):
             if os.path.islink(state_local_conf_symlink_abs_path_inited):
                 if os.path.isdir(state_local_conf_symlink_abs_path_inited):
-                    if state_input_exec_mode_arg_loaded == ExecMode.mode_start:
+                    if state_input_sub_command_arg_loaded == SubCommand.command_start:
                         # Nothing to do:
                         pass
                     else:
@@ -2753,7 +2752,7 @@ class Bootstrapper_state_env_conf_file_data_loaded(AbstractCachingStateNode[dict
     _parent_states = staticmethod(
         lambda: [
             EnvState.state_input_stderr_log_level_eval_finalized.name,
-            EnvState.state_input_exec_mode_arg_loaded.name,
+            EnvState.state_input_sub_command_arg_loaded.name,
             EnvState.state_local_conf_file_abs_path_inited.name,
         ]
     )
@@ -3157,7 +3156,7 @@ class Bootstrapper_state_derived_conf_data_loaded(AbstractCachingStateNode[dict]
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
         # TODO: Is this needed given the list of dependencies in `derived_data_env_states`?
         parent_states = [
-            EnvState.state_input_exec_mode_arg_loaded.name,
+            EnvState.state_input_sub_command_arg_loaded.name,
             EnvState.state_primer_conf_file_data_loaded.name,
             EnvState.state_client_conf_file_data_loaded.name,
             EnvState.state_env_conf_file_data_loaded.name,
@@ -3251,7 +3250,7 @@ class Bootstrapper_state_default_file_log_handler_configured(AbstractCachingStat
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 # noinspection PyPep8Naming
-class Bootstrapper_state_stride_py_required_reached_not_mode_start(AbstractCachingStateNode[StateStride]):
+class Bootstrapper_state_stride_py_required_reached_not_command_start(AbstractCachingStateNode[StateStride]):
     """
     Recursively runs this script inside the `python` interpreter required by the client.
 
@@ -3261,7 +3260,7 @@ class Bootstrapper_state_stride_py_required_reached_not_mode_start(AbstractCachi
     _parent_states = staticmethod(
         lambda: [
             EnvState.state_args_parsed.name,
-            EnvState.state_input_exec_mode_arg_loaded.name,
+            EnvState.state_input_sub_command_arg_loaded.name,
             EnvState.state_input_start_id_var_loaded.name,
             EnvState.state_proto_code_file_abs_path_inited.name,
             EnvState.state_local_conf_file_abs_path_inited.name,
@@ -3280,7 +3279,7 @@ class Bootstrapper_state_stride_py_required_reached_not_mode_start(AbstractCachi
         if self.env_ctx.has_stride_reached(next_stride=state_stride_py_required_reached):
             return self.env_ctx.set_max_stride(state_stride_py_required_reached)
 
-        state_input_exec_mode_arg_loaded: ExecMode = self.eval_parent_state(EnvState.state_input_exec_mode_arg_loaded.name)
+        state_input_sub_command_arg_loaded: SubCommand = self.eval_parent_state(EnvState.state_input_sub_command_arg_loaded.name)
 
         # TODO: Unused, but plugged in to form complete DAG: consider adding intermediate state to plug it in:
         state_default_file_log_handler_configured = self.eval_parent_state(EnvState.state_default_file_log_handler_configured.name)
@@ -3327,11 +3326,11 @@ class Bootstrapper_state_stride_py_required_reached_not_mode_start(AbstractCachi
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
 # noinspection PyPep8Naming
-class Bootstrapper_state_stride_py_required_reached_mode_start(AbstractCachingStateNode[StateStride]):
+class Bootstrapper_state_stride_py_required_reached_command_start(AbstractCachingStateNode[StateStride]):
     _parent_states = staticmethod(
         lambda: [
             EnvState.state_args_parsed.name,
-            EnvState.state_input_exec_mode_arg_loaded.name,
+            EnvState.state_input_sub_command_arg_loaded.name,
             EnvState.state_input_start_id_var_loaded.name,
             EnvState.state_proto_code_file_abs_path_inited.name,
             EnvState.state_local_conf_file_abs_path_inited.name,
@@ -3357,15 +3356,15 @@ class Bootstrapper_state_stride_py_required_reached_mode_start(AbstractCachingSt
 class Factory_state_stride_py_required_reached(NodeFactory[StateStride]):
 
     def create_state_node(self) -> StateNode[ValueType]:
-        assert self.env_ctx.graph_coordinates.exec_mode is not None
+        assert self.env_ctx.graph_coordinates.sub_command is not None
 
         # The only reason for `EnvState.state_stride_py_required_reached`
         # is to use the required `python` to create a `venv`.
-        if self.env_ctx.graph_coordinates.exec_mode == ExecMode.mode_start:
-            # Skip it as `venv` is supposed to be ready in `ExecMode.mode_start`:
-            return Bootstrapper_state_stride_py_required_reached_mode_start(self.env_ctx)
+        if self.env_ctx.graph_coordinates.sub_command == SubCommand.command_start:
+            # Skip it as `venv` is supposed to be ready in `SubCommand.command_start`:
+            return Bootstrapper_state_stride_py_required_reached_command_start(self.env_ctx)
         else:
-            return Bootstrapper_state_stride_py_required_reached_not_mode_start(self.env_ctx)
+            return Bootstrapper_state_stride_py_required_reached_not_command_start(self.env_ctx)
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 # noinspection PyPep8Naming
@@ -3378,7 +3377,7 @@ class Bootstrapper_state_reboot_triggered(AbstractCachingStateNode[bool]):
     _parent_states = staticmethod(
         lambda: [
             EnvState.state_args_parsed.name,
-            EnvState.state_input_exec_mode_arg_loaded.name,
+            EnvState.state_input_sub_command_arg_loaded.name,
             EnvState.state_input_start_id_var_loaded.name,
             EnvState.state_proto_code_file_abs_path_inited.name,
             EnvState.state_local_conf_symlink_abs_path_inited.name,
@@ -3393,19 +3392,19 @@ class Bootstrapper_state_reboot_triggered(AbstractCachingStateNode[bool]):
 
         state_args_parsed: argparse.Namespace = self.eval_parent_state(EnvState.state_args_parsed.name)
 
-        state_input_exec_mode_arg_loaded: ExecMode = self.eval_parent_state(EnvState.state_input_exec_mode_arg_loaded.name)
+        state_input_sub_command_arg_loaded: SubCommand = self.eval_parent_state(EnvState.state_input_sub_command_arg_loaded.name)
 
-        if state_input_exec_mode_arg_loaded == ExecMode.mode_start:
+        if state_input_sub_command_arg_loaded == SubCommand.command_start:
             # The only reason for `EnvState.state_reboot_triggered`
             # is to destroy `venv` to recreate it later.
-            # Skip it as `venv` is supposed to be ready in `ExecMode.mode_start`:
+            # Skip it as `venv` is supposed to be ready in `SubCommand.command_start`:
             return False
 
         state_input_start_id_var_loaded: str = self.eval_parent_state(EnvState.state_input_start_id_var_loaded.name)
 
         state_args_parsed: argparse.Namespace = self.eval_parent_state(EnvState.state_args_parsed.name)
 
-        reboot_env: bool = state_args_parsed.exec_mode == ExecMode.mode_reboot.value
+        reboot_env: bool = state_args_parsed.sub_command == SubCommand.command_reboot.value
 
         state_stride_py_required_reached: StateStride = self.eval_parent_state(EnvState.state_stride_py_required_reached.name)
         assert self.env_ctx.get_stride().value >= StateStride.stride_py_required.value
@@ -3452,7 +3451,7 @@ class Bootstrapper_state_reboot_triggered(AbstractCachingStateNode[bool]):
 class Bootstrapper_state_venv_driver_prepared(AbstractCachingStateNode[VenvDriverBase]):
     _parent_states = staticmethod(
         lambda: [
-            EnvState.state_input_exec_mode_arg_loaded.name,
+            EnvState.state_input_sub_command_arg_loaded.name,
             EnvState.state_required_python_version_inited.name,
             EnvState.state_selected_python_file_abs_path_inited.name,
             EnvState.state_local_venv_dir_abs_path_inited.name,
@@ -3465,12 +3464,12 @@ class Bootstrapper_state_venv_driver_prepared(AbstractCachingStateNode[VenvDrive
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     def _eval_state_once(self) -> ValueType:
 
-        state_input_exec_mode_arg_loaded: ExecMode = self.eval_parent_state(EnvState.state_input_exec_mode_arg_loaded.name)
+        state_input_sub_command_arg_loaded: SubCommand = self.eval_parent_state(EnvState.state_input_sub_command_arg_loaded.name)
 
-        if state_input_exec_mode_arg_loaded == ExecMode.mode_start:
+        if state_input_sub_command_arg_loaded == SubCommand.command_start:
             # The only reason for `EnvState.state_venv_driver_prepared`
             # is to prepare `VenvDriverBase` to create `venv`.
-            # Skip it as `venv` is supposed to be ready in `ExecMode.mode_start`:
+            # Skip it as `venv` is supposed to be ready in `SubCommand.command_start`:
             return VenvDriverBase()
 
         state_required_python_version_inited: str = self.eval_parent_state(EnvState.state_required_python_version_inited.name)
@@ -3515,7 +3514,7 @@ class Bootstrapper_state_stride_py_venv_reached(AbstractCachingStateNode[StateSt
     _parent_states = staticmethod(
         lambda: [
             EnvState.state_args_parsed.name,
-            EnvState.state_input_exec_mode_arg_loaded.name,
+            EnvState.state_input_sub_command_arg_loaded.name,
             EnvState.state_input_start_id_var_loaded.name,
             EnvState.state_proto_code_file_abs_path_inited.name,
             EnvState.state_local_conf_file_abs_path_inited.name,
@@ -3534,12 +3533,12 @@ class Bootstrapper_state_stride_py_venv_reached(AbstractCachingStateNode[StateSt
         if self.env_ctx.has_stride_reached(next_stride=state_stride_py_venv_reached):
             return self.env_ctx.set_max_stride(state_stride_py_venv_reached)
 
-        state_input_exec_mode_arg_loaded: ExecMode = self.eval_parent_state(EnvState.state_input_exec_mode_arg_loaded.name)
+        state_input_sub_command_arg_loaded: SubCommand = self.eval_parent_state(EnvState.state_input_sub_command_arg_loaded.name)
 
-        if state_input_exec_mode_arg_loaded == ExecMode.mode_start:
+        if state_input_sub_command_arg_loaded == SubCommand.command_start:
             # The only reason for `EnvState.state_stride_py_venv_reached`
             # is to create a `venv`.
-            # Skip it as `venv` is supposed to be ready in `ExecMode.mode_start`:
+            # Skip it as `venv` is supposed to be ready in `SubCommand.command_start`:
             return self.env_ctx.set_max_stride(state_stride_py_venv_reached)
 
         state_input_start_id_var_loaded: str = self.eval_parent_state(EnvState.state_input_start_id_var_loaded.name)
@@ -3567,7 +3566,7 @@ class Bootstrapper_state_stride_py_venv_reached(AbstractCachingStateNode[StateSt
             raise AssertionError(f"Current `python` [{path_to_curr_python}] must be outside of the `venv` [{state_local_venv_dir_abs_path_inited}].")
 
         if os.environ.get(EnvVar.var_PROTOPRIMER_MOCKED_RESTART.value, None) is None:
-            if state_input_exec_mode_arg_loaded == ExecMode.mode_start:
+            if state_input_sub_command_arg_loaded == SubCommand.command_start:
                 # Skip required `python` validation because we do not need it to create `venv`:
                 pass
             else:
@@ -3579,19 +3578,19 @@ class Bootstrapper_state_stride_py_venv_reached(AbstractCachingStateNode[StateSt
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
         assert self.env_ctx.get_stride().value <= StateStride.stride_py_required.value
         if not os.path.exists(state_local_venv_dir_abs_path_inited):
-            if state_input_exec_mode_arg_loaded == ExecMode.mode_start:
-                # The `venv` is supposed to be ready in `ExecMode.mode_start`:
-                raise AssertionError(f"`venv` [{state_local_venv_dir_abs_path_inited}] is supposed to be ready in `ExecMode` [{state_input_exec_mode_arg_loaded.name}] execute `ExecMode` [{ExecMode.mode_boot.name}] to prepare it.")
+            if state_input_sub_command_arg_loaded == SubCommand.command_start:
+                # The `venv` is supposed to be ready in `SubCommand.command_start`:
+                raise AssertionError(f"`venv` [{state_local_venv_dir_abs_path_inited}] is supposed to be ready in `SubCommand` [{state_input_sub_command_arg_loaded.name}] execute `SubCommand` [{SubCommand.command_boot.name}] to prepare it.")
             else:
                 state_venv_driver_prepared.create_venv(state_local_venv_dir_abs_path_inited)
         else:
             logger.info(f"reusing existing `venv` [{state_local_venv_dir_abs_path_inited}]")
-            if state_input_exec_mode_arg_loaded == ExecMode.mode_start:
+            if state_input_sub_command_arg_loaded == SubCommand.command_start:
                 # Skip `venv` type validation:
                 pass
             else:
                 if not state_venv_driver_prepared.is_mine_venv(state_local_venv_dir_abs_path_inited):
-                    raise AssertionError(f"`venv` [{state_local_venv_dir_abs_path_inited}] was not created by this driver [{state_venv_driver_prepared.get_type().name}] retry with [{ExecMode.mode_reboot.value}] sub-command.")
+                    raise AssertionError(f"`venv` [{state_local_venv_dir_abs_path_inited}] was not created by this driver [{state_venv_driver_prepared.get_type().name}] retry with [{SubCommand.command_reboot.value}] sub command.")
 
         return switch_python(
             curr_python_path=state_selected_python_file_abs_path_inited,
@@ -3610,7 +3609,7 @@ class Bootstrapper_state_protoprimer_package_installed(AbstractCachingStateNode[
         lambda: [
             EnvState.state_input_do_install_var_loaded.name,
             EnvState.state_args_parsed.name,
-            EnvState.state_input_exec_mode_arg_loaded.name,
+            EnvState.state_input_sub_command_arg_loaded.name,
             EnvState.state_ref_root_dir_abs_path_inited.name,
             EnvState.state_local_conf_symlink_abs_path_inited.name,
             EnvState.state_project_descriptors_inited.name,
@@ -3625,12 +3624,12 @@ class Bootstrapper_state_protoprimer_package_installed(AbstractCachingStateNode[
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
         state_args_parsed: argparse.Namespace = self.eval_parent_state(EnvState.state_args_parsed.name)
 
-        state_input_exec_mode_arg_loaded: ExecMode = self.eval_parent_state(EnvState.state_input_exec_mode_arg_loaded.name)
+        state_input_sub_command_arg_loaded: SubCommand = self.eval_parent_state(EnvState.state_input_sub_command_arg_loaded.name)
 
-        if state_input_exec_mode_arg_loaded == ExecMode.mode_start:
+        if state_input_sub_command_arg_loaded == SubCommand.command_start:
             # The only reason for `EnvState.state_protoprimer_package_installed`
             # is to install dependencies into `venv`.
-            # Skip it as `venv` is supposed to be ready in `ExecMode.mode_start`:
+            # Skip it as `venv` is supposed to be ready in `SubCommand.command_start`:
             return False
 
         state_input_do_install_var_loaded: bool = self.eval_parent_state(EnvState.state_input_do_install_var_loaded.name)
@@ -3648,7 +3647,7 @@ class Bootstrapper_state_protoprimer_package_installed(AbstractCachingStateNode[
 
         state_venv_driver_prepared: VenvDriverBase = self.eval_parent_state(EnvState.state_venv_driver_prepared.name)
 
-        reboot_env: bool = state_args_parsed.exec_mode == ExecMode.mode_reboot.value
+        reboot_env: bool = state_args_parsed.sub_command == SubCommand.command_reboot.value
 
         do_install: bool = (
             state_stride_py_venv_reached.value == StateStride.stride_py_venv.value
@@ -3751,7 +3750,7 @@ class Bootstrapper_state_version_constraints_generated(AbstractCachingStateNode[
 
     _parent_states = staticmethod(
         lambda: [
-            EnvState.state_input_exec_mode_arg_loaded.name,
+            EnvState.state_input_sub_command_arg_loaded.name,
             EnvState.state_local_conf_symlink_abs_path_inited.name,
             EnvState.state_venv_driver_prepared.name,
             EnvState.state_protoprimer_package_installed.name,
@@ -3761,12 +3760,12 @@ class Bootstrapper_state_version_constraints_generated(AbstractCachingStateNode[
 
     def _eval_state_once(self) -> ValueType:
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-        state_input_exec_mode_arg_loaded: ExecMode = self.eval_parent_state(EnvState.state_input_exec_mode_arg_loaded.name)
+        state_input_sub_command_arg_loaded: SubCommand = self.eval_parent_state(EnvState.state_input_sub_command_arg_loaded.name)
 
-        if state_input_exec_mode_arg_loaded == ExecMode.mode_start:
+        if state_input_sub_command_arg_loaded == SubCommand.command_start:
             # The only reason for `EnvState.state_version_constraints_generated`
             # is to re-generate the `constraints.txt` file based on `venv`.
-            # Skip it as `venv` is supposed to be ready in `ExecMode.mode_start`:
+            # Skip it as `venv` is supposed to be ready in `SubCommand.command_start`:
             return False
 
         state_protoprimer_package_installed: bool = self.eval_parent_state(EnvState.state_protoprimer_package_installed.name)
@@ -3796,7 +3795,7 @@ class Bootstrapper_state_stride_deps_updated_reached(AbstractCachingStateNode[St
     _parent_states = staticmethod(
         lambda: [
             EnvState.state_args_parsed.name,
-            EnvState.state_input_exec_mode_arg_loaded.name,
+            EnvState.state_input_sub_command_arg_loaded.name,
             EnvState.state_input_start_id_var_loaded.name,
             EnvState.state_proto_code_file_abs_path_inited.name,
             EnvState.state_local_venv_dir_abs_path_inited.name,
@@ -3812,12 +3811,12 @@ class Bootstrapper_state_stride_deps_updated_reached(AbstractCachingStateNode[St
         if self.env_ctx.has_stride_reached(next_stride=state_stride_deps_updated_reached):
             return self.env_ctx.set_max_stride(state_stride_deps_updated_reached)
 
-        state_input_exec_mode_arg_loaded: ExecMode = self.eval_parent_state(EnvState.state_input_exec_mode_arg_loaded.name)
+        state_input_sub_command_arg_loaded: SubCommand = self.eval_parent_state(EnvState.state_input_sub_command_arg_loaded.name)
 
-        if state_input_exec_mode_arg_loaded == ExecMode.mode_start:
+        if state_input_sub_command_arg_loaded == SubCommand.command_start:
             # The only reason for `EnvState.state_stride_deps_updated_reached`
             # is to make `venv` dependencies effective.
-            # Skip it as `venv` is supposed to be ready in `ExecMode.mode_start`:
+            # Skip it as `venv` is supposed to be ready in `SubCommand.command_start`:
             return self.env_ctx.set_max_stride(state_stride_deps_updated_reached)
 
         state_proto_code_file_abs_path_inited: str = self.eval_parent_state(EnvState.state_proto_code_file_abs_path_inited.name)
@@ -3853,7 +3852,7 @@ class Bootstrapper_state_proto_code_updated(AbstractCachingStateNode[bool]):
 
     _parent_states = staticmethod(
         lambda: [
-            EnvState.state_input_exec_mode_arg_loaded.name,
+            EnvState.state_input_sub_command_arg_loaded.name,
             EnvState.state_proto_code_file_abs_path_inited.name,
             EnvState.state_stride_deps_updated_reached.name,
         ]
@@ -3869,11 +3868,11 @@ class Bootstrapper_state_proto_code_updated(AbstractCachingStateNode[bool]):
             # Update only after package installation, otherwise, nothing to do:
             return False
 
-        state_input_exec_mode_arg_loaded: ExecMode = self.eval_parent_state(EnvState.state_input_exec_mode_arg_loaded.name)
+        state_input_sub_command_arg_loaded: SubCommand = self.eval_parent_state(EnvState.state_input_sub_command_arg_loaded.name)
 
-        if state_input_exec_mode_arg_loaded == ExecMode.mode_start:
+        if state_input_sub_command_arg_loaded == SubCommand.command_start:
             # The only reason for `EnvState.state_proto_code_updated`
-            # is to update sources, but that has to be done in `ExecMode.mode_boot`.
+            # is to update sources, but that has to be done in `SubCommand.command_boot`.
             # Skip:
             return False
 
@@ -3936,7 +3935,7 @@ class Bootstrapper_state_stride_src_updated_reached(AbstractCachingStateNode[Sta
     _parent_states = staticmethod(
         lambda: [
             EnvState.state_args_parsed.name,
-            EnvState.state_input_exec_mode_arg_loaded.name,
+            EnvState.state_input_sub_command_arg_loaded.name,
             EnvState.state_input_start_id_var_loaded.name,
             EnvState.state_proto_code_file_abs_path_inited.name,
             EnvState.state_local_venv_dir_abs_path_inited.name,
@@ -3949,7 +3948,7 @@ class Bootstrapper_state_stride_src_updated_reached(AbstractCachingStateNode[Sta
 
         state_stride_src_updated_reached: StateStride = StateStride.stride_src_updated
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-        state_input_exec_mode_arg_loaded: ExecMode = self.eval_parent_state(EnvState.state_input_exec_mode_arg_loaded.name)
+        state_input_sub_command_arg_loaded: SubCommand = self.eval_parent_state(EnvState.state_input_sub_command_arg_loaded.name)
 
         if self.env_ctx.has_stride_reached(next_stride=state_stride_src_updated_reached):
             return self.env_ctx.set_max_stride(state_stride_src_updated_reached)
@@ -4052,12 +4051,12 @@ class EnvState(enum.Enum):
 
     state_input_stderr_log_level_eval_finalized = Bootstrapper_state_input_stderr_log_level_eval_finalized
 
-    state_input_exec_mode_arg_loaded = Bootstrapper_state_input_exec_mode_arg_loaded
+    state_input_sub_command_arg_loaded = Bootstrapper_state_input_sub_command_arg_loaded
 
     state_input_final_state_eval_finalized = Bootstrapper_state_input_final_state_eval_finalized
 
     # Special case: triggers everything:
-    state_exec_mode_executed = Bootstrapper_state_exec_mode_executed
+    state_sub_command_executed = Bootstrapper_state_sub_command_executed
 
     state_input_start_id_var_loaded = Bootstrapper_state_input_start_id_var_loaded
 
@@ -4159,8 +4158,8 @@ class TargetState(enum.Enum):
     # Used for `EnvState.state_status_line_printed` to report exit code:
     target_stderr_log_handler = EnvState.state_default_stderr_log_handler_configured
 
-    # A special state that triggers execution in the specific `ExecMode`:
-    target_exec_mode_executed = EnvState.state_exec_mode_executed
+    # A special state that triggers execution in the specific `SubCommand`:
+    target_sub_command_executed = EnvState.state_sub_command_executed
 
     # TODO: This should be `state_derived_conf_data_loaded`:
     # When all config files loaded:
@@ -4716,7 +4715,7 @@ def rename_to_moved_state_name(state_name: str) -> str:
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
 def missing_conf_file_message(file_abs_path: str) -> str:
-    return f"File [{file_abs_path}] does not exist - use [{ExecMode.mode_eval.value}] sub-command for description."
+    return f"File [{file_abs_path}] does not exist - use [{SubCommand.command_eval.value}] sub command for description."
 
 
 def warn_once_at_state_stride(
@@ -4732,13 +4731,13 @@ def can_print_effective_config(state_node: StateNode) -> bool:
     See: FT_19_44_42_19.effective_config.md
     """
 
-    state_input_exec_mode_arg_loaded: ExecMode = state_node.eval_parent_state(EnvState.state_input_exec_mode_arg_loaded.name)
+    state_input_sub_command_arg_loaded: SubCommand = state_node.eval_parent_state(EnvState.state_input_sub_command_arg_loaded.name)
 
     return (
         state_node.env_ctx.get_stride().value
         # `StateStride.stride_py_arbitrary` ensures that the path to `proto_code` is outside `venv`:
         == StateStride.stride_py_arbitrary.value
-        and state_input_exec_mode_arg_loaded == ExecMode.mode_eval
+        and state_input_sub_command_arg_loaded == SubCommand.command_eval
     )
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
@@ -5282,7 +5281,7 @@ def boot_env(venv_main_func: str):
     (which only starts the specified `venv_main_func` assuming `venv` has already been bootstrapped).
     """
     _start_main(
-        ExecMode.mode_boot,
+        SubCommand.command_boot,
         venv_main_func,
     )
 
@@ -5297,13 +5296,13 @@ def start_app(venv_main_func: str):
     (via a script which calls `boot_env` function).
     """
     _start_main(
-        ExecMode.mode_start,
+        SubCommand.command_start,
         venv_main_func,
     )
 
 
 def _start_main(
-    exec_mode: ExecMode,
+    sub_command: SubCommand,
     # Same format as in `EnvVar.var_PROTOPRIMER_MAIN_FUNC`:
     venv_main_func: str,
 ) -> None:
@@ -5312,7 +5311,7 @@ def _start_main(
     #       (outside venv, outside local packages, outside global packages):
     os.environ[EnvVar.var_PROTOPRIMER_PROTO_CODE.value] = os.path.abspath(__file__)
 
-    os.environ[EnvVar.var_PROTOPRIMER_EXEC_MODE.value] = exec_mode.value
+    os.environ[EnvVar.var_PROTOPRIMER_SUB_COMMAND.value] = sub_command.value
     os.environ[EnvVar.var_PROTOPRIMER_MAIN_FUNC.value] = venv_main_func
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     module_name: str
@@ -5341,7 +5340,7 @@ def _start_main(
         if curr_py_exec.value >= StateStride.stride_src_updated.value:
             venv_module = importlib.import_module(module_name)
             selected_main = getattr(venv_module, func_name)
-            if exec_mode == ExecMode.mode_start:
+            if sub_command == SubCommand.command_start:
                 remove_protoprimer_env_vars(os.environ)
         elif curr_py_exec.value >= StateStride.stride_deps_updated.value:
             # TODO: It may not work in instant cases when `protoprimer` is not a dependency.

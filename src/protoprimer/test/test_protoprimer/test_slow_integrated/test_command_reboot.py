@@ -20,12 +20,12 @@ from protoprimer.primer_kernel import (
     ConfConstGeneral,
     ConfConstInput,
     ConfConstPrimer,
-    ExecMode,
+    SubCommand,
     SyntaxArg,
 )
 
 
-def test_mode_reboot(tmp_path: pathlib.Path):
+def test_command_reboot(tmp_path: pathlib.Path):
 
     # given:
 
@@ -84,7 +84,7 @@ def test_mode_reboot(tmp_path: pathlib.Path):
     run_primer_main(
         [
             str(proto_kernel_abs_path),
-            ExecMode.mode_boot.value,
+            SubCommand.command_boot.value,
             SyntaxArg.arg_v,
             SyntaxArg.arg_v,
         ]
@@ -105,7 +105,7 @@ def test_mode_reboot(tmp_path: pathlib.Path):
     run_primer_main(
         [
             str(proto_kernel_abs_path),
-            ExecMode.mode_reboot.value,
+            SubCommand.command_reboot.value,
             SyntaxArg.arg_v,
             SyntaxArg.arg_v,
         ]

@@ -9,7 +9,7 @@ from local_repo.graph_printer import (
 from protoprimer.primer_kernel import (
     EnvContext,
     EnvState,
-    ExecMode,
+    SubCommand,
     StateGraph,
     StateNode,
     TargetState,
@@ -26,7 +26,7 @@ def custom_main():
     #       After Phase 2, this code should not exists.
     #       Instead arg_parser should obtain `GraphCoordinates`
     #       to print the required portion of the graph.
-    env_ctx.graph_coordinates.exec_mode = ExecMode.mode_eval
+    env_ctx.graph_coordinates.sub_command = SubCommand.command_eval
 
     env_ctx.final_state = TargetState.target_proto_bootstrap_completed.value.name
 

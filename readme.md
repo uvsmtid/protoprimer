@@ -88,13 +88,13 @@ config:
 ---
 graph LR;
 
-    install_link["**1 x install:**"]
-    github_web["<br>from github.com<br>`protoprimer` repo"]
+    install_link["<b>1 x install:</b>"]
+    github_web["<br>from github.com<br>`protoprimer`<br>repo"]
 
-    bootstrap_link["**N x bootstrap:**"];
-    pypi_web["<br>from pypi.org<br>`protoprimer` package"]
+    bootstrap_link["<b>N x bootstrap:</b>"];
+    pypi_web["<br>from pypi.org<br>`protoprimer`<br>package"]
 
-    client_repo["client repo<br>with<br>**own copy**<br>of<br>`proto_kernel.py`"];
+    client_repo["client repo<br>with<br><b>own copy</b><br>of<br>`proto_kernel.py`"];
 
     install_link ~~~ github_web;
     github_web --manual copy--> client_repo;

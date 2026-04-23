@@ -1,5 +1,5 @@
 from local_test.name_assertion import assert_test_module_name_embeds_str
-from protoprimer.primer_kernel import ExecMode
+from protoprimer.primer_kernel import SubCommand
 from protoprimer.proto_generator import generate_entry_script_content
 
 
@@ -17,7 +17,7 @@ def test_generate_entry_script_content_no_env_vars():
     # when:
 
     generated_content = generate_entry_script_content(
-        ExecMode.mode_boot.value,
+        SubCommand.command_boot.value,
         "/dummy/path/proto_kernel.py",
         "/dummy/path/entry.py",
         module_name,
@@ -40,7 +40,7 @@ def test_generate_entry_script_content_with_env_vars():
     # when:
 
     generated_content = generate_entry_script_content(
-        ExecMode.mode_boot.value,
+        SubCommand.command_boot.value,
         "/dummy/path/proto_kernel.py",
         "/dummy/path/entry.py",
         module_name,

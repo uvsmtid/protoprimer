@@ -38,9 +38,9 @@ def test_relationship():
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_cache_dir_abs_path_inited.__name__}.create_state_node")
 @patch("protoprimer.primer_kernel.Bootstrapper_required_python_version_inited.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_selected_python_file_abs_path_inited.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_sub_command_arg_loaded.__name__}.create_state_node")
 def test_pip_driver_inited(
-    mock_input_exec_mode_arg_loaded,
+    mock_input_sub_command_arg_loaded,
     mock_state_selected_python_file_abs_path_inited,
     mock_state_required_python_version_inited,
     mock_state_local_cache_dir_abs_path_inited,
@@ -77,9 +77,9 @@ def test_pip_driver_inited(
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_cache_dir_abs_path_inited.__name__}.create_state_node")
 @patch("protoprimer.primer_kernel.Bootstrapper_required_python_version_inited.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_selected_python_file_abs_path_inited.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_sub_command_arg_loaded.__name__}.create_state_node")
 def test_uv_driver_inited_when_not_installed(
-    mock_input_exec_mode_arg_loaded,
+    mock_input_sub_command_arg_loaded,
     mock_state_selected_python_file_abs_path_inited,
     mock_state_required_python_version_inited,
     mock_state_local_cache_dir_abs_path_inited,
@@ -122,9 +122,9 @@ def test_uv_driver_inited_when_not_installed(
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_cache_dir_abs_path_inited.__name__}.create_state_node")
 @patch("protoprimer.primer_kernel.Bootstrapper_required_python_version_inited.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_selected_python_file_abs_path_inited.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_sub_command_arg_loaded.__name__}.create_state_node")
 def test_uv_driver_inited_when_already_installed(
-    mock_input_exec_mode_arg_loaded,
+    mock_input_sub_command_arg_loaded,
     mock_state_selected_python_file_abs_path_inited,
     mock_state_required_python_version_inited,
     mock_state_local_cache_dir_abs_path_inited,
@@ -164,9 +164,9 @@ def test_uv_driver_inited_when_already_installed(
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_cache_dir_abs_path_inited.__name__}.create_state_node")
 @patch("protoprimer.primer_kernel.Bootstrapper_required_python_version_inited.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_selected_python_file_abs_path_inited.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_sub_command_arg_loaded.__name__}.create_state_node")
 def test_unsupported_driver(
-    mock_input_exec_mode_arg_loaded,
+    mock_input_sub_command_arg_loaded,
     mock_state_selected_python_file_abs_path_inited,
     mock_state_required_python_version_inited,
     mock_state_local_cache_dir_abs_path_inited,

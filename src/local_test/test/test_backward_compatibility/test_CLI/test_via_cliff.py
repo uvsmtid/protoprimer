@@ -237,5 +237,5 @@ def test_default_subcommand():
 
     # then:
 
-    assert parsed_args.exec_mode == "boot"
+    assert parsed_args.sub_command == "boot"
     assert parsed_args.stderr_log_level_quiet == 1

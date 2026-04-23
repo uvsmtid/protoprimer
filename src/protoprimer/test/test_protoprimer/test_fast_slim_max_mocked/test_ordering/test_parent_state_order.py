@@ -5,7 +5,7 @@ import pytest
 from protoprimer.primer_kernel import (
     EnvContext,
     EnvState,
-    ExecMode,
+    SubCommand,
     EntryFunc,
     StateNode,
 )
@@ -25,13 +25,13 @@ class TestParentStateOrdering:
     It also helps to keep line history consistent with ordering.
     """
 
-    @pytest.mark.parametrize("exec_mode", list(ExecMode))
+    @pytest.mark.parametrize("sub_command", list(SubCommand))
     @pytest.mark.parametrize("entry_func", list(EntryFunc))
     # noinspection PyPep8Naming
-    def test_EnvState_parent_order(self, exec_mode: ExecMode, entry_func: EntryFunc) -> None:
+    def test_EnvState_parent_order(self, sub_command: SubCommand, entry_func: EntryFunc) -> None:
         # given:
         env_ctx = EnvContext()
-        env_ctx.graph_coordinates.exec_mode = exec_mode
+        env_ctx.graph_coordinates.sub_command = sub_command
         env_ctx.graph_coordinates.entry_func = entry_func
 
         state_graph_instance = env_ctx.state_graph

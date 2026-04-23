@@ -14,7 +14,7 @@ from protoprimer.primer_kernel import (
     ConfConstGeneral,
     EnvContext,
     EnvState,
-    ExecMode,
+    SubCommand,
     StateStride,
 )
 
@@ -32,12 +32,12 @@ class ThisTestClass(BasePyfakefsTestClass):
 
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_stride_deps_updated_reached.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_sub_command_arg_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{EnvContext.__name__}.{EnvContext.get_stride.__name__}")
     def test_state_proto_code_updated(
         self,
         mock_get_stride,
-        mock_state_input_exec_mode_arg_loaded,
+        mock_state_input_sub_command_arg_loaded,
         mock_state_stride_deps_updated_reached,
         mock_state_proto_code_file_abs_path_inited,
     ):
@@ -71,7 +71,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_stride_deps_updated_reached.return_value.eval_own_state.return_value = StateStride.stride_deps_updated
 
         mock_state_proto_code_file_abs_path_inited.return_value.eval_own_state.return_value = proto_code_abs_file_path
-        mock_state_input_exec_mode_arg_loaded.return_value.eval_own_state.return_value = ExecMode.mode_boot
+        mock_state_input_sub_command_arg_loaded.return_value.eval_own_state.return_value = SubCommand.command_boot
 
         # when:
 
@@ -96,10 +96,10 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_stride_deps_updated_reached.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{EnvContext.__name__}.{EnvContext.get_stride.__name__}")
-    @patch(f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_sub_command_arg_loaded.__name__}.create_state_node")
     def test_import_error_when_protoprimer_is_missing(
         self,
-        mock_state_input_exec_mode_arg_loaded,
+        mock_state_input_sub_command_arg_loaded,
         mock_get_stride,
         mock_state_stride_deps_updated_reached,
         mock_state_proto_code_file_abs_path_inited,
@@ -115,7 +115,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         fake_path = "/fake/path"
         self.fs.create_file(fake_path)
         mock_state_proto_code_file_abs_path_inited.return_value.eval_own_state.return_value = fake_path
-        mock_state_input_exec_mode_arg_loaded.return_value.eval_own_state.return_value = ExecMode.mode_boot
+        mock_state_input_sub_command_arg_loaded.return_value.eval_own_state.return_value = SubCommand.command_boot
 
         # when:
         with patch.dict("sys.modules", {"protoprimer": None}):

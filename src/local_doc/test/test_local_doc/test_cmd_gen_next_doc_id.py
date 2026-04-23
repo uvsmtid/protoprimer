@@ -139,7 +139,7 @@ def test_generate_next_id_user_scenario(mock_choice: MagicMock) -> None:
         "FT_00_22_19_59.derived_config.md",
         "FT_02_89_37_65.shebang_line.md",
         "FT_08_92_69_92.env_var.md",
-        "FT_11_27_29_83.exec_mode.md",
+        "FT_11_27_29_83.sub_command.md",
         "FT_14_52_73_23.primer_runtime.md",
         "FT_22_11_94_65.bootstrap_precondition.md",
         "FT_23_37_64_44.global_vs_local.md",

@@ -17,7 +17,7 @@ from protoprimer.primer_kernel import (
     ConfConstClient,
     ConfConstInput,
     ConfConstPrimer,
-    ExecMode,
+    SubCommand,
     SyntaxArg,
 )
 
@@ -117,7 +117,7 @@ def test_boot_env_with_env_selection_default_to_special(tmp_path: pathlib.Path):
             str(proto_kernel_abs_path),
             SyntaxArg.arg_v,
             SyntaxArg.arg_v,
-            ExecMode.mode_boot.value,
+            SubCommand.command_boot.value,
             SyntaxArg.arg_env,
             special_env_dir_name,
         ]
@@ -202,7 +202,7 @@ def test_boot_env_with_env_selection_special_to_default(tmp_path: pathlib.Path):
             str(proto_kernel_abs_path),
             SyntaxArg.arg_v,
             SyntaxArg.arg_v,
-            ExecMode.mode_boot.value,
+            SubCommand.command_boot.value,
             SyntaxArg.arg_env,
             special_env_dir_name,
         ]
@@ -314,7 +314,7 @@ def test_boot_env_with_symlink_to_env_special_but_config_to_env_common(
             str(proto_kernel_abs_path),
             SyntaxArg.arg_v,
             SyntaxArg.arg_v,
-            ExecMode.mode_boot.value,
+            SubCommand.command_boot.value,
             SyntaxArg.arg_env,
             special_env_dir_name,
         ]

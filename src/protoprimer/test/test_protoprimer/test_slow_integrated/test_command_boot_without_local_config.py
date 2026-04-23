@@ -15,18 +15,18 @@ from local_test.name_assertion import (
 )
 from protoprimer.primer_kernel import (
     ConfConstClient,
-    ExecMode,
+    SubCommand,
     SyntaxArg,
     TopDir,
 )
 
 
 def test_relationship():
-    assert_test_module_name_embeds_str(ExecMode.mode_boot.value)
+    assert_test_module_name_embeds_str(SubCommand.command_boot.value)
 
 
 @requires_max_python
-def test_mode_boot_without_local_config(tmp_path: Path):
+def test_command_boot_without_local_config(tmp_path: Path):
     """
     Make sure bootstrap works with all defaults (from global config) when the local config file is missing.
     """

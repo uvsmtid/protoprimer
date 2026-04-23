@@ -15,7 +15,7 @@ from protoprimer.primer_kernel import (
     start_app,
     boot_env,
     EnvVar,
-    ExecMode,
+    SubCommand,
     StateStride,
 )
 
@@ -36,7 +36,7 @@ class TestStartMain:
     @patch.dict(os.environ, {}, clear=True)
     def test_invalid_main_func_format(self):
         with pytest.raises(ValueError):
-            _start_main(ExecMode.mode_boot, "invalid_format")
+            _start_main(SubCommand.command_boot, "invalid_format")
 
     @patch.dict(
         os.environ,
@@ -51,7 +51,7 @@ class TestStartMain:
         self.mock_import_module.return_value = mock_module
 
         # when
-        _start_main(ExecMode.mode_boot, "my_module:my_func")
+        _start_main(SubCommand.command_boot, "my_module:my_func")
 
         # then
         self.mock_import_module.assert_called_once_with("my_module")
@@ -71,7 +71,7 @@ class TestStartMain:
         self.mock_import_module.return_value = mock_module
 
         # when
-        _start_main(ExecMode.mode_boot, "my_module:my_func")
+        _start_main(SubCommand.command_boot, "my_module:my_func")
 
         # then
         self.mock_import_module.assert_called_once_with("protoprimer.primer_kernel")
@@ -89,7 +89,7 @@ class TestStartMain:
 
         # when/then
         with pytest.raises(AssertionError):
-            _start_main(ExecMode.mode_boot, "my_module:my_func")
+            _start_main(SubCommand.command_boot, "my_module:my_func")
 
     @patch.dict(
         os.environ,
@@ -101,7 +101,7 @@ class TestStartMain:
         self.mock_import_module.side_effect = ImportError
 
         # when
-        _start_main(ExecMode.mode_boot, "my_module:my_func")
+        _start_main(SubCommand.command_boot, "my_module:my_func")
 
         # then
         self.mock_proto_main.assert_called_once()
@@ -113,19 +113,19 @@ class TestStartMain:
     )
     def test_default_case(self):
         # when
-        _start_main(ExecMode.mode_boot, "my_module:my_func")
+        _start_main(SubCommand.command_boot, "my_module:my_func")
 
         # then
         self.mock_import_module.assert_not_called()
         self.mock_proto_main.assert_called_once()
 
     @patch.dict(os.environ, {}, clear=True)
-    def test_exec_mode_and_main_func_env_vars_set(self):
+    def test_sub_command_and_main_func_env_vars_set(self):
         # when
-        _start_main(ExecMode.mode_start, "my_module:my_func")
+        _start_main(SubCommand.command_start, "my_module:my_func")
 
         # then
-        assert os.environ[EnvVar.var_PROTOPRIMER_EXEC_MODE.value] == ExecMode.mode_start.value
+        assert os.environ[EnvVar.var_PROTOPRIMER_SUB_COMMAND.value] == SubCommand.command_start.value
         assert os.environ[EnvVar.var_PROTOPRIMER_MAIN_FUNC.value] == "my_module:my_func"
         self.mock_proto_main.assert_called_once()
 
@@ -146,7 +146,7 @@ class TestBootEnvAndStartApp:
         boot_env(main_func)
 
         # then
-        assert os.environ[EnvVar.var_PROTOPRIMER_EXEC_MODE.value] == ExecMode.mode_boot.value
+        assert os.environ[EnvVar.var_PROTOPRIMER_SUB_COMMAND.value] == SubCommand.command_boot.value
         assert os.environ[EnvVar.var_PROTOPRIMER_MAIN_FUNC.value] == main_func
         self.mock_proto_main.assert_called_once()
         self.mock_import_module.assert_not_called()  # _start_main calls proto_main by default if stride is not high enough
@@ -160,7 +160,7 @@ class TestBootEnvAndStartApp:
         start_app(main_func)
 
         # then
-        assert os.environ[EnvVar.var_PROTOPRIMER_EXEC_MODE.value] == ExecMode.mode_start.value
+        assert os.environ[EnvVar.var_PROTOPRIMER_SUB_COMMAND.value] == SubCommand.command_start.value
         assert os.environ[EnvVar.var_PROTOPRIMER_MAIN_FUNC.value] == main_func
         self.mock_proto_main.assert_called_once()
         self.mock_import_module.assert_not_called()  # _start_main calls proto_main by default if stride is not high enough

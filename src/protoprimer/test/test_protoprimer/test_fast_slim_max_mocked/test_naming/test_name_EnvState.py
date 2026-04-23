@@ -10,7 +10,7 @@ from protoprimer.primer_kernel import (
     ConfConstGeneral,
     ConfLeap,
     EnvState,
-    ExecMode,
+    SubCommand,
     FilesystemObject,
     KeyWord,
     PathName,
@@ -147,13 +147,13 @@ class StateName(enum.Enum):
         ],
     )
 
-    state_input_exec_mode_arg_loaded = StateMeta(
-        env_state=EnvState.state_input_exec_mode_arg_loaded,
+    state_input_sub_command_arg_loaded = StateMeta(
+        env_state=EnvState.state_input_sub_command_arg_loaded,
         name_category=NameCategory.category_named_value,
         name_components=[
             KeyWord.key_state.value,
             ConfLeap.leap_input.value,
-            ValueName.value_exec_mode.value,
+            ValueName.value_sub_command.value,
             ValueSource.value_arg.value,
             CompletedAction.action_loaded.value,
         ],
@@ -171,12 +171,12 @@ class StateName(enum.Enum):
         ],
     )
 
-    state_exec_mode_executed = StateMeta(
-        env_state=EnvState.state_exec_mode_executed,
+    state_sub_command_executed = StateMeta(
+        env_state=EnvState.state_sub_command_executed,
         name_category=NameCategory.category_state_mutation,
         name_components=[
             KeyWord.key_state.value,
-            ValueName.value_exec_mode.value,
+            ValueName.value_sub_command.value,
             KeyWord.key_executed.value,
         ],
     )
@@ -504,7 +504,7 @@ class StateName(enum.Enum):
         name_category=NameCategory.category_state_mutation,
         name_components=[
             KeyWord.key_state.value,
-            ExecMode.mode_reboot.value,
+            SubCommand.command_reboot.value,
             KeyWord.key_triggered.value,
         ],
     )

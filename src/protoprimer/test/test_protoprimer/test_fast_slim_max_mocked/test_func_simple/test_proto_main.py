@@ -40,7 +40,7 @@ def test_main_success(
     mock_ensure_min_python_version.assert_called_once()
     mock_env_context.assert_called_once()
     mock_env_ctx_instance.state_graph.eval_state.assert_called_once_with(
-        TargetState.target_exec_mode_executed.value.name,
+        TargetState.target_sub_command_executed.value.name,
     )
     mock_atexit_register.assert_called_once()
 
@@ -66,7 +66,7 @@ def test_main_assertion_error(
     mock_ensure_min_python_version.assert_called_once()
     mock_env_context.assert_called_once()
     mock_env_ctx_instance.state_graph.eval_state.assert_called_once_with(
-        TargetState.target_exec_mode_executed.value.name,
+        TargetState.target_sub_command_executed.value.name,
     )
     mock_atexit_register.assert_called_once()
 
@@ -92,7 +92,7 @@ def test_main_system_exit(
     mock_ensure_min_python_version.assert_called_once()
     mock_env_context.assert_called_once()
     mock_env_ctx_instance.state_graph.eval_state.assert_called_once_with(
-        TargetState.target_exec_mode_executed.value.name,
+        TargetState.target_sub_command_executed.value.name,
     )
     mock_atexit_register.assert_called_once()
 
@@ -118,7 +118,7 @@ def test_main_generic_exception(
     mock_ensure_min_python_version.assert_called_once()
     mock_env_context.assert_called_once()
     mock_env_ctx_instance.state_graph.eval_state.assert_called_once_with(
-        TargetState.target_exec_mode_executed.value.name,
+        TargetState.target_sub_command_executed.value.name,
     )
     mock_atexit_register.assert_called_once()
 
@@ -142,7 +142,7 @@ def test_main_with_configure_env_context(
     mock_ensure_min_python_version.assert_called_once()
     mock_configure_env_context.assert_called_once()
     mock_env_ctx_instance.state_graph.eval_state.assert_called_once_with(
-        TargetState.target_exec_mode_executed.value.name,
+        TargetState.target_sub_command_executed.value.name,
     )
     mock_atexit_register.assert_called_once()
 

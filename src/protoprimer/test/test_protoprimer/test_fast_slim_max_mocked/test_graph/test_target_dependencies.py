@@ -3,7 +3,7 @@ from __future__ import annotations
 from protoprimer.primer_kernel import (
     EnvContext,
     EnvState,
-    ExecMode,
+    SubCommand,
     TargetState,
 )
 from test_protoprimer.test_fast_slim_max_mocked.misc_tools.graph_utils import (
@@ -17,11 +17,11 @@ class TestTargetDependencies:
     """
 
     # These are not dependencies of `TargetState.target_proto_bootstrap_completed`,
-    # but they are dependencies of `TargetState.target_exec_mode_executed`.
-    some_state_exec_mode_executed_dependencies = [
-        EnvState.state_input_exec_mode_arg_loaded.name,
+    # but they are dependencies of `TargetState.target_sub_command_executed`.
+    some_state_sub_command_executed_dependencies = [
+        EnvState.state_input_sub_command_arg_loaded.name,
         EnvState.state_input_final_state_eval_finalized.name,
-        EnvState.state_exec_mode_executed.name,
+        EnvState.state_sub_command_executed.name,
     ]
 
     def test_all_env_states_are_dependencies_of_target_proto_bootstrap_completed(
@@ -30,7 +30,7 @@ class TestTargetDependencies:
         # given:
 
         env_context_instance = EnvContext()
-        env_context_instance.graph_coordinates.exec_mode = ExecMode.mode_boot
+        env_context_instance.graph_coordinates.sub_command = SubCommand.command_boot
         state_graph_instance = env_context_instance.state_graph
         final_state_name = EnvState.state_command_executed.name
 
@@ -48,7 +48,7 @@ class TestTargetDependencies:
         all_env_state_names = {env_state.name for env_state in EnvState}
         missing_dependencies = all_env_state_names - all_dependencies
 
-        allowed_missing_dependencies = set(self.some_state_exec_mode_executed_dependencies)
+        allowed_missing_dependencies = set(self.some_state_sub_command_executed_dependencies)
         allowed_missing_dependencies.add(EnvState.state_derived_conf_data_loaded.name)
         allowed_missing_dependencies.add(EnvState.state_effective_conf_data_printed.name)
 
@@ -63,15 +63,15 @@ class TestTargetDependencies:
                 #
             )
 
-    def test_dependencies_of_state_exec_mode_executed(
+    def test_dependencies_of_state_sub_command_executed(
         self,
     ):
         # given:
 
         env_context_instance = EnvContext()
-        env_context_instance.graph_coordinates.exec_mode = ExecMode.mode_boot
+        env_context_instance.graph_coordinates.sub_command = SubCommand.command_boot
         state_graph_instance = env_context_instance.state_graph
-        final_state_name = TargetState.target_exec_mode_executed.value.name
+        final_state_name = TargetState.target_sub_command_executed.value.name
 
         # when:
 
@@ -86,7 +86,7 @@ class TestTargetDependencies:
 
         # another set which is supposed to be equal:
         all_dependencies_with_extra = set(all_dependencies_only)
-        all_dependencies_with_extra.update(self.some_state_exec_mode_executed_dependencies)
+        all_dependencies_with_extra.update(self.some_state_sub_command_executed_dependencies)
 
         # then:
 
