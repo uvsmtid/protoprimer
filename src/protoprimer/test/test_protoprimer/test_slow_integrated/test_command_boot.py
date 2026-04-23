@@ -19,23 +19,23 @@ from protoprimer.primer_kernel import (
     ConfConstInput,
     ConfConstPrimer,
     ConfDst,
-    ExecMode,
+    SubCommand,
     SyntaxArg,
 )
 
 
 def test_relationship():
-    assert_test_module_name_embeds_str(ExecMode.mode_boot.value)
+    assert_test_module_name_embeds_str(SubCommand.command_boot.value)
 
 
-def test_mode_boot(tmp_path: Path):
+def test_command_boot(tmp_path: Path):
     """
     This test runs `proto_code` directly (rather than importing it via `entry_script`).
 
     It uses `create_max_layout` (see FT_59_95_81_63.env_layout.md).
     """
 
-    assert_test_func_name_embeds_str(ExecMode.mode_boot.value)
+    assert_test_func_name_embeds_str(SubCommand.command_boot.value)
 
     # given:
 
@@ -47,7 +47,7 @@ def test_mode_boot(tmp_path: Path):
 
     # when:
 
-    # TODO: Variate boot mode tests for cases when different combinations of fields are missing.
+    # TODO: Variate boot command tests for cases when different combinations of fields are missing.
     run_primer_main(
         [
             str(proto_kernel_abs_path),
@@ -76,11 +76,11 @@ def test_mode_boot(tmp_path: Path):
     assert os.path.isfile(conf_env_file)
 
     # when:
-    # re-run in eval mode - it should not fail:
+    # re-run in eval command - it should not fail:
 
     run_primer_main(
         [
             str(proto_kernel_abs_path),
-            ExecMode.mode_eval.value,
+            SubCommand.command_eval.value,
         ]
     )

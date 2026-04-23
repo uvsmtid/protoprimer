@@ -5,7 +5,7 @@ import pytest
 from protoprimer.primer_kernel import (
     EnvContext,
     EnvState,
-    ExecMode,
+    SubCommand,
     EntryFunc,
     StateNode,
 )
@@ -24,8 +24,8 @@ def _report_violations(
 class TestEnvStateOrdering:
 
     @pytest.mark.parametrize(
-        "exec_mode",
-        list(ExecMode),
+        "sub_command",
+        list(SubCommand),
     )
     @pytest.mark.parametrize(
         "entry_func",
@@ -33,11 +33,11 @@ class TestEnvStateOrdering:
     )
     def test_env_state_topological_sort(
         self,
-        exec_mode: ExecMode,
+        sub_command: SubCommand,
         entry_func: EntryFunc,
     ) -> None:
         self.env_ctx = EnvContext()
-        self.env_ctx.graph_coordinates.exec_mode = exec_mode
+        self.env_ctx.graph_coordinates.sub_command = sub_command
         self.env_ctx.graph_coordinates.entry_func = entry_func
 
         state_graph_instance = self.env_ctx.state_graph
@@ -69,8 +69,8 @@ class TestEnvStateOrdering:
         _report_violations(violations)
 
     @pytest.mark.parametrize(
-        "exec_mode",
-        list(ExecMode),
+        "sub_command",
+        list(SubCommand),
     )
     @pytest.mark.parametrize(
         "entry_func",
@@ -78,11 +78,11 @@ class TestEnvStateOrdering:
     )
     def test_bootstrapper_class_definition_order(
         self,
-        exec_mode: ExecMode,
+        sub_command: SubCommand,
         entry_func: EntryFunc,
     ) -> None:
         self.env_ctx = EnvContext()
-        self.env_ctx.graph_coordinates.exec_mode = exec_mode
+        self.env_ctx.graph_coordinates.sub_command = sub_command
         self.env_ctx.graph_coordinates.entry_func = entry_func
 
         state_graph_instance = self.env_ctx.state_graph

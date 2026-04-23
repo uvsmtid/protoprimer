@@ -26,7 +26,7 @@ from protoprimer.primer_kernel import (
     ConfConstPrimer,
     EnvState,
     EnvVar,
-    ExecMode,
+    SubCommand,
     import_proto_module,
 )
 from protoprimer.proto_generator import generate_entry_script_content
@@ -82,7 +82,7 @@ def test_eval_conf_returns_derived_config(tmp_path: pathlib.Path):
 
     eval_conf_script_abs_path = ref_root_abs_path / "eval_conf"
     eval_conf_script_content = generate_entry_script_content(
-        ExecMode.mode_boot.value,
+        SubCommand.command_boot.value,
         str(proto_kernel_abs_path),
         str(eval_conf_script_abs_path),
         f"{cmd_eval_conf.__name__}",

@@ -12,7 +12,7 @@ from local_test.integrated_helper import (
 )
 from protoprimer.primer_kernel import (
     ConfDst,
-    ExecMode,
+    SubCommand,
     SyntaxArg,
     TopDir,
 )
@@ -67,11 +67,11 @@ def test_instant_scenario(tmp_path: Path):
     assert os.path.exists(ref_root_abs_path / TopDir.dir_venv.value)
 
     # when:
-    # re-run in eval mode - it should not fail:
+    # re-run in eval command - it should not fail:
 
     run_primer_main(
         [
             str(proto_kernel_abs_path),
-            ExecMode.mode_eval.value,
+            SubCommand.command_eval.value,
         ]
     )

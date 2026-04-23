@@ -14,7 +14,7 @@ from metaprimer.conf_renderer import (
 )
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
-    Bootstrapper_state_input_exec_mode_arg_loaded,
+    Bootstrapper_state_input_sub_command_arg_loaded,
     Bootstrapper_state_input_stderr_log_level_eval_finalized,
     Bootstrapper_state_local_conf_file_abs_path_inited,
     EnvState,
@@ -31,13 +31,13 @@ def test_relationship():
 
 
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_stderr_log_level_eval_finalized.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_sub_command_arg_loaded.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_file_abs_path_inited.__name__}.create_state_node")
 @patch(f"{conf_renderer.__name__}.{Bootstrapper_state_client_conf_file_data_loaded_rendered.__name__}.create_state_node")
 def test_conf_file_exists(
     mock_factory_client_conf_file_data_loaded_rendered,
     mock_factory_local_conf_file_abs_path_inited,
-    mock_factory_input_exec_mode_arg_loaded,
+    mock_factory_input_sub_command_arg_loaded,
     mock_factory_input_stderr_log_level_eval_finalized,
     env_ctx,
     fs,
@@ -68,13 +68,13 @@ def test_conf_file_exists(
 
 
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_stderr_log_level_eval_finalized.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_sub_command_arg_loaded.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_file_abs_path_inited.__name__}.create_state_node")
 @patch(f"{conf_renderer.__name__}.{Bootstrapper_state_client_conf_file_data_loaded_rendered.__name__}.create_state_node")
 def test_conf_file_missing(
     mock_factory_client_conf_file_data_loaded_rendered,
     mock_factory_local_conf_file_abs_path_inited,
-    mock_factory_input_exec_mode_arg_loaded,
+    mock_factory_input_sub_command_arg_loaded,
     mock_factory_input_stderr_log_level_eval_finalized,
     env_ctx,
     fs,
@@ -107,13 +107,13 @@ def test_conf_file_missing(
 
 
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_stderr_log_level_eval_finalized.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_sub_command_arg_loaded.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_file_abs_path_inited.__name__}.create_state_node")
 @patch(f"{conf_renderer.__name__}.{Bootstrapper_state_client_conf_file_data_loaded_rendered.__name__}.create_state_node")
 def test_conf_file_malformed(
     mock_factory_client_conf_file_data_loaded_rendered,
     mock_factory_local_conf_file_abs_path_inited,
-    mock_factory_input_exec_mode_arg_loaded,
+    mock_factory_input_sub_command_arg_loaded,
     mock_factory_input_stderr_log_level_eval_finalized,
     env_ctx,
     fs,

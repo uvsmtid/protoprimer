@@ -23,7 +23,7 @@ from protoprimer.primer_kernel import (
     EnvContext,
     EnvState,
     StateStride,
-    ExecMode,
+    SubCommand,
 )
 
 mock_client_dir = "/mock_client_dir"
@@ -81,10 +81,10 @@ class ThisTestClass(BasePyfakefsTestClass):
     )
     @patch(f"{primer_kernel.__name__}.os.execve")
     @patch(f"{primer_kernel.__name__}.subprocess.check_call")
-    @patch(f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_sub_command_arg_loaded.__name__}.create_state_node")
     def test_success_on_arbitrary_py_exec_outside_venv(
         self,
-        mock_input_exec_mode_arg_loaded,
+        mock_input_sub_command_arg_loaded,
         mock_check_call,
         mock_execve,
         mock_get_path_to_curr_python,
@@ -99,7 +99,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     ):
 
         # given:
-        self.env_ctx.graph_coordinates.exec_mode = ExecMode.mode_boot
+        self.env_ctx.graph_coordinates.sub_command = SubCommand.command_boot
 
         assert_parent_factories_mocked(
             self.env_ctx,
@@ -148,10 +148,10 @@ class ThisTestClass(BasePyfakefsTestClass):
     )
     @patch(f"{primer_kernel.__name__}.os.execve")
     @patch(f"{primer_kernel.__name__}.subprocess.check_call")
-    @patch(f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_sub_command_arg_loaded.__name__}.create_state_node")
     def test_skip_if_py_exec_is_already_required(
         self,
-        mock_input_exec_mode_arg_loaded,
+        mock_input_sub_command_arg_loaded,
         mock_check_call,
         mock_execve,
         mock_get_path_to_curr_python,
@@ -165,7 +165,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_input_start_id_var_loaded,
     ):
         # given:
-        self.env_ctx.graph_coordinates.exec_mode = ExecMode.mode_boot
+        self.env_ctx.graph_coordinates.sub_command = SubCommand.command_boot
         self.env_ctx.state_stride = StateStride.stride_py_required
 
         # when:
@@ -199,10 +199,10 @@ class ThisTestClass(BasePyfakefsTestClass):
     )
     @patch(f"{primer_kernel.__name__}.os.execve")
     @patch(f"{primer_kernel.__name__}.subprocess.check_call")
-    @patch(f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_sub_command_arg_loaded.__name__}.create_state_node")
     def test_success_if_correct_python_is_already_used(
         self,
-        mock_input_exec_mode_arg_loaded,
+        mock_input_sub_command_arg_loaded,
         mock_check_call,
         mock_execve,
         mock_get_path_to_curr_python,
@@ -216,7 +216,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_input_start_id_var_loaded,
     ):
         # given:
-        self.env_ctx.graph_coordinates.exec_mode = ExecMode.mode_boot
+        self.env_ctx.graph_coordinates.sub_command = SubCommand.command_boot
         mock_state_selected_python_file_abs_path_inited.return_value.eval_own_state.return_value = non_default_file_abs_path_python
         mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = non_default_dir_abs_path_venv
 

@@ -32,12 +32,12 @@ class ThisTestClass(BasePyfakefsTestClass):
 
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_protoprimer_package_installed.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_sub_command_arg_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_venv_driver_prepared.__name__}.create_state_node")
     def test_constraints_generated(
         self,
         mock_state_venv_driver_prepared,
-        mock_state_input_exec_mode_arg_loaded,
+        mock_state_input_sub_command_arg_loaded,
         mock_state_local_conf_symlink_abs_path_inited,
         mock_state_protoprimer_package_installed,
     ):
@@ -62,7 +62,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             self.fs.create_file(constraints_file_abs_path)
 
         mock_state_venv_driver_prepared.return_value.eval_own_state.return_value.pin_versions.side_effect = pin_versions_impl
-        mock_state_input_exec_mode_arg_loaded.return_value.eval_own_state.return_value = "boot"
+        mock_state_input_sub_command_arg_loaded.return_value.eval_own_state.return_value = "boot"
 
         # when:
         self.env_ctx.state_graph.eval_state(EnvState.state_version_constraints_generated.name)
@@ -76,12 +76,12 @@ class ThisTestClass(BasePyfakefsTestClass):
 
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_protoprimer_package_installed.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_exec_mode_arg_loaded.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_sub_command_arg_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_venv_driver_prepared.__name__}.create_state_node")
     def test_generation_skipped(
         self,
         mock_state_venv_driver_prepared,
-        mock_state_input_exec_mode_arg_loaded,
+        mock_state_input_sub_command_arg_loaded,
         mock_state_local_conf_symlink_abs_path_inited,
         mock_state_protoprimer_package_installed,
     ):
@@ -96,7 +96,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_client_conf_env_dir = "/mock_client_conf_env_dir"
         self.fs.create_dir(mock_client_conf_env_dir)
         mock_state_local_conf_symlink_abs_path_inited.return_value.eval_own_state.return_value = mock_client_conf_env_dir
-        mock_state_input_exec_mode_arg_loaded.return_value.eval_own_state.return_value = "boot"
+        mock_state_input_sub_command_arg_loaded.return_value.eval_own_state.return_value = "boot"
         # when:
         self.env_ctx.state_graph.eval_state(EnvState.state_version_constraints_generated.name)
         # then:

@@ -19,7 +19,7 @@ from protoprimer.primer_kernel import (
     ConfConstGeneral,
     ConfConstInput,
     ConfConstPrimer,
-    ExecMode,
+    SubCommand,
     SyntaxArg,
     VenvDriverPip,
 )
@@ -74,7 +74,7 @@ def test_start_app_cleans_protoprimer_env_vars(tmp_path: pathlib.Path):
 
     start_app_script_abs_path = ref_root_abs_path / "start_app"
     start_app_script_content = generate_entry_script_content(
-        ExecMode.mode_start.value,
+        SubCommand.command_start.value,
         str(proto_kernel_abs_path),
         str(start_app_script_abs_path),
         f"{cmd_check_context_isolation.__name__}",
