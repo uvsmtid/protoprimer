@@ -3,7 +3,7 @@ from unittest.mock import patch
 from local_test.mock_verifier import assert_parent_factories_mocked
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from metaprimer import conf_renderer
-from metaprimer.cmd_eval_conf import customize_env_context
+from metaprimer.conf_renderer import customize_env_context
 from metaprimer.conf_renderer import (
     Bootstrapper_state_derived_conf_data_loaded_rendered,
     Bootstrapper_state_env_conf_file_data_loaded_rendered,
@@ -23,7 +23,7 @@ from protoprimer.primer_kernel import (
     Bootstrapper_state_local_venv_dir_abs_path_inited,
     Bootstrapper_state_primer_conf_file_abs_path_inited,
     Bootstrapper_state_project_descriptors_inited,
-    Bootstrapper_state_proto_code_file_abs_path_inited,
+    Factory_state_proto_code_file_abs_path_inited,
     Bootstrapper_state_ref_root_dir_abs_path_inited,
     Bootstrapper_state_selected_env_dir_rel_path_inited,
     Bootstrapper_state_selected_python_file_abs_path_inited,
@@ -39,7 +39,7 @@ def test_relationship():
 @patch("sys.argv", [""])
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_sub_command_arg_loaded.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_stderr_log_level_eval_finalized.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Factory_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_primer_conf_file_abs_path_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_global_conf_dir_abs_path_inited.__name__}.create_state_node")

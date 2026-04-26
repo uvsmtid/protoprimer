@@ -48,14 +48,6 @@ class EnvVarMeta(AbstractMeta):
 
 
 class EnvVarName(enum.Enum):
-    var_PROTOPRIMER_SUB_COMMAND = EnvVarMeta(
-        env_var=EnvVar.var_PROTOPRIMER_SUB_COMMAND,
-        name_category=NameCategory.category_name_only,
-        name_components=[
-            ConfConstGeneral.name_protoprimer_package.upper(),
-            ValueName.value_sub_command.value.upper(),
-        ],
-    )
     var_PROTOPRIMER_MAIN_FUNC = EnvVarMeta(
         env_var=EnvVar.var_PROTOPRIMER_MAIN_FUNC,
         name_category=NameCategory.category_name_only,

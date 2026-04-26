@@ -1,4 +1,5 @@
 import os
+import textwrap
 from typing import Dict
 
 
@@ -19,11 +20,12 @@ def generate_entry_script_content(
     if env_vars:
         env_vars_lines = "\n".join(
             [
-                f'    os.environ["{var_name}"] = "{var_value}"'
+                f'os.environ["{var_name}"] = "{var_value}"'
                 for var_name, var_value in env_vars.items()
                 #
             ]
         )
+        env_vars_lines = textwrap.indent(env_vars_lines, "    ")
 
     if sub_command == "start":
         entry_func = "start_app"

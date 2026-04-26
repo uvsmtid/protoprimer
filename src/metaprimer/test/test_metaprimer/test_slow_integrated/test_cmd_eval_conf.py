@@ -1,9 +1,6 @@
-import json
-import os
 import pathlib
 import re
 import stat
-import sys
 
 from local_repo.sub_proc_util import (
     get_command_code,
@@ -26,8 +23,8 @@ from protoprimer.primer_kernel import (
     ConfConstPrimer,
     EnvState,
     EnvVar,
-    SubCommand,
     import_proto_module,
+    SubCommand,
 )
 from protoprimer.proto_generator import generate_entry_script_content
 

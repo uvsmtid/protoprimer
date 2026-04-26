@@ -1888,3 +1888,33 @@ class Bootstrapper_state_all_conf_data_rendered(AbstractCachingStateNode[int]):
         self,
     ) -> ValueType:
         return 0
+
+
+def customize_env_context():
+
+    env_ctx = EnvContext()
+
+    env_ctx.state_graph.register_factory(
+        Bootstrapper_state_primer_conf_file_data_loaded_rendered._state_name(),
+        Bootstrapper_state_primer_conf_file_data_loaded_rendered(env_ctx),
+    )
+    env_ctx.state_graph.register_factory(
+        Bootstrapper_state_client_conf_file_data_loaded_rendered._state_name(),
+        Bootstrapper_state_client_conf_file_data_loaded_rendered(env_ctx),
+    )
+    env_ctx.state_graph.register_factory(
+        Bootstrapper_state_env_conf_file_data_loaded_rendered._state_name(),
+        Bootstrapper_state_env_conf_file_data_loaded_rendered(env_ctx),
+    )
+    env_ctx.state_graph.register_factory(
+        Bootstrapper_state_derived_conf_data_loaded_rendered._state_name(),
+        Bootstrapper_state_derived_conf_data_loaded_rendered(env_ctx),
+    )
+    env_ctx.state_graph.register_factory(
+        Bootstrapper_state_all_conf_data_rendered._state_name(),
+        Bootstrapper_state_all_conf_data_rendered(env_ctx),
+    )
+
+    env_ctx.final_state = RendererState.state_all_conf_data_rendered.name
+
+    return env_ctx

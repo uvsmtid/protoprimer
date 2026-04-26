@@ -6,7 +6,7 @@ from protoprimer.primer_kernel import (
     SubCommand,
     TargetState,
 )
-from test_protoprimer.test_fast_slim_max_mocked.misc_tools.graph_utils import (
+from local_repo.misc_tools.graph_utils import (
     get_transitive_dependencies,
 )
 

@@ -8,7 +8,7 @@ import pytest
 from local_test.mock_verifier import assert_parent_factories_mocked
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from metaprimer import conf_renderer
-from metaprimer.cmd_eval_conf import customize_env_context
+from metaprimer.conf_renderer import customize_env_context
 from metaprimer.conf_renderer import (
     Bootstrapper_state_client_conf_file_data_loaded_rendered,
     Bootstrapper_state_primer_conf_file_data_loaded_rendered,

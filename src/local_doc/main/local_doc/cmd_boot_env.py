@@ -1,4 +1,4 @@
-# FT_93_57_03_75.app_vs_lib.md: see also `cmd_start_app.py`
+# FT_85_17_35_21.boot_env.md: see also `cmd_start_app.py`
 from __future__ import annotations
 
 import enum
@@ -6,8 +6,8 @@ import logging
 
 from protoprimer.primer_kernel import (
     AbstractCachingStateNode,
-    proto_main,
     EnvContext,
+    run_process,
     TargetState,
     trivial_factory,
     ValueType,
@@ -17,7 +17,7 @@ logger = logging.getLogger()
 
 
 def custom_main():
-    proto_main(customize_env_context)
+    run_process(customize_env_context())
 
 
 # noinspection PyPep8Naming
