@@ -4,11 +4,10 @@ import pytest
 
 from protoprimer.primer_kernel import (
     EnvContext,
-    StateGraph,
     StateNode,
     trivial_factory,
 )
-from .graph_utils import (
+from local_repo.misc_tools.graph_utils import (
     get_transitive_dependencies,
     topological_sort,
 )

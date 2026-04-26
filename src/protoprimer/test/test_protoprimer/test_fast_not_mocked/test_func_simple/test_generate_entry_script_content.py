@@ -50,4 +50,5 @@ def test_generate_entry_script_content_with_env_vars():
 
     # then:
 
-    assert 'os.environ["MY_VAR"] = "my_value"' in generated_content
+    assert '    os.environ["MY_VAR"] = "my_value"' in generated_content
+    assert '     os.environ["MY_VAR"] = "my_value"' not in generated_content

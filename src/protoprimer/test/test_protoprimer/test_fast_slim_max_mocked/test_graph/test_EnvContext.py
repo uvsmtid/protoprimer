@@ -19,6 +19,7 @@ from protoprimer.primer_kernel import (
     Bootstrapper_state_local_venv_dir_abs_path_inited,
     Bootstrapper_state_reboot_triggered,
     Bootstrapper_state_selected_python_file_abs_path_inited,
+    EntryFunc,
     EnvContext,
     EnvState,
     EnvVar,
@@ -87,6 +88,7 @@ class TestEnvContext(BasePyfakefsTestClass):
         self.fs.create_file("/tmp/venv/uv.venv/bin/uv", contents="foo")
         # when:
         env_ctx = EnvContext()
+        env_ctx.graph_coordinates.entry_func = EntryFunc.func_run_main
         venv_driver = env_ctx.state_graph.eval_state(EnvState.state_venv_driver_prepared.name)
         # then:
         if is_min_python():
@@ -149,6 +151,7 @@ class TestEnvContext(BasePyfakefsTestClass):
         self.fs.create_file("/tmp/venv/uv.venv/bin/uv", contents="foo")
         # when:
         env_ctx = EnvContext()
+        env_ctx.graph_coordinates.entry_func = EntryFunc.func_run_main
         venv_driver = env_ctx.state_graph.eval_state(EnvState.state_venv_driver_prepared.name)
         # then:
         if is_min_python():
@@ -208,6 +211,7 @@ class TestEnvContext(BasePyfakefsTestClass):
         # given:
         # when:
         env_ctx = EnvContext()
+        env_ctx.graph_coordinates.entry_func = EntryFunc.func_run_main
         venv_driver = env_ctx.state_graph.eval_state(EnvState.state_venv_driver_prepared.name)
         # then:
         assert isinstance(venv_driver, VenvDriverPip)

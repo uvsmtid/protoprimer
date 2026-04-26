@@ -9,7 +9,7 @@ from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     Bootstrapper_state_primer_conf_file_data_loaded,
-    Bootstrapper_state_proto_code_file_abs_path_inited,
+    Factory_state_proto_code_file_abs_path_inited,
     ConfField,
     EnvContext,
     EnvState,
@@ -34,7 +34,7 @@ def test_relationship():
     assert_test_module_name_embeds_str(EnvState.state_ref_root_dir_abs_path_inited.name)
 
 
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Factory_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_primer_conf_file_data_loaded.__name__}.create_state_node")
 def test_success_when_field_present(
     mock_state_primer_conf_file_data_loaded,
@@ -63,7 +63,7 @@ def test_success_when_field_present(
 
 
 @patch(f"{primer_kernel.__name__}.EnvContext.get_stride")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Factory_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_primer_conf_file_data_loaded.__name__}.create_state_node")
 def test_warning_when_field_missing(
     mock_state_primer_conf_file_data_loaded,

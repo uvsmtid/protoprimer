@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
+# FT_00_22_19_59.derived_config.md
+# FT_19_44_42_19.effective_config.md
 
 
+# noinspection DuplicatedCode
 def import_proto_kernel(proto_kernel_rel_path):
     """
     `protoprimer` entry script boilerplate function to import `proto_kernel`.
@@ -24,11 +27,4 @@ def import_proto_kernel(proto_kernel_rel_path):
 
 if __name__ == "__main__":
     proto_kernel = import_proto_kernel("./proto_code/proto_kernel.py")
-
-    import os
-
-    os.environ["PROTOPRIMER_DO_INSTALL"] = str(False)
-
-    # TODO: TODO_28_48_19_20.api_to_traverse_config_when_primed.md:
-    #       convert from `boot_env` to `start_app` when it can access the config.
-    proto_kernel.boot_env("metaprimer.cmd_eval_conf:custom_main")
+    proto_kernel.start_app("metaprimer.cmd_eval_conf:custom_main")

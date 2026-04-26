@@ -9,7 +9,7 @@ from local_test.mock_verifier import (
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
-    Bootstrapper_state_proto_code_file_abs_path_inited,
+    Factory_state_proto_code_file_abs_path_inited,
     Bootstrapper_state_stride_deps_updated_reached,
     ConfConstGeneral,
     EnvContext,
@@ -30,7 +30,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     def test_relationship(self):
         assert_test_module_name_embeds_str(EnvState.state_proto_code_updated.name)
 
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_stride_deps_updated_reached.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_sub_command_arg_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{EnvContext.__name__}.{EnvContext.get_stride.__name__}")
@@ -93,7 +93,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.is_venv",
         return_value=True,
     )
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_stride_deps_updated_reached.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{EnvContext.__name__}.{EnvContext.get_stride.__name__}")
     @patch(f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_sub_command_arg_loaded.__name__}.create_state_node")

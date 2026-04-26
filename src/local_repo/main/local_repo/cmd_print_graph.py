@@ -1,12 +1,15 @@
 from __future__ import annotations
 
 import argparse
+from enum import Enum
 
 from local_repo.graph_printer import (
     GraphPrinterMermaid,
     GraphPrinterText,
 )
+from local_repo.misc_tools.graph_utils import get_transitive_dependencies
 from protoprimer.primer_kernel import (
+    EntryFunc,
     EnvContext,
     EnvState,
     SubCommand,
@@ -16,34 +19,67 @@ from protoprimer.primer_kernel import (
 )
 
 
+format_text = "text"
+format_mermaid = "mermaid"
+
+
+class OutputFormat(Enum):
+    output_text = format_text
+    output_mermaid = format_mermaid
+
+
+layout_nested = "nested"
+layout_flat = "flat"
+
+
+class OutputLayout(Enum):
+    layout_nested = layout_nested
+    layout_flat = layout_flat
+
+
 def custom_main():
 
     parsed_args = init_arg_parser().parse_args()
 
     env_ctx = EnvContext()
 
-    # TODO: TODO_60_63_68_81.refactor_DAG_builder.md:
-    #       After Phase 2, this code should not exists.
-    #       Instead arg_parser should obtain `GraphCoordinates`
-    #       to print the required portion of the graph.
-    env_ctx.graph_coordinates.sub_command = SubCommand.command_eval
+    if parsed_args.sub_command:
+        env_ctx.graph_coordinates.sub_command = SubCommand[parsed_args.sub_command]
 
-    env_ctx.final_state = TargetState.target_proto_bootstrap_completed.value.name
+    env_ctx.graph_coordinates.entry_func = EntryFunc[parsed_args.entry_func]
+
+    env_ctx.final_state = TargetState[parsed_args.target_state].value.name
 
     # Ensure all nodes are initialized (populated into `state_graph.state_nodes`):
+    # TODO: TODO_60_63_68_81.refactor_DAG_builder.md:
+    #       Is this still needed?
     for env_state in EnvState:
         env_ctx.state_graph.get_state_node(env_state.name)
 
-    state_node: StateNode = env_ctx.state_graph.get_state_node(
-        env_ctx.final_state,
-    )
+    state_node: StateNode = env_ctx.state_graph.get_state_node(env_ctx.final_state)
 
-    if parsed_args.mermaid:
-        selected_strategy = GraphPrinterMermaid(env_ctx.state_graph)
+    if parsed_args.format == OutputFormat.output_mermaid.value and parsed_args.layout != OutputLayout.layout_nested.value:
+        raise ValueError(f"Format `{OutputFormat.output_mermaid.value}` requires layout `{OutputLayout.layout_nested.value}`")
+
+    if parsed_args.layout == OutputLayout.layout_flat.value:
+        # Implementation for layout_flat:
+        sorted_dependencies = get_transitive_dependencies(
+            env_ctx.state_graph,
+            state_node.get_state_name(),
+            env_ctx,
+        )
+        sorted_dependencies.append(state_node.get_state_name())
+
+        for state_name in sorted_dependencies:
+            print(state_name)
+
     else:
-        selected_strategy = GraphPrinterText(env_ctx.state_graph)
+        if parsed_args.format == OutputFormat.output_mermaid.value:
+            selected_strategy = GraphPrinterMermaid(env_ctx.state_graph)
+        else:
+            selected_strategy = GraphPrinterText(env_ctx.state_graph)
 
-    selected_strategy.execute_strategy(state_node)
+        selected_strategy.execute_strategy(state_node)
 
 
 def init_arg_parser():
@@ -55,20 +91,44 @@ def init_arg_parser():
 
     # ===
 
-    output_format_group = arg_parser.add_mutually_exclusive_group()
-    output_format_group.add_argument(
-        "--mermaid",
-        dest="mermaid",
-        action="store_true",
-        help="Print in mermaid format.",
+    arg_parser.add_argument(
+        "--format",
+        dest="format",
+        choices=[enum_item.value for enum_item in OutputFormat],
+        default=OutputFormat.output_text.value,
+        help="Output format.",
     )
-    output_format_group.add_argument(
-        "--text",
-        dest="mermaid",
-        action="store_false",
-        help="Print in text format (default).",
+    arg_parser.add_argument(
+        "--layout",
+        dest="layout",
+        choices=[enum_item.value for enum_item in OutputLayout],
+        default=OutputLayout.layout_nested.value,
+        help="Output layout.",
     )
-    arg_parser.set_defaults(mermaid=False)
+
+    # ===
+
+    arg_parser.add_argument(
+        "--target_state",
+        dest="target_state",
+        choices=[enum_item.name for enum_item in TargetState],
+        default=TargetState.target_proto_bootstrap_completed.name,
+        help="Target state to print.",
+    )
+    arg_parser.add_argument(
+        "--entry_func",
+        dest="entry_func",
+        choices=[enum_item.name for enum_item in EntryFunc],
+        default=EntryFunc.func_boot_env.name,
+        help="Entry function coordinate.",
+    )
+    arg_parser.add_argument(
+        "--sub_command",
+        dest="sub_command",
+        choices=[enum_item.name for enum_item in SubCommand],
+        default=None,
+        help="Sub command coordinate.",
+    )
 
     # ===
 

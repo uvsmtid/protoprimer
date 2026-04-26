@@ -11,8 +11,8 @@ from local_test.mock_subprocess import (
 from local_test.name_assertion import assert_test_func_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
-    proto_main,
-    Bootstrapper_state_proto_code_file_abs_path_inited,
+    _proto_main,
+    Bootstrapper_state_proto_code_file_abs_path_inited_not_func_call_lib,
     ConfConstClient,
     ConfConstEnv,
     ConfConstGeneral,
@@ -41,7 +41,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     )
     @patch(f"{primer_kernel.__name__}.probe_python_file_abs_path")
     @patch(f"{primer_kernel.__name__}.get_default_start_id", return_value="mock_start_id")
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_proto_code_file_abs_path_inited.__name__}.eval_own_state")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_proto_code_file_abs_path_inited_not_func_call_lib.__name__}.eval_own_state")
     @patch(f"{primer_kernel.__name__}.os.execve")
     def test_boot_switches_from_py_exec_stride_py_unknown(
         self,
@@ -139,7 +139,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         with patch.object(sys, "argv", test_args):
             # this assertion comes from `mock_execve`:
             with self.assertRaises(AssertionError) as cm:
-                proto_main()
+                _proto_main()
             self.assertEqual(execv_args, cm.exception.args[0])
 
         # then:

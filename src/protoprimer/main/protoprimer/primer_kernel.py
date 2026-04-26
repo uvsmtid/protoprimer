@@ -52,7 +52,7 @@ from typing import (
 
 # The release process ensures that content in this file matches the version below while tagging the release commit
 # (otherwise, if the file comes from a different commit, the version is irrelevant):
-__version__ = "0.11.2"
+__version__ = "0.12.0.dev1"
 
 logger: logging.Logger = logging.getLogger()
 
@@ -62,20 +62,11 @@ ValueType = TypeVar("ValueType")
 DataValueType = TypeVar("DataValueType")
 
 
-def proto_main(configure_env_context: typing.Callable[[], EnvContext] | None = None):
-    # Avoid `NameError` (not associated with a value in enclosing scope) for the last `except`:
-    env_ctx = EnvContext()
+def run_process(env_ctx: EnvContext) -> None:
+    # See UC_10_80_27_57.extend_DAG.md
     try:
         ensure_min_python_version()
 
-        if configure_env_context is not None:
-            # See UC_10_80_27_57.extend_DAG.md:
-            env_ctx = configure_env_context()
-
-        # TODO: TODO_60_63_68_81.refactor_DAG_builder.md:
-        #       Do not call `state_graph.eval_state` directly.
-        #       Evaluate state via child state (to check that this is eligible).
-        #       But... What is the child state here?
         state_sub_command_executed: bool = env_ctx.state_graph.eval_state(TargetState.target_sub_command_executed.value.name)
         assert state_sub_command_executed
         atexit.register(lambda: env_ctx.print_exit_line(0))
@@ -226,6 +217,7 @@ class KeyWord(enum.Enum):
     key_package = "package"
     key_constraints = "constraints"
     key_main = "main"
+    key_entry = "entry"
     key_func = "func"
     key_level = "level"
     key_basename = "basename"
@@ -314,11 +306,21 @@ class EntryFunc(enum.Enum):
     # FT_05_08_64_67.start_app.md
     func_start_app = "start_app"
 
-    # A lib function call (e.g. `get_derived_config`):
-    func_lib = "lib"
+    # FT_85_17_35_21.call_lib.md:
+    # A lib function call (e.g. `get_config`):
+    func_call_lib = "call_lib"
 
     # Direct CLI execution via (e.g.) `./proto_kernel.py` executing `__main__` section:
-    func_main = "main"
+    func_run_main = "run_main"
+
+
+class ExecMode(enum.Enum):
+    """
+    TODO: TODO_60_63_68_81.refactor_DAG_builder.md:
+          Add items, explain and add FT_*.
+    """
+
+    pass
 
 
 class SubCommand(enum.Enum):
@@ -357,7 +359,17 @@ class GraphCoordinates:
     """
 
     def __init__(self):
+
         self.entry_func: EntryFunc | None = None
+
+        # For example:
+        # FT_42_03_79_73.reboot_env.md: True
+        # FT_05_08_64_67.start_app.md: False
+        self.prepare_venv: bool = True
+
+        # TODO: TODO_60_63_68_81.refactor_DAG_builder.md:
+        #       `sub_command` should affect how things are set here,
+        #       but should not be part of `GraphCoordinates`.
         self.sub_command: SubCommand | None = None
 
 
@@ -393,8 +405,9 @@ class EnvVar(enum.Enum):
     See FT_08_92_69_92.env_var.md
     """
 
-    # FT_11_27_29_83.sub_command.md
-    var_PROTOPRIMER_SUB_COMMAND = "PROTOPRIMER_SUB_COMMAND"
+    # FT_87_17_49_36.kernel_copy.md
+    # TODO: Rename to `*_KERNEL_COPY` or `*_PROTO_COPY`?
+    var_PROTOPRIMER_PROTO_CODE = "PROTOPRIMER_PROTO_CODE"
 
     # FT_58_74_37_70.boot_vs_start.md
     # Selects the main function to run, for example, "sup_module.sub_module:some_main".
@@ -409,8 +422,6 @@ class EnvVar(enum.Enum):
     #       `conf_eval` and `venv_shell` which can be switched to `start_app`
     #       as soon as config can be accessed via API.
     var_PROTOPRIMER_DO_INSTALL = "PROTOPRIMER_DO_INSTALL"
-
-    var_PROTOPRIMER_PROTO_CODE = "PROTOPRIMER_PROTO_CODE"
 
     var_PROTOPRIMER_CONF_BASENAME = "PROTOPRIMER_CONF_BASENAME"
 
@@ -1016,7 +1027,6 @@ def remove_protoprimer_env_vars(env_vars: MutableMapping[str, str]) -> None:
     """
     for env_var in EnvVar:
         env_vars.pop(env_var.value, None)
-    return env_vars
 
 
 class ShellDriverBase:
@@ -1742,7 +1752,15 @@ class NodeFactory(Generic[ValueType]):
         raise NotImplementedError()
 
 
-def trivial_factory(state_node_class: type[StateNode]) -> type[StateNode]:
+StateNodeSubclass = TypeVar("StateNodeSubclass", bound=StateNode)
+
+
+def conditional_factory(state_node_class: type[StateNodeSubclass]) -> type[StateNodeSubclass]:
+    # A no-op decorator to indicate that the `StateNode` does not have a `@trivial_factory`.
+    return state_node_class
+
+
+def trivial_factory(state_node_class: type[StateNodeSubclass]) -> type[StateNodeSubclass]:
     """
     Class decorator that makes a `StateNode` class act like a factory for itself.
 
@@ -1931,10 +1949,16 @@ class Bootstrapper_state_args_parsed(AbstractCachingStateNode[argparse.Namespace
 
     def _eval_state_once(self) -> ValueType:
         """
-        Parse the args. In case of `EnvVar.var_PROTOPRIMER_SUB_COMMAND` == `SubCommand.command_start`, skip parsing.
+        Parse the args if `EntryFunc.func_boot_env` or `EntryFunc.func_run_main`.
+        Otherwise, pretend there are no args except `SubCommand.command_start`.
         """
+        # TODO: TODO_60_63_68_81.refactor_DAG_builder.md:
+        #       This step should not be executed without need to parse args.
+        #       Do not fake args. Just redesign dependency. No?
         state_args_parsed: argparse.Namespace
-        if os.environ.get(EnvVar.var_PROTOPRIMER_SUB_COMMAND.value, None) == SubCommand.command_start.value:
+        if self.env_ctx.graph_coordinates.entry_func == EntryFunc.func_boot_env or self.env_ctx.graph_coordinates.entry_func == EntryFunc.func_run_main:
+            state_args_parsed = parse_args()
+        else:
             # Pretend there is no args except `SubCommand.command_start`:
             state_args_parsed = parse_args([])
             setattr(
@@ -1942,8 +1966,6 @@ class Bootstrapper_state_args_parsed(AbstractCachingStateNode[argparse.Namespace
                 ParsedArg.name_sub_command.value,
                 SubCommand.command_start.value,
             )
-        else:
-            state_args_parsed = parse_args()
         return state_args_parsed
 
 
@@ -1998,6 +2020,10 @@ class Bootstrapper_state_input_stderr_log_level_eval_finalized(AbstractCachingSt
             if stderr_log_level_eval_finalized < logging.NOTSET:
                 stderr_log_level_eval_finalized = logging.NOTSET
 
+        # TODO: TODO_60_63_68_81.refactor_DAG_builder.md:
+        #       Evaluate `stderr_log_level_eval_finalized`
+        #       but do not configure anything for `start_app` and `lib_call`
+
         state_default_stderr_logger_configured.setLevel(stderr_log_level_eval_finalized)
         assert isinstance(
             state_default_stderr_logger_configured.formatter,
@@ -2042,6 +2068,8 @@ class Bootstrapper_state_input_sub_command_arg_loaded(AbstractCachingStateNode[S
             )
         )
         self.env_ctx.graph_coordinates.sub_command = state_input_sub_command_arg_loaded
+        if self.env_ctx.graph_coordinates.sub_command == SubCommand.command_start:
+            self.env_ctx.graph_coordinates.prepare_venv = False
         return state_input_sub_command_arg_loaded
 
 
@@ -2234,8 +2262,22 @@ class Bootstrapper_state_stride_py_arbitrary_reached(AbstractCachingStateNode[St
 
 
 # noinspection PyPep8Naming
-@trivial_factory
-class Bootstrapper_state_proto_code_file_abs_path_inited(AbstractCachingStateNode[str]):
+@conditional_factory
+class Bootstrapper_state_proto_code_file_abs_path_inited_func_call_lib(AbstractCachingStateNode[str]):
+    _parent_states = staticmethod(lambda: [])
+    _state_name = staticmethod(lambda: EnvState.state_proto_code_file_abs_path_inited.name)
+
+    def _eval_state_once(self) -> ValueType:
+        if self.env_ctx.proto_code is None:
+            raise AssertionError(f"`proto_code` [{self.env_ctx.proto_code}] cannot be [{self.env_ctx.proto_code}]")
+        if not os.path.isfile(self.env_ctx.proto_code):
+            raise AssertionError(f"`proto_code` [{self.env_ctx.proto_code}] is not a file")
+        return self.env_ctx.proto_code
+
+
+# noinspection PyPep8Naming
+@conditional_factory
+class Bootstrapper_state_proto_code_file_abs_path_inited_not_func_call_lib(AbstractCachingStateNode[str]):
     _parent_states = staticmethod(
         lambda: [
             EnvState.state_input_sub_command_arg_loaded.name,
@@ -2293,6 +2335,16 @@ class Bootstrapper_state_proto_code_file_abs_path_inited(AbstractCachingStateNod
 
         assert os.path.isabs(state_proto_code_file_abs_path_inited)
         return state_proto_code_file_abs_path_inited
+
+
+# noinspection PyPep8Naming
+class Factory_state_proto_code_file_abs_path_inited(NodeFactory[StateStride]):
+
+    def create_state_node(self) -> StateNode[ValueType]:
+        if self.env_ctx.graph_coordinates.entry_func == EntryFunc.func_call_lib:
+            return Bootstrapper_state_proto_code_file_abs_path_inited_func_call_lib(self.env_ctx)
+        else:
+            return Bootstrapper_state_proto_code_file_abs_path_inited_not_func_call_lib(self.env_ctx)
 
 
 # noinspection PyPep8Naming
@@ -3156,11 +3208,9 @@ class Bootstrapper_state_derived_conf_data_loaded(AbstractCachingStateNode[dict]
 
         # TODO: Is this needed given the list of dependencies in `derived_data_env_states`?
         parent_states = [
-            EnvState.state_input_sub_command_arg_loaded.name,
             EnvState.state_primer_conf_file_data_loaded.name,
             EnvState.state_client_conf_file_data_loaded.name,
             EnvState.state_env_conf_file_data_loaded.name,
-            EnvState.state_input_stderr_log_level_eval_finalized.name,
             *self.derived_data_env_states,
         ]
 
@@ -3250,6 +3300,7 @@ class Bootstrapper_state_default_file_log_handler_configured(AbstractCachingStat
 
 
 # noinspection PyPep8Naming
+@conditional_factory
 class Bootstrapper_state_stride_py_required_reached_not_command_start(AbstractCachingStateNode[StateStride]):
     """
     Recursively runs this script inside the `python` interpreter required by the client.
@@ -3326,6 +3377,7 @@ class Bootstrapper_state_stride_py_required_reached_not_command_start(AbstractCa
 
 
 # noinspection PyPep8Naming
+@conditional_factory
 class Bootstrapper_state_stride_py_required_reached_command_start(AbstractCachingStateNode[StateStride]):
     _parent_states = staticmethod(
         lambda: [
@@ -3356,15 +3408,17 @@ class Bootstrapper_state_stride_py_required_reached_command_start(AbstractCachin
 class Factory_state_stride_py_required_reached(NodeFactory[StateStride]):
 
     def create_state_node(self) -> StateNode[ValueType]:
-        assert self.env_ctx.graph_coordinates.sub_command is not None
-
         # The only reason for `EnvState.state_stride_py_required_reached`
         # is to use the required `python` to create a `venv`.
-        if self.env_ctx.graph_coordinates.sub_command == SubCommand.command_start:
-            # Skip it as `venv` is supposed to be ready in `SubCommand.command_start`:
-            return Bootstrapper_state_stride_py_required_reached_command_start(self.env_ctx)
-        else:
+        if self.env_ctx.graph_coordinates.prepare_venv:
+            # TODO: TODO_60_63_68_81.refactor_DAG_builder.md:
+            #       Rename to avoid `command_start` in its name:
             return Bootstrapper_state_stride_py_required_reached_not_command_start(self.env_ctx)
+        else:
+            # TODO: TODO_60_63_68_81.refactor_DAG_builder.md:
+            #       Rename to avoid `command_start` in its name:
+            # Skip it as `venv` is supposed to be ready:
+            return Bootstrapper_state_stride_py_required_reached_command_start(self.env_ctx)
 
 
 # noinspection PyPep8Naming
@@ -4065,7 +4119,7 @@ class EnvState(enum.Enum):
     # restart: `StateStride.stride_py_unknown` -> `StateStride.stride_py_arbitrary`:
     state_stride_py_arbitrary_reached = Bootstrapper_state_stride_py_arbitrary_reached
 
-    state_proto_code_file_abs_path_inited = Bootstrapper_state_proto_code_file_abs_path_inited
+    state_proto_code_file_abs_path_inited = Factory_state_proto_code_file_abs_path_inited
 
     state_primer_conf_file_abs_path_inited = Bootstrapper_state_primer_conf_file_abs_path_inited
 
@@ -4158,12 +4212,11 @@ class TargetState(enum.Enum):
     # Used for `EnvState.state_status_line_printed` to report exit code:
     target_stderr_log_handler = EnvState.state_default_stderr_log_handler_configured
 
-    # A special state that triggers execution in the specific `SubCommand`:
+    # A special state that triggers execution of the specific `SubCommand`:
     target_sub_command_executed = EnvState.state_sub_command_executed
 
-    # TODO: This should be `state_derived_conf_data_loaded`:
-    # When all config files loaded:
-    target_config_loaded = EnvState.state_venv_driver_inited
+    # FT_00_22_19_59.derived_config.md:
+    target_derived_config_loaded = EnvState.state_derived_conf_data_loaded
 
     # The final state before switching to `PrimerRuntime.runtime_meta`:
     target_proto_bootstrap_completed = EnvState.state_command_executed
@@ -4301,11 +4354,14 @@ class EnvContext:
         # TODO: Do not set it on `EnvContext` - use bootstrap-able values:
         self.final_state: str = TargetState.target_proto_bootstrap_completed.value.name
 
+        # Same as `EnvVar.var_PROTOPRIMER_PROTO_CODE` for non-restart-able `EntryFunc.func_call_lib`:
+        self.proto_code: str | None = None
+
         self._register_graph_node_factories()
 
     def _register_graph_node_factories(self):
         """
-        Registers all defined `EnvState`-s.
+        Registers factories for all defined `EnvState`-s.
         """
         for env_state in EnvState:
             # This `self` in `env_state.value(self)` is required
@@ -4731,13 +4787,11 @@ def can_print_effective_config(state_node: StateNode) -> bool:
     See: FT_19_44_42_19.effective_config.md
     """
 
-    state_input_sub_command_arg_loaded: SubCommand = state_node.eval_parent_state(EnvState.state_input_sub_command_arg_loaded.name)
-
     return (
         state_node.env_ctx.get_stride().value
         # `StateStride.stride_py_arbitrary` ensures that the path to `proto_code` is outside `venv`:
         == StateStride.stride_py_arbitrary.value
-        and state_input_sub_command_arg_loaded == SubCommand.command_eval
+        and state_node.env_ctx.graph_coordinates.sub_command == SubCommand.command_eval
     )
 
 
@@ -5253,22 +5307,35 @@ def get_import_error_hint(meta_main_module: str) -> str:
     return f"Is `{meta_main_module}` a (transitive) dependency of any `{ConfConstClient.default_pyproject_toml_basename}` being installed?"
 
 
-def get_derived_config(proto_kernel_abs_path: str) -> dict:
+def get_config(proto_kernel_abs_path: str, conf_leap: ConfLeap) -> dict:
+    """
+    Retrieve config data for the specified `conf_leap` as a function call (without the process restarts).
+    `proto_kernel_abs_path` is required to load the config at the right paths.
+    None of `EnvVar.*` can be used to ensure FT_66_02_54_56.context_isolation.md.
+    """
 
     # NOTE: Assume (no verification) the module is loaded from
     #       (outside venv, outside local packages, outside global packages):
-    os.environ[EnvVar.var_PROTOPRIMER_PROTO_CODE.value] = proto_kernel_abs_path
     # TODO: TODO_60_63_68_81.refactor_DAG_builder.md:
     #       It is set to `StateStride.stride_py_arbitrary` even though we do not really know
     #       whether this python is outside `venv` (what `StateStride.stride_py_arbitrary` is really for).
-    #       But it works for now until we an build different implementation for `get_derived_config` lib call.
-    os.environ[EnvVar.var_PROTOPRIMER_PY_EXEC.value] = StateStride.stride_py_arbitrary.name
+    #       But it works for now until we can build different implementation for `get_config` lib call.
+
+    _conf_leap_to_state: dict[ConfLeap, str] = {
+        ConfLeap.leap_primer: EnvState.state_primer_conf_file_data_loaded.name,
+        ConfLeap.leap_client: EnvState.state_client_conf_file_data_loaded.name,
+        ConfLeap.leap_env: EnvState.state_env_conf_file_data_loaded.name,
+        ConfLeap.leap_derived: EnvState.state_derived_conf_data_loaded.name,
+    }
+
+    if conf_leap not in _conf_leap_to_state:
+        raise ValueError(f"Unsupported `ConfLeap` value: {conf_leap}")
 
     env_ctx = EnvContext()
-
-    state_derived_conf_data_loaded: dict = env_ctx.state_graph.eval_state(EnvState.state_derived_conf_data_loaded.name)
-
-    return state_derived_conf_data_loaded
+    env_ctx.graph_coordinates.entry_func = EntryFunc.func_call_lib
+    env_ctx.graph_coordinates.prepare_venv = False
+    env_ctx.proto_code = proto_kernel_abs_path
+    return env_ctx.state_graph.eval_state(_conf_leap_to_state[conf_leap])
 
 
 def boot_env(venv_main_func: str):
@@ -5281,7 +5348,7 @@ def boot_env(venv_main_func: str):
     (which only starts the specified `venv_main_func` assuming `venv` has already been bootstrapped).
     """
     _start_main(
-        SubCommand.command_boot,
+        EntryFunc.func_boot_env,
         venv_main_func,
     )
 
@@ -5296,13 +5363,13 @@ def start_app(venv_main_func: str):
     (via a script which calls `boot_env` function).
     """
     _start_main(
-        SubCommand.command_start,
+        EntryFunc.func_start_app,
         venv_main_func,
     )
 
 
 def _start_main(
-    sub_command: SubCommand,
+    entry_func: EntryFunc,
     # Same format as in `EnvVar.var_PROTOPRIMER_MAIN_FUNC`:
     venv_main_func: str,
 ) -> None:
@@ -5311,7 +5378,6 @@ def _start_main(
     #       (outside venv, outside local packages, outside global packages):
     os.environ[EnvVar.var_PROTOPRIMER_PROTO_CODE.value] = os.path.abspath(__file__)
 
-    os.environ[EnvVar.var_PROTOPRIMER_SUB_COMMAND.value] = sub_command.value
     os.environ[EnvVar.var_PROTOPRIMER_MAIN_FUNC.value] = venv_main_func
 
     module_name: str
@@ -5334,29 +5400,49 @@ def _start_main(
         )
     ]
 
-    selected_main = proto_main
     try:
         # NOTE: `state_stride_src_updated_reached` forces restart with this `StateStride`:
         if curr_py_exec.value >= StateStride.stride_src_updated.value:
             venv_module = importlib.import_module(module_name)
             selected_main = getattr(venv_module, func_name)
-            if sub_command == SubCommand.command_start:
+            if entry_func == EntryFunc.func_start_app:
                 remove_protoprimer_env_vars(os.environ)
+            selected_main()
         elif curr_py_exec.value >= StateStride.stride_deps_updated.value:
-            # TODO: It may not work in instant cases when `protoprimer` is not a dependency.
+            # TODO: FT_21_75_54_18.instant_scenario.md:
+            #       It may not work in instant cases when `protoprimer` is not a dependency (not installed).
+            # FT_14_52_73_23.primer_runtime.md:
             # Switch from running `proto_code` to installed `venv` code:
             venv_module = importlib.import_module(f"{ConfConstGeneral.name_protoprimer_package}.{ConfConstGeneral.name_primer_kernel_module}")
-            selected_main = getattr(venv_module, proto_main.__name__)
-    except ImportError:
+            # noinspection PyPep8Naming
+            imported_EnvContext = getattr(venv_module, EnvContext.__name__)
+            # noinspection PyPep8Naming
+            imported_EntryFunc = getattr(venv_module, EntryFunc.__name__)
+            imported_run_process = getattr(venv_module, run_process.__name__)
+            env_ctx = imported_EnvContext()
+            env_ctx.graph_coordinates.entry_func = imported_EntryFunc[entry_func.name]
+            imported_run_process(env_ctx)
+        else:
+            env_ctx = EnvContext()
+            env_ctx.graph_coordinates.entry_func = entry_func
+            run_process(env_ctx)
+    except ImportError as e:
         if curr_py_exec.value >= StateStride.stride_src_updated.value:
             raise AssertionError(
                 f"Failed to import `{module_name}` with `{EnvVar.var_PROTOPRIMER_PY_EXEC.value}` [{curr_py_exec.name}]. "
+                # TODO: This hint is only correct for error to import anything from `protoprimer`,
+                #       not any import in general:
                 f"{get_import_error_hint(module_name)} "
                 #
             )
+        raise e
 
-    selected_main()
+
+def _proto_main() -> None:
+    env_ctx = EnvContext()
+    env_ctx.graph_coordinates.entry_func = EntryFunc.func_run_main
+    run_process(env_ctx)
 
 
 if __name__ == "__main__":
-    proto_main()
+    _proto_main()

@@ -14,7 +14,7 @@ TODO: Use links to FC/UC docs under `./doc` (when ready) from this readme to nav
 
 # <code><a href="https://protoprimer.readthedocs.io/"><img src="doc/readthedocs/source/_static/protoprimer.logo.svg" alt="logo" style="width: 11ch; height: auto;"></a></code>
 
-# [`protoprimer`][protoprimer_readthedocs]
+# `protoprimer`
 
 Want your users to run software straight from a `git` repo with a single, zero-argument, healing command?
 
@@ -22,59 +22,41 @@ Want your users to run software straight from a `git` repo with a single, zero-a
 ./prime
 ```
 
-If not, see this page to double confirm:
-
-https://protoprimer.readthedocs.io/
+If not, [double confirm][protoprimer_readthedocs].
 
 ## Typical usage
 
-Bootstrap (default env):
+*   Bootstrap (default env):
 
-```sh
-./prime
-```
+    ```
+    ./prime
+    ```
 
-Bootstrap (special env):
+*   Bootstrap (special env):
 
-```sh
-./prime --env dst/special_env
-```
+    ```
+    ./prime --env dst/special_env
+    ```
 
-Reboot: re-create venv, re-solve and re-install deps, re-pin versions:
+*   From scratch: re-create venv, re-solve and re-install deps, re-pin versions:
 
-```sh
-./prime reboot
-```
+    ```
+    ./prime reboot
+    ```
 
-Evaluate the effective config:
+*   Evaluate the effective config:
 
-```sh
-./prime eval
-```
+    ```
+    ./prime eval
+    ```
 
-Bootstrap into an interactive `shell` with an activated `venv`:
+*   Start an interactive `shell` with an activated `venv`:
 
-```sh
-./cmd/venv_shell
-```
+    ```
+    ./cmd/venv_shell
+    ```
 
-See how `boot_env` works via this entry script:
-
-```py
-# ./cmd/boot_env:
-# ...
-proto_kernel.boot_env("local_doc.cmd_boot_env:custom_main")
-```
-
-See how `start_app` works via this entry script:
-
-```py
-# ./cmd/start_app:
-# ...
-proto_kernel.start_app("local_doc.cmd_start_app:custom_main")
-```
-
-<a id="protoprimer-getting-started"></a>
+<a id="protoprimer-quick-start"></a>
 
 ## Quick start
 
@@ -117,45 +99,57 @@ graph LR;
     └── *
     ```
 
+    The location, name, details can be changed through optional config.
+
 *   Run (any time):
 
     ```sh
     ./proto_kernel.py
     ```
 
-*   Use a wrapper to launch `some_main` function:
+<a id="protoprimer-proto-code-vs-entry-script"></a>
 
-    ```py
-    # ./some_script.py
-    # ...
-    proto_kernel.start_app("some_module:some_main")
-    ```
-
-    ```sh
-    ./some_script.py
-    ```
-
-*   Result:
-
-    *   This "entry script" (wrapper) executes "proto code" by a **wild** `python` version found in `PATH`.
-    *   But `some_main` is executed by the **required** `python` version inside the isolated `venv`.
-
-*   Note:
-
-    A shebang to `venv` (instead of "entry script") may be useless:
-    *   if `venv` does not exist (during bootstrap)
-    *   if `venv` has an abs path more than 128 chars
-    *   if the abs path is not generated (to match every repo clone)
-
-## What are "proto code" and "entry scripts"?
+## "proto code" vs "entry scripts"
 
 *   **"proto code"** is any code designed to be executed by arbitrary `python` version.
 
-    The own copy of `proto_kernel.py` is most of the "proto code".
+    The own copy of `proto_kernel.py` is the hard part but handled entirely by `protoprimer`.
 
-*   **"entry scripts"** are those files that rely on `proto_kernel.py` to switch to `venv`.
+*   **"entry script"** relies on `proto_kernel.py` to switch into `venv`.
 
-    Technically, "entry scripts" are also "proto code" but they only delegate.
+    Technically, an "entry script" is also "proto code" but the easy part as it only delegates.
+
+<a id="protoprimer-hello-world"></a>
+
+## "Hello, world!"
+
+*   An "entry script" executes "proto code" by a **wild** `python` version found in `PATH`.
+
+*   But `custom_main` is executed by the **required** `python` version inside the isolated `venv`.
+
+*   See how an entry script extends bootstrap:
+
+    ```py
+    # ./cmd/boot_env:
+    # ...
+    proto_kernel.boot_env("local_doc.cmd_boot_env:custom_main")
+    ```
+
+    ```sh
+    ./cmd/boot_env
+    ```
+
+*   See how an entry script launches `some_main` function:
+
+    ```py
+    # ./cmd/start_app:
+    # ...
+    proto_kernel.start_app("local_doc.cmd_start_app:custom_main")
+    ```
+
+    ```sh
+    ./cmd/start_app
+    ```
 
 [readme.md]: readme.md
 
@@ -189,7 +183,9 @@ graph LR;
 [constraints.txt]: dst/default_env/constraints.txt
 [pyproject.toml]: src/metaprimer/pyproject.toml
 
-[getting_started]: #protoprimer-getting-started
+[quick_start]: #protoprimer-quick-start
+[proto_code_vs_entry_script]: #protoprimer-proto-code-vs-entry-script
+[hello_world]: #protoprimer-hello-world
 
 <!-- markdownlint-disable MD051 -->
 <!--
