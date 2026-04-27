@@ -29,7 +29,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     def test_relationship(self):
         assert_test_module_name_embeds_str(EnvState.state_primer_conf_file_data_loaded.name)
 
-    @patch(f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_stderr_log_level_eval_finalized.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_stderr_log_level_handler_configured.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Factory_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_sub_command_arg_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_primer_conf_file_abs_path_inited.__name__}.create_state_node")
@@ -61,7 +61,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.assertEqual(state_value, {"test": "data"})
 
     @patch(f"{primer_kernel.__name__}.EnvContext.get_stride")
-    @patch(f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_stderr_log_level_eval_finalized.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_stderr_log_level_handler_configured.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Factory_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_sub_command_arg_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_primer_conf_file_abs_path_inited.__name__}.create_state_node")
@@ -96,7 +96,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.assertIn("does not exist", log_dst.output[0])
         self.assertEqual({}, state_value)
 
-    @patch(f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_stderr_log_level_eval_finalized.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_stderr_log_level_handler_configured.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Factory_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_sub_command_arg_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_primer_conf_file_abs_path_inited.__name__}.create_state_node")

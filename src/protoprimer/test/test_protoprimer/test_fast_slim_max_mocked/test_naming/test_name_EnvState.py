@@ -147,6 +147,18 @@ class StateName(enum.Enum):
         ],
     )
 
+    state_input_stderr_log_level_handler_configured = StateMeta(
+        env_state=EnvState.state_input_stderr_log_level_handler_configured,
+        name_category=NameCategory.category_state_mutation,
+        name_components=[
+            KeyWord.key_state.value,
+            ConfLeap.leap_input.value,
+            ValueName.value_stderr_log_level.value,
+            KeyWord.key_handler.value,
+            KeyWord.key_configured.value,
+        ],
+    )
+
     state_input_sub_command_arg_loaded = StateMeta(
         env_state=EnvState.state_input_sub_command_arg_loaded,
         name_category=NameCategory.category_named_value,

@@ -52,7 +52,7 @@ from typing import (
 
 # The release process ensures that content in this file matches the version below while tagging the release commit
 # (otherwise, if the file comes from a different commit, the version is irrelevant):
-__version__ = "0.12.0.dev1"
+__version__ = "0.12.0.dev2"
 
 logger: logging.Logger = logging.getLogger()
 
@@ -1314,8 +1314,8 @@ class ConfConstGeneral:
     relative_path_field_note: str = f"The path is relative to the `{PathName.path_ref_root.value}` dir specified in the `{ConfField.field_ref_root_dir_rel_path.value}` field."
     common_field_global_note: str = f"This field can be specified in global config (see `{ConfLeap.leap_client.name}`) but it is override-able by local environment-specific config (see `{ConfLeap.leap_env.name}`)."
     common_field_local_note: str = f"This local environment-specific field overrides the global one (see description in `{ConfLeap.leap_client.name}`)."
-    func_note_derived_based_on_common = lambda field_name: (f"This value is derived from `{field_name}` in `{ConfLeap.leap_client.name}` (override-able in `{ConfLeap.leap_env.name}`) - see description there.")
-    func_note_derived_based_on_conf_leap_field = lambda field_name, conf_leap: (f"This value is derived from `{field_name}` - see description in `{conf_leap.name}`.")
+    func_note_derived_based_on_common = lambda field_name: f"This value is derived from `{field_name}` in `{ConfLeap.leap_client.name}` (override-able in `{ConfLeap.leap_env.name}`) - see description there."
+    func_note_derived_based_on_conf_leap_field = lambda field_name, conf_leap: f"This value is derived from `{field_name}` - see description in `{conf_leap.name}`."
 
 
 class ConfConstInput:
@@ -1542,7 +1542,7 @@ def _create_child_argparser(parent_argparsers):
         parser_check.set_defaults(sub_command=SubCommand.command_check.value)
 
     child_argparser = CustomArgumentParser(
-        description=(f"The early [{PrimerRuntime.runtime_proto.value}] environment bootstrapper [{KeyWord.key_primer.value}]."),
+        description=f"The early [{PrimerRuntime.runtime_proto.value}] environment bootstrapper [{KeyWord.key_primer.value}].",
         parents=parent_argparsers,
         epilog=f"Version: {__version__} | {ConfConstGeneral.name_protoprimer_site_link} | {pathlib.Path(__file__).resolve()}",
     )
@@ -1972,15 +1972,10 @@ class Bootstrapper_state_args_parsed(AbstractCachingStateNode[argparse.Namespace
 # noinspection PyPep8Naming
 @trivial_factory
 class Bootstrapper_state_input_stderr_log_level_eval_finalized(AbstractCachingStateNode[int]):
-    """
-    There is a narrow window between the default log level is set and this state is evaluated.
-    To control the default log level, see `EnvVar.var_PROTOPRIMER_STDERR_LOG_LEVEL`.
-    """
 
     _parent_states = staticmethod(
         lambda: [
             EnvState.state_input_stderr_log_level_var_loaded.name,
-            EnvState.state_default_stderr_log_handler_configured.name,
             EnvState.state_args_parsed.name,
         ]
     )
@@ -1989,8 +1984,6 @@ class Bootstrapper_state_input_stderr_log_level_eval_finalized(AbstractCachingSt
     def _eval_state_once(self) -> ValueType:
 
         state_input_stderr_log_level_var_loaded: int = self.eval_parent_state(EnvState.state_input_stderr_log_level_var_loaded.name)
-
-        state_default_stderr_logger_configured: logging.Handler = self.eval_parent_state(EnvState.state_default_stderr_log_handler_configured.name)
 
         parsed_args = self.eval_parent_state(EnvState.state_args_parsed.name)
         stderr_log_level_quiet_count: int = getattr(
@@ -2002,9 +1995,9 @@ class Bootstrapper_state_input_stderr_log_level_eval_finalized(AbstractCachingSt
             SyntaxArg.dest_verbose,
         )
 
-        stderr_log_level_eval_finalized: int
+        state_input_stderr_log_level_eval_finalized: int
         if stderr_log_level_quiet_count == 0 and stderr_log_level_verbose_count == 0:
-            stderr_log_level_eval_finalized = state_input_stderr_log_level_var_loaded
+            state_input_stderr_log_level_eval_finalized = state_input_stderr_log_level_var_loaded
         else:
             # FT_38_73_38_52.log_verbosity.md
             # The base is the numeric value of `ConfConstInput.default_PROTOPRIMER_STDERR_LOG_LEVEL`.
@@ -2015,37 +2008,51 @@ class Bootstrapper_state_input_stderr_log_level_eval_finalized(AbstractCachingSt
 
             relative_log_level = 10 * (stderr_log_level_quiet_count - stderr_log_level_verbose_count)
 
-            stderr_log_level_eval_finalized = base_log_level + relative_log_level
+            state_input_stderr_log_level_eval_finalized = base_log_level + relative_log_level
 
-            if stderr_log_level_eval_finalized < logging.NOTSET:
-                stderr_log_level_eval_finalized = logging.NOTSET
+            if state_input_stderr_log_level_eval_finalized < logging.NOTSET:
+                state_input_stderr_log_level_eval_finalized = logging.NOTSET
 
-        # TODO: TODO_60_63_68_81.refactor_DAG_builder.md:
-        #       Evaluate `stderr_log_level_eval_finalized`
-        #       but do not configure anything for `start_app` and `lib_call`
+        return state_input_stderr_log_level_eval_finalized
 
-        state_default_stderr_logger_configured.setLevel(stderr_log_level_eval_finalized)
+
+# noinspection PyPep8Naming
+@trivial_factory
+class Bootstrapper_state_input_stderr_log_level_handler_configured(AbstractCachingStateNode[logging.Handler]):
+    """
+    There is a narrow window between the default log level is set and this state is evaluated.
+    To control the default log level, see `EnvVar.var_PROTOPRIMER_STDERR_LOG_LEVEL`.
+    """
+
+    _parent_states = staticmethod(
+        lambda: [
+            EnvState.state_default_stderr_log_handler_configured.name,
+            EnvState.state_args_parsed.name,
+            EnvState.state_input_stderr_log_level_eval_finalized.name,
+        ]
+    )
+    _state_name = staticmethod(lambda: EnvState.state_input_stderr_log_level_handler_configured.name)
+
+    def _eval_state_once(self) -> ValueType:
+
+        state_default_stderr_logger_configured: logging.Handler = self.eval_parent_state(EnvState.state_default_stderr_log_handler_configured.name)
+
+        state_input_stderr_log_level_eval_finalized: int = self.eval_parent_state(EnvState.state_input_stderr_log_level_eval_finalized.name)
+
+        state_default_stderr_logger_configured.setLevel(state_input_stderr_log_level_eval_finalized)
         assert isinstance(
             state_default_stderr_logger_configured.formatter,
             _PrimerStderrLogFormatter,
         )
-        state_default_stderr_logger_configured.formatter.set_verbosity_level(stderr_log_level_eval_finalized)
-
-        # Set default log level for subsequent invocations:
-        level_var_value: str = logging.getLevelName(stderr_log_level_eval_finalized)
-        assert isinstance(level_var_value, str)
-        if " " in level_var_value:
-            # Due to some hacks in the `python` `logging` library,
-            # it may return non-existing level names - use number instead:
-            level_var_value = str(stderr_log_level_eval_finalized)
+        state_default_stderr_logger_configured.formatter.set_verbosity_level(state_input_stderr_log_level_eval_finalized)
 
         # Remove stack trace for levels >= WARNING (it will only print the exception itself):
-        if stderr_log_level_eval_finalized >= logging.WARNING:
+        if state_input_stderr_log_level_eval_finalized >= logging.WARNING:
             # Avoid changing that in tests - it changes the global state and causes many tests to fail unexpectedly:
             if not is_test_run():
                 sys.tracebacklimit = 0
 
-        return stderr_log_level_eval_finalized
+        return state_default_stderr_logger_configured
 
 
 # noinspection PyPep8Naming
@@ -2088,8 +2095,6 @@ class Bootstrapper_state_input_final_state_eval_finalized(AbstractCachingStateNo
     def _eval_state_once(self) -> ValueType:
         state_args_parsed: argparse.Namespace = self.eval_parent_state(EnvState.state_args_parsed.name)
 
-        state_input_sub_command_arg_loaded: SubCommand = self.eval_parent_state(EnvState.state_input_sub_command_arg_loaded.name)
-
         state_input_final_state_eval_finalized: str | None
         state_input_final_state_eval_finalized = getattr(
             state_args_parsed,
@@ -2118,7 +2123,7 @@ class Bootstrapper_state_sub_command_executed(AbstractCachingStateNode[bool]):
 
     _parent_states = staticmethod(
         lambda: [
-            EnvState.state_input_stderr_log_level_eval_finalized.name,
+            EnvState.state_input_stderr_log_level_handler_configured.name,
             EnvState.state_input_sub_command_arg_loaded.name,
             EnvState.state_input_final_state_eval_finalized.name,
         ]
@@ -2126,9 +2131,6 @@ class Bootstrapper_state_sub_command_executed(AbstractCachingStateNode[bool]):
     _state_name = staticmethod(lambda: EnvState.state_sub_command_executed.name)
 
     def _eval_state_once(self) -> ValueType:
-
-        state_input_stderr_log_level_eval_finalized = self.eval_parent_state(EnvState.state_input_stderr_log_level_eval_finalized.name)
-        assert state_input_stderr_log_level_eval_finalized >= 0
 
         state_input_final_state_eval_finalized: str = self.eval_parent_state(EnvState.state_input_final_state_eval_finalized.name)
 
@@ -2289,8 +2291,6 @@ class Bootstrapper_state_proto_code_file_abs_path_inited_not_func_call_lib(Abstr
 
     def _eval_state_once(self) -> ValueType:
 
-        state_stride_py_arbitrary_reached: StateStride = self.eval_parent_state(EnvState.state_stride_py_arbitrary_reached.name)
-
         state_input_sub_command_arg_loaded: SubCommand = self.eval_parent_state(EnvState.state_input_sub_command_arg_loaded.name)
 
         state_input_proto_code_file_abs_path_var_loaded: str | None = self.eval_parent_state(EnvState.state_input_proto_code_file_abs_path_var_loaded.name)
@@ -2402,7 +2402,7 @@ class Bootstrapper_state_primer_conf_file_data_loaded(AbstractCachingStateNode[d
 
     _parent_states = staticmethod(
         lambda: [
-            EnvState.state_input_stderr_log_level_eval_finalized.name,
+            EnvState.state_input_stderr_log_level_handler_configured.name,
             EnvState.state_input_sub_command_arg_loaded.name,
             EnvState.state_proto_code_file_abs_path_inited.name,
             EnvState.state_primer_conf_file_abs_path_inited.name,
@@ -2564,7 +2564,7 @@ class Bootstrapper_state_client_conf_file_data_loaded(AbstractCachingStateNode[d
 
     _parent_states = staticmethod(
         lambda: [
-            EnvState.state_input_stderr_log_level_eval_finalized.name,
+            EnvState.state_input_stderr_log_level_handler_configured.name,
             EnvState.state_input_sub_command_arg_loaded.name,
             EnvState.state_global_conf_file_abs_path_inited.name,
         ]
@@ -2803,7 +2803,7 @@ class Bootstrapper_state_env_conf_file_data_loaded(AbstractCachingStateNode[dict
 
     _parent_states = staticmethod(
         lambda: [
-            EnvState.state_input_stderr_log_level_eval_finalized.name,
+            EnvState.state_input_stderr_log_level_handler_configured.name,
             EnvState.state_input_sub_command_arg_loaded.name,
             EnvState.state_local_conf_file_abs_path_inited.name,
         ]
@@ -3271,7 +3271,7 @@ class Bootstrapper_state_default_file_log_handler_configured(AbstractCachingStat
     _parent_states = staticmethod(
         lambda: [
             EnvState.state_args_parsed.name,
-            EnvState.state_input_stderr_log_level_eval_finalized.name,
+            EnvState.state_input_stderr_log_level_handler_configured.name,
             EnvState.state_input_start_id_var_loaded.name,
             EnvState.state_local_log_dir_abs_path_inited.name,
         ]
@@ -3284,7 +3284,7 @@ class Bootstrapper_state_default_file_log_handler_configured(AbstractCachingStat
 
         state_local_log_dir_abs_path_inited: str = self.eval_parent_state(EnvState.state_local_log_dir_abs_path_inited.name)
 
-        state_input_stderr_log_level_eval_finalized: int = self.eval_parent_state(EnvState.state_input_stderr_log_level_eval_finalized.name)
+        state_input_stderr_log_level_handler_configured: logging.Handler = self.eval_parent_state(EnvState.state_input_stderr_log_level_handler_configured.name)
 
         script_path = sys.argv[0]
         script_name = os.path.basename(script_path)
@@ -3292,7 +3292,7 @@ class Bootstrapper_state_default_file_log_handler_configured(AbstractCachingStat
         file_handler = _configure_primer_file_log_handler(
             script_name,
             state_input_start_id_var_loaded,
-            state_input_stderr_log_level_eval_finalized,
+            state_input_stderr_log_level_handler_configured,
             state_local_log_dir_abs_path_inited,
         )
 
@@ -3329,14 +3329,6 @@ class Bootstrapper_state_stride_py_required_reached_not_command_start(AbstractCa
 
         if self.env_ctx.has_stride_reached(next_stride=state_stride_py_required_reached):
             return self.env_ctx.set_max_stride(state_stride_py_required_reached)
-
-        state_input_sub_command_arg_loaded: SubCommand = self.eval_parent_state(EnvState.state_input_sub_command_arg_loaded.name)
-
-        # TODO: Unused, but plugged in to form complete DAG: consider adding intermediate state to plug it in:
-        state_default_file_log_handler_configured = self.eval_parent_state(EnvState.state_default_file_log_handler_configured.name)
-
-        # TODO: Unused, but plugged in to form complete DAG: consider adding intermediate state to plug it in:
-        state_local_tmp_dir_abs_path_inited = self.eval_parent_state(EnvState.state_local_tmp_dir_abs_path_inited.name)
 
         state_input_start_id_var_loaded: str = self.eval_parent_state(EnvState.state_input_start_id_var_loaded.name)
 
@@ -3444,8 +3436,6 @@ class Bootstrapper_state_reboot_triggered(AbstractCachingStateNode[bool]):
 
     def _eval_state_once(self) -> ValueType:
 
-        state_args_parsed: argparse.Namespace = self.eval_parent_state(EnvState.state_args_parsed.name)
-
         state_input_sub_command_arg_loaded: SubCommand = self.eval_parent_state(EnvState.state_input_sub_command_arg_loaded.name)
 
         if state_input_sub_command_arg_loaded == SubCommand.command_start:
@@ -3462,8 +3452,6 @@ class Bootstrapper_state_reboot_triggered(AbstractCachingStateNode[bool]):
 
         state_stride_py_required_reached: StateStride = self.eval_parent_state(EnvState.state_stride_py_required_reached.name)
         assert self.env_ctx.get_stride().value >= StateStride.stride_py_required.value
-
-        state_proto_code_file_abs_path_inited: str = self.eval_parent_state(EnvState.state_proto_code_file_abs_path_inited.name)
 
         # Reboot can only happen outside `venv` (to delete it):
         if not (reboot_env and state_stride_py_required_reached == StateStride.stride_py_required):
@@ -3596,8 +3584,6 @@ class Bootstrapper_state_stride_py_venv_reached(AbstractCachingStateNode[StateSt
             return self.env_ctx.set_max_stride(state_stride_py_venv_reached)
 
         state_input_start_id_var_loaded: str = self.eval_parent_state(EnvState.state_input_start_id_var_loaded.name)
-
-        state_reboot_triggered: bool = self.eval_parent_state(EnvState.state_reboot_triggered.name)
 
         state_proto_code_file_abs_path_inited: str = self.eval_parent_state(EnvState.state_proto_code_file_abs_path_inited.name)
 
@@ -3875,8 +3861,6 @@ class Bootstrapper_state_stride_deps_updated_reached(AbstractCachingStateNode[St
 
         state_proto_code_file_abs_path_inited: str = self.eval_parent_state(EnvState.state_proto_code_file_abs_path_inited.name)
 
-        state_version_constraints_generated: bool = self.eval_parent_state(EnvState.state_version_constraints_generated.name)
-
         state_local_venv_dir_abs_path_inited: str = self.eval_parent_state(EnvState.state_local_venv_dir_abs_path_inited.name)
 
         venv_path_to_python: str = os.path.join(
@@ -3915,7 +3899,6 @@ class Bootstrapper_state_proto_code_updated(AbstractCachingStateNode[bool]):
 
     def _eval_state_once(self) -> ValueType:
 
-        state_stride_deps_updated_reached: StateStride = self.eval_parent_state(EnvState.state_stride_deps_updated_reached.name)
         assert self.env_ctx.get_stride().value >= StateStride.stride_deps_updated.value
 
         if self.env_ctx.get_stride().value != StateStride.stride_deps_updated.value:
@@ -4002,14 +3985,10 @@ class Bootstrapper_state_stride_src_updated_reached(AbstractCachingStateNode[Sta
 
         state_stride_src_updated_reached: StateStride = StateStride.stride_src_updated
 
-        state_input_sub_command_arg_loaded: SubCommand = self.eval_parent_state(EnvState.state_input_sub_command_arg_loaded.name)
-
         if self.env_ctx.has_stride_reached(next_stride=state_stride_src_updated_reached):
             return self.env_ctx.set_max_stride(state_stride_src_updated_reached)
 
         state_proto_code_file_abs_path_inited: str = self.eval_parent_state(EnvState.state_proto_code_file_abs_path_inited.name)
-
-        state_proto_code_updated: bool = self.eval_parent_state(EnvState.state_proto_code_updated.name)
 
         state_local_venv_dir_abs_path_inited: str = self.eval_parent_state(EnvState.state_local_venv_dir_abs_path_inited.name)
 
@@ -4104,6 +4083,8 @@ class EnvState(enum.Enum):
     state_args_parsed = Bootstrapper_state_args_parsed
 
     state_input_stderr_log_level_eval_finalized = Bootstrapper_state_input_stderr_log_level_eval_finalized
+
+    state_input_stderr_log_level_handler_configured = Bootstrapper_state_input_stderr_log_level_handler_configured
 
     state_input_sub_command_arg_loaded = Bootstrapper_state_input_sub_command_arg_loaded
 
@@ -4329,14 +4310,13 @@ class MutableValue(Generic[ValueType]):
 
     def set_curr_value(
         self,
-        state_node: StateNode | None,
+        state_node: StateNode,
         curr_value: ValueType,
     ) -> None:
         # TODO: Shell we also ensure that the `StateNode` using that `MutableValue` has necessary dependencies on write?
 
         if self.curr_value is None:
             raise AssertionError(f"`{MutableValue.__name__}` [{self.state_name}] cannot be set as it is not initialized yet.")
-        state_name: str | None = None
         self.curr_value = curr_value
         logger.debug(f"`{self.__class__.__name__}` [{self.state_name}] `curr_value` after set [{self.curr_value}] in [{state_node.get_state_name()}]")
 
@@ -4717,7 +4697,7 @@ def configure_default_file_log_handler(
 def _configure_primer_file_log_handler(
     script_name: str,
     state_input_start_id_var_loaded: str,
-    state_input_stderr_log_level_eval_finalized: int,
+    state_input_stderr_log_level_handler_configured: logging.Handler,
     state_local_log_dir_abs_path_inited: str,
 ) -> logging.Handler:
     """
@@ -4733,8 +4713,8 @@ def _configure_primer_file_log_handler(
     # TODO: Configure MAX file log level in the config file (NOTE: the higher the level the fewer the log entries):
     file_log_level: int = logging.INFO
     # Increase the log level at most to what is used by stderr:
-    if state_input_stderr_log_level_eval_finalized < file_log_level:
-        file_log_level = state_input_stderr_log_level_eval_finalized
+    if state_input_stderr_log_level_handler_configured.level < file_log_level:
+        file_log_level = state_input_stderr_log_level_handler_configured.level
 
     os.makedirs(
         state_local_log_dir_abs_path_inited,
