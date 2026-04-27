@@ -31,7 +31,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     def test_relationship(self):
         assert_test_module_name_embeds_str(EnvState.state_env_conf_file_data_loaded.name)
 
-    @patch(f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_stderr_log_level_eval_finalized.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_stderr_log_level_handler_configured.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_sub_command_arg_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_file_abs_path_inited.__name__}.create_state_node")
     def test_state_env_conf_file_data_loaded_exists(
@@ -62,7 +62,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         self.assertEqual(state_value, mock_data)
 
-    @patch(f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_stderr_log_level_eval_finalized.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_stderr_log_level_handler_configured.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_sub_command_arg_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_file_abs_path_inited.__name__}.create_state_node")
     def test_state_env_conf_file_data_loaded_missing(
@@ -99,7 +99,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.assertEqual({}, state_value)
         self.assertNotIn("does not exist", log_stream.getvalue())
 
-    @patch(f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_stderr_log_level_eval_finalized.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_stderr_log_level_handler_configured.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_sub_command_arg_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_file_abs_path_inited.__name__}.create_state_node")
     def test_state_env_conf_file_data_loaded_malformed(

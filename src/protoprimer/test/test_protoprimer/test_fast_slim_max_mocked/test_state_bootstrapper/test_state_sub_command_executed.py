@@ -13,7 +13,7 @@ from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     Bootstrapper_state_input_final_state_eval_finalized,
     Bootstrapper_state_input_sub_command_arg_loaded,
-    Bootstrapper_state_input_stderr_log_level_eval_finalized,
+    Bootstrapper_state_input_stderr_log_level_handler_configured,
     EnvContext,
     EnvState,
     ExitCodeReporter,
@@ -31,13 +31,13 @@ def test_relationship():
 
 
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_final_state_eval_finalized.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_stderr_log_level_eval_finalized.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_stderr_log_level_handler_configured.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_sub_command_arg_loaded.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{ExitCodeReporter.__name__}.execute_strategy")
 def test_sub_command_boot(
     mock_exit_code_reporter_execute_strategy,
     mock_state_input_sub_command_arg_loaded,
-    mock_state_input_stderr_log_level_eval_finalized,
+    mock_state_input_stderr_log_level_handler_configured,
     mock_state_input_final_state_eval_finalized,
     env_ctx,
 ):
@@ -49,7 +49,6 @@ def test_sub_command_boot(
     )
 
     mock_state_input_sub_command_arg_loaded.return_value.eval_own_state.return_value = SubCommand.command_boot
-    mock_state_input_stderr_log_level_eval_finalized.return_value.eval_own_state.return_value = 0
     mock_state_input_final_state_eval_finalized.return_value.eval_own_state.return_value = "mock_final_state"
 
     mock_state_node = MagicMock()
@@ -66,11 +65,11 @@ def test_sub_command_boot(
 
 
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_final_state_eval_finalized.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_stderr_log_level_eval_finalized.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_stderr_log_level_handler_configured.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_sub_command_arg_loaded.__name__}.create_state_node")
 def test_sub_command_none(
     mock_state_input_sub_command_arg_loaded,
-    mock_state_input_stderr_log_level_eval_finalized,
+    mock_state_input_stderr_log_level_handler_configured,
     mock_state_input_final_state_eval_finalized,
     env_ctx,
 ):
@@ -82,8 +81,6 @@ def test_sub_command_none(
     )
 
     mock_state_input_sub_command_arg_loaded.return_value.eval_own_state.return_value = None
-
-    mock_state_input_stderr_log_level_eval_finalized.return_value.eval_own_state.return_value = 0
     mock_state_input_final_state_eval_finalized.return_value.eval_own_state.return_value = "mock_final_state"
 
     mock_state_node = MagicMock()
@@ -95,11 +92,11 @@ def test_sub_command_none(
 
 
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_final_state_eval_finalized.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_stderr_log_level_eval_finalized.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_stderr_log_level_handler_configured.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_sub_command_arg_loaded.__name__}.create_state_node")
 def test_sub_command_invalid(
     mock_state_input_sub_command_arg_loaded,
-    mock_state_input_stderr_log_level_eval_finalized,
+    mock_state_input_stderr_log_level_handler_configured,
     mock_state_input_final_state_eval_finalized,
     env_ctx,
 ):
@@ -111,7 +108,6 @@ def test_sub_command_invalid(
     )
 
     mock_state_input_sub_command_arg_loaded.return_value.eval_own_state.return_value = "invalid_sub_command"
-    mock_state_input_stderr_log_level_eval_finalized.return_value.eval_own_state.return_value = 0
     mock_state_input_final_state_eval_finalized.return_value.eval_own_state.return_value = "mock_final_state"
 
     mock_state_node = MagicMock()
