@@ -1,8 +1,6 @@
 import os
 from contextlib import contextmanager
 
-import protoprimer
-
 
 @contextmanager
 def change_to_known_repo_path(path_from_repo_root="."):
@@ -12,7 +10,7 @@ def change_to_known_repo_path(path_from_repo_root="."):
     This allows any other code accessing files by relative paths to rely on the stable path within the repo.
     """
 
-    start_dir_abs_path = os.path.dirname(str(protoprimer.__file__))
+    start_dir_abs_path = os.path.dirname(os.path.abspath(__file__))
     curr_dir_abs_path = start_dir_abs_path
     os.chdir(curr_dir_abs_path)
 

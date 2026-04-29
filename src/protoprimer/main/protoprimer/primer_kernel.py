@@ -4594,29 +4594,34 @@ class _PrimerStderrLogFormatter(DefaultStderrLogFormatter):
         }
 
 
+def _reconfigure_log_handler(
+    formatter_class: type,
+    new_formatter: logging.Formatter,
+    log_level: int,
+) -> logging.Handler | None:
+    for log_handler in logger.handlers:
+        if isinstance(log_handler.formatter, formatter_class):
+            # This covers both `_Primer*` (subclass) and `Default*` formatter variants.
+            log_handler.setFormatter(new_formatter)
+            log_handler.setLevel(log_level)
+            # Remove `protoprimer`-specific filter if present:
+            for handler_filter in list(log_handler.filters):
+                if isinstance(handler_filter, StateStrideFilter):
+                    log_handler.removeFilter(handler_filter)
+            return log_handler
+    return None
+
+
 def reconfigure_stderr_log_handler(log_level: int = logging.WARNING) -> logging.Handler | None:
     """
     UC_81_50_97_17.reuse_logger.md
     """
-
     logger.setLevel(logging.NOTSET)
-
-    # Check for existing primer handler (to replace its formatter):
-    stderr_handler: logging.Handler
-    for stderr_handler in logger.handlers:
-        if isinstance(stderr_handler, logging.StreamHandler) and stderr_handler.stream is sys.stderr and isinstance(stderr_handler.formatter, DefaultStderrLogFormatter):
-            # This covers both `_PrimerStderrLogFormatter` (subclass) and `DefaultStderrLogFormatter`.
-            stderr_handler.setFormatter(DefaultStderrLogFormatter(log_level))
-            stderr_handler.setLevel(log_level)
-
-            # Remove primer-specific filter if present:
-            for f in list(stderr_handler.filters):
-                if isinstance(f, StateStrideFilter):
-                    stderr_handler.removeFilter(f)
-
-            return stderr_handler
-
-    return None
+    return _reconfigure_log_handler(
+        formatter_class=DefaultStderrLogFormatter,
+        new_formatter=DefaultStderrLogFormatter(log_level),
+        log_level=log_level,
+    )
 
 
 def configure_default_stderr_log_handler(log_level: int = logging.WARNING) -> logging.Handler:
@@ -4637,18 +4642,19 @@ def _configure_primer_stderr_log_handler(state_input_stderr_log_level_var_loaded
     logger.setLevel(logging.NOTSET)
 
     handler_class = logging.StreamHandler
+    out_stream = sys.stderr
     stderr_handler: logging.Handler | None = None
     if os.environ.get(EnvVar.var_PROTOPRIMER_MOCKED_RESTART.value, None) is not None:
         # Prevent duplicate handler (when `os.execv*` calls restart `main` again in tests).
-        # Select `stderr` handler:
         for handler_instance in logger.handlers:
             if isinstance(handler_instance, handler_class):
-                if handler_instance.stream is sys.stderr:
-                    stderr_handler = handler_instance
-                    break
+                if handler_instance.stream is out_stream:
+                    if isinstance(handler_instance.formatter, _PrimerStderrLogFormatter):
+                        stderr_handler = handler_instance
+                        break
 
     if stderr_handler is None:
-        stderr_handler: logging.Handler = handler_class(sys.stderr)
+        stderr_handler: logging.Handler = handler_class(out_stream)
 
         stderr_handler.addFilter(StateStrideFilter())
         stderr_handler.setFormatter(_PrimerStderrLogFormatter(state_input_stderr_log_level_var_loaded))
@@ -4663,23 +4669,11 @@ def reconfigure_file_log_handler(log_level: int = logging.INFO) -> logging.Handl
     """
     UC_81_50_97_17.reuse_logger.md
     """
-
-    # Check for existing `_Primer*` handler (to replace its formatter):
-    file_handler: logging.Handler
-    for file_handler in logger.handlers:
-        if isinstance(file_handler, logging.FileHandler) and isinstance(file_handler.formatter, DefaultFileLogFormatter):
-            # This covers both `_PrimerFileLogFormatter` (subclass) and `DefaultFileLogFormatter`.
-            file_handler.setFormatter(DefaultFileLogFormatter())
-            file_handler.setLevel(log_level)
-
-            # Remove primer-specific filter if present:
-            for handler_filter in list(file_handler.filters):
-                if isinstance(handler_filter, StateStrideFilter):
-                    file_handler.removeFilter(handler_filter)
-
-            return file_handler
-
-    return None
+    return _reconfigure_log_handler(
+        formatter_class=DefaultFileLogFormatter,
+        new_formatter=DefaultFileLogFormatter(),
+        log_level=log_level,
+    )
 
 
 def configure_default_file_log_handler(
@@ -4703,6 +4697,9 @@ def _configure_primer_file_log_handler(
     """
     Implements for log file: FT_38_73_38_52.log_verbosity.md
     """
+
+    # TODO: Do we need to avoid duplicate file formatters in case of EnvVar.var_PROTOPRIMER_MOCKED_RESTART?
+    #       See how `_configure_primer_stderr_log_handler` avoids that for `sys.stderr` formatter.
 
     log_file_basename = f"{script_name}.{state_input_start_id_var_loaded}.log"
     log_file_abs_path = os.path.join(
@@ -5177,7 +5174,7 @@ def select_python_file_abs_path(
         try:
             logger.debug(f"trying `python` version of `selected_python_abs_path` [{selected_python_abs_path}]")
             python_version: tuple[int, int, int] = get_python_version(selected_python_abs_path)
-            logger.info(f"`python` version of `selected_python_abs_path` [{selected_python_abs_path}] is [{python_version}]")
+            logger.debug(f"`python` version of `selected_python_abs_path` [{selected_python_abs_path}] is [{python_version}]")
         except (subprocess.CalledProcessError, FileNotFoundError):
             logger.warning(f"`python` in `selected_python_abs_path` [{selected_python_abs_path}] failed without returning its version")
             selected_python_abs_path = None
