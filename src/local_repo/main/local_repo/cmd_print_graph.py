@@ -15,20 +15,17 @@ from local_repo.graph_printer import (
 from local_repo.misc_tools.graph_utils import get_transitive_dependencies
 from protoprimer.primer_kernel import (
     ConfLeap,
-    configure_default_file_log_handler,
-    configure_default_stderr_log_handler,
     EntryFunc,
     EnvContext,
     EnvState,
     get_config,
     reconfigure_file_log_handler,
     reconfigure_stderr_log_handler,
-    SubCommand,
     StateGraph,
     StateNode,
+    SubCommand,
     TargetState,
 )
-
 
 logger: logging.Logger = logging.getLogger()
 
@@ -57,25 +54,8 @@ def custom_main():
     script_basename = os.path.basename(sys.argv[0])
 
     # UC_81_50_97_17.reuse_logger.md:
-    if reconfigure_stderr_log_handler(logging.INFO) is None:
-        configure_default_stderr_log_handler(logging.INFO)
-
-    proto_kernel_abs_path = os.path.join(
-        os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(str(__file__)))))),
-        "./cmd/proto_code/proto_kernel.py",
-    )
-
-    derived_data = get_config(proto_kernel_abs_path, ConfLeap.leap_derived)
-
-    # UC_81_50_97_17.reuse_logger.md:
-    if reconfigure_file_log_handler(logging.INFO) is None:
-        configure_default_file_log_handler(
-            log_file_abs_path=os.path.join(
-                derived_data[EnvState.state_local_log_dir_abs_path_inited.name],
-                f"{script_basename}.log",
-            ),
-            log_level=logging.INFO,
-        )
+    reconfigure_stderr_log_handler(logging.INFO)
+    reconfigure_file_log_handler(logging.INFO)
 
     parsed_args = init_arg_parser().parse_args()
 
