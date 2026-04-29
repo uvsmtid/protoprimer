@@ -1942,31 +1942,49 @@ class Bootstrapper_state_default_stderr_log_handler_configured(AbstractCachingSt
 
 
 # noinspection PyPep8Naming
-@trivial_factory
-class Bootstrapper_state_args_parsed(AbstractCachingStateNode[argparse.Namespace]):
+@conditional_factory
+class Bootstrapper_state_args_parsed_boot_env(AbstractCachingStateNode[argparse.Namespace]):
 
     _state_name = staticmethod(lambda: EnvState.state_args_parsed.name)
 
     def _eval_state_once(self) -> ValueType:
-        """
-        Parse the args if `EntryFunc.func_boot_env` or `EntryFunc.func_run_main`.
-        Otherwise, pretend there are no args except `SubCommand.command_start`.
-        """
+        return parse_args()
+
+
+# noinspection PyPep8Naming
+@conditional_factory
+class Bootstrapper_state_args_parsed_lib(AbstractCachingStateNode[argparse.Namespace]):
+
+    _state_name = staticmethod(lambda: EnvState.state_args_parsed.name)
+
+    def _eval_state_once(self) -> ValueType:
         # TODO: TODO_60_63_68_81.refactor_DAG_builder.md:
         #       This step should not be executed without need to parse args.
         #       Do not fake args. Just redesign dependency. No?
-        state_args_parsed: argparse.Namespace
-        if self.env_ctx.graph_coordinates.entry_func == EntryFunc.func_boot_env or self.env_ctx.graph_coordinates.entry_func == EntryFunc.func_run_main:
-            state_args_parsed = parse_args()
-        else:
-            # Pretend there is no args except `SubCommand.command_start`:
-            state_args_parsed = parse_args([])
-            setattr(
-                state_args_parsed,
-                ParsedArg.name_sub_command.value,
-                SubCommand.command_start.value,
-            )
+        # Pretend there is no args except `SubCommand.command_start`:
+        state_args_parsed: argparse.Namespace = parse_args([])
+        setattr(
+            state_args_parsed,
+            ParsedArg.name_sub_command.value,
+            SubCommand.command_start.value,
+        )
         return state_args_parsed
+
+
+# noinspection PyPep8Naming
+class Factory_state_args_parsed(NodeFactory[StateStride]):
+
+    def create_state_node(self) -> StateNode[ValueType]:
+        # TODO: TODO_60_63_68_81.refactor_DAG_builder.md:
+        #       This step should not be executed without need to parse args.
+        #       Do not fake args. Just redesign dependency. No?
+        if self.env_ctx.graph_coordinates.entry_func in [
+            EntryFunc.func_boot_env,
+            EntryFunc.func_run_main,
+        ]:
+            return Bootstrapper_state_args_parsed_boot_env(self.env_ctx)
+        else:
+            return Bootstrapper_state_args_parsed_lib(self.env_ctx)
 
 
 # noinspection PyPep8Naming
@@ -4080,7 +4098,7 @@ class EnvState(enum.Enum):
 
     state_default_stderr_log_handler_configured = Bootstrapper_state_default_stderr_log_handler_configured
 
-    state_args_parsed = Bootstrapper_state_args_parsed
+    state_args_parsed = Factory_state_args_parsed
 
     state_input_stderr_log_level_eval_finalized = Bootstrapper_state_input_stderr_log_level_eval_finalized
 
@@ -4624,13 +4642,21 @@ def reconfigure_stderr_log_handler(log_level: int = logging.WARNING) -> logging.
     )
 
 
-def configure_default_stderr_log_handler(log_level: int = logging.WARNING) -> logging.Handler:
-    logger.setLevel(logging.NOTSET)
-    stderr_handler: logging.Handler = logging.StreamHandler(sys.stderr)
-    stderr_handler.setFormatter(DefaultStderrLogFormatter(log_level))
-    stderr_handler.setLevel(log_level)
-    logger.addHandler(stderr_handler)
-    return stderr_handler
+def _find_existing_log_handler(
+    handler_class: type[logging.StreamHandler],
+    formatter_class: type,
+) -> logging.StreamHandler | None:
+    """
+    Prevent duplicate handler (when `os.execv*` calls restart `main` again in tests).
+    """
+    if os.environ.get(EnvVar.var_PROTOPRIMER_MOCKED_RESTART.value, None) is None:
+        return None
+    log_handler: logging.Handler
+    for log_handler in logger.handlers:
+        if isinstance(log_handler, handler_class):
+            if isinstance(log_handler.formatter, formatter_class):
+                return log_handler
+    return None
 
 
 def _configure_primer_stderr_log_handler(state_input_stderr_log_level_var_loaded: int) -> logging.Handler:
@@ -4641,24 +4667,16 @@ def _configure_primer_stderr_log_handler(state_input_stderr_log_level_var_loaded
     # Log everything (the filters are supposed to be set on output handlers instead):
     logger.setLevel(logging.NOTSET)
 
-    handler_class = logging.StreamHandler
-    out_stream = sys.stderr
-    stderr_handler: logging.Handler | None = None
-    if os.environ.get(EnvVar.var_PROTOPRIMER_MOCKED_RESTART.value, None) is not None:
-        # Prevent duplicate handler (when `os.execv*` calls restart `main` again in tests).
-        for handler_instance in logger.handlers:
-            if isinstance(handler_instance, handler_class):
-                if handler_instance.stream is out_stream:
-                    if isinstance(handler_instance.formatter, _PrimerStderrLogFormatter):
-                        stderr_handler = handler_instance
-                        break
+    stderr_handler: logging.StreamHandler | None = _find_existing_log_handler(
+        logging.StreamHandler,
+        _PrimerStderrLogFormatter,
+    )
 
     if stderr_handler is None:
-        stderr_handler: logging.Handler = handler_class(out_stream)
-
+        stderr_handler = logging.StreamHandler(sys.stderr)
+        assert stderr_handler is not None
         stderr_handler.addFilter(StateStrideFilter())
         stderr_handler.setFormatter(_PrimerStderrLogFormatter(state_input_stderr_log_level_var_loaded))
-
         logger.addHandler(stderr_handler)
 
     stderr_handler.setLevel(state_input_stderr_log_level_var_loaded)
@@ -4676,18 +4694,6 @@ def reconfigure_file_log_handler(log_level: int = logging.INFO) -> logging.Handl
     )
 
 
-def configure_default_file_log_handler(
-    log_file_abs_path: str,
-    log_level: int = logging.INFO,
-) -> logging.Handler:
-    os.makedirs(os.path.dirname(log_file_abs_path), exist_ok=True)
-    file_handler: logging.Handler = logging.FileHandler(log_file_abs_path)
-    file_handler.setFormatter(DefaultFileLogFormatter())
-    file_handler.setLevel(log_level)
-    logger.addHandler(file_handler)
-    return file_handler
-
-
 def _configure_primer_file_log_handler(
     script_name: str,
     state_input_start_id_var_loaded: str,
@@ -4697,9 +4703,6 @@ def _configure_primer_file_log_handler(
     """
     Implements for log file: FT_38_73_38_52.log_verbosity.md
     """
-
-    # TODO: Do we need to avoid duplicate file formatters in case of EnvVar.var_PROTOPRIMER_MOCKED_RESTART?
-    #       See how `_configure_primer_stderr_log_handler` avoids that for `sys.stderr` formatter.
 
     log_file_basename = f"{script_name}.{state_input_start_id_var_loaded}.log"
     log_file_abs_path = os.path.join(
@@ -4713,30 +4716,34 @@ def _configure_primer_file_log_handler(
     if state_input_stderr_log_level_handler_configured.level < file_log_level:
         file_log_level = state_input_stderr_log_level_handler_configured.level
 
-    os.makedirs(
-        state_local_log_dir_abs_path_inited,
-        exist_ok=True,
+    file_handler: logging.StreamHandler | None = _find_existing_log_handler(
+        logging.FileHandler,
+        _PrimerFileLogFormatter,
     )
 
-    if not os.path.exists(log_file_abs_path):
-        # Explain missing logs to avoid confusion:
-        write_text_file(
-            log_file_abs_path,
-            f"""
+    if file_handler is None:
+        os.makedirs(
+            state_local_log_dir_abs_path_inited,
+            exist_ok=True,
+        )
+
+        if not os.path.exists(log_file_abs_path):
+            # Explain missing logs to avoid confusion:
+            write_text_file(
+                log_file_abs_path,
+                f"""
 {ConfConstGeneral.log_section_delimiter} file log starts at [{StateStride.stride_py_arbitrary.name}] after its config is resolved {ConfConstGeneral.log_section_delimiter}
 
 """,
-        )
+            )
 
-    file_handler: logging.Handler = logging.FileHandler(log_file_abs_path)
-    file_handler.addFilter(StateStrideFilter())
-
-    file_formatter = _PrimerFileLogFormatter()
+        file_handler = logging.FileHandler(log_file_abs_path)
+        assert file_handler is not None
+        file_handler.addFilter(StateStrideFilter())
+        file_handler.setFormatter(_PrimerFileLogFormatter())
+        logger.addHandler(file_handler)
 
     file_handler.setLevel(file_log_level)
-    file_handler.setFormatter(file_formatter)
-
-    logger.addHandler(file_handler)
     return file_handler
 
 

@@ -13,7 +13,7 @@ from local_test.mock_verifier import (
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
-    Bootstrapper_state_args_parsed,
+    Factory_state_args_parsed,
     Bootstrapper_state_input_stderr_log_level_var_loaded,
     ConfConstInput,
     EnvContext,
@@ -32,7 +32,7 @@ def test_relationship():
     assert_test_module_name_embeds_str(EnvState.state_input_stderr_log_level_eval_finalized.name)
 
 
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Factory_state_args_parsed.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_stderr_log_level_var_loaded.__name__}.create_state_node")
 def test_default_case_no_flags_uses_default_from_var(
     mock_state_input_stderr_log_level_var_loaded,
@@ -60,7 +60,7 @@ def test_default_case_no_flags_uses_default_from_var(
     assert state_value == logging.INFO
 
 
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Factory_state_args_parsed.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_stderr_log_level_var_loaded.__name__}.create_state_node")
 def test_default_case_no_flags_uses_warning(
     mock_state_input_stderr_log_level_var_loaded,
@@ -92,7 +92,7 @@ def test_default_case_no_flags_uses_warning(
     assert state_value == logging.WARNING
 
 
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Factory_state_args_parsed.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_stderr_log_level_var_loaded.__name__}.create_state_node")
 def test_quiet_1_only(
     mock_state_input_stderr_log_level_var_loaded,
@@ -124,7 +124,7 @@ def test_quiet_1_only(
     assert state_value == logging.ERROR
 
 
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Factory_state_args_parsed.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_stderr_log_level_var_loaded.__name__}.create_state_node")
 def test_quiet_2_only(
     mock_state_input_stderr_log_level_var_loaded,
@@ -156,7 +156,7 @@ def test_quiet_2_only(
     assert state_value == logging.CRITICAL
 
 
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Factory_state_args_parsed.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_stderr_log_level_var_loaded.__name__}.create_state_node")
 def test_quiet_5_only(
     mock_state_input_stderr_log_level_var_loaded,
@@ -188,7 +188,7 @@ def test_quiet_5_only(
     assert state_value == 80
 
 
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Factory_state_args_parsed.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_stderr_log_level_var_loaded.__name__}.create_state_node")
 def test_verbose_1_only(
     mock_state_input_stderr_log_level_var_loaded,
@@ -220,7 +220,7 @@ def test_verbose_1_only(
     assert state_value == logging.INFO
 
 
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Factory_state_args_parsed.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_stderr_log_level_var_loaded.__name__}.create_state_node")
 def test_verbose_2_only(
     mock_state_input_stderr_log_level_var_loaded,
@@ -252,7 +252,7 @@ def test_verbose_2_only(
     assert state_value == logging.DEBUG
 
 
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Factory_state_args_parsed.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_stderr_log_level_var_loaded.__name__}.create_state_node")
 def test_verbose_3_only(
     mock_state_input_stderr_log_level_var_loaded,
@@ -284,7 +284,7 @@ def test_verbose_3_only(
     assert state_value == logging.NOTSET
 
 
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Factory_state_args_parsed.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_stderr_log_level_var_loaded.__name__}.create_state_node")
 def test_verbose_4_only(
     mock_state_input_stderr_log_level_var_loaded,
@@ -316,7 +316,7 @@ def test_verbose_4_only(
     assert state_value == logging.NOTSET
 
 
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Factory_state_args_parsed.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_stderr_log_level_var_loaded.__name__}.create_state_node")
 def test_quiet_and_verbose(
     mock_state_input_stderr_log_level_var_loaded,
@@ -348,7 +348,7 @@ def test_quiet_and_verbose(
     assert state_value == logging.ERROR
 
 
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Factory_state_args_parsed.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_stderr_log_level_var_loaded.__name__}.create_state_node")
 @patch.dict(f"{os.__name__}.environ", {}, clear=True)
 def test_env_var_not_updated_read_only(

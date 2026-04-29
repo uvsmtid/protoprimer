@@ -10,7 +10,7 @@ from local_test.mock_verifier import (
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
-    Bootstrapper_state_args_parsed,
+    Factory_state_args_parsed,
     Bootstrapper_state_client_conf_file_data_loaded,
     Bootstrapper_state_ref_root_dir_abs_path_inited,
     ConfField,
@@ -34,7 +34,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         assert_test_module_name_embeds_str(EnvState.state_selected_env_dir_rel_path_inited.name)
 
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_args_parsed.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.create_state_node")
     def test_success_when_arg_is_present_and_rel_to_cwd(
         self,
@@ -70,7 +70,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.assertEqual(state_selected_env_dir_rel_path_inited, arg_value)
 
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_args_parsed.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.create_state_node")
     def test_success_when_arg_is_present_and_rel_to_ref_root(
         self,
@@ -105,7 +105,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.assertEqual(state_selected_env_dir_rel_path_inited, arg_value)
 
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_args_parsed.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.create_state_node")
     def test_success_when_default_field_is_present(
         self,
@@ -137,7 +137,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
     @patch(f"{primer_kernel.__name__}.EnvContext.get_stride")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_args_parsed.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.create_state_node")
     def test_failure_when_default_field_is_missing(
         self,
@@ -174,7 +174,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
 
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_args_parsed.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.create_state_node")
     def test_failure_when_path_is_not_a_dir(
         self,
@@ -206,7 +206,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.assertIn("is relative to neither", str(ctx.exception))
 
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_args_parsed.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.create_state_node")
     def test_failure_when_default_path_from_conf_is_absolute(
         self,
@@ -237,7 +237,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.assertIn("must be a relative path", str(ctx.exception))
 
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_args_parsed.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.create_state_node")
     def test_failure_when_path_from_conf_is_outside_ref_root(
         self,
@@ -267,7 +267,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.assertIn("is not under", str(ctx.exception))
 
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_args_parsed.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.create_state_node")
     def test_success_when_path_from_conf_is_inside_ref_root(
         self,
@@ -297,7 +297,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.assertEqual(result, arg_value_rel)
 
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_args_parsed.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.create_state_node")
     def test_failure_when_path_does_not_exist(
         self,
@@ -328,7 +328,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.assertIn("is relative to neither", str(ctx.exception))
 
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_args_parsed.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.create_state_node")
     def test_success_when_path_leads_to_a_dir(
         self,
@@ -360,7 +360,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.assertEqual(result, "symlink_to_dir")
 
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_args_parsed.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.create_state_node")
     def test_failure_when_path_from_arg_is_not_a_dir(
         self,
@@ -393,7 +393,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
 
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_args_parsed.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.create_state_node")
     def test_success_when_arg_is_present_and_sub_dir_to_ref_root_but_rel_to_curr_dir(
         self,
