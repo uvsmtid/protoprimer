@@ -214,7 +214,43 @@ class StateMeta(enum.Enum):
     )
 
 
-class GraphPrinterText(RunStrategy):
+def compose_python_output(sorted_state_names: list[str]) -> str:
+    items = "\n".join(f"        EnvState.{name}," for name in sorted_state_names)
+    return f"""\
+def get_env_states() -> list:
+    from protoprimer.primer_kernel import EnvState
+    return [
+{items}
+    ]
+"""
+
+
+class GraphPrinterTextFlat:
+
+    def __init__(self, sorted_state_names: list[str]):
+        self.sorted_state_names = sorted_state_names
+
+    def execute_strategy(
+        self,
+        ignored_node: StateNode,
+    ) -> None:
+        for state_name in self.sorted_state_names:
+            print(state_name)
+
+
+class GraphPrinterPython:
+
+    def __init__(self, sorted_state_names: list[str]):
+        self.sorted_state_names = sorted_state_names
+
+    def execute_strategy(
+        self,
+        ignored_node: StateNode,
+    ) -> None:
+        print(compose_python_output(self.sorted_state_names))
+
+
+class GraphPrinterTextNested(RunStrategy):
     """
     This class prints reduced DAG of `EnvState`-s.
 

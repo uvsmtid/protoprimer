@@ -55,6 +55,7 @@ def publish_package(
     if reconfigure_stderr_log_handler(logging.INFO) is None:
         configure_default_stderr_log_handler(logging.INFO)
 
+    # UC_81_50_97_17.reuse_logger.md:
     if reconfigure_file_log_handler(logging.INFO) is None:
         configure_default_file_log_handler(
             # TODO: TODO_28_48_19_20.api_to_traverse_config_when_primed.md:
