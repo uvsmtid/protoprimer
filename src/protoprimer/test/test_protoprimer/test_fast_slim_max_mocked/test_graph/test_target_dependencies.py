@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from protoprimer.primer_kernel import (
+    EntryFunc,
     EnvContext,
     EnvState,
     SubCommand,
@@ -17,11 +18,16 @@ class TestTargetDependencies:
     """
 
     # These are not dependencies of `TargetState.target_proto_bootstrap_completed`,
-    # but they are dependencies of `TargetState.target_sub_command_executed`.
-    some_state_sub_command_executed_dependencies = [
+    # but they are dependencies of `TargetState.target_everything_executed`.
+    state_func_boot_env_executed_dependencies = [
         EnvState.state_input_sub_command_arg_loaded.name,
         EnvState.state_input_final_state_eval_finalized.name,
-        EnvState.state_sub_command_executed.name,
+        EnvState.state_func_boot_env_executed.name,
+    ]
+
+    conditionally_missing_func_executed_states = [
+        EnvState.state_func_start_app_executed.name,
+        EnvState.state_func_call_lib_executed.name,
     ]
 
     def test_all_env_states_are_dependencies_of_target_proto_bootstrap_completed(
@@ -30,6 +36,7 @@ class TestTargetDependencies:
         # given:
 
         env_context_instance = EnvContext()
+        env_context_instance.graph_coordinates.entry_func = EntryFunc.func_run_main
         env_context_instance.graph_coordinates.sub_command = SubCommand.command_boot
         state_graph_instance = env_context_instance.state_graph
         final_state_name = EnvState.state_command_executed.name
@@ -48,9 +55,11 @@ class TestTargetDependencies:
         all_env_state_names = {env_state.name for env_state in EnvState}
         missing_dependencies = all_env_state_names - all_dependencies
 
-        allowed_missing_dependencies = set(self.some_state_sub_command_executed_dependencies)
+        allowed_missing_dependencies = set(self.state_func_boot_env_executed_dependencies)
+        allowed_missing_dependencies.update(self.conditionally_missing_func_executed_states)
         allowed_missing_dependencies.add(EnvState.state_derived_conf_data_loaded.name)
         allowed_missing_dependencies.add(EnvState.state_effective_conf_data_printed.name)
+        allowed_missing_dependencies.add(EnvState.state_everything_executed.name)
 
         missing_dependencies -= allowed_missing_dependencies
 
@@ -63,15 +72,16 @@ class TestTargetDependencies:
                 #
             )
 
-    def test_dependencies_of_state_sub_command_executed(
+    def test_dependencies_of_state_func_boot_env_executed(
         self,
     ):
         # given:
 
         env_context_instance = EnvContext()
+        env_context_instance.graph_coordinates.entry_func = EntryFunc.func_run_main
         env_context_instance.graph_coordinates.sub_command = SubCommand.command_boot
         state_graph_instance = env_context_instance.state_graph
-        final_state_name = TargetState.target_sub_command_executed.value.name
+        final_state_name = TargetState.target_everything_executed.value.name
 
         # when:
 
@@ -86,7 +96,7 @@ class TestTargetDependencies:
 
         # another set which is supposed to be equal:
         all_dependencies_with_extra = set(all_dependencies_only)
-        all_dependencies_with_extra.update(self.some_state_sub_command_executed_dependencies)
+        all_dependencies_with_extra.update(self.state_func_boot_env_executed_dependencies)
 
         # then:
 

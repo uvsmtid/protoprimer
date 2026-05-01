@@ -26,11 +26,9 @@ from local_repo.sub_proc_util import (
     get_command_output,
 )
 from protoprimer.primer_kernel import (
-    TopDir,
-    configure_default_file_log_handler,
-    configure_default_stderr_log_handler,
     reconfigure_file_log_handler,
     reconfigure_stderr_log_handler,
+    TopDir,
 )
 
 logger: logging.Logger = logging.getLogger()
@@ -52,21 +50,8 @@ def publish_package(
     parsed_args = init_arg_parser().parse_args()
 
     # UC_81_50_97_17.reuse_logger.md:
-    if reconfigure_stderr_log_handler(logging.INFO) is None:
-        configure_default_stderr_log_handler(logging.INFO)
-
-    # UC_81_50_97_17.reuse_logger.md:
-    if reconfigure_file_log_handler(logging.INFO) is None:
-        configure_default_file_log_handler(
-            # TODO: TODO_28_48_19_20.api_to_traverse_config_when_primed.md:
-            #       Get `log` directory from `protoprimer` config:
-            log_file_abs_path=os.path.join(
-                client_dir,
-                TopDir.dir_log.value,
-                f"{script_basename}.log",
-            ),
-            log_level=logging.INFO,
-        )
+    reconfigure_stderr_log_handler(logging.INFO)
+    reconfigure_file_log_handler(logging.INFO)
 
     logger.info(f"client_dir: {client_dir}")
 

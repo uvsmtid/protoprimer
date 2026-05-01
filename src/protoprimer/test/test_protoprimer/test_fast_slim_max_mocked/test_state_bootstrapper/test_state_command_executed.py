@@ -11,7 +11,7 @@ from local_test.mock_verifier import (
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
-    Bootstrapper_state_args_parsed,
+    Factory_state_args_parsed,
     Bootstrapper_state_default_stderr_log_handler_configured,
     Bootstrapper_state_local_cache_dir_abs_path_inited,
     Bootstrapper_state_local_venv_dir_abs_path_inited,
@@ -36,7 +36,7 @@ def test_relationship():
 @patch(f"{primer_kernel.__name__}.{EnvContext.__name__}.{EnvContext.get_stride.__name__}")
 @patch(f"{primer_kernel.__name__}.os.execve")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_stride_src_updated_reached.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Factory_state_args_parsed.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_cache_dir_abs_path_inited.__name__}.create_state_node")
 @patch.dict(
@@ -98,7 +98,7 @@ def test_command_executed_in_bash(
 @patch(f"{primer_kernel.__name__}.{EnvContext.__name__}.{EnvContext.get_stride.__name__}")
 @patch(f"{primer_kernel.__name__}.os.execve")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_stride_src_updated_reached.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Factory_state_args_parsed.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_cache_dir_abs_path_inited.__name__}.create_state_node")
 @patch.dict(
@@ -160,7 +160,7 @@ def test_command_executed_in_zsh(
 @patch(f"{primer_kernel.__name__}.{EnvContext.__name__}.{EnvContext.get_stride.__name__}")
 @patch(f"{primer_kernel.__name__}.os.execve")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_stride_src_updated_reached.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Factory_state_args_parsed.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_cache_dir_abs_path_inited.__name__}.create_state_node")
 @patch.dict(
@@ -206,7 +206,7 @@ def test_command_not_executed_when_no_command_line_provided(
 @patch(f"{primer_kernel.__name__}.{EnvContext.__name__}.{EnvContext.get_stride.__name__}")
 @patch(f"{primer_kernel.__name__}.os.execve")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_stride_src_updated_reached.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Factory_state_args_parsed.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_cache_dir_abs_path_inited.__name__}.create_state_node")
 @patch.dict(
@@ -268,7 +268,7 @@ def test_command_executed_empty(
 @patch(f"{primer_kernel.__name__}.{EnvContext.__name__}.{EnvContext.get_stride.__name__}")
 @patch(f"{primer_kernel.__name__}.os.execve")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_stride_src_updated_reached.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Factory_state_args_parsed.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_cache_dir_abs_path_inited.__name__}.create_state_node")
 @patch.dict(

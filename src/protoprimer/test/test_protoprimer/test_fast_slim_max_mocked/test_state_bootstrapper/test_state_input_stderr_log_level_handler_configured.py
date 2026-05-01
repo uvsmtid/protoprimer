@@ -10,7 +10,6 @@ from local_test.mock_verifier import (
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
-    Bootstrapper_state_args_parsed,
     Bootstrapper_state_default_stderr_log_handler_configured,
     Bootstrapper_state_input_stderr_log_level_eval_finalized,
     EnvContext,
@@ -40,11 +39,9 @@ def test_relationship():
 
 
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_stderr_log_level_eval_finalized.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_default_stderr_log_handler_configured.__name__}.create_state_node")
 def test_handler_level_configured(
     mock_state_default_stderr_log_handler_configured,
-    mock_state_args_parsed,
     mock_state_input_stderr_log_level_eval_finalized,
     env_ctx,
     stderr_handler,
@@ -70,11 +67,9 @@ def test_handler_level_configured(
 
 
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_stderr_log_level_eval_finalized.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_args_parsed.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_default_stderr_log_handler_configured.__name__}.create_state_node")
 def test_returns_handler(
     mock_state_default_stderr_log_handler_configured,
-    mock_state_args_parsed,
     mock_state_input_stderr_log_level_eval_finalized,
     env_ctx,
     stderr_handler,

@@ -9,6 +9,7 @@ from protoprimer.primer_kernel import (
     CommandAction,
     ConfConstGeneral,
     ConfLeap,
+    EntryFunc,
     EnvState,
     SubCommand,
     FilesystemObject,
@@ -183,12 +184,35 @@ class StateName(enum.Enum):
         ],
     )
 
-    state_sub_command_executed = StateMeta(
-        env_state=EnvState.state_sub_command_executed,
+    state_func_boot_env_executed = StateMeta(
+        env_state=EnvState.state_func_boot_env_executed,
         name_category=NameCategory.category_state_mutation,
         name_components=[
             KeyWord.key_state.value,
-            ValueName.value_sub_command.value,
+            KeyWord.key_func.value,
+            EntryFunc.func_boot_env.value,
+            KeyWord.key_executed.value,
+        ],
+    )
+
+    state_func_start_app_executed = StateMeta(
+        env_state=EnvState.state_func_start_app_executed,
+        name_category=NameCategory.category_state_mutation,
+        name_components=[
+            KeyWord.key_state.value,
+            KeyWord.key_func.value,
+            EntryFunc.func_start_app.value,
+            KeyWord.key_executed.value,
+        ],
+    )
+
+    state_func_call_lib_executed = StateMeta(
+        env_state=EnvState.state_func_call_lib_executed,
+        name_category=NameCategory.category_state_mutation,
+        name_components=[
+            KeyWord.key_state.value,
+            KeyWord.key_func.value,
+            EntryFunc.func_call_lib.value,
             KeyWord.key_executed.value,
         ],
     )
@@ -589,6 +613,16 @@ class StateName(enum.Enum):
         name_components=[
             KeyWord.key_state.value,
             CommandAction.action_command.value,
+            KeyWord.key_executed.value,
+        ],
+    )
+
+    state_everything_executed = StateMeta(
+        env_state=EnvState.state_everything_executed,
+        name_category=NameCategory.category_state_mutation,
+        name_components=[
+            KeyWord.key_state.value,
+            "everything",
             KeyWord.key_executed.value,
         ],
     )
