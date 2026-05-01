@@ -60,8 +60,20 @@ class StateMeta(enum.Enum):
         env_state=EnvState.state_input_final_state_eval_finalized,
         sub_graph=SubGraph.graph_input,
     )
-    state_sub_command_executed = StateNodeMeta(
-        env_state=EnvState.state_sub_command_executed,
+    state_func_boot_env_executed = StateNodeMeta(
+        env_state=EnvState.state_func_boot_env_executed,
+        sub_graph=None,
+    )
+    state_func_start_app_executed = StateNodeMeta(
+        env_state=EnvState.state_func_start_app_executed,
+        sub_graph=None,
+    )
+    state_func_call_lib_executed = StateNodeMeta(
+        env_state=EnvState.state_func_call_lib_executed,
+        sub_graph=None,
+    )
+    state_everything_executed = StateNodeMeta(
+        env_state=EnvState.state_everything_executed,
         sub_graph=None,
     )
     state_input_start_id_var_loaded = StateNodeMeta(

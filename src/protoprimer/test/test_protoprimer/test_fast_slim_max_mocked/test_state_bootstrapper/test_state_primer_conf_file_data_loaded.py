@@ -9,7 +9,6 @@ from local_test.mock_verifier import (
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
-    Bootstrapper_state_input_sub_command_arg_loaded,
     Bootstrapper_state_primer_conf_file_abs_path_inited,
     Factory_state_proto_code_file_abs_path_inited,
     EnvContext,
@@ -29,16 +28,12 @@ class ThisTestClass(BasePyfakefsTestClass):
     def test_relationship(self):
         assert_test_module_name_embeds_str(EnvState.state_primer_conf_file_data_loaded.name)
 
-    @patch(f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_stderr_log_level_handler_configured.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Factory_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_sub_command_arg_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_primer_conf_file_abs_path_inited.__name__}.create_state_node")
     def test_conf_file_exists(
         self,
         mock_state_primer_conf_file_abs_path_inited,
-        mock_state_input_sub_command_arg_loaded,
         mock_state_proto_code_file_abs_path_inited,
-        mock_state_input_stderr_log_level_eval_finalized,
     ):
 
         # given:
@@ -61,16 +56,12 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.assertEqual(state_value, {"test": "data"})
 
     @patch(f"{primer_kernel.__name__}.EnvContext.get_stride")
-    @patch(f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_stderr_log_level_handler_configured.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Factory_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_sub_command_arg_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_primer_conf_file_abs_path_inited.__name__}.create_state_node")
     def test_conf_file_missing(
         self,
         mock_state_primer_conf_file_abs_path_inited,
-        mock_state_input_sub_command_arg_loaded,
         mock_state_proto_code_file_abs_path_inited,
-        mock_state_input_stderr_log_level_eval_finalized,
         mock_get_stride,
     ):
 
@@ -96,16 +87,12 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.assertIn("does not exist", log_dst.output[0])
         self.assertEqual({}, state_value)
 
-    @patch(f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_stderr_log_level_handler_configured.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Factory_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_sub_command_arg_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_primer_conf_file_abs_path_inited.__name__}.create_state_node")
     def test_conf_file_malformed(
         self,
         mock_state_primer_conf_file_abs_path_inited,
-        mock_state_input_sub_command_arg_loaded,
         mock_state_proto_code_file_abs_path_inited,
-        mock_state_input_stderr_log_level_eval_finalized,
     ):
 
         # given:

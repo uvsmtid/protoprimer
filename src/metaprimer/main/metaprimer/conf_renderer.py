@@ -18,6 +18,7 @@ from protoprimer.primer_kernel import (
     ConfConstInput,
     ConfField,
     ConfLeap,
+    EntryFunc,
     EnvContext,
     EnvState,
     SubCommand,
@@ -1893,6 +1894,7 @@ class Bootstrapper_state_all_conf_data_rendered(AbstractCachingStateNode[int]):
 def customize_env_context():
 
     env_ctx = EnvContext()
+    env_ctx.graph_coordinates.entry_func = EntryFunc.func_boot_env
 
     env_ctx.state_graph.register_factory(
         Bootstrapper_state_primer_conf_file_data_loaded_rendered._state_name(),

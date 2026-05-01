@@ -7,6 +7,7 @@ from metaprimer.pre_commit import (
     Bootstrapper_state_pre_commit_configured,
 )
 from protoprimer.primer_kernel import (
+    EntryFunc,
     EnvContext,
     run_process,
 )
@@ -29,6 +30,7 @@ def customize_env_context():
     """
 
     env_ctx = EnvContext()
+    env_ctx.graph_coordinates.entry_func = EntryFunc.func_boot_env
 
     env_ctx.state_graph.register_factory(
         Bootstrapper_state_pre_commit_configured._state_name(),

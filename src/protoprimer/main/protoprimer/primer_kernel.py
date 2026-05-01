@@ -67,8 +67,8 @@ def run_process(env_ctx: EnvContext) -> None:
     try:
         ensure_min_python_version()
 
-        state_sub_command_executed: bool = env_ctx.state_graph.eval_state(TargetState.target_sub_command_executed.value.name)
-        assert state_sub_command_executed
+        state_everything_executed: bool = env_ctx.state_graph.eval_state(TargetState.target_everything_executed.value.name)
+        assert state_everything_executed
         atexit.register(lambda: env_ctx.print_exit_line(0))
 
     except subprocess.CalledProcessError as subproc_error:
@@ -1942,31 +1942,49 @@ class Bootstrapper_state_default_stderr_log_handler_configured(AbstractCachingSt
 
 
 # noinspection PyPep8Naming
-@trivial_factory
-class Bootstrapper_state_args_parsed(AbstractCachingStateNode[argparse.Namespace]):
+@conditional_factory
+class Bootstrapper_state_args_parsed_func_boot_env(AbstractCachingStateNode[argparse.Namespace]):
 
     _state_name = staticmethod(lambda: EnvState.state_args_parsed.name)
 
     def _eval_state_once(self) -> ValueType:
-        """
-        Parse the args if `EntryFunc.func_boot_env` or `EntryFunc.func_run_main`.
-        Otherwise, pretend there are no args except `SubCommand.command_start`.
-        """
+        return parse_args()
+
+
+# noinspection PyPep8Naming
+@conditional_factory
+class Bootstrapper_state_args_parsed_not_func_boot_env(AbstractCachingStateNode[argparse.Namespace]):
+
+    _state_name = staticmethod(lambda: EnvState.state_args_parsed.name)
+
+    def _eval_state_once(self) -> ValueType:
         # TODO: TODO_60_63_68_81.refactor_DAG_builder.md:
         #       This step should not be executed without need to parse args.
         #       Do not fake args. Just redesign dependency. No?
-        state_args_parsed: argparse.Namespace
-        if self.env_ctx.graph_coordinates.entry_func == EntryFunc.func_boot_env or self.env_ctx.graph_coordinates.entry_func == EntryFunc.func_run_main:
-            state_args_parsed = parse_args()
-        else:
-            # Pretend there is no args except `SubCommand.command_start`:
-            state_args_parsed = parse_args([])
-            setattr(
-                state_args_parsed,
-                ParsedArg.name_sub_command.value,
-                SubCommand.command_start.value,
-            )
+        # Pretend there is no args except `SubCommand.command_start`:
+        state_args_parsed: argparse.Namespace = parse_args([])
+        setattr(
+            state_args_parsed,
+            ParsedArg.name_sub_command.value,
+            SubCommand.command_start.value,
+        )
         return state_args_parsed
+
+
+# noinspection PyPep8Naming
+class Factory_state_args_parsed(NodeFactory[StateStride]):
+
+    def create_state_node(self) -> StateNode[ValueType]:
+        # TODO: TODO_60_63_68_81.refactor_DAG_builder.md:
+        #       This step should not be executed without need to parse args.
+        #       Do not fake args. Just redesign dependency. No?
+        if self.env_ctx.graph_coordinates.entry_func in [
+            EntryFunc.func_boot_env,
+            EntryFunc.func_run_main,
+        ]:
+            return Bootstrapper_state_args_parsed_func_boot_env(self.env_ctx)
+        else:
+            return Bootstrapper_state_args_parsed_not_func_boot_env(self.env_ctx)
 
 
 # noinspection PyPep8Naming
@@ -2027,7 +2045,6 @@ class Bootstrapper_state_input_stderr_log_level_handler_configured(AbstractCachi
     _parent_states = staticmethod(
         lambda: [
             EnvState.state_default_stderr_log_handler_configured.name,
-            EnvState.state_args_parsed.name,
             EnvState.state_input_stderr_log_level_eval_finalized.name,
         ]
     )
@@ -2081,13 +2098,12 @@ class Bootstrapper_state_input_sub_command_arg_loaded(AbstractCachingStateNode[S
 
 
 # noinspection PyPep8Naming
-@trivial_factory
-class Bootstrapper_state_input_final_state_eval_finalized(AbstractCachingStateNode[str]):
+@conditional_factory
+class Bootstrapper_state_input_final_state_eval_finalized_func_boot_env(AbstractCachingStateNode[str]):
 
     _parent_states = staticmethod(
         lambda: [
             EnvState.state_args_parsed.name,
-            EnvState.state_input_sub_command_arg_loaded.name,
         ]
     )
     _state_name = staticmethod(lambda: EnvState.state_input_final_state_eval_finalized.name)
@@ -2113,12 +2129,37 @@ class Bootstrapper_state_input_final_state_eval_finalized(AbstractCachingStateNo
 
 
 # noinspection PyPep8Naming
-@trivial_factory
-class Bootstrapper_state_sub_command_executed(AbstractCachingStateNode[bool]):
-    """
-    This is a special node - it traverses ALL nodes.
+@conditional_factory
+class Bootstrapper_state_input_final_state_eval_finalized_not_func_boot_env(AbstractCachingStateNode[str]):
 
-    BUT: It does not depend on ALL nodes - instead, it uses a sub command strategy implementation.
+    _parent_states = staticmethod(lambda: [])
+    _state_name = staticmethod(lambda: EnvState.state_input_final_state_eval_finalized.name)
+
+    def _eval_state_once(self) -> ValueType:
+        state_input_final_state_eval_finalized = self.env_ctx.final_state
+        return state_input_final_state_eval_finalized
+
+
+# noinspection PyPep8Naming
+class Factory_state_input_final_state_eval_finalized(NodeFactory[StateStride]):
+
+    def create_state_node(self) -> StateNode[ValueType]:
+        if self.env_ctx.graph_coordinates.entry_func in [
+            EntryFunc.func_boot_env,
+            EntryFunc.func_run_main,
+        ]:
+            return Bootstrapper_state_input_final_state_eval_finalized_func_boot_env(self.env_ctx)
+        else:
+            return Bootstrapper_state_input_final_state_eval_finalized_not_func_boot_env(self.env_ctx)
+
+
+# noinspection PyPep8Naming
+@trivial_factory
+class Bootstrapper_state_func_boot_env_executed(AbstractCachingStateNode[bool]):
+    """
+    This is a special node - it traverses ALL nodes for `EntryFunc` cases with parsed args.
+
+    BUT: It does not depend on ALL nodes - instead, re-executes the graph with a new target.
     """
 
     _parent_states = staticmethod(
@@ -2128,13 +2169,13 @@ class Bootstrapper_state_sub_command_executed(AbstractCachingStateNode[bool]):
             EnvState.state_input_final_state_eval_finalized.name,
         ]
     )
-    _state_name = staticmethod(lambda: EnvState.state_sub_command_executed.name)
+    _state_name = staticmethod(lambda: EnvState.state_func_boot_env_executed.name)
 
     def _eval_state_once(self) -> ValueType:
 
-        state_input_final_state_eval_finalized: str = self.eval_parent_state(EnvState.state_input_final_state_eval_finalized.name)
-
         state_input_sub_command_arg_loaded: SubCommand = self.eval_parent_state(EnvState.state_input_sub_command_arg_loaded.name)
+
+        state_input_final_state_eval_finalized: str = self.eval_parent_state(EnvState.state_input_final_state_eval_finalized.name)
 
         state_node: StateNode = self.env_ctx.state_graph.get_state_node(state_input_final_state_eval_finalized)
 
@@ -2156,6 +2197,111 @@ class Bootstrapper_state_sub_command_executed(AbstractCachingStateNode[bool]):
         selected_strategy.execute_strategy(state_node)
 
         return True
+
+
+# noinspection PyPep8Naming
+@trivial_factory
+class Bootstrapper_state_func_start_app_executed(AbstractCachingStateNode[bool]):
+
+    _parent_states = staticmethod(
+        lambda: [
+            EnvState.state_input_stderr_log_level_handler_configured.name,
+            EnvState.state_input_final_state_eval_finalized.name,
+        ]
+    )
+    _state_name = staticmethod(lambda: EnvState.state_func_start_app_executed.name)
+
+    def _eval_state_once(self) -> ValueType:
+        state_input_final_state_eval_finalized: str = self.eval_parent_state(EnvState.state_input_final_state_eval_finalized.name)
+        state_node: StateNode = self.env_ctx.state_graph.get_state_node(state_input_final_state_eval_finalized)
+        state_node.eval_own_state()
+        return True
+
+
+# noinspection PyPep8Naming
+@trivial_factory
+class Bootstrapper_state_func_call_lib_executed(AbstractCachingStateNode[bool]):
+
+    _parent_states = staticmethod(
+        lambda: [
+            EnvState.state_input_final_state_eval_finalized.name,
+        ]
+    )
+    _state_name = staticmethod(lambda: EnvState.state_func_call_lib_executed.name)
+
+    def _eval_state_once(self) -> ValueType:
+        state_input_final_state_eval_finalized: str = self.eval_parent_state(EnvState.state_input_final_state_eval_finalized.name)
+        state_node: StateNode = self.env_ctx.state_graph.get_state_node(state_input_final_state_eval_finalized)
+        state_node.eval_own_state()
+        return True
+
+
+# noinspection PyPep8Naming
+@conditional_factory
+class Bootstrapper_state_everything_executed_func_boot_env(AbstractCachingStateNode[bool]):
+
+    _parent_states = staticmethod(
+        lambda: [
+            EnvState.state_func_boot_env_executed.name,
+        ]
+    )
+    _state_name = staticmethod(lambda: EnvState.state_everything_executed.name)
+
+    def _eval_state_once(self) -> ValueType:
+        state_func_boot_env_executed: bool = self.eval_parent_state(EnvState.state_func_boot_env_executed.name)
+        return state_func_boot_env_executed
+
+
+# noinspection PyPep8Naming
+@conditional_factory
+class Bootstrapper_state_everything_executed_func_start_app(AbstractCachingStateNode[bool]):
+
+    _parent_states = staticmethod(
+        lambda: [
+            EnvState.state_func_start_app_executed.name,
+        ]
+    )
+    _state_name = staticmethod(lambda: EnvState.state_everything_executed.name)
+
+    def _eval_state_once(self) -> ValueType:
+        state_func_start_app_executed: bool = self.eval_parent_state(EnvState.state_func_start_app_executed.name)
+        return state_func_start_app_executed
+
+
+# noinspection PyPep8Naming
+@conditional_factory
+class Bootstrapper_state_everything_executed_func_call_lib(AbstractCachingStateNode[bool]):
+
+    _parent_states = staticmethod(
+        lambda: [
+            EnvState.state_func_call_lib_executed.name,
+        ]
+    )
+    _state_name = staticmethod(lambda: EnvState.state_everything_executed.name)
+
+    def _eval_state_once(self) -> ValueType:
+        state_func_call_lib_executed: bool = self.eval_parent_state(EnvState.state_func_call_lib_executed.name)
+        return state_func_call_lib_executed
+
+
+# noinspection PyPep8Naming
+class Factory_state_everything_executed(NodeFactory[StateStride]):
+    """
+    This is a special node - it traverses ALL nodes.
+    """
+
+    def create_state_node(self) -> StateNode[ValueType]:
+        if self.env_ctx.graph_coordinates.entry_func in [
+            EntryFunc.func_boot_env,
+            EntryFunc.func_run_main,
+        ]:
+            return Bootstrapper_state_everything_executed_func_boot_env(self.env_ctx)
+        elif self.env_ctx.graph_coordinates.entry_func == EntryFunc.func_start_app:
+            return Bootstrapper_state_everything_executed_func_start_app(self.env_ctx)
+        elif self.env_ctx.graph_coordinates.entry_func == EntryFunc.func_call_lib:
+            return Bootstrapper_state_everything_executed_func_call_lib(self.env_ctx)
+        else:
+            raise RuntimeError(self.env_ctx.graph_coordinates.entry_func)
 
 
 # noinspection PyPep8Naming
@@ -2282,7 +2428,6 @@ class Bootstrapper_state_proto_code_file_abs_path_inited_func_call_lib(AbstractC
 class Bootstrapper_state_proto_code_file_abs_path_inited_not_func_call_lib(AbstractCachingStateNode[str]):
     _parent_states = staticmethod(
         lambda: [
-            EnvState.state_input_sub_command_arg_loaded.name,
             EnvState.state_input_proto_code_file_abs_path_var_loaded.name,
             EnvState.state_stride_py_arbitrary_reached.name,
         ]
@@ -2290,8 +2435,6 @@ class Bootstrapper_state_proto_code_file_abs_path_inited_not_func_call_lib(Abstr
     _state_name = staticmethod(lambda: EnvState.state_proto_code_file_abs_path_inited.name)
 
     def _eval_state_once(self) -> ValueType:
-
-        state_input_sub_command_arg_loaded: SubCommand = self.eval_parent_state(EnvState.state_input_sub_command_arg_loaded.name)
 
         state_input_proto_code_file_abs_path_var_loaded: str | None = self.eval_parent_state(EnvState.state_input_proto_code_file_abs_path_var_loaded.name)
 
@@ -2306,7 +2449,10 @@ class Bootstrapper_state_proto_code_file_abs_path_inited_not_func_call_lib(Abstr
         else:
             log_python_context()
             if os.environ.get(EnvVar.var_PROTOPRIMER_MOCKED_RESTART.value, None) is None:
-                if state_input_sub_command_arg_loaded != SubCommand.command_start:
+                if self.env_ctx.graph_coordinates.entry_func in [
+                    EntryFunc.func_boot_env,
+                    EntryFunc.func_run_main,
+                ]:
                     if self.env_ctx.get_stride().value == StateStride.stride_py_arbitrary.value:
                         state_proto_code_file_abs_path_inited = os.path.abspath(__file__)
                     else:
@@ -2324,7 +2470,7 @@ class Bootstrapper_state_proto_code_file_abs_path_inited_not_func_call_lib(Abstr
                                 if is_venv():
                                     logger.warning(f"`sys.executable` [{sys.executable}] for [{StateStride.stride_py_required.name}] evaluated from config should ideally be outside `venv`")
                 else:
-                    # `SubCommand.command_start` relies only on the `EnvVar.var_PROTOPRIMER_PROTO_CODE` env var:
+                    # Rely only on the `EnvVar.var_PROTOPRIMER_PROTO_CODE` env var:
                     assert state_input_proto_code_file_abs_path_var_loaded is not None
                     state_proto_code_file_abs_path_inited = state_input_proto_code_file_abs_path_var_loaded
             else:
@@ -2402,8 +2548,6 @@ class Bootstrapper_state_primer_conf_file_data_loaded(AbstractCachingStateNode[d
 
     _parent_states = staticmethod(
         lambda: [
-            EnvState.state_input_stderr_log_level_handler_configured.name,
-            EnvState.state_input_sub_command_arg_loaded.name,
             EnvState.state_proto_code_file_abs_path_inited.name,
             EnvState.state_primer_conf_file_abs_path_inited.name,
         ]
@@ -2564,8 +2708,6 @@ class Bootstrapper_state_client_conf_file_data_loaded(AbstractCachingStateNode[d
 
     _parent_states = staticmethod(
         lambda: [
-            EnvState.state_input_stderr_log_level_handler_configured.name,
-            EnvState.state_input_sub_command_arg_loaded.name,
             EnvState.state_global_conf_file_abs_path_inited.name,
         ]
     )
@@ -2600,17 +2742,8 @@ class Bootstrapper_state_client_conf_file_data_loaded(AbstractCachingStateNode[d
 
 
 # noinspection PyPep8Naming
-@trivial_factory
-class Bootstrapper_state_selected_env_dir_rel_path_inited(AbstractCachingStateNode[str]):
-
-    _parent_states = staticmethod(
-        lambda: [
-            EnvState.state_args_parsed.name,
-            EnvState.state_ref_root_dir_abs_path_inited.name,
-            EnvState.state_client_conf_file_data_loaded.name,
-        ]
-    )
-    _state_name = staticmethod(lambda: EnvState.state_selected_env_dir_rel_path_inited.name)
+@conditional_factory
+class Base_state_selected_env_dir_rel_path(AbstractCachingStateNode[str]):
 
     def _eval_state_once(self) -> ValueType:
 
@@ -2641,14 +2774,11 @@ class Bootstrapper_state_selected_env_dir_rel_path_inited(AbstractCachingStateNo
 
         return state_selected_env_dir_rel_path_inited
 
+    def _select_env_conf_dir_any_path(self) -> str | None:
+        raise NotImplementedError()
+
     def _select_client_local_env_dir_any_path(self) -> str | None:
-        state_args_parsed: argparse.Namespace = self.eval_parent_state(EnvState.state_args_parsed.name)
-        env_conf_dir_any_path: str | None = getattr(
-            state_args_parsed,
-            ParsedArg.name_selected_env_dir.value,
-            # NOTE: The value is only set for `SubCommand.command_boot`, otherwise, this default is used:
-            None,
-        )
+        env_conf_dir_any_path = self._select_env_conf_dir_any_path()
         if env_conf_dir_any_path is None:
             # Use the default env configured:
             state_client_conf_file_data_loaded: dict = self.eval_parent_state(EnvState.state_client_conf_file_data_loaded.name)
@@ -2697,12 +2827,67 @@ class Bootstrapper_state_selected_env_dir_rel_path_inited(AbstractCachingStateNo
 
 
 # noinspection PyPep8Naming
+@conditional_factory
+class Bootstrapper_state_selected_env_dir_rel_path_inited_func_boot_env(Base_state_selected_env_dir_rel_path):
+
+    _parent_states = staticmethod(
+        lambda: [
+            EnvState.state_args_parsed.name,
+            EnvState.state_ref_root_dir_abs_path_inited.name,
+            EnvState.state_client_conf_file_data_loaded.name,
+        ]
+    )
+    _state_name = staticmethod(lambda: EnvState.state_selected_env_dir_rel_path_inited.name)
+
+    def _select_env_conf_dir_any_path(self) -> str | None:
+        state_args_parsed: argparse.Namespace = self.eval_parent_state(EnvState.state_args_parsed.name)
+        env_conf_dir_any_path: str | None = getattr(
+            state_args_parsed,
+            ParsedArg.name_selected_env_dir.value,
+            # NOTE: The value is only set for `SubCommand.command_boot`, otherwise, this default is used:
+            None,
+        )
+        return env_conf_dir_any_path
+
+
+# noinspection PyPep8Naming
+@conditional_factory
+class Bootstrapper_state_selected_env_dir_rel_path_inited_not_func_boot_env(Base_state_selected_env_dir_rel_path):
+
+    _parent_states = staticmethod(
+        lambda: [
+            EnvState.state_ref_root_dir_abs_path_inited.name,
+            EnvState.state_client_conf_file_data_loaded.name,
+        ]
+    )
+    _state_name = staticmethod(lambda: EnvState.state_selected_env_dir_rel_path_inited.name)
+
+    def _select_env_conf_dir_any_path(self) -> str | None:
+        return None
+
+
+# noinspection PyPep8Naming
+class Factory_state_selected_env_dir_rel_path_inited(NodeFactory[StateStride]):
+    """
+    This is a special node - it traverses ALL nodes.
+    """
+
+    def create_state_node(self) -> StateNode[ValueType]:
+        if self.env_ctx.graph_coordinates.entry_func in [
+            EntryFunc.func_boot_env,
+            EntryFunc.func_run_main,
+        ]:
+            return Bootstrapper_state_selected_env_dir_rel_path_inited_func_boot_env(self.env_ctx)
+        else:
+            return Bootstrapper_state_selected_env_dir_rel_path_inited_not_func_boot_env(self.env_ctx)
+
+
+# noinspection PyPep8Naming
 @trivial_factory
 class Bootstrapper_state_local_conf_symlink_abs_path_inited(AbstractCachingStateNode[str]):
 
     _parent_states = staticmethod(
         lambda: [
-            EnvState.state_input_sub_command_arg_loaded.name,
             EnvState.state_ref_root_dir_abs_path_inited.name,
             EnvState.state_client_conf_file_data_loaded.name,
             EnvState.state_selected_env_dir_rel_path_inited.name,
@@ -2711,8 +2896,6 @@ class Bootstrapper_state_local_conf_symlink_abs_path_inited(AbstractCachingState
     _state_name = staticmethod(lambda: EnvState.state_local_conf_symlink_abs_path_inited.name)
 
     def _eval_state_once(self) -> ValueType:
-
-        state_input_sub_command_arg_loaded: SubCommand = self.eval_parent_state(EnvState.state_input_sub_command_arg_loaded.name)
 
         state_ref_root_dir_abs_path_inited: str = self.eval_parent_state(EnvState.state_ref_root_dir_abs_path_inited.name)
 
@@ -2743,7 +2926,10 @@ class Bootstrapper_state_local_conf_symlink_abs_path_inited(AbstractCachingState
         if os.path.exists(state_local_conf_symlink_abs_path_inited):
             if os.path.islink(state_local_conf_symlink_abs_path_inited):
                 if os.path.isdir(state_local_conf_symlink_abs_path_inited):
-                    if state_input_sub_command_arg_loaded == SubCommand.command_start:
+                    if self.env_ctx.graph_coordinates.entry_func in [
+                        EntryFunc.func_start_app,
+                        EntryFunc.func_call_lib,
+                    ]:
                         # Nothing to do:
                         pass
                     else:
@@ -2803,8 +2989,6 @@ class Bootstrapper_state_env_conf_file_data_loaded(AbstractCachingStateNode[dict
 
     _parent_states = staticmethod(
         lambda: [
-            EnvState.state_input_stderr_log_level_handler_configured.name,
-            EnvState.state_input_sub_command_arg_loaded.name,
             EnvState.state_local_conf_file_abs_path_inited.name,
         ]
     )
@@ -4080,7 +4264,7 @@ class EnvState(enum.Enum):
 
     state_default_stderr_log_handler_configured = Bootstrapper_state_default_stderr_log_handler_configured
 
-    state_args_parsed = Bootstrapper_state_args_parsed
+    state_args_parsed = Factory_state_args_parsed
 
     state_input_stderr_log_level_eval_finalized = Bootstrapper_state_input_stderr_log_level_eval_finalized
 
@@ -4088,10 +4272,16 @@ class EnvState(enum.Enum):
 
     state_input_sub_command_arg_loaded = Bootstrapper_state_input_sub_command_arg_loaded
 
-    state_input_final_state_eval_finalized = Bootstrapper_state_input_final_state_eval_finalized
+    state_input_final_state_eval_finalized = Factory_state_input_final_state_eval_finalized
+
+    state_func_boot_env_executed = Bootstrapper_state_func_boot_env_executed
+
+    state_func_start_app_executed = Bootstrapper_state_func_start_app_executed
+
+    state_func_call_lib_executed = Bootstrapper_state_func_call_lib_executed
 
     # Special case: triggers everything:
-    state_sub_command_executed = Bootstrapper_state_sub_command_executed
+    state_everything_executed = Factory_state_everything_executed
 
     state_input_start_id_var_loaded = Bootstrapper_state_input_start_id_var_loaded
 
@@ -4116,7 +4306,7 @@ class EnvState(enum.Enum):
     # `ConfLeap.leap_client`:
     state_client_conf_file_data_loaded = Bootstrapper_state_client_conf_file_data_loaded
 
-    state_selected_env_dir_rel_path_inited = Bootstrapper_state_selected_env_dir_rel_path_inited
+    state_selected_env_dir_rel_path_inited = Factory_state_selected_env_dir_rel_path_inited
 
     state_local_conf_symlink_abs_path_inited = Bootstrapper_state_local_conf_symlink_abs_path_inited
 
@@ -4190,11 +4380,8 @@ class TargetState(enum.Enum):
     Special `EnvState`-s.
     """
 
-    # Used for `EnvState.state_status_line_printed` to report exit code:
-    target_stderr_log_handler = EnvState.state_default_stderr_log_handler_configured
-
-    # A special state that triggers execution of the specific `SubCommand`:
-    target_sub_command_executed = EnvState.state_sub_command_executed
+    # A special state that triggers execution of everything else:
+    target_everything_executed = EnvState.state_everything_executed
 
     # FT_00_22_19_59.derived_config.md:
     target_derived_config_loaded = EnvState.state_derived_conf_data_loaded
@@ -4624,13 +4811,21 @@ def reconfigure_stderr_log_handler(log_level: int = logging.WARNING) -> logging.
     )
 
 
-def configure_default_stderr_log_handler(log_level: int = logging.WARNING) -> logging.Handler:
-    logger.setLevel(logging.NOTSET)
-    stderr_handler: logging.Handler = logging.StreamHandler(sys.stderr)
-    stderr_handler.setFormatter(DefaultStderrLogFormatter(log_level))
-    stderr_handler.setLevel(log_level)
-    logger.addHandler(stderr_handler)
-    return stderr_handler
+def _find_existing_log_handler(
+    handler_class: type[logging.StreamHandler],
+    formatter_class: type,
+) -> logging.StreamHandler | None:
+    """
+    Prevent duplicate handler (when `os.execv*` calls restart `main` again in tests).
+    """
+    if os.environ.get(EnvVar.var_PROTOPRIMER_MOCKED_RESTART.value, None) is None:
+        return None
+    log_handler: logging.Handler
+    for log_handler in logger.handlers:
+        if isinstance(log_handler, handler_class):
+            if isinstance(log_handler.formatter, formatter_class):
+                return log_handler
+    return None
 
 
 def _configure_primer_stderr_log_handler(state_input_stderr_log_level_var_loaded: int) -> logging.Handler:
@@ -4641,24 +4836,16 @@ def _configure_primer_stderr_log_handler(state_input_stderr_log_level_var_loaded
     # Log everything (the filters are supposed to be set on output handlers instead):
     logger.setLevel(logging.NOTSET)
 
-    handler_class = logging.StreamHandler
-    out_stream = sys.stderr
-    stderr_handler: logging.Handler | None = None
-    if os.environ.get(EnvVar.var_PROTOPRIMER_MOCKED_RESTART.value, None) is not None:
-        # Prevent duplicate handler (when `os.execv*` calls restart `main` again in tests).
-        for handler_instance in logger.handlers:
-            if isinstance(handler_instance, handler_class):
-                if handler_instance.stream is out_stream:
-                    if isinstance(handler_instance.formatter, _PrimerStderrLogFormatter):
-                        stderr_handler = handler_instance
-                        break
+    stderr_handler: logging.StreamHandler | None = _find_existing_log_handler(
+        logging.StreamHandler,
+        _PrimerStderrLogFormatter,
+    )
 
     if stderr_handler is None:
-        stderr_handler: logging.Handler = handler_class(out_stream)
-
+        stderr_handler = logging.StreamHandler(sys.stderr)
+        assert stderr_handler is not None
         stderr_handler.addFilter(StateStrideFilter())
         stderr_handler.setFormatter(_PrimerStderrLogFormatter(state_input_stderr_log_level_var_loaded))
-
         logger.addHandler(stderr_handler)
 
     stderr_handler.setLevel(state_input_stderr_log_level_var_loaded)
@@ -4676,18 +4863,6 @@ def reconfigure_file_log_handler(log_level: int = logging.INFO) -> logging.Handl
     )
 
 
-def configure_default_file_log_handler(
-    log_file_abs_path: str,
-    log_level: int = logging.INFO,
-) -> logging.Handler:
-    os.makedirs(os.path.dirname(log_file_abs_path), exist_ok=True)
-    file_handler: logging.Handler = logging.FileHandler(log_file_abs_path)
-    file_handler.setFormatter(DefaultFileLogFormatter())
-    file_handler.setLevel(log_level)
-    logger.addHandler(file_handler)
-    return file_handler
-
-
 def _configure_primer_file_log_handler(
     script_name: str,
     state_input_start_id_var_loaded: str,
@@ -4697,9 +4872,6 @@ def _configure_primer_file_log_handler(
     """
     Implements for log file: FT_38_73_38_52.log_verbosity.md
     """
-
-    # TODO: Do we need to avoid duplicate file formatters in case of EnvVar.var_PROTOPRIMER_MOCKED_RESTART?
-    #       See how `_configure_primer_stderr_log_handler` avoids that for `sys.stderr` formatter.
 
     log_file_basename = f"{script_name}.{state_input_start_id_var_loaded}.log"
     log_file_abs_path = os.path.join(
@@ -4713,30 +4885,34 @@ def _configure_primer_file_log_handler(
     if state_input_stderr_log_level_handler_configured.level < file_log_level:
         file_log_level = state_input_stderr_log_level_handler_configured.level
 
-    os.makedirs(
-        state_local_log_dir_abs_path_inited,
-        exist_ok=True,
+    file_handler: logging.StreamHandler | None = _find_existing_log_handler(
+        logging.FileHandler,
+        _PrimerFileLogFormatter,
     )
 
-    if not os.path.exists(log_file_abs_path):
-        # Explain missing logs to avoid confusion:
-        write_text_file(
-            log_file_abs_path,
-            f"""
+    if file_handler is None:
+        os.makedirs(
+            state_local_log_dir_abs_path_inited,
+            exist_ok=True,
+        )
+
+        if not os.path.exists(log_file_abs_path):
+            # Explain missing logs to avoid confusion:
+            write_text_file(
+                log_file_abs_path,
+                f"""
 {ConfConstGeneral.log_section_delimiter} file log starts at [{StateStride.stride_py_arbitrary.name}] after its config is resolved {ConfConstGeneral.log_section_delimiter}
 
 """,
-        )
+            )
 
-    file_handler: logging.Handler = logging.FileHandler(log_file_abs_path)
-    file_handler.addFilter(StateStrideFilter())
-
-    file_formatter = _PrimerFileLogFormatter()
+        file_handler = logging.FileHandler(log_file_abs_path)
+        assert file_handler is not None
+        file_handler.addFilter(StateStrideFilter())
+        file_handler.setFormatter(_PrimerFileLogFormatter())
+        logger.addHandler(file_handler)
 
     file_handler.setLevel(file_log_level)
-    file_handler.setFormatter(file_formatter)
-
-    logger.addHandler(file_handler)
     return file_handler
 
 

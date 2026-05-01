@@ -11,9 +11,8 @@ from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     Bootstrapper_state_client_conf_file_data_loaded,
-    Bootstrapper_state_input_sub_command_arg_loaded,
     Bootstrapper_state_ref_root_dir_abs_path_inited,
-    Bootstrapper_state_selected_env_dir_rel_path_inited,
+    Factory_state_selected_env_dir_rel_path_inited,
     ConfConstClient,
     ConfConstInput,
     ConfConstPrimer,
@@ -35,21 +34,17 @@ class ThisTestClass(BasePyfakefsTestClass):
     def test_relationship(self):
         assert_test_module_name_embeds_str(EnvState.state_local_conf_symlink_abs_path_inited.name)
 
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_sub_command_arg_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_selected_env_dir_rel_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_selected_env_dir_rel_path_inited.__name__}.create_state_node")
     def test_success_when_conf_symlink_exists_and_target_dst_dir_unspecified(
         self,
         mock_state_selected_env_dir_rel_path_inited,
         mock_state_ref_root_dir_abs_path_inited,
         mock_state_client_conf_file_data_loaded,
-        mock_state_input_sub_command_arg_loaded,
     ):
 
         # given:
-
-        mock_state_input_sub_command_arg_loaded.return_value.eval_own_state.return_value = SubCommand.command_start
 
         assert_parent_factories_mocked(
             self.env_ctx,
@@ -100,21 +95,17 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # no exception happens
 
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_sub_command_arg_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_selected_env_dir_rel_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_selected_env_dir_rel_path_inited.__name__}.create_state_node")
     def test_success_when_conf_symlink_exists_and_target_dst_dir_matches(
         self,
         mock_state_selected_env_dir_rel_path_inited,
         mock_state_ref_root_dir_abs_path_inited,
         mock_state_client_conf_file_data_loaded,
-        mock_state_input_sub_command_arg_loaded,
     ):
 
         # given:
-
-        mock_state_input_sub_command_arg_loaded.return_value.eval_own_state.return_value = SubCommand.command_boot
 
         assert_parent_factories_mocked(
             self.env_ctx,
@@ -158,21 +149,17 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # no exception happens
 
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_sub_command_arg_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_selected_env_dir_rel_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_selected_env_dir_rel_path_inited.__name__}.create_state_node")
     def test_failure_when_conf_symlink_exists_but_target_dst_dir_mismatches(
         self,
         mock_state_selected_env_dir_rel_path_inited,
         mock_state_ref_root_dir_abs_path_inited,
         mock_state_client_conf_file_data_loaded,
-        mock_state_input_sub_command_arg_loaded,
     ):
 
         # given:
-
-        mock_state_input_sub_command_arg_loaded.return_value.eval_own_state.return_value = SubCommand.command_boot
 
         assert_parent_factories_mocked(
             self.env_ctx,
@@ -218,21 +205,17 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         self.assertIn("not the same as the provided target", str(ctx.exception))
 
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_sub_command_arg_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_selected_env_dir_rel_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_selected_env_dir_rel_path_inited.__name__}.create_state_node")
     def test_failure_when_conf_symlink_is_not_directory(
         self,
         mock_state_selected_env_dir_rel_path_inited,
         mock_state_ref_root_dir_abs_path_inited,
         mock_state_client_conf_file_data_loaded,
-        mock_state_input_sub_command_arg_loaded,
     ):
 
         # given:
-
-        mock_state_input_sub_command_arg_loaded.return_value.eval_own_state.return_value = SubCommand.command_boot
 
         assert_parent_factories_mocked(
             self.env_ctx,
@@ -277,21 +260,17 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         self.assertIn("is not a directory", str(ctx.exception))
 
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_sub_command_arg_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_selected_env_dir_rel_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_selected_env_dir_rel_path_inited.__name__}.create_state_node")
     def test_failure_when_conf_is_not_symlink(
         self,
         mock_state_selected_env_dir_rel_path_inited,
         mock_state_ref_root_dir_abs_path_inited,
         mock_state_client_conf_file_data_loaded,
-        mock_state_input_sub_command_arg_loaded,
     ):
 
         # given:
-
-        mock_state_input_sub_command_arg_loaded.return_value.eval_own_state.return_value = SubCommand.command_boot
 
         assert_parent_factories_mocked(
             self.env_ctx,
@@ -336,21 +315,17 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         self.assertIn("is not a symlink", str(ctx.exception))
 
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_sub_command_arg_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_selected_env_dir_rel_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_selected_env_dir_rel_path_inited.__name__}.create_state_node")
     def test_success_when_conf_symlink_is_created_if_it_is_missing_and_target_dir_is_given(
         self,
         mock_state_selected_env_dir_rel_path_inited,
         mock_state_ref_root_dir_abs_path_inited,
         mock_state_client_conf_file_data_loaded,
-        mock_state_input_sub_command_arg_loaded,
     ):
 
         # given:
-
-        mock_state_input_sub_command_arg_loaded.return_value.eval_own_state.return_value = SubCommand.command_boot
 
         assert_parent_factories_mocked(
             self.env_ctx,
@@ -395,21 +370,17 @@ class ThisTestClass(BasePyfakefsTestClass):
             target_dst_dir_path,
         )
 
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_sub_command_arg_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_selected_env_dir_rel_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_selected_env_dir_rel_path_inited.__name__}.create_state_node")
     def test_success_when_conf_symlink_is_created_with_normalized_target(
         self,
         mock_state_selected_env_dir_rel_path_inited,
         mock_state_ref_root_dir_abs_path_inited,
         mock_state_client_conf_file_data_loaded,
-        mock_state_input_sub_command_arg_loaded,
     ):
 
         # given:
-
-        mock_state_input_sub_command_arg_loaded.return_value.eval_own_state.return_value = SubCommand.command_boot
 
         assert_parent_factories_mocked(
             self.env_ctx,
@@ -454,19 +425,16 @@ class ThisTestClass(BasePyfakefsTestClass):
             target_dst_dir_path_normalized,
         )
 
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_sub_command_arg_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_selected_env_dir_rel_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_selected_env_dir_rel_path_inited.__name__}.create_state_node")
     def test_success_when_local_env_conf_dir_is_none(
         self,
         mock_state_selected_env_dir_rel_path_inited,
         mock_state_ref_root_dir_abs_path_inited,
         mock_state_client_conf_file_data_loaded,
-        mock_state_input_sub_command_arg_loaded,
     ):
         # given:
-        mock_state_input_sub_command_arg_loaded.return_value.eval_own_state.return_value = SubCommand.command_boot
         assert_parent_factories_mocked(
             self.env_ctx,
             EnvState.state_local_conf_symlink_abs_path_inited.name,

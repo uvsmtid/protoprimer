@@ -25,7 +25,7 @@ from protoprimer.primer_kernel import (
     Bootstrapper_state_project_descriptors_inited,
     Factory_state_proto_code_file_abs_path_inited,
     Bootstrapper_state_ref_root_dir_abs_path_inited,
-    Bootstrapper_state_selected_env_dir_rel_path_inited,
+    Factory_state_selected_env_dir_rel_path_inited,
     Bootstrapper_state_selected_python_file_abs_path_inited,
     Bootstrapper_state_venv_driver_inited,
     EnvState,
@@ -44,7 +44,7 @@ def test_relationship():
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_global_conf_dir_abs_path_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_global_conf_file_abs_path_inited.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_selected_env_dir_rel_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Factory_state_selected_env_dir_rel_path_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_file_abs_path_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_required_python_version_inited.__name__}.create_state_node")
