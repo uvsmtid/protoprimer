@@ -17,6 +17,7 @@ from protoprimer.primer_kernel import (
     Bootstrapper_state_ref_root_dir_abs_path_inited,
     Bootstrapper_state_stride_py_venv_reached,
     Bootstrapper_state_venv_driver_prepared,
+    Bootstrapper_state_version_constraints_file_basename_inited,
     CommandAction,
     ConfConstClient,
     ConfField,
@@ -45,6 +46,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_stride_py_venv_reached.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_project_descriptors_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_install_specs_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_version_constraints_file_basename_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_do_install_var_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Factory_state_args_parsed.__name__}.create_state_node")
     @patch.dict(
@@ -61,6 +63,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_input_sub_command_arg_loaded,
         mock_state_args_parsed,
         mock_state_input_do_install_var_loaded,
+        mock_state_version_constraints_file_basename_inited,
         mock_state_install_specs_inited,
         mock_state_project_descriptors_inited,
         mock_state_stride_py_venv_reached,
@@ -109,6 +112,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             )
         mock_state_project_descriptors_inited.return_value.eval_own_state.return_value = project_descriptors
         mock_state_install_specs_inited.return_value.eval_own_state.return_value = []
+        mock_state_version_constraints_file_basename_inited.return_value.eval_own_state.return_value = primer_kernel.ConfConstEnv.default_version_constraints_file_basename
         mock_state_input_do_install_var_loaded.return_value.eval_own_state.return_value = True
         parsed_args = argparse.Namespace(
             **{ParsedArg.name_sub_command.value: SubCommand.command_boot.value},
@@ -124,7 +128,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             primer_kernel.get_path_to_curr_python(),
             os.path.join(
                 mock_state_local_conf_symlink_abs_path_inited.return_value.eval_own_state.return_value,
-                primer_kernel.ConfConstEnv.constraints_txt_basename,
+                primer_kernel.ConfConstEnv.default_version_constraints_file_basename,
             ),
             project_descriptors,
             [],
@@ -135,6 +139,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_stride_py_venv_reached.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_project_descriptors_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_install_specs_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_version_constraints_file_basename_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_do_install_var_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Factory_state_args_parsed.__name__}.create_state_node")
     @patch.dict(
@@ -151,6 +156,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_input_sub_command_arg_loaded,
         mock_state_args_parsed,
         mock_state_input_do_install_var_loaded,
+        mock_state_version_constraints_file_basename_inited,
         mock_state_install_specs_inited,
         mock_state_project_descriptors_inited,
         mock_state_stride_py_venv_reached,
@@ -199,6 +205,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             )
         mock_state_project_descriptors_inited.return_value.eval_own_state.return_value = project_descriptors
         mock_state_install_specs_inited.return_value.eval_own_state.return_value = []
+        mock_state_version_constraints_file_basename_inited.return_value.eval_own_state.return_value = primer_kernel.ConfConstEnv.default_version_constraints_file_basename
         mock_state_input_do_install_var_loaded.return_value.eval_own_state.return_value = True
         parsed_args = argparse.Namespace(
             **{ParsedArg.name_sub_command.value: SubCommand.command_reboot.value},
@@ -214,7 +221,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             primer_kernel.get_path_to_curr_python(),
             os.path.join(
                 mock_state_local_conf_symlink_abs_path_inited.return_value.eval_own_state.return_value,
-                primer_kernel.ConfConstEnv.constraints_txt_basename,
+                primer_kernel.ConfConstEnv.default_version_constraints_file_basename,
             ),
             project_descriptors,
             [],
@@ -225,6 +232,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_stride_py_venv_reached.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_project_descriptors_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_install_specs_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_version_constraints_file_basename_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_do_install_var_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Factory_state_args_parsed.__name__}.create_state_node")
     @patch.dict(
@@ -241,6 +249,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_input_sub_command_arg_loaded,
         mock_state_args_parsed,
         mock_state_input_do_install_var_loaded,
+        mock_state_version_constraints_file_basename_inited,
         mock_state_install_specs_inited,
         mock_state_project_descriptors_inited,
         mock_state_stride_py_venv_reached,
@@ -305,6 +314,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_stride_py_venv_reached.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_project_descriptors_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_install_specs_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_version_constraints_file_basename_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_do_install_var_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Factory_state_args_parsed.__name__}.create_state_node")
     @patch.dict(
@@ -321,6 +331,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_input_sub_command_arg_loaded,
         mock_state_args_parsed,
         mock_state_input_do_install_var_loaded,
+        mock_state_version_constraints_file_basename_inited,
         mock_state_install_specs_inited,
         mock_state_project_descriptors_inited,
         mock_state_stride_py_venv_reached,
@@ -361,6 +372,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             {"group1": {ConfField.field_extra_command_args.value: ["--group_1-arg"]}},
             {"group2": {}},
         ]
+        mock_state_version_constraints_file_basename_inited.return_value.eval_own_state.return_value = primer_kernel.ConfConstEnv.default_version_constraints_file_basename
         mock_state_input_do_install_var_loaded.return_value.eval_own_state.return_value = True
         mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(sub_command=SubCommand.command_boot.value)
         mock_state_input_sub_command_arg_loaded.return_value.eval_own_state.return_value = SubCommand.command_boot
@@ -373,7 +385,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         constraints_txt_path = os.path.join(
             mock_client_conf_env_dir,
-            primer_kernel.ConfConstEnv.constraints_txt_basename,
+            primer_kernel.ConfConstEnv.default_version_constraints_file_basename,
         )
         mock_state_venv_driver_prepared.return_value.eval_own_state.return_value.install_dependencies.assert_has_calls(
             [
@@ -407,6 +419,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_stride_py_venv_reached.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_project_descriptors_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_install_specs_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_version_constraints_file_basename_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_do_install_var_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Factory_state_args_parsed.__name__}.create_state_node")
     @patch.dict(
@@ -423,6 +436,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_input_sub_command_arg_loaded,
         mock_state_args_parsed,
         mock_state_input_do_install_var_loaded,
+        mock_state_version_constraints_file_basename_inited,
         mock_state_install_specs_inited,
         mock_state_project_descriptors_inited,
         mock_state_stride_py_venv_reached,
@@ -453,6 +467,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         mock_state_project_descriptors_inited.return_value.eval_own_state.return_value = project_descriptors
         mock_state_install_specs_inited.return_value.eval_own_state.return_value = []
+        mock_state_version_constraints_file_basename_inited.return_value.eval_own_state.return_value = primer_kernel.ConfConstEnv.default_version_constraints_file_basename
 
         mock_state_input_do_install_var_loaded.return_value.eval_own_state.return_value = True
 

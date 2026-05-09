@@ -42,9 +42,9 @@ jobs:
                 run: |
                     git diff || true
                     git status --porcelain || true
-                    # NOTE: Avoid verifying `constraints.txt`:
+                    # NOTE: Avoid verifying `version_constraints.txt`:
                     #       Different `python` version may depend on different set of dependencies:
-                    test -z "$(git status --porcelain -- ':!dst/test_python_min/constraints.txt')"
+                    test -z "$(git status --porcelain -- ':!dst/test_python_min/version_constraints.txt')"
 
             -   run: |
                     ${{ github.workspace }}/venv/bin/python --version

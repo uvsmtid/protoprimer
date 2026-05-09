@@ -52,7 +52,7 @@ from typing import (
 
 # The release process ensures that content in this file matches the version below while tagging the release commit
 # (otherwise, if the file comes from a different commit, the version is irrelevant):
-__version__ = "0.12.0.dev2"
+__version__ = "0.12.0"
 
 logger: logging.Logger = logging.getLogger()
 
@@ -482,6 +482,10 @@ class ValueName(enum.Enum):
 
     value_version = "version"
 
+    value_file_basename = "file_basename"
+
+    value_version_constraints = "version_constraints"
+
 
 class PathName(enum.Enum):
 
@@ -638,6 +642,9 @@ class ConfField(enum.Enum):
 
     # state_venv_driver_inited:
     field_venv_driver = f"{ValueName.value_venv_driver.value}"
+
+    # state_version_constraints_file_basename_inited:
+    field_version_constraints_file_basename = f"{ValueName.value_version_constraints.value}_{ValueName.value_file_basename.value}"
 
     # parent of `field_build_root_dir_rel_path` & `field_install_extras`:
     # state_project_descriptors_inited:
@@ -1406,6 +1413,8 @@ class ConfConstEnv:
     #       The default is `uv` only if it is supported by the selected `python` version:
     default_venv_driver = VenvDriverType.venv_uv.name
 
+    default_version_constraints_file_basename = "constraints.txt"
+
     default_project_descriptors = [
         {
             ConfField.field_build_root_dir_rel_path.value: ".",
@@ -1415,8 +1424,6 @@ class ConfConstEnv:
     ]
 
     default_install_specs = []
-
-    constraints_txt_basename = "constraints.txt"
 
     # FT_84_11_73_28.supported_python_versions.md:
     latest_known_python_version = "3.14"
@@ -3305,6 +3312,25 @@ class Bootstrapper_state_venv_driver_inited(AbstractOverriddenFieldCachingStateN
 
 # noinspection PyPep8Naming
 @trivial_factory
+class Bootstrapper_state_version_constraints_file_basename_inited(AbstractOverriddenFieldCachingStateNode[str]):
+
+    _parent_states = staticmethod(
+        lambda: [
+            EnvState.state_client_conf_file_data_loaded.name,
+            EnvState.state_env_conf_file_data_loaded.name,
+        ]
+    )
+    _state_name = staticmethod(lambda: EnvState.state_version_constraints_file_basename_inited.name)
+
+    def _eval_state_once(self) -> ValueType:
+        return self._get_overridden_value_or_default(
+            ConfField.field_version_constraints_file_basename.value,
+            ConfConstEnv.default_version_constraints_file_basename,
+        )
+
+
+# noinspection PyPep8Naming
+@trivial_factory
 class Bootstrapper_state_project_descriptors_inited(AbstractOverriddenFieldCachingStateNode[list]):
 
     _parent_states = staticmethod(
@@ -3387,6 +3413,7 @@ class Bootstrapper_state_derived_conf_data_loaded(AbstractCachingStateNode[dict]
             EnvState.state_local_tmp_dir_abs_path_inited.name,
             EnvState.state_local_cache_dir_abs_path_inited.name,
             EnvState.state_venv_driver_inited.name,
+            EnvState.state_version_constraints_file_basename_inited.name,
             EnvState.state_project_descriptors_inited.name,
         ]
 
@@ -3601,7 +3628,7 @@ class Factory_state_stride_py_required_reached(NodeFactory[StateStride]):
 @trivial_factory
 class Bootstrapper_state_reboot_triggered(AbstractCachingStateNode[bool]):
     """
-    Removes current `venv` dir and `constraints.txt` file (to trigger their re-creation subsequently).
+    Removes current `venv` dir and `version_constraints.txt` file (to trigger their re-creation subsequently).
     """
 
     _parent_states = staticmethod(
@@ -3613,6 +3640,7 @@ class Bootstrapper_state_reboot_triggered(AbstractCachingStateNode[bool]):
             EnvState.state_local_conf_symlink_abs_path_inited.name,
             EnvState.state_local_venv_dir_abs_path_inited.name,
             EnvState.state_local_tmp_dir_abs_path_inited.name,
+            EnvState.state_version_constraints_file_basename_inited.name,
             EnvState.state_stride_py_required_reached.name,
         ]
     )
@@ -3661,9 +3689,10 @@ class Bootstrapper_state_reboot_triggered(AbstractCachingStateNode[bool]):
             )
 
         state_local_conf_symlink_abs_path_inited = self.eval_parent_state(EnvState.state_local_conf_symlink_abs_path_inited.name)
+        state_version_constraints_file_basename_inited: str = self.eval_parent_state(EnvState.state_version_constraints_file_basename_inited.name)
         constraints_txt_path = os.path.join(
             state_local_conf_symlink_abs_path_inited,
-            ConfConstEnv.constraints_txt_basename,
+            state_version_constraints_file_basename_inited,
         )
         if os.path.exists(constraints_txt_path):
             logger.info(f"removing version constraints file [{constraints_txt_path}]")
@@ -3836,6 +3865,7 @@ class Bootstrapper_state_protoprimer_package_installed(AbstractCachingStateNode[
             EnvState.state_input_sub_command_arg_loaded.name,
             EnvState.state_ref_root_dir_abs_path_inited.name,
             EnvState.state_local_conf_symlink_abs_path_inited.name,
+            EnvState.state_version_constraints_file_basename_inited.name,
             EnvState.state_project_descriptors_inited.name,
             EnvState.state_install_specs_inited.name,
             EnvState.state_venv_driver_prepared.name,
@@ -3871,6 +3901,8 @@ class Bootstrapper_state_protoprimer_package_installed(AbstractCachingStateNode[
 
         state_venv_driver_prepared: VenvDriverBase = self.eval_parent_state(EnvState.state_venv_driver_prepared.name)
 
+        state_version_constraints_file_basename_inited: str = self.eval_parent_state(EnvState.state_version_constraints_file_basename_inited.name)
+
         reboot_env: bool = state_args_parsed.sub_command == SubCommand.command_reboot.value
 
         do_install: bool = (
@@ -3884,7 +3916,7 @@ class Bootstrapper_state_protoprimer_package_installed(AbstractCachingStateNode[
 
         constraints_txt_path = os.path.join(
             state_local_conf_symlink_abs_path_inited,
-            ConfConstEnv.constraints_txt_basename,
+            state_version_constraints_file_basename_inited,
         )
         if not os.path.exists(constraints_txt_path):
             logger.info(f"creating empty constraints file [{constraints_txt_path}]")
@@ -3976,6 +4008,7 @@ class Bootstrapper_state_version_constraints_generated(AbstractCachingStateNode[
         lambda: [
             EnvState.state_input_sub_command_arg_loaded.name,
             EnvState.state_local_conf_symlink_abs_path_inited.name,
+            EnvState.state_version_constraints_file_basename_inited.name,
             EnvState.state_venv_driver_prepared.name,
             EnvState.state_protoprimer_package_installed.name,
         ]
@@ -3988,7 +4021,7 @@ class Bootstrapper_state_version_constraints_generated(AbstractCachingStateNode[
 
         if state_input_sub_command_arg_loaded == SubCommand.command_start:
             # The only reason for `EnvState.state_version_constraints_generated`
-            # is to re-generate the `constraints.txt` file based on `venv`.
+            # is to re-generate the `version_constraints.txt` file based on `venv`.
             # Skip it as `venv` is supposed to be ready in `SubCommand.command_start`:
             return False
 
@@ -4001,11 +4034,13 @@ class Bootstrapper_state_version_constraints_generated(AbstractCachingStateNode[
 
         state_venv_driver_prepared: VenvDriverBase = self.eval_parent_state(EnvState.state_venv_driver_prepared.name)
 
+        state_version_constraints_file_basename_inited: str = self.eval_parent_state(EnvState.state_version_constraints_file_basename_inited.name)
+
         state_venv_driver_prepared.pin_versions(
             get_path_to_curr_python(),
             os.path.join(
                 state_local_conf_symlink_abs_path_inited,
-                ConfConstEnv.constraints_txt_basename,
+                state_version_constraints_file_basename_inited,
             ),
         )
 
@@ -4335,6 +4370,8 @@ class EnvState(enum.Enum):
     state_local_cache_dir_abs_path_inited = Bootstrapper_state_local_cache_dir_abs_path_inited
 
     state_venv_driver_inited = Bootstrapper_state_venv_driver_inited
+
+    state_version_constraints_file_basename_inited = Bootstrapper_state_version_constraints_file_basename_inited
 
     state_project_descriptors_inited = Bootstrapper_state_project_descriptors_inited
 
