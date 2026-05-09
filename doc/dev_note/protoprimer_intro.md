@@ -277,7 +277,7 @@ In turn, once bootstrapped, `python` code may springboard other toolchains:
 [make_wiki]: https://en.wikipedia.org/wiki/Make_(software)
 [systemd_wiki]: https://en.wikipedia.org/wiki/Systemd
 
-[constraints.txt]: dst/default_env/constraints.txt
+[constraints.txt]: dst/default_env/version_constraints.txt
 [pyproject.toml]: src/metaprimer/pyproject.toml
 
 [protoprimer_extensions]: #protoprimer-extensions

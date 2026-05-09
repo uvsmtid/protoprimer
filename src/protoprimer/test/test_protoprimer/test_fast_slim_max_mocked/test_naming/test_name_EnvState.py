@@ -491,6 +491,17 @@ class StateName(enum.Enum):
         ],
     )
 
+    state_version_constraints_file_basename_inited = StateMeta(
+        env_state=EnvState.state_version_constraints_file_basename_inited,
+        name_category=NameCategory.category_value_field_action,
+        name_components=[
+            KeyWord.key_state.value,
+            ValueName.value_version_constraints.value,
+            ValueName.value_file_basename.value,
+            CompletedAction.action_inited.value,
+        ],
+    )
+
     state_venv_driver_inited = StateMeta(
         env_state=EnvState.state_venv_driver_inited,
         name_category=NameCategory.category_value_field_action,

@@ -164,6 +164,10 @@ class StateMeta(enum.Enum):
         env_state=EnvState.state_venv_driver_inited,
         sub_graph=SubGraph.graph_config,
     )
+    state_version_constraints_file_basename_inited = StateNodeMeta(
+        env_state=EnvState.state_version_constraints_file_basename_inited,
+        sub_graph=SubGraph.graph_config,
+    )
     state_project_descriptors_inited = StateNodeMeta(
         env_state=EnvState.state_project_descriptors_inited,
         sub_graph=SubGraph.graph_config,

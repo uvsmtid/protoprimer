@@ -76,7 +76,7 @@ def test_command_reboot(tmp_path: pathlib.Path):
     # ===
 
     package_name = "pyfakefs"
-    constraints_file = conf_env_dir_abs_path / ConfConstEnv.constraints_txt_basename
+    constraints_file = conf_env_dir_abs_path / ConfConstEnv.default_version_constraints_file_basename
     constraints_file.write_text(f"{package_name}==5.7.4")
 
     # when:

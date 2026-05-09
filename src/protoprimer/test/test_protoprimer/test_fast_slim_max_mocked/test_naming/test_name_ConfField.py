@@ -134,6 +134,15 @@ class FieldName(enum.Enum):
         ],
     )
 
+    field_version_constraints_file_basename = FieldMeta(
+        conf_field=ConfField.field_version_constraints_file_basename,
+        name_category=NameCategory.category_value_field,
+        name_components=[
+            ValueName.value_version_constraints.value,
+            ValueName.value_file_basename.value,
+        ],
+    )
+
     field_build_root_dir_rel_path = FieldMeta(
         conf_field=ConfField.field_build_root_dir_rel_path,
         name_category=NameCategory.category_path_arg_value,

@@ -7,6 +7,7 @@
     "python_selector_file_rel_path": "cmd/proto_code/python_selector_same.py",
 
     "venv_driver": "venv_uv",
+    "version_constraints_file_basename": "version_constraints.txt",
 
     "local_venv_dir_rel_path": "venv",
     "local_log_dir_rel_path": "log",

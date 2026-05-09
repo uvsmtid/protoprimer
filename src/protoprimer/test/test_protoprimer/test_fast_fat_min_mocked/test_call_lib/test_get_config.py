@@ -155,6 +155,7 @@ def test_get_config_with_leap_derived(proto_kernel_abs_path):
         EnvState.state_local_cache_dir_abs_path_inited.name,
         EnvState.state_venv_driver_inited.name,
         EnvState.state_project_descriptors_inited.name,
+        EnvState.state_version_constraints_file_basename_inited.name,
     }
 
     assert conf_data[EnvState.state_selected_env_dir_rel_path_inited.name] == "dst/default_env"
