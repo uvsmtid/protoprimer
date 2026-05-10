@@ -52,7 +52,7 @@ from typing import (
 
 # The release process ensures that content in this file matches the version below while tagging the release commit
 # (otherwise, if the file comes from a different commit, the version is irrelevant):
-__version__ = "0.12.0"
+__version__ = "0.12.1"
 
 logger: logging.Logger = logging.getLogger()
 
@@ -1470,6 +1470,15 @@ def _create_parent_argparser():
         default=0,
         help="Increase log verbosity level.",
     )
+    parent_argparser.add_argument(
+        SyntaxArg.arg_e,
+        SyntaxArg.arg_env,
+        type=str,
+        default=None,
+        dest=ParsedArg.name_selected_env_dir.value,
+        metavar=ParsedArg.name_selected_env_dir.value,
+        help="Path to the env-specific config dir.",
+    )
     return parent_argparser
 
 
@@ -1482,21 +1491,6 @@ def _create_child_argparser(parent_argparsers):
             description=sub_command_desc,
         )
         parser_boot.set_defaults(sub_command=SubCommand.command_boot.value)
-        parser_boot.add_argument(
-            SyntaxArg.arg_e,
-            SyntaxArg.arg_env,
-            type=str,
-            default=None,
-            dest=ParsedArg.name_selected_env_dir.value,
-            metavar=ParsedArg.name_selected_env_dir.value,
-            help=(
-                f"Path to the env-specific config dir. "
-                f"If specified, `{SubCommand.command_boot.value}` sub command creates the symlink to that dir. "
-                f"If not specified, the existing symlink is reused. "
-                #
-            ),
-        )
-
         parser_boot.add_argument(
             SyntaxArg.arg_c,
             SyntaxArg.arg_command,
@@ -2785,6 +2779,9 @@ class Base_state_selected_env_dir_rel_path(AbstractCachingStateNode[str]):
         raise NotImplementedError()
 
     def _select_client_local_env_dir_any_path(self) -> str | None:
+        """
+        TODO: TODO_41_10_50_01.implement_env_selector.md
+        """
         env_conf_dir_any_path = self._select_env_conf_dir_any_path()
         if env_conf_dir_any_path is None:
             # Use the default env configured:
@@ -2875,9 +2872,6 @@ class Bootstrapper_state_selected_env_dir_rel_path_inited_not_func_boot_env(Base
 
 # noinspection PyPep8Naming
 class Factory_state_selected_env_dir_rel_path_inited(NodeFactory[StateStride]):
-    """
-    This is a special node - it traverses ALL nodes.
-    """
 
     def create_state_node(self) -> StateNode[ValueType]:
         if self.env_ctx.graph_coordinates.entry_func in [

@@ -21,13 +21,6 @@ class Boot(Command):
 
     def get_parser(self, prog_name):
         parser = super().get_parser(prog_name)
-        # We use the exact destination names as used in protoprimer for comparison:
-        parser.add_argument(
-            "-e",
-            "--env",
-            dest="selected_env_dir",
-            metavar="selected_env_dir",
-        )
         parser.add_argument(
             "-c",
             "--command",
@@ -107,6 +100,12 @@ class SpecApp(App):
             action="count",
             dest="stderr_log_level_verbose",
             default=0,
+        )
+        parser.add_argument(
+            "-e",
+            "--env",
+            dest="selected_env_dir",
+            metavar="selected_env_dir",
         )
         return parser
 
@@ -200,6 +199,8 @@ def test_cli_structure_compatibility():
         (["-v", "-v", "reboot"], "stderr_log_level_verbose", 2),
         (["boot", "-e", "my_env"], "selected_env_dir", "my_env"),
         (["boot", "--env", "my_env"], "selected_env_dir", "my_env"),
+        (["-e", "my_env", "eval"], "selected_env_dir", "my_env"),
+        (["eval", "-e", "my_env"], "selected_env_dir", "my_env"),
         (["boot", "-c", "my_cmd"], "run_command", "my_cmd"),
         (["boot", "--command", "my_cmd"], "run_command", "my_cmd"),
     ],

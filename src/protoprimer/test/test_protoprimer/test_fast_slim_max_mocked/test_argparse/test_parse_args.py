@@ -167,6 +167,7 @@ def test_parse_args_final_state():
             ["reboot"],
             {
                 ParsedArg.name_sub_command.value: "reboot",
+                ParsedArg.name_selected_env_dir.value: None,
                 SyntaxArg.dest_quiet: 0,
                 SyntaxArg.dest_verbose: 0,
             },
@@ -175,6 +176,7 @@ def test_parse_args_final_state():
             ["eval"],
             {
                 ParsedArg.name_sub_command.value: "eval",
+                ParsedArg.name_selected_env_dir.value: None,
                 SyntaxArg.dest_quiet: 0,
                 SyntaxArg.dest_verbose: 0,
             },
@@ -276,15 +278,16 @@ def test_argparse_invalid_final_state(test_argv):
 
 
 @pytest.mark.parametrize(
-    "test_argv",
+    "test_argv,expected_env",
     [
-        ["reboot", "--env", "some/path"],
-        ["eval", "--env", "some/path"],
+        (["reboot", "--env", "some/path"], "some/path"),
+        (["eval", "--env", "some/path"], "some/path"),
+        (["-e", "some/path", "eval"], "some/path"),
     ],
 )
-def test_argparse_invalid_env(test_argv):
-    with pytest.raises(SystemExit):
-        try_main.parse_args(test_argv)
+def test_argparse_env_common_arg(test_argv, expected_env):
+    parsed_args = try_main.parse_args(test_argv)
+    assert getattr(parsed_args, ParsedArg.name_selected_env_dir.value) == expected_env
 
 
 def test_main_help_contains_subcommand_descriptions():
