@@ -14,11 +14,9 @@ from local_repo.graph_printer import (
 )
 from local_repo.misc_tools.graph_utils import get_transitive_dependencies
 from protoprimer.primer_kernel import (
-    ConfLeap,
     EntryFunc,
     EnvContext,
     EnvState,
-    get_config,
     reconfigure_file_log_handler,
     reconfigure_stderr_log_handler,
     StateGraph,

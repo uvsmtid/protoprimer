@@ -52,7 +52,7 @@ from typing import (
 
 # The release process ensures that content in this file matches the version below while tagging the release commit
 # (otherwise, if the file comes from a different commit, the version is irrelevant):
-__version__ = "0.12.1"
+__version__ = "0.12.2.dev0"
 
 logger: logging.Logger = logging.getLogger()
 
@@ -1922,6 +1922,7 @@ class Bootstrapper_state_input_do_install_var_loaded(AbstractCachingStateNode[bo
 # noinspection PyPep8Naming
 @trivial_factory
 class Bootstrapper_state_default_stderr_log_handler_configured(AbstractCachingStateNode[logging.Handler]):
+    # TODO: UC_81_50_97_17.reuse_logger.md: Shell we disable configuring loggers for `EntryFunc.func_start_app`?
 
     _parent_states = staticmethod(
         lambda: [
@@ -3472,6 +3473,7 @@ class Bootstrapper_state_effective_conf_data_printed(AbstractCachingStateNode[in
 # noinspection PyPep8Naming
 @trivial_factory
 class Bootstrapper_state_default_file_log_handler_configured(AbstractCachingStateNode[logging.Handler]):
+    # TODO: UC_81_50_97_17.reuse_logger.md: Shell we disable configuring loggers for `EntryFunc.func_start_app`?
 
     _parent_states = staticmethod(
         lambda: [

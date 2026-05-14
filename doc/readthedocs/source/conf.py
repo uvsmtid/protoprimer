@@ -91,7 +91,7 @@ base_url = "https://protoprimer.readthedocs.io"
 rtd_canonical_url = os.environ.get("READTHEDOCS_CANONICAL_URL")
 
 # The URL structure configured in the `protoprimer` project:
-html_baseurl = rtd_canonical_url
+html_baseurl = rtd_canonical_url or base_url
 
 # -- Options for HTML output
 

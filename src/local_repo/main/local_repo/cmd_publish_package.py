@@ -28,7 +28,6 @@ from local_repo.sub_proc_util import (
 from protoprimer.primer_kernel import (
     reconfigure_file_log_handler,
     reconfigure_stderr_log_handler,
-    TopDir,
 )
 
 logger: logging.Logger = logging.getLogger()

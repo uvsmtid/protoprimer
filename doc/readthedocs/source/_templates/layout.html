@@ -1,0 +1,12 @@
+{% extends "!layout.html" %}
+
+{% block extrahead %}
+    {{ super() }}
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="{{ pageurl or html_baseurl or 'https://protoprimer.readthedocs.io/' }}" />
+    <meta property="og:title" content="{{ title|striptags or 'protoprimer' }} — {{ docstitle }}" />
+    <meta property="og:description" content="A tool to bootstrap repo environments with a single command." />
+    <meta property="og:image" content="{{ (html_baseurl or 'https://protoprimer.readthedocs.io/').rstrip('/') }}/_static/protoprimer.og_image.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="apple-touch-icon" href="{{ pathto('_static/protoprimer.apple-touch-icon.png', 1) }}">
+{% endblock %}

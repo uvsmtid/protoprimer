@@ -1,40 +1,69 @@
 from __future__ import annotations
 
+import argparse
 import logging
+import os
 
-from metaprimer.venv_shell import Bootstrapper_state_activated_venv_shell_started
 from protoprimer.primer_kernel import (
-    EntryFunc,
-    EnvContext,
-    run_process,
+    _get_shell_driver,
+    ConfLeap,
+    EnvState,
+    get_config,
+    ParsedArg,
+    reconfigure_file_log_handler,
+    reconfigure_stderr_log_handler,
+    SyntaxArg,
 )
 
 logger = logging.getLogger()
 
 
 def custom_main():
-    # TODO: TODO_28_48_19_20.api_to_traverse_config_when_primed.md:
-    #       convert from `boot_env` to `start_app` when it can access the config.
-    run_process(customize_env_context())
 
+    log_handler = reconfigure_stderr_log_handler(logging.WARNING)
+    reconfigure_file_log_handler(logging.INFO)
 
-def customize_env_context():
-    """
-    See UC_10_80_27_57.extend_DAG.md
-    """
+    parsed_args = _init_arg_parser().parse_args()
 
-    env_ctx = EnvContext()
-    env_ctx.graph_coordinates.entry_func = EntryFunc.func_boot_env
-
-    env_ctx.state_graph.register_factory(
-        Bootstrapper_state_activated_venv_shell_started._state_name(),
-        Bootstrapper_state_activated_venv_shell_started(env_ctx),
+    proto_kernel_abs_path = os.path.join(
+        os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(str(__file__)))))),
+        "cmd/proto_code/proto_kernel.py",
     )
 
-    # NOTE: It runs instead of `EnvState.state_command_executed` but also supports the `--command` arg.
-    env_ctx.final_state = Bootstrapper_state_activated_venv_shell_started._state_name()
+    derived_data: dict = get_config(proto_kernel_abs_path, ConfLeap.leap_derived)
 
-    return env_ctx
+    venv_dir_abs_path: str = derived_data[EnvState.state_local_venv_dir_abs_path_inited.name]
+    cache_dir_abs_path: str = derived_data[EnvState.state_local_cache_dir_abs_path_inited.name]
+
+    command_line: str | None = getattr(parsed_args, ParsedArg.name_command.value, None)
+
+    shell_driver = _get_shell_driver(cache_dir_abs_path)
+    shell_driver.run_shell(
+        True,
+        command_line,
+        log_handler,
+        venv_dir_abs_path,
+    )
+
+
+def _init_arg_parser() -> argparse.ArgumentParser:
+
+    arg_parser = argparse.ArgumentParser(
+        description="Start shell with activated `venv`.",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+    )
+
+    arg_parser.add_argument(
+        SyntaxArg.arg_c,
+        SyntaxArg.arg_command,
+        dest=ParsedArg.name_command.value,
+        metavar=ParsedArg.name_command.value,
+        type=str,
+        default=None,
+        help="Shell command to execute (non-interactive).",
+    )
+
+    return arg_parser
 
 
 if __name__ == "__main__":

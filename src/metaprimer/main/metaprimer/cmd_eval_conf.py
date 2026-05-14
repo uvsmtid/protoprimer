@@ -1,9 +1,7 @@
 from __future__ import annotations
 
-import json
 import logging
 import os
-import sys
 
 from metaprimer.conf_renderer import (
     RenderConfigVisitor,
@@ -16,7 +14,6 @@ from metaprimer.conf_renderer import (
 from protoprimer.primer_kernel import (
     ConfLeap,
     EnvState,
-    EnvVar,
     get_config,
 )
 
@@ -24,16 +21,10 @@ logger = logging.getLogger()
 
 
 def custom_main():
-    # TODO: TODO_28_48_19_20.api_to_traverse_config_when_primed.md:
-    #       Who to make `venv`-module independent of the any entry script path it was called from?
-    #       NOTE: This is a wrong fix (because the script is not supposed to be called via `boot_env`):
-    #       Fix: check PROTOPRIMER_PROTO_CODE env var first (available when called via boot_env).
-    proto_kernel_abs_path = os.environ.get(EnvVar.var_PROTOPRIMER_PROTO_CODE.value)
-    if proto_kernel_abs_path is None:
-        proto_kernel_abs_path = os.path.join(
-            os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(str(__file__)))))),
-            "./cmd/proto_code/proto_kernel.py",
-        )
+    proto_kernel_abs_path = os.path.join(
+        os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(str(__file__)))))),
+        "cmd/proto_code/proto_kernel.py",
+    )
 
     derived_data = get_config(proto_kernel_abs_path, ConfLeap.leap_derived)
 
