@@ -421,12 +421,6 @@ class EnvVar(enum.Enum):
 
     var_PROTOPRIMER_PY_EXEC = "PROTOPRIMER_PY_EXEC"
 
-    # TODO: TODO_28_48_19_20.api_to_traverse_config_when_primed.md:
-    #       This is to be removed - it is only used by
-    #       `conf_eval` and `venv_shell` which can be switched to `start_app`
-    #       as soon as config can be accessed via API.
-    var_PROTOPRIMER_DO_INSTALL = "PROTOPRIMER_DO_INSTALL"
-
     var_PROTOPRIMER_CONF_BASENAME = "PROTOPRIMER_CONF_BASENAME"
 
     var_PROTOPRIMER_START_ID = "PROTOPRIMER_START_ID"
@@ -457,8 +451,6 @@ class ConfDst(enum.Enum):
 class ValueName(enum.Enum):
 
     value_stderr_log_level = "stderr_log_level"
-
-    value_do_install = "do_install"
 
     value_sub_command = "sub_command"
 
@@ -1348,8 +1340,6 @@ class ConfConstInput:
 
     default_PROTOPRIMER_PY_EXEC: str = StateStride.stride_py_unknown.name
 
-    default_PROTOPRIMER_DO_INSTALL: str = str(True)
-
 
 class ConfConstPrimer:
     """
@@ -1901,22 +1891,6 @@ class Bootstrapper_state_input_stderr_log_level_var_loaded(AbstractCachingStateN
             state_input_stderr_log_level_var_loaded = defined_value
 
         return state_input_stderr_log_level_var_loaded
-
-
-# noinspection PyPep8Naming
-@trivial_factory
-class Bootstrapper_state_input_do_install_var_loaded(AbstractCachingStateNode[bool]):
-
-    _state_name = staticmethod(lambda: EnvState.state_input_do_install_var_loaded.name)
-
-    def _eval_state_once(self) -> ValueType:
-        state_input_do_install_var_loaded: bool = str_to_bool(
-            os.getenv(
-                EnvVar.var_PROTOPRIMER_DO_INSTALL.value,
-                ConfConstInput.default_PROTOPRIMER_DO_INSTALL,
-            )
-        )
-        return state_input_do_install_var_loaded
 
 
 # noinspection PyPep8Naming
@@ -3856,8 +3830,6 @@ class Bootstrapper_state_protoprimer_package_installed(AbstractCachingStateNode[
 
     _parent_states = staticmethod(
         lambda: [
-            EnvState.state_input_do_install_var_loaded.name,
-            EnvState.state_args_parsed.name,
             EnvState.state_input_sub_command_arg_loaded.name,
             EnvState.state_ref_root_dir_abs_path_inited.name,
             EnvState.state_local_conf_symlink_abs_path_inited.name,
@@ -3872,8 +3844,6 @@ class Bootstrapper_state_protoprimer_package_installed(AbstractCachingStateNode[
 
     def _eval_state_once(self) -> ValueType:
 
-        state_args_parsed: argparse.Namespace = self.eval_parent_state(EnvState.state_args_parsed.name)
-
         state_input_sub_command_arg_loaded: SubCommand = self.eval_parent_state(EnvState.state_input_sub_command_arg_loaded.name)
 
         if state_input_sub_command_arg_loaded == SubCommand.command_start:
@@ -3881,8 +3851,6 @@ class Bootstrapper_state_protoprimer_package_installed(AbstractCachingStateNode[
             # is to install dependencies into `venv`.
             # Skip it as `venv` is supposed to be ready in `SubCommand.command_start`:
             return False
-
-        state_input_do_install_var_loaded: bool = self.eval_parent_state(EnvState.state_input_do_install_var_loaded.name)
 
         state_stride_py_venv_reached: StateStride = self.eval_parent_state(EnvState.state_stride_py_venv_reached.name)
         assert self.env_ctx.get_stride().value >= StateStride.stride_py_venv.value
@@ -3899,15 +3867,9 @@ class Bootstrapper_state_protoprimer_package_installed(AbstractCachingStateNode[
 
         state_version_constraints_file_basename_inited: str = self.eval_parent_state(EnvState.state_version_constraints_file_basename_inited.name)
 
-        reboot_env: bool = state_args_parsed.sub_command == SubCommand.command_reboot.value
+        install_packages: bool = state_stride_py_venv_reached.value == StateStride.stride_py_venv.value
 
-        do_install: bool = (
-            state_stride_py_venv_reached.value == StateStride.stride_py_venv.value
-            and (reboot_env or state_input_do_install_var_loaded)
-            #
-        )
-
-        if not do_install:
+        if not install_packages:
             return False
 
         constraints_txt_path = os.path.join(
@@ -4289,8 +4251,6 @@ class EnvState(enum.Enum):
     state_input_py_exec_var_loaded = Bootstrapper_state_input_py_exec_var_loaded
 
     state_input_stderr_log_level_var_loaded = Bootstrapper_state_input_stderr_log_level_var_loaded
-
-    state_input_do_install_var_loaded = Bootstrapper_state_input_do_install_var_loaded
 
     state_default_stderr_log_handler_configured = Bootstrapper_state_default_stderr_log_handler_configured
 

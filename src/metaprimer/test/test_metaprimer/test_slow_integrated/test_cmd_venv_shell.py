@@ -24,7 +24,6 @@ from protoprimer.primer_kernel import (
     ConfConstGeneral,
     ConfConstInput,
     ConfConstPrimer,
-    EnvVar,
     SubCommand,
     SyntaxArg,
 )
@@ -106,9 +105,6 @@ def test_venv_shell_no_update(tmp_path: pathlib.Path):
         str(venv_shell_script_abs_path),
         f"{cmd_venv_shell.__name__}",
         f"{custom_main.__name__}",
-        {
-            EnvVar.var_PROTOPRIMER_DO_INSTALL.value: str(False),
-        },
     )
     with open(venv_shell_script_abs_path, "w") as f:
         f.write(venv_shell_script_content)
@@ -190,9 +186,6 @@ def test_venv_shell_command_execution(tmp_path: pathlib.Path):
         str(venv_shell_script_abs_path),
         f"{cmd_venv_shell.__name__}",
         f"{custom_main.__name__}",
-        {
-            EnvVar.var_PROTOPRIMER_DO_INSTALL.value: str(False),
-        },
     )
     with open(venv_shell_script_abs_path, "w") as f:
         f.write(venv_shell_script_content)
