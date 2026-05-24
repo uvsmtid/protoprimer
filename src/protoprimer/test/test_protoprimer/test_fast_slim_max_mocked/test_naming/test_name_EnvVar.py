@@ -75,15 +75,6 @@ class EnvVarName(enum.Enum):
             ValueName.value_py_exec.value.upper(),
         ],
     )
-    var_PROTOPRIMER_DO_INSTALL = EnvVarMeta(
-        env_var=EnvVar.var_PROTOPRIMER_DO_INSTALL,
-        name_category=NameCategory.category_name_only,
-        name_components=[
-            ConfConstGeneral.name_protoprimer_package.upper(),
-            KeyWord.key_do.value.upper(),
-            KeyWord.key_install.value.upper(),
-        ],
-    )
     var_PROTOPRIMER_PROTO_CODE = EnvVarMeta(
         env_var=EnvVar.var_PROTOPRIMER_PROTO_CODE,
         name_category=NameCategory.category_name_only,

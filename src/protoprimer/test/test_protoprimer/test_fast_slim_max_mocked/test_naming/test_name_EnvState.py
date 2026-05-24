@@ -88,18 +88,6 @@ class StateName(enum.Enum):
         ],
     )
 
-    state_input_do_install_var_loaded = StateMeta(
-        env_state=EnvState.state_input_do_install_var_loaded,
-        name_category=NameCategory.category_named_value,
-        name_components=[
-            KeyWord.key_state.value,
-            ConfLeap.leap_input.value,
-            ValueName.value_do_install.value,
-            ValueSource.value_var.value,
-            CompletedAction.action_loaded.value,
-        ],
-    )
-
     state_default_stderr_log_handler_configured = StateMeta(
         env_state=EnvState.state_default_stderr_log_handler_configured,
         name_category=NameCategory.category_state_mutation,

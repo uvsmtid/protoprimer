@@ -32,10 +32,6 @@ class StateMeta(enum.Enum):
         env_state=EnvState.state_input_stderr_log_level_var_loaded,
         sub_graph=SubGraph.graph_input,
     )
-    state_input_do_install_var_loaded = StateNodeMeta(
-        env_state=EnvState.state_input_do_install_var_loaded,
-        sub_graph=SubGraph.graph_input,
-    )
     state_default_stderr_log_handler_configured = StateNodeMeta(
         env_state=EnvState.state_default_stderr_log_handler_configured,
         sub_graph=SubGraph.graph_input,

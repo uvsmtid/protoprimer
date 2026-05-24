@@ -22,7 +22,6 @@ from protoprimer.primer_kernel import (
     ConfConstInput,
     ConfConstPrimer,
     EnvState,
-    EnvVar,
     import_proto_module,
     SubCommand,
 )
@@ -84,9 +83,6 @@ def test_eval_conf_returns_derived_config(tmp_path: pathlib.Path):
         str(eval_conf_script_abs_path),
         f"{cmd_eval_conf.__name__}",
         f"{custom_main.__name__}",
-        {
-            EnvVar.var_PROTOPRIMER_DO_INSTALL.value: str(False),
-        },
     )
     with open(eval_conf_script_abs_path, "w") as f:
         f.write(eval_conf_script_content)
