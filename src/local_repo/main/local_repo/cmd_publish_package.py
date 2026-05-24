@@ -25,38 +25,24 @@ from local_repo.sub_proc_util import (
     get_command_code,
     get_command_output,
 )
-from protoprimer.primer_kernel import (
-    reconfigure_file_log_handler,
-    reconfigure_stderr_log_handler,
-    TopDir,
+from metaprimer.script_lib import (
+    configure_script,
 )
+from protoprimer.primer_kernel import EnvState
 
 logger: logging.Logger = logging.getLogger()
 
 
 def custom_main():
-    publish_package(
-        # TODO: TODO_28_48_19_20.api_to_traverse_config_when_primed.md:
-        #       Get ref_root from `protoprimer` config (as a lib) instead:
-        client_dir=os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(str(__file__)))))),
-        script_basename=os.path.basename(sys.argv[0]),
-    )
 
-
-def publish_package(
-    client_dir: str,
-    script_basename: str,
-):
     parsed_args = init_arg_parser().parse_args()
 
-    # UC_81_50_97_17.reuse_logger.md:
-    reconfigure_stderr_log_handler(logging.INFO)
-    reconfigure_file_log_handler(logging.INFO)
+    derived_data = configure_script(script_basename=os.path.basename(sys.argv[0]))
 
-    logger.info(f"client_dir: {client_dir}")
+    ref_root_abs_path: str = derived_data[EnvState.state_ref_root_dir_abs_path_inited.name]
 
     _publish_package(
-        client_dir=client_dir,
+        ref_root_abs_path=ref_root_abs_path,
         package_name=parsed_args.package_name,
         repository_url=parsed_args.repository_url,
         no_tag=parsed_args.no_tag or parsed_args.dry_run,
@@ -154,15 +140,17 @@ def create_and_push_tag(
 
 
 def _publish_package(
-    client_dir: str,
+    ref_root_abs_path: str,
     package_name: str,
     repository_url: Optional[str],
     no_tag: bool,
     allow_dirty: bool,
     dry_run: bool,
 ):
+    logger.info(f"ref_root_abs_path: {ref_root_abs_path}")
+
     # Switch to `@/` to avoid creating temporary dirs somewhere else:
-    os.chdir(client_dir)
+    os.chdir(ref_root_abs_path)
 
     # Ensure all changes are committed:
     # https://stackoverflow.com/a/3879077/441652
@@ -182,7 +170,7 @@ def _publish_package(
     # Get the version of distribution:
     distrib_version = None
     version_file_path = os.path.join(
-        client_dir,
+        ref_root_abs_path,
         f"src/{package_dir_basename}/pyproject.toml",
     )
     with open(version_file_path, "r") as f:
@@ -242,7 +230,7 @@ def _publish_package(
 
     # Switch to `build_dir`:
     build_dir = os.path.join(
-        client_dir,
+        ref_root_abs_path,
         f"src/{package_dir_basename}",
     )
     os.chdir(build_dir)
@@ -310,8 +298,8 @@ def _publish_package(
         else:
             get_command_code(f"{twine_command_path} upload --verbose {dist_file}")
 
-    # Switch back to `client_dir`:
-    os.chdir(client_dir)
+    # Switch back to `ref_root_abs_path`:
+    os.chdir(ref_root_abs_path)
 
     if not dry_run:
         # Change the version to non-release-able to force the user to change it later:

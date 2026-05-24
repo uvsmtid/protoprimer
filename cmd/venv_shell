@@ -23,9 +23,4 @@ def import_proto_kernel(proto_kernel_rel_path):
 if __name__ == "__main__":
     proto_kernel = import_proto_kernel("./proto_code/proto_kernel.py")
 
-    import os
-
-    os.environ["PROTOPRIMER_DO_INSTALL"] = str(False)
-
-    # TODO: Do we really want to start `venv_shell` as `boot_env` (not as `start_app`)?
-    proto_kernel.boot_env("metaprimer.cmd_venv_shell:custom_main")
+    proto_kernel.start_app("metaprimer.cmd_venv_shell:custom_main")

@@ -1,4 +1,5 @@
 import os
+from unittest.mock import patch
 
 import pytest
 
@@ -24,7 +25,9 @@ def proto_kernel_abs_path():
     with change_to_known_repo_path("."):
         if not os.path.islink("./lconf") or os.readlink("./lconf") != _lconf_expected_target:
             pytest.skip(f"`./lconf` does not point to {_lconf_expected_target}")
-        yield os.path.abspath("./cmd/proto_code/proto_kernel.py")
+        abs_path = os.path.abspath("./cmd/proto_code/proto_kernel.py")
+        with patch("protoprimer.primer_kernel.get_proto_code_abs_path", return_value=abs_path):
+            yield abs_path
 
 
 def test_get_config_with_leap_primer(proto_kernel_abs_path):
@@ -33,7 +36,7 @@ def test_get_config_with_leap_primer(proto_kernel_abs_path):
 
     # when:
 
-    conf_data = get_config(proto_kernel_abs_path, ConfLeap.leap_primer)
+    conf_data = get_config(ConfLeap.leap_primer)
 
     # then:
 
@@ -48,7 +51,7 @@ def test_get_config_with_leap_client(proto_kernel_abs_path):
 
     # when:
 
-    conf_data = get_config(proto_kernel_abs_path, ConfLeap.leap_client)
+    conf_data = get_config(ConfLeap.leap_client)
 
     # then:
 
@@ -121,7 +124,7 @@ def test_get_config_with_leap_env(proto_kernel_abs_path):
 
     # when:
 
-    conf_data = get_config(proto_kernel_abs_path, ConfLeap.leap_env)
+    conf_data = get_config(ConfLeap.leap_env)
 
     # then:
 
@@ -134,7 +137,7 @@ def test_get_config_with_leap_derived(proto_kernel_abs_path):
 
     # when:
 
-    conf_data = get_config(proto_kernel_abs_path, ConfLeap.leap_derived)
+    conf_data = get_config(ConfLeap.leap_derived)
 
     # then:
 

@@ -52,7 +52,7 @@ from typing import (
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 # The release process ensures that content in this file matches the version below while tagging the release commit
 # (otherwise, if the file comes from a different commit, the version is irrelevant):
-__version__ = "0.12.1"
+__version__ = "0.12.2.dev0"
 
 logger: logging.Logger = logging.getLogger()
 
@@ -61,16 +61,20 @@ log_stride = contextvars.ContextVar("state_stride")
 ValueType = TypeVar("ValueType")
 DataValueType = TypeVar("DataValueType")
 
+# FT_96_50_58_75.context_propagation.md:
+# It is only set on `EntryFunc.func_start_app`:
+_proto_kernel_abs_path: str = ""
+
 
 def run_process(env_ctx: EnvContext) -> None:
     # See UC_10_80_27_57.extend_DAG.md
     try:
         ensure_min_python_version()
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
         state_everything_executed: bool = env_ctx.state_graph.eval_state(TargetState.target_everything_executed.value.name)
         assert state_everything_executed
         atexit.register(lambda: env_ctx.print_exit_line(0))
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     except subprocess.CalledProcessError as subproc_error:
         # Convert the list of arguments into a single shell-escaped string:
         if isinstance(subproc_error.cmd, list):
@@ -1109,7 +1113,6 @@ fi
         self,
         start_interactive_shell: bool,
         command_line: str | None,
-        stderr_log_handler: logging.Handler,
         venv_abs_path: str,
     ) -> int:
 
@@ -1136,17 +1139,12 @@ fi
                 ]
             )
 
-        print_delegate_line(
-            self.shell_args,
-            stderr_log_handler,
-        )
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
         os.execve(
             self.shell_abs_path,
             self.shell_args,
             self.shell_env_vars,
         )
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
         # When `os.execve` is mocked:
         # noinspection PyUnreachableCode
         return 0
@@ -1193,6 +1191,7 @@ class ShellDriverZsh(ShellDriverBase):
                 ]
             )
         # `zsh` takes "dot dir" path to find overridden `.zshrc`:
+        # TODO: Define in KnownEnvVar enum:
         self.shell_env_vars["ZDOTDIR"] = os.path.dirname(self.get_init_file_abs_path())
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
@@ -1201,6 +1200,7 @@ def _get_shell_driver(
     activate_venv: bool = True,
 ) -> ShellDriverBase:
 
+    # TODO: Define in KnownEnvVar enum:
     var_shell = "SHELL"
     shell_abs_path: str | None = os.environ.get(var_shell, None)
     shell_driver_type: type[ShellDriverBase]
@@ -1214,7 +1214,7 @@ def _get_shell_driver(
         shell_abs_path = shutil.which("bash")
         # TODO: If `bash` is not in the `PATH`, fall back to `/bin/sh` instead:
         assert shell_abs_path is not None
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
         shell_driver_type = ShellDriverBash
     elif os.path.basename(shell_abs_path) == ShellType.shell_bash.value:
         shell_driver_type = ShellDriverBash
@@ -1222,7 +1222,7 @@ def _get_shell_driver(
         shell_driver_type = ShellDriverZsh
     else:
         raise ValueError(f"env var `{var_shell}` has unknown value [{shell_abs_path}]")
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     shell_env_vars = os.environ.copy()
     remove_protoprimer_env_vars(shell_env_vars)
     return shell_driver_type(
@@ -1235,7 +1235,7 @@ def _get_shell_driver(
 
 ########################################################################################################################
 
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 class ConfConstGeneral:
 
     # The project name = package name:
@@ -1245,7 +1245,7 @@ class ConfConstGeneral:
 
     # Concept name of the FT_90_65_67_62.proto_code.md:
     name_proto_code = "proto_code"
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     # The main module of the `protoprimer` package (this file):
     name_primer_kernel_module = "primer_kernel"
 
@@ -1257,7 +1257,7 @@ class ConfConstGeneral:
     default_proto_code_basename = f"{default_proto_code_module}.py"
 
     python_version_file_basename = ".python-version"
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     venv_config_file_basename = "pyvenv.cfg"
 
     pytest_module = "pytest"
@@ -1267,7 +1267,7 @@ class ConfConstGeneral:
     name_uv_package = "uv"
 
     curr_dir_rel_path = "."
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     module_func_separator = ":"
 
     # TODO: use lambdas to generate based on input (instead of None):
@@ -1281,7 +1281,7 @@ class ConfConstGeneral:
         file_rel_path_venv_bin,
         "python",
     )
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     file_rel_path_venv_activate = os.path.join(
         file_rel_path_venv_bin,
         "activate",
@@ -1291,7 +1291,7 @@ class ConfConstGeneral:
         file_rel_path_venv_bin,
         name_uv_package,
     )
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     log_section_delimiter = "=" * 5
 
     min_lines_between_generated_boilerplate = 20
@@ -1310,14 +1310,14 @@ class ConfConstGeneral:
 ################################################################################
 """
     )
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     # FT_56_85_65_41.generated_boilerplate.md
     func_get_proto_code_generated_boilerplate_multiple_body = lambda module_obj: (
         f"""
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 """
     )
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     relative_path_field_note: str = f"The path is relative to the `{PathName.path_ref_root.value}` dir specified in the `{ConfField.field_ref_root_dir_rel_path.value}` field."
     common_field_global_note: str = f"This field can be specified in global config (see `{ConfLeap.leap_client.name}`) but it is override-able by local environment-specific config (see `{ConfLeap.leap_env.name}`)."
     common_field_local_note: str = f"This local environment-specific field overrides the global one (see description in `{ConfLeap.leap_client.name}`)."
@@ -1332,14 +1332,14 @@ class ConfConstInput:
 
     file_abs_path_script = ConfConstGeneral.input_based
     dir_abs_path_current = ConfConstGeneral.input_based
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     default_proto_conf_dir_rel_path: str = f"{ConfConstGeneral.name_proto_code}"
 
     conf_file_ext = "json"
 
     # Next FT_89_41_35_82.conf_leap.md: `ConfLeap.leap_primer`:
     default_file_basename_conf_primer = f"{ConfConstGeneral.name_protoprimer_package}.{conf_file_ext}"
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     ext_env_var_VIRTUAL_ENV: str = "VIRTUAL_ENV"
     ext_env_var_PATH: str = "PATH"
     ext_env_var_PYTHONPATH: str = "PYTHONPATH"
@@ -1355,12 +1355,12 @@ class ConfConstPrimer:
     """
     Constants for FT_89_41_35_82.conf_leap.md / leap_primer
     """
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     default_client_conf_dir_rel_path: str = f"{ConfDst.dst_global.value}"
 
     # Next FT_89_41_35_82.conf_leap.md: `ConfLeap.leap_client`:
     default_file_basename_leap_client: str = ConfConstInput.default_file_basename_conf_primer
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     # TODO: Is this still needed if we propagate conf file base name primer -> client -> env?
     default_client_conf_file_rel_path: str = os.path.join(
         default_client_conf_dir_rel_path,
@@ -1377,14 +1377,14 @@ class ConfConstClient:
 
     # TODO: Is this used? If link_name is not specified, the env conf dir becomes ref root dir:
     default_dir_rel_path_leap_env_link_name: str = os.path.join(ConfDst.dst_local.value)
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     # FT_59_95_81_63.env_layout.md / max layout
     default_default_env_dir_rel_path: str = os.path.join(
         # TODO: Use constant:
         "dst",
         common_env_name,
     )
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     # Next FT_89_41_35_82.conf_leap.md: `ConfLeap.leap_env`:
     default_file_basename_leap_env: str = ConfConstInput.default_file_basename_conf_primer
 
@@ -1400,13 +1400,13 @@ class ConfConstEnv:
     """
     Constants for FT_89_41_35_82.conf_leap.md / leap_env
     """
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     default_dir_rel_path_venv = "venv"
 
     default_dir_rel_path_log = "log"
 
     default_dir_rel_path_tmp = "tmp"
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     default_dir_rel_path_cache = "cache"
 
     # NOTE: FT_84_11_73_28.supported_python_versions.md:
@@ -1422,12 +1422,12 @@ class ConfConstEnv:
             ConfField.field_install_group.value: None,
         },
     ]
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     default_install_specs = []
 
     # FT_84_11_73_28.supported_python_versions.md:
     latest_known_python_version = "3.14"
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
 
 class CustomArgumentParser(argparse.ArgumentParser):
     def __init__(
@@ -1922,6 +1922,7 @@ class Bootstrapper_state_input_do_install_var_loaded(AbstractCachingStateNode[bo
 # noinspection PyPep8Naming
 @trivial_factory
 class Bootstrapper_state_default_stderr_log_handler_configured(AbstractCachingStateNode[logging.Handler]):
+    # TODO: UC_81_50_97_17.do_not_reuse_logger.md: Shell we disable configuring loggers for `EntryFunc.func_start_app`?
 
     _parent_states = staticmethod(
         lambda: [
@@ -1938,9 +1939,9 @@ class Bootstrapper_state_default_stderr_log_handler_configured(AbstractCachingSt
         assert state_input_stderr_log_level_var_loaded >= 0
 
         stderr_handler: logging.Handler = _configure_primer_stderr_log_handler(state_input_stderr_log_level_var_loaded)
-
-        return stderr_handler
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+        return stderr_handler
+
 
 # noinspection PyPep8Naming
 @conditional_factory
@@ -3472,6 +3473,7 @@ class Bootstrapper_state_effective_conf_data_printed(AbstractCachingStateNode[in
 # noinspection PyPep8Naming
 @trivial_factory
 class Bootstrapper_state_default_file_log_handler_configured(AbstractCachingStateNode[logging.Handler]):
+    # TODO: UC_81_50_97_17.do_not_reuse_logger.md: Shell we disable configuring loggers for `EntryFunc.func_start_app`?
 
     _parent_states = staticmethod(
         lambda: [
@@ -4262,7 +4264,6 @@ class Bootstrapper_state_command_executed(AbstractCachingStateNode[int]):
         return shell_driver.run_shell(
             False,
             command_line,
-            state_default_stderr_log_handler_configured,
             state_local_venv_dir_abs_path_inited,
         )
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
@@ -4812,36 +4813,6 @@ class _PrimerStderrLogFormatter(DefaultStderrLogFormatter):
         }
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
-def _reconfigure_log_handler(
-    formatter_class: type,
-    new_formatter: logging.Formatter,
-    log_level: int,
-) -> logging.Handler | None:
-    for log_handler in logger.handlers:
-        if isinstance(log_handler.formatter, formatter_class):
-            # This covers both `_Primer*` (subclass) and `Default*` formatter variants.
-            log_handler.setFormatter(new_formatter)
-            log_handler.setLevel(log_level)
-            # Remove `protoprimer`-specific filter if present:
-            for handler_filter in list(log_handler.filters):
-                if isinstance(handler_filter, StateStrideFilter):
-                    log_handler.removeFilter(handler_filter)
-            return log_handler
-    return None
-
-
-def reconfigure_stderr_log_handler(log_level: int = logging.WARNING) -> logging.Handler | None:
-    """
-    UC_81_50_97_17.reuse_logger.md
-    """
-    logger.setLevel(logging.NOTSET)
-    return _reconfigure_log_handler(
-        formatter_class=DefaultStderrLogFormatter,
-        new_formatter=DefaultStderrLogFormatter(log_level),
-        log_level=log_level,
-    )
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
 def _find_existing_log_handler(
     handler_class: type[logging.StreamHandler],
     formatter_class: type,
@@ -4883,17 +4854,6 @@ def _configure_primer_stderr_log_handler(state_input_stderr_log_level_var_loaded
     return stderr_handler
 
 
-def reconfigure_file_log_handler(log_level: int = logging.INFO) -> logging.Handler | None:
-    """
-    UC_81_50_97_17.reuse_logger.md
-    """
-    return _reconfigure_log_handler(
-        formatter_class=DefaultFileLogFormatter,
-        new_formatter=DefaultFileLogFormatter(),
-        log_level=log_level,
-    )
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-
 def _configure_primer_file_log_handler(
     script_name: str,
     state_input_start_id_var_loaded: str,
@@ -4903,7 +4863,7 @@ def _configure_primer_file_log_handler(
     """
     Implements for log file: FT_38_73_38_52.log_verbosity.md
     """
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     log_file_basename = f"{script_name}.{state_input_start_id_var_loaded}.log"
     log_file_abs_path = os.path.join(
         state_local_log_dir_abs_path_inited,
@@ -4915,7 +4875,7 @@ def _configure_primer_file_log_handler(
     # Increase the log level at most to what is used by stderr:
     if state_input_stderr_log_level_handler_configured.level < file_log_level:
         file_log_level = state_input_stderr_log_level_handler_configured.level
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     file_handler: logging.StreamHandler | None = _find_existing_log_handler(
         logging.FileHandler,
         _PrimerFileLogFormatter,
@@ -4926,7 +4886,7 @@ def _configure_primer_file_log_handler(
             state_local_log_dir_abs_path_inited,
             exist_ok=True,
         )
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
         if not os.path.exists(log_file_abs_path):
             # Explain missing logs to avoid confusion:
             write_text_file(
@@ -4936,7 +4896,7 @@ def _configure_primer_file_log_handler(
 
 """,
             )
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
         file_handler = logging.FileHandler(log_file_abs_path)
         assert file_handler is not None
         file_handler.addFilter(StateStrideFilter())
@@ -4952,12 +4912,12 @@ def rename_to_moved_state_name(state_name: str) -> str:
     See UC_27_40_17_59.replace_by_new_and_use_old.md
     """
     return f"_{state_name}"
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
 def missing_conf_file_message(file_abs_path: str) -> str:
     return f"File [{file_abs_path}] does not exist - use [{SubCommand.command_eval.value}] sub command for description."
 
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
 def warn_once_at_state_stride(
     log_message,
     state_stride: StateStride,
@@ -4977,8 +4937,8 @@ def can_print_effective_config(state_node: StateNode) -> bool:
         == StateStride.stride_py_arbitrary.value
         and state_node.env_ctx.graph_coordinates.sub_command == SubCommand.command_eval
     )
-
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
 def find_python_version_file(curr_dir_any_path=".") -> str | None:
     """
     Walks up the directory tree to find the path to a `.python-version` file.
@@ -4998,11 +4958,11 @@ def find_python_version_file(curr_dir_any_path=".") -> str | None:
 
         # Walk up one level:
         parent_dir_abs_path = os.path.dirname(curr_dir_abs_path)
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
         # If the walk did not work, we hit the root:
         if parent_dir_abs_path == curr_dir_abs_path:
             break
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
         curr_dir_abs_path = parent_dir_abs_path
 
     return None
@@ -5019,14 +4979,14 @@ def switch_python(
     """
     It always "returns" `next_py_exec` (or fails).
     """
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     curr_py_exec: StateStride = StateStride[
         os.getenv(
             EnvVar.var_PROTOPRIMER_PY_EXEC.value,
             ConfConstInput.default_PROTOPRIMER_PY_EXEC,
         )
     ]
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     # TODO: Do not add args if they have been parsed and already have the same value:
     exec_argv: list[str] = [
         next_python_path,
@@ -5040,14 +5000,14 @@ def switch_python(
     if required_environ is None:
         required_environ = os.environ.copy()
     assert isinstance(required_environ, dict)
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     required_environ[EnvVar.var_PROTOPRIMER_PY_EXEC.value] = next_py_exec.name
     required_environ[EnvVar.var_PROTOPRIMER_START_ID.value] = start_id
     if proto_code_abs_file_path is not None:
         required_environ[EnvVar.var_PROTOPRIMER_PROTO_CODE.value] = proto_code_abs_file_path
 
     logger.info(f"switching from current `python` executable [{curr_python_path}][{curr_py_exec.name}] to [{next_python_path}][{next_py_exec.name}] with `{EnvVar.var_PROTOPRIMER_PROTO_CODE.value}`[{proto_code_abs_file_path}] exec_argv: {exec_argv}" "\n" "\n" f"{ConfConstGeneral.log_section_delimiter} before: [{curr_py_exec.name}] <<< restart >>> after: [{next_py_exec.name}] {ConfConstGeneral.log_section_delimiter}" "\n")
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     os.execve(
         path=next_python_path,
         argv=exec_argv,
@@ -5066,25 +5026,7 @@ def skip_python(
 ) -> StateStride:
     logger.info(f"{log_message}: skip `python` executable switch from [{curr_py_exec.name}] to [{next_py_exec.name}]")
     return next_py_exec
-
-
-def print_delegate_line(
-    arg_list: list[str],
-    stderr_log_handler: logging.Handler,
-) -> None:
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-    color_delegate = f"{TermColor.back_dark_blue.value}{TermColor.fore_bright_white.value}"
-    color_reset = TermColor.reset_style.value
-
-    is_reportable: bool = stderr_log_handler.level <= logging.INFO
-    if is_reportable:
-        command_line = get_shell_command_line(arg_list)
-        print(
-            f"{color_delegate}DELEGATE{color_reset}: {command_line}",
-            file=sys.stderr,
-            flush=True,
-        )
-
 
 def get_file_name_timestamp():
     """
@@ -5094,7 +5036,7 @@ def get_file_name_timestamp():
     now_utc = datetime.datetime.now(datetime.timezone.utc)
     file_timestamp = now_utc.strftime("%Y%m%dT%H%M%S") + "Z"
     return file_timestamp
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
 
 def get_default_start_id():
     return f"{get_file_name_timestamp()}.{os.getpid()}"
@@ -5112,7 +5054,7 @@ def is_sub_path(
         return True
     except ValueError:
         return False
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
 def rel_path(
     target_any_path: str,
@@ -5122,7 +5064,7 @@ def rel_path(
     `PurePath` compares `str` paths (without looking at the filesystem or resolving symlinks).
     """
     return str(pathlib.PurePath(target_any_path).relative_to(pathlib.PurePath(source_any_path)))
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
 
 def is_same_file(
     l_abs_path: str,
@@ -5133,7 +5075,7 @@ def is_same_file(
 
 def get_path_to_curr_python() -> str:
     return sys.executable
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
 def get_path_to_base_python() -> str:
 
@@ -5149,13 +5091,13 @@ def get_path_to_base_python() -> str:
     )
     if os.path.exists(path_to_next_python):
         return path_to_next_python
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     path_to_next_python = os.path.join(
         sys.base_prefix,
         ConfConstGeneral.file_rel_path_venv_python,
     )
     return path_to_next_python
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
 def get_script_command_line():
     return get_shell_command_line(sys.argv)
@@ -5170,7 +5112,7 @@ def read_json_file(file_path: str) -> dict:
     with open(file_path, "r", encoding="utf-8") as file_obj:
         return json.load(file_obj)
 
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
 def write_json_file(
     file_path: str,
     file_data: dict,
@@ -5182,7 +5124,7 @@ def write_json_file(
             indent=4,
         )
         file_obj.write("\n")
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
 def read_text_file(file_path: str) -> str:
     with open(file_path, "r", encoding="utf-8") as file_obj:
@@ -5195,7 +5137,7 @@ def write_text_file(
 ) -> None:
     with open(file_path, "w", encoding="utf-8") as file_obj:
         file_obj.write(file_data)
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
 
 def _is_blank_line(line: str) -> bool:
     stripped = line.strip()
@@ -5214,7 +5156,7 @@ def _replace_single_header_in_empty_lines(
     boilerplate_height = len(boilerplate_lines)
     output_lines = input_lines[:1] + boilerplate_lines + input_lines[1 + boilerplate_height :]
     return "\n".join(output_lines) + "\n"
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
 def _replace_multiple_body_in_empty_lines(
     input_text: str,
@@ -5491,10 +5433,16 @@ def get_import_error_hint(meta_main_module: str) -> str:
     return f"Is `{meta_main_module}` a (transitive) dependency of any `{ConfConstClient.default_pyproject_toml_basename}` being installed?"
 
 
-def get_config(proto_kernel_abs_path: str, conf_leap: ConfLeap) -> dict:
+def get_proto_code_abs_path() -> str:
+    # FT_96_50_58_75.context_propagation.md:
+    return _proto_kernel_abs_path
+
+
+def get_config(conf_leap: ConfLeap) -> dict:
     """
     Retrieve config data for the specified `conf_leap` as a function call (without the process restarts).
-    `proto_kernel_abs_path` is required to load the config at the right paths.
+    See FT_96_50_58_75.context_propagation.md:
+    `_proto_kernel_abs_path` is required to load the config from the right paths.
     None of `EnvVar.*` can be used to ensure FT_66_02_54_56.context_isolation.md.
     """
 
@@ -5504,21 +5452,21 @@ def get_config(proto_kernel_abs_path: str, conf_leap: ConfLeap) -> dict:
     #       It is set to `StateStride.stride_py_arbitrary` even though we do not really know
     #       whether this python is outside `venv` (what `StateStride.stride_py_arbitrary` is really for).
     #       But it works for now until we can build different implementation for `get_config` lib call.
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     _conf_leap_to_state: dict[ConfLeap, str] = {
         ConfLeap.leap_primer: EnvState.state_primer_conf_file_data_loaded.name,
         ConfLeap.leap_client: EnvState.state_client_conf_file_data_loaded.name,
         ConfLeap.leap_env: EnvState.state_env_conf_file_data_loaded.name,
         ConfLeap.leap_derived: EnvState.state_derived_conf_data_loaded.name,
     }
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     if conf_leap not in _conf_leap_to_state:
         raise ValueError(f"Unsupported `ConfLeap` value: {conf_leap}")
 
     env_ctx = EnvContext()
     env_ctx.graph_coordinates.entry_func = EntryFunc.func_call_lib
     env_ctx.graph_coordinates.prepare_venv = False
-    env_ctx.proto_code = proto_kernel_abs_path
+    env_ctx.proto_code = get_proto_code_abs_path()
     return env_ctx.state_graph.eval_state(_conf_leap_to_state[conf_leap])
 
 
@@ -5526,7 +5474,7 @@ def boot_env(venv_main_func: str):
     """
     This is a helper function for an FT_75_87_82_46.entry_script.md
     which implements FT_85_17_35_21.boot_env.md.
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     It bootstraps `venv` from nothing.
     The majority of the entry scripts are supposed to use the `start_app` function instead
     (which only starts the specified `venv_main_func` assuming `venv` has already been bootstrapped).
@@ -5535,7 +5483,7 @@ def boot_env(venv_main_func: str):
         EntryFunc.func_boot_env,
         venv_main_func,
     )
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
 
 def start_app(venv_main_func: str):
     """
@@ -5550,14 +5498,14 @@ def start_app(venv_main_func: str):
         EntryFunc.func_start_app,
         venv_main_func,
     )
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
 def _start_main(
     entry_func: EntryFunc,
     # Same format as in `EnvVar.var_PROTOPRIMER_MAIN_FUNC`:
     venv_main_func: str,
 ) -> None:
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     # NOTE: Assume (no verification) the module is loaded from
     #       (outside venv, outside local packages, outside global packages):
     os.environ[EnvVar.var_PROTOPRIMER_PROTO_CODE.value] = os.path.abspath(__file__)
@@ -5576,20 +5524,26 @@ def _start_main(
         )
     else:
         raise ValueError(f"The specified main function [{venv_main_func}] does not match expected format `module_name:function_name`.")
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     curr_py_exec = StateStride[
         os.getenv(
             EnvVar.var_PROTOPRIMER_PY_EXEC.value,
             ConfConstInput.default_PROTOPRIMER_PY_EXEC,
         )
     ]
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
+    installed_kernel_name = f"{ConfConstGeneral.name_protoprimer_package}.{ConfConstGeneral.name_primer_kernel_module}"
+
     try:
         # NOTE: `state_stride_src_updated_reached` forces restart with this `StateStride`:
         if curr_py_exec.value >= StateStride.stride_src_updated.value:
             venv_module = importlib.import_module(module_name)
             selected_main = getattr(venv_module, func_name)
             if entry_func == EntryFunc.func_start_app:
+                # FT_96_50_58_75.context_propagation.md:
+                # Switch from running `proto_code` to installed `venv` code:
+                imported_kernel = importlib.import_module(installed_kernel_name)
+                setattr(imported_kernel, "_proto_kernel_abs_path", os.environ[EnvVar.var_PROTOPRIMER_PROTO_CODE.value])
                 remove_protoprimer_env_vars(os.environ)
             selected_main()
         elif curr_py_exec.value >= StateStride.stride_deps_updated.value:
@@ -5597,12 +5551,12 @@ def _start_main(
             #       It may not work in instant cases when `protoprimer` is not a dependency (not installed).
             # FT_14_52_73_23.primer_runtime.md:
             # Switch from running `proto_code` to installed `venv` code:
-            venv_module = importlib.import_module(f"{ConfConstGeneral.name_protoprimer_package}.{ConfConstGeneral.name_primer_kernel_module}")
+            imported_kernel = importlib.import_module(installed_kernel_name)
             # noinspection PyPep8Naming
-            imported_EnvContext = getattr(venv_module, EnvContext.__name__)
+            imported_EnvContext = getattr(imported_kernel, EnvContext.__name__)
             # noinspection PyPep8Naming
-            imported_EntryFunc = getattr(venv_module, EntryFunc.__name__)
-            imported_run_process = getattr(venv_module, run_process.__name__)
+            imported_EntryFunc = getattr(imported_kernel, EntryFunc.__name__)
+            imported_run_process = getattr(imported_kernel, run_process.__name__)
             env_ctx = imported_EnvContext()
             env_ctx.graph_coordinates.entry_func = imported_EntryFunc[entry_func.name]
             imported_run_process(env_ctx)

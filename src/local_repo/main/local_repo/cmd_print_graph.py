@@ -13,14 +13,13 @@ from local_repo.graph_printer import (
     GraphPrinterTextNested,
 )
 from local_repo.misc_tools.graph_utils import get_transitive_dependencies
+from metaprimer.script_lib import (
+    configure_script,
+)
 from protoprimer.primer_kernel import (
-    ConfLeap,
     EntryFunc,
     EnvContext,
     EnvState,
-    get_config,
-    reconfigure_file_log_handler,
-    reconfigure_stderr_log_handler,
     StateGraph,
     StateNode,
     SubCommand,
@@ -51,13 +50,9 @@ class OutputLayout(Enum):
 
 def custom_main():
 
-    script_basename = os.path.basename(sys.argv[0])
-
-    # UC_81_50_97_17.reuse_logger.md:
-    reconfigure_stderr_log_handler(logging.INFO)
-    reconfigure_file_log_handler(logging.INFO)
-
     parsed_args = init_arg_parser().parse_args()
+
+    configure_script(script_basename=os.path.basename(sys.argv[0]))
 
     run_print_graph(
         output_format=OutputFormat(parsed_args.format),

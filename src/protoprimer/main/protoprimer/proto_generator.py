@@ -5,6 +5,7 @@ from typing import Dict
 
 def generate_entry_script_content(
     # TODO: Move this function to `protoprimer.primer_kernel`? To use `SubCommand` enum.
+    #       But then, why? Isn't this func supposed to be used when `protoprimer.primer_kernel` is already installed?
     sub_command: str,
     proto_kernel_abs_path: str,
     entry_script_abs_path: str,
@@ -27,6 +28,7 @@ def generate_entry_script_content(
         )
         env_vars_lines = textwrap.indent(env_vars_lines, "    ")
 
+    # TODO: Remove `sub_command` and use `entry_func` directly:
     if sub_command == "start":
         entry_func = "start_app"
     elif sub_command == "boot":
