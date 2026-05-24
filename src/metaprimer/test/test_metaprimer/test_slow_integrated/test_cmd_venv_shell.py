@@ -101,7 +101,7 @@ def test_venv_shell_no_update(tmp_path: pathlib.Path):
 
     venv_shell_script_abs_path = ref_root_abs_path / "venv_shell"
     venv_shell_script_content = generate_entry_script_content(
-        SubCommand.command_boot.value,
+        SubCommand.command_start.value,
         str(proto_kernel_abs_path),
         str(venv_shell_script_abs_path),
         f"{cmd_venv_shell.__name__}",
@@ -117,7 +117,7 @@ def test_venv_shell_no_update(tmp_path: pathlib.Path):
     # when:
     # Run the interactive shell and pipe "exit 42" to its `stdin` to make it terminate with a specific exit code.
     sub_proc = subprocess.run(
-        "./venv_shell -vv",
+        "./venv_shell",
         shell=True,
         input="exit 42\n",
         text=True,
@@ -185,7 +185,7 @@ def test_venv_shell_command_execution(tmp_path: pathlib.Path):
 
     venv_shell_script_abs_path = ref_root_abs_path / "venv_shell"
     venv_shell_script_content = generate_entry_script_content(
-        SubCommand.command_boot.value,
+        SubCommand.command_start.value,
         str(proto_kernel_abs_path),
         str(venv_shell_script_abs_path),
         f"{cmd_venv_shell.__name__}",
@@ -201,7 +201,7 @@ def test_venv_shell_command_execution(tmp_path: pathlib.Path):
     assert not output_file.exists()
 
     # when:
-    get_command_code(f'./venv_shell {SubCommand.command_boot.value} {SyntaxArg.arg_command} "touch {output_file}"')
+    get_command_code(f'./venv_shell {SyntaxArg.arg_command} "touch {output_file}"')
 
     # then:
     assert output_file.exists()

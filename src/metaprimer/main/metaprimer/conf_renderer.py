@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import enum
 import json
-import logging
 import os
 from types import CodeType
 from typing import (
@@ -21,11 +20,11 @@ from protoprimer.primer_kernel import (
     EntryFunc,
     EnvContext,
     EnvState,
-    SubCommand,
     missing_conf_file_message,
     PathName,
     read_json_file,
     SelectorFunc,
+    SubCommand,
     SyntaxArg,
     TermColor,
     trivial_factory,

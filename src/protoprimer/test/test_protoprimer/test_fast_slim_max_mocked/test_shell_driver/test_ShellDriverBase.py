@@ -1,8 +1,4 @@
-import logging
-from unittest.mock import (
-    MagicMock,
-    patch,
-)
+from unittest.mock import patch
 
 import pytest
 
@@ -101,10 +97,8 @@ def test_run_shell(mock_configure, mock_write, mock_execve):
         shell_env_vars={"VAR": "value"},
         cache_dir_abs_path="/fake/cache",
     )
-    mock_log_handler = MagicMock()
-    mock_log_handler.level = logging.INFO
     # when:
-    driver.run_shell(False, "echo hello", mock_log_handler, "/fake/venv")
+    driver.run_shell(False, "echo hello", "/fake/venv")
     # then:
     mock_write.assert_called_once_with("/fake/venv")
     mock_configure.assert_called_once_with(True)

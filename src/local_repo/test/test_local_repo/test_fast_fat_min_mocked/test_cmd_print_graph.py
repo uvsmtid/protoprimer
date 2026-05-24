@@ -39,12 +39,13 @@ def test_state_meta_matches_env_state():
     "sys.stdout",
     new_callable=StringIO,
 )
+@patch("local_repo.cmd_print_graph.configure_script")
 @patch.object(
     sys,
     "argv",
     [graph_printer_file_name],
 )
-def test_print_dag_cmd_default(fake_stdout):
+def test_print_dag_cmd_default(mock_configure_script, fake_stdout):
 
     # given:
 
@@ -61,6 +62,7 @@ def test_print_dag_cmd_default(fake_stdout):
     "sys.stdout",
     new_callable=StringIO,
 )
+@patch("local_repo.cmd_print_graph.configure_script")
 @patch.object(
     sys,
     "argv",
@@ -70,7 +72,7 @@ def test_print_dag_cmd_default(fake_stdout):
         "text",
     ],
 )
-def test_print_dag_cmd_text(fake_stdout):
+def test_print_dag_cmd_text(mock_configure_script, fake_stdout):
 
     # given:
 
@@ -87,6 +89,7 @@ def test_print_dag_cmd_text(fake_stdout):
     "sys.stdout",
     new_callable=StringIO,
 )
+@patch("local_repo.cmd_print_graph.configure_script")
 @patch.object(
     sys,
     "argv",
@@ -96,7 +99,7 @@ def test_print_dag_cmd_text(fake_stdout):
         "mermaid",
     ],
 )
-def test_print_dag_cmd_mermaid(fake_stdout):
+def test_print_dag_cmd_mermaid(mock_configure_script, fake_stdout):
 
     # given:
 
@@ -113,6 +116,7 @@ def test_print_dag_cmd_mermaid(fake_stdout):
     "sys.stdout",
     new_callable=StringIO,
 )
+@patch("local_repo.cmd_print_graph.configure_script")
 @patch.object(
     sys,
     "argv",
@@ -122,7 +126,7 @@ def test_print_dag_cmd_mermaid(fake_stdout):
         "flat",
     ],
 )
-def test_print_dag_cmd_layout_flat(fake_stdout):
+def test_print_dag_cmd_layout_flat(mock_configure_script, fake_stdout):
 
     # given:
 
@@ -135,6 +139,7 @@ def test_print_dag_cmd_layout_flat(fake_stdout):
     # do not assert huge output - if it does not fail, that is enough
 
 
+@patch("local_repo.cmd_print_graph.configure_script")
 @patch.object(
     sys,
     "argv",
@@ -146,7 +151,7 @@ def test_print_dag_cmd_layout_flat(fake_stdout):
         "flat",
     ],
 )
-def test_print_dag_cmd_mermaid_flat_fail():
+def test_print_dag_cmd_mermaid_flat_fail(mock_configure_script):
 
     # given:
 

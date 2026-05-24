@@ -27,6 +27,7 @@ def test_relationship():
 )
 @patch("local_repo.cmd_print_graph.get_transitive_dependencies")
 @patch("local_repo.cmd_print_graph.EnvContext")
+@patch("local_repo.cmd_print_graph.configure_script")
 @patch.object(
     sys,
     "argv",
@@ -39,6 +40,7 @@ def test_relationship():
     ],
 )
 def test_print_dag_python_output(
+    mock_configure_script,
     mock_env_ctx_class,
     mock_get_trans,
     fake_stdout,

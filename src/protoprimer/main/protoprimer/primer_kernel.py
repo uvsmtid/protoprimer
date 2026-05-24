@@ -52,7 +52,7 @@ from typing import (
 
 # The release process ensures that content in this file matches the version below while tagging the release commit
 # (otherwise, if the file comes from a different commit, the version is irrelevant):
-__version__ = "0.12.1"
+__version__ = "0.12.2.dev0"
 
 logger: logging.Logger = logging.getLogger()
 
@@ -60,6 +60,10 @@ log_stride = contextvars.ContextVar("state_stride")
 
 ValueType = TypeVar("ValueType")
 DataValueType = TypeVar("DataValueType")
+
+# FT_96_50_58_75.context_propagation.md:
+# It is only set on `EntryFunc.func_start_app`:
+_proto_kernel_abs_path: str = ""
 
 
 def run_process(env_ctx: EnvContext) -> None:
@@ -1109,7 +1113,6 @@ fi
         self,
         start_interactive_shell: bool,
         command_line: str | None,
-        stderr_log_handler: logging.Handler,
         venv_abs_path: str,
     ) -> int:
 
@@ -1135,11 +1138,6 @@ fi
                     command_line,
                 ]
             )
-
-        print_delegate_line(
-            self.shell_args,
-            stderr_log_handler,
-        )
 
         os.execve(
             self.shell_abs_path,
@@ -1193,6 +1191,7 @@ class ShellDriverZsh(ShellDriverBase):
                 ]
             )
         # `zsh` takes "dot dir" path to find overridden `.zshrc`:
+        # TODO: Define in KnownEnvVar enum:
         self.shell_env_vars["ZDOTDIR"] = os.path.dirname(self.get_init_file_abs_path())
 
 
@@ -1201,6 +1200,7 @@ def _get_shell_driver(
     activate_venv: bool = True,
 ) -> ShellDriverBase:
 
+    # TODO: Define in KnownEnvVar enum:
     var_shell = "SHELL"
     shell_abs_path: str | None = os.environ.get(var_shell, None)
     shell_driver_type: type[ShellDriverBase]
@@ -1922,6 +1922,7 @@ class Bootstrapper_state_input_do_install_var_loaded(AbstractCachingStateNode[bo
 # noinspection PyPep8Naming
 @trivial_factory
 class Bootstrapper_state_default_stderr_log_handler_configured(AbstractCachingStateNode[logging.Handler]):
+    # TODO: UC_81_50_97_17.do_not_reuse_logger.md: Shell we disable configuring loggers for `EntryFunc.func_start_app`?
 
     _parent_states = staticmethod(
         lambda: [
@@ -3472,6 +3473,7 @@ class Bootstrapper_state_effective_conf_data_printed(AbstractCachingStateNode[in
 # noinspection PyPep8Naming
 @trivial_factory
 class Bootstrapper_state_default_file_log_handler_configured(AbstractCachingStateNode[logging.Handler]):
+    # TODO: UC_81_50_97_17.do_not_reuse_logger.md: Shell we disable configuring loggers for `EntryFunc.func_start_app`?
 
     _parent_states = staticmethod(
         lambda: [
@@ -4262,7 +4264,6 @@ class Bootstrapper_state_command_executed(AbstractCachingStateNode[int]):
         return shell_driver.run_shell(
             False,
             command_line,
-            state_default_stderr_log_handler_configured,
             state_local_venv_dir_abs_path_inited,
         )
 
@@ -4812,36 +4813,6 @@ class _PrimerStderrLogFormatter(DefaultStderrLogFormatter):
         }
 
 
-def _reconfigure_log_handler(
-    formatter_class: type,
-    new_formatter: logging.Formatter,
-    log_level: int,
-) -> logging.Handler | None:
-    for log_handler in logger.handlers:
-        if isinstance(log_handler.formatter, formatter_class):
-            # This covers both `_Primer*` (subclass) and `Default*` formatter variants.
-            log_handler.setFormatter(new_formatter)
-            log_handler.setLevel(log_level)
-            # Remove `protoprimer`-specific filter if present:
-            for handler_filter in list(log_handler.filters):
-                if isinstance(handler_filter, StateStrideFilter):
-                    log_handler.removeFilter(handler_filter)
-            return log_handler
-    return None
-
-
-def reconfigure_stderr_log_handler(log_level: int = logging.WARNING) -> logging.Handler | None:
-    """
-    UC_81_50_97_17.reuse_logger.md
-    """
-    logger.setLevel(logging.NOTSET)
-    return _reconfigure_log_handler(
-        formatter_class=DefaultStderrLogFormatter,
-        new_formatter=DefaultStderrLogFormatter(log_level),
-        log_level=log_level,
-    )
-
-
 def _find_existing_log_handler(
     handler_class: type[logging.StreamHandler],
     formatter_class: type,
@@ -4881,17 +4852,6 @@ def _configure_primer_stderr_log_handler(state_input_stderr_log_level_var_loaded
 
     stderr_handler.setLevel(state_input_stderr_log_level_var_loaded)
     return stderr_handler
-
-
-def reconfigure_file_log_handler(log_level: int = logging.INFO) -> logging.Handler | None:
-    """
-    UC_81_50_97_17.reuse_logger.md
-    """
-    return _reconfigure_log_handler(
-        formatter_class=DefaultFileLogFormatter,
-        new_formatter=DefaultFileLogFormatter(),
-        log_level=log_level,
-    )
 
 
 def _configure_primer_file_log_handler(
@@ -5066,24 +5026,6 @@ def skip_python(
 ) -> StateStride:
     logger.info(f"{log_message}: skip `python` executable switch from [{curr_py_exec.name}] to [{next_py_exec.name}]")
     return next_py_exec
-
-
-def print_delegate_line(
-    arg_list: list[str],
-    stderr_log_handler: logging.Handler,
-) -> None:
-
-    color_delegate = f"{TermColor.back_dark_blue.value}{TermColor.fore_bright_white.value}"
-    color_reset = TermColor.reset_style.value
-
-    is_reportable: bool = stderr_log_handler.level <= logging.INFO
-    if is_reportable:
-        command_line = get_shell_command_line(arg_list)
-        print(
-            f"{color_delegate}DELEGATE{color_reset}: {command_line}",
-            file=sys.stderr,
-            flush=True,
-        )
 
 
 def get_file_name_timestamp():
@@ -5491,10 +5433,16 @@ def get_import_error_hint(meta_main_module: str) -> str:
     return f"Is `{meta_main_module}` a (transitive) dependency of any `{ConfConstClient.default_pyproject_toml_basename}` being installed?"
 
 
-def get_config(proto_kernel_abs_path: str, conf_leap: ConfLeap) -> dict:
+def get_proto_code_abs_path() -> str:
+    # FT_96_50_58_75.context_propagation.md:
+    return _proto_kernel_abs_path
+
+
+def get_config(conf_leap: ConfLeap) -> dict:
     """
     Retrieve config data for the specified `conf_leap` as a function call (without the process restarts).
-    `proto_kernel_abs_path` is required to load the config at the right paths.
+    See FT_96_50_58_75.context_propagation.md:
+    `_proto_kernel_abs_path` is required to load the config from the right paths.
     None of `EnvVar.*` can be used to ensure FT_66_02_54_56.context_isolation.md.
     """
 
@@ -5518,7 +5466,7 @@ def get_config(proto_kernel_abs_path: str, conf_leap: ConfLeap) -> dict:
     env_ctx = EnvContext()
     env_ctx.graph_coordinates.entry_func = EntryFunc.func_call_lib
     env_ctx.graph_coordinates.prepare_venv = False
-    env_ctx.proto_code = proto_kernel_abs_path
+    env_ctx.proto_code = get_proto_code_abs_path()
     return env_ctx.state_graph.eval_state(_conf_leap_to_state[conf_leap])
 
 
@@ -5584,12 +5532,18 @@ def _start_main(
         )
     ]
 
+    installed_kernel_name = f"{ConfConstGeneral.name_protoprimer_package}.{ConfConstGeneral.name_primer_kernel_module}"
+
     try:
         # NOTE: `state_stride_src_updated_reached` forces restart with this `StateStride`:
         if curr_py_exec.value >= StateStride.stride_src_updated.value:
             venv_module = importlib.import_module(module_name)
             selected_main = getattr(venv_module, func_name)
             if entry_func == EntryFunc.func_start_app:
+                # FT_96_50_58_75.context_propagation.md:
+                # Switch from running `proto_code` to installed `venv` code:
+                imported_kernel = importlib.import_module(installed_kernel_name)
+                setattr(imported_kernel, "_proto_kernel_abs_path", os.environ[EnvVar.var_PROTOPRIMER_PROTO_CODE.value])
                 remove_protoprimer_env_vars(os.environ)
             selected_main()
         elif curr_py_exec.value >= StateStride.stride_deps_updated.value:
@@ -5597,12 +5551,12 @@ def _start_main(
             #       It may not work in instant cases when `protoprimer` is not a dependency (not installed).
             # FT_14_52_73_23.primer_runtime.md:
             # Switch from running `proto_code` to installed `venv` code:
-            venv_module = importlib.import_module(f"{ConfConstGeneral.name_protoprimer_package}.{ConfConstGeneral.name_primer_kernel_module}")
+            imported_kernel = importlib.import_module(installed_kernel_name)
             # noinspection PyPep8Naming
-            imported_EnvContext = getattr(venv_module, EnvContext.__name__)
+            imported_EnvContext = getattr(imported_kernel, EnvContext.__name__)
             # noinspection PyPep8Naming
-            imported_EntryFunc = getattr(venv_module, EntryFunc.__name__)
-            imported_run_process = getattr(venv_module, run_process.__name__)
+            imported_EntryFunc = getattr(imported_kernel, EntryFunc.__name__)
+            imported_run_process = getattr(imported_kernel, run_process.__name__)
             env_ctx = imported_EnvContext()
             env_ctx.graph_coordinates.entry_func = imported_EntryFunc[entry_func.name]
             imported_run_process(env_ctx)
