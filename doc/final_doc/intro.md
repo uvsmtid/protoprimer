@@ -6,10 +6,33 @@
 
 # [![logo](/_static/protoprimer.logo.16x16.png)][protoprimer_github] [`protoprimer`][protoprimer_github]
 
-```{include} /full/01_basic/01_intro.md
-:start-after: stub_include_start
-:end-before: stub_include_stop
+Want a **one-liner** to bootstrap isolated envs for every repo clone?
+
+```bash
+./prime
 ```
+
+Invoke `protoprimer` - an **arg-less** stand-alone script that switches:
+
+*   from **chaos** (the many conditions in which a user may invoke it)
+*   into **order** (an env-specific `venv` with the **required** `python` version)
+
+Eventually, `protoprimer` transfers control to custom steps for **anything** else...
+<details>
+<summary>
+</summary>
+
+*   provision other SDKs
+
+*   verify system/user config (local, cloud)
+
+*   install `git` hooks
+
+*   generate env-specific code
+
+*   ... [you name it]
+
+</details>
 
 ## Why?
 
@@ -106,10 +129,19 @@ In other words, it must become **both** "the chicken **and** the egg".
 
 ## How?
 
-```{include} /full/02_advanced/03_implementation.md
-:start-after: stub_include_start
-:end-before: stub_include_stop
-```
+To bootstrap, `protoprimer` **restarts**, iteratively preparing the environment:
+
+*   Takes off with a **wild** `python` version (whatever is in the `PATH` env var).
+
+*   Switches in-flight to the **required** `python` version.
+
+*   Satisfies a set of DAG-organized pre-conditions on each restart cycle.
+
+*   Lands inside a comfy isolated `venv` with all dependencies **pinned**.
+
+    > The custom steps **take over** here.
+
+The "chicken-egg" can fly **reliably** because **any** `python` is **trivial** to satisfy.
 
 <!--
 
@@ -117,9 +149,9 @@ TODO: Move those sections into main `readme.md`, itemize them with links to `FC_
 
 ## Details
 
-```{include} /full/02_advanced/01_solutions.md
-:start-after: stub_include_start
-:end-before: stub_include_stop
+```{include} /draft_doc/02_advanced/01_solutions.md
+:start-after: final_doc_include_start
+:end-before: final_doc_include_stop
 ```
 
 -->

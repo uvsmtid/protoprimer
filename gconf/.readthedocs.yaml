@@ -15,7 +15,7 @@ python:
             path: src/local_doc
 
 sphinx:
-    configuration: doc/readthedocs/source/conf.py
+    configuration: doc/conf.py
 
     # Options:
     # * `html` = multiple pages

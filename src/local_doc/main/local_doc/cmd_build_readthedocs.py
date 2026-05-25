@@ -36,8 +36,8 @@ def build_readthedocs():
     #       Be able to take it from config API.
     project_root = Path.cwd()
 
-    source_dir = project_root / "doc" / "readthedocs" / "source"
-    build_dir = project_root / "doc" / "readthedocs" / "build"
+    source_dir = project_root / "doc"
+    build_dir = project_root / "doc" / "build"
 
     if build_dir.exists():
         print(f"removing build directory: {build_dir}")

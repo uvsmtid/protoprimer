@@ -3,12 +3,12 @@ import os
 
 # TODO: This is a temporary option to have a basic `readthedocs` page while the rest of the docs are in progress.
 #       When changed here, it should also be changed in `./index.rst` (automation did not work):
-is_full_protoprimer_content = False
+is_draft_doc_protoprimer_content = False
 doc_tag_name: str
-if is_full_protoprimer_content:
-    doc_tag_name = "protoprimer_full"
+if is_draft_doc_protoprimer_content:
+    doc_tag_name = "protoprimer_draft_doc"
 else:
-    doc_tag_name = "protoprimer_stub"
+    doc_tag_name = "protoprimer_final_doc"
 # NOTE: `tags` are not supposed to be `import`-ed:
 tags.add(doc_tag_name)
 
@@ -32,7 +32,7 @@ def import_proto_kernel(proto_kernel_rel_path):
     return loaded_proto_kernel
 
 
-proto_kernel = import_proto_kernel("../../../cmd/proto_code/proto_kernel.py")
+proto_kernel = import_proto_kernel("../cmd/proto_code/proto_kernel.py")
 __version__ = proto_kernel.__version__
 
 
@@ -59,6 +59,15 @@ extensions = [
     "myst_parser",
 ]
 
+myst_fence_as_directive = [
+    "mermaid",
+]
+
+mermaid_init_config = {
+    "look": "handDrawn",
+}
+mermaid_light_theme = "neutral"
+
 source_suffix = {
     ".rst": "restructuredtext",
     ".md": "markdown",
@@ -76,12 +85,17 @@ html_extra_path = [
     "BingSiteAuth.xml",
 ]
 
-exclude_patterns = []
+exclude_patterns = [
+    "untracked_notes/**",
+    "task_ref/**",
+    "dev_note/**",
+    "readme.md",
+]
 
-if is_full_protoprimer_content:
-    exclude_patterns.append("stub/")
+if is_draft_doc_protoprimer_content:
+    exclude_patterns.append("final_doc/**")
 else:
-    exclude_patterns.append("full/")
+    exclude_patterns.append("draft_doc/**")
 
 base_url = "https://protoprimer.readthedocs.io"
 
@@ -90,8 +104,8 @@ base_url = "https://protoprimer.readthedocs.io"
 # * `multiple_versions_without_translations` (e.g. `.../latest/`)
 rtd_canonical_url = os.environ.get("READTHEDOCS_CANONICAL_URL")
 
-# The URL structure configured in the `protoprimer` project:
-html_baseurl = rtd_canonical_url
+# The URL structure configured in the `protoprimer` project (fallback to `""` avoids warning of `None`):
+html_baseurl = rtd_canonical_url or ""
 
 # -- Options for HTML output
 
@@ -129,7 +143,7 @@ html_context = {
     "github_user": "uvsmtid",
     "github_repo": "protoprimer",
     "github_version": "main",
-    "conf_py_path": "/doc/readthedocs/source/",
+    "conf_py_path": "/doc/",
 }
 
 html_theme_options = {
@@ -137,23 +151,12 @@ html_theme_options = {
     "github_user": "uvsmtid",
     "github_repo": "protoprimer",
     "github_banner": False,
-    # ===
-    # If using `sphinx_rtd_theme`:
-    "collapse_navigation": False,
-    # If `True`, the navigation menu stays visible when page is scrolled:
-    "sticky_navigation": True,
-    # How many levels down should be shown:
-    "navigation_depth": 4,
-    "includehidden": True,
-    # Set to `False` to show sub-headings within pages:
-    "titles_only": False,
-    # Options: "bottom", "top", "both", or `None`:
-    "prev_next_buttons_location": "both",
-    "version_selector": True,
-    "language_selector": False,
+    "fixed_sidebar": True,
+    "page_width": "1200px",
 }
 
 html_sidebars = {
-    # This removes all sidebar elements for `stub` mode and `html_theme = "alabaster"`:
-    "**": [],
+    "**": [
+        "navigation.html",
+    ],
 }
