@@ -300,7 +300,7 @@ class EntryFunc(enum.Enum):
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     See FT_25_62_13_55.entry_func.md
 
-    TODO: TODO_60_63_68_81.refactor_DAG_builder.md:
+    TODO: FT_77_15_06_50.dynamic_DAG.md:
           make use of this enum.
     """
 
@@ -320,7 +320,7 @@ class EntryFunc(enum.Enum):
 
 class ExecMode(enum.Enum):
     """
-    TODO: TODO_60_63_68_81.refactor_DAG_builder.md:
+    TODO: FT_77_15_06_50.dynamic_DAG.md:
           Add items, explain and add FT_*.
     """
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
@@ -359,7 +359,7 @@ class GraphCoordinates:
 
     Each class of `StateNode` defines applicable coordinates for its creation via its `NodeFactory`.
 
-    See TODO_60_63_68_81.refactor_DAG_builder.md
+    See FT_77_15_06_50.dynamic_DAG.md
     """
 
     def __init__(self):
@@ -371,7 +371,7 @@ class GraphCoordinates:
         # FT_05_08_64_67.start_app.md: False
         self.prepare_venv: bool = True
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-        # TODO: TODO_60_63_68_81.refactor_DAG_builder.md:
+        # TODO: FT_77_15_06_50.dynamic_DAG.md:
         #       `sub_command` should affect how things are set here,
         #       but should not be part of `GraphCoordinates`.
         self.sub_command: SubCommand | None = None
@@ -1636,7 +1636,7 @@ class RunStrategy:
     *   `SubCommand`
     *   FT_11_27_29_83.sub_command.md
 
-    TODO: TODO_60_63_68_81.refactor_DAG_builder.md:
+    TODO: FT_77_15_06_50.dynamic_DAG.md:
           Currently, `RunStrategy` is degenerated into single implementation `ExitCodeReporter`.
           Is it even needed (unless make it useful beyond that)?
     """
@@ -1934,7 +1934,7 @@ class Bootstrapper_state_args_parsed_not_func_boot_env(AbstractCachingStateNode[
     _state_name = staticmethod(lambda: EnvState.state_args_parsed.name)
 
     def _eval_state_once(self) -> ValueType:
-        # TODO: TODO_60_63_68_81.refactor_DAG_builder.md:
+        # TODO: FT_77_15_06_50.dynamic_DAG.md:
         #       This step should not be executed without need to parse args.
         #       Do not fake args. Just redesign dependency. No?
         # Pretend there is no args except `SubCommand.command_start`:
@@ -1951,7 +1951,7 @@ class Bootstrapper_state_args_parsed_not_func_boot_env(AbstractCachingStateNode[
 class Factory_state_args_parsed(NodeFactory[StateStride]):
 
     def create_state_node(self) -> StateNode[ValueType]:
-        # TODO: TODO_60_63_68_81.refactor_DAG_builder.md:
+        # TODO: FT_77_15_06_50.dynamic_DAG.md:
         #       This step should not be executed without need to parse args.
         #       Do not fake args. Just redesign dependency. No?
         if self.env_ctx.graph_coordinates.entry_func in [
@@ -3584,11 +3584,11 @@ class Factory_state_stride_py_required_reached(NodeFactory[StateStride]):
         # The only reason for `EnvState.state_stride_py_required_reached`
         # is to use the required `python` to create a `venv`.
         if self.env_ctx.graph_coordinates.prepare_venv:
-            # TODO: TODO_60_63_68_81.refactor_DAG_builder.md:
+            # TODO: FT_77_15_06_50.dynamic_DAG.md:
             #       Rename to avoid `command_start` in its name:
             return Bootstrapper_state_stride_py_required_reached_not_command_start(self.env_ctx)
         else:
-            # TODO: TODO_60_63_68_81.refactor_DAG_builder.md:
+            # TODO: FT_77_15_06_50.dynamic_DAG.md:
             #       Rename to avoid `command_start` in its name:
             # Skip it as `venv` is supposed to be ready:
             return Bootstrapper_state_stride_py_required_reached_command_start(self.env_ctx)
@@ -4243,7 +4243,7 @@ class EnvState(enum.Enum):
 
     FT_68_54_41_96.state_dependency.md
 
-    TODO: TODO_60_63_68_81.refactor_DAG_builder.md:
+    TODO: FT_77_15_06_50.dynamic_DAG.md:
           Currently, this enum class maps "state name" -> "impl class" directly.
           In the future, it may change to "state name" -> "impl factory" instead.
     """
@@ -4395,7 +4395,7 @@ class StateGraph:
         self,
         state_name: str,
         state_factory: NodeFactory,
-        # TODO: TODO_60_63_68_81.refactor_DAG_builder.md:
+        # TODO: FT_77_15_06_50.dynamic_DAG.md:
         #       This use_case may become obsolete if we use "state name" -> "impl factory" naming
         #       where the factory cannot be replaced (currently, it is "state name" -> "impl class" directly).
         replace_existing: bool = False,
@@ -4456,7 +4456,7 @@ class MutableValue(Generic[ValueType]):
     But, if the current `StateNode` depends on parents updating that `MutableValue`,
     read it after evaluation of all parent states.
 
-    TODO: TODO_60_63_68_81.refactor_DAG_builder.md:
+    TODO: FT_77_15_06_50.dynamic_DAG.md:
           Why not simply rely on `EnvContext` to maintain current mutable state.
           It already does it with `StateStride`.
     """
@@ -4509,7 +4509,7 @@ class EnvContext:
 
         self.state_stride: StateStride = StateStride.stride_py_unknown
 
-        # TODO: TODO_60_63_68_81.refactor_DAG_builder.md: should it even be here?
+        # TODO: FT_77_15_06_50.dynamic_DAG.md: should it even be here?
         # TODO: Do not set it on `EnvContext` - use bootstrap-able values:
         self.final_state: str = TargetState.target_proto_bootstrap_completed.value.name
 
@@ -5400,6 +5400,7 @@ def get_proto_code_abs_path() -> str:
 
 def get_config(conf_leap: ConfLeap) -> dict:
     """
+    UC_54_26_66_63.lib_access_to_config_data.md:
     Retrieve config data for the specified `conf_leap` as a function call (without the process restarts).
     See FT_96_50_58_75.context_propagation.md:
     `_proto_kernel_abs_path` is required to load the config from the right paths.
@@ -5408,7 +5409,7 @@ def get_config(conf_leap: ConfLeap) -> dict:
 
     # NOTE: Assume (no verification) the module is loaded from
     #       (outside venv, outside local packages, outside global packages):
-    # TODO: TODO_60_63_68_81.refactor_DAG_builder.md:
+    # TODO: FT_77_15_06_50.dynamic_DAG.md:
     #       It is set to `StateStride.stride_py_arbitrary` even though we do not really know
     #       whether this python is outside `venv` (what `StateStride.stride_py_arbitrary` is really for).
     #       But it works for now until we can build different implementation for `get_config` lib call.

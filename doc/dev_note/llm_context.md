@@ -1,4 +1,6 @@
 
+TODO: Distribute this content among specific `feature_topic`-s.
+
 This file can be loaded into an AI/LLM agent for the initial context.
 
 ## Expected AI/LLM behavior

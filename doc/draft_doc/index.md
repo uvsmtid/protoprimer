@@ -11,9 +11,9 @@ The docs are under construction.
 :maxdepth: 2
 :caption: Contents:
 
-/full/01_basic/index
-/full/02_advanced/index
-/full/03_reference/index
+/draft_doc/01_basic/index
+/draft_doc/02_advanced/index
+/draft_doc/03_reference/index
 ```
 
 % [TODO: these are unnecessary at the moment]

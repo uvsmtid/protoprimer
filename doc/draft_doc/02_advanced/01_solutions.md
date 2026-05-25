@@ -2,7 +2,7 @@
 
 ## Overview
 
-% stub_include_start
+% final_doc_include_start
 
 <details><summary>Use cases</summary>
 
@@ -155,4 +155,4 @@ The environment detection and config discovery are handled for all:
 
 </details>
 
-% stub_include_stop
+% final_doc_include_stop

@@ -1,4 +1,9 @@
 
+/* Hide "Navigation" title in sidebar: */
+.sphinxsidebarwrapper > h3 {
+    display: none;
+}
+
 /* Use `monospace` everywhere: */
 * {
     font-family: "Roboto Mono", "Courier New", monospace !important;
