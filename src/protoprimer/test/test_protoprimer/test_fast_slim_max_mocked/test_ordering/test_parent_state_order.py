@@ -2,58 +2,54 @@ from __future__ import annotations
 
 import pytest
 
+from local_test.verified_dynamic_graph import (
+    VerifyingEnvContext,
+    max_deps_graph_coordinates,
+)
 from protoprimer.primer_kernel import (
-    EnvContext,
     EnvState,
-    SubCommand,
-    EntryFunc,
     StateNode,
 )
 
 
-def _report_violations(
-    violations: list[str],
-) -> None:
-    if violations:
-        pytest.fail("Parent definition order violations:\n" + "\n".join(violations))
+def _report_order_violations(order_violations: list[str]) -> None:
+    if order_violations:
+        pytest.fail("Parent states order violations:\n" + "\n".join(order_violations))
 
 
-class TestParentStateOrdering:
+# noinspection PyPep8Naming
+def test_EnvState_parent_order() -> None:
     """
-    This test ensures that parent states are ordered in the same way as in the enum definition.
-    This is purely cosmetic enforcement.
-    It also helps to keep line history consistent with ordering.
+    Verify parent states follow enum definition order.
     """
 
-    @pytest.mark.parametrize("sub_command", list(SubCommand))
-    @pytest.mark.parametrize("entry_func", list(EntryFunc))
-    # noinspection PyPep8Naming
-    def test_EnvState_parent_order(self, sub_command: SubCommand, entry_func: EntryFunc) -> None:
-        # given:
-        env_ctx = EnvContext()
-        env_ctx.graph_coordinates.sub_command = sub_command
-        env_ctx.graph_coordinates.entry_func = entry_func
+    # given:
 
-        state_graph_instance = env_ctx.state_graph
+    env_ctx = VerifyingEnvContext()
+    env_ctx.graph_coordinates.entry_func = max_deps_graph_coordinates.entry_func
+    env_ctx.graph_coordinates.sub_command = max_deps_graph_coordinates.sub_command
+    env_ctx.graph_coordinates.is_log_enabled = max_deps_graph_coordinates.is_log_enabled
 
-        env_state_name_to_ordinal = {env_state.name: index for index, env_state in enumerate(EnvState)}
+    state_graph_instance = env_ctx.state_graph
 
-        violations = []
+    env_state_name_to_ordinal = {env_state.name: index for index, env_state in enumerate(EnvState)}
 
-        # when:
-        for env_state in EnvState:
-            state_node = state_graph_instance.get_state_node(env_state.name)
-            if state_node is None:
-                raise AssertionError(f"`{StateNode.__name__}` for [{env_state.name}] not found")
+    order_violations = []
 
-            parent_states = state_node.get_parent_states()
-            if len(parent_states) <= 1:
-                continue
+    # when:
 
-            parent_ordinals = [env_state_name_to_ordinal[p] for p in parent_states]
+    for env_state in EnvState:
+        state_node = state_graph_instance.get_state_node(env_state.name)
+        if state_node is None:
+            raise AssertionError(f"`{StateNode.__name__}` for [{env_state.name}] not found")
 
-            # then:
-            if parent_ordinals != sorted(parent_ordinals):
-                violations.append(f"In `{env_state.name}`, parents [{parent_states}] with ordinals [{parent_ordinals}] are not sorted.")
+        parent_states = state_node.get_parent_states()
 
-        _report_violations(violations)
+        parent_ordinals = [env_state_name_to_ordinal[parent_state] for parent_state in parent_states]
+
+        # then:
+
+        if parent_ordinals != sorted(parent_ordinals):
+            order_violations.append(f"In `{env_state.name}`, parents [{parent_states}] with ordinals [{parent_ordinals}] are not sorted.")
+
+    _report_order_violations(order_violations)

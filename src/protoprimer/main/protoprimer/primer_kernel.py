@@ -314,6 +314,7 @@ class EntryFunc(enum.Enum):
     # A lib function call (e.g. `get_config`):
     func_call_lib = "call_lib"
 
+    # TODO: Does this have to be distinguished from `EntryFunc.func_boot_env`?
     # Direct CLI execution via (e.g.) `./proto_kernel.py` executing `__main__` section:
     func_run_main = "run_main"
 
@@ -375,6 +376,8 @@ class GraphCoordinates:
         #       `sub_command` should affect how things are set here,
         #       but should not be part of `GraphCoordinates`.
         self.sub_command: SubCommand | None = None
+
+        self.is_log_enabled: bool = False
 
 
 # TODO: TODO_31_76_38_60.sub_command_for_shell.md: remove "command" (when replaced by `shell_mode` or `run_mode`):
@@ -1672,7 +1675,7 @@ class ExitCodeReporter(RunStrategy):
         dependencies will be conditionally evaluated by the implementation of those nodes.
         """
         # NOTE: The `EnvContext.final_state` must return `int` with this strategy:
-        exit_code: int = state_node.eval_own_state()
+        exit_code: int = self.env_ctx.state_graph.eval_state(state_node.state_name)
         if type(exit_code) is not int:
             raise AssertionError("`exit_code` must be an `int`")
         sys.exit(exit_code)
@@ -1850,11 +1853,36 @@ class Bootstrapper_state_input_py_exec_var_loaded(AbstractCachingStateNode[State
 
 # noinspection PyPep8Naming
 @trivial_factory
+class Bootstrapper_state_input_is_stderr_log_enabled(AbstractCachingStateNode[bool]):
+
+    _state_name = staticmethod(lambda: EnvState.state_input_is_stderr_log_enabled.name)
+
+    def _eval_state_once(self) -> ValueType:
+
+        is_log_always_enabled: bool
+        if self.env_ctx.graph_coordinates.entry_func in [
+            EntryFunc.func_boot_env,
+            EntryFunc.func_run_main,
+        ]:
+            is_log_always_enabled = True
+        else:
+            is_log_always_enabled = False
+
+        if is_log_always_enabled:
+            self.env_ctx.graph_coordinates.is_log_enabled = True
+        else:
+            self.env_ctx.graph_coordinates.is_log_enabled = EnvVar.var_PROTOPRIMER_STDERR_LOG_LEVEL.value in os.environ
+        return self.env_ctx.graph_coordinates.is_log_enabled
+
+
+# noinspection PyPep8Naming
+@trivial_factory
 class Bootstrapper_state_input_stderr_log_level_var_loaded(AbstractCachingStateNode[int]):
 
     _parent_states = staticmethod(
         lambda: [
             EnvState.state_input_py_exec_var_loaded.name,
+            EnvState.state_input_is_stderr_log_enabled.name,
         ]
     )
     _state_name = staticmethod(lambda: EnvState.state_input_stderr_log_level_var_loaded.name)
@@ -2150,7 +2178,6 @@ class Bootstrapper_state_func_boot_env_executed(AbstractCachingStateNode[bool]):
     def _eval_state_once(self) -> ValueType:
 
         state_input_sub_command_arg_loaded: SubCommand = self.eval_parent_state(EnvState.state_input_sub_command_arg_loaded.name)
-
         state_input_final_state_eval_finalized: str = self.eval_parent_state(EnvState.state_input_final_state_eval_finalized.name)
 
         state_node: StateNode = self.env_ctx.state_graph.get_state_node(state_input_final_state_eval_finalized)
@@ -2171,13 +2198,25 @@ class Bootstrapper_state_func_boot_env_executed(AbstractCachingStateNode[bool]):
             raise ValueError(f"cannot handle sub command [{state_input_sub_command_arg_loaded}]")
 
         selected_strategy.execute_strategy(state_node)
-
         return True
 
 
 # noinspection PyPep8Naming
-@trivial_factory
-class Bootstrapper_state_func_start_app_executed(AbstractCachingStateNode[bool]):
+@conditional_factory
+class Base_state_func_start_app_executed(AbstractCachingStateNode[bool]):
+
+    _state_name = staticmethod(lambda: EnvState.state_func_start_app_executed.name)
+
+    def _eval_state_once(self) -> ValueType:
+        state_input_final_state_eval_finalized: str = self.eval_parent_state(EnvState.state_input_final_state_eval_finalized.name)
+        state_node: StateNode = self.env_ctx.state_graph.get_state_node(state_input_final_state_eval_finalized)
+        self.env_ctx.state_graph.eval_state(state_node.state_name)
+        return True
+
+
+# noinspection PyPep8Naming
+@conditional_factory
+class Bootstrapper_state_func_start_app_executed_log_enabled(Base_state_func_start_app_executed):
 
     _parent_states = staticmethod(
         lambda: [
@@ -2185,31 +2224,73 @@ class Bootstrapper_state_func_start_app_executed(AbstractCachingStateNode[bool])
             EnvState.state_input_final_state_eval_finalized.name,
         ]
     )
-    _state_name = staticmethod(lambda: EnvState.state_func_start_app_executed.name)
-
-    def _eval_state_once(self) -> ValueType:
-        state_input_final_state_eval_finalized: str = self.eval_parent_state(EnvState.state_input_final_state_eval_finalized.name)
-        state_node: StateNode = self.env_ctx.state_graph.get_state_node(state_input_final_state_eval_finalized)
-        state_node.eval_own_state()
-        return True
 
 
 # noinspection PyPep8Naming
-@trivial_factory
-class Bootstrapper_state_func_call_lib_executed(AbstractCachingStateNode[bool]):
+@conditional_factory
+class Bootstrapper_state_func_start_app_executed_log_disabled(Base_state_func_start_app_executed):
 
     _parent_states = staticmethod(
         lambda: [
             EnvState.state_input_final_state_eval_finalized.name,
         ]
     )
+
+
+# noinspection PyPep8Naming
+class Factory_state_func_start_app_executed(NodeFactory[bool]):
+
+    def create_state_node(self) -> StateNode[ValueType]:
+        if self.env_ctx.graph_coordinates.is_log_enabled:
+            return Bootstrapper_state_func_start_app_executed_log_enabled(self.env_ctx)
+        else:
+            return Bootstrapper_state_func_start_app_executed_log_disabled(self.env_ctx)
+
+
+# noinspection PyPep8Naming
+@conditional_factory
+class Base_state_func_call_lib_executed(AbstractCachingStateNode[bool]):
+
     _state_name = staticmethod(lambda: EnvState.state_func_call_lib_executed.name)
 
     def _eval_state_once(self) -> ValueType:
         state_input_final_state_eval_finalized: str = self.eval_parent_state(EnvState.state_input_final_state_eval_finalized.name)
         state_node: StateNode = self.env_ctx.state_graph.get_state_node(state_input_final_state_eval_finalized)
-        state_node.eval_own_state()
+        self.env_ctx.state_graph.eval_state(state_node.state_name)
         return True
+
+
+# noinspection PyPep8Naming
+@conditional_factory
+class Bootstrapper_state_func_call_lib_executed_log_enabled(Base_state_func_call_lib_executed):
+
+    _parent_states = staticmethod(
+        lambda: [
+            EnvState.state_input_stderr_log_level_handler_configured.name,
+            EnvState.state_input_final_state_eval_finalized.name,
+        ]
+    )
+
+
+# noinspection PyPep8Naming
+@conditional_factory
+class Bootstrapper_state_func_call_lib_executed_log_disabled(Base_state_func_call_lib_executed):
+
+    _parent_states = staticmethod(
+        lambda: [
+            EnvState.state_input_final_state_eval_finalized.name,
+        ]
+    )
+
+
+# noinspection PyPep8Naming
+class Factory_state_func_call_lib_executed(NodeFactory[bool]):
+
+    def create_state_node(self) -> StateNode[ValueType]:
+        if self.env_ctx.graph_coordinates.is_log_enabled:
+            return Bootstrapper_state_func_call_lib_executed_log_enabled(self.env_ctx)
+        else:
+            return Bootstrapper_state_func_call_lib_executed_log_disabled(self.env_ctx)
 
 
 # noinspection PyPep8Naming
@@ -2234,6 +2315,7 @@ class Bootstrapper_state_everything_executed_func_start_app(AbstractCachingState
 
     _parent_states = staticmethod(
         lambda: [
+            EnvState.state_input_is_stderr_log_enabled.name,
             EnvState.state_func_start_app_executed.name,
         ]
     )
@@ -2250,6 +2332,7 @@ class Bootstrapper_state_everything_executed_func_call_lib(AbstractCachingStateN
 
     _parent_states = staticmethod(
         lambda: [
+            EnvState.state_input_is_stderr_log_enabled.name,
             EnvState.state_func_call_lib_executed.name,
         ]
     )
@@ -4194,7 +4277,6 @@ class Bootstrapper_state_command_executed(AbstractCachingStateNode[int]):
 
     _parent_states = staticmethod(
         lambda: [
-            EnvState.state_default_stderr_log_handler_configured.name,
             EnvState.state_args_parsed.name,
             EnvState.state_local_venv_dir_abs_path_inited.name,
             EnvState.state_local_cache_dir_abs_path_inited.name,
@@ -4204,8 +4286,6 @@ class Bootstrapper_state_command_executed(AbstractCachingStateNode[int]):
     _state_name = staticmethod(lambda: EnvState.state_command_executed.name)
 
     def _eval_state_once(self) -> ValueType:
-
-        state_default_stderr_log_handler_configured: logging.Handler = self.eval_parent_state(EnvState.state_default_stderr_log_handler_configured.name)
 
         assert self.env_ctx.get_stride().value >= StateStride.stride_src_updated.value
 
@@ -4250,6 +4330,8 @@ class EnvState(enum.Enum):
 
     state_input_py_exec_var_loaded = Bootstrapper_state_input_py_exec_var_loaded
 
+    state_input_is_stderr_log_enabled = Bootstrapper_state_input_is_stderr_log_enabled
+
     state_input_stderr_log_level_var_loaded = Bootstrapper_state_input_stderr_log_level_var_loaded
 
     state_default_stderr_log_handler_configured = Bootstrapper_state_default_stderr_log_handler_configured
@@ -4266,9 +4348,9 @@ class EnvState(enum.Enum):
 
     state_func_boot_env_executed = Bootstrapper_state_func_boot_env_executed
 
-    state_func_start_app_executed = Bootstrapper_state_func_start_app_executed
+    state_func_start_app_executed = Factory_state_func_start_app_executed
 
-    state_func_call_lib_executed = Bootstrapper_state_func_call_lib_executed
+    state_func_call_lib_executed = Factory_state_func_call_lib_executed
 
     # Special case: triggers everything:
     state_everything_executed = Factory_state_everything_executed
@@ -4505,7 +4587,7 @@ class EnvContext:
     def __init__(self):
         self.graph_coordinates = GraphCoordinates()
 
-        self.state_graph: StateGraph = StateGraph()
+        self.state_graph: StateGraph = self._create_state_graph()
 
         self.state_stride: StateStride = StateStride.stride_py_unknown
 
@@ -4517,6 +4599,9 @@ class EnvContext:
         self.proto_code: str | None = None
 
         self._register_graph_node_factories()
+
+    def _create_state_graph(self) -> StateGraph:
+        return StateGraph()
 
     def _register_graph_node_factories(self):
         """

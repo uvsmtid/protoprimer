@@ -23,8 +23,8 @@ class ThisTestClass(BaseTestClass):
     def test_exit_code_reporter(self, mock_sys_exit):
         # given:
         mock_env_ctx = MagicMock()
+        mock_env_ctx.state_graph.eval_state.return_value = 42
         mock_state_node = MagicMock()
-        mock_state_node.eval_own_state.return_value = 42
         reporter = ExitCodeReporter(mock_env_ctx)
 
         # when:

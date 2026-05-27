@@ -92,9 +92,7 @@ exclude_patterns = [
     "readme.md",
 ]
 
-if is_draft_doc_protoprimer_content:
-    exclude_patterns.append("final_doc/**")
-else:
+if not is_draft_doc_protoprimer_content:
     exclude_patterns.append("draft_doc/**")
 
 base_url = "https://protoprimer.readthedocs.io"

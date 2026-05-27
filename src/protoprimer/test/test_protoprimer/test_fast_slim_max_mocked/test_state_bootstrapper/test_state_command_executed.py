@@ -1,5 +1,4 @@
 import argparse
-import logging
 import os
 from unittest.mock import patch
 
@@ -12,7 +11,6 @@ from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     Factory_state_args_parsed,
-    Bootstrapper_state_default_stderr_log_handler_configured,
     Bootstrapper_state_local_cache_dir_abs_path_inited,
     Bootstrapper_state_local_venv_dir_abs_path_inited,
     Bootstrapper_state_stride_src_updated_reached,
@@ -32,7 +30,6 @@ def test_relationship():
     assert_test_module_name_embeds_str(EnvState.state_command_executed.name)
 
 
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_default_stderr_log_handler_configured.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{EnvContext.__name__}.{EnvContext.get_stride.__name__}")
 @patch(f"{primer_kernel.__name__}.os.execve")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_stride_src_updated_reached.__name__}.create_state_node")
@@ -53,7 +50,6 @@ def test_command_executed_in_bash(
     mock_state_stride_src_updated_reached,
     mock_os_execve,
     mock_get_stride,
-    mock_state_default_stderr_log_handler_configured,
     env_ctx,
     fs,
 ):
@@ -70,7 +66,6 @@ def test_command_executed_in_bash(
     )
     mock_get_stride.return_value = StateStride.stride_src_updated
     mock_state_stride_src_updated_reached.return_value.eval_own_state.return_value = StateStride.stride_src_updated
-    mock_state_default_stderr_log_handler_configured.return_value.eval_own_state.return_value.level = logging.INFO
     mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = "/fake/venv"
     mock_state_local_cache_dir_abs_path_inited.return_value.eval_own_state.return_value = "/fake/cache"
 
@@ -94,7 +89,6 @@ def test_command_executed_in_bash(
     )
 
 
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_default_stderr_log_handler_configured.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{EnvContext.__name__}.{EnvContext.get_stride.__name__}")
 @patch(f"{primer_kernel.__name__}.os.execve")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_stride_src_updated_reached.__name__}.create_state_node")
@@ -115,7 +109,6 @@ def test_command_executed_in_zsh(
     mock_state_stride_src_updated_reached,
     mock_os_execve,
     mock_get_stride,
-    mock_state_default_stderr_log_handler_configured,
     env_ctx,
     fs,
 ):
@@ -132,7 +125,6 @@ def test_command_executed_in_zsh(
     )
     mock_get_stride.return_value = StateStride.stride_src_updated
     mock_state_stride_src_updated_reached.return_value.eval_own_state.return_value = StateStride.stride_src_updated
-    mock_state_default_stderr_log_handler_configured.return_value.eval_own_state.return_value.level = logging.INFO
     mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = "/fake/venv"
     mock_state_local_cache_dir_abs_path_inited.return_value.eval_own_state.return_value = "/fake/cache"
 
@@ -156,7 +148,6 @@ def test_command_executed_in_zsh(
     )
 
 
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_default_stderr_log_handler_configured.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{EnvContext.__name__}.{EnvContext.get_stride.__name__}")
 @patch(f"{primer_kernel.__name__}.os.execve")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_stride_src_updated_reached.__name__}.create_state_node")
@@ -177,7 +168,6 @@ def test_command_not_executed_when_no_command_line_provided(
     mock_state_stride_src_updated_reached,
     mock_os_execve,
     mock_get_stride,
-    mock_state_default_stderr_log_handler_configured,
     env_ctx,
 ):
     # given:
@@ -192,7 +182,6 @@ def test_command_not_executed_when_no_command_line_provided(
     )
     mock_get_stride.return_value = StateStride.stride_src_updated
     mock_state_stride_src_updated_reached.return_value.eval_own_state.return_value = StateStride.stride_src_updated
-    mock_state_default_stderr_log_handler_configured.return_value.eval_own_state.return_value.level = logging.INFO
 
     # when:
     state_value = env_ctx.state_graph.eval_state(EnvState.state_command_executed.name)
@@ -202,7 +191,6 @@ def test_command_not_executed_when_no_command_line_provided(
     mock_os_execve.assert_not_called()
 
 
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_default_stderr_log_handler_configured.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{EnvContext.__name__}.{EnvContext.get_stride.__name__}")
 @patch(f"{primer_kernel.__name__}.os.execve")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_stride_src_updated_reached.__name__}.create_state_node")
@@ -223,7 +211,6 @@ def test_command_executed_empty(
     mock_state_stride_src_updated_reached,
     mock_os_execve,
     mock_get_stride,
-    mock_state_default_stderr_log_handler_configured,
     env_ctx,
     fs,
 ):
@@ -240,7 +227,6 @@ def test_command_executed_empty(
     )
     mock_get_stride.return_value = StateStride.stride_src_updated
     mock_state_stride_src_updated_reached.return_value.eval_own_state.return_value = StateStride.stride_src_updated
-    mock_state_default_stderr_log_handler_configured.return_value.eval_own_state.return_value.level = logging.INFO
     mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = "/fake/venv"
     mock_state_local_cache_dir_abs_path_inited.return_value.eval_own_state.return_value = "/fake/cache"
 
@@ -264,7 +250,6 @@ def test_command_executed_empty(
     )
 
 
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_default_stderr_log_handler_configured.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{EnvContext.__name__}.{EnvContext.get_stride.__name__}")
 @patch(f"{primer_kernel.__name__}.os.execve")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_stride_src_updated_reached.__name__}.create_state_node")
@@ -285,7 +270,6 @@ def test_command_executed_with_whitespace(
     mock_state_stride_src_updated_reached,
     mock_os_execve,
     mock_get_stride,
-    mock_state_default_stderr_log_handler_configured,
     env_ctx,
     fs,
 ):
@@ -302,7 +286,6 @@ def test_command_executed_with_whitespace(
     )
     mock_get_stride.return_value = StateStride.stride_src_updated
     mock_state_stride_src_updated_reached.return_value.eval_own_state.return_value = StateStride.stride_src_updated
-    mock_state_default_stderr_log_handler_configured.return_value.eval_own_state.return_value.level = logging.INFO
     mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = "/fake/venv"
     mock_state_local_cache_dir_abs_path_inited.return_value.eval_own_state.return_value = "/fake/cache"
 

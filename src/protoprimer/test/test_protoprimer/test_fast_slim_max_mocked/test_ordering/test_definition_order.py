@@ -2,11 +2,12 @@ from __future__ import annotations
 
 import pytest
 
+from local_test.verified_dynamic_graph import (
+    VerifyingEnvContext,
+    max_deps_graph_coordinates,
+)
 from protoprimer.primer_kernel import (
-    EnvContext,
     EnvState,
-    SubCommand,
-    EntryFunc,
     StateNode,
 )
 from local_repo.misc_tools.code_utils import (
@@ -14,38 +15,37 @@ from local_repo.misc_tools.code_utils import (
 )
 
 
-def _report_violations(
-    def_violations: list[str],
+def _report_order_violations(
+    order_violations: list[str],
 ) -> None:
-    if def_violations:
-        pytest.fail("definition order violations:\n" + "\n".join(def_violations))
+    """
+    Fail the test and report all accumulated order violations.
+    """
+    if order_violations:
+        pytest.fail("definition order order violations:\n" + "\n".join(order_violations))
 
 
 class TestEnvStateOrdering:
+    """
+    Verify that `EnvState` members and their implementation classes follow a valid topological sort order.
+    """
 
-    @pytest.mark.parametrize(
-        "sub_command",
-        list(SubCommand),
-    )
-    @pytest.mark.parametrize(
-        "entry_func",
-        list(EntryFunc),
-    )
     def test_env_state_topological_sort(
         self,
-        sub_command: SubCommand,
-        entry_func: EntryFunc,
     ) -> None:
-        self.env_ctx = EnvContext()
-        self.env_ctx.graph_coordinates.sub_command = sub_command
-        self.env_ctx.graph_coordinates.entry_func = entry_func
+        """
+        Verify that each `EnvState` enum member is defined AFTER all the states it depends on (its parents).
+        """
+        self.env_ctx = VerifyingEnvContext()
+        self.env_ctx.graph_coordinates.sub_command = max_deps_graph_coordinates.sub_command
+        self.env_ctx.graph_coordinates.entry_func = max_deps_graph_coordinates.entry_func
 
         state_graph_instance = self.env_ctx.state_graph
 
         # Create a mapping from the state name to its ordinal position in the enum:
         env_state_name_to_ordinal = {env_state.name: index for index, env_state in enumerate(EnvState)}
 
-        violations = []
+        order_violations = []
         # Verify that for each state, its parents appear before it in the enum definition:
         for env_state in EnvState:
             state_node = state_graph_instance.get_state_node(env_state.name)
@@ -58,7 +58,7 @@ class TestEnvStateOrdering:
                     < env_state_name_to_ordinal[env_state.name]
                     #
                 ):
-                    violations.append(
+                    order_violations.append(
                         f"enum item definition order violation: "
                         f"[{parent_state_name}] "
                         f"should come before "
@@ -66,24 +66,17 @@ class TestEnvStateOrdering:
                         #
                     )
 
-        _report_violations(violations)
+        _report_order_violations(order_violations)
 
-    @pytest.mark.parametrize(
-        "sub_command",
-        list(SubCommand),
-    )
-    @pytest.mark.parametrize(
-        "entry_func",
-        list(EntryFunc),
-    )
     def test_bootstrapper_class_definition_order(
         self,
-        sub_command: SubCommand,
-        entry_func: EntryFunc,
     ) -> None:
-        self.env_ctx = EnvContext()
-        self.env_ctx.graph_coordinates.sub_command = sub_command
-        self.env_ctx.graph_coordinates.entry_func = entry_func
+        """
+        Verify that each state's implementation class is defined AFTER the classes of its parent states.
+        """
+        self.env_ctx = VerifyingEnvContext()
+        self.env_ctx.graph_coordinates.sub_command = max_deps_graph_coordinates.sub_command
+        self.env_ctx.graph_coordinates.entry_func = max_deps_graph_coordinates.entry_func
 
         state_graph_instance = self.env_ctx.state_graph
 
@@ -95,7 +88,7 @@ class TestEnvStateOrdering:
         }
 
         # then:
-        def_violations = []
+        order_violations = []
         # Verify that for each state, its implementation class is defined after its parents:
         for env_state in EnvState:
             state_node = state_graph_instance.get_state_node(env_state.name)
@@ -106,7 +99,7 @@ class TestEnvStateOrdering:
                 parent_line_number = state_name_to_line_number[parent_state_name]
                 child_line_number = state_name_to_line_number[env_state.name]
                 if not (parent_line_number < child_line_number):
-                    def_violations.append(
+                    order_violations.append(
                         f"class definition order violation: "
                         f"[{parent_state_name}][line {parent_line_number}] "
                         f"should come before "
@@ -114,10 +107,13 @@ class TestEnvStateOrdering:
                         #
                     )
 
-        _report_violations(def_violations)
+        _report_order_violations(order_violations)
 
     def test_bootstrapper_class_definition_matches_env_state_order(self) -> None:
-        def_violations = []
+        """
+        Verify that implementation classes appear in the file in the exact same order as their `EnvState` enum members.
+        """
+        order_violations = []
         prev_line_number = -1
         prev_env_state: EnvState | None = None
 
@@ -126,7 +122,8 @@ class TestEnvStateOrdering:
 
             # `EnvState`-s are already defined in the right order:
             if curr_line_number < prev_line_number:
-                def_violations.append(
+                assert prev_env_state is not None
+                order_violations.append(
                     f"class for "
                     f"[{curr_env_state.name}][line {curr_line_number}] "
                     f"is defined before the class for the preceding enum item "
@@ -136,4 +133,4 @@ class TestEnvStateOrdering:
             prev_line_number = curr_line_number
             prev_env_state = curr_env_state
 
-        _report_violations(def_violations)
+        _report_order_violations(order_violations)

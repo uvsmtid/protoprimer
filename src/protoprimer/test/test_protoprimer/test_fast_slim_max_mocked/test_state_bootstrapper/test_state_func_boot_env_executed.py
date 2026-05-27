@@ -17,7 +17,6 @@ from protoprimer.primer_kernel import (
     EntryFunc,
     EnvContext,
     EnvState,
-    ExitCodeReporter,
     SubCommand,
 )
 
@@ -36,9 +35,7 @@ def test_relationship():
 @patch(f"{primer_kernel.__name__}.{Factory_state_input_final_state_eval_finalized.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_stderr_log_level_handler_configured.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_sub_command_arg_loaded.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{ExitCodeReporter.__name__}.execute_strategy")
 def test_sub_command_boot(
-    mock_exit_code_reporter_execute_strategy,
     mock_state_input_sub_command_arg_loaded,
     mock_state_input_stderr_log_level_handler_configured,
     mock_state_input_final_state_eval_finalized,
@@ -55,16 +52,16 @@ def test_sub_command_boot(
     mock_state_input_final_state_eval_finalized.return_value.eval_own_state.return_value = "mock_final_state"
 
     mock_state_node = MagicMock()
+    mock_state_node.state_name = "mock_final_state"
+    mock_state_node.eval_own_state.return_value = 0
     env_ctx.state_graph.state_nodes["mock_final_state"] = mock_state_node
 
-    # when:
+    # when/then:
 
-    state_value = env_ctx.state_graph.eval_state(EnvState.state_func_boot_env_executed.name)
+    with pytest.raises(SystemExit) as exc_info:
+        env_ctx.state_graph.eval_state(EnvState.state_func_boot_env_executed.name)
 
-    # then:
-
-    assert state_value is True
-    mock_exit_code_reporter_execute_strategy.assert_called_once_with(mock_state_node)
+    assert exc_info.value.code == 0
 
 
 @patch(f"{primer_kernel.__name__}.{Factory_state_input_final_state_eval_finalized.__name__}.create_state_node")
