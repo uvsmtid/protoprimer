@@ -61,6 +61,44 @@ def topological_sort(
     return sorted_nodes
 
 
+def topological_sort_of_verified_states(
+    state_graph: StateGraph,
+    env_ctx: EnvContext,
+    root_state_name: str,
+) -> list[str]:
+    """
+    Topological sort of only states reachable from root_state_name.
+
+    Calls get_state_node() per node so factory choices are respected.
+    Only actually reachable states appear in the result.
+    """
+    sorted_nodes: list[str] = []
+
+    class VisitState(enum.Enum):
+        unvisited = 0
+        in_progress = 1
+        done = 2
+
+    node_statuses: dict[str, VisitState] = {}
+
+    def dfs(node_name: str):
+        node_statuses[node_name] = VisitState.in_progress
+        curr_node: StateNode = state_graph.get_state_node(node_name)
+        for parent_name in curr_node.get_parent_states():
+            if parent_name not in state_graph.state_factories:
+                raise ValueError(f"`{StateNode.__name__}` [{parent_name}] not found in graph")
+            status = node_statuses.get(parent_name, VisitState.unvisited)
+            if status == VisitState.in_progress:
+                raise ValueError(f"cycle detected at [{parent_name}]")
+            if status == VisitState.unvisited:
+                dfs(parent_name)
+        node_statuses[node_name] = VisitState.done
+        sorted_nodes.append(node_name)
+
+    dfs(root_state_name)
+    return sorted_nodes
+
+
 def get_transitive_dependencies(
     state_graph: StateGraph,
     state_name: str,

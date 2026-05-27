@@ -28,6 +28,10 @@ class StateMeta(enum.Enum):
         env_state=EnvState.state_input_py_exec_var_loaded,
         sub_graph=SubGraph.graph_input,
     )
+    state_input_is_stderr_log_enabled = StateNodeMeta(
+        env_state=EnvState.state_input_is_stderr_log_enabled,
+        sub_graph=SubGraph.graph_input,
+    )
     state_input_stderr_log_level_var_loaded = StateNodeMeta(
         env_state=EnvState.state_input_stderr_log_level_var_loaded,
         sub_graph=SubGraph.graph_input,
