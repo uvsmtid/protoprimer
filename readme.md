@@ -12,7 +12,7 @@ FT_84_11_73_28.supported_python_versions.md: see above.
 TODO: Use links to FC/UC docs under `./doc` (when ready) from this readme to navigate to details.
 -->
 
-# <code><a href="https://protoprimer.readthedocs.io/"><img src="doc/readthedocs/source/_static/protoprimer.logo.svg" alt="logo" style="width: 11ch; height: auto;"></a></code>
+# <code><a href="https://protoprimer.readthedocs.io/"><img src="doc/_static/protoprimer.logo.svg" alt="logo" style="width: 11ch; height: auto;"></a></code>
 
 # `protoprimer`
 

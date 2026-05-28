@@ -224,6 +224,10 @@ class StateMeta(enum.Enum):
         env_state=EnvState.state_stride_src_updated_reached,
         sub_graph=SubGraph.graph_runtime,
     )
+    state_input_command_line = StateNodeMeta(
+        env_state=EnvState.state_input_command_line,
+        sub_graph=None,
+    )
     state_command_executed = StateNodeMeta(
         env_state=EnvState.state_command_executed,
         sub_graph=None,

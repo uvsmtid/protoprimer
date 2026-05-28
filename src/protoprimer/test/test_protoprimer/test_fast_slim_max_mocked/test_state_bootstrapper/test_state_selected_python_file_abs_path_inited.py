@@ -10,6 +10,10 @@ from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     EnvContext,
     EnvState,
+    Bootstrapper_required_python_version_inited,
+    Bootstrapper_state_client_conf_file_data_loaded,
+    Bootstrapper_state_python_selector_file_abs_path_inited,
+    Bootstrapper_state_ref_root_dir_abs_path_inited,
 )
 
 
@@ -23,10 +27,10 @@ def test_relationship():
 
 
 @patch(f"{primer_kernel.__name__}.probe_python_file_abs_path")
-@patch(f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_python_selector_file_abs_path_inited.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_required_python_version_inited.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_client_conf_file_data_loaded.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_python_selector_file_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Bootstrapper_required_python_version_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
 def test_python_selection(
     mock_state_ref_root_dir_abs_path_inited,
     mock_state_client_conf_file_data_loaded,

@@ -1,4 +1,3 @@
-import argparse
 from unittest.mock import (
     patch,
 )
@@ -11,7 +10,6 @@ from local_test.mock_verifier import (
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
-    Factory_state_args_parsed,
     Bootstrapper_state_input_start_id_var_loaded,
     Bootstrapper_state_local_conf_symlink_abs_path_inited,
     Bootstrapper_state_local_tmp_dir_abs_path_inited,
@@ -23,9 +21,9 @@ from protoprimer.primer_kernel import (
     ConfConstEnv,
     EnvContext,
     EnvState,
-    ParsedArg,
     SubCommand,
     StateStride,
+    Factory_state_input_sub_command_arg_loaded,
 )
 
 
@@ -47,13 +45,11 @@ def test_relationship():
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_version_constraints_file_basename_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Factory_state_args_parsed.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Factory_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_sub_command_arg_loaded.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Factory_state_input_sub_command_arg_loaded.__name__}.create_state_node")
 def test_reboot_true(
     mock_state_input_sub_command_arg_loaded,
     mock_state_proto_code_file_abs_path_inited,
-    mock_state_args_parsed,
     mock_state_local_venv_dir_abs_path_inited,
     mock_state_local_conf_symlink_abs_path_inited,
     mock_state_version_constraints_file_basename_inited,
@@ -72,11 +68,7 @@ def test_reboot_true(
         env_ctx,
         EnvState.state_reboot_triggered.name,
     )
-    mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(
-        **{
-            ParsedArg.name_sub_command.value: SubCommand.command_reboot.value,
-        }
-    )
+    mock_state_input_sub_command_arg_loaded.return_value.eval_own_state.return_value = SubCommand.command_reboot
     mock_state_input_start_id_var_loaded.return_value.eval_own_state.return_value = "mock_start_id"
 
     py_exec = StateStride.stride_py_required
@@ -107,13 +99,11 @@ def test_reboot_true(
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_version_constraints_file_basename_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Factory_state_args_parsed.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Factory_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_sub_command_arg_loaded.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Factory_state_input_sub_command_arg_loaded.__name__}.create_state_node")
 def test_reboot_false(
     mock_state_input_sub_command_arg_loaded,
     mock_state_proto_code_file_abs_path_inited,
-    mock_state_args_parsed,
     mock_state_local_venv_dir_abs_path_inited,
     mock_state_local_conf_symlink_abs_path_inited,
     mock_state_version_constraints_file_basename_inited,
@@ -130,11 +120,7 @@ def test_reboot_false(
         env_ctx,
         EnvState.state_reboot_triggered.name,
     )
-    mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(
-        **{
-            ParsedArg.name_sub_command.value: SubCommand.command_boot.value,
-        }
-    )
+    mock_state_input_sub_command_arg_loaded.return_value.eval_own_state.return_value = SubCommand.command_boot
 
     py_exec = StateStride.stride_py_required
     mock_state_stride_py_required_reached.return_value.eval_own_state.return_value = py_exec
@@ -158,13 +144,11 @@ def test_reboot_false(
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_version_constraints_file_basename_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Factory_state_args_parsed.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Factory_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_sub_command_arg_loaded.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Factory_state_input_sub_command_arg_loaded.__name__}.create_state_node")
 def test_reboot_true_but_py_exec_not_required(
     mock_state_input_sub_command_arg_loaded,
     mock_state_proto_code_file_abs_path_inited,
-    mock_state_args_parsed,
     mock_state_local_venv_dir_abs_path_inited,
     mock_state_local_conf_symlink_abs_path_inited,
     mock_state_version_constraints_file_basename_inited,
@@ -181,11 +165,7 @@ def test_reboot_true_but_py_exec_not_required(
         env_ctx,
         EnvState.state_reboot_triggered.name,
     )
-    mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(
-        **{
-            ParsedArg.name_sub_command.value: SubCommand.command_reboot.value,
-        }
-    )
+    mock_state_input_sub_command_arg_loaded.return_value.eval_own_state.return_value = SubCommand.command_reboot
     mock_state_input_start_id_var_loaded.return_value.eval_own_state.return_value = "mock_start_id"
 
     py_exec = StateStride.stride_py_venv

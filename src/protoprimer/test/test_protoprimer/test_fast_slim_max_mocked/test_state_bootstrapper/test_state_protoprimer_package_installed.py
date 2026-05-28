@@ -23,6 +23,7 @@ from protoprimer.primer_kernel import (
     EnvVar,
     SubCommand,
     StateStride,
+    Factory_state_input_sub_command_arg_loaded,
 )
 
 
@@ -47,7 +48,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         os.environ,
         {EnvVar.var_PROTOPRIMER_PY_EXEC.value: StateStride.stride_py_venv.name},
     )
-    @patch(f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_sub_command_arg_loaded.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_input_sub_command_arg_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_venv_driver_prepared.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{EnvContext.__name__}.{EnvContext.get_stride.__name__}")
     def test_default_install(
@@ -131,7 +132,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         os.environ,
         {EnvVar.var_PROTOPRIMER_PY_EXEC.value: StateStride.stride_py_venv.name},
     )
-    @patch(f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_sub_command_arg_loaded.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_input_sub_command_arg_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_venv_driver_prepared.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{EnvContext.__name__}.{EnvContext.get_stride.__name__}")
     def test_reboot(
@@ -215,7 +216,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         os.environ,
         {EnvVar.var_PROTOPRIMER_PY_EXEC.value: StateStride.stride_py_venv.name},
     )
-    @patch(f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_sub_command_arg_loaded.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_input_sub_command_arg_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_venv_driver_prepared.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{EnvContext.__name__}.{EnvContext.get_stride.__name__}")
     def test_grouped_install(
@@ -314,7 +315,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         os.environ,
         {EnvVar.var_PROTOPRIMER_PY_EXEC.value: StateStride.stride_py_venv.name},
     )
-    @patch(f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_sub_command_arg_loaded.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_input_sub_command_arg_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_venv_driver_prepared.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{EnvContext.__name__}.{EnvContext.get_stride.__name__}")
     def test_nothing_to_install(

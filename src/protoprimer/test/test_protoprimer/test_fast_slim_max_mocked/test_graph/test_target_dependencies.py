@@ -36,7 +36,7 @@ class TestTargetDependencies:
         # given:
 
         env_context_instance = EnvContext()
-        env_context_instance.graph_coordinates.entry_func = EntryFunc.func_run_main
+        env_context_instance.graph_coordinates.entry_func = EntryFunc.func_boot_env
         env_context_instance.graph_coordinates.sub_command = SubCommand.command_boot
         state_graph_instance = env_context_instance.state_graph
         final_state_name = EnvState.state_command_executed.name
@@ -78,7 +78,7 @@ class TestTargetDependencies:
         # given:
 
         env_context_instance = EnvContext()
-        env_context_instance.graph_coordinates.entry_func = EntryFunc.func_run_main
+        env_context_instance.graph_coordinates.entry_func = EntryFunc.func_boot_env
         env_context_instance.graph_coordinates.sub_command = SubCommand.command_boot
         state_graph_instance = env_context_instance.state_graph
         final_state_name = TargetState.target_everything_executed.value.name
