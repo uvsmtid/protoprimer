@@ -12,7 +12,7 @@ from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     Factory_state_input_final_state_eval_finalized,
-    Bootstrapper_state_input_sub_command_arg_loaded,
+    Factory_state_input_sub_command_arg_loaded,
     Bootstrapper_state_input_stderr_log_level_handler_configured,
     EntryFunc,
     EnvContext,
@@ -24,7 +24,7 @@ from protoprimer.primer_kernel import (
 @pytest.fixture
 def env_ctx():
     ctx = EnvContext()
-    ctx.graph_coordinates.entry_func = EntryFunc.func_run_main
+    ctx.graph_coordinates.entry_func = EntryFunc.func_boot_env
     return ctx
 
 
@@ -34,7 +34,7 @@ def test_relationship():
 
 @patch(f"{primer_kernel.__name__}.{Factory_state_input_final_state_eval_finalized.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_stderr_log_level_handler_configured.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_sub_command_arg_loaded.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Factory_state_input_sub_command_arg_loaded.__name__}.create_state_node")
 def test_sub_command_boot(
     mock_state_input_sub_command_arg_loaded,
     mock_state_input_stderr_log_level_handler_configured,
@@ -66,7 +66,7 @@ def test_sub_command_boot(
 
 @patch(f"{primer_kernel.__name__}.{Factory_state_input_final_state_eval_finalized.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_stderr_log_level_handler_configured.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_sub_command_arg_loaded.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Factory_state_input_sub_command_arg_loaded.__name__}.create_state_node")
 def test_sub_command_none(
     mock_state_input_sub_command_arg_loaded,
     mock_state_input_stderr_log_level_handler_configured,
@@ -93,7 +93,7 @@ def test_sub_command_none(
 
 @patch(f"{primer_kernel.__name__}.{Factory_state_input_final_state_eval_finalized.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_stderr_log_level_handler_configured.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_sub_command_arg_loaded.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Factory_state_input_sub_command_arg_loaded.__name__}.create_state_node")
 def test_sub_command_invalid(
     mock_state_input_sub_command_arg_loaded,
     mock_state_input_stderr_log_level_handler_configured,

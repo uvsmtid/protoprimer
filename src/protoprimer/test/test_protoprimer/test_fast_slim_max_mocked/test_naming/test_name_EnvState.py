@@ -619,6 +619,17 @@ class StateName(enum.Enum):
         ],
     )
 
+    state_input_command_line = StateMeta(
+        env_state=EnvState.state_input_command_line,
+        name_category=NameCategory.category_name_only,
+        name_components=[
+            KeyWord.key_state.value,
+            ConfLeap.leap_input.value,
+            CommandAction.action_command.value,
+            "line",
+        ],
+    )
+
     state_command_executed = StateMeta(
         env_state=EnvState.state_command_executed,
         name_category=NameCategory.category_state_mutation,

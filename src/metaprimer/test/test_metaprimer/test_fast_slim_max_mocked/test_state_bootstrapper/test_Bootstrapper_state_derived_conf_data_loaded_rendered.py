@@ -13,8 +13,8 @@ from protoprimer.primer_kernel import (
     Bootstrapper_required_python_version_inited,
     Bootstrapper_state_global_conf_dir_abs_path_inited,
     Bootstrapper_state_global_conf_file_abs_path_inited,
-    Bootstrapper_state_input_sub_command_arg_loaded,
-    Bootstrapper_state_input_stderr_log_level_eval_finalized,
+    Factory_state_input_sub_command_arg_loaded,
+    Factory_state_input_stderr_log_level_eval_finalized,
     Bootstrapper_state_local_cache_dir_abs_path_inited,
     Bootstrapper_state_local_conf_file_abs_path_inited,
     Bootstrapper_state_local_conf_symlink_abs_path_inited,
@@ -37,8 +37,8 @@ def test_relationship():
 
 
 @patch("sys.argv", [""])
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_sub_command_arg_loaded.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_stderr_log_level_eval_finalized.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Factory_state_input_sub_command_arg_loaded.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Factory_state_input_stderr_log_level_eval_finalized.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Factory_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_primer_conf_file_abs_path_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")

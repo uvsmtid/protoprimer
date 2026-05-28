@@ -1,4 +1,3 @@
-import argparse
 import os
 from unittest.mock import patch
 
@@ -10,7 +9,6 @@ from local_test.mock_verifier import (
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
-    Factory_state_args_parsed,
     Bootstrapper_state_default_file_log_handler_configured,
     Bootstrapper_state_input_start_id_var_loaded,
     Bootstrapper_state_local_conf_file_abs_path_inited,
@@ -24,6 +22,7 @@ from protoprimer.primer_kernel import (
     EnvState,
     StateStride,
     SubCommand,
+    Factory_state_input_sub_command_arg_loaded,
 )
 
 mock_client_dir = "/mock_client_dir"
@@ -70,7 +69,6 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_tmp_dir_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_default_file_log_handler_configured.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Factory_state_args_parsed.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Factory_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
@@ -81,7 +79,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     )
     @patch(f"{primer_kernel.__name__}.os.execve")
     @patch(f"{primer_kernel.__name__}.subprocess.check_call")
-    @patch(f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_sub_command_arg_loaded.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_input_sub_command_arg_loaded.__name__}.create_state_node")
     def test_success_on_arbitrary_py_exec_outside_venv(
         self,
         mock_input_sub_command_arg_loaded,
@@ -92,7 +90,6 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_local_venv_dir_abs_path_inited,
         mock_state_local_conf_file_abs_path_inited,
         mock_state_proto_code_file_abs_path_inited,
-        mock_state_args_parsed,
         mock_state_default_file_log_handler_configured,
         mock_state_local_tmp_dir_abs_path_inited,
         mock_state_input_start_id_var_loaded,
@@ -106,7 +103,6 @@ class ThisTestClass(BasePyfakefsTestClass):
             EnvState.state_stride_py_required_reached.name,
         )
 
-        mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace()
         mock_state_input_start_id_var_loaded.return_value.eval_own_state.return_value = "mock_start_id"
         mock_state_proto_code_file_abs_path_inited.return_value.eval_own_state.return_value = "any/path"
 
@@ -137,7 +133,6 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_tmp_dir_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_default_file_log_handler_configured.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Factory_state_args_parsed.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Factory_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
@@ -148,7 +143,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     )
     @patch(f"{primer_kernel.__name__}.os.execve")
     @patch(f"{primer_kernel.__name__}.subprocess.check_call")
-    @patch(f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_sub_command_arg_loaded.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_input_sub_command_arg_loaded.__name__}.create_state_node")
     def test_skip_if_py_exec_is_already_required(
         self,
         mock_input_sub_command_arg_loaded,
@@ -159,7 +154,6 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_local_venv_dir_abs_path_inited,
         mock_state_local_conf_file_abs_path_inited,
         mock_state_proto_code_file_abs_path_inited,
-        mock_state_args_parsed,
         mock_state_default_file_log_handler_configured,
         mock_state_local_tmp_dir_abs_path_inited,
         mock_state_input_start_id_var_loaded,
@@ -188,7 +182,6 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_tmp_dir_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_default_file_log_handler_configured.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Factory_state_args_parsed.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Factory_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
@@ -199,7 +192,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     )
     @patch(f"{primer_kernel.__name__}.os.execve")
     @patch(f"{primer_kernel.__name__}.subprocess.check_call")
-    @patch(f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_sub_command_arg_loaded.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_input_sub_command_arg_loaded.__name__}.create_state_node")
     def test_success_if_correct_python_is_already_used(
         self,
         mock_input_sub_command_arg_loaded,
@@ -210,7 +203,6 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_local_venv_dir_abs_path_inited,
         mock_state_local_conf_file_abs_path_inited,
         mock_state_proto_code_file_abs_path_inited,
-        mock_state_args_parsed,
         mock_state_default_file_log_handler_configured,
         mock_state_local_tmp_dir_abs_path_inited,
         mock_state_input_start_id_var_loaded,

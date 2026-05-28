@@ -16,6 +16,7 @@ from protoprimer.primer_kernel import (
     Factory_state_args_parsed,
     Bootstrapper_state_input_stderr_log_level_var_loaded,
     ConfConstInput,
+    EntryFunc,
     EnvContext,
     EnvState,
     EnvVar,
@@ -25,7 +26,9 @@ from protoprimer.primer_kernel import (
 
 @pytest.fixture
 def env_ctx():
-    return EnvContext()
+    ctx = EnvContext()
+    ctx.graph_coordinates.entry_func = EntryFunc.func_boot_env
+    return ctx
 
 
 def test_relationship():

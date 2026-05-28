@@ -17,6 +17,7 @@ from protoprimer.primer_kernel import (
     ConfConstEnv,
     EnvContext,
     EnvState,
+    Factory_state_input_sub_command_arg_loaded,
 )
 
 
@@ -35,7 +36,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_venv_driver_prepared.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_version_constraints_file_basename_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_sub_command_arg_loaded.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_input_sub_command_arg_loaded.__name__}.create_state_node")
     def test_constraints_generated(
         self,
         mock_state_input_sub_command_arg_loaded,
@@ -82,7 +83,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_venv_driver_prepared.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_version_constraints_file_basename_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_sub_command_arg_loaded.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_input_sub_command_arg_loaded.__name__}.create_state_node")
     def test_generation_skipped(
         self,
         mock_state_input_sub_command_arg_loaded,

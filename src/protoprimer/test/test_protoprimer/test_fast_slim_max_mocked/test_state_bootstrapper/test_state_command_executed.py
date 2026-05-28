@@ -1,4 +1,3 @@
-import argparse
 import os
 from unittest.mock import patch
 
@@ -10,13 +9,12 @@ from local_test.mock_verifier import (
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
-    Factory_state_args_parsed,
+    Factory_state_input_command_line,
     Bootstrapper_state_local_cache_dir_abs_path_inited,
     Bootstrapper_state_local_venv_dir_abs_path_inited,
     Bootstrapper_state_stride_src_updated_reached,
     EnvContext,
     EnvState,
-    ParsedArg,
     StateStride,
 )
 
@@ -33,9 +31,9 @@ def test_relationship():
 @patch(f"{primer_kernel.__name__}.{EnvContext.__name__}.{EnvContext.get_stride.__name__}")
 @patch(f"{primer_kernel.__name__}.os.execve")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_stride_src_updated_reached.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Factory_state_args_parsed.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_cache_dir_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Factory_state_input_command_line.__name__}.create_state_node")
 @patch.dict(
     os.environ,
     {
@@ -44,9 +42,9 @@ def test_relationship():
     clear=True,
 )
 def test_command_executed_in_bash(
+    mock_state_input_command_line,
     mock_state_local_cache_dir_abs_path_inited,
     mock_state_local_venv_dir_abs_path_inited,
-    mock_state_args_parsed,
     mock_state_stride_src_updated_reached,
     mock_os_execve,
     mock_get_stride,
@@ -59,11 +57,7 @@ def test_command_executed_in_bash(
         env_ctx,
         EnvState.state_command_executed.name,
     )
-    mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(
-        **{
-            ParsedArg.name_command.value: "echo hello",
-        }
-    )
+    mock_state_input_command_line.return_value.eval_own_state.return_value = "echo hello"
     mock_get_stride.return_value = StateStride.stride_src_updated
     mock_state_stride_src_updated_reached.return_value.eval_own_state.return_value = StateStride.stride_src_updated
     mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = "/fake/venv"
@@ -92,9 +86,9 @@ def test_command_executed_in_bash(
 @patch(f"{primer_kernel.__name__}.{EnvContext.__name__}.{EnvContext.get_stride.__name__}")
 @patch(f"{primer_kernel.__name__}.os.execve")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_stride_src_updated_reached.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Factory_state_args_parsed.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_cache_dir_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Factory_state_input_command_line.__name__}.create_state_node")
 @patch.dict(
     os.environ,
     {
@@ -103,9 +97,9 @@ def test_command_executed_in_bash(
     clear=True,
 )
 def test_command_executed_in_zsh(
+    mock_state_input_command_line,
     mock_state_local_cache_dir_abs_path_inited,
     mock_state_local_venv_dir_abs_path_inited,
-    mock_state_args_parsed,
     mock_state_stride_src_updated_reached,
     mock_os_execve,
     mock_get_stride,
@@ -118,11 +112,7 @@ def test_command_executed_in_zsh(
         env_ctx,
         EnvState.state_command_executed.name,
     )
-    mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(
-        **{
-            ParsedArg.name_command.value: "echo hello",
-        }
-    )
+    mock_state_input_command_line.return_value.eval_own_state.return_value = "echo hello"
     mock_get_stride.return_value = StateStride.stride_src_updated
     mock_state_stride_src_updated_reached.return_value.eval_own_state.return_value = StateStride.stride_src_updated
     mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = "/fake/venv"
@@ -151,9 +141,9 @@ def test_command_executed_in_zsh(
 @patch(f"{primer_kernel.__name__}.{EnvContext.__name__}.{EnvContext.get_stride.__name__}")
 @patch(f"{primer_kernel.__name__}.os.execve")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_stride_src_updated_reached.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Factory_state_args_parsed.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_cache_dir_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Factory_state_input_command_line.__name__}.create_state_node")
 @patch.dict(
     os.environ,
     {
@@ -162,9 +152,9 @@ def test_command_executed_in_zsh(
     clear=True,
 )
 def test_command_not_executed_when_no_command_line_provided(
+    mock_state_input_command_line,
     mock_state_local_cache_dir_abs_path_inited,
     mock_state_local_venv_dir_abs_path_inited,
-    mock_state_args_parsed,
     mock_state_stride_src_updated_reached,
     mock_os_execve,
     mock_get_stride,
@@ -175,11 +165,7 @@ def test_command_not_executed_when_no_command_line_provided(
         env_ctx,
         EnvState.state_command_executed.name,
     )
-    mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(
-        **{
-            ParsedArg.name_command.value: None,
-        }
-    )
+    mock_state_input_command_line.return_value.eval_own_state.return_value = None
     mock_get_stride.return_value = StateStride.stride_src_updated
     mock_state_stride_src_updated_reached.return_value.eval_own_state.return_value = StateStride.stride_src_updated
 
@@ -194,9 +180,9 @@ def test_command_not_executed_when_no_command_line_provided(
 @patch(f"{primer_kernel.__name__}.{EnvContext.__name__}.{EnvContext.get_stride.__name__}")
 @patch(f"{primer_kernel.__name__}.os.execve")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_stride_src_updated_reached.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Factory_state_args_parsed.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_cache_dir_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Factory_state_input_command_line.__name__}.create_state_node")
 @patch.dict(
     os.environ,
     {
@@ -205,9 +191,9 @@ def test_command_not_executed_when_no_command_line_provided(
     clear=True,
 )
 def test_command_executed_empty(
+    mock_state_input_command_line,
     mock_state_local_cache_dir_abs_path_inited,
     mock_state_local_venv_dir_abs_path_inited,
-    mock_state_args_parsed,
     mock_state_stride_src_updated_reached,
     mock_os_execve,
     mock_get_stride,
@@ -220,11 +206,7 @@ def test_command_executed_empty(
         env_ctx,
         EnvState.state_command_executed.name,
     )
-    mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(
-        **{
-            ParsedArg.name_command.value: "",
-        }
-    )
+    mock_state_input_command_line.return_value.eval_own_state.return_value = ""
     mock_get_stride.return_value = StateStride.stride_src_updated
     mock_state_stride_src_updated_reached.return_value.eval_own_state.return_value = StateStride.stride_src_updated
     mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = "/fake/venv"
@@ -253,9 +235,9 @@ def test_command_executed_empty(
 @patch(f"{primer_kernel.__name__}.{EnvContext.__name__}.{EnvContext.get_stride.__name__}")
 @patch(f"{primer_kernel.__name__}.os.execve")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_stride_src_updated_reached.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Factory_state_args_parsed.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_cache_dir_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Factory_state_input_command_line.__name__}.create_state_node")
 @patch.dict(
     os.environ,
     {
@@ -264,9 +246,9 @@ def test_command_executed_empty(
     clear=True,
 )
 def test_command_executed_with_whitespace(
+    mock_state_input_command_line,
     mock_state_local_cache_dir_abs_path_inited,
     mock_state_local_venv_dir_abs_path_inited,
-    mock_state_args_parsed,
     mock_state_stride_src_updated_reached,
     mock_os_execve,
     mock_get_stride,
@@ -279,11 +261,7 @@ def test_command_executed_with_whitespace(
         env_ctx,
         EnvState.state_command_executed.name,
     )
-    mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(
-        **{
-            ParsedArg.name_command.value: "  echo hello  ",
-        }
-    )
+    mock_state_input_command_line.return_value.eval_own_state.return_value = "  echo hello  "
     mock_get_stride.return_value = StateStride.stride_src_updated
     mock_state_stride_src_updated_reached.return_value.eval_own_state.return_value = StateStride.stride_src_updated
     mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = "/fake/venv"

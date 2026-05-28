@@ -1,4 +1,3 @@
-import argparse
 from unittest.mock import patch
 
 from local_test.base_test_class import BasePyfakefsTestClass
@@ -8,7 +7,6 @@ from local_test.mock_verifier import (
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
-    Factory_state_args_parsed,
     Bootstrapper_state_input_start_id_var_loaded,
     Factory_state_proto_code_file_abs_path_inited,
     Bootstrapper_state_proto_code_updated,
@@ -16,6 +14,8 @@ from protoprimer.primer_kernel import (
     EnvState,
     SubCommand,
     StateStride,
+    Bootstrapper_state_local_venv_dir_abs_path_inited,
+    Factory_state_input_sub_command_arg_loaded,
 )
 
 
@@ -31,11 +31,10 @@ class ThisTestClass(BasePyfakefsTestClass):
         assert_test_module_name_embeds_str(EnvState.state_stride_src_updated_reached.name)
 
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Factory_state_args_parsed.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_proto_code_updated.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Factory_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_sub_command_arg_loaded.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_input_sub_command_arg_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.switch_python")
     def test_not_yet_at_required_python(
         self,
@@ -44,7 +43,6 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_local_venv_dir_abs_path_inited,
         mock_state_proto_code_file_abs_path_inited,
         mock_state_proto_code_updated,
-        mock_state_args_parsed,
         mock_state_input_start_id_var_loaded,
     ):
 
@@ -55,7 +53,6 @@ class ThisTestClass(BasePyfakefsTestClass):
             EnvState.state_stride_src_updated_reached.name,
         )
 
-        mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace()
         mock_state_input_start_id_var_loaded.return_value.eval_own_state.return_value = "mock_start_id"
 
         mock_state_proto_code_file_abs_path_inited.return_value.eval_own_state.return_value = "path/to/whatever"
@@ -83,11 +80,10 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
 
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Factory_state_args_parsed.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_proto_code_updated.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Factory_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{primer_kernel.Bootstrapper_state_input_sub_command_arg_loaded.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_input_sub_command_arg_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.switch_python")
     def test_already_required_python(
         self,
@@ -96,7 +92,6 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_local_venv_dir_abs_path_inited,
         mock_state_proto_code_file_abs_path_inited,
         mock_state_proto_code_updated,
-        mock_state_args_parsed,
         mock_state_input_start_id_var_loaded,
     ):
         """
@@ -110,7 +105,6 @@ class ThisTestClass(BasePyfakefsTestClass):
             EnvState.state_stride_src_updated_reached.name,
         )
 
-        mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace()
         mock_state_input_start_id_var_loaded.return_value.eval_own_state.return_value = "mock_start_id"
 
         mock_state_proto_code_file_abs_path_inited.return_value.eval_own_state.return_value = "path/to/whatever"
