@@ -36,8 +36,9 @@ class TestTargetDependencies:
         # given:
 
         env_context_instance = EnvContext()
-        env_context_instance.graph_coordinates.entry_func = EntryFunc.func_boot_env
-        env_context_instance.graph_coordinates.sub_command = SubCommand.command_boot
+        env_context_instance._entry_func = EntryFunc.func_boot_env
+        env_context_instance._is_app = True
+        env_context_instance._sub_command = SubCommand.command_boot
         state_graph_instance = env_context_instance.state_graph
         final_state_name = EnvState.state_command_executed.name
 
@@ -60,6 +61,7 @@ class TestTargetDependencies:
         allowed_missing_dependencies.add(EnvState.state_derived_conf_data_loaded.name)
         allowed_missing_dependencies.add(EnvState.state_effective_conf_data_printed.name)
         allowed_missing_dependencies.add(EnvState.state_everything_executed.name)
+        allowed_missing_dependencies.add(EnvState.state_is_app_defined.name)
 
         missing_dependencies -= allowed_missing_dependencies
 
@@ -78,8 +80,9 @@ class TestTargetDependencies:
         # given:
 
         env_context_instance = EnvContext()
-        env_context_instance.graph_coordinates.entry_func = EntryFunc.func_boot_env
-        env_context_instance.graph_coordinates.sub_command = SubCommand.command_boot
+        env_context_instance._entry_func = EntryFunc.func_boot_env
+        env_context_instance._is_app = True
+        env_context_instance._sub_command = SubCommand.command_boot
         state_graph_instance = env_context_instance.state_graph
         final_state_name = TargetState.target_everything_executed.value.name
 

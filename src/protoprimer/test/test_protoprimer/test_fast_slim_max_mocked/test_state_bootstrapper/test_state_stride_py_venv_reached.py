@@ -526,7 +526,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_proto_code_file_abs_path_inited.return_value.eval_own_state.return_value = "any/path"
 
         # Important: it should be `StateStride.stride_py_arbitrary` for this test case:
-        self.env_ctx.state_stride = StateStride.stride_py_arbitrary
+        self.env_ctx._state_stride = StateStride.stride_py_arbitrary
 
         # Make sure `path_to_curr_python` != `configured python`:
         mock_state_selected_python_file_abs_path_inited.return_value.eval_own_state.return_value = "/a/different/python"
@@ -602,7 +602,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             EnvState.state_stride_py_venv_reached.name,
         )
 
-        self.env_ctx.state_stride = StateStride.stride_py_venv
+        self.env_ctx._state_stride = StateStride.stride_py_venv
 
         # when:
 

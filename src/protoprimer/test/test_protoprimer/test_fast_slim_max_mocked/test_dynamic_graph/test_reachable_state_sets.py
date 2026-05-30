@@ -19,20 +19,21 @@ def _make_env_ctx(
     is_log_enabled: bool,
 ) -> EnvContext:
     env_ctx = VerifyingEnvContext()
-    env_ctx.graph_coordinates.entry_func = entry_func
-    env_ctx.graph_coordinates.prepare_venv = prepare_venv
-    env_ctx.graph_coordinates.sub_command = sub_command
-    env_ctx.graph_coordinates.is_log_enabled = is_log_enabled
+    env_ctx._entry_func = entry_func
+    env_ctx._is_app = entry_func in (EntryFunc.func_boot_env, EntryFunc.func_run_main)
+    env_ctx._prepare_venv = prepare_venv
+    env_ctx._sub_command = sub_command
+    env_ctx._is_log_enabled = is_log_enabled
     return env_ctx
 
 
 class TestTopologicalSort:
     """
-    Verifies the topologically sorted list of `EnvState.name`-s for each meaningful `GraphCoordinates` combination.
+    Verifies the topologically sorted list of `EnvState.name`-s for each meaningful `EnvContext` coordinate combination.
 
     Each test method:
-    *   Constructs an `EnvContext` with specific `GraphCoordinates`.
-    *   Calls `topological_sort` (which instantiates nodes via factories — factories use `GraphCoordinates`).
+    *   Constructs an `EnvContext` with specific graph coordinates.
+    *   Calls `topological_sort` (which instantiates nodes via factories — factories use `EnvContext` coordinates).
     *   Asserts the sorted list equals the expected hardcoded list.
 
     The expected list serves as a reviewable snapshot:
@@ -63,6 +64,7 @@ class TestTopologicalSort:
 
         # then:
         assert sorted_names == [
+            EnvState.state_is_app_defined.name,
             EnvState.state_input_py_exec_var_loaded.name,
             EnvState.state_input_is_stderr_log_enabled.name,
             EnvState.state_input_stderr_log_level_var_loaded.name,
@@ -97,6 +99,7 @@ class TestTopologicalSort:
 
         # then:
         assert sorted_names == [
+            EnvState.state_is_app_defined.name,
             EnvState.state_input_is_stderr_log_enabled.name,
             EnvState.state_input_final_state_eval_finalized.name,
             EnvState.state_func_start_app_executed.name,
@@ -124,6 +127,7 @@ class TestTopologicalSort:
 
         # then:
         assert sorted_names == [
+            EnvState.state_is_app_defined.name,
             EnvState.state_input_is_stderr_log_enabled.name,
             EnvState.state_input_final_state_eval_finalized.name,
             EnvState.state_func_call_lib_executed.name,
@@ -151,6 +155,7 @@ class TestTopologicalSort:
 
         # then:
         assert sorted_names == [
+            EnvState.state_is_app_defined.name,
             EnvState.state_input_py_exec_var_loaded.name,
             EnvState.state_input_is_stderr_log_enabled.name,
             EnvState.state_input_stderr_log_level_var_loaded.name,

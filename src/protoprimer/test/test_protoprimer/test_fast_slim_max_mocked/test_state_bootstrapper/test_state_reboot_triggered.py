@@ -73,7 +73,7 @@ def test_reboot_true(
 
     py_exec = StateStride.stride_py_required
     mock_state_stride_py_required_reached.return_value.eval_own_state.return_value = py_exec
-    env_ctx.state_stride = py_exec
+    env_ctx._state_stride = py_exec
 
     mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = "/path/to/venv"
     mock_state_local_tmp_dir_abs_path_inited.return_value.eval_own_state.return_value = "/path/to/tmp"
@@ -124,7 +124,7 @@ def test_reboot_false(
 
     py_exec = StateStride.stride_py_required
     mock_state_stride_py_required_reached.return_value.eval_own_state.return_value = py_exec
-    env_ctx.state_stride = py_exec
+    env_ctx._state_stride = py_exec
 
     # when:
     state_value = env_ctx.state_graph.eval_state(EnvState.state_reboot_triggered.name)
@@ -170,7 +170,7 @@ def test_reboot_true_but_py_exec_not_required(
 
     py_exec = StateStride.stride_py_venv
     mock_state_stride_py_required_reached.return_value.eval_own_state.return_value = py_exec
-    env_ctx.state_stride = py_exec
+    env_ctx._state_stride = py_exec
 
     # when:
     state_value = env_ctx.state_graph.eval_state(EnvState.state_reboot_triggered.name)

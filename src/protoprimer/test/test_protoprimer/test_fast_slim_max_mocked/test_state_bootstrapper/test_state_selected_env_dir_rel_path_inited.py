@@ -26,7 +26,8 @@ class ThisTestClass(BasePyfakefsTestClass):
     def setUp(self):
         self.setUpPyfakefs()
         self.env_ctx = EnvContext()
-        self.env_ctx.graph_coordinates.entry_func = primer_kernel.EntryFunc.func_boot_env
+        self.env_ctx._entry_func = primer_kernel.EntryFunc.func_boot_env
+        self.env_ctx._is_app = True
         self.mock_ref_root = "/mock_ref_root"
         self.fs.create_dir(self.mock_ref_root)
 

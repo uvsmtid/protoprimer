@@ -4,9 +4,10 @@ import pytest
 
 from local_test.verified_dynamic_graph import (
     VerifyingEnvContext,
-    max_deps_graph_coordinates,
+    max_deps_env_ctx,
 )
 from protoprimer.primer_kernel import (
+    EntryFunc,
     EnvState,
     StateNode,
 )
@@ -26,9 +27,10 @@ def test_EnvState_parent_order() -> None:
     # given:
 
     env_ctx = VerifyingEnvContext()
-    env_ctx.graph_coordinates.entry_func = max_deps_graph_coordinates.entry_func
-    env_ctx.graph_coordinates.sub_command = max_deps_graph_coordinates.sub_command
-    env_ctx.graph_coordinates.is_log_enabled = max_deps_graph_coordinates.is_log_enabled
+    env_ctx._entry_func = EntryFunc.func_boot_env
+    env_ctx._is_app = True
+    env_ctx._sub_command = max_deps_env_ctx._sub_command
+    env_ctx._is_log_enabled = max_deps_env_ctx._is_log_enabled
 
     state_graph_instance = env_ctx.state_graph
 

@@ -1,3 +1,7 @@
+---
+html_meta:
+  "robots": "noindex, follow"
+---
 
 % Redirect to "intro":
 ```{raw} html
