@@ -4,9 +4,10 @@ import pytest
 
 from local_test.verified_dynamic_graph import (
     VerifyingEnvContext,
-    max_deps_graph_coordinates,
+    max_deps_env_ctx,
 )
 from protoprimer.primer_kernel import (
+    EntryFunc,
     EnvState,
     StateNode,
 )
@@ -37,8 +38,9 @@ class TestEnvStateOrdering:
         Verify that each `EnvState` enum member is defined AFTER all the states it depends on (its parents).
         """
         self.env_ctx = VerifyingEnvContext()
-        self.env_ctx.graph_coordinates.sub_command = max_deps_graph_coordinates.sub_command
-        self.env_ctx.graph_coordinates.entry_func = max_deps_graph_coordinates.entry_func
+        self.env_ctx._entry_func = EntryFunc.func_boot_env
+        self.env_ctx._is_app = True
+        self.env_ctx._sub_command = max_deps_env_ctx._sub_command
 
         state_graph_instance = self.env_ctx.state_graph
 
@@ -75,8 +77,9 @@ class TestEnvStateOrdering:
         Verify that each state's implementation class is defined AFTER the classes of its parent states.
         """
         self.env_ctx = VerifyingEnvContext()
-        self.env_ctx.graph_coordinates.sub_command = max_deps_graph_coordinates.sub_command
-        self.env_ctx.graph_coordinates.entry_func = max_deps_graph_coordinates.entry_func
+        self.env_ctx._entry_func = EntryFunc.func_boot_env
+        self.env_ctx._is_app = True
+        self.env_ctx._sub_command = max_deps_env_ctx._sub_command
 
         state_graph_instance = self.env_ctx.state_graph
 

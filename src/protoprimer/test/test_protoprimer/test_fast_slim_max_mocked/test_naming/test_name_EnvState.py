@@ -76,6 +76,17 @@ class StateName(enum.Enum):
         ],
     )
 
+    state_is_app_defined = StateMeta(
+        env_state=EnvState.state_is_app_defined,
+        name_category=NameCategory.category_name_only,
+        name_components=[
+            KeyWord.key_state.value,
+            "is",
+            "app",
+            "defined",
+        ],
+    )
+
     state_input_is_stderr_log_enabled = StateMeta(
         env_state=EnvState.state_input_is_stderr_log_enabled,
         name_category=NameCategory.category_name_only,

@@ -30,7 +30,8 @@ def customize_env_context():
     """
 
     env_ctx = EnvContext()
-    env_ctx.graph_coordinates.entry_func = EntryFunc.func_boot_env
+    env_ctx._entry_func = EntryFunc.func_boot_env
+    env_ctx._is_app = True
 
     env_ctx.state_graph.register_factory(
         Bootstrapper_state_pre_commit_configured._state_name(),

@@ -30,9 +30,10 @@ def _make_tracking_env_ctx(
     prepare_venv: bool,
 ) -> TrackingEnvContext:
     env_ctx = TrackingEnvContext()
-    env_ctx.graph_coordinates.entry_func = entry_func
-    env_ctx.graph_coordinates.prepare_venv = prepare_venv
-    env_ctx.state_stride = StateStride.stride_src_updated
+    env_ctx._entry_func = entry_func
+    env_ctx._is_app = entry_func in (EntryFunc.func_boot_env, EntryFunc.func_run_main)
+    env_ctx._prepare_venv = prepare_venv
+    env_ctx._state_stride = StateStride.stride_src_updated
     return env_ctx
 
 
@@ -51,11 +52,11 @@ class TestEvaluatedStateSets:
     """
     Verifies the actual set of `EnvState` names evaluated during graph execution.
 
-    Each function uses a meaningful `GraphCoordinates` combination.
+    Each function uses a meaningful `EnvContext` coordinate combination.
 
     Each test method:
     *   Use fake filesystem with `create_max_layout` (inside `fat_mock_wrapper`).
-    *   Use `state_stride = stride_src_updated` to skip process-restart transitions.
+    *   Use `StateStride.stride_src_updated` to skip process-restart transitions.
     *   Runs the graph inside `fat_mock_wrapper` (which mocks execution side effects).
     *   Asserts the collected state names match the expected list.
 
@@ -75,13 +76,14 @@ class TestEvaluatedStateSets:
                 entry_func=EntryFunc.func_boot_env,
                 prepare_venv=True,
             )
-            env_ctx.proto_code = str(proto_kernel_abs_path)
+            env_ctx._proto_code = str(proto_kernel_abs_path)
             os.environ[EnvVar.var_PROTOPRIMER_PROTO_CODE.value] = str(proto_kernel_abs_path)
 
             with patch.object(sys, "argv", [str(proto_kernel_abs_path), SubCommand.command_boot.value]):
                 state_names = _eval_and_collect(env_ctx)
 
         assert state_names == [
+            EnvState.state_is_app_defined.name,
             EnvState.state_input_py_exec_var_loaded.name,
             EnvState.state_input_is_stderr_log_enabled.name,
             EnvState.state_input_stderr_log_level_var_loaded.name,
@@ -148,12 +150,13 @@ class TestEvaluatedStateSets:
                 entry_func=EntryFunc.func_start_app,
                 prepare_venv=False,
             )
-            env_ctx.proto_code = str(proto_kernel_abs_path)
+            env_ctx._proto_code = str(proto_kernel_abs_path)
             os.environ[EnvVar.var_PROTOPRIMER_PROTO_CODE.value] = str(proto_kernel_abs_path)
 
             state_names = _eval_and_collect(env_ctx)
 
         assert state_names == [
+            EnvState.state_is_app_defined.name,
             EnvState.state_input_is_stderr_log_enabled.name,
             EnvState.state_input_final_state_eval_finalized.name,
             EnvState.state_input_proto_code_file_abs_path_var_loaded.name,
@@ -219,11 +222,12 @@ class TestEvaluatedStateSets:
                 entry_func=EntryFunc.func_call_lib,
                 prepare_venv=False,
             )
-            env_ctx.proto_code = str(proto_kernel_abs_path)
+            env_ctx._proto_code = str(proto_kernel_abs_path)
 
             state_names = _eval_and_collect(env_ctx)
 
         assert state_names == [
+            EnvState.state_is_app_defined.name,
             EnvState.state_input_is_stderr_log_enabled.name,
             EnvState.state_input_final_state_eval_finalized.name,
             EnvState.state_proto_code_file_abs_path_inited.name,
@@ -288,7 +292,7 @@ class TestEvaluatedStateSets:
                 entry_func=EntryFunc.func_call_lib,
                 prepare_venv=False,
             )
-            env_ctx.proto_code = str(proto_kernel_abs_path)
+            env_ctx._proto_code = str(proto_kernel_abs_path)
 
             state_graph: TrackingStateGraph = env_ctx.state_graph
             state_graph.eval_state(EnvState.state_derived_conf_data_loaded.name)
@@ -335,13 +339,14 @@ class TestEvaluatedStateSets:
                 entry_func=EntryFunc.func_boot_env,
                 prepare_venv=False,
             )
-            env_ctx.proto_code = str(proto_kernel_abs_path)
+            env_ctx._proto_code = str(proto_kernel_abs_path)
             os.environ[EnvVar.var_PROTOPRIMER_PROTO_CODE.value] = str(proto_kernel_abs_path)
 
             with patch.object(sys, "argv", [str(proto_kernel_abs_path), SubCommand.command_boot.value]):
                 state_names = _eval_and_collect(env_ctx)
 
         assert state_names == [
+            EnvState.state_is_app_defined.name,
             EnvState.state_input_py_exec_var_loaded.name,
             EnvState.state_input_is_stderr_log_enabled.name,
             EnvState.state_input_stderr_log_level_var_loaded.name,

@@ -79,8 +79,8 @@ def run_print_graph(
 
     env_ctx = EnvContext()
 
-    env_ctx.graph_coordinates.sub_command = sub_command
-    env_ctx.graph_coordinates.entry_func = entry_func
+    env_ctx._sub_command = sub_command
+    env_ctx._entry_func = entry_func
     env_ctx.final_state = target_state.value.name
 
     # Ensure all nodes are initialized (populated into `state_graph.state_nodes`):

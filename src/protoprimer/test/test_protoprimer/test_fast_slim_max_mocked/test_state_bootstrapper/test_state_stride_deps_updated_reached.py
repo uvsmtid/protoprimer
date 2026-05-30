@@ -58,7 +58,7 @@ def test_stride_py_required_to_next_stride_deps_updated(
 
     mock_state_version_constraints_generated.return_value.eval_own_state.return_value = True
 
-    env_ctx.state_stride = StateStride.stride_py_required
+    env_ctx._state_stride = StateStride.stride_py_required
     mock_switch_python.return_value = StateStride.stride_deps_updated
 
     mock_state_proto_code_file_abs_path_inited.return_value.eval_own_state.return_value = "path/to/whatever"
@@ -112,7 +112,7 @@ def test_stride_deps_updated_to_same_stride_deps_updated(
 
     py_exec = StateStride.stride_deps_updated
 
-    env_ctx.state_stride = py_exec
+    env_ctx._state_stride = py_exec
 
     mock_state_proto_code_file_abs_path_inited.return_value.eval_own_state.return_value = "path/to/whatever"
     mock_state_input_sub_command_arg_loaded.return_value.eval_own_state.return_value = SubCommand.command_boot

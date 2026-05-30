@@ -301,9 +301,6 @@ class EntryFunc(enum.Enum):
     See FT_25_62_13_55.entry_func.md
     """
 
-    # It is triggered by both:
-    # *   `boot_env` API
-    # *   direct CLI execution via (e.g.) `./proto_kernel.py` executing `__main__` section:
     # FT_85_17_35_21.boot_env.md
     func_boot_env = "boot_env"
 
@@ -313,6 +310,9 @@ class EntryFunc(enum.Enum):
     # FT_85_17_35_21.call_lib.md:
     # A lib function call (e.g. `get_config`):
     func_call_lib = "call_lib"
+
+    # Direct CLI execution via (e.g.) `./proto_kernel.py` executing `__main__` section:
+    func_run_main = "run_main"
 
 
 class ExecMode(enum.Enum):
@@ -348,32 +348,6 @@ class SubCommand(enum.Enum):
     #       If we specify which `StateStride` or which `EnvState` to check things for, it might be useful.
     # TODO: implement? It must find its application to check things before `venv`.
     command_check = "check"
-
-
-class GraphCoordinates:
-    """
-    This class defines fields which specify coordinates for `NodeFactory`-ies during DAG constructions.
-
-    Each class of `StateNode` defines applicable coordinates for its creation via its `NodeFactory`.
-
-    See FT_77_15_06_50.dynamic_DAG.md
-    """
-
-    def __init__(self):
-
-        self.entry_func: EntryFunc | None = None
-
-        # For example:
-        # FT_42_03_79_73.reboot_env.md: True
-        # FT_05_08_64_67.start_app.md: False
-        self.prepare_venv: bool = True
-
-        # TODO: FT_77_15_06_50.dynamic_DAG.md:
-        #       `sub_command` should affect how things are set here,
-        #       but should not be part of `GraphCoordinates`.
-        self.sub_command: SubCommand | None = None
-
-        self.is_log_enabled: bool = False
 
 
 # TODO: TODO_31_76_38_60.sub_command_for_shell.md: remove "command" (when replaced by `shell_mode` or `run_mode`):
@@ -1754,7 +1728,7 @@ def trivial_factory(state_node_class: type[StateNodeSubclass]) -> type[StateNode
     """
     Class decorator that makes a `StateNode` class act like a factory for itself.
 
-    In other words, the creation of this DAG node does not depend on `GraphCoordinates`.
+    In other words, the creation of this DAG node does not depend on graph coordinates.
     """
 
     def create_state_node(self) -> StateNode:
@@ -1849,23 +1823,31 @@ class Bootstrapper_state_input_py_exec_var_loaded(AbstractCachingStateNode[State
 
 # noinspection PyPep8Naming
 @trivial_factory
+class Bootstrapper_state_is_app_defined(AbstractCachingStateNode[bool]):
+
+    _state_name = staticmethod(lambda: EnvState.state_is_app_defined.name)
+
+    def _eval_state_once(self) -> ValueType:
+        self.env_ctx._is_app = self.env_ctx._entry_func in [
+            EntryFunc.func_boot_env,
+            EntryFunc.func_run_main,
+        ]
+        return self.env_ctx._is_app
+
+
+# noinspection PyPep8Naming
+@trivial_factory
 class Bootstrapper_state_input_is_stderr_log_enabled(AbstractCachingStateNode[bool]):
 
     _state_name = staticmethod(lambda: EnvState.state_input_is_stderr_log_enabled.name)
 
     def _eval_state_once(self) -> ValueType:
 
-        is_log_always_enabled: bool
-        if self.env_ctx.graph_coordinates.entry_func == EntryFunc.func_boot_env:
-            is_log_always_enabled = True
+        if self.env_ctx._is_app:
+            self.env_ctx._is_log_enabled = True
         else:
-            is_log_always_enabled = False
-
-        if is_log_always_enabled:
-            self.env_ctx.graph_coordinates.is_log_enabled = True
-        else:
-            self.env_ctx.graph_coordinates.is_log_enabled = EnvVar.var_PROTOPRIMER_STDERR_LOG_LEVEL.value in os.environ
-        return self.env_ctx.graph_coordinates.is_log_enabled
+            self.env_ctx._is_log_enabled = EnvVar.var_PROTOPRIMER_STDERR_LOG_LEVEL.value in os.environ
+        return self.env_ctx._is_log_enabled
 
 
 # noinspection PyPep8Naming
@@ -1957,7 +1939,7 @@ class Bootstrapper_state_args_parsed_not_func_boot_env(AbstractCachingStateNode[
     _state_name = staticmethod(lambda: EnvState.state_args_parsed.name)
 
     def _eval_state_once(self) -> ValueType:
-        raise AssertionError(f"`{EnvState.state_args_parsed.name}` must not be evaluated for `{self.env_ctx.graph_coordinates.entry_func}`")
+        raise AssertionError(f"`{EnvState.state_args_parsed.name}` must not be evaluated for `{self.env_ctx._entry_func}`")
 
 
 # noinspection PyPep8Naming
@@ -1967,7 +1949,7 @@ class Factory_state_args_parsed(NodeFactory[StateStride]):
         # TODO: FT_77_15_06_50.dynamic_DAG.md:
         #       This step should not be executed without need to parse args.
         #       Do not fake args. Just redesign dependency. No?
-        if self.env_ctx.graph_coordinates.entry_func == EntryFunc.func_boot_env:
+        if self.env_ctx._is_app:
             return Bootstrapper_state_args_parsed_func_boot_env(self.env_ctx)
         else:
             return Bootstrapper_state_args_parsed_not_func_boot_env(self.env_ctx)
@@ -2042,7 +2024,7 @@ class Bootstrapper_state_input_stderr_log_level_eval_finalized_not_func_boot_env
 class Factory_state_input_stderr_log_level_eval_finalized(NodeFactory[int]):
 
     def create_state_node(self) -> StateNode[ValueType]:
-        if self.env_ctx.graph_coordinates.entry_func == EntryFunc.func_boot_env:
+        if self.env_ctx._is_app:
             return Bootstrapper_state_input_stderr_log_level_eval_finalized_func_boot_env(self.env_ctx)
         else:
             return Bootstrapper_state_input_stderr_log_level_eval_finalized_not_func_boot_env(self.env_ctx)
@@ -2105,9 +2087,9 @@ class Bootstrapper_state_input_sub_command_arg_loaded_func_boot_env(AbstractCach
                 ParsedArg.name_sub_command.value,
             )
         )
-        self.env_ctx.graph_coordinates.sub_command = state_input_sub_command_arg_loaded
-        if self.env_ctx.graph_coordinates.sub_command == SubCommand.command_start:
-            self.env_ctx.graph_coordinates.prepare_venv = False
+        self.env_ctx._sub_command = state_input_sub_command_arg_loaded
+        if self.env_ctx._sub_command == SubCommand.command_start:
+            self.env_ctx._prepare_venv = False
         return state_input_sub_command_arg_loaded
 
 
@@ -2121,14 +2103,9 @@ class Bootstrapper_state_input_sub_command_arg_loaded_func_start_app(AbstractCac
     _state_name = staticmethod(lambda: EnvState.state_input_sub_command_arg_loaded.name)
 
     def _eval_state_once(self) -> ValueType:
-        # TODO: FT_77_15_06_50.dynamic_DAG.md:
-        #       Remove `sub_command` from `graph_coordinates` eventually.
-        #       Indicate the action to do rather than what was specified on CLI
-        #       (especially when CLI is not available for all use cases).
-        sub_command: SubCommand = SubCommand.command_start
-        self.env_ctx.graph_coordinates.sub_command = sub_command
-        self.env_ctx.graph_coordinates.prepare_venv = False
-        return sub_command
+        self.env_ctx._sub_command = SubCommand.command_start
+        self.env_ctx._prepare_venv = False
+        return self.env_ctx._sub_command
 
 
 # TODO: FT_77_15_06_50.dynamic_DAG.md:
@@ -2150,9 +2127,9 @@ class Bootstrapper_state_input_sub_command_arg_loaded_func_call_lib(AbstractCach
 class Factory_state_input_sub_command_arg_loaded(NodeFactory[SubCommand]):
 
     def create_state_node(self) -> StateNode[ValueType]:
-        if self.env_ctx.graph_coordinates.entry_func == EntryFunc.func_boot_env:
+        if self.env_ctx._is_app:
             return Bootstrapper_state_input_sub_command_arg_loaded_func_boot_env(self.env_ctx)
-        elif self.env_ctx.graph_coordinates.entry_func == EntryFunc.func_start_app:
+        elif self.env_ctx._entry_func == EntryFunc.func_start_app:
             return Bootstrapper_state_input_sub_command_arg_loaded_func_start_app(self.env_ctx)
         else:
             return Bootstrapper_state_input_sub_command_arg_loaded_func_call_lib(self.env_ctx)
@@ -2205,7 +2182,7 @@ class Bootstrapper_state_input_final_state_eval_finalized_not_func_boot_env(Abst
 class Factory_state_input_final_state_eval_finalized(NodeFactory[StateStride]):
 
     def create_state_node(self) -> StateNode[ValueType]:
-        if self.env_ctx.graph_coordinates.entry_func == EntryFunc.func_boot_env:
+        if self.env_ctx._is_app:
             return Bootstrapper_state_input_final_state_eval_finalized_func_boot_env(self.env_ctx)
         else:
             return Bootstrapper_state_input_final_state_eval_finalized_not_func_boot_env(self.env_ctx)
@@ -2295,7 +2272,7 @@ class Bootstrapper_state_func_start_app_executed_log_disabled(Base_state_func_st
 class Factory_state_func_start_app_executed(NodeFactory[bool]):
 
     def create_state_node(self) -> StateNode[ValueType]:
-        if self.env_ctx.graph_coordinates.is_log_enabled:
+        if self.env_ctx._is_log_enabled:
             return Bootstrapper_state_func_start_app_executed_log_enabled(self.env_ctx)
         else:
             return Bootstrapper_state_func_start_app_executed_log_disabled(self.env_ctx)
@@ -2341,7 +2318,7 @@ class Bootstrapper_state_func_call_lib_executed_log_disabled(Base_state_func_cal
 class Factory_state_func_call_lib_executed(NodeFactory[bool]):
 
     def create_state_node(self) -> StateNode[ValueType]:
-        if self.env_ctx.graph_coordinates.is_log_enabled:
+        if self.env_ctx._is_log_enabled:
             return Bootstrapper_state_func_call_lib_executed_log_enabled(self.env_ctx)
         else:
             return Bootstrapper_state_func_call_lib_executed_log_disabled(self.env_ctx)
@@ -2353,6 +2330,7 @@ class Bootstrapper_state_everything_executed_func_boot_env(AbstractCachingStateN
 
     _parent_states = staticmethod(
         lambda: [
+            EnvState.state_is_app_defined.name,
             EnvState.state_func_boot_env_executed.name,
         ]
     )
@@ -2369,6 +2347,7 @@ class Bootstrapper_state_everything_executed_func_start_app(AbstractCachingState
 
     _parent_states = staticmethod(
         lambda: [
+            EnvState.state_is_app_defined.name,
             EnvState.state_input_is_stderr_log_enabled.name,
             EnvState.state_func_start_app_executed.name,
         ]
@@ -2386,6 +2365,7 @@ class Bootstrapper_state_everything_executed_func_call_lib(AbstractCachingStateN
 
     _parent_states = staticmethod(
         lambda: [
+            EnvState.state_is_app_defined.name,
             EnvState.state_input_is_stderr_log_enabled.name,
             EnvState.state_func_call_lib_executed.name,
         ]
@@ -2404,14 +2384,15 @@ class Factory_state_everything_executed(NodeFactory[StateStride]):
     """
 
     def create_state_node(self) -> StateNode[ValueType]:
-        if self.env_ctx.graph_coordinates.entry_func == EntryFunc.func_boot_env:
+        if self.env_ctx._entry_func in [
+            EntryFunc.func_boot_env,
+            EntryFunc.func_run_main,
+        ]:
             return Bootstrapper_state_everything_executed_func_boot_env(self.env_ctx)
-        elif self.env_ctx.graph_coordinates.entry_func == EntryFunc.func_start_app:
+        elif self.env_ctx._entry_func == EntryFunc.func_start_app:
             return Bootstrapper_state_everything_executed_func_start_app(self.env_ctx)
-        elif self.env_ctx.graph_coordinates.entry_func == EntryFunc.func_call_lib:
-            return Bootstrapper_state_everything_executed_func_call_lib(self.env_ctx)
         else:
-            raise RuntimeError(self.env_ctx.graph_coordinates.entry_func)
+            return Bootstrapper_state_everything_executed_func_call_lib(self.env_ctx)
 
 
 # noinspection PyPep8Naming
@@ -2526,11 +2507,11 @@ class Bootstrapper_state_proto_code_file_abs_path_inited_func_call_lib(AbstractC
     _state_name = staticmethod(lambda: EnvState.state_proto_code_file_abs_path_inited.name)
 
     def _eval_state_once(self) -> ValueType:
-        if self.env_ctx.proto_code is None:
-            raise AssertionError(f"`proto_code` [{self.env_ctx.proto_code}] cannot be [{self.env_ctx.proto_code}]")
-        if not os.path.isfile(self.env_ctx.proto_code):
-            raise AssertionError(f"`proto_code` [{self.env_ctx.proto_code}] is not a file")
-        return self.env_ctx.proto_code
+        if self.env_ctx._proto_code is None:
+            raise AssertionError(f"`proto_code` [{self.env_ctx._proto_code}] cannot be [{self.env_ctx._proto_code}]")
+        if not os.path.isfile(self.env_ctx._proto_code):
+            raise AssertionError(f"`proto_code` [{self.env_ctx._proto_code}] is not a file")
+        return self.env_ctx._proto_code
 
 
 # noinspection PyPep8Naming
@@ -2559,7 +2540,7 @@ class Bootstrapper_state_proto_code_file_abs_path_inited_not_func_call_lib(Abstr
         else:
             log_python_context()
             if os.environ.get(EnvVar.var_PROTOPRIMER_MOCKED_RESTART.value, None) is None:
-                if self.env_ctx.graph_coordinates.entry_func == EntryFunc.func_boot_env:
+                if self.env_ctx._is_app:
                     if self.env_ctx.get_stride().value == StateStride.stride_py_arbitrary.value:
                         state_proto_code_file_abs_path_inited = os.path.abspath(__file__)
                     else:
@@ -2594,7 +2575,7 @@ class Bootstrapper_state_proto_code_file_abs_path_inited_not_func_call_lib(Abstr
 class Factory_state_proto_code_file_abs_path_inited(NodeFactory[StateStride]):
 
     def create_state_node(self) -> StateNode[ValueType]:
-        if self.env_ctx.graph_coordinates.entry_func == EntryFunc.func_call_lib:
+        if self.env_ctx._entry_func == EntryFunc.func_call_lib:
             return Bootstrapper_state_proto_code_file_abs_path_inited_func_call_lib(self.env_ctx)
         else:
             return Bootstrapper_state_proto_code_file_abs_path_inited_not_func_call_lib(self.env_ctx)
@@ -2980,7 +2961,7 @@ class Bootstrapper_state_selected_env_dir_rel_path_inited_not_func_boot_env(Base
 class Factory_state_selected_env_dir_rel_path_inited(NodeFactory[StateStride]):
 
     def create_state_node(self) -> StateNode[ValueType]:
-        if self.env_ctx.graph_coordinates.entry_func == EntryFunc.func_boot_env:
+        if self.env_ctx._is_app:
             return Bootstrapper_state_selected_env_dir_rel_path_inited_func_boot_env(self.env_ctx)
         else:
             return Bootstrapper_state_selected_env_dir_rel_path_inited_not_func_boot_env(self.env_ctx)
@@ -3030,10 +3011,7 @@ class Bootstrapper_state_local_conf_symlink_abs_path_inited(AbstractCachingState
         if os.path.exists(state_local_conf_symlink_abs_path_inited):
             if os.path.islink(state_local_conf_symlink_abs_path_inited):
                 if os.path.isdir(state_local_conf_symlink_abs_path_inited):
-                    if self.env_ctx.graph_coordinates.entry_func in [
-                        EntryFunc.func_start_app,
-                        EntryFunc.func_call_lib,
-                    ]:
+                    if not self.env_ctx._is_app:
                         # Nothing to do:
                         pass
                     else:
@@ -3708,7 +3686,7 @@ class Factory_state_stride_py_required_reached(NodeFactory[StateStride]):
     def create_state_node(self) -> StateNode[ValueType]:
         # The only reason for `EnvState.state_stride_py_required_reached`
         # is to use the required `python` to create a `venv`.
-        if self.env_ctx.graph_coordinates.prepare_venv:
+        if self.env_ctx._prepare_venv:
             # TODO: FT_77_15_06_50.dynamic_DAG.md:
             #       Rename to avoid `command_start` in its name:
             return Bootstrapper_state_stride_py_required_reached_not_command_start(self.env_ctx)
@@ -4339,7 +4317,7 @@ class Bootstrapper_state_input_command_line_not_func_boot_env(AbstractCachingSta
 class Factory_state_input_command_line(NodeFactory[str]):
 
     def create_state_node(self) -> StateNode[ValueType]:
-        if self.env_ctx.graph_coordinates.entry_func == EntryFunc.func_boot_env:
+        if self.env_ctx._is_app:
             return Bootstrapper_state_input_command_line_func_boot_env(self.env_ctx)
         else:
             return Bootstrapper_state_input_command_line_not_func_boot_env(self.env_ctx)
@@ -4402,6 +4380,8 @@ class EnvState(enum.Enum):
     """
 
     state_input_py_exec_var_loaded = Bootstrapper_state_input_py_exec_var_loaded
+
+    state_is_app_defined = Bootstrapper_state_is_app_defined
 
     state_input_is_stderr_log_enabled = Bootstrapper_state_input_is_stderr_log_enabled
 
@@ -4658,20 +4638,51 @@ class MutableValue(Generic[ValueType]):
 
 
 class EnvContext:
+    """
+    Transient state used by `NodeFactory`-ies during DAG evaluation.
+
+    FT_77_15_06_50.dynamic_DAG.md
+    """
 
     def __init__(self):
-        self.graph_coordinates = GraphCoordinates()
+        """
+        Most of the field values here are conceptually "graph coordinates"
+        that affect what implementation is selected by `NodeFactory`.
+        """
 
-        self.state_graph: StateGraph = self._create_state_graph()
+        self._entry_func: EntryFunc | None = None
 
-        self.state_stride: StateStride = StateStride.stride_py_unknown
+        self._state_stride: StateStride = StateStride.stride_py_unknown
+
+        # FT_42_03_79_73.reboot_env.md
+        # FT_62_88_55_10.CLI_compatibility.md
+        self._is_app: bool | None = None
+
+        # For example:
+        # FT_42_03_79_73.reboot_env.md: True
+        # FT_05_08_64_67.start_app.md: False
+        self._prepare_venv: bool = True
+
+        # TODO: FT_77_15_06_50.dynamic_DAG.md:
+        #       Do not use `_sub_command` directly.
+        #       Instead, use it to set a more specific field based on `SubCommand`
+        #       (which may also be set based on other input).
+        self._sub_command: SubCommand | None = None
+
+        self._is_log_enabled: bool = False
 
         # TODO: FT_77_15_06_50.dynamic_DAG.md: should it even be here?
+        #       In some cases yes, in some cases, it may need to be `None`.
         # TODO: Do not set it on `EnvContext` - use bootstrap-able values:
         self.final_state: str = TargetState.target_proto_bootstrap_completed.value.name
 
+        # TODO: FT_77_15_06_50.dynamic_DAG.md: do we even need it?
+        #       For dependent states, it is evaluated.
+        #       For call_lib, get_proto_code_abs_path() is used.
         # Same as `EnvVar.var_PROTOPRIMER_PROTO_CODE` for non-restart-able `EntryFunc.func_call_lib`:
-        self.proto_code: str | None = None
+        self._proto_code: str | None = None
+
+        self.state_graph: StateGraph = self._create_state_graph()
 
         self._register_graph_node_factories()
 
@@ -4692,16 +4703,16 @@ class EnvContext:
             )
 
     def get_stride(self) -> StateStride:
-        return self.state_stride
+        return self._state_stride
 
     def set_max_stride(
         self,
         next_stride: StateStride,
     ) -> StateStride:
         if not self.has_stride_reached(next_stride):
-            self.state_stride = next_stride
-        log_stride.set(self.state_stride)
-        return self.state_stride
+            self._state_stride = next_stride
+        log_stride.set(self._state_stride)
+        return self._state_stride
 
     def has_stride_reached(
         self,
@@ -5055,7 +5066,7 @@ def can_print_effective_config(state_node: StateNode) -> bool:
         state_node.env_ctx.get_stride().value
         # `StateStride.stride_py_arbitrary` ensures that the path to `proto_code` is outside `venv`:
         == StateStride.stride_py_arbitrary.value
-        and state_node.env_ctx.graph_coordinates.sub_command == SubCommand.command_eval
+        and state_node.env_ctx._sub_command == SubCommand.command_eval
     )
 
 
@@ -5585,9 +5596,11 @@ def get_config(conf_leap: ConfLeap) -> dict:
         raise ValueError(f"Unsupported `ConfLeap` value: {conf_leap}")
 
     env_ctx = EnvContext()
-    env_ctx.graph_coordinates.entry_func = EntryFunc.func_call_lib
-    env_ctx.graph_coordinates.prepare_venv = False
-    env_ctx.proto_code = get_proto_code_abs_path()
+    env_ctx._entry_func = EntryFunc.func_call_lib
+    env_ctx._prepare_venv = False
+    env_ctx._proto_code = get_proto_code_abs_path()
+    env_ctx.final_state = _conf_leap_to_state[conf_leap]
+    env_ctx.state_graph.eval_state(TargetState.target_everything_executed.value.name)
     return env_ctx.state_graph.eval_state(_conf_leap_to_state[conf_leap])
 
 
@@ -5679,11 +5692,11 @@ def _start_main(
             imported_EntryFunc = getattr(imported_kernel, EntryFunc.__name__)
             imported_run_process = getattr(imported_kernel, run_process.__name__)
             env_ctx = imported_EnvContext()
-            env_ctx.graph_coordinates.entry_func = imported_EntryFunc[entry_func.name]
+            env_ctx._entry_func = imported_EntryFunc[entry_func.name]
             imported_run_process(env_ctx)
         else:
             env_ctx = EnvContext()
-            env_ctx.graph_coordinates.entry_func = entry_func
+            env_ctx._entry_func = entry_func
             run_process(env_ctx)
     except ImportError as e:
         if curr_py_exec.value >= StateStride.stride_src_updated.value:
@@ -5699,7 +5712,7 @@ def _start_main(
 
 def _proto_main() -> None:
     env_ctx = EnvContext()
-    env_ctx.graph_coordinates.entry_func = EntryFunc.func_boot_env
+    env_ctx._entry_func = EntryFunc.func_run_main
     run_process(env_ctx)
 
 

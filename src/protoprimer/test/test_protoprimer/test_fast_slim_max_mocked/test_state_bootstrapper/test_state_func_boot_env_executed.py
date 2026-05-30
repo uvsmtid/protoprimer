@@ -24,7 +24,7 @@ from protoprimer.primer_kernel import (
 @pytest.fixture
 def env_ctx():
     ctx = EnvContext()
-    ctx.graph_coordinates.entry_func = EntryFunc.func_boot_env
+    ctx._entry_func = EntryFunc.func_boot_env
     return ctx
 
 

@@ -96,7 +96,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     ):
 
         # given:
-        self.env_ctx.graph_coordinates.sub_command = SubCommand.command_boot
+        self.env_ctx._sub_command = SubCommand.command_boot
 
         assert_parent_factories_mocked(
             self.env_ctx,
@@ -159,8 +159,8 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_input_start_id_var_loaded,
     ):
         # given:
-        self.env_ctx.graph_coordinates.sub_command = SubCommand.command_boot
-        self.env_ctx.state_stride = StateStride.stride_py_required
+        self.env_ctx._sub_command = SubCommand.command_boot
+        self.env_ctx._state_stride = StateStride.stride_py_required
 
         # when:
         actual_result = self.env_ctx.state_graph.eval_state(EnvState.state_stride_py_required_reached.name)
@@ -208,7 +208,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_input_start_id_var_loaded,
     ):
         # given:
-        self.env_ctx.graph_coordinates.sub_command = SubCommand.command_boot
+        self.env_ctx._sub_command = SubCommand.command_boot
         mock_state_selected_python_file_abs_path_inited.return_value.eval_own_state.return_value = non_default_file_abs_path_python
         mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = non_default_dir_abs_path_venv
 
