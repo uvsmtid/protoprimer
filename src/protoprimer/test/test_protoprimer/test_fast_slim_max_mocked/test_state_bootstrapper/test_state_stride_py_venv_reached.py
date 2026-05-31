@@ -115,7 +115,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # when:
 
-        self.env_ctx.state_graph.eval_state(EnvState.state_stride_py_venv_reached.name)
+        self.env_ctx.eval_state(EnvState.state_stride_py_venv_reached.name)
 
         # then:
 
@@ -193,7 +193,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # when:
         with self.assertRaises(AssertionError) as cm:
-            self.env_ctx.state_graph.eval_state(EnvState.state_stride_py_venv_reached.name)
+            self.env_ctx.eval_state(EnvState.state_stride_py_venv_reached.name)
 
         # then:
         self.assertIn(
@@ -251,7 +251,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # when:
         with self.assertRaises(AssertionError) as cm:
-            self.env_ctx.state_graph.eval_state(EnvState.state_stride_py_venv_reached.name)
+            self.env_ctx.eval_state(EnvState.state_stride_py_venv_reached.name)
 
         # then:
         self.assertIn(
@@ -311,7 +311,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # when:
         with self.assertRaises(AssertionError) as cm:
-            self.env_ctx.state_graph.eval_state(EnvState.state_stride_py_venv_reached.name)
+            self.env_ctx.eval_state(EnvState.state_stride_py_venv_reached.name)
 
         # then:
         self.assertIn(
@@ -371,7 +371,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # when:
 
-        self.env_ctx.state_graph.eval_state(EnvState.state_stride_py_venv_reached.name)
+        self.env_ctx.eval_state(EnvState.state_stride_py_venv_reached.name)
 
         # then:
 
@@ -452,7 +452,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # when:
 
-        self.env_ctx.state_graph.eval_state(EnvState.state_stride_py_venv_reached.name)
+        self.env_ctx.eval_state(EnvState.state_stride_py_venv_reached.name)
 
         # then:
 
@@ -537,7 +537,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_local_conf_file_abs_path_inited.return_value.eval_own_state.return_value = "any/path"
 
         # when:
-        self.env_ctx.state_graph.eval_state(EnvState.state_stride_py_venv_reached.name)
+        self.env_ctx.eval_state(EnvState.state_stride_py_venv_reached.name)
 
         # then:
         path_to_venv_python = os.path.join(
@@ -606,7 +606,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # when:
 
-        actual_result = self.env_ctx.state_graph.eval_state(EnvState.state_stride_py_venv_reached.name)
+        actual_result = self.env_ctx.eval_state(EnvState.state_stride_py_venv_reached.name)
 
         # then:
 
@@ -669,7 +669,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # when:
 
-        self.env_ctx.state_graph.eval_state(EnvState.state_stride_py_venv_reached.name)
+        self.env_ctx.eval_state(EnvState.state_stride_py_venv_reached.name)
 
         # then:
 
@@ -759,7 +759,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # when:
         with self.assertRaises(AssertionError) as cm:
-            self.env_ctx.state_graph.eval_state(EnvState.state_stride_py_venv_reached.name)
+            self.env_ctx.eval_state(EnvState.state_stride_py_venv_reached.name)
 
         # then:
         self.assertIn("was not created by this driver", str(cm.exception))

@@ -65,7 +65,7 @@ def test_conf_file_exists(
 
     # when:
 
-    state_value = env_ctx.state_graph.eval_state(
+    state_value = env_ctx.eval_state(
         Bootstrapper_state_client_conf_file_data_loaded_rendered._state_name(),
     )
 
@@ -110,7 +110,7 @@ def test_conf_file_missing(
     # when:
 
     caplog.set_level(WARNING)
-    state_value = env_ctx.state_graph.eval_state(
+    state_value = env_ctx.eval_state(
         Bootstrapper_state_client_conf_file_data_loaded_rendered._state_name(),
     )
 

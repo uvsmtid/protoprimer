@@ -16,8 +16,8 @@ from protoprimer.primer_kernel import (
     Factory_state_args_parsed,
     Bootstrapper_state_input_stderr_log_level_var_loaded,
     ConfConstInput,
+    ContextBuilder,
     EntryFunc,
-    EnvContext,
     EnvState,
     EnvVar,
     SyntaxArg,
@@ -26,10 +26,13 @@ from protoprimer.primer_kernel import (
 
 @pytest.fixture
 def env_ctx():
-    ctx = EnvContext()
-    ctx._entry_func = EntryFunc.func_boot_env
-    ctx._is_app = True
-    return ctx
+    return (
+        ContextBuilder()
+        .entry_func(EntryFunc.func_boot_env)
+        .is_app(True)
+        #
+        .build_context()
+    )
 
 
 def test_relationship():
@@ -57,7 +60,7 @@ def test_default_case_no_flags_uses_default_from_var(
 
     # when:
 
-    state_value = env_ctx.state_graph.eval_state(EnvState.state_input_stderr_log_level_eval_finalized.name)
+    state_value = env_ctx.eval_state(EnvState.state_input_stderr_log_level_eval_finalized.name)
 
     # then:
 
@@ -89,7 +92,7 @@ def test_default_case_no_flags_uses_warning(
 
     # when:
 
-    state_value = env_ctx.state_graph.eval_state(EnvState.state_input_stderr_log_level_eval_finalized.name)
+    state_value = env_ctx.eval_state(EnvState.state_input_stderr_log_level_eval_finalized.name)
 
     # then:
 
@@ -121,7 +124,7 @@ def test_quiet_1_only(
 
     # when:
 
-    state_value = env_ctx.state_graph.eval_state(EnvState.state_input_stderr_log_level_eval_finalized.name)
+    state_value = env_ctx.eval_state(EnvState.state_input_stderr_log_level_eval_finalized.name)
 
     # then:
 
@@ -153,7 +156,7 @@ def test_quiet_2_only(
 
     # when:
 
-    state_value = env_ctx.state_graph.eval_state(EnvState.state_input_stderr_log_level_eval_finalized.name)
+    state_value = env_ctx.eval_state(EnvState.state_input_stderr_log_level_eval_finalized.name)
 
     # then:
 
@@ -185,7 +188,7 @@ def test_quiet_5_only(
 
     # when:
 
-    state_value = env_ctx.state_graph.eval_state(EnvState.state_input_stderr_log_level_eval_finalized.name)
+    state_value = env_ctx.eval_state(EnvState.state_input_stderr_log_level_eval_finalized.name)
 
     # then:
 
@@ -217,7 +220,7 @@ def test_verbose_1_only(
 
     # when:
 
-    state_value = env_ctx.state_graph.eval_state(EnvState.state_input_stderr_log_level_eval_finalized.name)
+    state_value = env_ctx.eval_state(EnvState.state_input_stderr_log_level_eval_finalized.name)
 
     # then:
 
@@ -249,7 +252,7 @@ def test_verbose_2_only(
 
     # when:
 
-    state_value = env_ctx.state_graph.eval_state(EnvState.state_input_stderr_log_level_eval_finalized.name)
+    state_value = env_ctx.eval_state(EnvState.state_input_stderr_log_level_eval_finalized.name)
 
     # then:
 
@@ -281,7 +284,7 @@ def test_verbose_3_only(
 
     # when:
 
-    state_value = env_ctx.state_graph.eval_state(EnvState.state_input_stderr_log_level_eval_finalized.name)
+    state_value = env_ctx.eval_state(EnvState.state_input_stderr_log_level_eval_finalized.name)
 
     # then:
 
@@ -313,7 +316,7 @@ def test_verbose_4_only(
 
     # when:
 
-    state_value = env_ctx.state_graph.eval_state(EnvState.state_input_stderr_log_level_eval_finalized.name)
+    state_value = env_ctx.eval_state(EnvState.state_input_stderr_log_level_eval_finalized.name)
 
     # then:
 
@@ -345,7 +348,7 @@ def test_quiet_and_verbose(
 
     # when:
 
-    state_value = env_ctx.state_graph.eval_state(EnvState.state_input_stderr_log_level_eval_finalized.name)
+    state_value = env_ctx.eval_state(EnvState.state_input_stderr_log_level_eval_finalized.name)
 
     # then:
 
@@ -378,7 +381,7 @@ def test_env_var_not_updated_read_only(
 
     # when:
 
-    state_value = env_ctx.state_graph.eval_state(EnvState.state_input_stderr_log_level_eval_finalized.name)
+    state_value = env_ctx.eval_state(EnvState.state_input_stderr_log_level_eval_finalized.name)
 
     # then:
 

@@ -6,8 +6,8 @@ import logging
 
 from protoprimer.primer_kernel import (
     AbstractCachingStateNode,
+    ContextBuilder,
     EntryFunc,
-    EnvContext,
     run_process,
     TargetState,
     trivial_factory,
@@ -51,17 +51,18 @@ def customize_env_context():
     See UC_10_80_27_57.extend_DAG.md
     """
 
-    # TODO: Make it simpler: have a builder? At least env_ctx.populate_dependencies() does not have to be explicit.
-
-    env_ctx = EnvContext()
-    env_ctx._entry_func = EntryFunc.func_boot_env
-
-    env_ctx.state_graph.register_factory(
-        CustomEnvState.state_hello_world_printed.name,
-        Bootstrapper_state_hello_world_printed(env_ctx),
+    env_ctx = (
+        ContextBuilder()
+        .entry_func(EntryFunc.func_boot_env)
+        .final_state(CustomEnvState.state_hello_world_printed.name)
+        #
+        .build_context()
     )
 
-    env_ctx.final_state = CustomEnvState.state_hello_world_printed.name
+    env_ctx.register_factory(
+        CustomEnvState.state_hello_world_printed.name,
+        Bootstrapper_state_hello_world_printed,
+    )
 
     return env_ctx
 

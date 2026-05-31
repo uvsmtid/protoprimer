@@ -42,7 +42,7 @@ class TestEnvStateOrdering:
         self.env_ctx._is_app = True
         self.env_ctx._sub_command = max_deps_env_ctx._sub_command
 
-        state_graph_instance = self.env_ctx.state_graph
+        state_graph_instance = self.env_ctx._state_graph
 
         # Create a mapping from the state name to its ordinal position in the enum:
         env_state_name_to_ordinal = {env_state.name: index for index, env_state in enumerate(EnvState)}
@@ -81,7 +81,7 @@ class TestEnvStateOrdering:
         self.env_ctx._is_app = True
         self.env_ctx._sub_command = max_deps_env_ctx._sub_command
 
-        state_graph_instance = self.env_ctx.state_graph
+        state_graph_instance = self.env_ctx._state_graph
 
         # Create a mapping from the state name to the line number of its implementation class:
         state_name_to_line_number = {

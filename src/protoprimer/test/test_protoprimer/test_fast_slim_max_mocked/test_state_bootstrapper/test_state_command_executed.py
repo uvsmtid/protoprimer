@@ -64,7 +64,7 @@ def test_command_executed_in_bash(
     mock_state_local_cache_dir_abs_path_inited.return_value.eval_own_state.return_value = "/fake/cache"
 
     # when:
-    env_ctx.state_graph.eval_state(EnvState.state_command_executed.name)
+    env_ctx.eval_state(EnvState.state_command_executed.name)
 
     # then:
     mock_os_execve.assert_called_once_with(
@@ -119,7 +119,7 @@ def test_command_executed_in_zsh(
     mock_state_local_cache_dir_abs_path_inited.return_value.eval_own_state.return_value = "/fake/cache"
 
     # when:
-    env_ctx.state_graph.eval_state(EnvState.state_command_executed.name)
+    env_ctx.eval_state(EnvState.state_command_executed.name)
 
     # then:
     # In ShellDriverZsh, there are no extra shell_args, just an env var `ZDOTDIR`.
@@ -170,7 +170,7 @@ def test_command_not_executed_when_no_command_line_provided(
     mock_state_stride_src_updated_reached.return_value.eval_own_state.return_value = StateStride.stride_src_updated
 
     # when:
-    state_value = env_ctx.state_graph.eval_state(EnvState.state_command_executed.name)
+    state_value = env_ctx.eval_state(EnvState.state_command_executed.name)
 
     # then:
     assert state_value == 0
@@ -213,7 +213,7 @@ def test_command_executed_empty(
     mock_state_local_cache_dir_abs_path_inited.return_value.eval_own_state.return_value = "/fake/cache"
 
     # when:
-    env_ctx.state_graph.eval_state(EnvState.state_command_executed.name)
+    env_ctx.eval_state(EnvState.state_command_executed.name)
 
     # then:
     mock_os_execve.assert_called_once_with(
@@ -268,7 +268,7 @@ def test_command_executed_with_whitespace(
     mock_state_local_cache_dir_abs_path_inited.return_value.eval_own_state.return_value = "/fake/cache"
 
     # when:
-    env_ctx.state_graph.eval_state(EnvState.state_command_executed.name)
+    env_ctx.eval_state(EnvState.state_command_executed.name)
 
     # then:
     mock_os_execve.assert_called_once_with(

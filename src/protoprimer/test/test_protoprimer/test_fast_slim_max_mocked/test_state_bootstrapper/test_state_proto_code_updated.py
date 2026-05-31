@@ -76,7 +76,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # when:
 
-        self.env_ctx.state_graph.eval_state(EnvState.state_proto_code_updated.name)
+        self.env_ctx.eval_state(EnvState.state_proto_code_updated.name)
 
         # then:
 
@@ -121,7 +121,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         # when:
         with patch.dict("sys.modules", {"protoprimer": None}):
             with self.assertLogs(primer_kernel.logger, level="WARNING") as cm:
-                result = self.env_ctx.state_graph.eval_state(EnvState.state_proto_code_updated.name)
+                result = self.env_ctx.eval_state(EnvState.state_proto_code_updated.name)
 
         # then:
         self.assertFalse(result)

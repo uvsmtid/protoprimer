@@ -60,6 +60,14 @@ class StateMeta(enum.Enum):
         env_state=EnvState.state_input_sub_command_arg_loaded,
         sub_graph=SubGraph.graph_input,
     )
+    state_print_conf_finalized = StateNodeMeta(
+        env_state=EnvState.state_print_conf_finalized,
+        sub_graph=SubGraph.graph_input,
+    )
+    state_prepare_venv_finalized = StateNodeMeta(
+        env_state=EnvState.state_prepare_venv_finalized,
+        sub_graph=SubGraph.graph_input,
+    )
     state_input_final_state_eval_finalized = StateNodeMeta(
         env_state=EnvState.state_input_final_state_eval_finalized,
         sub_graph=SubGraph.graph_input,

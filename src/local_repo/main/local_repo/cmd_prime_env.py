@@ -7,8 +7,8 @@ from metaprimer.pre_commit import (
     Bootstrapper_state_pre_commit_configured,
 )
 from protoprimer.primer_kernel import (
+    ContextBuilder,
     EntryFunc,
-    EnvContext,
     run_process,
 )
 
@@ -29,16 +29,19 @@ def customize_env_context():
     See UC_10_80_27_57.extend_DAG.md
     """
 
-    env_ctx = EnvContext()
-    env_ctx._entry_func = EntryFunc.func_boot_env
-    env_ctx._is_app = True
-
-    env_ctx.state_graph.register_factory(
-        Bootstrapper_state_pre_commit_configured._state_name(),
-        Bootstrapper_state_pre_commit_configured(env_ctx),
+    env_ctx = (
+        ContextBuilder()
+        .entry_func(EntryFunc.func_boot_env)
+        .is_app(True)
+        .final_state(CustomEnvState.state_pre_commit_configured.name)
+        #
+        .build_context()
     )
 
-    env_ctx.final_state = CustomEnvState.state_pre_commit_configured.name
+    env_ctx.register_factory(
+        Bootstrapper_state_pre_commit_configured._state_name(),
+        Bootstrapper_state_pre_commit_configured,
+    )
 
     return env_ctx
 

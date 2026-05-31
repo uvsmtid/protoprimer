@@ -184,6 +184,28 @@ class StateName(enum.Enum):
         ],
     )
 
+    state_print_conf_finalized = StateMeta(
+        env_state=EnvState.state_print_conf_finalized,
+        name_category=NameCategory.category_name_only,
+        name_components=[
+            KeyWord.key_state.value,
+            KeyWord.key_print.value,
+            KeyWord.key_conf.value,
+            CompletedAction.action_finalized.value,
+        ],
+    )
+
+    state_prepare_venv_finalized = StateMeta(
+        env_state=EnvState.state_prepare_venv_finalized,
+        name_category=NameCategory.category_name_only,
+        name_components=[
+            KeyWord.key_state.value,
+            KeyWord.key_prepare.value,
+            KeyWord.key_venv.value,
+            CompletedAction.action_finalized.value,
+        ],
+    )
+
     state_input_final_state_eval_finalized = StateMeta(
         env_state=EnvState.state_input_final_state_eval_finalized,
         name_category=NameCategory.category_named_value,

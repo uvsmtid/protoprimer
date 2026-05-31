@@ -69,7 +69,7 @@ def test_stride_py_required_to_next_stride_deps_updated(
 
     # when:
 
-    state_value = env_ctx.state_graph.eval_state(EnvState.state_stride_deps_updated_reached.name)
+    state_value = env_ctx.eval_state(EnvState.state_stride_deps_updated_reached.name)
 
     # then:
 
@@ -120,7 +120,7 @@ def test_stride_deps_updated_to_same_stride_deps_updated(
 
     # when:
 
-    state_value = env_ctx.state_graph.eval_state(EnvState.state_stride_deps_updated_reached.name)
+    state_value = env_ctx.eval_state(EnvState.state_stride_deps_updated_reached.name)
 
     # then:
 

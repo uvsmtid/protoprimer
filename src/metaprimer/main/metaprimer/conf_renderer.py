@@ -18,6 +18,7 @@ from protoprimer.primer_kernel import (
     ConfField,
     ConfLeap,
     EntryFunc,
+    ContextBuilder,
     EnvContext,
     EnvState,
     missing_conf_file_message,
@@ -1892,31 +1893,34 @@ class Bootstrapper_state_all_conf_data_rendered(AbstractCachingStateNode[int]):
 
 def customize_env_context():
 
-    env_ctx = EnvContext()
-    env_ctx._entry_func = EntryFunc.func_boot_env
-    env_ctx._is_app = True
+    env_ctx = (
+        ContextBuilder()
+        .entry_func(EntryFunc.func_boot_env)
+        .is_app(True)
+        .final_state(RendererState.state_all_conf_data_rendered.name)
+        #
+        .build_context()
+    )
 
-    env_ctx.state_graph.register_factory(
+    env_ctx.register_factory(
         Bootstrapper_state_primer_conf_file_data_loaded_rendered._state_name(),
-        Bootstrapper_state_primer_conf_file_data_loaded_rendered(env_ctx),
+        Bootstrapper_state_primer_conf_file_data_loaded_rendered,
     )
-    env_ctx.state_graph.register_factory(
+    env_ctx.register_factory(
         Bootstrapper_state_client_conf_file_data_loaded_rendered._state_name(),
-        Bootstrapper_state_client_conf_file_data_loaded_rendered(env_ctx),
+        Bootstrapper_state_client_conf_file_data_loaded_rendered,
     )
-    env_ctx.state_graph.register_factory(
+    env_ctx.register_factory(
         Bootstrapper_state_env_conf_file_data_loaded_rendered._state_name(),
-        Bootstrapper_state_env_conf_file_data_loaded_rendered(env_ctx),
+        Bootstrapper_state_env_conf_file_data_loaded_rendered,
     )
-    env_ctx.state_graph.register_factory(
+    env_ctx.register_factory(
         Bootstrapper_state_derived_conf_data_loaded_rendered._state_name(),
-        Bootstrapper_state_derived_conf_data_loaded_rendered(env_ctx),
+        Bootstrapper_state_derived_conf_data_loaded_rendered,
     )
-    env_ctx.state_graph.register_factory(
+    env_ctx.register_factory(
         Bootstrapper_state_all_conf_data_rendered._state_name(),
-        Bootstrapper_state_all_conf_data_rendered(env_ctx),
+        Bootstrapper_state_all_conf_data_rendered,
     )
-
-    env_ctx.final_state = RendererState.state_all_conf_data_rendered.name
 
     return env_ctx

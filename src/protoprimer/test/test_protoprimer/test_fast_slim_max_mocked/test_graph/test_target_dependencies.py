@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 from protoprimer.primer_kernel import (
+    ContextBuilder,
     EntryFunc,
-    EnvContext,
     EnvState,
     SubCommand,
     TargetState,
@@ -35,11 +35,15 @@ class TestTargetDependencies:
     ):
         # given:
 
-        env_context_instance = EnvContext()
-        env_context_instance._entry_func = EntryFunc.func_boot_env
-        env_context_instance._is_app = True
-        env_context_instance._sub_command = SubCommand.command_boot
-        state_graph_instance = env_context_instance.state_graph
+        env_context_instance = (
+            ContextBuilder()
+            .entry_func(EntryFunc.func_boot_env)
+            .is_app(True)
+            .sub_command(SubCommand.command_boot)
+            #
+            .build_context()
+        )
+        state_graph_instance = env_context_instance._state_graph
         final_state_name = EnvState.state_command_executed.name
 
         # when:
@@ -79,11 +83,15 @@ class TestTargetDependencies:
     ):
         # given:
 
-        env_context_instance = EnvContext()
-        env_context_instance._entry_func = EntryFunc.func_boot_env
-        env_context_instance._is_app = True
-        env_context_instance._sub_command = SubCommand.command_boot
-        state_graph_instance = env_context_instance.state_graph
+        env_context_instance = (
+            ContextBuilder()
+            .entry_func(EntryFunc.func_boot_env)
+            .is_app(True)
+            .sub_command(SubCommand.command_boot)
+            #
+            .build_context()
+        )
+        state_graph_instance = env_context_instance._state_graph
         final_state_name = TargetState.target_everything_executed.value.name
 
         # when:

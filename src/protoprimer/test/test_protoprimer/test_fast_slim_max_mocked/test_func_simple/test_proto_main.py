@@ -32,7 +32,7 @@ def test_main_success(
     # given:
     mock_env_ctx_instance = MagicMock()
     mock_env_context.return_value = mock_env_ctx_instance
-    mock_env_ctx_instance.state_graph.eval_state.return_value = True
+    mock_env_ctx_instance.eval_state.return_value = True
 
     # when:
     _proto_main()
@@ -40,7 +40,7 @@ def test_main_success(
     # then:
     mock_ensure_min_python_version.assert_called_once()
     mock_env_context.assert_called_once()
-    mock_env_ctx_instance.state_graph.eval_state.assert_called_once_with(
+    mock_env_ctx_instance.eval_state.assert_called_once_with(
         TargetState.target_everything_executed.value.name,
     )
     mock_atexit_register.assert_called_once()
@@ -57,7 +57,7 @@ def test_main_assertion_error(
     # given:
     mock_env_ctx_instance = MagicMock()
     mock_env_context.return_value = mock_env_ctx_instance
-    mock_env_ctx_instance.state_graph.eval_state.return_value = False
+    mock_env_ctx_instance.eval_state.return_value = False
 
     # when/then:
     with pytest.raises(AssertionError):
@@ -66,7 +66,7 @@ def test_main_assertion_error(
     # then:
     mock_ensure_min_python_version.assert_called_once()
     mock_env_context.assert_called_once()
-    mock_env_ctx_instance.state_graph.eval_state.assert_called_once_with(
+    mock_env_ctx_instance.eval_state.assert_called_once_with(
         TargetState.target_everything_executed.value.name,
     )
     mock_atexit_register.assert_called_once()
@@ -83,7 +83,7 @@ def test_main_system_exit(
     # given:
     mock_env_ctx_instance = MagicMock()
     mock_env_context.return_value = mock_env_ctx_instance
-    mock_env_ctx_instance.state_graph.eval_state.side_effect = SystemExit(1)
+    mock_env_ctx_instance.eval_state.side_effect = SystemExit(1)
 
     # when/then:
     with pytest.raises(SystemExit):
@@ -92,7 +92,7 @@ def test_main_system_exit(
     # then:
     mock_ensure_min_python_version.assert_called_once()
     mock_env_context.assert_called_once()
-    mock_env_ctx_instance.state_graph.eval_state.assert_called_once_with(
+    mock_env_ctx_instance.eval_state.assert_called_once_with(
         TargetState.target_everything_executed.value.name,
     )
     mock_atexit_register.assert_called_once()
@@ -109,7 +109,7 @@ def test_main_generic_exception(
     # given:
     mock_env_ctx_instance = MagicMock()
     mock_env_context.return_value = mock_env_ctx_instance
-    mock_env_ctx_instance.state_graph.eval_state.side_effect = Exception("Test Exception")
+    mock_env_ctx_instance.eval_state.side_effect = Exception("Test Exception")
 
     # when/then:
     with pytest.raises(Exception, match="Test Exception"):
@@ -118,7 +118,7 @@ def test_main_generic_exception(
     # then:
     mock_ensure_min_python_version.assert_called_once()
     mock_env_context.assert_called_once()
-    mock_env_ctx_instance.state_graph.eval_state.assert_called_once_with(
+    mock_env_ctx_instance.eval_state.assert_called_once_with(
         TargetState.target_everything_executed.value.name,
     )
     mock_atexit_register.assert_called_once()
@@ -134,7 +134,7 @@ def test_main_with_configure_env_context(
     mock_configure_env_context = MagicMock()
     mock_env_ctx_instance = MagicMock()
     mock_configure_env_context.return_value = mock_env_ctx_instance
-    mock_env_ctx_instance.state_graph.eval_state.return_value = True
+    mock_env_ctx_instance.eval_state.return_value = True
 
     # when:
     run_process(mock_configure_env_context())
@@ -142,7 +142,7 @@ def test_main_with_configure_env_context(
     # then:
     mock_ensure_min_python_version.assert_called_once()
     mock_configure_env_context.assert_called_once()
-    mock_env_ctx_instance.state_graph.eval_state.assert_called_once_with(
+    mock_env_ctx_instance.eval_state.assert_called_once_with(
         TargetState.target_everything_executed.value.name,
     )
     mock_atexit_register.assert_called_once()
@@ -159,7 +159,7 @@ def test_main_atexit_on_success(
     # given:
     mock_env_ctx_instance = MagicMock()
     mock_env_context.return_value = mock_env_ctx_instance
-    mock_env_ctx_instance.state_graph.eval_state.return_value = True
+    mock_env_ctx_instance.eval_state.return_value = True
 
     # when:
     _proto_main()
@@ -184,7 +184,7 @@ def test_main_system_exit_0(
     # given:
     mock_env_ctx_instance = MagicMock()
     mock_env_context.return_value = mock_env_ctx_instance
-    mock_env_ctx_instance.state_graph.eval_state.side_effect = SystemExit(0)
+    mock_env_ctx_instance.eval_state.side_effect = SystemExit(0)
 
     # when/then:
     with pytest.raises(SystemExit):
@@ -210,7 +210,7 @@ def test_main_system_exit_none(
     # given:
     mock_env_ctx_instance = MagicMock()
     mock_env_context.return_value = mock_env_ctx_instance
-    mock_env_ctx_instance.state_graph.eval_state.side_effect = SystemExit(None)
+    mock_env_ctx_instance.eval_state.side_effect = SystemExit(None)
 
     # when/then:
     with pytest.raises(SystemExit):
@@ -240,7 +240,7 @@ def test_called_process_error_raises_runtime_error(
     mock_env_ctx_instance = MagicMock()
     mock_env_context.return_value = mock_env_ctx_instance
     failing_cmd = ["some_cmd", "--arg"]
-    mock_env_ctx_instance.state_graph.eval_state.side_effect = subprocess.CalledProcessError(
+    mock_env_ctx_instance.eval_state.side_effect = subprocess.CalledProcessError(
         returncode=_failing_exit_code,
         cmd=failing_cmd,
     )
@@ -271,7 +271,7 @@ def test_called_process_error_with_shell_string_raises_runtime_error(
     mock_env_ctx_instance = MagicMock()
     mock_env_context.return_value = mock_env_ctx_instance
     failing_cmd = "some_cmd --arg"
-    mock_env_ctx_instance.state_graph.eval_state.side_effect = subprocess.CalledProcessError(
+    mock_env_ctx_instance.eval_state.side_effect = subprocess.CalledProcessError(
         returncode=_failing_exit_code,
         cmd=failing_cmd,
     )

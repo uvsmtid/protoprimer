@@ -108,7 +108,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_version_constraints_file_basename_inited.return_value.eval_own_state.return_value = primer_kernel.ConfConstEnv.default_version_constraints_file_basename
         mock_state_input_sub_command_arg_loaded.return_value.eval_own_state.return_value = SubCommand.command_boot
         # when:
-        self.env_ctx.state_graph.eval_state(EnvState.state_protoprimer_package_installed.name)
+        self.env_ctx.eval_state(EnvState.state_protoprimer_package_installed.name)
         # then:
         mock_state_venv_driver_prepared.return_value.eval_own_state.return_value.install_dependencies.assert_called()
         mock_state_venv_driver_prepared.return_value.eval_own_state.return_value.install_dependencies.assert_any_call(
@@ -192,7 +192,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_version_constraints_file_basename_inited.return_value.eval_own_state.return_value = primer_kernel.ConfConstEnv.default_version_constraints_file_basename
         mock_state_input_sub_command_arg_loaded.return_value.eval_own_state.return_value = SubCommand.command_reboot
         # when:
-        self.env_ctx.state_graph.eval_state(EnvState.state_protoprimer_package_installed.name)
+        self.env_ctx.eval_state(EnvState.state_protoprimer_package_installed.name)
         # then:
         mock_state_venv_driver_prepared.return_value.eval_own_state.return_value.install_dependencies.assert_called()
         mock_state_venv_driver_prepared.return_value.eval_own_state.return_value.install_dependencies.assert_any_call(
@@ -269,7 +269,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_input_sub_command_arg_loaded.return_value.eval_own_state.return_value = SubCommand.command_boot
 
         # when:
-        self.env_ctx.state_graph.eval_state(EnvState.state_protoprimer_package_installed.name)
+        self.env_ctx.eval_state(EnvState.state_protoprimer_package_installed.name)
 
         # then:
         from unittest.mock import call
@@ -360,7 +360,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # when:
 
-        self.env_ctx.state_graph.eval_state(EnvState.state_protoprimer_package_installed.name)
+        self.env_ctx.eval_state(EnvState.state_protoprimer_package_installed.name)
 
         # then:
 

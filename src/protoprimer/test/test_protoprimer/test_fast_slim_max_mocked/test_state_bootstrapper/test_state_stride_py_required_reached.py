@@ -14,6 +14,7 @@ from protoprimer.primer_kernel import (
     Bootstrapper_state_local_conf_file_abs_path_inited,
     Bootstrapper_state_local_tmp_dir_abs_path_inited,
     Bootstrapper_state_local_venv_dir_abs_path_inited,
+    Factory_state_prepare_venv_finalized,
     Factory_state_proto_code_file_abs_path_inited,
     Bootstrapper_state_selected_python_file_abs_path_inited,
     ConfConstEnv,
@@ -79,10 +80,12 @@ class ThisTestClass(BasePyfakefsTestClass):
     )
     @patch(f"{primer_kernel.__name__}.os.execve")
     @patch(f"{primer_kernel.__name__}.subprocess.check_call")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_prepare_venv_finalized.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Factory_state_input_sub_command_arg_loaded.__name__}.create_state_node")
     def test_success_on_arbitrary_py_exec_outside_venv(
         self,
         mock_input_sub_command_arg_loaded,
+        mock_state_prepare_venv_finalized,
         mock_check_call,
         mock_execve,
         mock_get_path_to_curr_python,
@@ -97,11 +100,13 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # given:
         self.env_ctx._sub_command = SubCommand.command_boot
+        self.env_ctx._prepare_venv = True
 
         assert_parent_factories_mocked(
             self.env_ctx,
             EnvState.state_stride_py_required_reached.name,
         )
+        mock_state_prepare_venv_finalized.return_value.eval_own_state.return_value = True
 
         mock_state_input_start_id_var_loaded.return_value.eval_own_state.return_value = "mock_start_id"
         mock_state_proto_code_file_abs_path_inited.return_value.eval_own_state.return_value = "any/path"
@@ -116,7 +121,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # when:
 
-        self.env_ctx.state_graph.eval_state(EnvState.state_stride_py_required_reached.name)
+        self.env_ctx.eval_state(EnvState.state_stride_py_required_reached.name)
 
         # then:
 
@@ -143,10 +148,12 @@ class ThisTestClass(BasePyfakefsTestClass):
     )
     @patch(f"{primer_kernel.__name__}.os.execve")
     @patch(f"{primer_kernel.__name__}.subprocess.check_call")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_prepare_venv_finalized.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Factory_state_input_sub_command_arg_loaded.__name__}.create_state_node")
     def test_skip_if_py_exec_is_already_required(
         self,
         mock_input_sub_command_arg_loaded,
+        mock_state_prepare_venv_finalized,
         mock_check_call,
         mock_execve,
         mock_get_path_to_curr_python,
@@ -160,10 +167,12 @@ class ThisTestClass(BasePyfakefsTestClass):
     ):
         # given:
         self.env_ctx._sub_command = SubCommand.command_boot
+        self.env_ctx._prepare_venv = True
         self.env_ctx._state_stride = StateStride.stride_py_required
+        mock_state_prepare_venv_finalized.return_value.eval_own_state.return_value = True
 
         # when:
-        actual_result = self.env_ctx.state_graph.eval_state(EnvState.state_stride_py_required_reached.name)
+        actual_result = self.env_ctx.eval_state(EnvState.state_stride_py_required_reached.name)
 
         # then:
         self.assertEqual(
@@ -192,10 +201,12 @@ class ThisTestClass(BasePyfakefsTestClass):
     )
     @patch(f"{primer_kernel.__name__}.os.execve")
     @patch(f"{primer_kernel.__name__}.subprocess.check_call")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_prepare_venv_finalized.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Factory_state_input_sub_command_arg_loaded.__name__}.create_state_node")
     def test_success_if_correct_python_is_already_used(
         self,
         mock_input_sub_command_arg_loaded,
+        mock_state_prepare_venv_finalized,
         mock_check_call,
         mock_execve,
         mock_get_path_to_curr_python,
@@ -209,11 +220,13 @@ class ThisTestClass(BasePyfakefsTestClass):
     ):
         # given:
         self.env_ctx._sub_command = SubCommand.command_boot
+        self.env_ctx._prepare_venv = True
+        mock_state_prepare_venv_finalized.return_value.eval_own_state.return_value = True
         mock_state_selected_python_file_abs_path_inited.return_value.eval_own_state.return_value = non_default_file_abs_path_python
         mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = non_default_dir_abs_path_venv
 
         # when:
-        actual_result = self.env_ctx.state_graph.eval_state(EnvState.state_stride_py_required_reached.name)
+        actual_result = self.env_ctx.eval_state(EnvState.state_stride_py_required_reached.name)
 
         # then:
         self.assertEqual(

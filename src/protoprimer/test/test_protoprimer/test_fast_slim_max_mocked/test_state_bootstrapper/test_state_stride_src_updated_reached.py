@@ -67,7 +67,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # when:
 
-        self.env_ctx.state_graph.eval_state(EnvState.state_stride_src_updated_reached.name)
+        self.env_ctx.eval_state(EnvState.state_stride_src_updated_reached.name)
 
         # then:
 
@@ -118,7 +118,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # when:
 
-        self.env_ctx.state_graph.eval_state(EnvState.state_stride_src_updated_reached.name)
+        self.env_ctx.eval_state(EnvState.state_stride_src_updated_reached.name)
 
         # then:
 

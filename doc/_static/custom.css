@@ -58,6 +58,12 @@ section#why details > summary {
     margin-top: 1em;
 }
 
+/* RTD ads shown in footer via #ethical-ads-placement, hide sidebar fallback */
+.sphinxsidebar #ethical-ads-placement,
+.sphinxsidebar [data-ea-publisher] {
+    display: none !important;
+}
+
 /* Custom [+]/[-] marker for <details>/<summary>: */
 summary {
     list-style: none;

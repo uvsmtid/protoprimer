@@ -10,6 +10,7 @@ from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     Bootstrapper_state_primer_conf_file_abs_path_inited,
+    Factory_state_print_conf_finalized,
     Factory_state_proto_code_file_abs_path_inited,
     EnvContext,
     EnvState,
@@ -28,12 +29,14 @@ class ThisTestClass(BasePyfakefsTestClass):
     def test_relationship(self):
         assert_test_module_name_embeds_str(EnvState.state_primer_conf_file_data_loaded.name)
 
+    @patch(f"{primer_kernel.__name__}.{Factory_state_print_conf_finalized.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Factory_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_primer_conf_file_abs_path_inited.__name__}.create_state_node")
     def test_conf_file_exists(
         self,
         mock_state_primer_conf_file_abs_path_inited,
         mock_state_proto_code_file_abs_path_inited,
+        mock_state_print_conf_finalized,
     ):
 
         # given:
@@ -49,19 +52,21 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # when:
 
-        state_value = self.env_ctx.state_graph.eval_state(EnvState.state_primer_conf_file_data_loaded.name)
+        state_value = self.env_ctx.eval_state(EnvState.state_primer_conf_file_data_loaded.name)
 
         # then:
 
         self.assertEqual(state_value, {"test": "data"})
 
     @patch(f"{primer_kernel.__name__}.EnvContext.get_stride")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_print_conf_finalized.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Factory_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_primer_conf_file_abs_path_inited.__name__}.create_state_node")
     def test_conf_file_missing(
         self,
         mock_state_primer_conf_file_abs_path_inited,
         mock_state_proto_code_file_abs_path_inited,
+        mock_state_print_conf_finalized,
         mock_get_stride,
     ):
 
@@ -80,19 +85,21 @@ class ThisTestClass(BasePyfakefsTestClass):
         # when:
 
         with self.assertLogs(primer_kernel.logger, level=WARNING) as log_dst:
-            state_value = self.env_ctx.state_graph.eval_state(EnvState.state_primer_conf_file_data_loaded.name)
+            state_value = self.env_ctx.eval_state(EnvState.state_primer_conf_file_data_loaded.name)
 
         # then:
 
         self.assertIn("does not exist", log_dst.output[0])
         self.assertEqual({}, state_value)
 
+    @patch(f"{primer_kernel.__name__}.{Factory_state_print_conf_finalized.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Factory_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_primer_conf_file_abs_path_inited.__name__}.create_state_node")
     def test_conf_file_malformed(
         self,
         mock_state_primer_conf_file_abs_path_inited,
         mock_state_proto_code_file_abs_path_inited,
+        mock_state_print_conf_finalized,
     ):
 
         # given:
@@ -108,4 +115,4 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # when/then:
         with self.assertRaises(json.decoder.JSONDecodeError):
-            self.env_ctx.state_graph.eval_state(EnvState.state_primer_conf_file_data_loaded.name)
+            self.env_ctx.eval_state(EnvState.state_primer_conf_file_data_loaded.name)

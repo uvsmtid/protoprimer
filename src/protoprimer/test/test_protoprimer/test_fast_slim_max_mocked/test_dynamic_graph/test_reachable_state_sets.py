@@ -33,7 +33,7 @@ class TestTopologicalSort:
 
     Each test method:
     *   Constructs an `EnvContext` with specific graph coordinates.
-    *   Calls `topological_sort` (which instantiates nodes via factories — factories use `EnvContext` coordinates).
+    *   Calls `topological_sort` (which instantiates nodes via factories - factories use `EnvContext` coordinates).
     *   Asserts the sorted list equals the expected hardcoded list.
 
     The expected list serves as a reviewable snapshot:
@@ -57,7 +57,7 @@ class TestTopologicalSort:
 
         # when:
         sorted_names = topological_sort_of_verified_states(
-            env_ctx.state_graph,
+            env_ctx._state_graph,
             env_ctx,
             EnvState.state_everything_executed.name,
         )
@@ -92,7 +92,7 @@ class TestTopologicalSort:
 
         # when:
         sorted_names = topological_sort_of_verified_states(
-            env_ctx.state_graph,
+            env_ctx._state_graph,
             env_ctx,
             EnvState.state_everything_executed.name,
         )
@@ -120,7 +120,7 @@ class TestTopologicalSort:
 
         # when:
         sorted_names = topological_sort_of_verified_states(
-            env_ctx.state_graph,
+            env_ctx._state_graph,
             env_ctx,
             EnvState.state_everything_executed.name,
         )
@@ -148,7 +148,7 @@ class TestTopologicalSort:
 
         # when:
         sorted_names = topological_sort_of_verified_states(
-            env_ctx.state_graph,
+            env_ctx._state_graph,
             env_ctx,
             EnvState.state_everything_executed.name,
         )
