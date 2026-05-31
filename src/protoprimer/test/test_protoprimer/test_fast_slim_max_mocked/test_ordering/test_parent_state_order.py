@@ -32,7 +32,7 @@ def test_EnvState_parent_order() -> None:
     env_ctx._sub_command = max_deps_env_ctx._sub_command
     env_ctx._is_log_enabled = max_deps_env_ctx._is_log_enabled
 
-    state_graph_instance = env_ctx.state_graph
+    state_graph_instance = env_ctx._state_graph
 
     env_state_name_to_ordinal = {env_state.name: index for index, env_state in enumerate(EnvState)}
 

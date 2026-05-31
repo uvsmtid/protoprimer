@@ -58,7 +58,7 @@ def test_handler_level_configured(
 
     # when:
 
-    result_handler = env_ctx.state_graph.eval_state(EnvState.state_input_stderr_log_level_handler_configured.name)
+    result_handler = env_ctx.eval_state(EnvState.state_input_stderr_log_level_handler_configured.name)
 
     # then:
 
@@ -85,7 +85,7 @@ def test_returns_handler(
 
     # when:
 
-    result = env_ctx.state_graph.eval_state(EnvState.state_input_stderr_log_level_handler_configured.name)
+    result = env_ctx.eval_state(EnvState.state_input_stderr_log_level_handler_configured.name)
 
     # then:
 

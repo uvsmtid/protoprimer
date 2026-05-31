@@ -19,6 +19,7 @@ from protoprimer.primer_kernel import (
     Bootstrapper_state_local_venv_dir_abs_path_inited,
     Bootstrapper_state_reboot_triggered,
     Bootstrapper_state_selected_python_file_abs_path_inited,
+    ContextBuilder,
     EntryFunc,
     EnvContext,
     EnvState,
@@ -87,10 +88,14 @@ class TestEnvContext(BasePyfakefsTestClass):
         # given:
         self.fs.create_file("/tmp/venv/uv.venv/bin/uv", contents="foo")
         # when:
-        env_ctx = EnvContext()
-        env_ctx._entry_func = EntryFunc.func_boot_env
-        env_ctx._is_app = True
-        venv_driver = env_ctx.state_graph.eval_state(EnvState.state_venv_driver_prepared.name)
+        env_ctx = (
+            ContextBuilder()
+            .entry_func(EntryFunc.func_boot_env)
+            .is_app(True)
+            #
+            .build_context()
+        )
+        venv_driver = env_ctx.eval_state(EnvState.state_venv_driver_prepared.name)
         # then:
         if is_min_python():
             assert isinstance(venv_driver, VenvDriverPip)
@@ -151,10 +156,14 @@ class TestEnvContext(BasePyfakefsTestClass):
         # given:
         self.fs.create_file("/tmp/venv/uv.venv/bin/uv", contents="foo")
         # when:
-        env_ctx = EnvContext()
-        env_ctx._entry_func = EntryFunc.func_boot_env
-        env_ctx._is_app = True
-        venv_driver = env_ctx.state_graph.eval_state(EnvState.state_venv_driver_prepared.name)
+        env_ctx = (
+            ContextBuilder()
+            .entry_func(EntryFunc.func_boot_env)
+            .is_app(True)
+            #
+            .build_context()
+        )
+        venv_driver = env_ctx.eval_state(EnvState.state_venv_driver_prepared.name)
         # then:
         if is_min_python():
             assert isinstance(venv_driver, VenvDriverPip)
@@ -212,9 +221,13 @@ class TestEnvContext(BasePyfakefsTestClass):
     ):
         # given:
         # when:
-        env_ctx = EnvContext()
-        env_ctx._entry_func = EntryFunc.func_boot_env
-        env_ctx._is_app = True
-        venv_driver = env_ctx.state_graph.eval_state(EnvState.state_venv_driver_prepared.name)
+        env_ctx = (
+            ContextBuilder()
+            .entry_func(EntryFunc.func_boot_env)
+            .is_app(True)
+            #
+            .build_context()
+        )
+        venv_driver = env_ctx.eval_state(EnvState.state_venv_driver_prepared.name)
         # then:
         assert isinstance(venv_driver, VenvDriverPip)

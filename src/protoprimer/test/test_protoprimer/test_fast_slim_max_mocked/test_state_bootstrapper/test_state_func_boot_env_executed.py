@@ -14,8 +14,8 @@ from protoprimer.primer_kernel import (
     Factory_state_input_final_state_eval_finalized,
     Factory_state_input_sub_command_arg_loaded,
     Bootstrapper_state_input_stderr_log_level_handler_configured,
+    ContextBuilder,
     EntryFunc,
-    EnvContext,
     EnvState,
     SubCommand,
 )
@@ -23,9 +23,13 @@ from protoprimer.primer_kernel import (
 
 @pytest.fixture
 def env_ctx():
-    ctx = EnvContext()
-    ctx._entry_func = EntryFunc.func_boot_env
-    return ctx
+    return (
+        ContextBuilder()
+        #
+        .entry_func(EntryFunc.func_boot_env)
+        #
+        .build_context()
+    )
 
 
 def test_relationship():
@@ -54,12 +58,12 @@ def test_sub_command_boot(
     mock_state_node = MagicMock()
     mock_state_node.state_name = "mock_final_state"
     mock_state_node.eval_own_state.return_value = 0
-    env_ctx.state_graph.state_nodes["mock_final_state"] = mock_state_node
+    env_ctx._state_graph.state_nodes["mock_final_state"] = mock_state_node
 
     # when/then:
 
     with pytest.raises(SystemExit) as exc_info:
-        env_ctx.state_graph.eval_state(EnvState.state_func_boot_env_executed.name)
+        env_ctx.eval_state(EnvState.state_func_boot_env_executed.name)
 
     assert exc_info.value.code == 0
 
@@ -84,11 +88,11 @@ def test_sub_command_none(
     mock_state_input_final_state_eval_finalized.return_value.eval_own_state.return_value = "mock_final_state"
 
     mock_state_node = MagicMock()
-    env_ctx.state_graph.state_nodes["mock_final_state"] = mock_state_node
+    env_ctx._state_graph.state_nodes["mock_final_state"] = mock_state_node
 
     # when/then:
     with pytest.raises(ValueError, match="sub command is not defined"):
-        env_ctx.state_graph.eval_state(EnvState.state_func_boot_env_executed.name)
+        env_ctx.eval_state(EnvState.state_func_boot_env_executed.name)
 
 
 @patch(f"{primer_kernel.__name__}.{Factory_state_input_final_state_eval_finalized.__name__}.create_state_node")
@@ -111,8 +115,8 @@ def test_sub_command_invalid(
     mock_state_input_final_state_eval_finalized.return_value.eval_own_state.return_value = "mock_final_state"
 
     mock_state_node = MagicMock()
-    env_ctx.state_graph.state_nodes["mock_final_state"] = mock_state_node
+    env_ctx._state_graph.state_nodes["mock_final_state"] = mock_state_node
 
     # when/then:
     with pytest.raises(ValueError, match="cannot handle sub command"):
-        env_ctx.state_graph.eval_state(EnvState.state_func_boot_env_executed.name)
+        env_ctx.eval_state(EnvState.state_func_boot_env_executed.name)

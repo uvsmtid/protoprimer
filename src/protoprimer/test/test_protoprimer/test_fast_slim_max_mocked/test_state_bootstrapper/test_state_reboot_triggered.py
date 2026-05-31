@@ -15,6 +15,7 @@ from protoprimer.primer_kernel import (
     Bootstrapper_state_local_tmp_dir_abs_path_inited,
     Bootstrapper_state_local_venv_dir_abs_path_inited,
     Bootstrapper_state_version_constraints_file_basename_inited,
+    Factory_state_prepare_venv_finalized,
     Factory_state_proto_code_file_abs_path_inited,
     Factory_state_stride_py_required_reached,
     CommandAction,
@@ -46,9 +47,11 @@ def test_relationship():
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Factory_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Factory_state_prepare_venv_finalized.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Factory_state_input_sub_command_arg_loaded.__name__}.create_state_node")
 def test_reboot_true(
     mock_state_input_sub_command_arg_loaded,
+    mock_state_prepare_venv_finalized,
     mock_state_proto_code_file_abs_path_inited,
     mock_state_local_venv_dir_abs_path_inited,
     mock_state_local_conf_symlink_abs_path_inited,
@@ -82,7 +85,7 @@ def test_reboot_true(
     mock_os_path_exists.return_value = True
 
     # when:
-    state_value = env_ctx.state_graph.eval_state(EnvState.state_reboot_triggered.name)
+    state_value = env_ctx.eval_state(EnvState.state_reboot_triggered.name)
 
     # then:
     assert state_value is True
@@ -100,9 +103,11 @@ def test_reboot_true(
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Factory_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Factory_state_prepare_venv_finalized.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Factory_state_input_sub_command_arg_loaded.__name__}.create_state_node")
 def test_reboot_false(
     mock_state_input_sub_command_arg_loaded,
+    mock_state_prepare_venv_finalized,
     mock_state_proto_code_file_abs_path_inited,
     mock_state_local_venv_dir_abs_path_inited,
     mock_state_local_conf_symlink_abs_path_inited,
@@ -127,7 +132,7 @@ def test_reboot_false(
     env_ctx._state_stride = py_exec
 
     # when:
-    state_value = env_ctx.state_graph.eval_state(EnvState.state_reboot_triggered.name)
+    state_value = env_ctx.eval_state(EnvState.state_reboot_triggered.name)
 
     # then:
     assert state_value is False
@@ -145,9 +150,11 @@ def test_reboot_false(
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Factory_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Factory_state_prepare_venv_finalized.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Factory_state_input_sub_command_arg_loaded.__name__}.create_state_node")
 def test_reboot_true_but_py_exec_not_required(
     mock_state_input_sub_command_arg_loaded,
+    mock_state_prepare_venv_finalized,
     mock_state_proto_code_file_abs_path_inited,
     mock_state_local_venv_dir_abs_path_inited,
     mock_state_local_conf_symlink_abs_path_inited,
@@ -173,7 +180,7 @@ def test_reboot_true_but_py_exec_not_required(
     env_ctx._state_stride = py_exec
 
     # when:
-    state_value = env_ctx.state_graph.eval_state(EnvState.state_reboot_triggered.name)
+    state_value = env_ctx.eval_state(EnvState.state_reboot_triggered.name)
 
     # then:
     assert state_value is False

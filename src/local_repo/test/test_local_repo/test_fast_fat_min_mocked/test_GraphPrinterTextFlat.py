@@ -20,7 +20,7 @@ def test_relationship():
     new_callable=StringIO,
 )
 @patch("local_repo.cmd_print_graph.get_transitive_dependencies")
-@patch("local_repo.cmd_print_graph.EnvContext")
+@patch("local_repo.cmd_print_graph.ContextBuilder")
 @patch("local_repo.cmd_print_graph.configure_script")
 @patch.object(
     sys,
@@ -35,15 +35,25 @@ def test_relationship():
 )
 def test_print_dag_flat_output(
     mock_configure_script,
-    mock_env_ctx_class,
+    mock_context_builder_class,
     mock_get_trans,
     fake_stdout,
 ):
 
     # given:
 
-    mock_env_ctx = mock_env_ctx_class.return_value
-    mock_state_graph = mock_env_ctx.state_graph
+    mock_env_ctx = (
+        mock_context_builder_class.return_value
+        #
+        .sub_command.return_value
+        #
+        .entry_func.return_value
+        #
+        .final_state.return_value
+        #
+        .build_context.return_value
+    )
+    mock_state_graph = mock_env_ctx._state_graph
     mock_node = MagicMock()
     mock_node.get_state_name.return_value = "FINAL_STATE"
     mock_state_graph.get_state_node.return_value = mock_node

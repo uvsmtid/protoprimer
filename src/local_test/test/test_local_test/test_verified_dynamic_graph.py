@@ -21,7 +21,7 @@ from protoprimer.primer_kernel import (
 def _count_reachable_states(env_ctx: EnvContext) -> int:
     reachable_state_set = set()
     for env_state in EnvState:
-        state_node = env_ctx.state_graph.get_state_node(env_state.name)
+        state_node = env_ctx._state_graph.get_state_node(env_state.name)
         for parent_state in state_node.get_parent_states():
             reachable_state_set.add(parent_state)
     return len(reachable_state_set)

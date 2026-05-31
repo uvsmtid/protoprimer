@@ -88,7 +88,7 @@ class TrackingStateGraph(VerifyingStateGraph):
 
 
 class TrackingEnvContext(VerifyingEnvContext):
-    state_graph: TrackingStateGraph
+    _state_graph: TrackingStateGraph
 
     def _create_state_graph(self) -> TrackingStateGraph:
         return TrackingStateGraph()
@@ -147,7 +147,7 @@ def _verify_start_app_does_not_prepare_venv(
     node_factory: NodeFactory,
 ) -> None:
     """
-    `func_start_app` assumes `venv` is already created — `prepare_venv` must be `False`.
+    `func_start_app` assumes `venv` is already created - `prepare_venv` must be `False`.
     See: FT_05_08_64_67.start_app.md
     """
     if (
@@ -167,7 +167,7 @@ def _verify_call_lib_does_not_prepare_venv(
     node_factory: NodeFactory,
 ) -> None:
     """
-    `func_call_lib` assumes `venv` is already created — `prepare_venv` must be `False`.
+    `func_call_lib` assumes `venv` is already created - `prepare_venv` must be `False`.
     See: FT_85_17_35_21.call_lib.md
     """
     if (

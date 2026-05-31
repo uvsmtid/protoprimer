@@ -54,7 +54,7 @@ def test_get_parent_states():
 def test_eval_parent_state():
     # given:
     mock_env_ctx = MagicMock()
-    mock_env_ctx.state_graph.eval_state.return_value = "parent_value"
+    mock_env_ctx.eval_state.return_value = "parent_value"
     parent_states = ["parent1"]
     state_node = StateNode(mock_env_ctx, parent_states, "my_state")
 
@@ -63,7 +63,7 @@ def test_eval_parent_state():
 
     # then:
     assert result == "parent_value"
-    mock_env_ctx.state_graph.eval_state.assert_called_once_with("parent1")
+    mock_env_ctx.eval_state.assert_called_once_with("parent1")
 
 
 def test_eval_parent_state_not_declared():

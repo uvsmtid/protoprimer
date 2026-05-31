@@ -28,7 +28,7 @@ def _call(fs, input_content: str) -> str:
 
 
 def test_no_replacement_when_lines_less_than_min(fs):
-    # given: 19 non-empty lines (< min=20) then empty — no replacement.
+    # given: 19 non-empty lines (< min=20) then empty - no replacement.
 
     input_content = (
         #
@@ -59,7 +59,7 @@ def test_no_replacement_when_lines_less_than_min(fs):
 
     actual_content = _call(fs, input_content)
 
-    # then: unchanged — only 19 non-empty lines passed before the empty line.
+    # then: unchanged - only 19 non-empty lines passed before the empty line.
 
     expected_content = (
         #
@@ -89,7 +89,7 @@ def test_no_replacement_when_lines_less_than_min(fs):
 
 
 def test_replacement_when_lines_equal_min(fs):
-    # given: 20 non-empty lines (= min=20) then empty — replacement at the empty line.
+    # given: 20 non-empty lines (= min=20) then empty - replacement at the empty line.
 
     input_content = (
         #
@@ -152,7 +152,7 @@ def test_replacement_when_lines_equal_min(fs):
 
 
 def test_replacement_when_lines_between_min_and_max(fs):
-    # given: 25 non-empty lines (min=20 < 25 < max=40) then empty — replacement.
+    # given: 25 non-empty lines (min=20 < 25 < max=40) then empty - replacement.
 
     input_content = (
         #
@@ -225,7 +225,7 @@ def test_replacement_when_lines_between_min_and_max(fs):
 
 
 def test_replacement_when_lines_equal_max(fs):
-    # given: 40 non-empty lines (= max=40) then empty — replacement at the boundary.
+    # given: 40 non-empty lines (= max=40) then empty - replacement at the boundary.
 
     input_content = "".join(f"line_{i:02d}\n" for i in range(1, 41)) + "\n" + "trailing\n"
 
@@ -240,7 +240,7 @@ def test_replacement_when_lines_equal_max(fs):
 
 
 def test_no_replacement_when_lines_exceed_max(fs):
-    # given: 41 non-empty lines (> max=40) with no empty line — no replacement possible.
+    # given: 41 non-empty lines (> max=40) with no empty line - no replacement possible.
 
     input_content = "".join(f"line_{i:02d}\n" for i in range(1, 42))
 
@@ -248,6 +248,6 @@ def test_no_replacement_when_lines_exceed_max(fs):
 
     actual_content = _call(fs, input_content)
 
-    # then: unchanged — no empty line to replace.
+    # then: unchanged - no empty line to replace.
 
     assert actual_content == input_content

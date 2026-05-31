@@ -43,7 +43,7 @@ def test_default_case(mock_state_input_py_exec_var_loaded, mock_state_input_is_s
         EnvState.state_input_stderr_log_level_var_loaded.name,
     )
     # when:
-    state_value = env_ctx.state_graph.eval_state(EnvState.state_input_stderr_log_level_var_loaded.name)
+    state_value = env_ctx.eval_state(EnvState.state_input_stderr_log_level_var_loaded.name)
     # then:
     assert getattr(logging, ConfConstInput.default_PROTOPRIMER_STDERR_LOG_LEVEL) == state_value
 
@@ -62,7 +62,7 @@ def test_env_var_set_to_debug(mock_state_input_py_exec_var_loaded, mock_state_in
         EnvState.state_input_stderr_log_level_var_loaded.name,
     )
     # when:
-    state_value = env_ctx.state_graph.eval_state(EnvState.state_input_stderr_log_level_var_loaded.name)
+    state_value = env_ctx.eval_state(EnvState.state_input_stderr_log_level_var_loaded.name)
     # then:
     assert logging.DEBUG == state_value
 
@@ -81,7 +81,7 @@ def test_env_var_set_to_10(mock_state_input_py_exec_var_loaded, mock_state_input
         EnvState.state_input_stderr_log_level_var_loaded.name,
     )
     # when:
-    state_value = env_ctx.state_graph.eval_state(EnvState.state_input_stderr_log_level_var_loaded.name)
+    state_value = env_ctx.eval_state(EnvState.state_input_stderr_log_level_var_loaded.name)
     # then:
     assert 10 == state_value
 
@@ -100,7 +100,7 @@ def test_env_var_set_to_negative_1(mock_state_input_py_exec_var_loaded, mock_sta
         EnvState.state_input_stderr_log_level_var_loaded.name,
     )
     # when:
-    state_value = env_ctx.state_graph.eval_state(EnvState.state_input_stderr_log_level_var_loaded.name)
+    state_value = env_ctx.eval_state(EnvState.state_input_stderr_log_level_var_loaded.name)
     # then:
     assert default_stderr_log_level == state_value
 
@@ -119,7 +119,7 @@ def test_env_var_set_to_notset(mock_state_input_py_exec_var_loaded, mock_state_i
         EnvState.state_input_stderr_log_level_var_loaded.name,
     )
     # when:
-    state_value = env_ctx.state_graph.eval_state(EnvState.state_input_stderr_log_level_var_loaded.name)
+    state_value = env_ctx.eval_state(EnvState.state_input_stderr_log_level_var_loaded.name)
     # then:
     assert logging.NOTSET == state_value
 
@@ -138,6 +138,6 @@ def test_env_var_set_to_invalid_string(mock_state_input_py_exec_var_loaded, mock
         EnvState.state_input_stderr_log_level_var_loaded.name,
     )
     # when:
-    state_value = env_ctx.state_graph.eval_state(EnvState.state_input_stderr_log_level_var_loaded.name)
+    state_value = env_ctx.eval_state(EnvState.state_input_stderr_log_level_var_loaded.name)
     # then:
     assert default_stderr_log_level == state_value
