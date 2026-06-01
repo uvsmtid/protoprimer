@@ -21,7 +21,7 @@ def test_relationship():
     )
 
 
-@patch(f"{protoprimer.primer_kernel.__name__}.atexit.register")
+@patch("atexit.register")
 @patch(f"{protoprimer.primer_kernel.__name__}.EnvContext")
 @patch(f"{protoprimer.primer_kernel.__name__}.ensure_min_python_version")
 def test_main_success(
@@ -46,7 +46,7 @@ def test_main_success(
     mock_atexit_register.assert_called_once()
 
 
-@patch(f"{protoprimer.primer_kernel.__name__}.atexit.register")
+@patch("atexit.register")
 @patch(f"{protoprimer.primer_kernel.__name__}.EnvContext")
 @patch(f"{protoprimer.primer_kernel.__name__}.ensure_min_python_version")
 def test_main_assertion_error(
@@ -72,7 +72,7 @@ def test_main_assertion_error(
     mock_atexit_register.assert_called_once()
 
 
-@patch(f"{protoprimer.primer_kernel.__name__}.atexit.register")
+@patch("atexit.register")
 @patch(f"{protoprimer.primer_kernel.__name__}.EnvContext")
 @patch(f"{protoprimer.primer_kernel.__name__}.ensure_min_python_version")
 def test_main_system_exit(
@@ -98,7 +98,7 @@ def test_main_system_exit(
     mock_atexit_register.assert_called_once()
 
 
-@patch(f"{protoprimer.primer_kernel.__name__}.atexit.register")
+@patch("atexit.register")
 @patch(f"{protoprimer.primer_kernel.__name__}.EnvContext")
 @patch(f"{protoprimer.primer_kernel.__name__}.ensure_min_python_version")
 def test_main_generic_exception(
@@ -124,7 +124,7 @@ def test_main_generic_exception(
     mock_atexit_register.assert_called_once()
 
 
-@patch(f"{protoprimer.primer_kernel.__name__}.atexit.register")
+@patch("atexit.register")
 @patch(f"{protoprimer.primer_kernel.__name__}.ensure_min_python_version")
 def test_main_with_configure_env_context(
     mock_ensure_min_python_version,
@@ -148,7 +148,7 @@ def test_main_with_configure_env_context(
     mock_atexit_register.assert_called_once()
 
 
-@patch(f"{protoprimer.primer_kernel.__name__}.atexit.register")
+@patch("atexit.register")
 @patch(f"{protoprimer.primer_kernel.__name__}.EnvContext")
 @patch(f"{protoprimer.primer_kernel.__name__}.ensure_min_python_version")
 def test_main_atexit_on_success(
@@ -173,7 +173,7 @@ def test_main_atexit_on_success(
     mock_env_ctx_instance.print_exit_line.assert_called_once_with(0)
 
 
-@patch(f"{protoprimer.primer_kernel.__name__}.atexit.register")
+@patch("atexit.register")
 @patch(f"{protoprimer.primer_kernel.__name__}.EnvContext")
 @patch(f"{protoprimer.primer_kernel.__name__}.ensure_min_python_version")
 def test_main_system_exit_0(
@@ -199,7 +199,7 @@ def test_main_system_exit_0(
     mock_env_ctx_instance.print_exit_line.assert_called_once_with(0)
 
 
-@patch(f"{protoprimer.primer_kernel.__name__}.atexit.register")
+@patch("atexit.register")
 @patch(f"{protoprimer.primer_kernel.__name__}.EnvContext")
 @patch(f"{protoprimer.primer_kernel.__name__}.ensure_min_python_version")
 def test_main_system_exit_none(
@@ -228,7 +228,7 @@ def test_main_system_exit_none(
 _failing_exit_code = 42
 
 
-@patch(f"{protoprimer.primer_kernel.__name__}.atexit.register")
+@patch("atexit.register")
 @patch(f"{protoprimer.primer_kernel.__name__}.EnvContext")
 @patch(f"{protoprimer.primer_kernel.__name__}.ensure_min_python_version")
 def test_called_process_error_raises_runtime_error(
@@ -259,7 +259,7 @@ def test_called_process_error_raises_runtime_error(
     mock_env_ctx_instance.print_exit_line.assert_called_once_with(1)
 
 
-@patch(f"{protoprimer.primer_kernel.__name__}.atexit.register")
+@patch("atexit.register")
 @patch(f"{protoprimer.primer_kernel.__name__}.EnvContext")
 @patch(f"{protoprimer.primer_kernel.__name__}.ensure_min_python_version")
 def test_called_process_error_with_shell_string_raises_runtime_error(

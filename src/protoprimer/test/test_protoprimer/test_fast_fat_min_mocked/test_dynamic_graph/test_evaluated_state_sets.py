@@ -150,9 +150,6 @@ class TestEvaluatedStateSets:
             EnvState.state_everything_executed.name,
         ]
 
-        # TODO: TODO_60_63_68_81.refactor_DAG_builder.md
-        #       Add assertions for state_name-s which should or should not be seen in this scenario.
-
         mandatory_state_names = [
             # args:
             EnvState.state_args_parsed.name,
@@ -220,10 +217,8 @@ class TestEvaluatedStateSets:
             EnvState.state_everything_executed.name,
         ]
 
-        # TODO: TODO_60_63_68_81.refactor_DAG_builder.md
-        #       Add assertions for state_name-s which should or should not be seen in this scenario.
-
         mandatory_state_names = [
+            # main:
             EnvState.state_everything_executed.name,
             EnvState.state_func_start_app_executed.name,
             EnvState.state_stride_py_venv_reached.name,
@@ -267,7 +262,7 @@ class TestEvaluatedStateSets:
             env_ctx = _make_tracking_env_ctx(
                 entry_func=EntryFunc.func_call_lib,
             )
-            env_ctx._proto_kernel_abs_path = str(proto_kernel_abs_path)
+            env_ctx._forced_proto_kernel_abs_path = str(proto_kernel_abs_path)
 
             actual_state_names = _eval_and_collect(env_ctx)
 
@@ -275,9 +270,9 @@ class TestEvaluatedStateSets:
             EnvState.state_is_app_defined.name,
             EnvState.state_input_is_stderr_log_enabled.name,
             EnvState.state_input_final_state_eval_finalized.name,
+            EnvState.state_print_conf_finalized.name,
             EnvState.state_proto_code_file_abs_path_inited.name,
             EnvState.state_primer_conf_file_abs_path_inited.name,
-            EnvState.state_print_conf_finalized.name,
             EnvState.state_primer_conf_file_data_loaded.name,
             EnvState.state_ref_root_dir_abs_path_inited.name,
             EnvState.state_global_conf_dir_abs_path_inited.name,
@@ -302,10 +297,8 @@ class TestEvaluatedStateSets:
             EnvState.state_everything_executed.name,
         ]
 
-        # TODO: TODO_60_63_68_81.refactor_DAG_builder.md
-        #       Add assertions for state_name-s which should or should not be seen in this scenario.
-
         mandatory_state_names = [
+            # main:
             EnvState.state_everything_executed.name,
             EnvState.state_func_call_lib_executed.name,
             EnvState.state_derived_conf_data_loaded.name,

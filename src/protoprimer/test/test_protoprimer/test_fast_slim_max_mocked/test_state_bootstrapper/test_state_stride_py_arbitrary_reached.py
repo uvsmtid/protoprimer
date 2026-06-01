@@ -13,6 +13,7 @@ from protoprimer.primer_kernel import (
     Bootstrapper_state_input_start_id_var_loaded,
     ConfConstInput,
     ContextBuilder,
+    EntryFunc,
     EnvState,
     StateStride,
 )
@@ -22,6 +23,8 @@ from protoprimer.primer_kernel import (
 def env_ctx():
     return (
         ContextBuilder()
+        #
+        .entry_func(EntryFunc.func_boot_env)
         #
         .is_app(True)
         #

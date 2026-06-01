@@ -54,7 +54,7 @@ def customize_env_context():
     env_ctx = (
         ContextBuilder()
         .entry_func(EntryFunc.func_boot_env)
-        .final_state(CustomEnvState.state_hello_world_printed.name)
+        .forced_final_state(CustomEnvState.state_hello_world_printed.name)
         #
         .build_context()
     )

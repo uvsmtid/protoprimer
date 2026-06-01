@@ -1897,7 +1897,7 @@ def customize_env_context():
         ContextBuilder()
         .entry_func(EntryFunc.func_boot_env)
         .is_app(True)
-        .final_state(RendererState.state_all_conf_data_rendered.name)
+        .forced_final_state(RendererState.state_all_conf_data_rendered.name)
         #
         .build_context()
     )

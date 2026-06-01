@@ -13,9 +13,7 @@ from local_repo.graph_printer import (
     GraphPrinterTextNested,
 )
 from local_repo.misc_tools.graph_utils import get_transitive_dependencies
-from metaprimer.script_lib import (
-    configure_script,
-)
+from metaprimer.script_lib import configure_script
 from protoprimer.primer_kernel import (
     ContextBuilder,
     EntryFunc,
@@ -63,6 +61,13 @@ def custom_main():
     )
 
 
+def _populate_all_state_nodes(state_graph: StateGraph) -> None:
+    # Nodes enter `state_nodes` only on first access lazily.
+    # Force-instantiate all so any consumer of `state_nodes` sees the full graph.
+    for env_state in EnvState:
+        state_graph.get_state_node(env_state.name)
+
+
 def run_print_graph(
     output_format: OutputFormat,
     output_layout: OutputLayout,
@@ -81,18 +86,15 @@ def run_print_graph(
         ContextBuilder()
         .sub_command(sub_command)
         .entry_func(entry_func)
-        .final_state(target_state.value.name)
+        .is_app(entry_func in [EntryFunc.func_boot_env, EntryFunc.func_run_main])
+        .forced_final_state(target_state.value.name)
         #
         .build_context()
     )
 
-    # Ensure all nodes are initialized (populated into `state_graph.state_nodes`):
-    # TODO: FT_77_15_06_50.dynamic_DAG.md:
-    #       Is this still needed?
-    for env_state in EnvState:
-        env_ctx._state_graph.get_state_node(env_state.name)
+    _populate_all_state_nodes(env_ctx._state_graph)
 
-    state_node: StateNode = env_ctx._state_graph.get_state_node(env_ctx._final_state)
+    state_node: StateNode = env_ctx._state_graph.get_state_node(env_ctx._forced_final_state)
 
     if output_format == OutputFormat.output_mermaid and output_layout != OutputLayout.layout_nested:
         raise ValueError(f"Format `{OutputFormat.output_mermaid.value}` requires layout `{OutputLayout.layout_nested.value}`")
