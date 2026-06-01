@@ -12,7 +12,7 @@ from protoprimer.primer_kernel import (
     Factory_state_input_sub_command_arg_loaded,
     Bootstrapper_state_input_start_id_var_loaded,
     ConfConstInput,
-    EnvContext,
+    ContextBuilder,
     EnvState,
     StateStride,
 )
@@ -20,7 +20,13 @@ from protoprimer.primer_kernel import (
 
 @pytest.fixture
 def env_ctx():
-    return EnvContext()
+    return (
+        ContextBuilder()
+        #
+        .is_app(True)
+        #
+        .build_context()
+    )
 
 
 def test_relationship():

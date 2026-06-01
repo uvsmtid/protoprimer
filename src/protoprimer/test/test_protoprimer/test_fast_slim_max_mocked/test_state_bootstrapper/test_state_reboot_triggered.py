@@ -15,12 +15,12 @@ from protoprimer.primer_kernel import (
     Bootstrapper_state_local_tmp_dir_abs_path_inited,
     Bootstrapper_state_local_venv_dir_abs_path_inited,
     Bootstrapper_state_version_constraints_file_basename_inited,
+    ContextBuilder,
     Factory_state_prepare_venv_finalized,
     Factory_state_proto_code_file_abs_path_inited,
     Factory_state_stride_py_required_reached,
     CommandAction,
     ConfConstEnv,
-    EnvContext,
     EnvState,
     SubCommand,
     StateStride,
@@ -30,7 +30,13 @@ from protoprimer.primer_kernel import (
 
 @pytest.fixture
 def env_ctx():
-    return EnvContext()
+    return (
+        ContextBuilder()
+        #
+        .is_app(True)
+        #
+        .build_context()
+    )
 
 
 def test_relationship():

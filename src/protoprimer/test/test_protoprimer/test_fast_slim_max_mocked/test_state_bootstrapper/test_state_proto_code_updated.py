@@ -10,8 +10,9 @@ from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     Factory_state_proto_code_file_abs_path_inited,
-    Bootstrapper_state_stride_deps_updated_reached,
+    Factory_state_stride_deps_updated_reached,
     ConfConstGeneral,
+    ContextBuilder,
     EnvContext,
     EnvState,
     SubCommand,
@@ -25,14 +26,20 @@ class ThisTestClass(BasePyfakefsTestClass):
 
     def setUp(self):
         self.setUpPyfakefs()
-        self.env_ctx = EnvContext()
+        self.env_ctx = (
+            ContextBuilder()
+            #
+            .is_app(True)
+            #
+            .build_context()
+        )
 
     # noinspection PyMethodMayBeStatic
     def test_relationship(self):
         assert_test_module_name_embeds_str(EnvState.state_proto_code_updated.name)
 
     @patch(f"{primer_kernel.__name__}.{Factory_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_stride_deps_updated_reached.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_stride_deps_updated_reached.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Factory_state_input_sub_command_arg_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{EnvContext.__name__}.{EnvContext.get_stride.__name__}")
     def test_state_proto_code_updated(
@@ -95,7 +102,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         return_value=True,
     )
     @patch(f"{primer_kernel.__name__}.{Factory_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_stride_deps_updated_reached.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_stride_deps_updated_reached.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{EnvContext.__name__}.{EnvContext.get_stride.__name__}")
     @patch(f"{primer_kernel.__name__}.{Factory_state_input_sub_command_arg_loaded.__name__}.create_state_node")
     def test_import_error_when_protoprimer_is_missing(

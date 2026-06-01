@@ -58,6 +58,24 @@ section#why details > summary {
     margin-top: 1em;
 }
 
+/* Narrow viewport: match sidebar background to main content */
+@media screen and (max-width: 1200px) {
+    div.sphinxsidebar {
+        background: #fff !important;
+        color: #000 !important;
+    }
+    div.sphinxsidebar ul, div.sphinxsidebar ol {
+        padding-left: 0 !important;
+    }
+    div.sphinxsidebar h3, div.sphinxsidebar h4, div.sphinxsidebar p,
+    div.sphinxsidebar h3 a {
+        color: #444 !important;
+    }
+    div.sphinxsidebar a {
+        color: #444 !important;
+    }
+}
+
 /* RTD ads shown in footer via #ethical-ads-placement, hide sidebar fallback */
 .sphinxsidebar #ethical-ads-placement,
 .sphinxsidebar [data-ea-publisher] {

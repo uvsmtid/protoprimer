@@ -91,7 +91,7 @@ class TestStartMain:
         self.mock_import_module.side_effect = ImportError
 
         # when/then
-        with pytest.raises(AssertionError):
+        with pytest.raises(ImportError):
             _start_main(EntryFunc.func_boot_env, "my_module:my_func")
 
     @patch.dict(

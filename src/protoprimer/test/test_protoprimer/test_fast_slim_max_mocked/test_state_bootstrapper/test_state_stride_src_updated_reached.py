@@ -9,13 +9,11 @@ from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     Bootstrapper_state_input_start_id_var_loaded,
     Factory_state_proto_code_file_abs_path_inited,
-    Bootstrapper_state_proto_code_updated,
-    EnvContext,
+    Factory_state_proto_code_updated,
+    ContextBuilder,
     EnvState,
-    SubCommand,
     StateStride,
     Bootstrapper_state_local_venv_dir_abs_path_inited,
-    Factory_state_input_sub_command_arg_loaded,
 )
 
 
@@ -24,22 +22,24 @@ class ThisTestClass(BasePyfakefsTestClass):
 
     def setUp(self):
         self.setUpPyfakefs()
-        self.env_ctx = EnvContext()
+        self.env_ctx = (
+            ContextBuilder()
+            #
+            .build_context()
+        )
 
     # noinspection PyMethodMayBeStatic
     def test_relationship(self):
         assert_test_module_name_embeds_str(EnvState.state_stride_src_updated_reached.name)
 
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_proto_code_updated.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_proto_code_updated.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Factory_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Factory_state_input_sub_command_arg_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.switch_python")
     def test_not_yet_at_required_python(
         self,
         mock_switch_python,
-        mock_state_input_sub_command_arg_loaded,
         mock_state_local_venv_dir_abs_path_inited,
         mock_state_proto_code_file_abs_path_inited,
         mock_state_proto_code_updated,
@@ -61,7 +61,6 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         self.env_ctx._state_stride = StateStride.stride_py_unknown
 
-        mock_state_input_sub_command_arg_loaded.return_value.eval_own_state.return_value = SubCommand.command_boot
         mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = "/path/to/venv"
         self.fs.create_file("/path/to/venv/bin/python")
 
@@ -80,15 +79,13 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
 
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_proto_code_updated.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_proto_code_updated.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Factory_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Factory_state_input_sub_command_arg_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.switch_python")
     def test_already_required_python(
         self,
         mock_switch_python,
-        mock_state_input_sub_command_arg_loaded,
         mock_state_local_venv_dir_abs_path_inited,
         mock_state_proto_code_file_abs_path_inited,
         mock_state_proto_code_updated,
@@ -113,7 +110,6 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         self.env_ctx._state_stride = StateStride.stride_src_updated
 
-        mock_state_input_sub_command_arg_loaded.return_value.eval_own_state.return_value = SubCommand.command_boot
         mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = "/path/to/venv"
 
         # when:

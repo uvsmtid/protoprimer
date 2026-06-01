@@ -10,8 +10,8 @@ from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     Bootstrapper_state_input_start_id_var_loaded,
     Factory_state_proto_code_file_abs_path_inited,
-    Bootstrapper_state_version_constraints_generated,
-    EnvContext,
+    Factory_state_version_constraints_generated,
+    ContextBuilder,
     EnvState,
     SubCommand,
     StateStride,
@@ -22,7 +22,13 @@ from protoprimer.primer_kernel import (
 
 @pytest.fixture
 def env_ctx():
-    return EnvContext()
+    return (
+        ContextBuilder()
+        #
+        .is_app(True)
+        #
+        .build_context()
+    )
 
 
 def test_relationship():
@@ -35,7 +41,7 @@ def test_relationship():
 @patch(f"{primer_kernel.__name__}.{Factory_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Factory_state_input_sub_command_arg_loaded.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_version_constraints_generated.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Factory_state_version_constraints_generated.__name__}.create_state_node")
 def test_stride_py_required_to_next_stride_deps_updated(
     mock_state_version_constraints_generated,
     mock_state_input_sub_command_arg_loaded,
@@ -88,7 +94,7 @@ def test_stride_py_required_to_next_stride_deps_updated(
 @patch(f"{primer_kernel.__name__}.{Factory_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Factory_state_input_sub_command_arg_loaded.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_version_constraints_generated.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Factory_state_version_constraints_generated.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.get_path_to_curr_python")
 def test_stride_deps_updated_to_same_stride_deps_updated(
     mock_switch_python,
