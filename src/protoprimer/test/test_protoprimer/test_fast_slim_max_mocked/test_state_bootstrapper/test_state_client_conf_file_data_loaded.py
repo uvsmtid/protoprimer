@@ -12,8 +12,11 @@ from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     Bootstrapper_state_global_conf_file_abs_path_inited,
     ConfConstPrimer,
+    ContextBuilder,
+    EntryFunc,
     EnvContext,
     EnvState,
+    Factory_state_print_conf_finalized,
     StateStride,
 )
 
@@ -23,16 +26,28 @@ class ThisTestClass(BasePyfakefsTestClass):
 
     def setUp(self):
         self.setUpPyfakefs()
-        self.env_ctx = EnvContext()
+        self.env_ctx = (
+            ContextBuilder()
+            #
+            .entry_func(EntryFunc.func_boot_env)
+            #
+            .is_app(True)
+            #
+            .state_stride(StateStride.stride_py_unknown)
+            #
+            .build_context()
+        )
 
     # noinspection PyMethodMayBeStatic
     def test_relationship(self):
         assert_test_module_name_embeds_str(EnvState.state_client_conf_file_data_loaded.name)
 
+    @patch(f"{primer_kernel.__name__}.{Factory_state_print_conf_finalized.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_global_conf_file_abs_path_inited.__name__}.create_state_node")
     def test_state_global_conf_file_abs_path_inited_exists(
         self,
         mock_factory_global_conf_file_abs_path_inited,
+        mock_state_print_conf_finalized,
     ):
 
         # given:
@@ -64,15 +79,27 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # no exception happens
 
-    @patch(f"{primer_kernel.__name__}.EnvContext.get_stride")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_print_conf_finalized.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_global_conf_file_abs_path_inited.__name__}.create_state_node")
     def test_state_global_conf_file_abs_path_inited_missing(
         self,
         mock_factory_global_conf_file_abs_path_inited,
-        mock_get_stride,
+        mock_state_print_conf_finalized,
     ):
 
         # given:
+
+        self.env_ctx = (
+            ContextBuilder()
+            #
+            .entry_func(EntryFunc.func_boot_env)
+            #
+            .is_app(True)
+            #
+            .state_stride(StateStride.stride_py_arbitrary)
+            #
+            .build_context()
+        )
 
         assert_parent_factories_mocked(
             self.env_ctx,
@@ -89,7 +116,6 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_factory_global_conf_file_abs_path_inited.return_value.eval_own_state.return_value = state_global_conf_file_abs_path_inited
 
         self.assertFalse(os.path.isfile(state_global_conf_file_abs_path_inited))
-        mock_get_stride.return_value = StateStride.stride_py_arbitrary
 
         # when:
 

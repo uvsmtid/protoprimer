@@ -28,6 +28,8 @@ def env_ctx():
         #
         .entry_func(EntryFunc.func_boot_env)
         #
+        .is_app(True)
+        #
         .build_context()
     )
 

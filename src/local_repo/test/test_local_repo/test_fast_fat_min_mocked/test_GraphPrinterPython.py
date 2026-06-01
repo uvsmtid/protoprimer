@@ -55,7 +55,9 @@ def test_print_dag_python_output(
         #
         .entry_func.return_value
         #
-        .final_state.return_value
+        .is_app.return_value
+        #
+        .forced_final_state.return_value
         #
         .build_context.return_value
     )

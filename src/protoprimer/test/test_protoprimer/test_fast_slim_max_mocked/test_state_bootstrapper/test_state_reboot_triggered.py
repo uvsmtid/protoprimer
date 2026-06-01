@@ -16,6 +16,7 @@ from protoprimer.primer_kernel import (
     Bootstrapper_state_local_venv_dir_abs_path_inited,
     Bootstrapper_state_version_constraints_file_basename_inited,
     ContextBuilder,
+    EntryFunc,
     Factory_state_prepare_venv_finalized,
     Factory_state_proto_code_file_abs_path_inited,
     Factory_state_stride_py_required_reached,
@@ -32,6 +33,8 @@ from protoprimer.primer_kernel import (
 def env_ctx():
     return (
         ContextBuilder()
+        #
+        .entry_func(EntryFunc.func_boot_env)
         #
         .is_app(True)
         #

@@ -24,51 +24,40 @@
 from __future__ import annotations
 
 import argparse
-import ast
-import atexit
 import contextvars
 import datetime
 import enum
 import importlib
-import importlib.util
 import json
 import logging
 import os
 import pathlib
-import re
 import shlex
 import shutil
-import site
 import subprocess
 import sys
-import types
 import typing
-from typing import (
-    Any,
-    Callable,
-    Generic,
-    MutableMapping,
-    TypeVar,
-)
 
 # The release process ensures that content in this file matches the version below while tagging the release commit
 # (otherwise, if the file comes from a different commit, the version is irrelevant):
-__version__ = "0.12.2.dev0"
+__version__ = "0.13.0.dev0"
 
 logger: logging.Logger = logging.getLogger()
 
 log_stride = contextvars.ContextVar("state_stride")
 
-ValueType = TypeVar("ValueType")
-DataValueType = TypeVar("DataValueType")
+ValueType = typing.TypeVar("ValueType")
+DataValueType = typing.TypeVar("DataValueType")
 
 # FT_96_50_58_75.context_propagation.md:
 # It is only set on `EntryFunc.func_start_app` as default for `EntryFunc.func_call_lib`.
-# `EnvContext._proto_kernel_abs_path` overrides it.
+# `EnvContext._forced_proto_kernel_abs_path` overrides it.
 _proto_kernel_abs_path: str | None = None
 
 
 def run_process(env_ctx: EnvContext) -> None:
+    import atexit
+
     # See UC_10_80_27_57.extend_DAG.md
     try:
         ensure_min_python_version()
@@ -1002,7 +991,7 @@ class ShellType(enum.Enum):
     shell_zsh = "zsh"
 
 
-def remove_protoprimer_env_vars(env_vars: MutableMapping[str, str]) -> None:
+def remove_protoprimer_env_vars(env_vars: typing.MutableMapping[str, str]) -> None:
     """
     FT_66_02_54_56.context_isolation.md
     """
@@ -1652,7 +1641,7 @@ class ExitCodeReporter(RunStrategy):
         But it may not reach all nodes because
         dependencies will be conditionally evaluated by the implementation of those nodes.
         """
-        # NOTE: The `EnvContext._final_state` must return `int` with this strategy:
+        # NOTE: The `EnvContext._forced_final_state` must return `int` with this strategy:
         exit_code: int = self.env_ctx.eval_state(state_node.state_name)
         if type(exit_code) is not int:
             raise AssertionError("`exit_code` must be an `int`")
@@ -1662,7 +1651,7 @@ class ExitCodeReporter(RunStrategy):
 ########################################################################################################################
 
 
-class StateNode(Generic[ValueType]):
+class StateNode(typing.Generic[ValueType]):
     """
     All nodes form a `StateGraph`, which must be a DAG.
     """
@@ -1712,7 +1701,7 @@ class StateNode(Generic[ValueType]):
 
 # FT_84_11_73_28.supported_python_versions.md:
 # With min `python` switched to 3.8, `NodeFactory` can be turned into `typing.Protocol`:
-class NodeFactory(Generic[ValueType]):
+class NodeFactory(typing.Generic[ValueType]):
 
     def __init__(
         self,
@@ -1724,7 +1713,7 @@ class NodeFactory(Generic[ValueType]):
         raise NotImplementedError()
 
 
-StateNodeSubclass = TypeVar("StateNodeSubclass", bound=StateNode)
+StateNodeSubclass = typing.TypeVar("StateNodeSubclass", bound=StateNode)
 
 
 def conditional_factory(state_node_class: type[StateNodeSubclass]) -> type[StateNodeSubclass]:
@@ -1750,8 +1739,8 @@ def trivial_factory(state_node_class: type[StateNodeSubclass]) -> type[NodeFacto
 
 
 class AbstractCachingStateNode(StateNode[ValueType]):
-    _parent_states: Callable[[], list[str]] = staticmethod(lambda: [])
-    _state_name: Callable[[], str]
+    _parent_states: typing.Callable[[], list[str]] = staticmethod(lambda: [])
+    _state_name: typing.Callable[[], str]
 
     def __init__(
         self,
@@ -1847,6 +1836,7 @@ class Bootstrapper_state_is_app_defined(AbstractCachingStateNode[bool]):
 @trivial_factory
 class Bootstrapper_state_input_is_stderr_log_enabled(AbstractCachingStateNode[bool]):
 
+    _parent_states = staticmethod(lambda: [EnvState.state_is_app_defined.name])
     _state_name = staticmethod(lambda: EnvState.state_input_is_stderr_log_enabled.name)
 
     def _eval_state_once(self) -> ValueType:
@@ -1909,11 +1899,7 @@ class Bootstrapper_state_input_stderr_log_level_var_loaded(AbstractCachingStateN
 class Bootstrapper_state_default_stderr_log_handler_configured(AbstractCachingStateNode[logging.Handler]):
     # TODO: UC_81_50_97_17.do_not_reuse_logger.md: Shell we disable configuring loggers for `EntryFunc.func_start_app`?
 
-    _parent_states = staticmethod(
-        lambda: [
-            EnvState.state_input_stderr_log_level_var_loaded.name,
-        ]
-    )
+    _parent_states = staticmethod(lambda: [EnvState.state_input_stderr_log_level_var_loaded.name])
     _state_name = staticmethod(lambda: EnvState.state_default_stderr_log_handler_configured.name)
 
     def _eval_state_once(self) -> ValueType:
@@ -1930,7 +1916,7 @@ class Bootstrapper_state_default_stderr_log_handler_configured(AbstractCachingSt
 
 # noinspection PyPep8Naming
 @conditional_factory
-class Bootstrapper_state_args_parsed_func_boot_env(AbstractCachingStateNode[argparse.Namespace]):
+class Bootstrapper_state_args_parsed_is_app(AbstractCachingStateNode[argparse.Namespace]):
 
     _state_name = staticmethod(lambda: EnvState.state_args_parsed.name)
 
@@ -1938,34 +1924,29 @@ class Bootstrapper_state_args_parsed_func_boot_env(AbstractCachingStateNode[argp
         return parse_args()
 
 
-# TODO: FT_77_15_06_50.dynamic_DAG.md:
-#       Do we still need this? Assert at Factory instead.
 # noinspection PyPep8Naming
 @conditional_factory
-class Bootstrapper_state_args_parsed_not_func_boot_env(AbstractCachingStateNode[argparse.Namespace]):
+class Bootstrapper_state_args_parsed_not_is_app(AbstractCachingStateNode[argparse.Namespace]):
 
     _state_name = staticmethod(lambda: EnvState.state_args_parsed.name)
 
     def _eval_state_once(self) -> ValueType:
-        raise AssertionError(f"`{EnvState.state_args_parsed.name}` must not be evaluated for `{self.env_ctx._entry_func}`")
+        raise AssertionError(f"`{EnvState.state_args_parsed.name}` must not be reachable in this context")
 
 
 # noinspection PyPep8Naming
 class Factory_state_args_parsed(NodeFactory[StateStride]):
 
     def create_state_node(self) -> StateNode[ValueType]:
-        # TODO: FT_77_15_06_50.dynamic_DAG.md:
-        #       This step should not be executed without need to parse args.
-        #       Do not fake args. Just redesign dependency. No?
         if self.env_ctx._is_app:
-            return Bootstrapper_state_args_parsed_func_boot_env(self.env_ctx)
+            return Bootstrapper_state_args_parsed_is_app(self.env_ctx)
         else:
-            return Bootstrapper_state_args_parsed_not_func_boot_env(self.env_ctx)
+            return Bootstrapper_state_args_parsed_not_is_app(self.env_ctx)
 
 
 # noinspection PyPep8Naming
 @conditional_factory
-class Bootstrapper_state_input_stderr_log_level_eval_finalized_func_boot_env(AbstractCachingStateNode[int]):
+class Bootstrapper_state_input_stderr_log_level_eval_finalized_is_app(AbstractCachingStateNode[int]):
 
     _parent_states = staticmethod(
         lambda: [
@@ -2012,19 +1993,12 @@ class Bootstrapper_state_input_stderr_log_level_eval_finalized_func_boot_env(Abs
 
 # noinspection PyPep8Naming
 @conditional_factory
-class Bootstrapper_state_input_stderr_log_level_eval_finalized_not_func_boot_env(AbstractCachingStateNode[int]):
+class Bootstrapper_state_input_stderr_log_level_eval_finalized_not_is_app(AbstractCachingStateNode[int]):
 
-    _parent_states = staticmethod(
-        lambda: [
-            EnvState.state_input_stderr_log_level_var_loaded.name,
-        ]
-    )
+    _parent_states = staticmethod(lambda: [EnvState.state_input_stderr_log_level_var_loaded.name])
     _state_name = staticmethod(lambda: EnvState.state_input_stderr_log_level_eval_finalized.name)
 
     def _eval_state_once(self) -> ValueType:
-        # TODO: FT_77_15_06_50.dynamic_DAG.md:
-        #       How is it event possible?
-        #       `state_input_stderr_log_level_var_loaded` evaluates recursively `state_input_stderr_log_level_var_loaded`?
         return self.eval_parent_state(EnvState.state_input_stderr_log_level_var_loaded.name)
 
 
@@ -2033,9 +2007,9 @@ class Factory_state_input_stderr_log_level_eval_finalized(NodeFactory[int]):
 
     def create_state_node(self) -> StateNode[ValueType]:
         if self.env_ctx._is_app:
-            return Bootstrapper_state_input_stderr_log_level_eval_finalized_func_boot_env(self.env_ctx)
+            return Bootstrapper_state_input_stderr_log_level_eval_finalized_is_app(self.env_ctx)
         else:
-            return Bootstrapper_state_input_stderr_log_level_eval_finalized_not_func_boot_env(self.env_ctx)
+            return Bootstrapper_state_input_stderr_log_level_eval_finalized_not_is_app(self.env_ctx)
 
 
 # noinspection PyPep8Naming
@@ -2078,13 +2052,9 @@ class Bootstrapper_state_input_stderr_log_level_handler_configured(AbstractCachi
 
 # noinspection PyPep8Naming
 @conditional_factory
-class Bootstrapper_state_input_sub_command_arg_loaded_func_boot_env(AbstractCachingStateNode[SubCommand]):
+class Bootstrapper_state_input_sub_command_arg_loaded_is_app(AbstractCachingStateNode[SubCommand]):
 
-    _parent_states = staticmethod(
-        lambda: [
-            EnvState.state_args_parsed.name,
-        ]
-    )
+    _parent_states = staticmethod(lambda: [EnvState.state_args_parsed.name])
     _state_name = staticmethod(lambda: EnvState.state_input_sub_command_arg_loaded.name)
 
     def _eval_state_once(self) -> ValueType:
@@ -2121,6 +2091,7 @@ class Bootstrapper_state_input_sub_command_arg_loaded_func_call_lib(AbstractCach
     _state_name = staticmethod(lambda: EnvState.state_input_sub_command_arg_loaded.name)
 
     def _eval_state_once(self) -> ValueType:
+        self.env_ctx._sub_command = None
         return None
 
 
@@ -2131,28 +2102,25 @@ class Factory_state_input_sub_command_arg_loaded(NodeFactory[SubCommand]):
 
     def create_state_node(self) -> StateNode[ValueType]:
         if self.env_ctx._is_app:
-            return Bootstrapper_state_input_sub_command_arg_loaded_func_boot_env(self.env_ctx)
+            return Bootstrapper_state_input_sub_command_arg_loaded_is_app(self.env_ctx)
         elif self.env_ctx._entry_func == EntryFunc.func_start_app:
             return Bootstrapper_state_input_sub_command_arg_loaded_func_start_app(self.env_ctx)
-        else:
+        elif self.env_ctx._entry_func == EntryFunc.func_call_lib:
             return Bootstrapper_state_input_sub_command_arg_loaded_func_call_lib(self.env_ctx)
+        else:
+            raise AssertionError(self.env_ctx._entry_func)
 
 
 # noinspection PyPep8Naming
 @conditional_factory
 class Bootstrapper_state_print_conf_finalized_is_app(AbstractCachingStateNode[bool]):
 
-    _parent_states = staticmethod(
-        lambda: [
-            EnvState.state_input_sub_command_arg_loaded.name,
-        ]
-    )
+    _parent_states = staticmethod(lambda: [EnvState.state_input_sub_command_arg_loaded.name])
     _state_name = staticmethod(lambda: EnvState.state_print_conf_finalized.name)
 
     def _eval_state_once(self) -> ValueType:
-        sub_cmd: SubCommand = self.eval_parent_state(EnvState.state_input_sub_command_arg_loaded.name)
-        self.env_ctx._print_conf = sub_cmd == SubCommand.command_eval
-        return self.env_ctx._print_conf
+        sub_command: SubCommand = self.eval_parent_state(EnvState.state_input_sub_command_arg_loaded.name)
+        return sub_command == SubCommand.command_eval
 
 
 # noinspection PyPep8Naming
@@ -2162,8 +2130,7 @@ class Bootstrapper_state_print_conf_finalized_not_is_app(AbstractCachingStateNod
     _state_name = staticmethod(lambda: EnvState.state_print_conf_finalized.name)
 
     def _eval_state_once(self) -> ValueType:
-        self.env_ctx._print_conf = False
-        return self.env_ctx._print_conf
+        return False
 
 
 # noinspection PyPep8Naming
@@ -2180,11 +2147,7 @@ class Factory_state_print_conf_finalized(NodeFactory[bool]):
 @conditional_factory
 class Bootstrapper_state_prepare_venv_finalized_is_app(AbstractCachingStateNode[bool]):
 
-    _parent_states = staticmethod(
-        lambda: [
-            EnvState.state_input_sub_command_arg_loaded.name,
-        ]
-    )
+    _parent_states = staticmethod(lambda: [EnvState.state_input_sub_command_arg_loaded.name])
     _state_name = staticmethod(lambda: EnvState.state_prepare_venv_finalized.name)
 
     def _eval_state_once(self) -> ValueType:
@@ -2216,13 +2179,9 @@ class Factory_state_prepare_venv_finalized(NodeFactory[bool]):
 
 # noinspection PyPep8Naming
 @conditional_factory
-class Bootstrapper_state_input_final_state_eval_finalized_func_boot_env(AbstractCachingStateNode[str]):
+class Bootstrapper_state_input_final_state_eval_finalized_is_app(AbstractCachingStateNode[str]):
 
-    _parent_states = staticmethod(
-        lambda: [
-            EnvState.state_args_parsed.name,
-        ]
-    )
+    _parent_states = staticmethod(lambda: [EnvState.state_args_parsed.name])
     _state_name = staticmethod(lambda: EnvState.state_input_final_state_eval_finalized.name)
 
     def _eval_state_once(self) -> ValueType:
@@ -2237,10 +2196,10 @@ class Bootstrapper_state_input_final_state_eval_finalized_func_boot_env(Abstract
         )
 
         if state_input_final_state_eval_finalized is None:
-            if self.env_ctx._final_state is None:
+            if self.env_ctx._forced_final_state is None:
                 state_input_final_state_eval_finalized = TargetState.target_proto_bootstrap_completed.value.name
             else:
-                state_input_final_state_eval_finalized = self.env_ctx._final_state
+                state_input_final_state_eval_finalized = self.env_ctx._forced_final_state
 
         return state_input_final_state_eval_finalized
 
@@ -2253,10 +2212,10 @@ class Bootstrapper_state_input_final_state_eval_finalized_func_start_app(Abstrac
 
     def _eval_state_once(self) -> ValueType:
         state_input_final_state_eval_finalized: str
-        if self.env_ctx._final_state is None:
+        if self.env_ctx._forced_final_state is None:
             state_input_final_state_eval_finalized = TargetState.target_venv_activated.value.name
         else:
-            state_input_final_state_eval_finalized = self.env_ctx._final_state
+            state_input_final_state_eval_finalized = self.env_ctx._forced_final_state
         return state_input_final_state_eval_finalized
 
 
@@ -2268,10 +2227,10 @@ class Bootstrapper_state_input_final_state_eval_finalized_func_call_lib(Abstract
 
     def _eval_state_once(self) -> ValueType:
         state_input_final_state_eval_finalized: str
-        if self.env_ctx._final_state is None:
+        if self.env_ctx._forced_final_state is None:
             state_input_final_state_eval_finalized = TargetState.target_derived_config_loaded.value.name
         else:
-            state_input_final_state_eval_finalized = self.env_ctx._final_state
+            state_input_final_state_eval_finalized = self.env_ctx._forced_final_state
         return state_input_final_state_eval_finalized
 
 
@@ -2283,7 +2242,7 @@ class Factory_state_input_final_state_eval_finalized(NodeFactory[StateStride]):
             EntryFunc.func_boot_env,
             EntryFunc.func_run_main,
         ]:
-            return Bootstrapper_state_input_final_state_eval_finalized_func_boot_env(self.env_ctx)
+            return Bootstrapper_state_input_final_state_eval_finalized_is_app(self.env_ctx)
         elif self.env_ctx._entry_func == EntryFunc.func_start_app:
             return Bootstrapper_state_input_final_state_eval_finalized_func_start_app(self.env_ctx)
         elif self.env_ctx._entry_func == EntryFunc.func_call_lib:
@@ -2320,15 +2279,17 @@ class Bootstrapper_state_func_boot_env_executed(AbstractCachingStateNode[bool]):
         selected_strategy: RunStrategy
         if state_input_sub_command_arg_loaded is None:
             raise ValueError(f"sub command is not defined")
-        elif state_input_sub_command_arg_loaded == SubCommand.command_boot:
-            selected_strategy = ExitCodeReporter(self.env_ctx)
-        elif state_input_sub_command_arg_loaded == SubCommand.command_start:
-            selected_strategy = ExitCodeReporter(self.env_ctx)
-        elif state_input_sub_command_arg_loaded == SubCommand.command_reboot:
-            selected_strategy = ExitCodeReporter(self.env_ctx)
         elif state_input_sub_command_arg_loaded == SubCommand.command_eval:
             selected_strategy = ExitCodeReporter(self.env_ctx)
+            # TODO: FT_77_15_06_50.dynamic_DAG.md:
+            #       How does it comply with `EnvContext._forced_final_state`?
             state_node = self.env_ctx._state_graph.get_state_node(EnvState.state_effective_conf_data_printed.name)
+        elif state_input_sub_command_arg_loaded in [
+            SubCommand.command_boot,
+            SubCommand.command_start,
+            SubCommand.command_reboot,
+        ]:
+            selected_strategy = ExitCodeReporter(self.env_ctx)
         else:
             raise ValueError(f"cannot handle sub command [{state_input_sub_command_arg_loaded}]")
 
@@ -2365,11 +2326,7 @@ class Bootstrapper_state_func_start_app_executed_log_enabled(Base_state_func_sta
 @conditional_factory
 class Bootstrapper_state_func_start_app_executed_log_disabled(Base_state_func_start_app_executed):
 
-    _parent_states = staticmethod(
-        lambda: [
-            EnvState.state_input_final_state_eval_finalized.name,
-        ]
-    )
+    _parent_states = staticmethod(lambda: [EnvState.state_input_final_state_eval_finalized.name])
 
 
 # noinspection PyPep8Naming
@@ -2411,11 +2368,7 @@ class Bootstrapper_state_func_call_lib_executed_log_enabled(Base_state_func_call
 @conditional_factory
 class Bootstrapper_state_func_call_lib_executed_log_disabled(Base_state_func_call_lib_executed):
 
-    _parent_states = staticmethod(
-        lambda: [
-            EnvState.state_input_final_state_eval_finalized.name,
-        ]
-    )
+    _parent_states = staticmethod(lambda: [EnvState.state_input_final_state_eval_finalized.name])
 
 
 # noinspection PyPep8Naming
@@ -2430,7 +2383,7 @@ class Factory_state_func_call_lib_executed(NodeFactory[bool]):
 
 # noinspection PyPep8Naming
 @conditional_factory
-class Bootstrapper_state_everything_executed_func_boot_env(AbstractCachingStateNode[bool]):
+class Bootstrapper_state_everything_executed_is_app(AbstractCachingStateNode[bool]):
 
     _parent_states = staticmethod(
         lambda: [
@@ -2492,7 +2445,7 @@ class Factory_state_everything_executed(NodeFactory[StateStride]):
             EntryFunc.func_boot_env,
             EntryFunc.func_run_main,
         ]:
-            return Bootstrapper_state_everything_executed_func_boot_env(self.env_ctx)
+            return Bootstrapper_state_everything_executed_is_app(self.env_ctx)
         elif self.env_ctx._entry_func == EntryFunc.func_start_app:
             return Bootstrapper_state_everything_executed_func_start_app(self.env_ctx)
         elif self.env_ctx._entry_func == EntryFunc.func_call_lib:
@@ -2560,6 +2513,8 @@ class Bootstrapper_state_stride_py_arbitrary_reached_is_app(AbstractCachingState
 
         if (
             (os.environ.get(EnvVar.var_PROTOPRIMER_PROTO_CODE.value, None) is not None)
+            # TODO: FT_77_15_06_50.dynamic_DAG.md:
+            #       Review and clarify `SubCommand.command_start`, `EnvContext._is_app`, ...
             and state_input_sub_command_arg_loaded == SubCommand.command_start
             #
         ):
@@ -2636,10 +2591,10 @@ class Bootstrapper_state_proto_code_file_abs_path_inited_func_call_lib(AbstractC
 
     def _eval_state_once(self) -> ValueType:
         proto_kernel_abs_path: str | None
-        if self.env_ctx._proto_kernel_abs_path is None:
+        if self.env_ctx._forced_proto_kernel_abs_path is None:
             proto_kernel_abs_path = get_proto_kernel_abs_path()
         else:
-            proto_kernel_abs_path = self.env_ctx._proto_kernel_abs_path
+            proto_kernel_abs_path = self.env_ctx._forced_proto_kernel_abs_path
 
         if proto_kernel_abs_path is None:
             raise AssertionError(f"`proto_kernel_abs_path` [{proto_kernel_abs_path}] is not set")
@@ -2721,11 +2676,7 @@ class Factory_state_proto_code_file_abs_path_inited(NodeFactory[StateStride]):
 @trivial_factory
 class Bootstrapper_state_primer_conf_file_abs_path_inited(AbstractCachingStateNode[str]):
 
-    _parent_states = staticmethod(
-        lambda: [
-            EnvState.state_proto_code_file_abs_path_inited.name,
-        ]
-    )
+    _parent_states = staticmethod(lambda: [EnvState.state_proto_code_file_abs_path_inited.name])
     _state_name = staticmethod(lambda: EnvState.state_primer_conf_file_abs_path_inited.name)
 
     def _eval_state_once(self) -> ValueType:
@@ -2780,6 +2731,7 @@ class Bootstrapper_state_primer_conf_file_data_loaded(AbstractCachingStateNode[d
     _state_name = staticmethod(lambda: EnvState.state_primer_conf_file_data_loaded.name)
 
     def _eval_state_once(self) -> ValueType:
+        state_print_conf_finalized: bool = self.eval_parent_state(EnvState.state_print_conf_finalized.name)
         state_proto_code_file_abs_path_inited: str = self.eval_parent_state(EnvState.state_proto_code_file_abs_path_inited.name)
         state_primer_conf_file_abs_path_inited: str = self.eval_parent_state(EnvState.state_primer_conf_file_abs_path_inited.name)
 
@@ -2794,7 +2746,7 @@ class Bootstrapper_state_primer_conf_file_data_loaded(AbstractCachingStateNode[d
             )
             file_data = {}
 
-        if can_print_effective_config(self):
+        if _can_print_effective_config(self, state_print_conf_finalized):
 
             # Print `ConfLeap.leap_input` data together:
             # ===
@@ -2933,13 +2885,14 @@ class Bootstrapper_state_client_conf_file_data_loaded(AbstractCachingStateNode[d
 
     _parent_states = staticmethod(
         lambda: [
+            EnvState.state_print_conf_finalized.name,
             EnvState.state_global_conf_file_abs_path_inited.name,
         ]
     )
     _state_name = staticmethod(lambda: EnvState.state_client_conf_file_data_loaded.name)
 
     def _eval_state_once(self) -> ValueType:
-
+        state_print_conf_finalized: bool = self.eval_parent_state(EnvState.state_print_conf_finalized.name)
         state_global_conf_file_abs_path_inited: str = self.eval_parent_state(EnvState.state_global_conf_file_abs_path_inited.name)
 
         file_data: dict
@@ -2953,7 +2906,7 @@ class Bootstrapper_state_client_conf_file_data_loaded(AbstractCachingStateNode[d
             )
             file_data = {}
 
-        if can_print_effective_config(self):
+        if _can_print_effective_config(self, state_print_conf_finalized):
             print(
                 json.dumps(
                     {
@@ -3056,7 +3009,7 @@ class Base_state_selected_env_dir_rel_path(AbstractCachingStateNode[str]):
 
 # noinspection PyPep8Naming
 @conditional_factory
-class Bootstrapper_state_selected_env_dir_rel_path_inited_func_boot_env(Base_state_selected_env_dir_rel_path):
+class Bootstrapper_state_selected_env_dir_rel_path_inited_is_app(Base_state_selected_env_dir_rel_path):
 
     _parent_states = staticmethod(
         lambda: [
@@ -3080,7 +3033,7 @@ class Bootstrapper_state_selected_env_dir_rel_path_inited_func_boot_env(Base_sta
 
 # noinspection PyPep8Naming
 @conditional_factory
-class Bootstrapper_state_selected_env_dir_rel_path_inited_not_func_boot_env(Base_state_selected_env_dir_rel_path):
+class Bootstrapper_state_selected_env_dir_rel_path_inited_not_is_app(Base_state_selected_env_dir_rel_path):
 
     _parent_states = staticmethod(
         lambda: [
@@ -3099,9 +3052,9 @@ class Factory_state_selected_env_dir_rel_path_inited(NodeFactory[StateStride]):
 
     def create_state_node(self) -> StateNode[ValueType]:
         if self.env_ctx._is_app:
-            return Bootstrapper_state_selected_env_dir_rel_path_inited_func_boot_env(self.env_ctx)
+            return Bootstrapper_state_selected_env_dir_rel_path_inited_is_app(self.env_ctx)
         else:
-            return Bootstrapper_state_selected_env_dir_rel_path_inited_not_func_boot_env(self.env_ctx)
+            return Bootstrapper_state_selected_env_dir_rel_path_inited_not_is_app(self.env_ctx)
 
 
 # noinspection PyPep8Naming
@@ -3208,12 +3161,14 @@ class Bootstrapper_state_env_conf_file_data_loaded(AbstractCachingStateNode[dict
 
     _parent_states = staticmethod(
         lambda: [
+            EnvState.state_print_conf_finalized.name,
             EnvState.state_local_conf_file_abs_path_inited.name,
         ]
     )
     _state_name = staticmethod(lambda: EnvState.state_env_conf_file_data_loaded.name)
 
     def _eval_state_once(self) -> ValueType:
+        state_print_conf_finalized: bool = self.eval_parent_state(EnvState.state_print_conf_finalized.name)
         state_local_conf_file_abs_path_inited: str = self.eval_parent_state(EnvState.state_local_conf_file_abs_path_inited.name)
 
         file_data: dict
@@ -3230,7 +3185,7 @@ class Bootstrapper_state_env_conf_file_data_loaded(AbstractCachingStateNode[dict
                 )
             file_data = {}
 
-        if can_print_effective_config(self):
+        if _can_print_effective_config(self, state_print_conf_finalized):
             print(
                 json.dumps(
                     {
@@ -3631,6 +3586,7 @@ class Bootstrapper_state_derived_conf_data_loaded(AbstractCachingStateNode[dict]
 
         # TODO: Is this needed given the list of dependencies in `derived_data_env_states`?
         parent_states = [
+            EnvState.state_print_conf_finalized.name,
             EnvState.state_primer_conf_file_data_loaded.name,
             EnvState.state_client_conf_file_data_loaded.name,
             EnvState.state_env_conf_file_data_loaded.name,
@@ -3644,7 +3600,7 @@ class Bootstrapper_state_derived_conf_data_loaded(AbstractCachingStateNode[dict]
         super().__init__(env_ctx=env_ctx)
 
     def _eval_state_once(self) -> ValueType:
-
+        state_print_conf_finalized: bool = self.eval_parent_state(EnvState.state_print_conf_finalized.name)
         config_data_derived = {}
         for derived_data_env_state in self.derived_data_env_states:
             evaluated_value = self.eval_parent_state(derived_data_env_state)
@@ -3653,7 +3609,7 @@ class Bootstrapper_state_derived_conf_data_loaded(AbstractCachingStateNode[dict]
             else:
                 config_data_derived[derived_data_env_state] = evaluated_value
 
-        if can_print_effective_config(self):
+        if _can_print_effective_config(self, state_print_conf_finalized):
             print(
                 json.dumps(
                     {
@@ -3673,11 +3629,7 @@ class Bootstrapper_state_effective_conf_data_printed(AbstractCachingStateNode[in
     Implements: FT_19_44_42_19.effective_config.md
     """
 
-    _parent_states = staticmethod(
-        lambda: [
-            EnvState.state_derived_conf_data_loaded.name,
-        ]
-    )
+    _parent_states = staticmethod(lambda: [EnvState.state_derived_conf_data_loaded.name])
     _state_name = staticmethod(lambda: EnvState.state_effective_conf_data_printed.name)
 
     def _eval_state_once(self) -> ValueType:
@@ -3724,7 +3676,7 @@ class Bootstrapper_state_default_file_log_handler_configured(AbstractCachingStat
 
 # noinspection PyPep8Naming
 @conditional_factory
-class Bootstrapper_state_stride_py_required_reached_not_command_start(AbstractCachingStateNode[StateStride]):
+class Bootstrapper_state_stride_py_required_reached_prepare_venv(AbstractCachingStateNode[StateStride]):
     """
     Recursively runs this script inside the `python` interpreter required by the client.
 
@@ -3792,7 +3744,7 @@ class Bootstrapper_state_stride_py_required_reached_not_command_start(AbstractCa
 
 # noinspection PyPep8Naming
 @conditional_factory
-class Bootstrapper_state_stride_py_required_reached_command_start(AbstractCachingStateNode[StateStride]):
+class Bootstrapper_state_stride_py_required_reached_not_prepare_venv(AbstractCachingStateNode[StateStride]):
     _parent_states = staticmethod(
         lambda: [
             EnvState.state_prepare_venv_finalized.name,
@@ -3824,14 +3776,9 @@ class Factory_state_stride_py_required_reached(NodeFactory[StateStride]):
         # The only reason for `EnvState.state_stride_py_required_reached`
         # is to use the required `python` to create a `venv`.
         if self.env_ctx._prepare_venv:
-            # TODO: FT_77_15_06_50.dynamic_DAG.md:
-            #       Rename to avoid `command_start` in its name:
-            return Bootstrapper_state_stride_py_required_reached_not_command_start(self.env_ctx)
+            return Bootstrapper_state_stride_py_required_reached_prepare_venv(self.env_ctx)
         else:
-            # TODO: FT_77_15_06_50.dynamic_DAG.md:
-            #       Rename to avoid `command_start` in its name:
-            # Skip it as `venv` is supposed to be ready:
-            return Bootstrapper_state_stride_py_required_reached_command_start(self.env_ctx)
+            return Bootstrapper_state_stride_py_required_reached_not_prepare_venv(self.env_ctx)
 
 
 # noinspection PyPep8Naming
@@ -3860,6 +3807,8 @@ class Bootstrapper_state_reboot_triggered_is_app(AbstractCachingStateNode[bool])
 
         state_input_sub_command_arg_loaded: SubCommand = self.eval_parent_state(EnvState.state_input_sub_command_arg_loaded.name)
 
+        # TODO: FT_77_15_06_50.dynamic_DAG.md:
+        #       Review and clarify `SubCommand.command_start`, `EnvContext._is_app`, ...
         if state_input_sub_command_arg_loaded == SubCommand.command_start:
             # The only reason for `EnvState.state_reboot_triggered`
             # is to destroy `venv` to recreate it later.
@@ -4049,6 +3998,8 @@ class Bootstrapper_state_stride_py_venv_reached_is_app(AbstractCachingStateNode[
         path_to_curr_python: str = get_path_to_curr_python()
         logger.debug(f"path_to_curr_python: {path_to_curr_python}")
 
+        # TODO: FT_77_15_06_50.dynamic_DAG.md:
+        #       Review and clarify `SubCommand.command_start`, `EnvContext._is_app`, ...
         if state_input_sub_command_arg_loaded == SubCommand.command_start:
             # Skip `venv` validation before switch because `SubCommand.command_start` does not switch outside of `venv`:
             pass
@@ -4168,8 +4119,7 @@ class Bootstrapper_state_protoprimer_package_installed_is_app(AbstractCachingSta
         state_input_sub_command_arg_loaded: SubCommand = self.eval_parent_state(EnvState.state_input_sub_command_arg_loaded.name)
 
         # TODO: FT_77_15_06_50.dynamic_DAG.md:
-        #       This is not reachable for `SubCommand.command_start`.
-        #       Command `command_start` will switch to `venv_module:func_name` at `StateStride.stride_py_venv`:
+        #       Review and clarify `SubCommand.command_start`, `EnvContext._is_app`, ...
         if state_input_sub_command_arg_loaded == SubCommand.command_start:
             # The only reason for `EnvState.state_protoprimer_package_installed`
             # is to install dependencies into `venv`.
@@ -4322,8 +4272,7 @@ class Bootstrapper_state_version_constraints_generated_is_app(AbstractCachingSta
         state_input_sub_command_arg_loaded: SubCommand = self.eval_parent_state(EnvState.state_input_sub_command_arg_loaded.name)
 
         # TODO: FT_77_15_06_50.dynamic_DAG.md:
-        #       This is not reachable for `SubCommand.command_start`.
-        #       Command `command_start` will switch to `venv_module:func_name` at `StateStride.stride_py_venv`:
+        #       Review and clarify `SubCommand.command_start`, `EnvContext._is_app`, ...
         if state_input_sub_command_arg_loaded == SubCommand.command_start:
             # The only reason for `EnvState.state_version_constraints_generated`
             # is to re-generate the `version_constraints.txt` file based on `venv`.
@@ -4397,8 +4346,7 @@ class Bootstrapper_state_stride_deps_updated_reached_is_app(AbstractCachingState
         state_input_sub_command_arg_loaded: SubCommand = self.eval_parent_state(EnvState.state_input_sub_command_arg_loaded.name)
 
         # TODO: FT_77_15_06_50.dynamic_DAG.md:
-        #       This is not reachable for `SubCommand.command_start`.
-        #       Command `command_start` will switch to `venv_module:func_name` at `StateStride.stride_py_venv`:
+        #       Review and clarify `SubCommand.command_start`, `EnvContext._is_app`, ...
         if state_input_sub_command_arg_loaded == SubCommand.command_start:
             # The only reason for `EnvState.state_stride_deps_updated_reached`
             # is to make `venv` dependencies effective.
@@ -4474,8 +4422,7 @@ class Bootstrapper_state_proto_code_updated_is_app(AbstractCachingStateNode[bool
         state_input_sub_command_arg_loaded: SubCommand = self.eval_parent_state(EnvState.state_input_sub_command_arg_loaded.name)
 
         # TODO: FT_77_15_06_50.dynamic_DAG.md:
-        #       This is not reachable for `SubCommand.command_start`.
-        #       Command `command_start` will switch to `venv_module:func_name` at `StateStride.stride_py_venv`:
+        #       Review and clarify `SubCommand.command_start`, `EnvContext._is_app`, ...
         if state_input_sub_command_arg_loaded == SubCommand.command_start:
             # The only reason for `EnvState.state_proto_code_updated`
             # is to update sources, but that has to be done in `SubCommand.command_boot`.
@@ -4597,13 +4544,9 @@ class Bootstrapper_state_stride_src_updated_reached(AbstractCachingStateNode[Sta
 
 # noinspection PyPep8Naming
 @conditional_factory
-class Bootstrapper_state_input_command_line_func_boot_env(AbstractCachingStateNode[str]):
+class Bootstrapper_state_input_command_line_is_app(AbstractCachingStateNode[str]):
 
-    _parent_states = staticmethod(
-        lambda: [
-            EnvState.state_args_parsed.name,
-        ]
-    )
+    _parent_states = staticmethod(lambda: [EnvState.state_args_parsed.name])
     _state_name = staticmethod(lambda: EnvState.state_input_command_line.name)
 
     def _eval_state_once(self) -> ValueType:
@@ -4617,7 +4560,7 @@ class Bootstrapper_state_input_command_line_func_boot_env(AbstractCachingStateNo
 
 # noinspection PyPep8Naming
 @conditional_factory
-class Bootstrapper_state_input_command_line_not_func_boot_env(AbstractCachingStateNode[str]):
+class Bootstrapper_state_input_command_line_not_is_app(AbstractCachingStateNode[str]):
 
     _state_name = staticmethod(lambda: EnvState.state_input_command_line.name)
 
@@ -4630,9 +4573,9 @@ class Factory_state_input_command_line(NodeFactory[str]):
 
     def create_state_node(self) -> StateNode[ValueType]:
         if self.env_ctx._is_app:
-            return Bootstrapper_state_input_command_line_func_boot_env(self.env_ctx)
+            return Bootstrapper_state_input_command_line_is_app(self.env_ctx)
         else:
-            return Bootstrapper_state_input_command_line_not_func_boot_env(self.env_ctx)
+            return Bootstrapper_state_input_command_line_not_is_app(self.env_ctx)
 
 
 # TODO: FT_77_15_06_50.dynamic_DAG.md:
@@ -4707,6 +4650,8 @@ class EnvState(enum.Enum):
 
     state_input_stderr_log_level_handler_configured = Bootstrapper_state_input_stderr_log_level_handler_configured
 
+    # TODO: FT_77_15_06_50.dynamic_DAG.md:
+    #       Avoid `arg` in the name (CLI is not available for all use cases).
     state_input_sub_command_arg_loaded = Factory_state_input_sub_command_arg_loaded
 
     state_print_conf_finalized = Factory_state_print_conf_finalized
@@ -4887,7 +4832,7 @@ class StateGraph:
     def eval_state(
         self,
         state_name: str,
-    ) -> Any:
+    ) -> typing.Any:
         try:
             state_node = self.get_state_node(state_name)
         except KeyError:
@@ -4909,19 +4854,22 @@ class EnvContext:
         that affect what implementation is selected by `NodeFactory`.
         """
 
+        # Must be set on `EnvContext` creation before any `EnvState` evaluation:
         self._entry_func: EntryFunc | None = None
 
-        self._state_stride: StateStride = StateStride.stride_py_unknown
+        # Set by `EnvState.state_input_py_exec_var_loaded`:
+        self._state_stride: StateStride | None = None
 
-        # FT_42_03_79_73.reboot_env.md
+        # Set by `EnvState.state_is_app_defined`:
         # FT_58_74_37_70.boot_vs_start.md
         # FT_62_88_55_10.CLI_compatibility.md
         self._is_app: bool | None = None
 
-        # For example:
+        # Set by `EnvState.state_prepare_venv_finalized`:
+        # Roughly:
         # FT_42_03_79_73.reboot_env.md: True
         # FT_05_08_64_67.start_app.md: False
-        self._prepare_venv: bool = False
+        self._prepare_venv: bool | None = None
 
         # TODO: FT_77_15_06_50.dynamic_DAG.md:
         #       Do not use `_sub_command` directly.
@@ -4929,18 +4877,15 @@ class EnvContext:
         #       (which may also be set based on other input).
         self._sub_command: SubCommand | None = None
 
-        self._print_conf: bool = False
+        # Set by `EnvState.state_input_is_stderr_log_enabled`:
+        self._is_log_enabled: bool | None = None
 
-        self._is_log_enabled: bool = False
-
-        # TODO: FT_77_15_06_50.dynamic_DAG.md: should it even be here?
-        #       In some cases yes, in some cases, it may need to be `None`.
         # This is an override for default (different value depending on `EntryFunc`).
-        self._final_state: str | None = None
+        self._forced_final_state: str | None = None
 
         # This is an override for global `_proto_kernel_abs_path`.
         # Same as `EnvVar.var_PROTOPRIMER_PROTO_CODE`, but for non-restart-able `EntryFunc.func_call_lib`.
-        self._proto_kernel_abs_path: str | None = None
+        self._forced_proto_kernel_abs_path: str | None = None
 
         self._state_graph: StateGraph = self._create_state_graph()
 
@@ -4962,7 +4907,7 @@ class EnvContext:
     def eval_state(
         self,
         state_name: str,
-    ) -> Any:
+    ) -> typing.Any:
         return self._state_graph.eval_state(state_name)
 
     def register_factory(
@@ -4974,6 +4919,7 @@ class EnvContext:
         return self._state_graph.register_factory(state_name, factory_class(self), replace_existing)
 
     def get_stride(self) -> StateStride:
+        assert self._state_stride is not None
         return self._state_stride
 
     def set_max_stride(
@@ -4982,6 +4928,7 @@ class EnvContext:
     ) -> StateStride:
         if not self.has_stride_reached(next_stride):
             self._state_stride = next_stride
+        assert self._state_stride is not None
         log_stride.set(self._state_stride)
         return self._state_stride
 
@@ -4991,9 +4938,10 @@ class EnvContext:
     ) -> bool:
         """
         `StateStride.value` is monotonically increasing.
-        At most one call to `switch_python` is required at each value.
         """
-        return self.get_stride().value >= next_stride.value
+        if self._state_stride is None:
+            return False
+        return self._state_stride.value >= next_stride.value
 
     def print_exit_line(
         self,
@@ -5041,39 +4989,40 @@ class ContextBuilder:
     def __init__(self):
         self._env_ctx = EnvContext()
 
-    def entry_func(self, value: EntryFunc) -> ContextBuilder:
+    def entry_func(self, value: EntryFunc | None) -> ContextBuilder:
         self._env_ctx._entry_func = value
         return self
 
-    def state_stride(self, value: StateStride) -> ContextBuilder:
+    def state_stride(self, value: StateStride | None) -> ContextBuilder:
         self._env_ctx._state_stride = value
         return self
 
-    def is_app(self, value: bool) -> ContextBuilder:
+    def is_app(self, value: bool | None) -> ContextBuilder:
         self._env_ctx._is_app = value
         return self
 
-    def prepare_venv(self, value: bool) -> ContextBuilder:
+    def prepare_venv(self, value: bool | None) -> ContextBuilder:
         self._env_ctx._prepare_venv = value
         return self
 
-    def sub_command(self, value: SubCommand) -> ContextBuilder:
+    def sub_command(self, value: SubCommand | None) -> ContextBuilder:
         self._env_ctx._sub_command = value
         return self
 
-    def is_log_enabled(self, value: bool) -> ContextBuilder:
+    def is_log_enabled(self, value: bool | None) -> ContextBuilder:
         self._env_ctx._is_log_enabled = value
         return self
 
-    def final_state(self, value: str) -> ContextBuilder:
-        self._env_ctx._final_state = value
+    def forced_final_state(self, value: str | None) -> ContextBuilder:
+        self._env_ctx._forced_final_state = value
         return self
 
-    def proto_kernel_abs_path(self, value: str) -> ContextBuilder:
-        self._env_ctx._proto_kernel_abs_path = value
+    def forced_proto_kernel_abs_path(self, value: str | None) -> ContextBuilder:
+        self._env_ctx._forced_proto_kernel_abs_path = value
         return self
 
     def build_context(self) -> EnvContext:
+        assert self._env_ctx._entry_func is not None
         return self._env_ctx
 
 
@@ -5372,7 +5321,7 @@ def warn_once_at_state_stride(
         logger.warning(log_message)
 
 
-def can_print_effective_config(state_node: StateNode) -> bool:
+def _can_print_effective_config(state_node: StateNode, state_print_conf_finalized: bool) -> bool:
     """
     See: FT_19_44_42_19.effective_config.md
     """
@@ -5381,7 +5330,7 @@ def can_print_effective_config(state_node: StateNode) -> bool:
         state_node.env_ctx.get_stride()
         # `StateStride.stride_py_arbitrary` ensures that the path to `proto_code` is outside `venv`:
         == StateStride.stride_py_arbitrary
-        and state_node.env_ctx._print_conf
+        and state_print_conf_finalized
     )
 
 
@@ -5631,6 +5580,8 @@ def _replace_multiple_body_in_empty_lines(
 
 
 def assert_proto_kernel_is_stand_alone(proto_kernel_abs_path: str) -> None:
+    import site
+
     normalized_path = os.path.realpath(proto_kernel_abs_path)
 
     package_dirs = site.getsitepackages()
@@ -5693,6 +5644,8 @@ def get_python_version(path_to_python: str) -> tuple[int, int, int]:
     """
     Executes a `python` binary and retrieves its version as a numeric tuple.
     """
+    import ast
+
     cmd_args: list[str] = [
         path_to_python,
         "-c",
@@ -5719,6 +5672,7 @@ def parse_python_version(python_version: str) -> tuple[int, int, int]:
     *   "3.13.4-beta" -> (3.13.4)
     *   "3" -> (3.0.0)
     """
+    import re
 
     def _parse_version_int(version_part: str) -> int:
         number_match = re.search(r"\d+", version_part)
@@ -5732,10 +5686,12 @@ def parse_python_version(python_version: str) -> tuple[int, int, int]:
 def import_proto_module(
     proto_module_name: str,
     proto_module_abs_path: str,
-) -> types.ModuleType:
+):
     """
     Import a module from an absolute path.
     """
+    import types
+    import importlib.util
 
     module_spec = importlib.util.spec_from_file_location(
         proto_module_name,
@@ -5899,19 +5855,15 @@ def get_config(conf_leap: ConfLeap) -> dict:
     """
     UC_54_26_66_63.lib_access_to_config_data.md:
     Retrieve config data for the specified `conf_leap` as a function call (without the process restarts).
-    See FT_96_50_58_75.context_propagation.md:
-    `_proto_kernel_abs_path` is required to load the config from the right paths.
-    None of `EnvVar.*` can be used to ensure FT_66_02_54_56.context_isolation.md.
 
     TODO: Maybe support proto_kernel_abs_path (default to None) to override _proto_kernel_abs_path?
     """
 
-    # NOTE: Assume (no verification) the module is loaded from
-    #       (outside venv, outside local packages, outside global packages):
-    # TODO: FT_77_15_06_50.dynamic_DAG.md:
-    #       It is set to `StateStride.stride_py_arbitrary` even though we do not really know
-    #       whether this python is outside `venv` (what `StateStride.stride_py_arbitrary` is really for).
-    #       But it works for now until we can build different implementation for `get_config` lib call.
+    # FT_96_50_58_75.context_propagation.md
+    # Assume (no verification) that `_proto_kernel_abs_path` was set to a stand-alone to load config.
+    # None of `EnvVar.*` can be used to ensure FT_66_02_54_56.context_isolation.md.
+    if False:
+        assert_proto_kernel_is_stand_alone(_proto_kernel_abs_path)
 
     _conf_leap_to_state: dict[ConfLeap, str] = {
         ConfLeap.leap_primer: EnvState.state_primer_conf_file_data_loaded.name,
@@ -5923,9 +5875,14 @@ def get_config(conf_leap: ConfLeap) -> dict:
     if conf_leap not in _conf_leap_to_state:
         raise ValueError(f"Unsupported `ConfLeap` value: {conf_leap}")
 
-    env_ctx = EnvContext()
-    env_ctx._entry_func = EntryFunc.func_call_lib
-    env_ctx._final_state = _conf_leap_to_state[conf_leap]
+    env_ctx = (
+        ContextBuilder()
+        .entry_func(EntryFunc.func_call_lib)
+        .state_stride(StateStride.stride_py_arbitrary)
+        .forced_final_state(_conf_leap_to_state[conf_leap])
+        #
+        .build_context()
+    )
     env_ctx.eval_state(TargetState.target_everything_executed.value.name)
     return env_ctx.eval_state(_conf_leap_to_state[conf_leap])
 
@@ -6012,8 +5969,15 @@ def _start_main(
             # noinspection PyPep8Naming
             imported_EntryFunc = getattr(imported_kernel, EntryFunc.__name__)
             imported_run_process = getattr(imported_kernel, run_process.__name__)
-            env_ctx = imported_EnvContext()
-            env_ctx._entry_func = imported_EntryFunc[entry_func.name]
+            # noinspection PyPep8Naming
+            imported_ContextBuilder = getattr(imported_kernel, ContextBuilder.__name__)
+            env_ctx = (
+                imported_ContextBuilder()
+                .entry_func(imported_EntryFunc[entry_func.name])
+                .state_stride(curr_py_exec)
+                #
+                .build_context()
+            )
             imported_run_process(env_ctx)
         elif curr_py_exec.value >= StateStride.stride_py_venv.value and entry_func == EntryFunc.func_start_app:
             venv_module = importlib.import_module(module_name)
@@ -6027,8 +5991,13 @@ def _start_main(
         else:
             # FT_14_52_73_23.primer_runtime.md:
             # Keep running `proto_code`:
-            env_ctx = EnvContext()
-            env_ctx._entry_func = entry_func
+            env_ctx = (
+                ContextBuilder()
+                .entry_func(entry_func)
+                .state_stride(curr_py_exec)
+                #
+                .build_context()
+            )
             run_process(env_ctx)
 
     except ImportError as import_error:
@@ -6048,8 +6017,13 @@ def _start_main(
 
 
 def _proto_main() -> None:
-    env_ctx = EnvContext()
-    env_ctx._entry_func = EntryFunc.func_run_main
+    env_ctx = (
+        ContextBuilder()
+        #
+        .entry_func(EntryFunc.func_run_main)
+        #
+        .build_context()
+    )
     run_process(env_ctx)
 
 

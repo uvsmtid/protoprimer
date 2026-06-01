@@ -33,7 +33,7 @@ def customize_env_context():
         ContextBuilder()
         .entry_func(EntryFunc.func_boot_env)
         .is_app(True)
-        .final_state(CustomEnvState.state_pre_commit_configured.name)
+        .forced_final_state(CustomEnvState.state_pre_commit_configured.name)
         #
         .build_context()
     )

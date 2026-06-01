@@ -19,6 +19,7 @@ from protoprimer.primer_kernel import (
     ConfConstClient,
     ConfField,
     ContextBuilder,
+    EntryFunc,
     EnvContext,
     EnvState,
     EnvVar,
@@ -35,6 +36,8 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.setUpPyfakefs()
         self.env_ctx = (
             ContextBuilder()
+            #
+            .entry_func(EntryFunc.func_boot_env)
             #
             .is_app(True)
             #

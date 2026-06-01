@@ -20,6 +20,8 @@ from protoprimer.primer_kernel import (
     Factory_state_input_sub_command_arg_loaded,
     ConfConstEnv,
     ConfConstGeneral,
+    ContextBuilder,
+    EntryFunc,
     EnvContext,
     EnvState,
     StateStride,
@@ -42,7 +44,17 @@ class ThisTestClass(BasePyfakefsTestClass):
 
     def setUp(self):
         self.setUpPyfakefs()
-        self.env_ctx = EnvContext()
+        self.env_ctx = (
+            ContextBuilder()
+            #
+            .entry_func(EntryFunc.func_boot_env)
+            #
+            .is_app(True)
+            #
+            .state_stride(StateStride.stride_py_unknown)
+            #
+            .build_context()
+        )
 
         self.fs.create_dir(mock_client_dir)
         os.chdir(mock_client_dir)

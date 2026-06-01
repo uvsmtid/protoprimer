@@ -12,6 +12,7 @@ from protoprimer.primer_kernel import (
     Factory_state_proto_code_file_abs_path_inited,
     Factory_state_version_constraints_generated,
     ContextBuilder,
+    EntryFunc,
     EnvState,
     SubCommand,
     StateStride,
@@ -24,6 +25,8 @@ from protoprimer.primer_kernel import (
 def env_ctx():
     return (
         ContextBuilder()
+        #
+        .entry_func(EntryFunc.func_boot_env)
         #
         .is_app(True)
         #
