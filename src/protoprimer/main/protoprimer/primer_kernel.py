@@ -1732,7 +1732,7 @@ def conditional_factory(state_node_class: type[StateNodeSubclass]) -> type[State
     return state_node_class
 
 
-def trivial_factory(state_node_class: type[StateNodeSubclass]) -> type[StateNodeSubclass]:
+def trivial_factory(state_node_class: type[StateNodeSubclass]) -> type[NodeFactory]:
     """
     Class decorator that makes a `StateNode` class act like a factory for itself.
 
@@ -2535,8 +2535,8 @@ class Bootstrapper_state_input_proto_code_file_abs_path_var_loaded(AbstractCachi
 
 
 # noinspection PyPep8Naming
-@trivial_factory
-class Bootstrapper_state_stride_py_arbitrary_reached(AbstractCachingStateNode[StateStride]):
+@conditional_factory
+class Bootstrapper_state_stride_py_arbitrary_reached_is_app(AbstractCachingStateNode[StateStride]):
     """
     Implements UC_90_98_17_93.run_under_venv.md.
     """
@@ -2605,6 +2605,28 @@ class Bootstrapper_state_stride_py_arbitrary_reached(AbstractCachingStateNode[St
             proto_code_abs_file_path=None,
             required_environ=cleaned_env,
         )
+
+
+# noinspection PyPep8Naming
+@conditional_factory
+class Bootstrapper_state_stride_py_arbitrary_reached_not_is_app(AbstractCachingStateNode[StateStride]):
+
+    _state_name = staticmethod(lambda: EnvState.state_stride_py_arbitrary_reached.name)
+
+    def _eval_state_once(self) -> ValueType:
+        # For `func_start_app`: `EnvVar.var_PROTOPRIMER_PROTO_CODE` is set (contract),
+        # so it does not need to switch to `StateStride.stride_py_arbitrary` to set it:
+        return self.env_ctx.set_max_stride(StateStride.stride_py_arbitrary)
+
+
+# noinspection PyPep8Naming
+class Factory_state_stride_py_arbitrary_reached(NodeFactory[StateStride]):
+
+    def create_state_node(self) -> StateNode[StateStride]:
+        if self.env_ctx._is_app:
+            return Bootstrapper_state_stride_py_arbitrary_reached_is_app(self.env_ctx)
+        else:
+            return Bootstrapper_state_stride_py_arbitrary_reached_not_is_app(self.env_ctx)
 
 
 # noinspection PyPep8Naming
@@ -3711,7 +3733,6 @@ class Bootstrapper_state_stride_py_required_reached_not_command_start(AbstractCa
 
     _parent_states = staticmethod(
         lambda: [
-            EnvState.state_input_sub_command_arg_loaded.name,
             EnvState.state_prepare_venv_finalized.name,
             EnvState.state_input_start_id_var_loaded.name,
             EnvState.state_proto_code_file_abs_path_inited.name,
@@ -3774,7 +3795,6 @@ class Bootstrapper_state_stride_py_required_reached_not_command_start(AbstractCa
 class Bootstrapper_state_stride_py_required_reached_command_start(AbstractCachingStateNode[StateStride]):
     _parent_states = staticmethod(
         lambda: [
-            EnvState.state_input_sub_command_arg_loaded.name,
             EnvState.state_prepare_venv_finalized.name,
             EnvState.state_input_start_id_var_loaded.name,
             EnvState.state_proto_code_file_abs_path_inited.name,
@@ -3815,8 +3835,8 @@ class Factory_state_stride_py_required_reached(NodeFactory[StateStride]):
 
 
 # noinspection PyPep8Naming
-@trivial_factory
-class Bootstrapper_state_reboot_triggered(AbstractCachingStateNode[bool]):
+@conditional_factory
+class Bootstrapper_state_reboot_triggered_is_app(AbstractCachingStateNode[bool]):
     """
     Removes current `venv` dir and `version_constraints.txt` file (to trigger their re-creation subsequently).
     """
@@ -3890,8 +3910,28 @@ class Bootstrapper_state_reboot_triggered(AbstractCachingStateNode[bool]):
 
 
 # noinspection PyPep8Naming
-@trivial_factory
-class Bootstrapper_state_venv_driver_prepared(AbstractCachingStateNode[VenvDriverBase]):
+@conditional_factory
+class Bootstrapper_state_reboot_triggered_not_is_app(AbstractCachingStateNode[bool]):
+
+    _state_name = staticmethod(lambda: EnvState.state_reboot_triggered.name)
+
+    def _eval_state_once(self) -> ValueType:
+        return False
+
+
+# noinspection PyPep8Naming
+class Factory_state_reboot_triggered(NodeFactory[bool]):
+
+    def create_state_node(self) -> StateNode[bool]:
+        if self.env_ctx._is_app:
+            return Bootstrapper_state_reboot_triggered_is_app(self.env_ctx)
+        else:
+            return Bootstrapper_state_reboot_triggered_not_is_app(self.env_ctx)
+
+
+# noinspection PyPep8Naming
+@conditional_factory
+class Bootstrapper_state_venv_driver_prepared_is_app(AbstractCachingStateNode[VenvDriverBase]):
     _parent_states = staticmethod(
         lambda: [
             EnvState.state_input_sub_command_arg_loaded.name,
@@ -3908,12 +3948,6 @@ class Bootstrapper_state_venv_driver_prepared(AbstractCachingStateNode[VenvDrive
     def _eval_state_once(self) -> ValueType:
 
         state_input_sub_command_arg_loaded: SubCommand = self.eval_parent_state(EnvState.state_input_sub_command_arg_loaded.name)
-
-        if state_input_sub_command_arg_loaded == SubCommand.command_start:
-            # The only reason for `EnvState.state_venv_driver_prepared`
-            # is to prepare `VenvDriverBase` to create `venv`.
-            # Skip it as `venv` is supposed to be ready in `SubCommand.command_start`:
-            return VenvDriverBase()
 
         state_required_python_version_inited: str = self.eval_parent_state(EnvState.state_required_python_version_inited.name)
 
@@ -3948,8 +3982,30 @@ class Bootstrapper_state_venv_driver_prepared(AbstractCachingStateNode[VenvDrive
 
 
 # noinspection PyPep8Naming
-@trivial_factory
-class Bootstrapper_state_stride_py_venv_reached(AbstractCachingStateNode[StateStride]):
+@conditional_factory
+class Bootstrapper_state_venv_driver_prepared_not_is_app(AbstractCachingStateNode[VenvDriverBase]):
+    _state_name = staticmethod(lambda: EnvState.state_venv_driver_prepared.name)
+
+    def _eval_state_once(self) -> ValueType:
+        # The only reason for `EnvState.state_venv_driver_prepared`
+        # is to prepare `VenvDriverBase` to create `venv`.
+        # Skip it as `venv` is supposed to be ready in `SubCommand.command_start`:
+        return VenvDriverBase()
+
+
+# noinspection PyPep8Naming
+class Factory_state_venv_driver_prepared(NodeFactory[VenvDriverBase]):
+
+    def create_state_node(self) -> StateNode[VenvDriverBase]:
+        if self.env_ctx._is_app:
+            return Bootstrapper_state_venv_driver_prepared_is_app(self.env_ctx)
+        else:
+            return Bootstrapper_state_venv_driver_prepared_not_is_app(self.env_ctx)
+
+
+# noinspection PyPep8Naming
+@conditional_factory
+class Bootstrapper_state_stride_py_venv_reached_is_app(AbstractCachingStateNode[StateStride]):
     """
     Creates `venv` and switches to `python` from there.
     """
@@ -3977,12 +4033,6 @@ class Bootstrapper_state_stride_py_venv_reached(AbstractCachingStateNode[StateSt
 
         state_input_sub_command_arg_loaded: SubCommand = self.eval_parent_state(EnvState.state_input_sub_command_arg_loaded.name)
 
-        if state_input_sub_command_arg_loaded == SubCommand.command_start:
-            # The only reason for `EnvState.state_stride_py_venv_reached`
-            # is to create a `venv`.
-            # Skip it as `venv` is supposed to be ready in `SubCommand.command_start`:
-            return self.env_ctx.set_max_stride(state_stride_py_venv_reached)
-
         state_input_start_id_var_loaded: str = self.eval_parent_state(EnvState.state_input_start_id_var_loaded.name)
 
         state_proto_code_file_abs_path_inited: str = self.eval_parent_state(EnvState.state_proto_code_file_abs_path_inited.name)
@@ -3999,11 +4049,15 @@ class Bootstrapper_state_stride_py_venv_reached(AbstractCachingStateNode[StateSt
         path_to_curr_python: str = get_path_to_curr_python()
         logger.debug(f"path_to_curr_python: {path_to_curr_python}")
 
-        if is_sub_path(
-            path_to_curr_python,
-            state_local_venv_dir_abs_path_inited,
-        ):
-            raise AssertionError(f"Current `python` [{path_to_curr_python}] must be outside of the `venv` [{state_local_venv_dir_abs_path_inited}].")
+        if state_input_sub_command_arg_loaded == SubCommand.command_start:
+            # Skip `venv` validation before switch because `SubCommand.command_start` does not switch outside of `venv`:
+            pass
+        else:
+            if is_sub_path(
+                path_to_curr_python,
+                state_local_venv_dir_abs_path_inited,
+            ):
+                raise AssertionError(f"Current `python` [{path_to_curr_python}] must be outside of the `venv` [{state_local_venv_dir_abs_path_inited}].")
 
         if os.environ.get(EnvVar.var_PROTOPRIMER_MOCKED_RESTART.value, None) is None:
             if state_input_sub_command_arg_loaded == SubCommand.command_start:
@@ -4042,8 +4096,58 @@ class Bootstrapper_state_stride_py_venv_reached(AbstractCachingStateNode[StateSt
 
 
 # noinspection PyPep8Naming
-@trivial_factory
-class Bootstrapper_state_protoprimer_package_installed(AbstractCachingStateNode[bool]):
+@conditional_factory
+class Bootstrapper_state_stride_py_venv_reached_not_is_app(AbstractCachingStateNode[StateStride]):
+
+    _parent_states = staticmethod(
+        lambda: [
+            EnvState.state_input_start_id_var_loaded.name,
+            EnvState.state_proto_code_file_abs_path_inited.name,
+            EnvState.state_local_venv_dir_abs_path_inited.name,
+        ]
+    )
+    _state_name = staticmethod(lambda: EnvState.state_stride_py_venv_reached.name)
+
+    def _eval_state_once(self) -> ValueType:
+        state_stride: StateStride = StateStride.stride_py_venv
+
+        if self.env_ctx.has_stride_reached(next_stride=state_stride):
+            return self.env_ctx.set_max_stride(state_stride)
+
+        state_input_start_id_var_loaded: str = self.eval_parent_state(EnvState.state_input_start_id_var_loaded.name)
+        state_proto_code_file_abs_path_inited: str = self.eval_parent_state(EnvState.state_proto_code_file_abs_path_inited.name)
+        state_local_venv_dir_abs_path_inited: str = self.eval_parent_state(EnvState.state_local_venv_dir_abs_path_inited.name)
+
+        # The `venv` is supposed to be ready when called as `func_start_app`:
+        if not os.path.exists(state_local_venv_dir_abs_path_inited):
+            raise AssertionError(f"`venv` [{state_local_venv_dir_abs_path_inited}] is not found, run `{SubCommand.command_boot.value}` first")
+
+        venv_path_to_python: str = os.path.join(
+            state_local_venv_dir_abs_path_inited,
+            ConfConstGeneral.file_rel_path_venv_python,
+        )
+        return switch_python(
+            curr_python_path=get_path_to_curr_python(),
+            next_py_exec=self.env_ctx.set_max_stride(state_stride),
+            next_python_path=venv_path_to_python,
+            start_id=state_input_start_id_var_loaded,
+            proto_code_abs_file_path=state_proto_code_file_abs_path_inited,
+        )
+
+
+# noinspection PyPep8Naming
+class Factory_state_stride_py_venv_reached(NodeFactory[StateStride]):
+
+    def create_state_node(self) -> StateNode[StateStride]:
+        if self.env_ctx._is_app:
+            return Bootstrapper_state_stride_py_venv_reached_is_app(self.env_ctx)
+        else:
+            return Bootstrapper_state_stride_py_venv_reached_not_is_app(self.env_ctx)
+
+
+# noinspection PyPep8Naming
+@conditional_factory
+class Bootstrapper_state_protoprimer_package_installed_is_app(AbstractCachingStateNode[bool]):
 
     _parent_states = staticmethod(
         lambda: [
@@ -4063,6 +4167,9 @@ class Bootstrapper_state_protoprimer_package_installed(AbstractCachingStateNode[
 
         state_input_sub_command_arg_loaded: SubCommand = self.eval_parent_state(EnvState.state_input_sub_command_arg_loaded.name)
 
+        # TODO: FT_77_15_06_50.dynamic_DAG.md:
+        #       This is not reachable for `SubCommand.command_start`.
+        #       Command `command_start` will switch to `venv_module:func_name` at `StateStride.stride_py_venv`:
         if state_input_sub_command_arg_loaded == SubCommand.command_start:
             # The only reason for `EnvState.state_protoprimer_package_installed`
             # is to install dependencies into `venv`.
@@ -4173,8 +4280,28 @@ class Bootstrapper_state_protoprimer_package_installed(AbstractCachingStateNode[
 
 
 # noinspection PyPep8Naming
-@trivial_factory
-class Bootstrapper_state_version_constraints_generated(AbstractCachingStateNode[bool]):
+@conditional_factory
+class Bootstrapper_state_protoprimer_package_installed_not_is_app(AbstractCachingStateNode[bool]):
+
+    _state_name = staticmethod(lambda: EnvState.state_protoprimer_package_installed.name)
+
+    def _eval_state_once(self) -> ValueType:
+        return False
+
+
+# noinspection PyPep8Naming
+class Factory_state_protoprimer_package_installed(NodeFactory[bool]):
+
+    def create_state_node(self) -> StateNode[bool]:
+        if self.env_ctx._is_app:
+            return Bootstrapper_state_protoprimer_package_installed_is_app(self.env_ctx)
+        else:
+            return Bootstrapper_state_protoprimer_package_installed_not_is_app(self.env_ctx)
+
+
+# noinspection PyPep8Naming
+@conditional_factory
+class Bootstrapper_state_version_constraints_generated_is_app(AbstractCachingStateNode[bool]):
     """
     Implements UC_44_82_07_30.requirements_lock.md.
     """
@@ -4194,6 +4321,9 @@ class Bootstrapper_state_version_constraints_generated(AbstractCachingStateNode[
 
         state_input_sub_command_arg_loaded: SubCommand = self.eval_parent_state(EnvState.state_input_sub_command_arg_loaded.name)
 
+        # TODO: FT_77_15_06_50.dynamic_DAG.md:
+        #       This is not reachable for `SubCommand.command_start`.
+        #       Command `command_start` will switch to `venv_module:func_name` at `StateStride.stride_py_venv`:
         if state_input_sub_command_arg_loaded == SubCommand.command_start:
             # The only reason for `EnvState.state_version_constraints_generated`
             # is to re-generate the `version_constraints.txt` file based on `venv`.
@@ -4223,8 +4353,28 @@ class Bootstrapper_state_version_constraints_generated(AbstractCachingStateNode[
 
 
 # noinspection PyPep8Naming
-@trivial_factory
-class Bootstrapper_state_stride_deps_updated_reached(AbstractCachingStateNode[StateStride]):
+@conditional_factory
+class Bootstrapper_state_version_constraints_generated_not_is_app(AbstractCachingStateNode[bool]):
+
+    _state_name = staticmethod(lambda: EnvState.state_version_constraints_generated.name)
+
+    def _eval_state_once(self) -> ValueType:
+        return False
+
+
+# noinspection PyPep8Naming
+class Factory_state_version_constraints_generated(NodeFactory[bool]):
+
+    def create_state_node(self) -> StateNode[bool]:
+        if self.env_ctx._is_app:
+            return Bootstrapper_state_version_constraints_generated_is_app(self.env_ctx)
+        else:
+            return Bootstrapper_state_version_constraints_generated_not_is_app(self.env_ctx)
+
+
+# noinspection PyPep8Naming
+@conditional_factory
+class Bootstrapper_state_stride_deps_updated_reached_is_app(AbstractCachingStateNode[StateStride]):
 
     _parent_states = staticmethod(
         lambda: [
@@ -4246,6 +4396,9 @@ class Bootstrapper_state_stride_deps_updated_reached(AbstractCachingStateNode[St
 
         state_input_sub_command_arg_loaded: SubCommand = self.eval_parent_state(EnvState.state_input_sub_command_arg_loaded.name)
 
+        # TODO: FT_77_15_06_50.dynamic_DAG.md:
+        #       This is not reachable for `SubCommand.command_start`.
+        #       Command `command_start` will switch to `venv_module:func_name` at `StateStride.stride_py_venv`:
         if state_input_sub_command_arg_loaded == SubCommand.command_start:
             # The only reason for `EnvState.state_stride_deps_updated_reached`
             # is to make `venv` dependencies effective.
@@ -4273,8 +4426,28 @@ class Bootstrapper_state_stride_deps_updated_reached(AbstractCachingStateNode[St
 
 
 # noinspection PyPep8Naming
-@trivial_factory
-class Bootstrapper_state_proto_code_updated(AbstractCachingStateNode[bool]):
+@conditional_factory
+class Bootstrapper_state_stride_deps_updated_reached_not_is_app(AbstractCachingStateNode[StateStride]):
+
+    _state_name = staticmethod(lambda: EnvState.state_stride_deps_updated_reached.name)
+
+    def _eval_state_once(self) -> ValueType:
+        return self.env_ctx.set_max_stride(StateStride.stride_deps_updated)
+
+
+# noinspection PyPep8Naming
+class Factory_state_stride_deps_updated_reached(NodeFactory[StateStride]):
+
+    def create_state_node(self) -> StateNode[StateStride]:
+        if self.env_ctx._is_app:
+            return Bootstrapper_state_stride_deps_updated_reached_is_app(self.env_ctx)
+        else:
+            return Bootstrapper_state_stride_deps_updated_reached_not_is_app(self.env_ctx)
+
+
+# noinspection PyPep8Naming
+@conditional_factory
+class Bootstrapper_state_proto_code_updated_is_app(AbstractCachingStateNode[bool]):
     """
     Return `True` if content of the `proto_kernel` has changed.
 
@@ -4300,6 +4473,9 @@ class Bootstrapper_state_proto_code_updated(AbstractCachingStateNode[bool]):
 
         state_input_sub_command_arg_loaded: SubCommand = self.eval_parent_state(EnvState.state_input_sub_command_arg_loaded.name)
 
+        # TODO: FT_77_15_06_50.dynamic_DAG.md:
+        #       This is not reachable for `SubCommand.command_start`.
+        #       Command `command_start` will switch to `venv_module:func_name` at `StateStride.stride_py_venv`:
         if state_input_sub_command_arg_loaded == SubCommand.command_start:
             # The only reason for `EnvState.state_proto_code_updated`
             # is to update sources, but that has to be done in `SubCommand.command_boot`.
@@ -4359,12 +4535,31 @@ class Bootstrapper_state_proto_code_updated(AbstractCachingStateNode[bool]):
 
 
 # noinspection PyPep8Naming
+@conditional_factory
+class Bootstrapper_state_proto_code_updated_not_is_app(AbstractCachingStateNode[bool]):
+
+    _state_name = staticmethod(lambda: EnvState.state_proto_code_updated.name)
+
+    def _eval_state_once(self) -> ValueType:
+        return False
+
+
+# noinspection PyPep8Naming
+class Factory_state_proto_code_updated(NodeFactory[bool]):
+
+    def create_state_node(self) -> StateNode[bool]:
+        if self.env_ctx._is_app:
+            return Bootstrapper_state_proto_code_updated_is_app(self.env_ctx)
+        else:
+            return Bootstrapper_state_proto_code_updated_not_is_app(self.env_ctx)
+
+
+# noinspection PyPep8Naming
 @trivial_factory
 class Bootstrapper_state_stride_src_updated_reached(AbstractCachingStateNode[StateStride]):
 
     _parent_states = staticmethod(
         lambda: [
-            EnvState.state_input_sub_command_arg_loaded.name,
             EnvState.state_input_start_id_var_loaded.name,
             EnvState.state_proto_code_file_abs_path_inited.name,
             EnvState.state_local_venv_dir_abs_path_inited.name,
@@ -4534,7 +4729,7 @@ class EnvState(enum.Enum):
     state_input_proto_code_file_abs_path_var_loaded = Bootstrapper_state_input_proto_code_file_abs_path_var_loaded
 
     # restart: `StateStride.stride_py_unknown` -> `StateStride.stride_py_arbitrary`:
-    state_stride_py_arbitrary_reached = Bootstrapper_state_stride_py_arbitrary_reached
+    state_stride_py_arbitrary_reached = Factory_state_stride_py_arbitrary_reached
 
     state_proto_code_file_abs_path_inited = Factory_state_proto_code_file_abs_path_inited
 
@@ -4598,24 +4793,23 @@ class EnvState(enum.Enum):
     # restart: `StateStride.stride_py_arbitrary` -> `StateStride.stride_py_required`:
     state_stride_py_required_reached = Factory_state_stride_py_required_reached
 
-    state_reboot_triggered = Bootstrapper_state_reboot_triggered
+    state_reboot_triggered = Factory_state_reboot_triggered
 
-    state_venv_driver_prepared = Bootstrapper_state_venv_driver_prepared
+    state_venv_driver_prepared = Factory_state_venv_driver_prepared
 
     # restart: `StateStride.stride_py_required` -> `StateStride.stride_py_venv`:
-    state_stride_py_venv_reached = Bootstrapper_state_stride_py_venv_reached
+    state_stride_py_venv_reached = Factory_state_stride_py_venv_reached
 
-    # TODO: rename to "client" (or "ref"?): `client_project_descriptors_installed`:
-    state_protoprimer_package_installed = Bootstrapper_state_protoprimer_package_installed
+    state_protoprimer_package_installed = Factory_state_protoprimer_package_installed
 
-    state_version_constraints_generated = Bootstrapper_state_version_constraints_generated
+    state_version_constraints_generated = Factory_state_version_constraints_generated
 
     # restart: `StateStride.stride_py_venv` -> `StateStride.stride_deps_updated`:
     # TODO: rename - "reached" sounds weird (and makes no sense):
-    state_stride_deps_updated_reached = Bootstrapper_state_stride_deps_updated_reached
+    state_stride_deps_updated_reached = Factory_state_stride_deps_updated_reached
 
     # TODO: rename according to the final name:
-    state_proto_code_updated = Bootstrapper_state_proto_code_updated
+    state_proto_code_updated = Factory_state_proto_code_updated
 
     # restart: `StateStride.stride_deps_updated` -> `StateStride.stride_src_updated`:
     state_stride_src_updated_reached = Bootstrapper_state_stride_src_updated_reached
@@ -4638,9 +4832,7 @@ class TargetState(enum.Enum):
     target_derived_config_loaded = EnvState.state_derived_conf_data_loaded
 
     # # FT_05_08_64_67.start_app.md
-    # TODO: FT_77_15_06_50.dynamic_DAG.md:
-    #       Can For `StateStride.stride_py_venv` be enough for `EntryFunc.func_start_app`?
-    target_venv_activated = EnvState.state_stride_src_updated_reached
+    target_venv_activated = EnvState.state_stride_py_venv_reached
 
     # FT_85_17_35_21.boot_env.md
     # The final state before switching to `PrimerRuntime.runtime_meta`:
@@ -4849,35 +5041,35 @@ class ContextBuilder:
     def __init__(self):
         self._env_ctx = EnvContext()
 
-    def entry_func(self, value: EntryFunc) -> "ContextBuilder":
+    def entry_func(self, value: EntryFunc) -> ContextBuilder:
         self._env_ctx._entry_func = value
         return self
 
-    def state_stride(self, value: StateStride) -> "ContextBuilder":
+    def state_stride(self, value: StateStride) -> ContextBuilder:
         self._env_ctx._state_stride = value
         return self
 
-    def is_app(self, value: bool) -> "ContextBuilder":
+    def is_app(self, value: bool) -> ContextBuilder:
         self._env_ctx._is_app = value
         return self
 
-    def prepare_venv(self, value: bool) -> "ContextBuilder":
+    def prepare_venv(self, value: bool) -> ContextBuilder:
         self._env_ctx._prepare_venv = value
         return self
 
-    def sub_command(self, value: SubCommand) -> "ContextBuilder":
+    def sub_command(self, value: SubCommand) -> ContextBuilder:
         self._env_ctx._sub_command = value
         return self
 
-    def is_log_enabled(self, value: bool) -> "ContextBuilder":
+    def is_log_enabled(self, value: bool) -> ContextBuilder:
         self._env_ctx._is_log_enabled = value
         return self
 
-    def final_state(self, value: str) -> "ContextBuilder":
+    def final_state(self, value: str) -> ContextBuilder:
         self._env_ctx._final_state = value
         return self
 
-    def proto_kernel_abs_path(self, value: str) -> "ContextBuilder":
+    def proto_kernel_abs_path(self, value: str) -> ContextBuilder:
         self._env_ctx._proto_kernel_abs_path = value
         return self
 
@@ -5335,7 +5527,7 @@ def get_path_to_base_python() -> str:
 
     executable_basename: str = os.path.basename(sys.executable)
 
-    # Try current `executable_basename` first.
+    # Try the current `executable_basename` first.
     # In some cases (e.g. on `macOS` with `homebrew`),
     # there are no simple basenames like `python`, instead, there are versioned ones like `python3.10`:
     path_to_next_python: str = os.path.join(
@@ -5803,18 +5995,11 @@ def _start_main(
     installed_kernel_name = f"{ConfConstGeneral.name_protoprimer_package}.{ConfConstGeneral.name_primer_kernel_module}"
 
     try:
-        # NOTE: `state_stride_src_updated_reached` forces restart with this `StateStride`:
         if curr_py_exec.value >= StateStride.stride_src_updated.value:
+            # FT_74_10_40_33.DAG_extension.md:
+            # Complete `EntryFunc.func_boot_env` with extension (if any).
             venv_module = importlib.import_module(module_name)
             selected_main = getattr(venv_module, func_name)
-            if entry_func == EntryFunc.func_start_app:
-                # TODO: FT_77_15_06_50.dynamic_DAG.md:
-                #       Can For `StateStride.stride_py_venv` be enough for `EntryFunc.func_start_app`?
-                # FT_96_50_58_75.context_propagation.md:
-                # Switch from running `proto_code` to installed `venv` code:
-                imported_kernel = importlib.import_module(installed_kernel_name)
-                setattr(imported_kernel, "_proto_kernel_abs_path", os.environ[EnvVar.var_PROTOPRIMER_PROTO_CODE.value])
-                remove_protoprimer_env_vars(os.environ)
             selected_main()
         elif curr_py_exec.value >= StateStride.stride_deps_updated.value:
             # TODO: FT_21_75_54_18.instant_scenario.md:
@@ -5830,20 +6015,36 @@ def _start_main(
             env_ctx = imported_EnvContext()
             env_ctx._entry_func = imported_EntryFunc[entry_func.name]
             imported_run_process(env_ctx)
+        elif curr_py_exec.value >= StateStride.stride_py_venv.value and entry_func == EntryFunc.func_start_app:
+            venv_module = importlib.import_module(module_name)
+            selected_main = getattr(venv_module, func_name)
+            # FT_96_50_58_75.context_propagation.md:
+            # Switch from running `proto_code` to installed `venv` code:
+            imported_kernel = importlib.import_module(installed_kernel_name)
+            setattr(imported_kernel, "_proto_kernel_abs_path", os.environ[EnvVar.var_PROTOPRIMER_PROTO_CODE.value])
+            remove_protoprimer_env_vars(os.environ)
+            selected_main()
         else:
+            # FT_14_52_73_23.primer_runtime.md:
+            # Keep running `proto_code`:
             env_ctx = EnvContext()
             env_ctx._entry_func = entry_func
             run_process(env_ctx)
-    except ImportError as e:
-        if curr_py_exec.value >= StateStride.stride_src_updated.value:
+
+    except ImportError as import_error:
+        if curr_py_exec.value >= StateStride.stride_py_venv.value and entry_func == EntryFunc.func_start_app:
             raise AssertionError(
-                f"Failed to import `{module_name}` with `{EnvVar.var_PROTOPRIMER_PY_EXEC.value}` [{curr_py_exec.name}]. "
-                # TODO: This hint is only correct for error to import anything from `protoprimer`,
-                #       not any import in general:
-                f"{get_import_error_hint(module_name)} "
+                f"Failed to import `{import_error.name}` at [{curr_py_exec.name}]. "
+                f"Has `{KeyWord.key_venv.value}` been initialized via `{SubCommand.command_boot.value}` sub command? "
                 #
-            )
-        raise e
+            ) from import_error
+        if import_error.name == installed_kernel_name:
+            raise AssertionError(
+                f"Failed to import `{installed_kernel_name}` at [{curr_py_exec.name}]. "
+                f"{get_import_error_hint(installed_kernel_name)} "
+                #
+            ) from import_error
+        raise import_error
 
 
 def _proto_main() -> None:

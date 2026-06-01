@@ -17,11 +17,12 @@ from protoprimer.primer_kernel import (
     Bootstrapper_state_local_conf_file_abs_path_inited,
     Bootstrapper_state_local_venv_dir_abs_path_inited,
     Factory_state_proto_code_file_abs_path_inited,
-    Bootstrapper_state_reboot_triggered,
+    Factory_state_reboot_triggered,
     Bootstrapper_state_selected_python_file_abs_path_inited,
-    Bootstrapper_state_venv_driver_prepared,
+    Factory_state_venv_driver_prepared,
     ConfConstEnv,
     ConfConstGeneral,
+    ContextBuilder,
     EnvContext,
     EnvState,
     EnvVar,
@@ -46,7 +47,13 @@ class ThisTestClass(BasePyfakefsTestClass):
 
     def setUp(self):
         self.setUpPyfakefs()
-        self.env_ctx = EnvContext()
+        self.env_ctx = (
+            ContextBuilder()
+            #
+            .is_app(True)
+            #
+            .build_context()
+        )
 
         self.fs.create_dir(mock_client_dir)
         os.chdir(mock_client_dir)
@@ -71,12 +78,12 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch.dict(f"{os.__name__}.environ", {}, clear=True)
     @patch.object(sys, "argv", ["/path/to/script.py", "--some-arg"])
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_reboot_triggered.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_reboot_triggered.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Factory_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_selected_python_file_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_venv_driver_prepared.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_venv_driver_prepared.__name__}.create_state_node")
     @patch(
         f"{primer_kernel.__name__}.get_path_to_curr_python",
         return_value=test_python_abs_path,
@@ -150,12 +157,12 @@ class ThisTestClass(BasePyfakefsTestClass):
     ####################################################################################################################
     @patch.dict(f"{os.__name__}.environ", {}, clear=True)
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_reboot_triggered.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_reboot_triggered.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Factory_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_selected_python_file_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_venv_driver_prepared.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_venv_driver_prepared.__name__}.create_state_node")
     @patch(
         f"{primer_kernel.__name__}.get_path_to_curr_python",
         return_value="/mock_client_dir/venv/wrong/path/to/python",
@@ -207,12 +214,12 @@ class ThisTestClass(BasePyfakefsTestClass):
     ####################################################################################################################
     @patch.dict(f"{os.__name__}.environ", {}, clear=True)
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_reboot_triggered.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_reboot_triggered.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Factory_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_selected_python_file_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_venv_driver_prepared.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_venv_driver_prepared.__name__}.create_state_node")
     @patch(
         f"{primer_kernel.__name__}.get_path_to_curr_python",
         # expected path to `python`:
@@ -266,12 +273,12 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch.dict(f"{os.__name__}.environ", {}, clear=True)
     @patch.object(sys, "argv", ["/path/to/script.py", "--some-arg"])
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_reboot_triggered.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_reboot_triggered.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Factory_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_selected_python_file_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_venv_driver_prepared.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_venv_driver_prepared.__name__}.create_state_node")
     @patch(
         f"{primer_kernel.__name__}.get_path_to_curr_python",
         return_value=test_python_abs_path,
@@ -326,12 +333,12 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch.dict(f"{os.__name__}.environ", {}, clear=True)
     @patch.object(sys, "argv", ["/path/to/script.py", "--some-arg"])
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_reboot_triggered.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_reboot_triggered.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Factory_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_selected_python_file_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_venv_driver_prepared.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_venv_driver_prepared.__name__}.create_state_node")
     @patch(
         f"{primer_kernel.__name__}.get_path_to_curr_python",
         return_value=test_python_abs_path,
@@ -407,12 +414,12 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch.dict(f"{os.__name__}.environ", {}, clear=True)
     @patch.object(sys, "argv", ["/path/to/script.py", "--some-arg"])
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_reboot_triggered.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_reboot_triggered.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Factory_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_selected_python_file_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_venv_driver_prepared.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_venv_driver_prepared.__name__}.create_state_node")
     @patch(
         f"{primer_kernel.__name__}.get_path_to_curr_python",
         return_value=non_default_file_abs_path_python,
@@ -486,12 +493,12 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch.dict(f"{os.__name__}.environ", {}, clear=True)
     @patch.object(sys, "argv", ["/path/to/script.py", "--some-arg"])
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_reboot_triggered.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_reboot_triggered.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Factory_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_selected_python_file_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_venv_driver_prepared.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_venv_driver_prepared.__name__}.create_state_node")
     @patch(
         f"{primer_kernel.__name__}.get_path_to_curr_python",
         return_value="/a/different/python",
@@ -570,12 +577,12 @@ class ThisTestClass(BasePyfakefsTestClass):
     )
     @patch.object(sys, "argv", ["/path/to/script.py", "--some-arg"])
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_reboot_triggered.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_reboot_triggered.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Factory_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_selected_python_file_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_venv_driver_prepared.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_venv_driver_prepared.__name__}.create_state_node")
     @patch(
         f"{primer_kernel.__name__}.get_path_to_curr_python",
     )
@@ -620,12 +627,12 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch.object(sys, "argv", ["/path/to/script.py", "--some-arg"])
     @patch(f"{primer_kernel.__name__}.logger.info")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_reboot_triggered.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_reboot_triggered.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Factory_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_selected_python_file_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_venv_driver_prepared.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_venv_driver_prepared.__name__}.create_state_node")
     @patch(
         f"{primer_kernel.__name__}.get_path_to_curr_python",
         return_value=test_python_abs_path,
@@ -700,12 +707,12 @@ class ThisTestClass(BasePyfakefsTestClass):
     ####################################################################################################################
     @patch.dict(f"{os.__name__}.environ", {}, clear=True)
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_reboot_triggered.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_reboot_triggered.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Factory_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_selected_python_file_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_venv_driver_prepared.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_venv_driver_prepared.__name__}.create_state_node")
     @patch(
         f"{primer_kernel.__name__}.get_path_to_curr_python",
         return_value=test_python_abs_path,

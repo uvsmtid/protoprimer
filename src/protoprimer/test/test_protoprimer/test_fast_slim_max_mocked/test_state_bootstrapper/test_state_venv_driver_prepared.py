@@ -12,10 +12,10 @@ from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     Bootstrapper_state_local_cache_dir_abs_path_inited,
-    Bootstrapper_state_reboot_triggered,
+    Factory_state_reboot_triggered,
     Bootstrapper_state_selected_python_file_abs_path_inited,
     Bootstrapper_state_venv_driver_inited,
-    EnvContext,
+    ContextBuilder,
     EnvState,
     VenvDriverPip,
     VenvDriverType,
@@ -27,7 +27,13 @@ from protoprimer.primer_kernel import (
 
 @pytest.fixture
 def env_ctx():
-    return EnvContext()
+    return (
+        ContextBuilder()
+        #
+        .is_app(True)
+        #
+        .build_context()
+    )
 
 
 def test_relationship():
@@ -36,7 +42,7 @@ def test_relationship():
 
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_venv_driver_inited.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_reboot_triggered.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Factory_state_reboot_triggered.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_cache_dir_abs_path_inited.__name__}.create_state_node")
 @patch("protoprimer.primer_kernel.Bootstrapper_required_python_version_inited.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_selected_python_file_abs_path_inited.__name__}.create_state_node")
@@ -75,7 +81,7 @@ def test_pip_driver_inited(
 @patch(f"{primer_kernel.__name__}.VenvDriverPip.create_venv")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_venv_driver_inited.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_reboot_triggered.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Factory_state_reboot_triggered.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_cache_dir_abs_path_inited.__name__}.create_state_node")
 @patch("protoprimer.primer_kernel.Bootstrapper_required_python_version_inited.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_selected_python_file_abs_path_inited.__name__}.create_state_node")
@@ -120,7 +126,7 @@ def test_uv_driver_inited_when_not_installed(
 @patch(f"{primer_kernel.__name__}.VenvDriverPip.create_venv")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_venv_driver_inited.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_reboot_triggered.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Factory_state_reboot_triggered.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_cache_dir_abs_path_inited.__name__}.create_state_node")
 @patch("protoprimer.primer_kernel.Bootstrapper_required_python_version_inited.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_selected_python_file_abs_path_inited.__name__}.create_state_node")
@@ -162,7 +168,7 @@ def test_uv_driver_inited_when_already_installed(
 
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_venv_driver_inited.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_reboot_triggered.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Factory_state_reboot_triggered.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_cache_dir_abs_path_inited.__name__}.create_state_node")
 @patch("protoprimer.primer_kernel.Bootstrapper_required_python_version_inited.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_selected_python_file_abs_path_inited.__name__}.create_state_node")

@@ -17,13 +17,13 @@ from protoprimer.primer_kernel import (
     Factory_state_prepare_venv_finalized,
     Factory_state_proto_code_file_abs_path_inited,
     Bootstrapper_state_selected_python_file_abs_path_inited,
+    Factory_state_input_sub_command_arg_loaded,
     ConfConstEnv,
     ConfConstGeneral,
     EnvContext,
     EnvState,
     StateStride,
     SubCommand,
-    Factory_state_input_sub_command_arg_loaded,
 )
 
 mock_client_dir = "/mock_client_dir"
@@ -81,10 +81,8 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(f"{primer_kernel.__name__}.os.execve")
     @patch(f"{primer_kernel.__name__}.subprocess.check_call")
     @patch(f"{primer_kernel.__name__}.{Factory_state_prepare_venv_finalized.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Factory_state_input_sub_command_arg_loaded.__name__}.create_state_node")
     def test_success_on_arbitrary_py_exec_outside_venv(
         self,
-        mock_input_sub_command_arg_loaded,
         mock_state_prepare_venv_finalized,
         mock_check_call,
         mock_execve,
