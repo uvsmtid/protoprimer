@@ -1,6 +1,11 @@
 from __future__ import annotations
 
+import re
 from pathlib import Path
+
+_doc_id_filename_re = re.compile(r"^[A-Za-z]+(_\d+)+\.[^.]+\.md$")
+_link_def_re = re.compile(r"^\[([^\]]+)\]:\s+(\S+)")
+_inline_link_re = re.compile(r"\[([^\]]+)\]\[([^\]]+)\]")
 
 
 def parse_frontmatter(file_path: Path) -> dict[str, str]:
@@ -48,6 +53,53 @@ def assert_h1_title_matches_filename(file_path: Path) -> None:
     expected_h1 = f"# {file_path.stem}"
     file_lines = file_path.read_text().splitlines()
     assert any(line.strip() == expected_h1 for line in file_lines)
+
+
+def assert_title_slug_matches_filename(file_path: Path, title_key: str) -> None:
+    front_matter = parse_frontmatter(file_path)
+    title_value = front_matter.get(title_key, "")
+    name_slug = file_path.stem.split(".", 1)[-1]
+    assert title_value == name_slug
+
+
+def assert_doc_id_link_labels_match_basename(file_path: Path) -> None:
+    mismatches: list[tuple[str, str]] = []
+    for line in file_path.read_text().splitlines():
+        line_match = _link_def_re.match(line.strip())
+        if not line_match:
+            continue
+        label, target = line_match.group(1), line_match.group(2)
+        basename = Path(target).name
+        if not _doc_id_filename_re.match(basename):
+            continue
+        if label != basename:
+            mismatches.append((label, basename))
+    if mismatches:
+        raise AssertionError(f"Link label != basename: {mismatches}")
+
+
+def assert_doc_id_link_captions_are_slug(file_path: Path) -> None:
+    violations: list[tuple[str, str, str]] = []
+    for line in file_path.read_text().splitlines():
+        stripped_line = line.strip()
+        if _link_def_re.match(stripped_line):
+            continue
+        for inline_match in _inline_link_re.finditer(stripped_line):
+            caption, ref_id = inline_match.group(1), inline_match.group(2)
+            basename = Path(ref_id).name
+            if not _doc_id_filename_re.match(basename):
+                continue
+            expected_slug = Path(basename).stem.split(".", 1)[-1]
+            if caption != expected_slug:
+                violations.append(
+                    (
+                        caption,
+                        ref_id,
+                        expected_slug,
+                    )
+                )
+    if violations:
+        raise AssertionError(f"Link caption should be slug: {violations}")
 
 
 def assert_title_tokens_in_title(file_path: Path, title_key: str) -> None:
