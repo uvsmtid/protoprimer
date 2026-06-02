@@ -1,5 +1,8 @@
 # Configuration file for the Sphinx documentation builder.
 import os
+import re
+
+from docutils import nodes
 
 # TODO: This is a temporary option to have a basic `readthedocs` page while the rest of the docs are in progress.
 #       When changed here, it should also be changed in `./index.rst` (automation did not work):
@@ -158,3 +161,48 @@ html_sidebars = {
         "navigation.html",
     ],
 }
+
+# Matches tag prefixes like `FT_00_00_00_00` or `UC_00_00_00_00` at start of title.
+_TAGGED_TITLE_RE = re.compile(r"^[A-Z]+_\d+_\d+_\d+_\d+\.")
+
+
+def _strip_tag_prefix(text: str) -> str:
+    # Remove leading tag like `FT_00_00_00_00` or `UC_00_00_00_00` from a title string.
+    return _TAGGED_TITLE_RE.sub("", text)
+
+
+def _on_doctree_resolved(
+    app,
+    doctree,
+    docname,
+):
+    # Strip tag prefix from the first title node (page <h1>).
+    # Fires after `toctree` has already captured `env.titles`,
+    # so `reference.html` listings keep the full prefixed title
+    # while the individual page shows only the suffix
+    # (e.g. `some_name` instead of `FT_00_00_00_00.some_name`).
+    for node in doctree.traverse(nodes.title):
+        raw = node.astext()
+        stripped = _strip_tag_prefix(raw)
+        if stripped != raw:
+            node.clear()
+            node += nodes.Text(stripped)
+        break
+
+
+def _on_html_page_context(
+    app,
+    pagename,
+    templatename,
+    context,
+    doctree,
+):
+    # Strip tag prefix from `context["title"]`
+    # so the browser tab title matches the stripped <h1> set by `_on_doctree_resolved`.
+    if "title" in context:
+        context["title"] = _strip_tag_prefix(context["title"])
+
+
+def setup(app):
+    app.connect("doctree-resolved", _on_doctree_resolved)
+    app.connect("html-page-context", _on_html_page_context)
