@@ -5773,9 +5773,10 @@ def search_python_file_abs_path_by_basename(required_version: tuple[int, int, in
         python_abs_path = shutil.which(python_basename)
 
         if python_abs_path is not None:
-            # Resolve symlinks so pyvenv.cfg gets the real `home`, not a symlink directory.
-            # Without this, venv Python can't find its stdlib (e.g. uv-installed Pythons
-            # are symlinked via ~/.local/bin but stdlib lives under the uv store path).
+            # Resolve symlinks so that `pyvenv.cfg` gets the real `home`.
+            # Without this, `python` from `venv` cannot find its `stdlib`.
+            # For example, `uv`-installed `python` is symlinked via `~/.local/bin`,
+            # but its `stdlib` lives under the `uv` store path.
             python_abs_path = os.path.realpath(python_abs_path)
             try:
                 logger.debug(f"checking version of `python_abs_path` [{python_abs_path}]")
