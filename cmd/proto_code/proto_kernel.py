@@ -5773,6 +5773,11 @@ def search_python_file_abs_path_by_basename(required_version: tuple[int, int, in
         python_abs_path = shutil.which(python_basename)
 
         if python_abs_path is not None:
+            # Resolve symlinks so that `pyvenv.cfg` gets the real `home`.
+            # Without this, `python` from `venv` cannot find its `stdlib`.
+            # For example, `uv`-installed `python` is symlinked via `~/.local/bin`,
+            # but its `stdlib` lives under the `uv` store path.
+            python_abs_path = os.path.realpath(python_abs_path)
             try:
                 logger.debug(f"checking version of `python_abs_path` [{python_abs_path}]")
                 python_version: tuple[int, int, int] = get_python_version(python_abs_path)
@@ -5783,7 +5788,7 @@ def search_python_file_abs_path_by_basename(required_version: tuple[int, int, in
                 continue
     return None
 
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 def probe_python_file_abs_path(
     state_python_selector_file_abs_path_inited: str | None,
     state_required_python_version_inited: tuple[int, int, int],
@@ -5791,7 +5796,7 @@ def probe_python_file_abs_path(
     """
     Tries to select python via the selector script, falls back to search by basename.
     """
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     selected_python_file_abs_path: str | None
     if state_python_selector_file_abs_path_inited is not None:
         selected_python_file_abs_path = select_python_file_abs_path(
@@ -5804,7 +5809,7 @@ def probe_python_file_abs_path(
     if selected_python_file_abs_path is None:
         selected_python_file_abs_path = search_python_file_abs_path_by_basename(state_required_python_version_inited)
     return selected_python_file_abs_path
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
 def log_python_context(log_level: int = logging.INFO):
     """

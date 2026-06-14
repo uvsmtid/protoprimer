@@ -20,9 +20,11 @@ def test_relationship():
 
 
 @patch(f"{protoprimer.primer_kernel.__name__}.get_python_version")
+@patch(f"{protoprimer.primer_kernel.__name__}.os.path.realpath", side_effect=lambda x: x)
 @patch(f"{protoprimer.primer_kernel.__name__}.shutil.which")
 def test_finds_python_on_first_try(
     mock_shutil_which,
+    mock_os_path_realpath,
     mock_get_python_version,
 ):
     """
@@ -48,9 +50,11 @@ def test_finds_python_on_first_try(
 
 
 @patch(f"{protoprimer.primer_kernel.__name__}.get_python_version")
+@patch(f"{protoprimer.primer_kernel.__name__}.os.path.realpath", side_effect=lambda x: x)
 @patch(f"{protoprimer.primer_kernel.__name__}.shutil.which")
 def test_finds_python_on_fallback(
     mock_shutil_which,
+    mock_os_path_realpath,
     mock_get_python_version,
 ):
     """
@@ -83,9 +87,11 @@ def test_finds_python_on_fallback(
 
 
 @patch(f"{protoprimer.primer_kernel.__name__}.get_python_version")
+@patch(f"{protoprimer.primer_kernel.__name__}.os.path.realpath", side_effect=lambda x: x)
 @patch(f"{protoprimer.primer_kernel.__name__}.shutil.which")
 def test_handles_verification_failure(
     mock_shutil_which,
+    mock_os_path_realpath,
     mock_get_python_version,
     caplog,
 ):
@@ -121,9 +127,11 @@ def test_handles_verification_failure(
 
 
 @patch(f"{protoprimer.primer_kernel.__name__}.get_python_version")
+@patch(f"{protoprimer.primer_kernel.__name__}.os.path.realpath", side_effect=lambda x: x)
 @patch(f"{protoprimer.primer_kernel.__name__}.shutil.which")
 def test_returns_none_if_no_python_found(
     mock_shutil_which,
+    mock_os_path_realpath,
     mock_get_python_version,
 ):
     """
@@ -148,9 +156,11 @@ def test_returns_none_if_no_python_found(
 
 
 @patch(f"{protoprimer.primer_kernel.__name__}.get_python_version")
+@patch(f"{protoprimer.primer_kernel.__name__}.os.path.realpath", side_effect=lambda x: x)
 @patch(f"{protoprimer.primer_kernel.__name__}.shutil.which")
 def test_returns_none_if_all_verifications_fail(
     mock_shutil_which,
+    mock_os_path_realpath,
     mock_get_python_version,
     caplog,
 ):
