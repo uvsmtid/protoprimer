@@ -316,9 +316,9 @@ class ExecMode(enum.Enum):
     FT_31_04_70_72.exec_mode.md
     """
 
-    mode_master = "master"
+    mode_cli = "cli"
 
-    mode_slave = "slave"
+    mode_api = "api"
 
 
 class SubCommand(enum.Enum):
