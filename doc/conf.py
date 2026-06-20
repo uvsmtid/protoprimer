@@ -60,6 +60,7 @@ extensions = [
     "sphinxcontrib.googleanalytics",
     "sphinxcontrib.mermaid",
     "myst_parser",
+    "sphinx_sitemap",
 ]
 
 myst_fence_as_directive = [

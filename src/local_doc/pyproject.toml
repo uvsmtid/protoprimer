@@ -24,6 +24,7 @@ dependencies = [
     "sphinxcontrib-googleanalytics",
     "sphinxcontrib-mermaid",
     "myst-parser",
+    "sphinx-sitemap",
 
     # Used for `./cmd/submit_to_index` (Google Indexing API):
     "google-auth",
