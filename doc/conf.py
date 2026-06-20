@@ -60,6 +60,7 @@ extensions = [
     "sphinxcontrib.googleanalytics",
     "sphinxcontrib.mermaid",
     "myst_parser",
+    "sphinx_sitemap",
 ]
 
 myst_fence_as_directive = [
@@ -105,8 +106,12 @@ base_url = "https://protoprimer.readthedocs.io"
 # * `multiple_versions_without_translations` (e.g. `.../latest/`)
 rtd_canonical_url = os.environ.get("READTHEDOCS_CANONICAL_URL")
 
-# The URL structure configured in the `protoprimer` project (fallback to `""` avoids warning of `None`):
-html_baseurl = rtd_canonical_url or ""
+# Fallback to `local` for local builds — `sphinx-sitemap` requires non-empty value:
+html_baseurl = rtd_canonical_url or f"{base_url}/local/"
+
+# Default `sitemap_url_scheme` is `"{lang}{version}{link}"`.
+# Using "{link}"` page path only that `sphinx-sitemap` appends to `html_baseurl`:
+sitemap_url_scheme = "{link}"
 
 # -- Options for HTML output
 

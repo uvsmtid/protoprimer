@@ -1,0 +1,5 @@
+
+# JSON key for Google Web Search Indexing API.
+# Can be created per project, per service account:
+# https://console.cloud.google.com/iam-admin/serviceaccounts
+/google_indexer_key.json
