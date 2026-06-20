@@ -104,7 +104,12 @@ def _discover_urls(base_url: str) -> list:
     sitemap_url = base_url + "sitemap.xml"
     logger.info(f"fetching sitemap: {sitemap_url}")
 
-    with urllib.request.urlopen(sitemap_url) as response:
+    sitemap_req = urllib.request.Request(
+        sitemap_url,
+        # Cloudflare blocks the default `Python-urllib` `User-Agent` with 403:
+        headers={"User-Agent": "Mozilla/5.0"},
+    )
+    with urllib.request.urlopen(sitemap_req) as response:
         sitemap_bytes = response.read()
 
     root_elem = ET.fromstring(sitemap_bytes)
