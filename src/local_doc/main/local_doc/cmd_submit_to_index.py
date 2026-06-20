@@ -4,7 +4,7 @@
 # ./cmd/submit_to_index -h
 # Requires a Google service account with Indexing API access
 # added as Owner in Google Search Console for the property.
-# Set GOOGLE_APPLICATION_CREDENTIALS to the service account JSON key path.
+# Set GOOGLE_APPLICATION_CREDENTIALS to override --credentials_file.
 
 import argparse
 import logging
@@ -13,7 +13,14 @@ import sys
 import urllib.request
 import xml.etree.ElementTree as ET
 
+from metaprimer.script_lib import (
+    configure_script,
+)
+from protoprimer.primer_kernel import EnvState
+
 logger: logging.Logger = logging.getLogger()
+
+_credentials_basename = "google_indexer_key.json"
 
 _default_base_url = "https://protoprimer.readthedocs.io/latest/"
 
@@ -24,16 +31,43 @@ _indexing_api_scope = "https://www.googleapis.com/auth/indexing"
 
 def custom_main():
 
-    parsed_args = init_arg_parser().parse_args()
+    derived_data = configure_script(script_basename=os.path.basename(sys.argv[0]))
+
+    ref_root_abs_path: str = derived_data[EnvState.state_ref_root_dir_abs_path_inited.name]
+    global_conf_dir_abs_path: str = derived_data[EnvState.state_global_conf_dir_abs_path_inited.name]
+
+    # Relative to ref root — shown as default in help:
+    credentials_file_rel_display = os.path.relpath(
+        os.path.join(
+            global_conf_dir_abs_path,
+            _credentials_basename,
+        ),
+        ref_root_abs_path,
+    )
+
+    parsed_args = init_arg_parser(
+        credentials_file_default_rel=credentials_file_rel_display,
+    ).parse_args()
+
+    # GOOGLE_APPLICATION_CREDENTIALS overrides --credentials_file:
+    effective_credentials_file = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS") or parsed_args.credentials_file
+    # Resolve relative path against ref root:
+    if not os.path.isabs(effective_credentials_file):
+        effective_credentials_file = os.path.join(
+            ref_root_abs_path,
+            effective_credentials_file,
+        )
 
     _submit_to_index(
         base_url=parsed_args.base_url,
-        credentials_file=parsed_args.credentials_file,
+        credentials_file=effective_credentials_file,
         dry_run=parsed_args.dry_run,
     )
 
 
-def init_arg_parser():
+def init_arg_parser(
+    credentials_file_default_rel: str,
+):
 
     arg_parser = argparse.ArgumentParser(
         description="Submit published doc URLs to Google Indexing API.",
@@ -48,8 +82,8 @@ def init_arg_parser():
     arg_parser.add_argument(
         "--credentials_file",
         type=str,
-        default=None,
-        help=("Path to the Google service account JSON key file." " Falls back to GOOGLE_APPLICATION_CREDENTIALS env var."),
+        default=credentials_file_default_rel,
+        help=("Path to the Google service account JSON key file." " Override-able by GOOGLE_APPLICATION_CREDENTIALS env var."),
     )
     arg_parser.add_argument(
         "--dry_run",
@@ -86,18 +120,14 @@ def _discover_urls(base_url: str) -> list:
     return discovered_urls
 
 
-def _build_credentials(credentials_file):
+def _build_credentials(credentials_file: str):
 
-    credentials_path = credentials_file or os.environ.get("GOOGLE_APPLICATION_CREDENTIALS")
-    if not credentials_path:
-        raise RuntimeError("no credentials: provide --credentials_file or set GOOGLE_APPLICATION_CREDENTIALS")
-
-    logger.info(f"credentials_path: {credentials_path}")
+    logger.info(f"credentials_file: {credentials_file}")
 
     from google.oauth2 import service_account
 
     credentials = service_account.Credentials.from_service_account_file(
-        credentials_path,
+        credentials_file,
         scopes=[_indexing_api_scope],
     )
     return credentials
@@ -109,6 +139,7 @@ def _submit_url(
 ) -> dict:
 
     import json
+    import urllib.error
 
     import google.auth.transport.requests
 
@@ -121,8 +152,6 @@ def _submit_url(
             "type": "URL_UPDATED",
         }
     ).encode("utf-8")
-
-    import urllib.error
 
     req = urllib.request.Request(
         url=_indexing_api_endpoint,
@@ -153,7 +182,7 @@ def _submit_url(
 
 def _submit_to_index(
     base_url: str,
-    credentials_file,
+    credentials_file: str,
     dry_run: bool,
 ):
     logger.info(f"base_url: {base_url}")
