@@ -69,7 +69,9 @@ six==1.17.0
 snowballstemmer==3.1.1
 soupsieve==2.8.4
 sphinx==9.1.0
+sphinx-last-updated-by-git==0.3.8
 sphinx-rtd-theme==3.1.0
+sphinx-sitemap==2.9.0
 sphinxcontrib-applehelp==2.0.0
 sphinxcontrib-devhelp==2.0.0
 sphinxcontrib-googleanalytics==0.5
