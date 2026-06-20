@@ -7,12 +7,16 @@
 # Set GOOGLE_APPLICATION_CREDENTIALS to override --credentials_file.
 
 import argparse
+import json
 import logging
 import os
 import sys
+import urllib.error
 import urllib.request
 import xml.etree.ElementTree as ET
 
+import google.auth.transport.requests
+from google.oauth2 import service_account
 from metaprimer.script_lib import (
     configure_script,
 )
@@ -124,8 +128,6 @@ def _build_credentials(credentials_file: str):
 
     logger.info(f"credentials_file: {credentials_file}")
 
-    from google.oauth2 import service_account
-
     credentials = service_account.Credentials.from_service_account_file(
         credentials_file,
         scopes=[_indexing_api_scope],
@@ -137,11 +139,6 @@ def _submit_url(
     credentials,
     page_url: str,
 ) -> dict:
-
-    import json
-    import urllib.error
-
-    import google.auth.transport.requests
 
     auth_request = google.auth.transport.requests.Request()
     credentials.refresh(auth_request)
