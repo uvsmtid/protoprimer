@@ -24,6 +24,12 @@ dependencies = [
     "sphinxcontrib-googleanalytics",
     "sphinxcontrib-mermaid",
     "myst-parser",
+    "sphinx-sitemap",
+
+    # Used for `./cmd/submit_to_index` (Google Indexing API):
+    "google-auth",
+    "google-auth-httplib2",
+    "google-api-python-client",
 ]
 
 [tool.setuptools.packages.find]

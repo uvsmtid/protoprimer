@@ -1,0 +1,21 @@
+# See: https://editorconfig.org/
+
+# Top-most file:
+root = true
+
+# Default settings for all files:
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 4
+
+[*.py]
+# 88 matches the default line length for the Black / Ruff formatters.
+max_line_length = 88
+
+[*.md]
+# Trailing spaces for line breaks in some specs:
+trim_trailing_whitespace = false

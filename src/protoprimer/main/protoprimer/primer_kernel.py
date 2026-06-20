@@ -291,7 +291,7 @@ class EntryFunc(enum.Enum):
     """
     Specifies how `proto_kernel` was started (which API was the entry point).
 
-    See FT_25_62_13_55.entry_func.md
+    FT_25_62_13_55.entry_func.md
     """
 
     # FT_85_17_35_21.boot_env.md
@@ -312,9 +312,13 @@ class ExecMode(enum.Enum):
     """
     TODO: FT_77_15_06_50.dynamic_DAG.md:
           Add items, explain and add FT_*.
+
+    FT_31_04_70_72.exec_mode.md
     """
 
-    pass
+    mode_cli = "cli"
+
+    mode_api = "api"
 
 
 class SubCommand(enum.Enum):
