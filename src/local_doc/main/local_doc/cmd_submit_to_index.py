@@ -90,6 +90,7 @@ def init_arg_parser(
         help=("Path to the Google service account JSON key file." " Override-able by GOOGLE_APPLICATION_CREDENTIALS env var."),
     )
     arg_parser.add_argument(
+        "-d",
         "--dry_run",
         action="store_true",
         default=False,
