@@ -83,12 +83,14 @@ def fat_mock_wrapper(
 
     def _mock_create_pip_venv(
         env_dir,
+        constraints_file_abs_path,
         **kwargs,
     ):
         _mock_create_venv(env_dir, **kwargs)
 
     def _mock_create_uv_venv(
         env_dir,
+        constraints_file_abs_path,
         **kwargs,
     ):
         _mock_create_venv(env_dir, **kwargs)

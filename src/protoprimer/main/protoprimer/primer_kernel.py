@@ -653,13 +653,15 @@ class VenvDriverBase:
     def create_venv(
         self,
         local_venv_dir_abs_path: str,
+        constraints_file_abs_path: str,
     ) -> None:
         logger.info(f"creating `venv` [{local_venv_dir_abs_path}]")
-        self._create_venv_impl(local_venv_dir_abs_path)
+        self._create_venv_impl(local_venv_dir_abs_path, constraints_file_abs_path)
 
     def _create_venv_impl(
         self,
         local_venv_dir_abs_path: str,
+        constraints_file_abs_path: str,
     ) -> None:
         raise NotImplementedError()
 
@@ -787,6 +789,7 @@ class VenvDriverPip(VenvDriverBase):
         self,
         # TODO: Do we need this arg if we have `state_local_venv_dir_abs_path_inited`?
         local_venv_dir_abs_path: str,
+        constraints_file_abs_path: str,
     ) -> None:
         subprocess.check_call(
             [
@@ -801,16 +804,24 @@ class VenvDriverPip(VenvDriverBase):
             local_venv_dir_abs_path,
             ConfConstGeneral.file_rel_path_venv_python,
         )
-        subprocess.check_call(
-            [
-                venv_python_executable,
-                "-m",
-                "pip",
-                "install",
-                "--upgrade",
-                "pip",
-            ]
-        )
+        pip_upgrade_cmd = [
+            venv_python_executable,
+            "-m",
+            "pip",
+            "install",
+            "--upgrade",
+            "pip",
+        ]
+        # Respect the committed constraints (if any) so a fresh `venv` does not
+        # silently drift `pip` itself past the pinned version:
+        if os.path.exists(constraints_file_abs_path):
+            pip_upgrade_cmd.extend(
+                [
+                    "--constraint",
+                    constraints_file_abs_path,
+                ]
+            )
+        subprocess.check_call(pip_upgrade_cmd)
 
     def get_install_dependencies_cmd(
         self,
@@ -835,6 +846,7 @@ class VenvDriverPip(VenvDriverBase):
             "pip",
             "freeze",
             "--exclude-editable",
+            "--all",
         ]
 
 
@@ -881,7 +893,9 @@ class VenvDriverUv(VenvDriverBase):
                 # this intermediate driver uses ` self.uv_venv_abs_path`:
                 state_local_venv_dir_abs_path_inited=self.uv_venv_abs_path,
             )
-            pip_driver.create_venv(self.uv_venv_abs_path)
+            # NOTE: This is a throwaway `venv` used only to install `uv` itself -
+            #       it is not governed by the project's `version_constraints.txt`:
+            pip_driver.create_venv(self.uv_venv_abs_path, "")
             uv_exec_venv_python_abs_path = os.path.join(
                 self.uv_venv_abs_path,
                 ConfConstGeneral.file_rel_path_venv_python,
@@ -908,6 +922,7 @@ class VenvDriverUv(VenvDriverBase):
         self,
         # TODO: Do we need this arg if we have `state_local_venv_dir_abs_path_inited`?
         local_venv_dir_abs_path: str,
+        constraints_file_abs_path: str,
     ) -> None:
 
         self._ensure_uv_is_available()
@@ -932,6 +947,27 @@ class VenvDriverUv(VenvDriverBase):
                 local_venv_dir_abs_path,
             ]
         )
+
+        # `--seed` installs whatever `pip` `uv` currently considers current, ignoring any
+        # committed constraints - re-pin it explicitly so a fresh `venv` does not silently
+        # drift `pip` itself past the pinned version:
+        if os.path.exists(constraints_file_abs_path):
+            seeded_venv_python_abs_path = os.path.join(
+                local_venv_dir_abs_path,
+                ConfConstGeneral.file_rel_path_venv_python,
+            )
+            subprocess.check_call(
+                [
+                    self.uv_exec_abs_path,
+                    "pip",
+                    "install",
+                    "--python",
+                    seeded_venv_python_abs_path,
+                    "--constraint",
+                    constraints_file_abs_path,
+                    "pip",
+                ]
+            )
 
     def get_install_dependencies_cmd(
         self,
@@ -3968,9 +4004,11 @@ class Bootstrapper_state_stride_py_venv_reached_is_app(AbstractCachingStateNode[
             EnvState.state_input_sub_command_arg_loaded.name,
             EnvState.state_input_start_id_var_loaded.name,
             EnvState.state_proto_code_file_abs_path_inited.name,
+            EnvState.state_local_conf_symlink_abs_path_inited.name,
             EnvState.state_local_conf_file_abs_path_inited.name,
             EnvState.state_selected_python_file_abs_path_inited.name,
             EnvState.state_local_venv_dir_abs_path_inited.name,
+            EnvState.state_version_constraints_file_basename_inited.name,
             EnvState.state_reboot_triggered.name,
             EnvState.state_venv_driver_prepared.name,
         ]
@@ -3994,6 +4032,13 @@ class Bootstrapper_state_stride_py_venv_reached_is_app(AbstractCachingStateNode[
         state_local_venv_dir_abs_path_inited: str = self.eval_parent_state(EnvState.state_local_venv_dir_abs_path_inited.name)
 
         state_venv_driver_prepared: VenvDriverBase = self.eval_parent_state(EnvState.state_venv_driver_prepared.name)
+
+        state_local_conf_symlink_abs_path_inited: str = self.eval_parent_state(EnvState.state_local_conf_symlink_abs_path_inited.name)
+        state_version_constraints_file_basename_inited: str = self.eval_parent_state(EnvState.state_version_constraints_file_basename_inited.name)
+        constraints_txt_path = os.path.join(
+            state_local_conf_symlink_abs_path_inited,
+            state_version_constraints_file_basename_inited,
+        )
 
         venv_path_to_python: str = os.path.join(
             state_local_venv_dir_abs_path_inited,
@@ -4031,7 +4076,7 @@ class Bootstrapper_state_stride_py_venv_reached_is_app(AbstractCachingStateNode[
                 # The `venv` is supposed to be ready in `SubCommand.command_start`:
                 raise AssertionError(f"`venv` [{state_local_venv_dir_abs_path_inited}] is supposed to be ready in `SubCommand` [{state_input_sub_command_arg_loaded.name}] execute `SubCommand` [{SubCommand.command_boot.name}] to prepare it.")
             else:
-                state_venv_driver_prepared.create_venv(state_local_venv_dir_abs_path_inited)
+                state_venv_driver_prepared.create_venv(state_local_venv_dir_abs_path_inited, constraints_txt_path)
         else:
             logger.info(f"reusing existing `venv` [{state_local_venv_dir_abs_path_inited}]")
             if state_input_sub_command_arg_loaded == SubCommand.command_start:

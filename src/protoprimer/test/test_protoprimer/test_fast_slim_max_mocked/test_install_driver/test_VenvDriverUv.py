@@ -25,9 +25,10 @@ def test_relationship():
 @patch(f"{primer_kernel.__name__}.os.path.isfile")
 @patch(f"{primer_kernel.__name__}.os.path.exists")
 @patch(f"{subprocess.__name__}.{subprocess.check_call.__name__}")
-def test_create_venv(mock_subprocess_check_call, mock_exists, mock_isfile):
+def test_create_venv_when_constraints_file_does_not_exist(mock_subprocess_check_call, mock_exists, mock_isfile):
     # given:
-    mock_exists.return_value = True
+    constraints_file_abs_path = "/tmp/constraints.txt"
+    mock_exists.side_effect = lambda path: path != constraints_file_abs_path
     mock_isfile.return_value = True
     install_driver = VenvDriverUv(
         required_python_version="3.10",
@@ -40,6 +41,7 @@ def test_create_venv(mock_subprocess_check_call, mock_exists, mock_isfile):
     # when:
     install_driver.create_venv(
         local_venv_dir_abs_path=venv_dir_abs_path,
+        constraints_file_abs_path=constraints_file_abs_path,
     )
 
     # then:
@@ -72,6 +74,72 @@ def test_create_venv(mock_subprocess_check_call, mock_exists, mock_isfile):
     ]
     mock_subprocess_check_call.assert_has_calls(expected_calls)
     assert mock_subprocess_check_call.call_count == 3
+
+
+@patch(f"{primer_kernel.__name__}.os.path.isfile")
+@patch(f"{primer_kernel.__name__}.os.path.exists")
+@patch(f"{subprocess.__name__}.{subprocess.check_call.__name__}")
+def test_create_venv_when_constraints_file_exists(mock_subprocess_check_call, mock_exists, mock_isfile):
+    # given:
+    constraints_file_abs_path = "/tmp/constraints.txt"
+    mock_exists.return_value = True
+    mock_isfile.return_value = True
+    install_driver = VenvDriverUv(
+        required_python_version="3.10",
+        selected_python_file_abs_path="/mock/python",
+        state_local_venv_dir_abs_path_inited="/tmp/venv",
+        state_local_cache_dir_abs_path_inited="/tmp/cache",
+    )
+    venv_dir_abs_path = "/tmp/test_venv"
+
+    # when:
+    install_driver.create_venv(
+        local_venv_dir_abs_path=venv_dir_abs_path,
+        constraints_file_abs_path=constraints_file_abs_path,
+    )
+
+    # then:
+    expected_calls = [
+        call(
+            [
+                "/tmp/cache/venv/uv.venv/bin/uv",
+                "python",
+                "dir",
+            ]
+        ),
+        call(
+            [
+                "/tmp/cache/venv/uv.venv/bin/uv",
+                "python",
+                "install",
+                "3.10",
+            ]
+        ),
+        call(
+            [
+                "/tmp/cache/venv/uv.venv/bin/uv",
+                "venv",
+                "--seed",
+                "--python",
+                "3.10",
+                venv_dir_abs_path,
+            ]
+        ),
+        call(
+            [
+                "/tmp/cache/venv/uv.venv/bin/uv",
+                "pip",
+                "install",
+                "--python",
+                "/tmp/test_venv/bin/python",
+                "--constraint",
+                constraints_file_abs_path,
+                "pip",
+            ]
+        ),
+    ]
+    mock_subprocess_check_call.assert_has_calls(expected_calls)
+    assert mock_subprocess_check_call.call_count == 4
 
 
 @patch(f"{primer_kernel.__name__}.os.path.isfile")

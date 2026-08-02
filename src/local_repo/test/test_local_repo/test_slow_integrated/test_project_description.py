@@ -1,8 +1,8 @@
 import os
+import re
 from unittest import TestCase
 
 import requests
-from bs4 import BeautifulSoup
 
 import protoprimer
 from local_test.toml_handler import load_toml_data
@@ -36,16 +36,10 @@ class ThisTestClass(TestCase):
         project_description = toml_data["project"]["description"]
         project_url = toml_data["project"]["urls"]["Repository"]
 
-        # Fetch the HTML content from the URL:
-        response = requests.get(project_url)
+        api_url = re.sub(r"^https://github\.com/", "https://api.github.com/repos/", project_url)
+        response = requests.get(api_url)
         response.raise_for_status()
-        text_html = response.text
-
-        parsed_html = BeautifulSoup(text_html, "html.parser")
-
-        # Find the description from the "About" section:
-        about_section = parsed_html.find("p", class_="f4 tmp-my-3")
-        github_description = about_section.get_text(strip=True) if about_section else None
+        github_description = response.json()["description"]
 
         assert github_description is not None
 
@@ -55,13 +49,14 @@ class ThisTestClass(TestCase):
             ":bomb:": "💣",
             ":shield:": "🛡️",
             ":rocket:": "🚀",
+            ":fast_forward:": "⏩",
         }
 
-        translated_description = project_description
+        translated_description = github_description
         for shortcode, emoji in emoji_map.items():
             translated_description = translated_description.replace(shortcode, emoji)
 
         self.assertEqual(
+            project_description,
             translated_description,
-            github_description,
         )

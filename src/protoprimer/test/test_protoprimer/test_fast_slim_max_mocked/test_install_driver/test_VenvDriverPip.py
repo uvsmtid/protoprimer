@@ -2,6 +2,7 @@ import os
 import subprocess
 from unittest.mock import (
     ANY,
+    mock_open,
     patch,
 )
 
@@ -22,13 +23,16 @@ def test_relationship():
     )
 
 
+@patch(f"{primer_kernel.__name__}.os.path.exists")
 @patch(f"{primer_kernel.__name__}.subprocess.check_call")
-def test_create_venv(mock_check_call):
+def test_create_venv_when_constraints_file_does_not_exist(mock_check_call, mock_exists):
 
     # given:
 
     venv_dir_abs_path = "/tmp/test_venv"
     python_path = "/tmp/python"
+    constraints_file_abs_path = "/tmp/constraints.txt"
+    mock_exists.return_value = False
     install_driver = VenvDriverPip(
         required_python_version=test_python_version,
         selected_python_file_abs_path=python_path,
@@ -37,7 +41,7 @@ def test_create_venv(mock_check_call):
 
     # when:
 
-    install_driver.create_venv(venv_dir_abs_path)
+    install_driver.create_venv(venv_dir_abs_path, constraints_file_abs_path)
 
     # then:
 
@@ -58,6 +62,51 @@ def test_create_venv(mock_check_call):
             "install",
             "--upgrade",
             "pip",
+        ]
+    )
+
+
+@patch(f"{primer_kernel.__name__}.os.path.exists")
+@patch(f"{primer_kernel.__name__}.subprocess.check_call")
+def test_create_venv_when_constraints_file_exists(mock_check_call, mock_exists):
+
+    # given:
+
+    venv_dir_abs_path = "/tmp/test_venv"
+    python_path = "/tmp/python"
+    constraints_file_abs_path = "/tmp/constraints.txt"
+    mock_exists.return_value = True
+    install_driver = VenvDriverPip(
+        required_python_version=test_python_version,
+        selected_python_file_abs_path=python_path,
+        state_local_venv_dir_abs_path_inited=venv_dir_abs_path,
+    )
+
+    # when:
+
+    install_driver.create_venv(venv_dir_abs_path, constraints_file_abs_path)
+
+    # then:
+
+    assert mock_check_call.call_count == 2
+    mock_check_call.assert_any_call(
+        [
+            python_path,
+            "-m",
+            "venv",
+            venv_dir_abs_path,
+        ]
+    )
+    mock_check_call.assert_any_call(
+        [
+            os.path.join(venv_dir_abs_path, "bin", "python"),
+            "-m",
+            "pip",
+            "install",
+            "--upgrade",
+            "pip",
+            "--constraint",
+            constraints_file_abs_path,
         ]
     )
 
@@ -113,6 +162,42 @@ def test_install_dependencies(mock_subprocess_check_call):
             "/tmp/project2",
         ],
         env=ANY,
+    )
+
+
+@patch(f"{subprocess.__name__}.{subprocess.check_call.__name__}")
+def test_pin_versions(mock_subprocess_check_call):
+
+    # given:
+
+    venv_python_file_abs_path = "/tmp/test_venv/bin/python"
+    install_driver = VenvDriverPip(
+        required_python_version=test_python_version,
+        selected_python_file_abs_path=venv_python_file_abs_path,
+        state_local_venv_dir_abs_path_inited="/tmp/venv",
+    )
+    constraints_file_abs_path = "/tmp/constraints.txt"
+
+    # when:
+
+    with patch("builtins.open", mock_open()) as mock_file:
+        install_driver.pin_versions(
+            venv_python_file_abs_path=venv_python_file_abs_path,
+            constraints_file_abs_path=constraints_file_abs_path,
+        )
+
+    # then:
+
+    mock_subprocess_check_call.assert_called_once_with(
+        [
+            venv_python_file_abs_path,
+            "-m",
+            "pip",
+            "freeze",
+            "--exclude-editable",
+            "--all",
+        ],
+        stdout=mock_file(),
     )
 
 
