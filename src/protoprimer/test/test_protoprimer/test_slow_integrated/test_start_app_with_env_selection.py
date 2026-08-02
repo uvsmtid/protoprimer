@@ -53,7 +53,7 @@ def test_start_app_from_env_default(tmp_path: pathlib.Path):
         sys.executable,
         str(arbitrary_venv_dir),
     )
-    venv_driver.create_venv(str(arbitrary_venv_dir))
+    venv_driver.create_venv(str(arbitrary_venv_dir), "")
     arbitrary_venv_python = arbitrary_venv_dir / ConfConstGeneral.file_rel_path_venv_python
 
     # === create `pyproject.toml`
@@ -182,7 +182,7 @@ def test_app_started_from_env_special(tmp_path: pathlib.Path):
         sys.executable,
         str(arbitrary_venv_dir),
     )
-    venv_driver.create_venv(str(arbitrary_venv_dir))
+    venv_driver.create_venv(str(arbitrary_venv_dir), "")
     arbitrary_venv_python = arbitrary_venv_dir / ConfConstGeneral.file_rel_path_venv_python
 
     # === create `pyproject.toml`
@@ -317,7 +317,7 @@ def test_app_started_with_symlink_to_env_special_but_config_to_env_common(
         sys.executable,
         str(arbitrary_venv_dir),
     )
-    venv_driver.create_venv(str(arbitrary_venv_dir))
+    venv_driver.create_venv(str(arbitrary_venv_dir), "")
     arbitrary_venv_python = arbitrary_venv_dir / ConfConstGeneral.file_rel_path_venv_python
 
     # === create `pyproject.toml`

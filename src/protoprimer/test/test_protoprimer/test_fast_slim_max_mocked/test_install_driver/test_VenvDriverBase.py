@@ -22,7 +22,7 @@ def test_relationship():
 
 
 class VenvDriverConcrete(VenvDriverBase):
-    def _create_venv_impl(self, local_venv_dir_abs_path: str) -> None:
+    def _create_venv_impl(self, local_venv_dir_abs_path: str, constraints_file_abs_path: str) -> None:
         pass
 
     def get_install_dependencies_cmd(self, venv_python_file_abs_path: str) -> List[str]:
@@ -46,10 +46,10 @@ def test_venv_driver_base_create_venv(mock_create_venv_impl):
     driver = VenvDriverConcrete()
 
     # when:
-    driver.create_venv("venv_path")
+    driver.create_venv("venv_path", "constraints_path")
 
     # then:
-    mock_create_venv_impl.assert_called_once_with("venv_path")
+    mock_create_venv_impl.assert_called_once_with("venv_path", "constraints_path")
 
 
 @patch.object(VenvDriverConcrete, "get_install_dependencies_cmd")
@@ -109,7 +109,7 @@ def test_venv_driver_base_create_venv_impl_raises_not_implemented_error():
     # given:
     # when/then:
     with pytest.raises(NotImplementedError):
-        VenvDriverBase._create_venv_impl(None, "venv_path")
+        VenvDriverBase._create_venv_impl(None, "venv_path", "constraints_path")
 
 
 @patch.object(VenvDriverConcrete, "get_install_dependencies_cmd")

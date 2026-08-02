@@ -15,6 +15,8 @@ from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     Bootstrapper_state_input_start_id_var_loaded,
     Bootstrapper_state_local_conf_file_abs_path_inited,
+    Bootstrapper_state_local_conf_symlink_abs_path_inited,
+    Bootstrapper_state_version_constraints_file_basename_inited,
     Bootstrapper_state_local_venv_dir_abs_path_inited,
     Factory_state_proto_code_file_abs_path_inited,
     Factory_state_reboot_triggered,
@@ -38,6 +40,8 @@ state_proto_code_file_abs_path_inited = os.path.join(
     ConfConstGeneral.default_proto_code_basename,
 )
 target_dst_dir_path = "target_dst_dir"
+mock_version_constraints_file_basename = "version_constraints.txt"
+constraints_txt_path = os.path.join(mock_client_dir, mock_version_constraints_file_basename)
 
 non_default_file_abs_path_python = "/oct/bin/python3"
 non_default_dir_abs_path_venv = "/another/venv"
@@ -96,8 +100,12 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(f"{primer_kernel.__name__}.os.execve")
     @patch(f"{primer_kernel.__name__}.{Factory_state_input_sub_command_arg_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.is_same_file", return_value=True)
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_version_constraints_file_basename_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
     def test_success_on_path_to_curr_python_is_outside_of_path_to_venv_when_venv_is_created(
         self,
+        mock_state_local_conf_symlink_abs_path_inited,
+        mock_state_version_constraints_file_basename_inited,
         mock_state_input_sub_command_arg_loaded,
         mock_is_same_file,
         mock_execve,
@@ -118,6 +126,9 @@ class ThisTestClass(BasePyfakefsTestClass):
             EnvState.state_stride_py_venv_reached.name,
         )
 
+        mock_state_local_conf_symlink_abs_path_inited.return_value.eval_own_state.return_value = mock_client_dir
+        mock_state_version_constraints_file_basename_inited.return_value.eval_own_state.return_value = mock_version_constraints_file_basename
+
         mock_state_input_start_id_var_loaded.return_value.eval_own_state.return_value = "mock_start_id"
         mock_state_reboot_triggered.return_value.eval_own_state.return_value = False
         mock_state_proto_code_file_abs_path_inited.return_value.eval_own_state.return_value = state_proto_code_file_abs_path_inited
@@ -135,7 +146,8 @@ class ThisTestClass(BasePyfakefsTestClass):
             os.path.join(
                 mock_client_dir,
                 ConfConstEnv.default_dir_rel_path_venv,
-            )
+            ),
+            constraints_txt_path,
         )
         path_to_required_python = os.path.join(
             mock_client_dir,
@@ -174,8 +186,12 @@ class ThisTestClass(BasePyfakefsTestClass):
     )
     @patch(f"{primer_kernel.__name__}.os.execve")
     @patch(f"{primer_kernel.__name__}.{Factory_state_input_sub_command_arg_loaded.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_version_constraints_file_basename_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
     def test_failure_when_path_to_curr_python_is_inside_venv(
         self,
+        mock_state_local_conf_symlink_abs_path_inited,
+        mock_state_version_constraints_file_basename_inited,
         mock_state_input_sub_command_arg_loaded,
         mock_execve,
         mock_get_path_to_curr_python,
@@ -194,6 +210,9 @@ class ThisTestClass(BasePyfakefsTestClass):
             self.env_ctx,
             EnvState.state_stride_py_venv_reached.name,
         )
+
+        mock_state_local_conf_symlink_abs_path_inited.return_value.eval_own_state.return_value = mock_client_dir
+        mock_state_version_constraints_file_basename_inited.return_value.eval_own_state.return_value = mock_version_constraints_file_basename
 
         mock_state_input_start_id_var_loaded.return_value.eval_own_state.return_value = "mock_start_id"
         mock_state_reboot_triggered.return_value.eval_own_state.return_value = False
@@ -232,8 +251,12 @@ class ThisTestClass(BasePyfakefsTestClass):
     )
     @patch(f"{primer_kernel.__name__}.os.execve")
     @patch(f"{primer_kernel.__name__}.{Factory_state_input_sub_command_arg_loaded.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_version_constraints_file_basename_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
     def test_failure_when_path_to_curr_python_is_inside_venv_initially_and_expected(
         self,
+        mock_state_local_conf_symlink_abs_path_inited,
+        mock_state_version_constraints_file_basename_inited,
         mock_state_input_sub_command_arg_loaded,
         mock_execve,
         mock_get_path_to_curr_python,
@@ -252,6 +275,9 @@ class ThisTestClass(BasePyfakefsTestClass):
             self.env_ctx,
             EnvState.state_stride_py_venv_reached.name,
         )
+
+        mock_state_local_conf_symlink_abs_path_inited.return_value.eval_own_state.return_value = mock_client_dir
+        mock_state_version_constraints_file_basename_inited.return_value.eval_own_state.return_value = mock_version_constraints_file_basename
 
         mock_state_input_start_id_var_loaded.return_value.eval_own_state.return_value = "mock_start_id"
         mock_state_reboot_triggered.return_value.eval_own_state.return_value = False
@@ -291,8 +317,12 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(f"{primer_kernel.__name__}.os.execve")
     @patch(f"{primer_kernel.__name__}.{Factory_state_input_sub_command_arg_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.is_same_file", return_value=False)
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_version_constraints_file_basename_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
     def test_failure_when_path_to_python_differs_from_path_to_curr_python(
         self,
+        mock_state_local_conf_symlink_abs_path_inited,
+        mock_state_version_constraints_file_basename_inited,
         mock_state_input_sub_command_arg_loaded,
         mock_is_same_file,
         mock_execve,
@@ -312,6 +342,9 @@ class ThisTestClass(BasePyfakefsTestClass):
             self.env_ctx,
             EnvState.state_stride_py_venv_reached.name,
         )
+
+        mock_state_local_conf_symlink_abs_path_inited.return_value.eval_own_state.return_value = mock_client_dir
+        mock_state_version_constraints_file_basename_inited.return_value.eval_own_state.return_value = mock_version_constraints_file_basename
 
         mock_state_input_start_id_var_loaded.return_value.eval_own_state.return_value = "mock_start_id"
         mock_state_reboot_triggered.return_value.eval_own_state.return_value = False
@@ -351,8 +384,12 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(f"{primer_kernel.__name__}.os.execve")
     @patch(f"{primer_kernel.__name__}.{Factory_state_input_sub_command_arg_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.is_same_file", return_value=True)
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_version_constraints_file_basename_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
     def test_success_when_path_to_python_matches_path_to_curr_python_and_execv_is_called_for_venv_python(
         self,
+        mock_state_local_conf_symlink_abs_path_inited,
+        mock_state_version_constraints_file_basename_inited,
         mock_state_input_sub_command_arg_loaded,
         mock_is_same_file,
         mock_execve,
@@ -372,6 +409,9 @@ class ThisTestClass(BasePyfakefsTestClass):
             self.env_ctx,
             EnvState.state_stride_py_venv_reached.name,
         )
+
+        mock_state_local_conf_symlink_abs_path_inited.return_value.eval_own_state.return_value = mock_client_dir
+        mock_state_version_constraints_file_basename_inited.return_value.eval_own_state.return_value = mock_version_constraints_file_basename
 
         mock_state_input_start_id_var_loaded.return_value.eval_own_state.return_value = "mock_start_id"
         mock_state_reboot_triggered.return_value.eval_own_state.return_value = False
@@ -393,6 +433,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
         mock_state_venv_driver_prepared.return_value.eval_own_state.return_value.create_venv.assert_called_once_with(
             path_to_venv,
+            constraints_txt_path,
         )
         path_to_venv_python = os.path.join(
             path_to_venv,
@@ -432,8 +473,12 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(f"{primer_kernel.__name__}.os.execve")
     @patch(f"{primer_kernel.__name__}.{Factory_state_input_sub_command_arg_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.is_same_file", return_value=True)
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_version_constraints_file_basename_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
     def test_success_when_path_to_python_is_not_inside_existing_venv(
         self,
+        mock_state_local_conf_symlink_abs_path_inited,
+        mock_state_version_constraints_file_basename_inited,
         mock_state_input_sub_command_arg_loaded,
         mock_is_same_file,
         mock_execve,
@@ -454,6 +499,9 @@ class ThisTestClass(BasePyfakefsTestClass):
             EnvState.state_stride_py_venv_reached.name,
         )
 
+        mock_state_local_conf_symlink_abs_path_inited.return_value.eval_own_state.return_value = mock_client_dir
+        mock_state_version_constraints_file_basename_inited.return_value.eval_own_state.return_value = mock_version_constraints_file_basename
+
         mock_state_input_start_id_var_loaded.return_value.eval_own_state.return_value = "mock_start_id"
         mock_state_reboot_triggered.return_value.eval_own_state.return_value = False
         mock_state_proto_code_file_abs_path_inited.return_value.eval_own_state.return_value = state_proto_code_file_abs_path_inited
@@ -470,6 +518,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         mock_state_venv_driver_prepared.return_value.eval_own_state.return_value.create_venv.assert_called_once_with(
             non_default_dir_abs_path_venv,
+            constraints_txt_path,
         )
 
         path_to_venv_python = os.path.join(
@@ -511,8 +560,12 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(f"{primer_kernel.__name__}.os.execve")
     @patch(f"{primer_kernel.__name__}.{Factory_state_input_sub_command_arg_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.is_same_file", return_value=True)
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_version_constraints_file_basename_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
     def test_success_on_arbitrary_py_exec_outside_venv(
         self,
+        mock_state_local_conf_symlink_abs_path_inited,
+        mock_state_version_constraints_file_basename_inited,
         mock_state_input_sub_command_arg_loaded,
         mock_is_same_file,
         mock_execve,
@@ -532,6 +585,9 @@ class ThisTestClass(BasePyfakefsTestClass):
             self.env_ctx,
             EnvState.state_stride_py_venv_reached.name,
         )
+
+        mock_state_local_conf_symlink_abs_path_inited.return_value.eval_own_state.return_value = mock_client_dir
+        mock_state_version_constraints_file_basename_inited.return_value.eval_own_state.return_value = mock_version_constraints_file_basename
 
         mock_state_input_start_id_var_loaded.return_value.eval_own_state.return_value = "mock_start_id"
         mock_state_reboot_triggered.return_value.eval_own_state.return_value = False
@@ -593,8 +649,12 @@ class ThisTestClass(BasePyfakefsTestClass):
     )
     @patch(f"{primer_kernel.__name__}.os.execve")
     @patch(f"{primer_kernel.__name__}.{Factory_state_input_sub_command_arg_loaded.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_version_constraints_file_basename_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
     def test_success_when_py_exec_is_already_venv(
         self,
+        mock_state_local_conf_symlink_abs_path_inited,
+        mock_state_version_constraints_file_basename_inited,
         mock_state_input_sub_command_arg_loaded,
         mock_execve,
         mock_get_path_to_curr_python,
@@ -613,6 +673,9 @@ class ThisTestClass(BasePyfakefsTestClass):
             self.env_ctx,
             EnvState.state_stride_py_venv_reached.name,
         )
+
+        mock_state_local_conf_symlink_abs_path_inited.return_value.eval_own_state.return_value = mock_client_dir
+        mock_state_version_constraints_file_basename_inited.return_value.eval_own_state.return_value = mock_version_constraints_file_basename
 
         self.env_ctx._state_stride = StateStride.stride_py_venv
 
@@ -645,8 +708,12 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(f"{primer_kernel.__name__}.os.execve")
     @patch(f"{primer_kernel.__name__}.{Factory_state_input_sub_command_arg_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.is_same_file", return_value=True)
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_version_constraints_file_basename_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
     def test_success_when_reusing_existing_venv(
         self,
+        mock_state_local_conf_symlink_abs_path_inited,
+        mock_state_version_constraints_file_basename_inited,
         mock_state_input_sub_command_arg_loaded,
         mock_is_same_file,
         mock_execve,
@@ -667,6 +734,9 @@ class ThisTestClass(BasePyfakefsTestClass):
             self.env_ctx,
             EnvState.state_stride_py_venv_reached.name,
         )
+
+        mock_state_local_conf_symlink_abs_path_inited.return_value.eval_own_state.return_value = mock_client_dir
+        mock_state_version_constraints_file_basename_inited.return_value.eval_own_state.return_value = mock_version_constraints_file_basename
 
         mock_state_input_start_id_var_loaded.return_value.eval_own_state.return_value = "mock_start_id"
         mock_state_reboot_triggered.return_value.eval_own_state.return_value = False
@@ -726,8 +796,12 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(f"{primer_kernel.__name__}.{VenvDriverPip.__name__}.create_venv")
     @patch(f"{primer_kernel.__name__}.{Factory_state_input_sub_command_arg_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.is_same_file", return_value=True)
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_version_constraints_file_basename_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
     def test_failure_when_reusing_existing_venv_of_wrong_type(
         self,
+        mock_state_local_conf_symlink_abs_path_inited,
+        mock_state_version_constraints_file_basename_inited,
         mock_state_input_sub_command_arg_loaded,
         mock_is_same_file,
         mock_venv_venv_pip_create_venv,
@@ -746,6 +820,9 @@ class ThisTestClass(BasePyfakefsTestClass):
             self.env_ctx,
             EnvState.state_stride_py_venv_reached.name,
         )
+
+        mock_state_local_conf_symlink_abs_path_inited.return_value.eval_own_state.return_value = mock_client_dir
+        mock_state_version_constraints_file_basename_inited.return_value.eval_own_state.return_value = mock_version_constraints_file_basename
 
         mock_state_input_start_id_var_loaded.return_value.eval_own_state.return_value = "mock_start_id"
         mock_state_reboot_triggered.return_value.eval_own_state.return_value = False

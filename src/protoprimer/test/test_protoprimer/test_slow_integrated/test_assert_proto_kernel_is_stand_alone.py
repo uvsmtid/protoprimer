@@ -37,7 +37,7 @@ def installed_venv(tmp_path_factory) -> tuple[str, str, dict[str, str]]:
         selected_python_file_abs_path=sys.executable,
         state_local_venv_dir_abs_path_inited=str(venv_dir),
     )
-    venv_driver.create_venv(str(venv_dir))
+    venv_driver.create_venv(str(venv_dir), "")
 
     venv_python_abs_path = str(venv_dir / ConfConstGeneral.file_rel_path_venv_python)
 

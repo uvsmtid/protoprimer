@@ -50,7 +50,7 @@ def test_start_app_cleans_protoprimer_env_vars(tmp_path: pathlib.Path):
         sys.executable,
         str(arbitrary_venv_dir),
     )
-    venv_driver.create_venv(str(arbitrary_venv_dir))
+    venv_driver.create_venv(str(arbitrary_venv_dir), "")
     arbitrary_venv_python = arbitrary_venv_dir / ConfConstGeneral.file_rel_path_venv_python
 
     project_dir_abs_path = ref_root_abs_path / test_pyproject_src_dir_rel_path
