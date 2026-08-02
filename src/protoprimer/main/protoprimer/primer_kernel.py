@@ -846,6 +846,7 @@ class VenvDriverPip(VenvDriverBase):
             "pip",
             "freeze",
             "--exclude-editable",
+            "--all",
         ]
 
 

@@ -2,6 +2,7 @@ import os
 import subprocess
 from unittest.mock import (
     ANY,
+    mock_open,
     patch,
 )
 
@@ -161,6 +162,42 @@ def test_install_dependencies(mock_subprocess_check_call):
             "/tmp/project2",
         ],
         env=ANY,
+    )
+
+
+@patch(f"{subprocess.__name__}.{subprocess.check_call.__name__}")
+def test_pin_versions(mock_subprocess_check_call):
+
+    # given:
+
+    venv_python_file_abs_path = "/tmp/test_venv/bin/python"
+    install_driver = VenvDriverPip(
+        required_python_version=test_python_version,
+        selected_python_file_abs_path=venv_python_file_abs_path,
+        state_local_venv_dir_abs_path_inited="/tmp/venv",
+    )
+    constraints_file_abs_path = "/tmp/constraints.txt"
+
+    # when:
+
+    with patch("builtins.open", mock_open()) as mock_file:
+        install_driver.pin_versions(
+            venv_python_file_abs_path=venv_python_file_abs_path,
+            constraints_file_abs_path=constraints_file_abs_path,
+        )
+
+    # then:
+
+    mock_subprocess_check_call.assert_called_once_with(
+        [
+            venv_python_file_abs_path,
+            "-m",
+            "pip",
+            "freeze",
+            "--exclude-editable",
+            "--all",
+        ],
+        stdout=mock_file(),
     )
 
 
