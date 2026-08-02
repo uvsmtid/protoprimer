@@ -40,7 +40,7 @@ import typing
 
 # The release process ensures that content in this file matches the version below while tagging the release commit
 # (otherwise, if the file comes from a different commit, the version is irrelevant):
-__version__ = "0.13.0.dev0"
+__version__ = "0.13.0.dev2"
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 logger: logging.Logger = logging.getLogger()
 
@@ -3145,23 +3145,37 @@ class Bootstrapper_state_local_conf_symlink_abs_path_inited(AbstractCachingState
                         # Nothing to do:
                         pass
                     else:
-                        # Compare the existing link target and the configured one:
+                        # Compare the existing link target and the configured one.
+                        # NOTE: `state_selected_env_dir_rel_path_inited` is relative to `state_ref_root_dir_abs_path_inited`,
+                        #       but a symlink target is resolved relative to the symlink's own dir - adjust before comparing:
                         conf_dir_path = os.path.normpath(os.readlink(state_local_conf_symlink_abs_path_inited))
-                        if state_selected_env_dir_rel_path_inited != conf_dir_path:
+                        expected_conf_dir_path = os.path.normpath(
+                            os.path.relpath(
+                                os.path.join(state_ref_root_dir_abs_path_inited, state_selected_env_dir_rel_path_inited),
+                                os.path.dirname(state_local_conf_symlink_abs_path_inited),
+                            )
+                        )
+                        if expected_conf_dir_path != conf_dir_path:
                             # TODO: TODO_53_40_17_68.default_env_config_vs_lconf_symlink.md
                             #       If symlink target does not match default env, why not reset instead of raising?
                             #       If we do not reset automatically, user has to do it manually.
                             #       More over, symlink matching default env may actually be normal...
                             #       What if user wants to keep "decision" of what env he uses in that symlink?
                             #       The automatic reset must only be done when --env arg is specified.
-                            raise AssertionError(f"The symlink [{state_local_conf_symlink_abs_path_inited}] target [{conf_dir_path}] is not the same as the provided target [{state_selected_env_dir_rel_path_inited}].")
+                            raise AssertionError(f"The symlink [{state_local_conf_symlink_abs_path_inited}] target [{conf_dir_path}] is not the same as the provided target [{expected_conf_dir_path}].")
                 else:
                     raise AssertionError(f"The symlink [{state_local_conf_symlink_abs_path_inited}] target [{state_local_conf_symlink_abs_path_inited}] is not a directory.")
             else:
                 raise AssertionError(f"The entry [{state_local_conf_symlink_abs_path_inited}] is not a symlink.")
         else:
+            # Target must be relative to the symlink's own dir, not `state_ref_root_dir_abs_path_inited`:
             os.symlink(
-                os.path.normpath(state_selected_env_dir_rel_path_inited),
+                os.path.normpath(
+                    os.path.relpath(
+                        os.path.join(state_ref_root_dir_abs_path_inited, state_selected_env_dir_rel_path_inited),
+                        os.path.dirname(state_local_conf_symlink_abs_path_inited),
+                    )
+                ),
                 state_local_conf_symlink_abs_path_inited,
             )
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
