@@ -450,3 +450,188 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # then:
         self.assertEqual(result, mock_ref_root)
+
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_selected_env_dir_rel_path_inited.__name__}.create_state_node")
+    def test_success_when_conf_symlink_is_nested_and_target_matches(
+        self,
+        mock_state_selected_env_dir_rel_path_inited,
+        mock_state_ref_root_dir_abs_path_inited,
+        mock_state_client_conf_file_data_loaded,
+    ):
+        """
+        Regression test for a symlink nested under `ref_root` (e.g. `conf/env`):
+        the on-disk symlink target is relative to the symlink's own dir (`dst/default_env`),
+        while `state_selected_env_dir_rel_path_inited` is relative to `ref_root` (`conf/dst/default_env`).
+        These must be reconciled before comparing, not compared raw.
+        """
+
+        # given:
+
+        assert_parent_factories_mocked(
+            self.env_ctx,
+            EnvState.state_local_conf_symlink_abs_path_inited.name,
+        )
+
+        mock_client_dir = "/mock_client_dir"
+        self.fs.create_dir(mock_client_dir)
+        os.chdir(mock_client_dir)
+
+        primer_conf_data = {
+            ConfField.field_ref_root_dir_rel_path.value: ".",
+            ConfField.field_global_conf_dir_rel_path.value: ConfConstPrimer.default_client_conf_dir_rel_path,
+        }
+        write_json_file(
+            os.path.join(mock_client_dir, ConfConstInput.default_file_basename_conf_primer),
+            primer_conf_data,
+        )
+
+        nested_conf_link_rel_path = os.path.join("conf", "env")
+        # `ref_root`-relative target (as it is provided/configured):
+        ref_root_rel_target_dir = os.path.join("conf", "dst", "default_env")
+        # Same target, but relative to the symlink's own dir (`conf/`) - what must end up on disk:
+        symlink_dir_rel_target_dir = os.path.join("dst", "default_env")
+
+        mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = mock_client_dir
+        mock_state_client_conf_file_data_loaded.return_value.eval_own_state.return_value = {ConfField.field_local_conf_symlink_rel_path.value: nested_conf_link_rel_path}
+
+        state_local_conf_symlink_abs_path_inited = os.path.join(
+            mock_client_dir,
+            nested_conf_link_rel_path,
+        )
+        self.fs.create_dir(os.path.join(mock_client_dir, "conf", "dst", "default_env"))
+        self.fs.create_symlink(
+            state_local_conf_symlink_abs_path_inited,
+            symlink_dir_rel_target_dir,
+        )
+
+        mock_state_selected_env_dir_rel_path_inited.return_value.eval_own_state.return_value = ref_root_rel_target_dir
+
+        # when:
+
+        self.env_ctx.eval_state(EnvState.state_local_conf_symlink_abs_path_inited.name)
+
+        # then:
+
+        # no exception happens
+
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_selected_env_dir_rel_path_inited.__name__}.create_state_node")
+    def test_failure_when_conf_symlink_is_nested_and_target_mismatches(
+        self,
+        mock_state_selected_env_dir_rel_path_inited,
+        mock_state_ref_root_dir_abs_path_inited,
+        mock_state_client_conf_file_data_loaded,
+    ):
+
+        # given:
+
+        assert_parent_factories_mocked(
+            self.env_ctx,
+            EnvState.state_local_conf_symlink_abs_path_inited.name,
+        )
+
+        mock_client_dir = "/mock_client_dir"
+        self.fs.create_dir(mock_client_dir)
+        os.chdir(mock_client_dir)
+
+        primer_conf_data = {
+            ConfField.field_ref_root_dir_rel_path.value: ".",
+            ConfField.field_global_conf_dir_rel_path.value: ConfConstPrimer.default_client_conf_dir_rel_path,
+        }
+        write_json_file(
+            os.path.join(mock_client_dir, ConfConstInput.default_file_basename_conf_primer),
+            primer_conf_data,
+        )
+
+        nested_conf_link_rel_path = os.path.join("conf", "env")
+        ref_root_rel_target_dir = os.path.join("conf", "dst", "default_env")
+        actual_symlink_dir_rel_target_dir = os.path.join("dst", "other_env")
+
+        mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = mock_client_dir
+        mock_state_client_conf_file_data_loaded.return_value.eval_own_state.return_value = {ConfField.field_local_conf_symlink_rel_path.value: nested_conf_link_rel_path}
+
+        state_local_conf_symlink_abs_path_inited = os.path.join(
+            mock_client_dir,
+            nested_conf_link_rel_path,
+        )
+        self.fs.create_dir(os.path.join(mock_client_dir, "conf", "dst", "default_env"))
+        self.fs.create_dir(os.path.join(mock_client_dir, "conf", "dst", "other_env"))
+        self.fs.create_symlink(
+            state_local_conf_symlink_abs_path_inited,
+            actual_symlink_dir_rel_target_dir,
+        )
+
+        mock_state_selected_env_dir_rel_path_inited.return_value.eval_own_state.return_value = ref_root_rel_target_dir
+
+        # when:
+
+        with self.assertRaises(AssertionError) as ctx:
+            self.env_ctx.eval_state(EnvState.state_local_conf_symlink_abs_path_inited.name)
+
+        # then:
+
+        self.assertIn("not the same as the provided target", str(ctx.exception))
+
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_selected_env_dir_rel_path_inited.__name__}.create_state_node")
+    def test_success_when_conf_symlink_is_nested_and_created_with_dir_relative_target(
+        self,
+        mock_state_selected_env_dir_rel_path_inited,
+        mock_state_ref_root_dir_abs_path_inited,
+        mock_state_client_conf_file_data_loaded,
+    ):
+        """
+        When the symlink itself lives in a subdir of `ref_root`, the target written on disk
+        must be relative to that subdir, not to `ref_root`.
+        """
+
+        # given:
+
+        assert_parent_factories_mocked(
+            self.env_ctx,
+            EnvState.state_local_conf_symlink_abs_path_inited.name,
+        )
+
+        mock_client_dir = "/mock_client_dir"
+        self.fs.create_dir(mock_client_dir)
+        os.chdir(mock_client_dir)
+
+        primer_conf_data = {
+            ConfField.field_ref_root_dir_rel_path.value: ".",
+            ConfField.field_global_conf_dir_rel_path.value: ConfConstPrimer.default_client_conf_dir_rel_path,
+        }
+        write_json_file(
+            os.path.join(mock_client_dir, ConfConstInput.default_file_basename_conf_primer),
+            primer_conf_data,
+        )
+
+        nested_conf_link_rel_path = os.path.join("conf", "env")
+        ref_root_rel_target_dir = os.path.join("conf", "dst", "default_env")
+        symlink_dir_rel_target_dir = os.path.join("dst", "default_env")
+
+        mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = mock_client_dir
+        mock_state_client_conf_file_data_loaded.return_value.eval_own_state.return_value = {ConfField.field_local_conf_symlink_rel_path.value: nested_conf_link_rel_path}
+
+        state_local_conf_symlink_abs_path_inited = os.path.join(
+            mock_client_dir,
+            nested_conf_link_rel_path,
+        )
+        self.fs.create_dir(os.path.join(mock_client_dir, "conf", "dst", "default_env"))
+
+        mock_state_selected_env_dir_rel_path_inited.return_value.eval_own_state.return_value = ref_root_rel_target_dir
+
+        # when:
+
+        self.env_ctx.eval_state(EnvState.state_local_conf_symlink_abs_path_inited.name)
+
+        # then:
+
+        self.assertTrue(os.path.islink(state_local_conf_symlink_abs_path_inited))
+        self.assertEqual(
+            os.readlink(state_local_conf_symlink_abs_path_inited),
+            symlink_dir_rel_target_dir,
+        )
