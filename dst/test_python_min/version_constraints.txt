@@ -2,7 +2,6 @@ alabaster==0.7.13
 attrs==24.2.0
 autopage==0.6.0
 Babel==2.14.0
-beautifulsoup4==4.15.0
 cachetools==5.5.2
 certifi==2026.7.22
 cffi==1.15.1
@@ -68,7 +67,6 @@ SecretStorage==3.3.3
 setuptools==47.1.0
 six==1.17.0
 snowballstemmer==3.1.1
-soupsieve==2.4.1
 Sphinx==5.3.0
 sphinx-last-updated-by-git==0.3.8
 sphinx-rtd-theme==2.0.0
