@@ -809,6 +809,7 @@ class VenvDriverPip(VenvDriverBase):
             "-m",
             "pip",
             "install",
+            "--no-input",
             "--upgrade",
             "pip",
         ]
@@ -4798,6 +4799,8 @@ class EnvState(enum.Enum):
 
     state_default_file_log_handler_configured = Bootstrapper_state_default_file_log_handler_configured
 
+    # TODO: Add a (replaceble) env_check step to execute before switching to `StateStride.stride_py_required`.
+
     # restart: `StateStride.stride_py_arbitrary` -> `StateStride.stride_py_required`:
     state_stride_py_required_reached = Factory_state_stride_py_required_reached
 
@@ -4809,9 +4812,9 @@ class EnvState(enum.Enum):
     state_stride_py_venv_reached = Factory_state_stride_py_venv_reached
 
     state_protoprimer_package_installed = Factory_state_protoprimer_package_installed
-
-    state_version_constraints_generated = Factory_state_version_constraints_generated
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+    state_version_constraints_generated = Factory_state_version_constraints_generated
+
     # restart: `StateStride.stride_py_venv` -> `StateStride.stride_deps_updated`:
     # TODO: rename - "reached" sounds weird (and makes no sense):
     state_stride_deps_updated_reached = Factory_state_stride_deps_updated_reached
@@ -4831,10 +4834,10 @@ class TargetState(enum.Enum):
     """
     Special `EnvState`-s.
     """
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     # A special state that triggers execution of everything else:
     target_everything_executed = EnvState.state_everything_executed
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     # FT_85_17_35_21.call_lib.md
     # FT_00_22_19_59.derived_config.md
     target_derived_config_loaded = EnvState.state_derived_conf_data_loaded
