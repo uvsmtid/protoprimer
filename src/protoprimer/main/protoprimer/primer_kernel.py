@@ -751,6 +751,35 @@ class VenvDriverBase:
     ) -> list[str]:
         raise NotImplementedError()
 
+    @staticmethod
+    def _list_installed_pkg_names(
+        venv_python_file_abs_path: str,
+    ) -> list[str]:
+        """
+        Returns names (without versions) of all packages currently
+        installed in the `venv` behind `venv_python_file_abs_path`.
+
+        Used to re-pin with `--constraint` whatever
+        a `venv`-seeding mechanism (`ensurepip`, `uv --seed`, ...)
+        happens to install (e.g. `pip`/`setuptools`/`wheel`).
+        """
+        freeze_output = subprocess.check_output(
+            [
+                venv_python_file_abs_path,
+                "-m",
+                "pip",
+                "list",
+                "--format=freeze",
+                "--exclude-editable",
+            ]
+        )
+        return [
+            #
+            output_line.split("==")[0]
+            for output_line in freeze_output.decode().splitlines()
+            if output_line.strip()
+        ]
+
     def pin_versions(
         self,
         venv_python_file_abs_path: str,
@@ -811,13 +840,13 @@ class VenvDriverPip(VenvDriverBase):
             "install",
             "--no-input",
             "--upgrade",
-            "pip",
-        ]
-        # Respect the committed constraints (if any) so a fresh `venv` does not
-        # silently drift `pip` itself past the pinned version:
+        ] + self._list_installed_pkg_names(venv_python_executable)
         if os.path.exists(constraints_file_abs_path):
             pip_upgrade_cmd.extend(
                 [
+                    # Respect the committed constraints (if any)
+                    # so a fresh `venv` does not silently drift
+                    # seeded packages past the pinned version:
                     "--constraint",
                     constraints_file_abs_path,
                 ]
@@ -949,9 +978,6 @@ class VenvDriverUv(VenvDriverBase):
             ]
         )
 
-        # `--seed` installs whatever `pip` `uv` currently considers current, ignoring any
-        # committed constraints - re-pin it explicitly so a fresh `venv` does not silently
-        # drift `pip` itself past the pinned version:
         if os.path.exists(constraints_file_abs_path):
             seeded_venv_python_abs_path = os.path.join(
                 local_venv_dir_abs_path,
@@ -964,10 +990,13 @@ class VenvDriverUv(VenvDriverBase):
                     "install",
                     "--python",
                     seeded_venv_python_abs_path,
+                    # Respect the committed constraints (if any)
+                    # so a fresh `venv` does not silently drift
+                    # seeded packages past the pinned version:
                     "--constraint",
                     constraints_file_abs_path,
-                    "pip",
                 ]
+                + self._list_installed_pkg_names(seeded_venv_python_abs_path)
             )
 
     def get_install_dependencies_cmd(
