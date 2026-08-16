@@ -9,6 +9,8 @@
 # - create tag
 # - publish package
 
+from __future__ import annotations
+
 import argparse
 import enum
 import logging
@@ -28,7 +30,10 @@ from local_repo.sub_proc_util import (
 from metaprimer.script_lib import (
     configure_script,
 )
-from protoprimer.primer_kernel import EnvState
+from protoprimer.primer_kernel import (
+    EnvState,
+    read_json_file,
+)
 
 logger: logging.Logger = logging.getLogger()
 
@@ -41,10 +46,14 @@ def custom_main():
 
     ref_root_abs_path: str = derived_data[EnvState.state_ref_root_dir_abs_path_inited.name]
 
+    env_conf_dir: str = derived_data[EnvState.state_local_conf_symlink_abs_path_inited.name]
+    script_conf_path = os.path.join(env_conf_dir, "publish_package.json")
+    script_conf = read_json_file(script_conf_path) if os.path.exists(script_conf_path) else {}
+
     _publish_package(
         ref_root_abs_path=ref_root_abs_path,
         package_name=parsed_args.package_name,
-        repository_url=parsed_args.repository_url,
+        repository_url=parsed_args.repository_url or script_conf.get("repository_url"),
         no_tag=parsed_args.no_tag or parsed_args.dry_run,
         allow_dirty=parsed_args.allow_dirty,
         dry_run=parsed_args.dry_run,
@@ -56,6 +65,22 @@ class DistribPackage(enum.Enum):
     package_metaprimer = "metaprimer"
     package_protoprimer = "protoprimer"
     package_dummy_private = "dummy_private"
+
+
+package_name_to_dir: dict[str, str] = {
+    DistribPackage.package_metaprimer.value: "metaprimer",
+    DistribPackage.package_protoprimer.value: "protoprimer",
+    DistribPackage.package_dummy_private.value: "dummy_private",
+}
+
+# Various version formats (including those with PEP 440 local identifier):
+# 1.2.3.dev4
+# 1.2.3.dev4+org
+re_dev_version = r"^\d+\.\d+\.\d+\.dev\d+(\+\w+)?$"
+# 1.2.3+org
+re_local_version = r"^\d+\.\d+\.\d+\+\w+$"
+# 1.2.3
+re_release_version = r"^\d+\.\d+\.\d+$"
 
 
 def init_arg_parser():
@@ -159,12 +184,6 @@ def _publish_package(
         if get_command_code("git diff-index --quiet HEAD --", fail_on_error=False) != 0:
             raise RuntimeError("uncommitted changes")
 
-    package_name_to_dir: dict[str, str] = {
-        DistribPackage.package_metaprimer.value: "metaprimer",
-        DistribPackage.package_protoprimer.value: "protoprimer",
-        DistribPackage.package_dummy_private.value: "dummy_private",
-    }
-
     package_dir_basename = package_name_to_dir[package_name]
 
     # Get the version of distribution:
@@ -185,16 +204,26 @@ def _publish_package(
 
     # Determine if it is a dev version (which relaxes many checks):
     is_dev_version: bool
-    if re.match(r"^\d+\.\d+\.\d+\.dev\d+$", distrib_version):
+    if re.match(re_dev_version, distrib_version):
         logger.info(f"dev version pattern: {distrib_version}")
         is_dev_version = True
-    elif re.match(r"^\d+\.\d+\.\d+$", distrib_version):
+    elif re.match(re_local_version, distrib_version):
+        logger.info(f"local version pattern: {distrib_version}")
+        # TODO: Do not relax validation local versions:
+        # PEP 440 local version identifier (e.g. +org) is
+        # treated as `is_dev_version` to relax the requirement since
+        # local versions are typically published from feature branches:
+        is_dev_version = True
+    elif re.match(re_release_version, distrib_version):
         logger.info(f"release version pattern: {distrib_version}")
         is_dev_version = False
     else:
         raise RuntimeError(f"unrecognized version pattern: {distrib_version}")
 
     logger.info(f"is_dev_version: {is_dev_version}")
+
+    if allow_dirty and not is_dev_version:
+        raise RuntimeError("--allow_dirty is only permitted for dev versions")
 
     # Fetch from upstream:
     git_main_remote = "origin"
