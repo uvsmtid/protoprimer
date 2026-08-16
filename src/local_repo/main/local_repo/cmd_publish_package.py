@@ -166,7 +166,7 @@ def _publish_package(
         if get_command_code("git diff-index --quiet HEAD --", fail_on_error=False) != 0:
             raise RuntimeError("uncommitted changes")
 
-    package_name_to_dir = dict[str, str] = {
+    package_name_to_dir: dict[str, str] = {
         DistribPackage.package_metaprimer.value: "metaprimer",
         DistribPackage.package_protoprimer.value: "protoprimer",
         DistribPackage.package_dummy_private.value: "dummy_private",
