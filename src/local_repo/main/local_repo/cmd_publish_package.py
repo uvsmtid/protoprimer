@@ -193,7 +193,7 @@ def _publish_package(
 
     # Determine if it is a dev version (which relaxes many checks):
     is_dev_version: bool
-    if re.match(r"^\d+\.\d+\.\d+\.dev\d+$", distrib_version):
+    if re.match(r"^\d+\.\d+\.\d+\.dev\d+(\+\w+)?$", distrib_version):
         logger.info(f"dev version pattern: {distrib_version}")
         is_dev_version = True
     elif re.match(r"^\d+\.\d+\.\d+\+\w+$", distrib_version):
