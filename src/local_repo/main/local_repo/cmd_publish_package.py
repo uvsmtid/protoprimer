@@ -190,19 +190,28 @@ def _publish_package(
 
     logger.info(f"`distrib_version` [{distrib_version}]")
 
+    # Various version formats (including those with PEP 440 local identifier):
+    # 1.2.3.dev4
+    # 1.2.3.dev4+company
+    re_dev_version = r"^\d+\.\d+\.\d+\.dev\d+(\+\w+)?$"
+    # 1.2.3+company
+    re_local_version = r"^\d+\.\d+\.\d+\+\w+$"
+    # 1.2.3
+    re_release_version = r"^\d+\.\d+\.\d+$"
+
     # Determine if it is a dev version (which relaxes many checks):
     is_dev_version: bool
-    if re.match(r"^\d+\.\d+\.\d+\.dev\d+(\+\w+)?$", distrib_version):
+    if re.match(re_dev_version, distrib_version):
         logger.info(f"dev version pattern: {distrib_version}")
         is_dev_version = True
-    elif re.match(r"^\d+\.\d+\.\d+\+\w+$", distrib_version):
+    elif re.match(re_local_version, distrib_version):
         logger.info(f"local version pattern: {distrib_version}")
         # TODO: Do not relax validation local versions:
         # PEP 440 local version identifier (e.g. +company) is
         # treated as `is_dev_version` to relax the requirement since
         # local versions are typically published from feature branches:
         is_dev_version = True
-    elif re.match(r"^\d+\.\d+\.\d+$", distrib_version):
+    elif re.match(re_release_version, distrib_version):
         logger.info(f"release version pattern: {distrib_version}")
         is_dev_version = False
     else:
