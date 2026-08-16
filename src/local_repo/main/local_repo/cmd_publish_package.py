@@ -9,6 +9,8 @@
 # - create tag
 # - publish package
 
+from __future__ import annotations
+
 import argparse
 import enum
 import logging
