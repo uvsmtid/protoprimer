@@ -9,6 +9,8 @@
 # - create tag
 # - publish package
 
+from __future__ import annotations
+
 import argparse
 import enum
 import logging
@@ -63,6 +65,22 @@ class DistribPackage(enum.Enum):
     package_metaprimer = "metaprimer"
     package_protoprimer = "protoprimer"
     package_dummy_private = "dummy_private"
+
+
+package_name_to_dir: dict[str, str] = {
+    DistribPackage.package_metaprimer.value: "metaprimer",
+    DistribPackage.package_protoprimer.value: "protoprimer",
+    DistribPackage.package_dummy_private.value: "dummy_private",
+}
+
+# Various version formats (including those with PEP 440 local identifier):
+# 1.2.3.dev4
+# 1.2.3.dev4+org
+re_dev_version = r"^\d+\.\d+\.\d+\.dev\d+(\+\w+)?$"
+# 1.2.3+org
+re_local_version = r"^\d+\.\d+\.\d+\+\w+$"
+# 1.2.3
+re_release_version = r"^\d+\.\d+\.\d+$"
 
 
 def init_arg_parser():
@@ -166,12 +184,6 @@ def _publish_package(
         if get_command_code("git diff-index --quiet HEAD --", fail_on_error=False) != 0:
             raise RuntimeError("uncommitted changes")
 
-    package_name_to_dir: dict[str, str] = {
-        DistribPackage.package_metaprimer.value: "metaprimer",
-        DistribPackage.package_protoprimer.value: "protoprimer",
-        DistribPackage.package_dummy_private.value: "dummy_private",
-    }
-
     package_dir_basename = package_name_to_dir[package_name]
 
     # Get the version of distribution:
@@ -192,16 +204,17 @@ def _publish_package(
 
     # Determine if it is a dev version (which relaxes many checks):
     is_dev_version: bool
-    if re.match(r"^\d+\.\d+\.\d+\.dev\d+(\+\w+)?$", distrib_version):
+    if re.match(re_dev_version, distrib_version):
         logger.info(f"dev version pattern: {distrib_version}")
         is_dev_version = True
-    elif re.match(r"^\d+\.\d+\.\d+\+\w+$", distrib_version):
+    elif re.match(re_local_version, distrib_version):
         logger.info(f"local version pattern: {distrib_version}")
-        # PEP 440 local version identifier (e.g. +company) – semantically a patched/forked
-        # release rather than a pre-release, but treated as dev here to relax the requirement
-        # that HEAD be on main, since local versions are typically published from feature branches.
+        # TODO: Do not relax validation local versions:
+        # PEP 440 local version identifier (e.g. +org) is
+        # treated as `is_dev_version` to relax the requirement since
+        # local versions are typically published from feature branches:
         is_dev_version = True
-    elif re.match(r"^\d+\.\d+\.\d+$", distrib_version):
+    elif re.match(re_release_version, distrib_version):
         logger.info(f"release version pattern: {distrib_version}")
         is_dev_version = False
     else:
