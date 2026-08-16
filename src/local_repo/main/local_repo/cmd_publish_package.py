@@ -71,6 +71,14 @@ package_name_to_dir: dict[str, str] = {
     DistribPackage.package_dummy_private.value: "dummy_private",
 }
 
+# Various version formats (including those with PEP 440 local identifier):
+# 1.2.3.dev4, 1.2.3.dev4+company
+re_dev_version = r"^\d+\.\d+\.\d+\.dev\d+(\+\w+)?$"
+# 1.2.3+company
+re_local_version = r"^\d+\.\d+\.\d+\+\w+$"
+# 1.2.3
+re_release_version = r"^\d+\.\d+\.\d+$"
+
 
 def init_arg_parser():
 
@@ -190,15 +198,6 @@ def _publish_package(
         raise RuntimeError(f"Could not find version in {version_file_path}")
 
     logger.info(f"`distrib_version` [{distrib_version}]")
-
-    # Various version formats (including those with PEP 440 local identifier):
-    # 1.2.3.dev4
-    # 1.2.3.dev4+company
-    re_dev_version = r"^\d+\.\d+\.\d+\.dev\d+(\+\w+)?$"
-    # 1.2.3+company
-    re_local_version = r"^\d+\.\d+\.\d+\+\w+$"
-    # 1.2.3
-    re_release_version = r"^\d+\.\d+\.\d+$"
 
     # Determine if it is a dev version (which relaxes many checks):
     is_dev_version: bool
