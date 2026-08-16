@@ -197,9 +197,10 @@ def _publish_package(
         is_dev_version = True
     elif re.match(r"^\d+\.\d+\.\d+\+\w+$", distrib_version):
         logger.info(f"local version pattern: {distrib_version}")
-        # PEP 440 local version identifier (e.g. +company) – semantically a patched/forked
-        # release rather than a pre-release, but treated as dev here to relax the requirement
-        # that HEAD be on main, since local versions are typically published from feature branches.
+        # TODO: Do not relax validation local versions:
+        # PEP 440 local version identifier (e.g. +company) is
+        # treated as `is_dev_version` to relax the requirement since
+        # local versions are typically published from feature branches:
         is_dev_version = True
     elif re.match(r"^\d+\.\d+\.\d+$", distrib_version):
         logger.info(f"release version pattern: {distrib_version}")
