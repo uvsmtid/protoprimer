@@ -78,12 +78,14 @@ def test_create_venv_when_constraints_file_does_not_exist(mock_subprocess_check_
 
 @patch(f"{primer_kernel.__name__}.os.path.isfile")
 @patch(f"{primer_kernel.__name__}.os.path.exists")
+@patch(f"{subprocess.__name__}.{subprocess.check_output.__name__}")
 @patch(f"{subprocess.__name__}.{subprocess.check_call.__name__}")
-def test_create_venv_when_constraints_file_exists(mock_subprocess_check_call, mock_exists, mock_isfile):
+def test_create_venv_when_constraints_file_exists(mock_subprocess_check_call, mock_subprocess_check_output, mock_exists, mock_isfile):
     # given:
     constraints_file_abs_path = "/tmp/constraints.txt"
     mock_exists.return_value = True
     mock_isfile.return_value = True
+    mock_subprocess_check_output.return_value = b"pip==25.0\nsetuptools==75.0\nwheel==0.47.0\n"
     install_driver = VenvDriverUv(
         required_python_version="3.10",
         selected_python_file_abs_path="/mock/python",
@@ -135,11 +137,23 @@ def test_create_venv_when_constraints_file_exists(mock_subprocess_check_call, mo
                 "--constraint",
                 constraints_file_abs_path,
                 "pip",
+                "setuptools",
+                "wheel",
             ]
         ),
     ]
     mock_subprocess_check_call.assert_has_calls(expected_calls)
     assert mock_subprocess_check_call.call_count == 4
+    mock_subprocess_check_output.assert_called_once_with(
+        [
+            "/tmp/test_venv/bin/python",
+            "-m",
+            "pip",
+            "list",
+            "--format=freeze",
+            "--exclude-editable",
+        ]
+    )
 
 
 @patch(f"{primer_kernel.__name__}.os.path.isfile")
