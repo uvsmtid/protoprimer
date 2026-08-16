@@ -811,9 +811,15 @@ class VenvDriverPip(VenvDriverBase):
             "install",
             "--upgrade",
             "pip",
+            # `venv` seeds `setuptools`/`wheel` via `ensurepip` regardless of
+            # the constraints file, so they must be re-pinned explicitly too
+            # (otherwise `pin_versions` below re-freezes them at whatever
+            # version happens to be bundled with the current Python):
+            "setuptools",
+            "wheel",
         ]
         # Respect the committed constraints (if any) so a fresh `venv` does not
-        # silently drift `pip` itself past the pinned version:
+        # silently drift `pip`/`setuptools`/`wheel` past the pinned versions:
         if os.path.exists(constraints_file_abs_path):
             pip_upgrade_cmd.extend(
                 [
@@ -948,9 +954,9 @@ class VenvDriverUv(VenvDriverBase):
             ]
         )
 
-        # `--seed` installs whatever `pip` `uv` currently considers current, ignoring any
-        # committed constraints - re-pin it explicitly so a fresh `venv` does not silently
-        # drift `pip` itself past the pinned version:
+        # `--seed` installs whatever `pip`/`setuptools`/`wheel` `uv` currently considers
+        # current, ignoring any committed constraints - re-pin them explicitly so a fresh
+        # `venv` does not silently drift past the pinned versions:
         if os.path.exists(constraints_file_abs_path):
             seeded_venv_python_abs_path = os.path.join(
                 local_venv_dir_abs_path,
@@ -966,6 +972,8 @@ class VenvDriverUv(VenvDriverBase):
                     "--constraint",
                     constraints_file_abs_path,
                     "pip",
+                    "setuptools",
+                    "wheel",
                 ]
             )
 
