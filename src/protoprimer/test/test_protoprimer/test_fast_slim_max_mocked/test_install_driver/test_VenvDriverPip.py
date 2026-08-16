@@ -24,8 +24,9 @@ def test_relationship():
 
 
 @patch(f"{primer_kernel.__name__}.os.path.exists")
+@patch(f"{primer_kernel.__name__}.subprocess.check_output")
 @patch(f"{primer_kernel.__name__}.subprocess.check_call")
-def test_create_venv_when_constraints_file_does_not_exist(mock_check_call, mock_exists):
+def test_create_venv_when_constraints_file_does_not_exist(mock_check_call, mock_check_output, mock_exists):
 
     # given:
 
@@ -33,6 +34,7 @@ def test_create_venv_when_constraints_file_does_not_exist(mock_check_call, mock_
     python_path = "/tmp/python"
     constraints_file_abs_path = "/tmp/constraints.txt"
     mock_exists.return_value = False
+    mock_check_output.return_value = b"pip==25.0\nsetuptools==75.0\nwheel==0.47.0\n"
     install_driver = VenvDriverPip(
         required_python_version=test_python_version,
         selected_python_file_abs_path=python_path,
@@ -45,6 +47,19 @@ def test_create_venv_when_constraints_file_does_not_exist(mock_check_call, mock_
 
     # then:
 
+    venv_python_abs_path = os.path.join(venv_dir_abs_path, "bin", "python")
+
+    mock_check_output.assert_called_once_with(
+        [
+            venv_python_abs_path,
+            "-m",
+            "pip",
+            "list",
+            "--format=freeze",
+            "--exclude-editable",
+        ]
+    )
+
     assert mock_check_call.call_count == 2
     mock_check_call.assert_any_call(
         [
@@ -56,19 +71,22 @@ def test_create_venv_when_constraints_file_does_not_exist(mock_check_call, mock_
     )
     mock_check_call.assert_any_call(
         [
-            os.path.join(venv_dir_abs_path, "bin", "python"),
+            venv_python_abs_path,
             "-m",
             "pip",
             "install",
             "--upgrade",
             "pip",
+            "setuptools",
+            "wheel",
         ]
     )
 
 
 @patch(f"{primer_kernel.__name__}.os.path.exists")
+@patch(f"{primer_kernel.__name__}.subprocess.check_output")
 @patch(f"{primer_kernel.__name__}.subprocess.check_call")
-def test_create_venv_when_constraints_file_exists(mock_check_call, mock_exists):
+def test_create_venv_when_constraints_file_exists(mock_check_call, mock_check_output, mock_exists):
 
     # given:
 
@@ -76,6 +94,7 @@ def test_create_venv_when_constraints_file_exists(mock_check_call, mock_exists):
     python_path = "/tmp/python"
     constraints_file_abs_path = "/tmp/constraints.txt"
     mock_exists.return_value = True
+    mock_check_output.return_value = b"pip==25.0\nsetuptools==75.0\nwheel==0.47.0\n"
     install_driver = VenvDriverPip(
         required_python_version=test_python_version,
         selected_python_file_abs_path=python_path,
@@ -88,6 +107,19 @@ def test_create_venv_when_constraints_file_exists(mock_check_call, mock_exists):
 
     # then:
 
+    venv_python_abs_path = os.path.join(venv_dir_abs_path, "bin", "python")
+
+    mock_check_output.assert_called_once_with(
+        [
+            venv_python_abs_path,
+            "-m",
+            "pip",
+            "list",
+            "--format=freeze",
+            "--exclude-editable",
+        ]
+    )
+
     assert mock_check_call.call_count == 2
     mock_check_call.assert_any_call(
         [
@@ -99,12 +131,14 @@ def test_create_venv_when_constraints_file_exists(mock_check_call, mock_exists):
     )
     mock_check_call.assert_any_call(
         [
-            os.path.join(venv_dir_abs_path, "bin", "python"),
+            venv_python_abs_path,
             "-m",
             "pip",
             "install",
             "--upgrade",
             "pip",
+            "setuptools",
+            "wheel",
             "--constraint",
             constraints_file_abs_path,
         ]
