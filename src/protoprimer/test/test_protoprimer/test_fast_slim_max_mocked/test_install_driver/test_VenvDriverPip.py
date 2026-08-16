@@ -60,6 +60,7 @@ def test_create_venv_when_constraints_file_does_not_exist(mock_check_call, mock_
             "-m",
             "pip",
             "install",
+            "--no-input",
             "--upgrade",
             "pip",
         ]
@@ -103,6 +104,7 @@ def test_create_venv_when_constraints_file_exists(mock_check_call, mock_exists):
             "-m",
             "pip",
             "install",
+            "--no-input",
             "--upgrade",
             "pip",
             "--constraint",
