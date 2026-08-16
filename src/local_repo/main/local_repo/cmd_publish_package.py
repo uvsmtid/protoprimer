@@ -72,9 +72,9 @@ package_name_to_dir: dict[str, str] = {
 }
 
 # Various version formats (including those with PEP 440 local identifier):
-# 1.2.3.dev4, 1.2.3.dev4+company
+# 1.2.3.dev4, 1.2.3.dev4+org
 re_dev_version = r"^\d+\.\d+\.\d+\.dev\d+(\+\w+)?$"
-# 1.2.3+company
+# 1.2.3+org
 re_local_version = r"^\d+\.\d+\.\d+\+\w+$"
 # 1.2.3
 re_release_version = r"^\d+\.\d+\.\d+$"
@@ -207,7 +207,7 @@ def _publish_package(
     elif re.match(re_local_version, distrib_version):
         logger.info(f"local version pattern: {distrib_version}")
         # TODO: Do not relax validation local versions:
-        # PEP 440 local version identifier (e.g. +company) is
+        # PEP 440 local version identifier (e.g. +org) is
         # treated as `is_dev_version` to relax the requirement since
         # local versions are typically published from feature branches:
         is_dev_version = True

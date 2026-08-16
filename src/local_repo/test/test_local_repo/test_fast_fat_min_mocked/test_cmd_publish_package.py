@@ -23,8 +23,8 @@ def test_relationship():
     "version",
     [
         "1.2.3.dev4",
-        "1.2.3.dev4+company",
-        "0.13.0.dev2+bullish",
+        "1.2.3.dev4+org",
+        "0.13.0.dev2+org",
     ],
 )
 def test_re_dev_version_matches(version):
@@ -35,7 +35,7 @@ def test_re_dev_version_matches(version):
     "version",
     [
         "1.2.3",
-        "1.2.3+company",
+        "1.2.3+org",
         "1.2.3.final",
         "1.2.3.dev4.extra",
     ],
@@ -47,8 +47,8 @@ def test_re_dev_version_no_match(version):
 @pytest.mark.parametrize(
     "version",
     [
-        "1.2.3+company",
-        "0.13.0+bullish",
+        "1.2.3+org",
+        "0.13.0+org",
     ],
 )
 def test_re_local_version_matches(version):
@@ -60,7 +60,7 @@ def test_re_local_version_matches(version):
     [
         "1.2.3",
         "1.2.3.dev4",
-        "1.2.3.dev4+company",
+        "1.2.3.dev4+org",
     ],
 )
 def test_re_local_version_no_match(version):
@@ -82,8 +82,8 @@ def test_re_release_version_matches(version):
     "version",
     [
         "1.2.3.dev4",
-        "1.2.3+company",
-        "1.2.3.dev4+company",
+        "1.2.3+org",
+        "1.2.3.dev4+org",
         "1.2.3.final",
     ],
 )
