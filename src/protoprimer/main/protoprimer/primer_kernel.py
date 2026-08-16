@@ -838,6 +838,7 @@ class VenvDriverPip(VenvDriverBase):
             "-m",
             "pip",
             "install",
+            "--no-input",
             "--upgrade",
         ] + self._list_installed_pkg_names(venv_python_executable)
         if os.path.exists(constraints_file_abs_path):
@@ -4826,6 +4827,8 @@ class EnvState(enum.Enum):
     state_effective_conf_data_printed = Bootstrapper_state_effective_conf_data_printed
 
     state_default_file_log_handler_configured = Bootstrapper_state_default_file_log_handler_configured
+
+    # TODO: Add a (replaceable) env_check step to execute before switching to `StateStride.stride_py_required`.
 
     # restart: `StateStride.stride_py_arbitrary` -> `StateStride.stride_py_required`:
     state_stride_py_required_reached = Factory_state_stride_py_required_reached
