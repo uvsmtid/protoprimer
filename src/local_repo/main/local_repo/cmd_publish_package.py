@@ -65,13 +65,6 @@ class DistribPackage(enum.Enum):
     package_dummy_private = "dummy_private"
 
 
-PACKAGE_NAME_TO_DIR: dict[str, str] = {
-    DistribPackage.package_metaprimer.value: "metaprimer",
-    DistribPackage.package_protoprimer.value: "protoprimer",
-    DistribPackage.package_dummy_private.value: "dummy_private",
-}
-
-
 def init_arg_parser():
 
     arg_parser = argparse.ArgumentParser(
@@ -173,7 +166,13 @@ def _publish_package(
         if get_command_code("git diff-index --quiet HEAD --", fail_on_error=False) != 0:
             raise RuntimeError("uncommitted changes")
 
-    package_dir_basename = PACKAGE_NAME_TO_DIR[package_name]
+    package_name_to_dir = dict[str, str] = {
+        DistribPackage.package_metaprimer.value: "metaprimer",
+        DistribPackage.package_protoprimer.value: "protoprimer",
+        DistribPackage.package_dummy_private.value: "dummy_private",
+    }
+
+    package_dir_basename = package_name_to_dir[package_name]
 
     # Get the version of distribution:
     distrib_version = None
