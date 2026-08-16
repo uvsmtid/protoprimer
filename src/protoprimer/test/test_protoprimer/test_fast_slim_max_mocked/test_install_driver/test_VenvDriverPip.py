@@ -147,6 +147,107 @@ def test_create_venv_when_constraints_file_exists(mock_check_call, mock_check_ou
     )
 
 
+@patch(f"{primer_kernel.__name__}.subprocess.check_output")
+def test_list_installed_pkg_names_strips_versions(mock_check_output):
+
+    # given:
+
+    mock_check_output.return_value = b"pip==25.0\nsetuptools==75.0\nwheel==0.47.0\n"
+
+    # when:
+
+    result = VenvDriverPip._list_installed_pkg_names("/tmp/python")
+
+    # then:
+
+    assert result == ["pip", "setuptools", "wheel"]
+    mock_check_output.assert_called_once_with(
+        [
+            "/tmp/python",
+            "-m",
+            "pip",
+            "list",
+            "--format=freeze",
+            "--exclude-editable",
+        ]
+    )
+
+
+@patch(f"{primer_kernel.__name__}.subprocess.check_output")
+def test_list_installed_pkg_names_with_empty_output(mock_check_output):
+
+    # given:
+
+    mock_check_output.return_value = b""
+
+    # when:
+
+    result = VenvDriverPip._list_installed_pkg_names("/tmp/python")
+
+    # then:
+
+    assert result == []
+
+
+@patch(f"{primer_kernel.__name__}.subprocess.check_output")
+def test_list_installed_pkg_names_ignores_blank_lines(mock_check_output):
+
+    # given:
+
+    mock_check_output.return_value = b"pip==25.0\n\nsetuptools==75.0\n\n"
+
+    # when:
+
+    result = VenvDriverPip._list_installed_pkg_names("/tmp/python")
+
+    # then:
+
+    assert result == ["pip", "setuptools"]
+
+
+@patch(f"{primer_kernel.__name__}.os.path.exists")
+@patch(f"{primer_kernel.__name__}.subprocess.check_output")
+@patch(f"{primer_kernel.__name__}.subprocess.check_call")
+def test_create_venv_upgrades_all_seeded_packages(mock_check_call, mock_check_output, mock_exists):
+    """
+    Verify that whatever packages pip list returns are passed to the upgrade command,
+    not a hardcoded list.
+    """
+
+    # given:
+
+    venv_dir_abs_path = "/tmp/test_venv"
+    python_path = "/tmp/python"
+    constraints_file_abs_path = "/tmp/constraints.txt"
+    mock_exists.return_value = False
+    mock_check_output.return_value = b"pip==25.0\n"
+    install_driver = VenvDriverPip(
+        required_python_version=test_python_version,
+        selected_python_file_abs_path=python_path,
+        state_local_venv_dir_abs_path_inited=venv_dir_abs_path,
+    )
+
+    # when:
+
+    install_driver.create_venv(venv_dir_abs_path, constraints_file_abs_path)
+
+    # then:
+
+    venv_python_abs_path = os.path.join(venv_dir_abs_path, "bin", "python")
+
+    mock_check_call.assert_any_call(
+        [
+            venv_python_abs_path,
+            "-m",
+            "pip",
+            "install",
+            "--no-input",
+            "--upgrade",
+            "pip",
+        ]
+    )
+
+
 @patch(f"{subprocess.__name__}.{subprocess.check_call.__name__}")
 def test_install_dependencies(mock_subprocess_check_call):
 
