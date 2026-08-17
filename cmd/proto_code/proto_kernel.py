@@ -224,6 +224,9 @@ class KeyWord(enum.Enum):
     key_conf = "conf"
     key_effective = "effective"
 
+    key_trace = "trace"
+    key_execution = "execution"
+
     key_configured = "configured"
     key_parsed = "parsed"
     key_executed = "executed"
