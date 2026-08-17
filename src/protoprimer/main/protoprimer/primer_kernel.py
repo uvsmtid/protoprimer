@@ -403,6 +403,9 @@ class EnvVar(enum.Enum):
     See: FT_83_60_72_19.test_perimeter.md / test_fast_fat_min_mocked
     """
 
+    # FT_41_45_81_49.trace_mode.md
+    var_PROTOPRIMER_TRACE_EXECUTION = "PROTOPRIMER_TRACE_EXECUTION"
+
 
 class ConfDst(enum.Enum):
     """
@@ -5485,6 +5488,9 @@ def switch_python(
         # (instead, it simply sets `sys.flags.isolated`):
         "-I",
     ]
+    # FT_41_45_81_49.trace_mode.md:
+    if os.environ.get(EnvVar.var_PROTOPRIMER_TRACE_EXECUTION.value, "").lower() == "true":
+        exec_argv.extend(["-m", "trace", "--trace"])
     exec_argv.extend(sys.argv)
 
     if required_environ is None:
