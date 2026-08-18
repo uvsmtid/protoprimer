@@ -34,7 +34,9 @@ def test_trace_mode_boot_env(tmp_path: Path):
     Full boot with PROTOPRIMER_TRACE_EXECUTION=true.
     """
 
-    # given: fresh max layout boot environment
+    # given:
+    # fresh max layout boot environment
+
     (
         proto_kernel_abs_path,
         _ref_root_abs_path,
@@ -47,7 +49,9 @@ def test_trace_mode_boot_env(tmp_path: Path):
     env = os.environ.copy()
     env[EnvVar.var_PROTOPRIMER_TRACE_EXECUTION.value] = "true"
 
-    # when: boot with trace propagating across all python restarts via PROTOPRIMER_TRACE_EXECUTION
+    # when:
+    # boot with trace propagating across all python restarts via PROTOPRIMER_TRACE_EXECUTION
+
     with stdout_log_path.open("w") as stdout_f, stderr_log_path.open("w") as stderr_f:
         subprocess.run(
             [
@@ -70,6 +74,7 @@ def test_trace_mode_boot_env(tmp_path: Path):
 
     # then:
     # every `StateStride` name appears in `stderr` log context
+
     for stride in StateStride:
         assert any(stride.name in stderr_line for stderr_line in stderr_lines), f"expected stride {stride.name} in stderr log"
 
@@ -92,7 +97,9 @@ def test_trace_mode_start_app(tmp_path: Path):
     start_app run with PROTOPRIMER_TRACE_EXECUTION=true.
     """
 
-    # given: full layout + boot (no trace) to create the configured venv
+    # given:
+    # full layout + boot (no trace) to create the configured venv
+
     (
         proto_kernel_abs_path,
         ref_root_abs_path,
@@ -127,7 +134,9 @@ def test_trace_mode_start_app(tmp_path: Path):
     env = os.environ.copy()
     env[EnvVar.var_PROTOPRIMER_TRACE_EXECUTION.value] = "true"
 
-    # when: start_app with trace propagating across the single python restart
+    # when:
+    # start_app with trace propagating across the single python restart
+
     with stdout_log_path.open("w") as stdout_f, stderr_log_path.open("w") as stderr_f:
         subprocess.run(
             [
@@ -146,7 +155,9 @@ def test_trace_mode_start_app(tmp_path: Path):
     stderr_lines = stderr_log_path.read_text().splitlines()
     stdout_lines = stdout_log_path.read_text().splitlines()
 
-    # then: `custom_main` ran successfully despite trace mode
+    # then:
+    # `custom_main` ran successfully despite trace mode
+
     assert any("Hello, world!" in stdout_line for stdout_line in stdout_lines)
 
     restart_count = sum(1 for stderr_line in stderr_lines if "<<< restart >>>" in stderr_line)
