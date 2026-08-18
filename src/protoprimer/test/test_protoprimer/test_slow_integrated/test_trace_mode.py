@@ -1,10 +1,15 @@
 # FT_41_45_81_49.trace_mode.md
 import os
+import stat
 import subprocess
 import sys
 from pathlib import Path
 
-from local_test.fat_mocked_helper import assert_editable_install
+from local_doc import cmd_start_app
+from local_test.fat_mocked_helper import (
+    assert_editable_install,
+    run_primer_main,
+)
 from local_test.integrated_helper import (
     create_max_layout,
     test_package_name,
@@ -13,8 +18,10 @@ from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer.primer_kernel import (
     EnvVar,
     StateStride,
+    SubCommand,
     SyntaxArg,
 )
+from protoprimer.proto_generator import generate_entry_script_content
 
 
 def test_relationship():
@@ -83,3 +90,84 @@ def test_trace_mode(tmp_path: Path):
 
     # boot completed successfully
     assert_editable_install(project_dir_abs_path, test_package_name)
+
+
+def test_trace_mode_start_app(tmp_path: Path):
+    """
+    FT_41_45_81_49.trace_mode.md:
+    start_app run with PROTOPRIMER_TRACE_EXECUTION=true.
+
+    start_app sets PROTOPRIMER_PROTO_CODE before _proto_main, so the
+    state machine skips stride_py_arbitrary switching (condition at
+    state_stride_py_arbitrary_reached) and switches directly to the
+    configured venv: exactly 1 restart (stride_py_unknown -> stride_py_venv).
+
+    Asserts:
+    - custom_main ran successfully ("Hello, world!" in stdout)
+    - restart_count == switch_python trace count == 1,
+      verifying trace propagated to the single python restart
+    """
+
+    # given: full layout + boot (no trace) to create the configured venv
+    (
+        proto_kernel_abs_path,
+        ref_root_abs_path,
+        _project_dir_abs_path,
+    ) = create_max_layout(tmp_path)
+
+    run_primer_main(
+        [
+            str(proto_kernel_abs_path),
+            SyntaxArg.arg_v,
+            SyntaxArg.arg_v,
+        ]
+    )
+
+    # create start_app entry script
+    start_app_script_abs_path = ref_root_abs_path / "start_app"
+    start_app_script_content = generate_entry_script_content(
+        SubCommand.command_start.value,
+        str(proto_kernel_abs_path),
+        str(start_app_script_abs_path),
+        f"{cmd_start_app.__name__}",
+        f"{cmd_start_app.custom_main.__name__}",
+        {},
+    )
+    with open(start_app_script_abs_path, "w") as f:
+        f.write(start_app_script_content)
+    start_app_script_abs_path.chmod(start_app_script_abs_path.stat().st_mode | stat.S_IEXEC)
+
+    stdout_log_path = tmp_path / "trace_start_app.stdout.log"
+    stderr_log_path = tmp_path / "trace_start_app.stderr.log"
+
+    env = os.environ.copy()
+    env[EnvVar.var_PROTOPRIMER_TRACE_EXECUTION.value] = "true"
+
+    # when: start_app with trace propagating across the single python restart
+    with stdout_log_path.open("w") as stdout_f, stderr_log_path.open("w") as stderr_f:
+        subprocess.run(
+            [
+                sys.executable,
+                "-m",
+                "trace",
+                "--trace",
+                str(start_app_script_abs_path),
+            ],
+            check=True,
+            env=env,
+            stdout=stdout_f,
+            stderr=stderr_f,
+        )
+
+    stderr_lines = stderr_log_path.read_text().splitlines()
+    stdout_lines = stdout_log_path.read_text().splitlines()
+
+    # then: custom_main ran successfully despite trace mode
+    assert any("Hello, world!" in line for line in stdout_lines)
+
+    # restart count (stderr) == switch_python trace count (stdout) == 1:
+    # start_app sets PROTOPRIMER_PROTO_CODE before _proto_main so stride_py_arbitrary
+    # switching is skipped; only one switch (stride_py_unknown -> stride_py_venv) occurs
+    restart_count = sum(1 for line in stderr_lines if "<<< restart >>>" in line)
+    switch_python_count = sum(1 for line in stdout_lines if "funcname: switch_python" in line)
+    assert restart_count == switch_python_count == 1, f"restart [{restart_count}] != switch_python [{switch_python_count}] != 1: " f"trace was not propagated to the single python restart"
