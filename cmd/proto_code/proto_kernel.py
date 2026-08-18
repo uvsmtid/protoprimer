@@ -5493,7 +5493,13 @@ def switch_python(
     ]
     # FT_41_45_81_49.trace_mode.md:
     if os.environ.get(EnvVar.var_PROTOPRIMER_TRACE_EXECUTION.value, "").lower() == "true":
-        exec_argv.extend(["-m", "trace", "--trace"])
+        exec_argv.extend(
+            [
+                "-m",
+                "trace",
+                "--trace",
+            ]
+        )
     exec_argv.extend(sys.argv)
 
     if required_environ is None:
