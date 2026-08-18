@@ -5520,7 +5520,7 @@ def switch_python(
     # When `os.execve` is mocked:
     # noinspection PyUnreachableCode
     return next_py_exec
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
 def skip_python(
     log_message: str,
@@ -5529,7 +5529,7 @@ def skip_python(
 ) -> StateStride:
     logger.info(f"{log_message}: skip `python` executable switch from [{curr_py_exec.name}] to [{next_py_exec.name}]")
     return next_py_exec
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
 
 def get_file_name_timestamp():
     """
@@ -5543,7 +5543,7 @@ def get_file_name_timestamp():
 
 def get_default_start_id():
     return f"{get_file_name_timestamp()}.{os.getpid()}"
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
 def is_sub_path(
     abs_sub_path: str,
@@ -5557,7 +5557,7 @@ def is_sub_path(
         return True
     except ValueError:
         return False
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
 
 def rel_path(
     target_any_path: str,
@@ -5567,7 +5567,7 @@ def rel_path(
     `PurePath` compares `str` paths (without looking at the filesystem or resolving symlinks).
     """
     return str(pathlib.PurePath(target_any_path).relative_to(pathlib.PurePath(source_any_path)))
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
 def is_same_file(
     l_abs_path: str,
@@ -5578,7 +5578,7 @@ def is_same_file(
 
 def get_path_to_curr_python() -> str:
     return sys.executable
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
 
 def get_path_to_base_python() -> str:
 
@@ -5594,13 +5594,13 @@ def get_path_to_base_python() -> str:
     )
     if os.path.exists(path_to_next_python):
         return path_to_next_python
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     path_to_next_python = os.path.join(
         sys.base_prefix,
         ConfConstGeneral.file_rel_path_venv_python,
     )
     return path_to_next_python
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
 
 def get_script_command_line():
     return get_shell_command_line(sys.argv)
@@ -5615,7 +5615,7 @@ def read_json_file(file_path: str) -> dict:
     with open(file_path, "r", encoding="utf-8") as file_obj:
         return json.load(file_obj)
 
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 def write_json_file(
     file_path: str,
     file_data: dict,
@@ -5627,7 +5627,7 @@ def write_json_file(
             indent=4,
         )
         file_obj.write("\n")
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
 
 def read_text_file(file_path: str) -> str:
     with open(file_path, "r", encoding="utf-8") as file_obj:
@@ -5640,7 +5640,7 @@ def write_text_file(
 ) -> None:
     with open(file_path, "w", encoding="utf-8") as file_obj:
         file_obj.write(file_data)
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
 def _is_blank_line(line: str) -> bool:
     stripped = line.strip()
@@ -5659,7 +5659,7 @@ def _replace_single_header_in_empty_lines(
     boilerplate_height = len(boilerplate_lines)
     output_lines = input_lines[:1] + boilerplate_lines + input_lines[1 + boilerplate_height :]
     return "\n".join(output_lines) + "\n"
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
 
 def _replace_multiple_body_in_empty_lines(
     input_text: str,

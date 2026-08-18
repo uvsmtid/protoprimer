@@ -5,8 +5,6 @@ import subprocess
 import sys
 from pathlib import Path
 
-from rich.ansi import stdout_result
-
 from local_doc import cmd_start_app
 from local_test.fat_mocked_helper import (
     assert_editable_install,
@@ -24,7 +22,6 @@ from protoprimer.primer_kernel import (
     SyntaxArg,
 )
 from protoprimer.proto_generator import generate_entry_script_content
-from test_protoprimer.test_fast_slim_max_mocked.test_state_bootstrapper.test_state_input_stderr_log_level_handler_configured import stderr_handler
 
 
 def test_relationship():
