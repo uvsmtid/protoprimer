@@ -5,6 +5,8 @@ import subprocess
 import sys
 from pathlib import Path
 
+from rich.ansi import stdout_result
+
 from local_doc import cmd_start_app
 from local_test.fat_mocked_helper import (
     assert_editable_install,
@@ -22,21 +24,17 @@ from protoprimer.primer_kernel import (
     SyntaxArg,
 )
 from protoprimer.proto_generator import generate_entry_script_content
+from test_protoprimer.test_fast_slim_max_mocked.test_state_bootstrapper.test_state_input_stderr_log_level_handler_configured import stderr_handler
 
 
 def test_relationship():
     assert_test_module_name_embeds_str("trace_mode")
 
 
-def test_trace_mode(tmp_path: Path):
+def test_trace_mode_boot_env(tmp_path: Path):
     """
     FT_41_45_81_49.trace_mode.md:
     Full boot with PROTOPRIMER_TRACE_EXECUTION=true.
-
-    Asserts:
-    - every StateStride name appears in stderr (protoprimer log context includes stride)
-    - restart count in stderr == switch_python trace count in stdout,
-      verifying trace propagated across every os.execve restart
     """
 
     # given: fresh max layout boot environment
@@ -73,19 +71,18 @@ def test_trace_mode(tmp_path: Path):
     stderr_lines = stderr_log_path.read_text().splitlines()
     stdout_lines = stdout_log_path.read_text().splitlines()
 
-    # then: every StateStride name appears in stderr log context
-    # (each log line embeds the active stride, e.g. "py:stride_py_venv[3]")
+    # then:
+    # every `StateStride` name appears in `stderr` log context
     for stride in StateStride:
-        assert any(stride.name in line for line in stderr_lines), f"expected stride {stride.name} in stderr log"
+        assert any(stride.name in stderr_line for stderr_line in stderr_lines), f"expected stride {stride.name} in stderr log"
 
-    # restart count (stderr) must equal switch_python trace count (stdout):
-    # - each os.execve restart logs "<<< restart >>>" to stderr
-    # - each call to switch_python is traced to stdout
-    # equality verifies trace was re-injected via exec_argv on every restart
-    restart_count = sum(1 for line in stderr_lines if "<<< restart >>>" in line)
-    switch_python_count = sum(1 for line in stdout_lines if "funcname: switch_python" in line)
-
+    # restart count (stderr) must equal `switch_python` trace count (stdout):
+    # *   each `os.execve` restart logs "<<< restart >>>" to `stderr`
+    # *   each call to `switch_python` is traced to `stdout`
+    restart_count = sum(1 for stderr_line in stderr_lines if "<<< restart >>>" in stderr_line)
     assert restart_count >= 1, "expected at least one python restart"
+    switch_python_count = sum(1 for stdout_line in stdout_lines if "funcname: switch_python" in stdout_line)
+    # equality verifies trace was re-injected via `exec_argv` on every restart
     assert restart_count == switch_python_count, f"restart count [{restart_count}] != switch_python trace count [{switch_python_count}]: " f"trace was not propagated to all python restarts"
 
     # boot completed successfully
@@ -96,16 +93,6 @@ def test_trace_mode_start_app(tmp_path: Path):
     """
     FT_41_45_81_49.trace_mode.md:
     start_app run with PROTOPRIMER_TRACE_EXECUTION=true.
-
-    start_app sets PROTOPRIMER_PROTO_CODE before _proto_main, so the
-    state machine skips stride_py_arbitrary switching (condition at
-    state_stride_py_arbitrary_reached) and switches directly to the
-    configured venv: exactly 1 restart (stride_py_unknown -> stride_py_venv).
-
-    Asserts:
-    - custom_main ran successfully ("Hello, world!" in stdout)
-    - restart_count == switch_python trace count == 1,
-      verifying trace propagated to the single python restart
     """
 
     # given: full layout + boot (no trace) to create the configured venv
@@ -162,12 +149,10 @@ def test_trace_mode_start_app(tmp_path: Path):
     stderr_lines = stderr_log_path.read_text().splitlines()
     stdout_lines = stdout_log_path.read_text().splitlines()
 
-    # then: custom_main ran successfully despite trace mode
-    assert any("Hello, world!" in line for line in stdout_lines)
+    # then: `custom_main` ran successfully despite trace mode
+    assert any("Hello, world!" in stdout_line for stdout_line in stdout_lines)
 
+    restart_count = sum(1 for stderr_line in stderr_lines if "<<< restart >>>" in stderr_line)
+    switch_python_count = sum(1 for stdout_line in stdout_lines if "funcname: switch_python" in stdout_line)
     # restart count (stderr) == switch_python trace count (stdout) == 1:
-    # start_app sets PROTOPRIMER_PROTO_CODE before _proto_main so stride_py_arbitrary
-    # switching is skipped; only one switch (stride_py_unknown -> stride_py_venv) occurs
-    restart_count = sum(1 for line in stderr_lines if "<<< restart >>>" in line)
-    switch_python_count = sum(1 for line in stdout_lines if "funcname: switch_python" in line)
     assert restart_count == switch_python_count == 1, f"restart [{restart_count}] != switch_python [{switch_python_count}] != 1: " f"trace was not propagated to the single python restart"
