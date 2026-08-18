@@ -60,6 +60,54 @@ def test_switch_python(
     )
 
 
+@patch.dict(
+    f"{os.__name__}.environ",
+    {EnvVar.var_PROTOPRIMER_TRACE_EXECUTION.value: "true"},
+    clear=True,
+)
+@patch.object(sys, "argv", ["/path/to/script.py", "--some-arg"])
+@patch(f"{os.__name__}.execve")
+def test_switch_python_trace_execution(
+    mock_execve: MagicMock,
+):
+    # given:
+    curr_python_path = "/usr/bin/python"
+    next_py_exec = StateStride.stride_py_required
+    next_python_path = "/usr/bin/python3.9"
+    start_id = "test_start_id"
+    proto_code_abs_file_path = "/path/to/proto_kernel.py"
+
+    # when:
+    switch_python(
+        curr_python_path,
+        next_py_exec,
+        next_python_path,
+        start_id,
+        proto_code_abs_file_path,
+    )
+
+    # then:
+    expected_argv = [
+        next_python_path,
+        "-I",
+        "-m",
+        "trace",
+        "--trace",
+        "/path/to/script.py",
+        "--some-arg",
+    ]
+    mock_execve.assert_called_once_with(
+        path=next_python_path,
+        argv=expected_argv,
+        env={
+            EnvVar.var_PROTOPRIMER_TRACE_EXECUTION.value: "true",
+            EnvVar.var_PROTOPRIMER_PY_EXEC.value: StateStride.stride_py_required.name,
+            EnvVar.var_PROTOPRIMER_START_ID.value: start_id,
+            EnvVar.var_PROTOPRIMER_PROTO_CODE.value: proto_code_abs_file_path,
+        },
+    )
+
+
 @patch.dict(f"{os.__name__}.environ", {}, clear=True)
 @patch.object(sys, "argv", ["/path/to/script.py", "--some-arg"])
 @patch(f"{os.__name__}.execve")

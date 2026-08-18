@@ -224,6 +224,9 @@ class KeyWord(enum.Enum):
     key_conf = "conf"
     key_effective = "effective"
 
+    key_trace = "trace"
+    key_execution = "execution"
+
     key_configured = "configured"
     key_parsed = "parsed"
     key_executed = "executed"
@@ -402,6 +405,9 @@ class EnvVar(enum.Enum):
     """
     See: FT_83_60_72_19.test_perimeter.md / test_fast_fat_min_mocked
     """
+
+    # FT_41_45_81_49.trace_mode.md
+    var_PROTOPRIMER_TRACE_EXECUTION = "PROTOPRIMER_TRACE_EXECUTION"
 
 
 class ConfDst(enum.Enum):
@@ -5485,6 +5491,15 @@ def switch_python(
         # (instead, it simply sets `sys.flags.isolated`):
         "-I",
     ]
+    # FT_41_45_81_49.trace_mode.md:
+    if os.environ.get(EnvVar.var_PROTOPRIMER_TRACE_EXECUTION.value, "").lower() == "true":
+        exec_argv.extend(
+            [
+                "-m",
+                "trace",
+                "--trace",
+            ]
+        )
     exec_argv.extend(sys.argv)
 
     if required_environ is None:
@@ -5497,6 +5512,10 @@ def switch_python(
         required_environ[EnvVar.var_PROTOPRIMER_PROTO_CODE.value] = proto_code_abs_file_path
 
     logger.info(f"switching from current `python` executable [{curr_python_path}][{curr_py_exec.name}] to [{next_python_path}][{next_py_exec.name}] with `{EnvVar.var_PROTOPRIMER_PROTO_CODE.value}`[{proto_code_abs_file_path}] exec_argv: {exec_argv}" "\n" "\n" f"{ConfConstGeneral.log_section_delimiter} before: [{curr_py_exec.name}] <<< restart >>> after: [{next_py_exec.name}] {ConfConstGeneral.log_section_delimiter}" "\n")
+
+    # FT_41_45_81_49.trace_mode.md
+    # ensure `stdout` data is not lost on `os.execve`
+    sys.stdout.flush()
 
     os.execve(
         path=next_python_path,

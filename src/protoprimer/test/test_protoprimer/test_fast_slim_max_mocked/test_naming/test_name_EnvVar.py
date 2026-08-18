@@ -118,6 +118,15 @@ class EnvVarName(enum.Enum):
             KeyWord.key_restart.value.upper(),
         ],
     )
+    var_PROTOPRIMER_TRACE_EXECUTION = EnvVarMeta(
+        env_var=EnvVar.var_PROTOPRIMER_TRACE_EXECUTION,
+        name_category=NameCategory.category_name_only,
+        name_components=[
+            ConfConstGeneral.name_protoprimer_package.upper(),
+            KeyWord.key_trace.value.upper(),
+            KeyWord.key_execution.value.upper(),
+        ],
+    )
 
 
 class TestEnvVarName(NamingTestBase):
