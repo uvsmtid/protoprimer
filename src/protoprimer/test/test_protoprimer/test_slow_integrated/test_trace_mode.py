@@ -1,4 +1,3 @@
-# FT_41_45_81_49.trace_mode.md
 import os
 import stat
 import subprocess
@@ -50,7 +49,7 @@ def test_trace_mode_boot_env(tmp_path: Path):
     env[EnvVar.var_PROTOPRIMER_TRACE_EXECUTION.value] = "true"
 
     # when:
-    # boot with trace propagating across all python restarts via PROTOPRIMER_TRACE_EXECUTION
+    # boot with trace propagating across all python restarts via `PROTOPRIMER_TRACE_EXECUTION`
 
     with stdout_log_path.open("w") as stdout_f, stderr_log_path.open("w") as stderr_f:
         subprocess.run(
@@ -78,7 +77,7 @@ def test_trace_mode_boot_env(tmp_path: Path):
     for stride in StateStride:
         assert any(stride.name in stderr_line for stderr_line in stderr_lines), f"expected stride {stride.name} in stderr log"
 
-    # restart count (stderr) must equal `switch_python` trace count (stdout):
+    # restart count in `stderr` must equal `switch_python` trace count in `stdout`:
     # *   each `os.execve` restart logs "<<< restart >>>" to `stderr`
     # *   each call to `switch_python` is traced to `stdout`
     restart_count = sum(1 for stderr_line in stderr_lines if "<<< restart >>>" in stderr_line)
@@ -98,7 +97,7 @@ def test_trace_mode_start_app(tmp_path: Path):
     """
 
     # given:
-    # full layout + boot (no trace) to create the configured venv
+    # full layout + boot (no trace) to create the configured `venv`
 
     (
         proto_kernel_abs_path,
@@ -114,7 +113,7 @@ def test_trace_mode_start_app(tmp_path: Path):
         ]
     )
 
-    # create start_app entry script
+    # create `start_app` entry script
     start_app_script_abs_path = ref_root_abs_path / "start_app"
     start_app_script_content = generate_entry_script_content(
         SubCommand.command_start.value,
@@ -135,7 +134,7 @@ def test_trace_mode_start_app(tmp_path: Path):
     env[EnvVar.var_PROTOPRIMER_TRACE_EXECUTION.value] = "true"
 
     # when:
-    # start_app with trace propagating across the single python restart
+    # `start_app` with trace propagating across the single `python` restart
 
     with stdout_log_path.open("w") as stdout_f, stderr_log_path.open("w") as stderr_f:
         subprocess.run(
