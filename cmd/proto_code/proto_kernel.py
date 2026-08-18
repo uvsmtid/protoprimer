@@ -5507,7 +5507,8 @@ def switch_python(
 
     logger.info(f"switching from current `python` executable [{curr_python_path}][{curr_py_exec.name}] to [{next_python_path}][{next_py_exec.name}] with `{EnvVar.var_PROTOPRIMER_PROTO_CODE.value}`[{proto_code_abs_file_path}] exec_argv: {exec_argv}" "\n" "\n" f"{ConfConstGeneral.log_section_delimiter} before: [{curr_py_exec.name}] <<< restart >>> after: [{next_py_exec.name}] {ConfConstGeneral.log_section_delimiter}" "\n")
 
-    # FT_41_45_81_49.trace_mode.md: flush stdout so python -m trace output is not lost on os.execve
+    # FT_41_45_81_49.trace_mode.md
+    # ensure `stdout` data is not lost on `os.execve`
     sys.stdout.flush()
 
     os.execve(
