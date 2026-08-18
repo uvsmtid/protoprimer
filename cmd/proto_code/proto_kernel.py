@@ -5501,11 +5501,11 @@ def switch_python(
             ]
         )
     exec_argv.extend(sys.argv)
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     if required_environ is None:
         required_environ = os.environ.copy()
     assert isinstance(required_environ, dict)
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     required_environ[EnvVar.var_PROTOPRIMER_PY_EXEC.value] = next_py_exec.name
     required_environ[EnvVar.var_PROTOPRIMER_START_ID.value] = start_id
     if proto_code_abs_file_path is not None:
@@ -5522,11 +5522,11 @@ def switch_python(
         argv=exec_argv,
         env=required_environ,
     )
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     # When `os.execve` is mocked:
     # noinspection PyUnreachableCode
     return next_py_exec
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
 
 def skip_python(
     log_message: str,
@@ -5545,11 +5545,11 @@ def get_file_name_timestamp():
     now_utc = datetime.datetime.now(datetime.timezone.utc)
     file_timestamp = now_utc.strftime("%Y%m%dT%H%M%S") + "Z"
     return file_timestamp
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
 def get_default_start_id():
     return f"{get_file_name_timestamp()}.{os.getpid()}"
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
 
 def is_sub_path(
     abs_sub_path: str,
