@@ -6,7 +6,7 @@
 
 /* Use `monospace` everywhere: */
 * {
-    font-family: "Roboto Mono", "Consolas", "Courier New", monospace !important;
+    font-family: "JetBrains Mono", "Roboto Mono", "Consolas", "Courier New", monospace !important;
     color: black !important;
     hyphens: none !important;
     overflow-wrap: anywhere;
