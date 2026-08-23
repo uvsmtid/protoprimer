@@ -113,7 +113,7 @@ graph LR;
 
 ## `proto_code`
 
-**[proto_code][FT_90_65_67_62.proto_code.md]** is any code designed to be executed by arbitrary `python` version.
+**[proto_code][FT_90_65_67_62.proto_code.md]** is any code designed to be executed by an arbitrary `python` version.
 
 The own copy of `proto_kernel.py` is an example of `proto_code` - the **hard** part handled by `protoprimer`.
 
@@ -121,11 +121,11 @@ The own copy of `proto_kernel.py` is an example of `proto_code` - the **hard** p
 
 ## `entry_script`
 
-**[entry_script][FT_75_87_82_46.entry_script.md]** an example of `proto_code`.
+**[entry_script][FT_75_87_82_46.entry_script.md]** is an example of `proto_code`.
 
 `entry_script` relies on `proto_kernel.py` to switch into `venv` - the **easy** part as it only delegates.
 
-<a id="protoprimer-first-scripts"></a>
+<a id="protoprimer-entry-functions"></a>
 
 ## `protoprimer` entry functions
 
@@ -165,7 +165,7 @@ proto_kernel.boot_env("local_doc.cmd_boot_env:custom_main")
 ./cmd/start_app
 ```
 
-This `entry_script` runs arbitrary function by invoking its `custom_main` via `start_app`:
+This `entry_script` runs arbitrary `custom_main` function via `start_app`:
 
 ```py
 # ./cmd/start_app:
