@@ -22,6 +22,12 @@ def init_arg_parser():
         default=BuildMode.multi_page,
         help=f"The build mode for the documentation: {', '.join([e.name for e in BuildMode])}.",
     )
+    arg_parser_instance.add_argument(
+        "-c",
+        "--link_check",
+        action="store_true",
+        help="Fail the build if `linkcheck` finds a broken link.",
+    )
     return arg_parser_instance
 
 
@@ -64,6 +70,33 @@ def build_readthedocs():
 
     # `sphinx-build` should be available inside the `venv`:
     subprocess.run(command_args, check=True)
+
+    linkcheck_dir = project_root / "doc" / "build_linkcheck"
+
+    linkcheck_command_args = [
+        sys.executable,
+        "-m",
+        "sphinx.cmd.build",
+        "-b",
+        "linkcheck",
+        str(source_dir),
+        str(linkcheck_dir),
+    ]
+
+    print(f"running command: {' '.join(linkcheck_command_args)}")
+
+    linkcheck_result = subprocess.run(linkcheck_command_args, check=False)
+
+    shutil.rmtree(linkcheck_dir)
+
+    if linkcheck_result.returncode != 0:
+        if parsed_arguments.link_check:
+            raise subprocess.CalledProcessError(
+                linkcheck_result.returncode,
+                linkcheck_command_args,
+            )
+        else:
+            print(f"WARNING: `linkcheck` found broken links")
 
     root_url = (build_dir / "index.html").as_uri()
     print(f"open in browser: {root_url}")
