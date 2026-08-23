@@ -1,4 +1,5 @@
 import argparse
+import os
 import shutil
 import subprocess
 import sys
@@ -9,6 +10,10 @@ from pathlib import Path
 class BuildMode(str, Enum):
     single_page = "single_page"
     multi_page = "multi_page"
+
+
+# Sphinx defaults `linkcheck_rate_limit_timeout` to 300s, which looks like a hang:
+default_rate_limit_timeout_seconds = 10
 
 
 def init_arg_parser():
@@ -27,6 +32,13 @@ def init_arg_parser():
         "--check_links",
         action="store_true",
         help="Fail the build if `linkcheck` finds a broken link.",
+    )
+    arg_parser_instance.add_argument(
+        "-t",
+        "--rate_limit_timeout",
+        type=int,
+        default=default_rate_limit_timeout_seconds,
+        help="Max seconds `linkcheck` retries a single rate-limited link before giving up " f"(default: {default_rate_limit_timeout_seconds}).",
     )
     return arg_parser_instance
 
@@ -66,7 +78,16 @@ def build_readthedocs():
 
     print(f"running command: {' '.join(linkcheck_command_args)}")
 
-    linkcheck_result = subprocess.run(linkcheck_command_args, check=False)
+    # `sphinx-build -D` can't override a `float` config, so use an env var instead:
+    linkcheck_env_vars = os.environ | {
+        "PROTOPRIMER_LINKCHECK_RATE_LIMIT_TIMEOUT": str(parsed_arguments.rate_limit_timeout),
+    }
+
+    linkcheck_result = subprocess.run(
+        linkcheck_command_args,
+        env=linkcheck_env_vars,
+        check=False,
+    )
 
     if linkcheck_result.returncode != 0:
         if parsed_arguments.check_links:
@@ -78,9 +99,9 @@ def build_readthedocs():
             print(f"WARNING: `linkcheck` found broken links")
 
     if parsed_arguments.build_mode == BuildMode.single_page:
-        builder = "singlehtml"
+        builder_name = "singlehtml"
     elif parsed_arguments.build_mode == BuildMode.multi_page:
-        builder = "html"
+        builder_name = "html"
     else:
         raise ValueError(f"unknown build mode: {parsed_arguments.build_mode}")
 
@@ -89,7 +110,7 @@ def build_readthedocs():
         "-m",
         "sphinx.cmd.build",
         "-b",
-        builder,
+        builder_name,
         str(source_dir),
         str(build_dir),
     ]
@@ -97,7 +118,10 @@ def build_readthedocs():
     print(f"running command: {' '.join(build_command_args)}")
 
     # `sphinx-build` should be available inside the `venv`:
-    subprocess.run(build_command_args, check=True)
+    subprocess.run(
+        build_command_args,
+        check=True,
+    )
 
     root_url = (build_dir / "index.html").as_uri()
     print(f"open in browser: {root_url}")

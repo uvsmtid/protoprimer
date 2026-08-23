@@ -83,6 +83,11 @@ intersphinx_mapping = {
 }
 intersphinx_disabled_domains = ["std"]
 
+# `sphinx-build -D` can't override this `float` config, so use an env var instead:
+env_rate_limit_timeout = os.environ.get("PROTOPRIMER_LINKCHECK_RATE_LIMIT_TIMEOUT")
+if env_rate_limit_timeout is not None:
+    linkcheck_rate_limit_timeout = float(env_rate_limit_timeout)
+
 templates_path = ["_templates"]
 
 html_extra_path = [
