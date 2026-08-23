@@ -24,7 +24,7 @@ def init_arg_parser():
     )
     arg_parser_instance.add_argument(
         "-c",
-        "--link_check",
+        "--check_links",
         action="store_true",
         help="Fail the build if `linkcheck` finds a broken link.",
     )
@@ -68,10 +68,8 @@ def build_readthedocs():
 
     linkcheck_result = subprocess.run(linkcheck_command_args, check=False)
 
-    shutil.rmtree(linkcheck_dir)
-
     if linkcheck_result.returncode != 0:
-        if parsed_arguments.link_check:
+        if parsed_arguments.check_links:
             raise subprocess.CalledProcessError(
                 linkcheck_result.returncode,
                 linkcheck_command_args,
@@ -86,7 +84,7 @@ def build_readthedocs():
     else:
         raise ValueError(f"unknown build mode: {parsed_arguments.build_mode}")
 
-    command_args = [
+    build_command_args = [
         sys.executable,
         "-m",
         "sphinx.cmd.build",
@@ -96,9 +94,10 @@ def build_readthedocs():
         str(build_dir),
     ]
 
-    print(f"running command: {' '.join(command_args)}")
+    print(f"running command: {' '.join(build_command_args)}")
 
-    subprocess.run(command_args, check=True)
+    # `sphinx-build` should be available inside the `venv`:
+    subprocess.run(build_command_args, check=True)
 
     root_url = (build_dir / "index.html").as_uri()
     print(f"open in browser: {root_url}")
