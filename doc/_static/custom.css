@@ -5,8 +5,8 @@
 }
 
 /* Roboto Mono is visually larger - shrink it: */
-html {
-    font-size: 92%;
+body {
+    font-size: 92% !important;
 }
 
 /* Use `monospace` everywhere: */
