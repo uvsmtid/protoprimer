@@ -49,29 +49,10 @@ def build_readthedocs():
         print(f"removing build directory: {build_dir}")
         shutil.rmtree(build_dir)
 
-    if parsed_arguments.build_mode == BuildMode.single_page:
-        builder = "singlehtml"
-    elif parsed_arguments.build_mode == BuildMode.multi_page:
-        builder = "html"
-    else:
-        raise ValueError(f"unknown build mode: {parsed_arguments.build_mode}")
+    linkcheck_dir = project_root / "doc" / "linkcheck"
 
-    command_args = [
-        sys.executable,
-        "-m",
-        "sphinx.cmd.build",
-        "-b",
-        builder,
-        str(source_dir),
-        str(build_dir),
-    ]
-
-    print(f"running command: {' '.join(command_args)}")
-
-    # `sphinx-build` should be available inside the `venv`:
-    subprocess.run(command_args, check=True)
-
-    linkcheck_dir = project_root / "doc" / "build_linkcheck"
+    if linkcheck_dir.exists():
+        shutil.rmtree(linkcheck_dir)
 
     linkcheck_command_args = [
         sys.executable,
@@ -97,6 +78,27 @@ def build_readthedocs():
             )
         else:
             print(f"WARNING: `linkcheck` found broken links")
+
+    if parsed_arguments.build_mode == BuildMode.single_page:
+        builder = "singlehtml"
+    elif parsed_arguments.build_mode == BuildMode.multi_page:
+        builder = "html"
+    else:
+        raise ValueError(f"unknown build mode: {parsed_arguments.build_mode}")
+
+    command_args = [
+        sys.executable,
+        "-m",
+        "sphinx.cmd.build",
+        "-b",
+        builder,
+        str(source_dir),
+        str(build_dir),
+    ]
+
+    print(f"running command: {' '.join(command_args)}")
+
+    subprocess.run(command_args, check=True)
 
     root_url = (build_dir / "index.html").as_uri()
     print(f"open in browser: {root_url}")
