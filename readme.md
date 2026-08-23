@@ -109,21 +109,25 @@ graph LR;
     ./proto_kernel.py
     ```
 
-<a id="protoprimer-proto-code-vs-entry-script"></a>
+<a id="protoprimer-proto-code"></a>
 
-## `proto_code` vs `entry_script`
+## `proto_code`
 
-*   **[proto_code][FT_90_65_67_62.proto_code.md]** is any code designed to be executed by arbitrary `python` version.
+**[proto_code][FT_90_65_67_62.proto_code.md]** is any code designed to be executed by arbitrary `python` version.
 
-    The own copy of `proto_kernel.py` is an example of `proto_code` - the **hard** part handled by `protoprimer`.
+The own copy of `proto_kernel.py` is an example of `proto_code` - the **hard** part handled by `protoprimer`.
 
-*   **[entry_script][FT_75_87_82_46.entry_script.md]** relies on `proto_kernel.py` to switch into `venv`.
+<a id="protoprimer-entry-script"></a>
 
-    An `entry_script` is also an example of `proto_code` - the **easy** part as it only delegates.
+## `entry_script`
+
+**[entry_script][FT_75_87_82_46.entry_script.md]** an example of `proto_code`.
+
+`entry_script` relies on `proto_kernel.py` to switch into `venv` - the **easy** part as it only delegates.
 
 <a id="protoprimer-first-scripts"></a>
 
-## First scripts
+## `protoprimer` entry functions
 
 *   An `entry_script` executes `proto_code` by a **wild** `python` version found in `PATH`.
 
@@ -131,12 +135,17 @@ graph LR;
 
 There are two entry functions - see details in [boot_vs_start][FT_58_74_37_70.boot_vs_start.md]:
 
-| Function:    | [boot_env][FT_85_17_35_21.boot_env.md]   | [start_app][FT_05_08_64_67.start_app.md]               |
-|--------------|------------------------------------------|--------------------------------------------------------|
-| Purpose:     | extend default bootstrap by custom steps | run arbitrary script from `venv` by required `python`  |
-| Cardinality: | **one** per project                      | **many** per project                                   |
+| Function:    | [boot_env][FT_85_17_35_21.boot_env.md]       | [start_app][FT_05_08_64_67.start_app.md]                  |
+|--------------|----------------------------------------------|-----------------------------------------------------------|
+| Purpose:     | **extend** default bootstrap by custom steps | run **arbitrary** script from `venv` by required `python` |
+| Cardinality: | **one** per project                          | **many** per project                                      |
+| Example:     | `./cmd/boot_env` (or `./prime`)              | `./cmd/start_app`                                         |
 
-### First `boot_env`
+<a id="protoprimer-first-scripts"></a>
+
+## Minimal examples
+
+### Minimal `boot_env`
 
 ```sh
 ./cmd/boot_env
@@ -150,7 +159,7 @@ This `entry_script` extends bootstrap sequence by invoking `custom_main` via `bo
 proto_kernel.boot_env("local_doc.cmd_boot_env:custom_main")
 ```
 
-### First `start_app`
+### Minimal `start_app`
 
 ```sh
 ./cmd/start_app
@@ -200,7 +209,6 @@ proto_kernel.start_app("local_doc.cmd_start_app:custom_main")
 [pyproject.toml]: src/metaprimer/pyproject.toml
 
 [quick_start]: #protoprimer-quick-start
-[proto_code_vs_entry_script]: #protoprimer-proto-code-vs-entry-script
 [first_scripts]: #protoprimer-first-scripts
 
 <!-- markdownlint-disable MD051 -->
