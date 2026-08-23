@@ -4,3 +4,4 @@
 
 # Sphinx build output:
 /build/
+/linkcheck/

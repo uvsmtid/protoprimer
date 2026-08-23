@@ -1,6 +1,7 @@
 ---
-html_meta:
-  "robots": "noindex, follow"
+myst:
+  html_meta:
+    "robots": "noindex, follow"
 ---
 
 % Redirect to "intro":

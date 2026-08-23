@@ -1,4 +1,5 @@
 import argparse
+import os
 import shutil
 import subprocess
 import sys
@@ -11,6 +12,10 @@ class BuildMode(str, Enum):
     multi_page = "multi_page"
 
 
+# Sphinx defaults `linkcheck_rate_limit_timeout` to 300s, which looks like a hang:
+default_rate_limit_timeout_seconds = 10
+
+
 def init_arg_parser():
     arg_parser_instance = argparse.ArgumentParser(
         description="Builds Sphinx documentation.",
@@ -21,6 +26,19 @@ def init_arg_parser():
         choices=[enum_item.name for enum_item in BuildMode],
         default=BuildMode.multi_page,
         help=f"The build mode for the documentation: {', '.join([e.name for e in BuildMode])}.",
+    )
+    arg_parser_instance.add_argument(
+        "-c",
+        "--check_links",
+        action="store_true",
+        help="Fail the build if `linkcheck` finds a broken link.",
+    )
+    arg_parser_instance.add_argument(
+        "-t",
+        "--rate_limit_timeout",
+        type=int,
+        default=default_rate_limit_timeout_seconds,
+        help="Max seconds `linkcheck` retries a single rate-limited link before giving up " f"(default: {default_rate_limit_timeout_seconds}).",
     )
     return arg_parser_instance
 
@@ -43,27 +61,67 @@ def build_readthedocs():
         print(f"removing build directory: {build_dir}")
         shutil.rmtree(build_dir)
 
-    if parsed_arguments.build_mode == BuildMode.single_page:
-        builder = "singlehtml"
-    elif parsed_arguments.build_mode == BuildMode.multi_page:
-        builder = "html"
-    else:
-        raise ValueError(f"unknown build mode: {parsed_arguments.build_mode}")
+    linkcheck_dir = project_root / "doc" / "linkcheck"
 
-    command_args = [
+    if linkcheck_dir.exists():
+        shutil.rmtree(linkcheck_dir)
+
+    linkcheck_command_args = [
         sys.executable,
         "-m",
         "sphinx.cmd.build",
         "-b",
-        builder,
+        "linkcheck",
+        str(source_dir),
+        str(linkcheck_dir),
+    ]
+
+    print(f"running command: {' '.join(linkcheck_command_args)}")
+
+    # `sphinx-build -D` can't override a `float` config, so use an env var instead:
+    linkcheck_env_vars = os.environ | {
+        "PROTOPRIMER_LINKCHECK_RATE_LIMIT_TIMEOUT": str(parsed_arguments.rate_limit_timeout),
+    }
+
+    linkcheck_result = subprocess.run(
+        linkcheck_command_args,
+        env=linkcheck_env_vars,
+        check=False,
+    )
+
+    if linkcheck_result.returncode != 0:
+        if parsed_arguments.check_links:
+            raise subprocess.CalledProcessError(
+                linkcheck_result.returncode,
+                linkcheck_command_args,
+            )
+        else:
+            print(f"WARNING: `linkcheck` found broken links")
+
+    if parsed_arguments.build_mode == BuildMode.single_page:
+        builder_name = "singlehtml"
+    elif parsed_arguments.build_mode == BuildMode.multi_page:
+        builder_name = "html"
+    else:
+        raise ValueError(f"unknown build mode: {parsed_arguments.build_mode}")
+
+    build_command_args = [
+        sys.executable,
+        "-m",
+        "sphinx.cmd.build",
+        "-b",
+        builder_name,
         str(source_dir),
         str(build_dir),
     ]
 
-    print(f"running command: {' '.join(command_args)}")
+    print(f"running command: {' '.join(build_command_args)}")
 
     # `sphinx-build` should be available inside the `venv`:
-    subprocess.run(command_args, check=True)
+    subprocess.run(
+        build_command_args,
+        check=True,
+    )
 
     root_url = (build_dir / "index.html").as_uri()
     print(f"open in browser: {root_url}")

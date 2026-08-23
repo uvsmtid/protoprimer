@@ -12,6 +12,8 @@ FT_84_11_73_28.supported_python_versions.md: see above.
 TODO: Use links to FC/UC docs under `./doc` (when ready) from this readme to navigate to details.
 -->
 
+<!-- NOTE: style="width: 11ch" ~ 11 chars = len("protoprimer") -->
+
 # <code><a href="https://protoprimer.readthedocs.io/"><img src="doc/_static/protoprimer.logo.svg" alt="logo" style="width: 11ch; height: auto;"></a></code>
 
 # `protoprimer`
@@ -107,49 +109,69 @@ graph LR;
     ./proto_kernel.py
     ```
 
-<a id="protoprimer-proto-code-vs-entry-script"></a>
+<a id="protoprimer-proto-code"></a>
 
-## "proto code" vs "entry scripts"
+## `proto_code`
 
-*   **"proto code"** is any code designed to be executed by arbitrary `python` version.
+**[proto_code][FT_90_65_67_62.proto_code.md]** is any code designed to be executed by an arbitrary `python` version.
 
-    The own copy of `proto_kernel.py` is the hard part but handled entirely by `protoprimer`.
+The own copy of `proto_kernel.py` is an example of `proto_code` - the **hard** part handled by `protoprimer`.
 
-*   **"entry script"** relies on `proto_kernel.py` to switch into `venv`.
+<a id="protoprimer-entry-script"></a>
 
-    Technically, an "entry script" is also "proto code" but the easy part as it only delegates.
+## `entry_script`
 
-<a id="protoprimer-hello-world"></a>
+**[entry_script][FT_75_87_82_46.entry_script.md]** is an example of `proto_code`.
 
-## "Hello, world!"
+`entry_script` relies on `proto_kernel.py` to switch into `venv` - the **easy** part as it only delegates.
 
-*   An "entry script" executes "proto code" by a **wild** `python` version found in `PATH`.
+<a id="protoprimer-entry-functions"></a>
+
+## `protoprimer` entry functions
+
+*   An `entry_script` executes `proto_code` by a **wild** `python` version found in `PATH`.
 
 *   But `custom_main` is executed by the **required** `python` version inside the isolated `venv`.
 
-*   See how an entry script extends bootstrap:
+There are two entry functions - see details in [boot_vs_start][FT_58_74_37_70.boot_vs_start.md]:
 
-    ```py
-    # ./cmd/boot_env:
-    # ...
-    proto_kernel.boot_env("local_doc.cmd_boot_env:custom_main")
-    ```
+| Function:    | [boot_env][FT_85_17_35_21.boot_env.md]       | [start_app][FT_05_08_64_67.start_app.md]                  |
+|--------------|----------------------------------------------|-----------------------------------------------------------|
+| Purpose:     | **extend** default bootstrap by custom steps | run **arbitrary** script from `venv` by required `python` |
+| Cardinality: | **one** per project                          | **many** per project                                      |
+| Example:     | `./cmd/boot_env` (or `./prime`)              | `./cmd/start_app`                                         |
 
-    ```sh
-    ./cmd/boot_env
-    ```
+<a id="protoprimer-first-scripts"></a>
 
-*   See how an entry script launches `some_main` function:
+## Minimal examples
 
-    ```py
-    # ./cmd/start_app:
-    # ...
-    proto_kernel.start_app("local_doc.cmd_start_app:custom_main")
-    ```
+### Minimal `boot_env`
 
-    ```sh
-    ./cmd/start_app
-    ```
+```sh
+./cmd/boot_env
+```
+
+This `entry_script` extends bootstrap sequence by invoking `custom_main` via `boot_env`:
+
+```py
+# ./cmd/boot_env:
+# ...
+proto_kernel.boot_env("local_doc.cmd_boot_env:custom_main")
+```
+
+### Minimal `start_app`
+
+```sh
+./cmd/start_app
+```
+
+This `entry_script` runs an arbitrary `custom_main` function via `start_app`:
+
+```py
+# ./cmd/start_app:
+# ...
+proto_kernel.start_app("local_doc.cmd_start_app:custom_main")
+```
 
 [readme.md]: readme.md
 
@@ -174,6 +196,9 @@ graph LR;
 [FT_90_65_67_62.proto_code.md]: doc/feature_topic/FT_90_65_67_62.proto_code.md
 [FT_75_87_82_46.entry_script.md]: doc/feature_topic/FT_75_87_82_46.entry_script.md
 [FT_57_87_94_94.bootstrap_process.md]: doc/feature_topic/FT_57_87_94_94.bootstrap_process.md
+[FT_05_08_64_67.start_app.md]: doc/feature_topic/FT_05_08_64_67.start_app.md
+[FT_85_17_35_21.boot_env.md]: doc/feature_topic/FT_85_17_35_21.boot_env.md
+[FT_58_74_37_70.boot_vs_start.md]: doc/feature_topic/FT_58_74_37_70.boot_vs_start.md
 
 [SOLID_wiki]: https://en.wikipedia.org/wiki/SOLID
 [DAG_wiki]: https://en.wikipedia.org/wiki/Directed_acyclic_graph
@@ -184,8 +209,7 @@ graph LR;
 [pyproject.toml]: src/metaprimer/pyproject.toml
 
 [quick_start]: #protoprimer-quick-start
-[proto_code_vs_entry_script]: #protoprimer-proto-code-vs-entry-script
-[hello_world]: #protoprimer-hello-world
+[first_scripts]: #protoprimer-first-scripts
 
 <!-- markdownlint-disable MD051 -->
 <!--
