@@ -4,6 +4,11 @@
     display: none;
 }
 
+/* Roboto Mono is visually larger - shrink it: */
+html {
+    font-size: 92%;
+}
+
 /* Use `monospace` everywhere: */
 * {
     font-family: "Roboto Mono", "Consolas", "Courier New", monospace !important;
