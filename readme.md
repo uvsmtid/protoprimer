@@ -111,47 +111,58 @@ graph LR;
 
 <a id="protoprimer-proto-code-vs-entry-script"></a>
 
-## "proto code" vs "entry scripts"
+## `proto_code` vs `entry_script`
 
-*   **"proto code"** is any code designed to be executed by arbitrary `python` version.
+*   **[proto_code][FT_90_65_67_62.proto_code.md]** is any code designed to be executed by arbitrary `python` version.
 
-    The own copy of `proto_kernel.py` is the hard part but handled entirely by `protoprimer`.
+    The own copy of `proto_kernel.py` is an example of `proto_code` - the **hard** part handled by `protoprimer`.
 
-*   **"entry script"** relies on `proto_kernel.py` to switch into `venv`.
+*   **[entry_script][FT_75_87_82_46.entry_script.md]** relies on `proto_kernel.py` to switch into `venv`.
 
-    Technically, an "entry script" is also "proto code" but the easy part as it only delegates.
+    An `entry_script` is also an example of `proto_code` - the **easy** part as it only delegates.
 
-<a id="protoprimer-hello-world"></a>
+<a id="protoprimer-first-scripts"></a>
 
-## "Hello, world!"
+## First scripts
 
-*   An "entry script" executes "proto code" by a **wild** `python` version found in `PATH`.
+*   An `entry_script` executes `proto_code` by a **wild** `python` version found in `PATH`.
 
 *   But `custom_main` is executed by the **required** `python` version inside the isolated `venv`.
 
-*   See how an entry script extends bootstrap:
+There are two entry functions - see details in [boot_vs_start][FT_58_74_37_70.boot_vs_start.md]:
 
-    ```py
-    # ./cmd/boot_env:
-    # ...
-    proto_kernel.boot_env("local_doc.cmd_boot_env:custom_main")
-    ```
+| Function:    | [boot_env][FT_85_17_35_21.boot_env.md]   | [start_app][FT_05_08_64_67.start_app.md]               |
+|--------------|------------------------------------------|--------------------------------------------------------|
+| Purpose:     | extend default bootstrap by custom steps | run arbitrary script from `venv` by required `python`  |
+| Cardinality: | **one** per project                      | **many** per project                                   |
 
-    ```sh
-    ./cmd/boot_env
-    ```
+### First `boot_env`
 
-*   See how an entry script launches `some_main` function:
+```sh
+./cmd/boot_env
+```
 
-    ```py
-    # ./cmd/start_app:
-    # ...
-    proto_kernel.start_app("local_doc.cmd_start_app:custom_main")
-    ```
+This `entry_script` extends bootstrap sequence by invoking `custom_main` via `boot_env`:
 
-    ```sh
-    ./cmd/start_app
-    ```
+```py
+# ./cmd/boot_env:
+# ...
+proto_kernel.boot_env("local_doc.cmd_boot_env:custom_main")
+```
+
+### First `start_app`
+
+```sh
+./cmd/start_app
+```
+
+This `entry_script` runs arbitrary function by invoking its `custom_main` via `start_app`:
+
+```py
+# ./cmd/start_app:
+# ...
+proto_kernel.start_app("local_doc.cmd_start_app:custom_main")
+```
 
 [readme.md]: readme.md
 
@@ -176,6 +187,9 @@ graph LR;
 [FT_90_65_67_62.proto_code.md]: doc/feature_topic/FT_90_65_67_62.proto_code.md
 [FT_75_87_82_46.entry_script.md]: doc/feature_topic/FT_75_87_82_46.entry_script.md
 [FT_57_87_94_94.bootstrap_process.md]: doc/feature_topic/FT_57_87_94_94.bootstrap_process.md
+[FT_05_08_64_67.start_app.md]: doc/feature_topic/FT_05_08_64_67.start_app.md
+[FT_85_17_35_21.boot_env.md]: doc/feature_topic/FT_85_17_35_21.boot_env.md
+[FT_58_74_37_70.boot_vs_start.md]: doc/feature_topic/FT_58_74_37_70.boot_vs_start.md
 
 [SOLID_wiki]: https://en.wikipedia.org/wiki/SOLID
 [DAG_wiki]: https://en.wikipedia.org/wiki/Directed_acyclic_graph
@@ -187,7 +201,7 @@ graph LR;
 
 [quick_start]: #protoprimer-quick-start
 [proto_code_vs_entry_script]: #protoprimer-proto-code-vs-entry-script
-[hello_world]: #protoprimer-hello-world
+[first_scripts]: #protoprimer-first-scripts
 
 <!-- markdownlint-disable MD051 -->
 <!--
