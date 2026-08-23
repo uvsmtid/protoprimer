@@ -165,7 +165,7 @@ proto_kernel.boot_env("local_doc.cmd_boot_env:custom_main")
 ./cmd/start_app
 ```
 
-This `entry_script` runs arbitrary `custom_main` function via `start_app`:
+This `entry_script` runs an arbitrary `custom_main` function via `start_app`:
 
 ```py
 # ./cmd/start_app:
