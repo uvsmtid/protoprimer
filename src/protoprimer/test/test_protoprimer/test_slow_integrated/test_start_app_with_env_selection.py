@@ -3,7 +3,7 @@ import stat
 import subprocess
 import sys
 
-from local_doc import cmd_start_app
+from local_doc import cmd_start_app_example
 from local_test.fat_mocked_helper import run_primer_main
 from local_test.integrated_helper import (
     create_conf_client_file,
@@ -108,8 +108,8 @@ def test_start_app_from_env_default(tmp_path: pathlib.Path):
         SubCommand.command_start.value,
         str(proto_kernel_abs_path),
         str(start_app_script_abs_path),
-        f"{cmd_start_app.__name__}",
-        f"{cmd_start_app.custom_main.__name__}",
+        f"{cmd_start_app_example.__name__}",
+        f"{cmd_start_app_example.custom_start_app_main.__name__}",
         {},
     )
     with open(start_app_script_abs_path, "w") as f:
@@ -237,8 +237,8 @@ def test_app_started_from_env_special(tmp_path: pathlib.Path):
         SubCommand.command_start.value,
         str(proto_kernel_abs_path),
         str(start_app_script_abs_path),
-        f"{cmd_start_app.__name__}",
-        f"{cmd_start_app.custom_main.__name__}",
+        f"{cmd_start_app_example.__name__}",
+        f"{cmd_start_app_example.custom_start_app_main.__name__}",
         {},
     )
     with open(start_app_script_abs_path, "w") as f:
@@ -372,8 +372,8 @@ def test_app_started_with_symlink_to_env_special_but_config_to_env_common(
         SubCommand.command_start.value,
         str(proto_kernel_abs_path),
         str(start_app_script_abs_path),
-        f"{cmd_start_app.__name__}",
-        f"{cmd_start_app.custom_main.__name__}",
+        f"{cmd_start_app_example.__name__}",
+        f"{cmd_start_app_example.custom_start_app_main.__name__}",
         {},
     )
     with open(start_app_script_abs_path, "w") as f:

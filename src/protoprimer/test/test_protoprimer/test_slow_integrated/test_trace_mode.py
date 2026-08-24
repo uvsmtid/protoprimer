@@ -4,7 +4,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-from local_doc import cmd_start_app
+from local_doc import cmd_start_app_example
 from local_test.fat_mocked_helper import (
     assert_editable_install,
     run_primer_main,
@@ -119,8 +119,8 @@ def test_trace_mode_start_app(tmp_path: Path):
         SubCommand.command_start.value,
         str(proto_kernel_abs_path),
         str(start_app_script_abs_path),
-        f"{cmd_start_app.__name__}",
-        f"{cmd_start_app.custom_main.__name__}",
+        f"{cmd_start_app_example.__name__}",
+        f"{cmd_start_app_example.custom_start_app_main.__name__}",
         {},
     )
     with open(start_app_script_abs_path, "w") as f:
@@ -155,7 +155,7 @@ def test_trace_mode_start_app(tmp_path: Path):
     stdout_lines = stdout_log_path.read_text().splitlines()
 
     # then:
-    # `custom_main` ran successfully despite trace mode
+    # `custom_start_app_main` ran successfully despite trace mode
 
     assert any("Hello, world!" in stdout_line for stdout_line in stdout_lines)
 

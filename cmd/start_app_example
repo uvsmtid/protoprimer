@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# FT_85_17_35_21.boot_env.md: see also `./cmd/start_app`
+# FT_05_08_64_67.start_app.md: see also `./cmd/boot_env_example`
 
 
 def import_proto_kernel(proto_kernel_rel_path):
@@ -23,4 +23,4 @@ def import_proto_kernel(proto_kernel_rel_path):
 
 if __name__ == "__main__":
     proto_kernel = import_proto_kernel("./proto_code/proto_kernel.py")
-    proto_kernel.boot_env("local_doc.cmd_boot_env:custom_main")
+    proto_kernel.start_app("local_doc.cmd_start_app_example:custom_start_app_main")

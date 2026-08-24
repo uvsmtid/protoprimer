@@ -382,7 +382,7 @@ class EnvVar(enum.Enum):
     See FT_08_92_69_92.env_var.md
     """
 
-    # FT_87_17_49_36.kernel_copy.md
+    # FT_87_17_49_36.proto_kernel.md
     # TODO: TODO_24_49_18_17.fix_proto_code_terms.md: rename to `*_KERNEL_COPY` or `*_PROTO_KERNEL`?
     var_PROTOPRIMER_PROTO_CODE = "PROTOPRIMER_PROTO_CODE"
 

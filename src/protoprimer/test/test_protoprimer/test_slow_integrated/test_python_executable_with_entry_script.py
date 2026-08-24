@@ -6,8 +6,8 @@ import subprocess
 import sys
 
 from local_doc import (
-    cmd_start_app,
-    cmd_boot_env,
+    cmd_start_app_example,
+    cmd_boot_env_example,
 )
 from local_test.case_condition import is_min_python
 from local_test.integrated_helper import (
@@ -102,8 +102,8 @@ def test_python_from_arbitrary_venv_with_start_app(
         SubCommand.command_boot.value,
         str(proto_kernel_abs_path),
         str(boot_env_script_abs_path),
-        f"{cmd_boot_env.__name__}",
-        f"{cmd_boot_env.custom_main.__name__}",
+        f"{cmd_boot_env_example.__name__}",
+        f"{cmd_boot_env_example.custom_boot_env_main.__name__}",
         {},
     )
     with open(boot_env_script_abs_path, "w") as f:
@@ -117,8 +117,8 @@ def test_python_from_arbitrary_venv_with_start_app(
         SubCommand.command_start.value,
         str(proto_kernel_abs_path),
         str(start_app_script_abs_path),
-        f"{cmd_start_app.__name__}",
-        f"{cmd_start_app.custom_main.__name__}",
+        f"{cmd_start_app_example.__name__}",
+        f"{cmd_start_app_example.custom_start_app_main.__name__}",
         {},
     )
     with open(start_app_script_abs_path, "w") as f:
@@ -250,8 +250,8 @@ def test_python_from_required_venv_with_start_app(
         SubCommand.command_boot.value,
         str(proto_kernel_abs_path),
         str(boot_env_script_abs_path),
-        f"{cmd_boot_env.__name__}",
-        f"{cmd_boot_env.custom_main.__name__}",
+        f"{cmd_boot_env_example.__name__}",
+        f"{cmd_boot_env_example.custom_boot_env_main.__name__}",
         {},
     )
     with open(boot_env_script_abs_path, "w") as f:
@@ -265,8 +265,8 @@ def test_python_from_required_venv_with_start_app(
         SubCommand.command_start.value,
         str(proto_kernel_abs_path),
         str(start_app_script_abs_path),
-        f"{cmd_start_app.__name__}",
-        f"{cmd_start_app.custom_main.__name__}",
+        f"{cmd_start_app_example.__name__}",
+        f"{cmd_start_app_example.custom_start_app_main.__name__}",
         {},
     )
     with open(start_app_script_abs_path, "w") as f:
