@@ -1,4 +1,4 @@
-# FT_85_17_35_21.boot_env.md: see also `cmd_start_app.py`
+# FT_85_17_35_21.boot_env.md: see also `cmd_start_app_example.py`
 from __future__ import annotations
 
 import enum
@@ -17,7 +17,7 @@ from protoprimer.primer_kernel import (
 logger = logging.getLogger()
 
 
-def custom_main():
+def custom_boot_env_main():
     run_process(customize_env_context())
 
 
@@ -68,4 +68,4 @@ def customize_env_context():
 
 
 if __name__ == "__main__":
-    custom_main()
+    custom_boot_env_main()
