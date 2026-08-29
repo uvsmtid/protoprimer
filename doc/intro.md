@@ -197,4 +197,3 @@ Those early bootstrap steps:
 -->
 
 [protoprimer_github]: https://github.com/uvsmtid/protoprimer
-[FT_90_65_67_62.proto_code.md]: feature_topic/FT_90_65_67_62.proto_code.md

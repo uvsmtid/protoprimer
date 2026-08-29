@@ -2,11 +2,6 @@
 # Start with default rules
 default: true
 
-# TODO: reformat and enable:
-# heading increment:
-# https://github.com/DavidAnson/markdownlint/blob/main/doc/md001.md
-MD001: false
-
 # unordered list indentation:
 # https://github.com/DavidAnson/markdownlint/blob/main/doc/md007.md
 MD007:
@@ -16,16 +11,6 @@ MD007:
 # line length:
 # https://github.com/DavidAnson/markdownlint/blob/main/doc/md013.md
 MD013: false
-
-# TODO: reformat and enable:
-# single title:
-# https://github.com/DavidAnson/markdownlint/blob/main/doc/md025.md
-MD025: false
-
-# TODO: reformat and enable:
-# no trailing punctuation:
-# https://github.com/DavidAnson/markdownlint/blob/main/doc/md026.md
-MD026: false
 
 # spaces after list markers:
 # https://github.com/DavidAnson/markdownlint/blob/main/doc/md030.md
@@ -64,8 +49,3 @@ MD040: false
 # first line heading:
 # https://github.com/DavidAnson/markdownlint/blob/main/doc/md041.md
 MD041: false
-
-# TODO: reformat and enable:
-# unused link:
-# https://github.com/DavidAnson/markdownlint/blob/main/doc/md053.md
-MD053: false
