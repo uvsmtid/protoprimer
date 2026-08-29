@@ -28,7 +28,7 @@ Please [read the docs][protoprimer_readthedocs] for an intro.
 
 ## TL;DR
 
-`protoprimer` employs broadly ubiquitous `python` for version pinning to provide a robust alternative to `shell`:
+`protoprimer` employs ubiquitous `python` for version pinning to provide a robust alternative to `shell`:
 
 *   First, a shim is executed by a **wild** `python` version found in `PATH` invoking `protoprimer`.
 *   Last, `protoprimer` executes target code by the **required** `python` version from configured `venv`.
@@ -152,7 +152,10 @@ This `entry_script` invokes the [cmd_start_app_example][cmd_start_app_example] s
 ```py
 # ./cmd/start_app_example:
 # ...
-proto_kernel.start_app("local_doc.cmd_start_app_example:custom_start_app_main")
+proto_kernel.start_app(
+    # module_name:function_name
+    "local_doc.cmd_start_app_example:custom_start_app_main"
+)
 ```
 
 ### Baseline bootstrap script invoked via `boot_env`
@@ -168,7 +171,10 @@ This `entry_script` extends the bootstrap sequence via the [cmd_boot_env_example
 ```py
 # ./cmd/boot_env_example:
 # ...
-proto_kernel.boot_env("local_doc.cmd_boot_env_example:custom_boot_env_main")
+proto_kernel.boot_env(
+    # module_name:function_name
+    "local_doc.cmd_boot_env_example:custom_boot_env_main"
+)
 ```
 
 ## Basic terms
@@ -183,7 +189,7 @@ Any code designed to be executed by an arbitrary (wild) `python` version is call
 
 ### Single [proto_kernel][FT_87_17_49_36.proto_kernel.md]
 
-The own copy of `proto_kernel.py` is an example of `proto_code`.
+Your own copy of `proto_kernel.py` is an example of `proto_code`.
 
 It implements in-flight `python` runtime switching - the **hard** part provided by `protoprimer`.
 
