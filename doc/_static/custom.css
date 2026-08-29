@@ -4,6 +4,11 @@
     display: none;
 }
 
+/* Hide separator before `extra_nav_links` in sidebar: */
+.sphinxsidebarwrapper > hr {
+    display: none;
+}
+
 /* Roboto Mono is visually larger - shrink it: */
 body {
     font-size: 92% !important;

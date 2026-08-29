@@ -6,39 +6,85 @@
 
 # [![logo](/_static/protoprimer.logo.16x16.png)][protoprimer_github] [`protoprimer`][protoprimer_github]
 
-Want a **one-liner** to bootstrap isolated envs for every repo clone?
+## When?
 
-```bash
-./prime
-```
+When you want:
 
-Invoke `protoprimer` - an **arg-less** stand-alone script that switches:
+*   to bootstrap an env for every **fresh** repo clone with a **one-liner**:
+
+    ```sh
+    ./prime
+    ```
+
+*   to start an app from **co-existing** repo clones at different versions:
+
+    ```sh
+    ./some_app
+    ```
+
+*   to eliminate **untestable** `shell` scripts and automate with `python`:
+
+    <details>
+    <summary>[direct execution]</summary>
+
+    *   **no** explicit activation of individual `venv`-s **per repo clone**
+    *   **no** worrying about incompatibility between branches **per repo clone**
+    *   **no** #!shebang absolute path exposure and length limit **per repo clone**
+
+    </details>
+
+## What?
+
+`protoprimer` is an **arg-less** stand-alone **idempotent** script that switches:
 
 *   from **chaos** (the many conditions in which a user may invoke it)
 *   into **order** (an env-specific `venv` with the **required** `python` version)
 
-Eventually, `protoprimer` transfers control to custom steps for **anything** else...
+Eventually, it transfers control to your code:
+
 <details>
-<summary>
-</summary>
+<summary>[guaranteed environment]</summary>
 
-*   provision other SDKs
+*   As a **bootstrapper**, `protoprimer` lets custom steps prepare **anything** else:
 
-*   verify system/user config (local, cloud)
+    *   install `git` hooks
 
-*   install `git` hooks
+    *   provision other SDKs
 
-*   generate env-specific code
+    *   build required dependencies from sources
 
-*   ... [you name it]
+    *   assert system and user config (local or cloud)
+
+    *   download env-specific data
+
+    *   generate env-specific code
+
+    *   verify authn and authz prerequisites
+
+    *   ... [you name it]
+
+*   As a **starter**, `protoprimer` invokes a specified custom function from `venv`.
 
 </details>
 
 ## Why?
 
-More than one manual step is **tedious and error-prone**.
+You want a **single reproducible step** to run anything.
 
-Plus, the **single-step** bootstrap is a non-trivial "chicken and egg" problem!
+<details>
+<summary>[imagine otherwise]</summary>
+
+Multiple manual steps are **tedious and error-prone**:
+*   **permute** steps by the number of **users** and repo **clones**
+*   any subsequent update **avalanches** into re-execution of steps
+*   partial failures, re-ordering, mistakes, ... turn into **support nightmare**
+
+</details>
+
+<!-- markdownlint-disable-next-line MD026 -->
+## But...
+
+The **single-step** bootstrap is a **non-trivial** "chicken and egg" problem!
 
 <details class="indented">
 <summary>[formal proof]</summary>
@@ -58,7 +104,7 @@ Plus, the **single-step** bootstrap is a non-trivial "chicken and egg" problem!
 <summary>1. <em>"What is the <strong>best</strong> glue for automation, if not <code>python</code>?"</em></summary>
 
 *   readable, testable, modular, cross-platform, ...
-*   huge mind-share, gazillion of packages, ...
+*   huge mind-share, a gazillion packages, ...
 
 **Next:** you need an isolated `venv` for dependencies.
 
@@ -86,7 +132,7 @@ uv pip install --editable path/to/project_2
 ...
 ```
 
-**Next:** `uv` reproduces `venv`, but steps may go **beyond** that.
+**Next:** `uv` reproduces any `venv`, but steps may go **beyond** that.
 
 </details>
 
@@ -110,10 +156,10 @@ This demands logic to handle flexibility:
 <details class="indented">
 <summary>5. <em>"I can replace <code>shell</code> with a <strong>better</strong> lang, but which one?"</em></summary>
 
-the lang has to be:
+The lang has to be:
 *   cross-platform
 *   ubiquitous (like `shell`)
-*   require no explicit compilation
+*   compilation-free
 
 **Next:** you are in a cycle back to **point 1** for `python`.
 
@@ -123,13 +169,13 @@ You need to break that 5-to-1 loop.
 
 </details>
 
-The entry script must **evolve through chaos** to survive.
+The entry script must **evolve while building the environment** end-to-end.
 
-In other words, it must become **both** "the chicken **and** the egg".
+In other words, it must become **both** "the chicken" **and** "the egg".
 
 ## How?
 
-To bootstrap, `protoprimer` **restarts**, iteratively preparing the environment:
+`protoprimer` **restarts** iteratively preparing the environment:
 
 *   Takes off with a **wild** `python` version (whatever is in the `PATH` env var).
 
@@ -141,7 +187,7 @@ To bootstrap, `protoprimer` **restarts**, iteratively preparing the environment:
 
     > The custom steps **take over** here.
 
-The "chicken-egg" can fly **reliably** because **any** `python` is **trivial** to satisfy.
+It runs ubiquitously - **any** `python` is **trivial** to satisfy.
 
 <!--
 
@@ -155,12 +201,6 @@ TODO: Move those sections into main `readme.md`, itemize them with links to `FC_
 ```
 
 -->
-
-<div style="text-align: center; margin-top: 8em; margin-bottom: 8em;">
-
-[View on GitHub][protoprimer_github]
-
-</div>
 
 <!--
 

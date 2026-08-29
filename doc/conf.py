@@ -164,6 +164,9 @@ html_theme_options = {
     "github_banner": False,
     "fixed_sidebar": True,
     "page_width": "1200px",
+    "extra_nav_links": {
+        "GitHub": github_url,
+    },
 }
 
 html_sidebars = {
