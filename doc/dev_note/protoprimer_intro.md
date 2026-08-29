@@ -248,40 +248,7 @@ In turn, once bootstrapped, `python` code may springboard other toolchains:
 
 ---
 
-[readme.md]: ../../readme.md
-
 [protoprimer_readthedocs]: https://protoprimer.readthedocs.io/
-
-[pyapp_project]: https://github.com/ofek/pyapp
-
-[local_proto_kernel.py]: ../../cmd/proto_code/proto_kernel.py
-[local_primer_kernel.py]: ../../src/protoprimer/main/protoprimer/primer_kernel.py
-
-[local_prime]: ../../prime
-
-[local_doc]: ../../src/local_doc
-[local_repo]: ../../src/local_repo
-[local_test]: ../../src/local_test
-[protoprimer]: ../../src/protoprimer
-[metaprimer]: ../../src/metaprimer
-
-[src_dir]: ../../src
-[cmd_dir]: ../../cmd
-
-[FT_90_65_67_62.proto_code.md]: ../../doc/feature_topic/FT_90_65_67_62.proto_code.md
-[FT_75_87_82_46.entry_script.md]: ../../doc/feature_topic/FT_75_87_82_46.entry_script.md
-[FT_57_87_94_94.bootstrap_process.md]: ../../doc/feature_topic/FT_57_87_94_94.bootstrap_process.md
-
-[SOLID_wiki]: https://en.wikipedia.org/wiki/SOLID
-[DAG_wiki]: https://en.wikipedia.org/wiki/Directed_acyclic_graph
-[make_wiki]: https://en.wikipedia.org/wiki/Make_(software)
-[systemd_wiki]: https://en.wikipedia.org/wiki/Systemd
-
-[constraints.txt]: dst/default_env/version_constraints.txt
-[pyproject.toml]: src/metaprimer/pyproject.toml
-
-[protoprimer_extensions]: #protoprimer-extensions
-[protoprimer_motivation]: #protoprimer-motivation
 
 <!-- markdownlint-disable MD051 -->
 <!--

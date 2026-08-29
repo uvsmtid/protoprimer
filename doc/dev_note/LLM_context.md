@@ -40,15 +40,5 @@ run `pytest` for all directories.
 ---
 
 [primer_kernel.py]: ../../src/protoprimer/main/protoprimer/primer_kernel.py
-[proto_kernel.py]: ../../cmd/proto_code/proto_kernel.py
-
-[local_repo]: ../../src/local_repo
-[local_test]: ../../src/local_test
-[protoprimer]: ../../src/protoprimer
-[metaprimer]: ../../src/metaprimer
-
-[src]: ../../src
-[cmd]: ../../cmd
 
 [test_fast_slim_max_mocked]: ../../src/protoprimer/test/test_protoprimer/test_fast_slim_max_mocked
-[test_slow_integrated]: ../../src/protoprimer/test/test_protoprimer/test_slow_integrated

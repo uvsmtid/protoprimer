@@ -15,6 +15,14 @@ repos:
                 "pre-commit",
             ]
 
+        -   id: mixed-line-ending
+            args: [
+                "--fix=lf",
+            ]
+            stages: [
+                "pre-commit",
+            ]
+
         -   id: check-executables-have-shebangs
             stages: [
                 "pre-commit",
@@ -59,14 +67,6 @@ repos:
                 "pre-commit",
             ]
 
-    -   repo: https://github.com/sphinx-contrib/sphinx-lint
-        rev: v1.0.2
-        hooks:
-        -   id: sphinx-lint
-            stages: [
-                "pre-commit",
-            ]
-
     -   repo: https://github.com/codespell-project/codespell
         rev: v2.3.0
         hooks:
@@ -74,6 +74,42 @@ repos:
             args: [
                 "--ignore-words=gconf/codespell_ignore.txt",
             ]
+            stages: [
+                "pre-commit",
+            ]
+
+    -   repo: local
+        hooks:
+        -   id: forbid-binary
+            name: forbid binary files
+            entry: "Binary files are not allowed:"
+            language: fail
+            types: [
+                "binary",
+            ]
+            exclude: "^doc/_static/protoprimer\\.logo\\.16x16\\.png$"
+            stages: [
+                "pre-commit",
+            ]
+
+    -   repo: https://github.com/editorconfig-checker/editorconfig-checker.python
+        rev: 3.0.3
+        hooks:
+        -   id: editorconfig-checker
+            args: [
+                # Allow existing violations in tons of files:
+                "--disable-indentation",
+                "--disable-indent-size",
+                "--disable-max-line-length",
+            ]
+            stages: [
+                "pre-commit",
+            ]
+
+    -   repo: https://github.com/gitleaks/gitleaks
+        rev: v8.30.1
+        hooks:
+        -   id: gitleaks
             stages: [
                 "pre-commit",
             ]
