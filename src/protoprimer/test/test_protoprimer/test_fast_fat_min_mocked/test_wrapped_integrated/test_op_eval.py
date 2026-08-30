@@ -7,23 +7,23 @@ from local_test.name_assertion import (
     assert_test_module_name_embeds_another_module_name,
 )
 from test_protoprimer.test_slow_integrated import (
-    test_command_eval,
+    test_op_eval,
 )
 
 
 def test_relationship():
-    assert_test_module_name_embeds_another_module_name(test_command_eval.__name__)
+    assert_test_module_name_embeds_another_module_name(test_op_eval.__name__)
 
 
 def test_min_layout(fs: FakeFilesystem):
     mock_test_dir = fs.create_dir("/mock_test_dir")
 
     with fat_mock_wrapper(fs):
-        test_command_eval.test_command_eval_with_min_layout(pathlib.Path(mock_test_dir.path))
+        test_op_eval.test_op_eval_with_min_layout(pathlib.Path(mock_test_dir.path))
 
 
 def test_max_layout(fs: FakeFilesystem):
     mock_test_dir = fs.create_dir("/mock_test_dir")
 
     with fat_mock_wrapper(fs):
-        test_command_eval.test_command_eval_with_min_layout(pathlib.Path(mock_test_dir.path))
+        test_op_eval.test_op_eval_with_min_layout(pathlib.Path(mock_test_dir.path))

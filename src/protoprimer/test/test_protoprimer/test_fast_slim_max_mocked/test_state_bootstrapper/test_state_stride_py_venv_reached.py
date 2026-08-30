@@ -30,7 +30,7 @@ from protoprimer.primer_kernel import (
     EnvState,
     EnvVar,
     StateStride,
-    Factory_state_input_sub_command_arg_loaded,
+    Factory_state_input_exec_operation_loaded,
     VenvDriverPip,
 )
 
@@ -98,7 +98,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         return_value=test_python_abs_path,
     )
     @patch(f"{primer_kernel.__name__}.os.execve")
-    @patch(f"{primer_kernel.__name__}.{Factory_state_input_sub_command_arg_loaded.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.is_same_file", return_value=True)
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_version_constraints_file_basename_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
@@ -106,7 +106,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         self,
         mock_state_local_conf_symlink_abs_path_inited,
         mock_state_version_constraints_file_basename_inited,
-        mock_state_input_sub_command_arg_loaded,
+        mock_state_input_exec_operation_loaded,
         mock_is_same_file,
         mock_execve,
         mock_get_path_to_curr_python,
@@ -185,14 +185,14 @@ class ThisTestClass(BasePyfakefsTestClass):
         return_value="/mock_client_dir/venv/wrong/path/to/python",
     )
     @patch(f"{primer_kernel.__name__}.os.execve")
-    @patch(f"{primer_kernel.__name__}.{Factory_state_input_sub_command_arg_loaded.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_version_constraints_file_basename_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
     def test_failure_when_path_to_curr_python_is_inside_venv(
         self,
         mock_state_local_conf_symlink_abs_path_inited,
         mock_state_version_constraints_file_basename_inited,
-        mock_state_input_sub_command_arg_loaded,
+        mock_state_input_exec_operation_loaded,
         mock_execve,
         mock_get_path_to_curr_python,
         mock_state_venv_driver_prepared,
@@ -250,14 +250,14 @@ class ThisTestClass(BasePyfakefsTestClass):
         return_value="/mock_client_dir/venv/bin/python",
     )
     @patch(f"{primer_kernel.__name__}.os.execve")
-    @patch(f"{primer_kernel.__name__}.{Factory_state_input_sub_command_arg_loaded.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_version_constraints_file_basename_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
     def test_failure_when_path_to_curr_python_is_inside_venv_initially_and_expected(
         self,
         mock_state_local_conf_symlink_abs_path_inited,
         mock_state_version_constraints_file_basename_inited,
-        mock_state_input_sub_command_arg_loaded,
+        mock_state_input_exec_operation_loaded,
         mock_execve,
         mock_get_path_to_curr_python,
         mock_state_venv_driver_prepared,
@@ -315,7 +315,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         return_value=test_python_abs_path,
     )
     @patch(f"{primer_kernel.__name__}.os.execve")
-    @patch(f"{primer_kernel.__name__}.{Factory_state_input_sub_command_arg_loaded.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.is_same_file", return_value=False)
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_version_constraints_file_basename_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
@@ -323,7 +323,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         self,
         mock_state_local_conf_symlink_abs_path_inited,
         mock_state_version_constraints_file_basename_inited,
-        mock_state_input_sub_command_arg_loaded,
+        mock_state_input_exec_operation_loaded,
         mock_is_same_file,
         mock_execve,
         mock_get_path_to_curr_python,
@@ -382,7 +382,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         return_value=test_python_abs_path,
     )
     @patch(f"{primer_kernel.__name__}.os.execve")
-    @patch(f"{primer_kernel.__name__}.{Factory_state_input_sub_command_arg_loaded.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.is_same_file", return_value=True)
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_version_constraints_file_basename_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
@@ -390,7 +390,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         self,
         mock_state_local_conf_symlink_abs_path_inited,
         mock_state_version_constraints_file_basename_inited,
-        mock_state_input_sub_command_arg_loaded,
+        mock_state_input_exec_operation_loaded,
         mock_is_same_file,
         mock_execve,
         mock_get_path_to_curr_python,
@@ -471,7 +471,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         return_value=non_default_file_abs_path_python,
     )
     @patch(f"{primer_kernel.__name__}.os.execve")
-    @patch(f"{primer_kernel.__name__}.{Factory_state_input_sub_command_arg_loaded.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.is_same_file", return_value=True)
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_version_constraints_file_basename_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
@@ -479,7 +479,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         self,
         mock_state_local_conf_symlink_abs_path_inited,
         mock_state_version_constraints_file_basename_inited,
-        mock_state_input_sub_command_arg_loaded,
+        mock_state_input_exec_operation_loaded,
         mock_is_same_file,
         mock_execve,
         mock_get_path_to_curr_python,
@@ -558,7 +558,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         return_value="/a/different/python",
     )
     @patch(f"{primer_kernel.__name__}.os.execve")
-    @patch(f"{primer_kernel.__name__}.{Factory_state_input_sub_command_arg_loaded.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.is_same_file", return_value=True)
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_version_constraints_file_basename_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
@@ -566,7 +566,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         self,
         mock_state_local_conf_symlink_abs_path_inited,
         mock_state_version_constraints_file_basename_inited,
-        mock_state_input_sub_command_arg_loaded,
+        mock_state_input_exec_operation_loaded,
         mock_is_same_file,
         mock_execve,
         mock_get_path_to_curr_python,
@@ -648,14 +648,14 @@ class ThisTestClass(BasePyfakefsTestClass):
         f"{primer_kernel.__name__}.get_path_to_curr_python",
     )
     @patch(f"{primer_kernel.__name__}.os.execve")
-    @patch(f"{primer_kernel.__name__}.{Factory_state_input_sub_command_arg_loaded.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_version_constraints_file_basename_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
     def test_success_when_py_exec_is_already_venv(
         self,
         mock_state_local_conf_symlink_abs_path_inited,
         mock_state_version_constraints_file_basename_inited,
-        mock_state_input_sub_command_arg_loaded,
+        mock_state_input_exec_operation_loaded,
         mock_execve,
         mock_get_path_to_curr_python,
         mock_state_venv_driver_prepared,
@@ -706,7 +706,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         return_value=test_python_abs_path,
     )
     @patch(f"{primer_kernel.__name__}.os.execve")
-    @patch(f"{primer_kernel.__name__}.{Factory_state_input_sub_command_arg_loaded.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.is_same_file", return_value=True)
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_version_constraints_file_basename_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
@@ -714,7 +714,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         self,
         mock_state_local_conf_symlink_abs_path_inited,
         mock_state_version_constraints_file_basename_inited,
-        mock_state_input_sub_command_arg_loaded,
+        mock_state_input_exec_operation_loaded,
         mock_is_same_file,
         mock_execve,
         mock_get_path_to_curr_python,
@@ -794,7 +794,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     )
     @patch(f"{primer_kernel.__name__}.os.execve")
     @patch(f"{primer_kernel.__name__}.{VenvDriverPip.__name__}.create_venv")
-    @patch(f"{primer_kernel.__name__}.{Factory_state_input_sub_command_arg_loaded.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.is_same_file", return_value=True)
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_version_constraints_file_basename_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
@@ -802,7 +802,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         self,
         mock_state_local_conf_symlink_abs_path_inited,
         mock_state_version_constraints_file_basename_inited,
-        mock_state_input_sub_command_arg_loaded,
+        mock_state_input_exec_operation_loaded,
         mock_is_same_file,
         mock_venv_venv_pip_create_venv,
         mock_execve,

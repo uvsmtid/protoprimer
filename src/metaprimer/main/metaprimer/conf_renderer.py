@@ -25,7 +25,7 @@ from protoprimer.primer_kernel import (
     PathName,
     read_json_file,
     SelectorFunc,
-    SubCommand,
+    ExecOperation,
     SyntaxArg,
     TermColor,
     trivial_factory,
@@ -1620,13 +1620,13 @@ def can_render_effective_config(
     state_node,
 ) -> bool:
     """
-    Like `can_print_effective_config` but for `SubCommand.command_boot` and without the `StateStride` restriction.
+    Like `can_print_effective_config` but for `ExecOperation.op_boot` and without the `StateStride` restriction.
     The rendered `Bootstrapper_*` only run when the venv module is imported (later `StateStride`).
     """
     # TODO: TODO_28_48_19_20.api_to_traverse_config_when_primed.md:
     #       With access to config, this will change from DAG to simple access of config via `custom_main`.
-    state_input_sub_command_arg_loaded: SubCommand = state_node.eval_parent_state(EnvState.state_input_sub_command_arg_loaded.name)
-    return state_input_sub_command_arg_loaded == SubCommand.command_boot
+    state_input_exec_operation_loaded: ExecOperation = state_node.eval_parent_state(EnvState.state_input_exec_operation_loaded.name)
+    return state_input_exec_operation_loaded == ExecOperation.op_boot
 
 
 # noinspection PyPep8Naming
@@ -1639,7 +1639,7 @@ class Bootstrapper_state_primer_conf_file_data_loaded_rendered(AbstractCachingSt
         lambda: [
             EnvState.state_stride_src_updated_reached.name,
             EnvState.state_input_stderr_log_level_eval_finalized.name,
-            EnvState.state_input_sub_command_arg_loaded.name,
+            EnvState.state_input_exec_operation_loaded.name,
             EnvState.state_proto_code_file_abs_path_inited.name,
             EnvState.state_primer_conf_file_abs_path_inited.name,
         ]
@@ -1701,7 +1701,7 @@ class Bootstrapper_state_client_conf_file_data_loaded_rendered(AbstractCachingSt
         lambda: [
             RendererState.state_primer_conf_file_data_loaded_rendered.name,
             EnvState.state_input_stderr_log_level_eval_finalized.name,
-            EnvState.state_input_sub_command_arg_loaded.name,
+            EnvState.state_input_exec_operation_loaded.name,
             EnvState.state_global_conf_file_abs_path_inited.name,
         ]
     )
@@ -1747,7 +1747,7 @@ class Bootstrapper_state_env_conf_file_data_loaded_rendered(AbstractCachingState
         lambda: [
             RendererState.state_client_conf_file_data_loaded_rendered.name,
             EnvState.state_input_stderr_log_level_eval_finalized.name,
-            EnvState.state_input_sub_command_arg_loaded.name,
+            EnvState.state_input_exec_operation_loaded.name,
             EnvState.state_local_conf_file_abs_path_inited.name,
         ]
     )
@@ -1834,7 +1834,7 @@ class Bootstrapper_state_derived_conf_data_loaded_rendered(AbstractCachingStateN
         # TODO: Is this needed given the list of dependencies in `derived_data_env_states`?
         parent_states = [
             RendererState.state_env_conf_file_data_loaded_rendered.name,
-            EnvState.state_input_sub_command_arg_loaded.name,
+            EnvState.state_input_exec_operation_loaded.name,
             EnvState.state_input_stderr_log_level_eval_finalized.name,
             *self.derived_data_env_states,
         ]

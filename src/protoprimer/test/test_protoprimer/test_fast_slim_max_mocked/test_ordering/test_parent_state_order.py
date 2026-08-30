@@ -29,7 +29,7 @@ def test_EnvState_parent_order() -> None:
     env_ctx = VerifyingEnvContext()
     env_ctx._entry_func = EntryFunc.func_boot_env
     env_ctx._is_app = True
-    env_ctx._sub_command = max_deps_env_ctx._sub_command
+    env_ctx._exec_operation = max_deps_env_ctx._exec_operation
     env_ctx._is_log_enabled = max_deps_env_ctx._is_log_enabled
 
     state_graph_instance = env_ctx._state_graph

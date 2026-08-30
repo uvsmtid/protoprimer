@@ -10,7 +10,7 @@ from protoprimer.primer_kernel import (
     NodeFactory,
     StateGraph,
     StateNode,
-    SubCommand,
+    ExecOperation,
 )
 
 
@@ -31,7 +31,7 @@ class VerifyingStateGraph(StateGraph):
         self.context_verifiers: list[Callable[[str, NodeFactory], None]] = [
             _verify_entry_func_is_defined,
             _verify_is_app_is_defined,
-            _verify_start_app_sub_command_is_not_boot,
+            _verify_start_app_exec_operation_is_not_boot,
             _verify_start_app_does_not_prepare_venv,
             _verify_call_lib_does_not_prepare_venv,
         ]
@@ -123,21 +123,21 @@ def _verify_is_app_is_defined(
         raise GraphAssertionError(f"`_is_app` is not set when instantiating state [{state_name}]")
 
 
-def _verify_start_app_sub_command_is_not_boot(
+def _verify_start_app_exec_operation_is_not_boot(
     state_name: str,
     node_factory: NodeFactory,
 ) -> None:
     """
-    `Bootstrapper_state_args_parsed_not_func_boot_env` always sets `command_start` for `func_start_app`.
+    `Bootstrapper_state_args_parsed_not_func_boot_env` always sets `op_start` for `func_start_app`.
     """
     if (
         #
         node_factory.env_ctx._entry_func == EntryFunc.func_start_app
-        and node_factory.env_ctx._sub_command == SubCommand.command_boot
+        and node_factory.env_ctx._exec_operation == ExecOperation.op_boot
     ):
         raise GraphAssertionError(
             #
-            f"`{EntryFunc.func_start_app}` with `{SubCommand.command_boot}` is not a valid combination "
+            f"`{EntryFunc.func_start_app}` with `{ExecOperation.op_boot}` is not a valid combination "
             f"when instantiating state [{state_name}]"
         )
 
@@ -188,5 +188,5 @@ max_deps_env_ctx = VerifyingEnvContext()
 max_deps_env_ctx._entry_func = EntryFunc.func_boot_env
 max_deps_env_ctx._is_app = True
 max_deps_env_ctx._prepare_venv = True
-max_deps_env_ctx._sub_command = SubCommand.command_boot
+max_deps_env_ctx._exec_operation = ExecOperation.op_boot
 max_deps_env_ctx._is_log_enabled = True

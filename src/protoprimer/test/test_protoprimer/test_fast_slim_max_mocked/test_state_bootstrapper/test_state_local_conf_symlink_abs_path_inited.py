@@ -18,7 +18,7 @@ from protoprimer.primer_kernel import (
     ConfConstPrimer,
     ConfField,
     EnvState,
-    SubCommand,
+    ExecOperation,
     write_json_file,
 )
 

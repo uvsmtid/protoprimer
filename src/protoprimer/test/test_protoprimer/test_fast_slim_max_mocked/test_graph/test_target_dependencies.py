@@ -4,7 +4,7 @@ from protoprimer.primer_kernel import (
     ContextBuilder,
     EntryFunc,
     EnvState,
-    SubCommand,
+    ExecOperation,
     TargetState,
 )
 from local_repo.misc_tools.graph_utils import (
@@ -20,7 +20,7 @@ class TestTargetDependencies:
     # These are not dependencies of `TargetState.target_proto_bootstrap_completed`,
     # but they are dependencies of `TargetState.target_everything_executed`.
     state_func_boot_env_executed_dependencies = [
-        EnvState.state_input_sub_command_arg_loaded.name,
+        EnvState.state_input_exec_operation_loaded.name,
         EnvState.state_input_final_state_eval_finalized.name,
         EnvState.state_func_boot_env_executed.name,
     ]
@@ -39,7 +39,7 @@ class TestTargetDependencies:
             ContextBuilder()
             .entry_func(EntryFunc.func_boot_env)
             .is_app(True)
-            .sub_command(SubCommand.command_boot)
+            .exec_operation(ExecOperation.op_boot)
             #
             .build_context()
         )
@@ -87,7 +87,7 @@ class TestTargetDependencies:
             ContextBuilder()
             .entry_func(EntryFunc.func_boot_env)
             .is_app(True)
-            .sub_command(SubCommand.command_boot)
+            .exec_operation(ExecOperation.op_boot)
             #
             .build_context()
         )

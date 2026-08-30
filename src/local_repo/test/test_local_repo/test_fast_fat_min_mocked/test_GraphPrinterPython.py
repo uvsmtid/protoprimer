@@ -51,7 +51,7 @@ def test_print_dag_python_output(
     mock_env_ctx = (
         mock_context_builder_class.return_value
         #
-        .sub_command.return_value
+        .exec_operation.return_value
         #
         .entry_func.return_value
         #

@@ -12,12 +12,12 @@ from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     Factory_state_input_final_state_eval_finalized,
-    Factory_state_input_sub_command_arg_loaded,
+    Factory_state_input_exec_operation_loaded,
     Bootstrapper_state_input_stderr_log_level_handler_configured,
     ContextBuilder,
     EntryFunc,
     EnvState,
-    SubCommand,
+    ExecOperation,
 )
 
 
@@ -40,9 +40,9 @@ def test_relationship():
 
 @patch(f"{primer_kernel.__name__}.{Factory_state_input_final_state_eval_finalized.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_stderr_log_level_handler_configured.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Factory_state_input_sub_command_arg_loaded.__name__}.create_state_node")
-def test_sub_command_boot(
-    mock_state_input_sub_command_arg_loaded,
+@patch(f"{primer_kernel.__name__}.{Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
+def test_exec_operation_boot(
+    mock_state_input_exec_operation_loaded,
     mock_state_input_stderr_log_level_handler_configured,
     mock_state_input_final_state_eval_finalized,
     env_ctx,
@@ -54,7 +54,7 @@ def test_sub_command_boot(
         EnvState.state_func_boot_env_executed.name,
     )
 
-    mock_state_input_sub_command_arg_loaded.return_value.eval_own_state.return_value = SubCommand.command_boot
+    mock_state_input_exec_operation_loaded.return_value.eval_own_state.return_value = ExecOperation.op_boot
     mock_state_input_final_state_eval_finalized.return_value.eval_own_state.return_value = "mock_final_state"
 
     mock_state_node = MagicMock()
@@ -72,9 +72,9 @@ def test_sub_command_boot(
 
 @patch(f"{primer_kernel.__name__}.{Factory_state_input_final_state_eval_finalized.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_stderr_log_level_handler_configured.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Factory_state_input_sub_command_arg_loaded.__name__}.create_state_node")
-def test_sub_command_none(
-    mock_state_input_sub_command_arg_loaded,
+@patch(f"{primer_kernel.__name__}.{Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
+def test_exec_operation_none(
+    mock_state_input_exec_operation_loaded,
     mock_state_input_stderr_log_level_handler_configured,
     mock_state_input_final_state_eval_finalized,
     env_ctx,
@@ -86,22 +86,22 @@ def test_sub_command_none(
         EnvState.state_func_boot_env_executed.name,
     )
 
-    mock_state_input_sub_command_arg_loaded.return_value.eval_own_state.return_value = None
+    mock_state_input_exec_operation_loaded.return_value.eval_own_state.return_value = None
     mock_state_input_final_state_eval_finalized.return_value.eval_own_state.return_value = "mock_final_state"
 
     mock_state_node = MagicMock()
     env_ctx._state_graph.state_nodes["mock_final_state"] = mock_state_node
 
     # when/then:
-    with pytest.raises(ValueError, match="sub command is not defined"):
+    with pytest.raises(ValueError, match="exec operation is not defined"):
         env_ctx.eval_state(EnvState.state_func_boot_env_executed.name)
 
 
 @patch(f"{primer_kernel.__name__}.{Factory_state_input_final_state_eval_finalized.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_stderr_log_level_handler_configured.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Factory_state_input_sub_command_arg_loaded.__name__}.create_state_node")
-def test_sub_command_invalid(
-    mock_state_input_sub_command_arg_loaded,
+@patch(f"{primer_kernel.__name__}.{Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
+def test_exec_operation_invalid(
+    mock_state_input_exec_operation_loaded,
     mock_state_input_stderr_log_level_handler_configured,
     mock_state_input_final_state_eval_finalized,
     env_ctx,
@@ -113,12 +113,12 @@ def test_sub_command_invalid(
         EnvState.state_func_boot_env_executed.name,
     )
 
-    mock_state_input_sub_command_arg_loaded.return_value.eval_own_state.return_value = "invalid_sub_command"
+    mock_state_input_exec_operation_loaded.return_value.eval_own_state.return_value = "invalid_exec_operation"
     mock_state_input_final_state_eval_finalized.return_value.eval_own_state.return_value = "mock_final_state"
 
     mock_state_node = MagicMock()
     env_ctx._state_graph.state_nodes["mock_final_state"] = mock_state_node
 
     # when/then:
-    with pytest.raises(ValueError, match="cannot handle sub command"):
+    with pytest.raises(ValueError, match="cannot handle exec operation"):
         env_ctx.eval_state(EnvState.state_func_boot_env_executed.name)
