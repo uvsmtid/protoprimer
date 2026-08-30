@@ -579,12 +579,12 @@ class StateName(enum.Enum):
         ],
     )
 
-    state_reboot_triggered = StateMeta(
-        env_state=EnvState.state_reboot_triggered,
+    state_reset_triggered = StateMeta(
+        env_state=EnvState.state_reset_triggered,
         name_category=NameCategory.category_state_mutation,
         name_components=[
             KeyWord.key_state.value,
-            ExecOperation.op_reboot.value,
+            ExecOperation.op_reset.value,
             KeyWord.key_triggered.value,
         ],
     )

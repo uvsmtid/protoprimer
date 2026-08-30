@@ -134,7 +134,7 @@ class TestEvaluatedStateSets:
             EnvState.state_local_log_dir_abs_path_inited.name,
             EnvState.state_default_file_log_handler_configured.name,
             EnvState.state_stride_py_required_reached.name,
-            EnvState.state_reboot_triggered.name,
+            EnvState.state_reset_triggered.name,
             EnvState.state_venv_driver_prepared.name,
             EnvState.state_project_descriptors_inited.name,
             EnvState.state_install_specs_inited.name,
@@ -236,7 +236,7 @@ class TestEvaluatedStateSets:
             EnvState.state_required_python_version_inited.name,
             EnvState.state_python_selector_file_abs_path_inited.name,
             EnvState.state_selected_python_file_abs_path_inited.name,
-            EnvState.state_reboot_triggered.name,
+            EnvState.state_reset_triggered.name,
             EnvState.state_venv_driver_prepared.name,
             # wrong func:
             EnvState.state_func_boot_env_executed.name,

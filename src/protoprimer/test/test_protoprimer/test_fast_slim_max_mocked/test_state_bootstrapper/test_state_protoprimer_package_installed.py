@@ -145,7 +145,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(f"{primer_kernel.__name__}.{Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Factory_state_venv_driver_prepared.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{EnvContext.__name__}.{EnvContext.get_stride.__name__}")
-    def test_reboot(
+    def test_reset(
         self,
         mock_get_stride,
         mock_state_venv_driver_prepared,
@@ -200,7 +200,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_project_descriptors_inited.return_value.eval_own_state.return_value = project_descriptors
         mock_state_install_specs_inited.return_value.eval_own_state.return_value = []
         mock_state_version_constraints_file_basename_inited.return_value.eval_own_state.return_value = primer_kernel.ConfConstEnv.default_version_constraints_file_basename
-        mock_state_input_exec_operation_loaded.return_value.eval_own_state.return_value = ExecOperation.op_reboot
+        mock_state_input_exec_operation_loaded.return_value.eval_own_state.return_value = ExecOperation.op_reset
         # when:
         self.env_ctx.eval_state(EnvState.state_protoprimer_package_installed.name)
         # then:

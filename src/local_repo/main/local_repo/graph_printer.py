@@ -204,8 +204,8 @@ class StateMeta(enum.Enum):
         env_state=EnvState.state_stride_py_required_reached,
         sub_graph=SubGraph.graph_runtime,
     )
-    state_reboot_triggered = StateNodeMeta(
-        env_state=EnvState.state_reboot_triggered,
+    state_reset_triggered = StateNodeMeta(
+        env_state=EnvState.state_reset_triggered,
         sub_graph=SubGraph.graph_runtime,
     )
     state_venv_driver_prepared = StateNodeMeta(

@@ -38,7 +38,7 @@ class Boot(Command):
         pass
 
 
-class Reboot(Command):
+class Reset(Command):
     """
     Re-create `venv`, re-install dependencies, and re-pin versions.
     """
@@ -73,7 +73,7 @@ class SpecApp(App):
     def __init__(self):
         cmd_manager = CommandManager("test_via_cliff")
         cmd_manager.add_command("boot", Boot)
-        cmd_manager.add_command("reboot", Reboot)
+        cmd_manager.add_command("reset", Reset)
         cmd_manager.add_command("eval", Eval)
         cmd_manager.add_command("check", Check)
         super().__init__(
@@ -168,7 +168,7 @@ def test_cli_structure_compatibility():
     # then:
     # ExecOperation options must match the spec exactly (bidirectional):
 
-    for execoperation in ["boot", "reboot", "eval"]:
+    for execoperation in ["boot", "reset", "eval"]:
         actual_subparser = subparsers_action.choices[execoperation]
         actual_sub_data = extract_parser_data(actual_subparser)
 
@@ -196,7 +196,7 @@ def test_cli_structure_compatibility():
     [
         (["-q", "boot"], "stderr_log_level_quiet", 1),
         (["boot", "-q"], "stderr_log_level_quiet", 1),
-        (["-v", "-v", "reboot"], "stderr_log_level_verbose", 2),
+        (["-v", "-v", "reset"], "stderr_log_level_verbose", 2),
         (["boot", "-e", "my_env"], "selected_env_dir", "my_env"),
         (["boot", "--env", "my_env"], "selected_env_dir", "my_env"),
         (["-e", "my_env", "eval"], "selected_env_dir", "my_env"),

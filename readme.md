@@ -52,7 +52,7 @@ It works without `shebang` for `venv` to **avoid hardcoding** absolute paths and
 *   From scratch: re-create venv, re-solve and re-install deps, re-pin versions:
 
     ```
-    ./prime reboot
+    ./prime reset
     ```
 
 *   Evaluate the effective config:

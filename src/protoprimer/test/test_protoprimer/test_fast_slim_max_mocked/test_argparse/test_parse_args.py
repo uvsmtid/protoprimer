@@ -32,10 +32,10 @@ def test_parse_args_defaults():
 
 def test_parse_args_reset():
     # when:
-    args = parse_args([ExecOperation.op_reboot.value])
+    args = parse_args([ExecOperation.op_reset.value])
 
     # then:
-    assert getattr(args, ParsedArg.name_exec_operation.value) == ExecOperation.op_reboot.value
+    assert getattr(args, ParsedArg.name_exec_operation.value) == ExecOperation.op_reset.value
 
 
 def test_parse_args_command():
@@ -164,9 +164,9 @@ def test_parse_args_final_state():
             },
         ),
         (
-            ["reboot"],
+            ["reset"],
             {
-                ParsedArg.name_exec_operation.value: "reboot",
+                ParsedArg.name_exec_operation.value: "reset",
                 ParsedArg.name_selected_env_dir.value: None,
                 SyntaxArg.dest_quiet: 0,
                 SyntaxArg.dest_verbose: 0,
@@ -268,7 +268,7 @@ def test_argparse_execoperations_parametrized(test_argv, expected_dict):
 @pytest.mark.parametrize(
     "test_argv",
     [
-        ["reboot", "--final_state", "some_state"],
+        ["reset", "--final_state", "some_state"],
         ["eval", "--final_state", "some_state"],
     ],
 )
@@ -280,7 +280,7 @@ def test_argparse_invalid_final_state(test_argv):
 @pytest.mark.parametrize(
     "test_argv,expected_env",
     [
-        (["reboot", "--env", "some/path"], "some/path"),
+        (["reset", "--env", "some/path"], "some/path"),
         (["eval", "--env", "some/path"], "some/path"),
         (["-e", "some/path", "eval"], "some/path"),
     ],
@@ -308,7 +308,7 @@ def test_main_help_contains_execoperation_descriptions():
         #
     )
     assert (
-        normalize_space("reboot Bootstrap from scratch: re-create `venv`, re-install dependencies, re-pin versions, ...")
+        normalize_space("reset Bootstrap from scratch: re-create `venv`, re-install dependencies, re-pin versions, ...")
         in normalized_output
         #
     )
