@@ -52,7 +52,7 @@ It works without `shebang` for `venv` to **avoid hardcoding** absolute paths and
 *   From scratch: re-create venv, re-solve and re-install deps, re-pin versions:
 
     ```
-    ./prime reboot
+    ./prime reset
     ```
 
 *   Evaluate the effective config:
@@ -128,12 +128,12 @@ graph LR;
 
 There are two entry functions - see details in [boot_vs_start][FT_58_74_37_70.boot_vs_start.md]:
 
-| Function:    | [start_app][FT_05_08_64_67.start_app.md]                  | [boot_env][FT_85_17_35_21.boot_env.md]             |
-|--------------|-----------------------------------------------------------|----------------------------------------------------|
+| Function:    | [start_app][FT_05_08_64_67.start_app.md]                     | [boot_env][FT_85_17_35_21.boot_env.md]                |
+|--------------|--------------------------------------------------------------|-------------------------------------------------------|
 | Purpose:     | run **arbitrary** script<br>from `venv` by required `python` | **extend** the default bootstrap<br>with custom steps |
-| Cardinality: | **many** per project                                      | **one** per project                                |
-| Executes:    | smaller part of `proto_kernel`                            | bigger part of `proto_kernel`                      |
-| Example:     | `./cmd/start_app_example`                                 | `./cmd/boot_env_example`                           |
+| Cardinality: | **many** per project                                         | **one** per project                                   |
+| Executes:    | smaller part of `proto_kernel`                               | bigger part of `proto_kernel`                         |
+| Example:     | `./cmd/start_app_example`                                    | `./cmd/boot_env_example`                              |
 
 <a id="protoprimer-first-examples"></a>
 
@@ -184,6 +184,8 @@ proto_kernel.boot_env(
 ### Any [proto_code][FT_90_65_67_62.proto_code.md]
 
 Any code designed to be executed by an arbitrary (wild) `python` version is called `proto_code`.
+
+In short, `proto_code` is what runs outside `venv` before switching into it.
 
 <a id="protoprimer-proto-kernel"></a>
 

@@ -336,9 +336,9 @@ class ExecOperation(enum.Enum):
     # TODO: This is not used yet. It should call "some_module:some_main".
     op_start = "start"
 
-    # FT_42_03_79_73.reboot_env.md
+    # FT_42_03_79_73.reset_env.md
     # UC_61_12_90_59.upgrade_venv.md
-    op_reboot = "reboot"
+    op_reset = "reset"
 
     # FT_00_22_19_59.derived_config.md
     # FT_19_44_42_19.effective_config.md
@@ -1554,11 +1554,11 @@ def _create_child_argparser(parent_argparsers):
     def _create_reset_parser(exec_operation_parsers):
         exec_operation_desc = "Bootstrap from scratch: re-create `venv`, re-install dependencies, re-pin versions, ..."
         parser_reset = exec_operation_parsers.add_parser(
-            ExecOperation.op_reboot.value,
+            ExecOperation.op_reset.value,
             help=exec_operation_desc,
             description=exec_operation_desc,
         )
-        parser_reset.set_defaults(exec_operation=ExecOperation.op_reboot.value)
+        parser_reset.set_defaults(exec_operation=ExecOperation.op_reset.value)
 
     def _create_eval_parser(exec_operation_parsers):
         exec_operation_desc = "Evaluate effective config (print it on `stdout`)."
@@ -2359,7 +2359,7 @@ class Bootstrapper_state_func_boot_env_executed(AbstractCachingStateNode[bool]):
         elif state_input_exec_operation_loaded in [
             ExecOperation.op_boot,
             ExecOperation.op_start,
-            ExecOperation.op_reboot,
+            ExecOperation.op_reset,
         ]:
             selected_strategy = ExitCodeReporter(self.env_ctx)
         else:
@@ -3870,7 +3870,7 @@ class Factory_state_stride_py_required_reached(NodeFactory[StateStride]):
 
 # noinspection PyPep8Naming
 @conditional_factory
-class Bootstrapper_state_reboot_triggered_is_app(AbstractCachingStateNode[bool]):
+class Bootstrapper_state_reset_triggered_is_app(AbstractCachingStateNode[bool]):
     """
     Removes current `venv` dir and `version_constraints.txt` file (to trigger their re-creation subsequently).
     """
@@ -3888,7 +3888,7 @@ class Bootstrapper_state_reboot_triggered_is_app(AbstractCachingStateNode[bool])
             EnvState.state_stride_py_required_reached.name,
         ]
     )
-    _state_name = staticmethod(lambda: EnvState.state_reboot_triggered.name)
+    _state_name = staticmethod(lambda: EnvState.state_reset_triggered.name)
 
     def _eval_state_once(self) -> ValueType:
 
@@ -3898,20 +3898,20 @@ class Bootstrapper_state_reboot_triggered_is_app(AbstractCachingStateNode[bool])
         # TODO: FT_77_15_06_50.dynamic_DAG.md:
         #       Review and clarify `ExecOperation.op_start`, `EnvContext._is_app`, ...
         if state_input_exec_operation_loaded == ExecOperation.op_start:
-            # The only reason for `EnvState.state_reboot_triggered`
+            # The only reason for `EnvState.state_reset_triggered`
             # is to destroy `venv` to recreate it later.
             # Skip it as `venv` is supposed to be ready in `ExecOperation.op_start`:
             return False
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
         state_input_start_id_var_loaded: str = self.eval_parent_state(EnvState.state_input_start_id_var_loaded.name)
 
-        reboot_env: bool = state_input_exec_operation_loaded == ExecOperation.op_reboot
+        reset_env: bool = state_input_exec_operation_loaded == ExecOperation.op_reset
 
         state_stride_py_required_reached: StateStride = self.eval_parent_state(EnvState.state_stride_py_required_reached.name)
         assert self.env_ctx.get_stride().value >= StateStride.stride_py_required.value
 
-        # Reboot can only happen outside `venv` (to delete it):
-        if not (reboot_env and state_stride_py_required_reached == StateStride.stride_py_required):
+        # Reset can only happen outside `venv` (to delete it):
+        if not (reset_env and state_stride_py_required_reached == StateStride.stride_py_required):
             return False
 
         state_local_venv_dir_abs_path_inited = self.eval_parent_state(EnvState.state_local_venv_dir_abs_path_inited.name)
@@ -3948,22 +3948,22 @@ class Bootstrapper_state_reboot_triggered_is_app(AbstractCachingStateNode[bool])
 
 # noinspection PyPep8Naming
 @conditional_factory
-class Bootstrapper_state_reboot_triggered_not_is_app(AbstractCachingStateNode[bool]):
+class Bootstrapper_state_reset_triggered_not_is_app(AbstractCachingStateNode[bool]):
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-    _state_name = staticmethod(lambda: EnvState.state_reboot_triggered.name)
+    _state_name = staticmethod(lambda: EnvState.state_reset_triggered.name)
 
     def _eval_state_once(self) -> ValueType:
         return False
 
 
 # noinspection PyPep8Naming
-class Factory_state_reboot_triggered(NodeFactory[bool]):
+class Factory_state_reset_triggered(NodeFactory[bool]):
 
     def create_state_node(self) -> StateNode[bool]:
         if self.env_ctx._is_app:
-            return Bootstrapper_state_reboot_triggered_is_app(self.env_ctx)
+            return Bootstrapper_state_reset_triggered_is_app(self.env_ctx)
         else:
-            return Bootstrapper_state_reboot_triggered_not_is_app(self.env_ctx)
+            return Bootstrapper_state_reset_triggered_not_is_app(self.env_ctx)
 
 
 # noinspection PyPep8Naming
@@ -3977,7 +3977,7 @@ class Bootstrapper_state_venv_driver_prepared_is_app(AbstractCachingStateNode[Ve
             EnvState.state_local_venv_dir_abs_path_inited.name,
             EnvState.state_local_cache_dir_abs_path_inited.name,
             EnvState.state_venv_driver_inited.name,
-            EnvState.state_reboot_triggered.name,
+            EnvState.state_reset_triggered.name,
         ]
     )
     _state_name = staticmethod(lambda: EnvState.state_venv_driver_prepared.name)
@@ -4057,7 +4057,7 @@ class Bootstrapper_state_stride_py_venv_reached_is_app(AbstractCachingStateNode[
             EnvState.state_selected_python_file_abs_path_inited.name,
             EnvState.state_local_venv_dir_abs_path_inited.name,
             EnvState.state_version_constraints_file_basename_inited.name,
-            EnvState.state_reboot_triggered.name,
+            EnvState.state_reset_triggered.name,
             EnvState.state_venv_driver_prepared.name,
         ]
     )
@@ -4133,7 +4133,7 @@ class Bootstrapper_state_stride_py_venv_reached_is_app(AbstractCachingStateNode[
                 pass
             else:
                 if not state_venv_driver_prepared.is_mine_venv(state_local_venv_dir_abs_path_inited):
-                    raise AssertionError(f"`venv` [{state_local_venv_dir_abs_path_inited}] was not created by this driver [{state_venv_driver_prepared.get_type().name}] retry with [{ExecOperation.op_reboot.value}] exec operation.")
+                    raise AssertionError(f"`venv` [{state_local_venv_dir_abs_path_inited}] was not created by this driver [{state_venv_driver_prepared.get_type().name}] retry with [{ExecOperation.op_reset.value}] exec operation.")
 
         return switch_python(
             curr_python_path=state_selected_python_file_abs_path_inited,
@@ -4840,7 +4840,7 @@ class EnvState(enum.Enum):
     # restart: `StateStride.stride_py_arbitrary` -> `StateStride.stride_py_required`:
     state_stride_py_required_reached = Factory_state_stride_py_required_reached
 
-    state_reboot_triggered = Factory_state_reboot_triggered
+    state_reset_triggered = Factory_state_reset_triggered
 
     state_venv_driver_prepared = Factory_state_venv_driver_prepared
 
@@ -4971,7 +4971,7 @@ class EnvContext:
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
         # Set by `EnvState.state_prepare_venv_finalized`:
         # Roughly:
-        # FT_42_03_79_73.reboot_env.md: True
+        # FT_42_03_79_73.reset_env.md: True
         # FT_05_08_64_67.start_app.md: False
         self._prepare_venv: bool | None = None
 
