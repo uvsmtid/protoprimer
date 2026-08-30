@@ -4,9 +4,9 @@ from typing import Dict
 
 
 def generate_entry_script_content(
-    # TODO: Move this function to `protoprimer.primer_kernel`? To use `SubCommand` enum.
+    # TODO: Move this function to `protoprimer.primer_kernel`? To use `ExecOperation` enum.
     #       But then, why? Isn't this func supposed to be used when `protoprimer.primer_kernel` is already installed?
-    sub_command: str,
+    exec_operation: str,
     proto_kernel_abs_path: str,
     entry_script_abs_path: str,
     module_name: str,
@@ -28,13 +28,13 @@ def generate_entry_script_content(
         )
         env_vars_lines = textwrap.indent(env_vars_lines, "    ")
 
-    # TODO: Remove `sub_command` and use `entry_func` directly:
-    if sub_command == "start":
+    # TODO: Remove `exec_operation` and use `entry_func` directly:
+    if exec_operation == "start":
         entry_func = "start_app"
-    elif sub_command == "boot":
+    elif exec_operation == "boot":
         entry_func = "boot_env"
     else:
-        raise AssertionError(f"Unrecognized `sub_command` [{sub_command}]")
+        raise AssertionError(f"Unrecognized `exec_operation` [{exec_operation}]")
 
     proto_kernel_rel_path = os.path.relpath(
         proto_kernel_abs_path,

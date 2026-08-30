@@ -14,7 +14,7 @@ from protoprimer import primer_kernel as try_main
 from protoprimer.primer_kernel import (
     parse_args,
     ParsedArg,
-    SubCommand,
+    ExecOperation,
     SyntaxArg,
 )
 
@@ -24,7 +24,7 @@ def test_parse_args_defaults():
     args = parse_args([])
 
     # then:
-    assert getattr(args, ParsedArg.name_sub_command.value) == SubCommand.command_boot.value
+    assert getattr(args, ParsedArg.name_exec_operation.value) == ExecOperation.op_boot.value
     assert getattr(args, ParsedArg.name_final_state.value) is None
     assert getattr(args, SyntaxArg.dest_quiet) == 0
     assert getattr(args, SyntaxArg.dest_verbose) == 0
@@ -32,23 +32,23 @@ def test_parse_args_defaults():
 
 def test_parse_args_reset():
     # when:
-    args = parse_args([SubCommand.command_reboot.value])
+    args = parse_args([ExecOperation.op_reboot.value])
 
     # then:
-    assert getattr(args, ParsedArg.name_sub_command.value) == SubCommand.command_reboot.value
+    assert getattr(args, ParsedArg.name_exec_operation.value) == ExecOperation.op_reboot.value
 
 
 def test_parse_args_command():
     cmd = "ls -l"
 
     # when:
-    args = parse_args([SubCommand.command_boot.value, SyntaxArg.arg_command, cmd])
+    args = parse_args([ExecOperation.op_boot.value, SyntaxArg.arg_command, cmd])
 
     # then:
     assert getattr(args, ParsedArg.name_command.value) == cmd
 
     # when: short arg
-    args_c = parse_args([SubCommand.command_boot.value, SyntaxArg.arg_c, cmd])
+    args_c = parse_args([ExecOperation.op_boot.value, SyntaxArg.arg_c, cmd])
 
     # then: short arg
     assert getattr(args_c, ParsedArg.name_command.value) == cmd
@@ -58,30 +58,30 @@ def test_parse_args_env():
     env_dir = "/path/to/env"
 
     # when: long arg
-    args = parse_args([SubCommand.command_boot.value, SyntaxArg.arg_env, env_dir])
+    args = parse_args([ExecOperation.op_boot.value, SyntaxArg.arg_env, env_dir])
 
     # then: long arg
     assert getattr(args, ParsedArg.name_selected_env_dir.value) == env_dir
 
     # when: short arg
-    args_e = parse_args([SubCommand.command_boot.value, SyntaxArg.arg_e, env_dir])
+    args_e = parse_args([ExecOperation.op_boot.value, SyntaxArg.arg_e, env_dir])
 
     # then: short arg
     assert getattr(args_e, ParsedArg.name_selected_env_dir.value) == env_dir
 
 
-def test_parse_args_sub_command():
+def test_parse_args_exec_operation():
     # when: boot command
-    args_prime = parse_args([SubCommand.command_boot.value])
+    args_prime = parse_args([ExecOperation.op_boot.value])
 
     # then: boot command
-    assert getattr(args_prime, ParsedArg.name_sub_command.value) == SubCommand.command_boot.value
+    assert getattr(args_prime, ParsedArg.name_exec_operation.value) == ExecOperation.op_boot.value
 
     # when: eval command
-    args_config = parse_args([SubCommand.command_eval.value])
+    args_config = parse_args([ExecOperation.op_eval.value])
 
     # then: eval command
-    assert getattr(args_config, ParsedArg.name_sub_command.value) == SubCommand.command_eval.value
+    assert getattr(args_config, ParsedArg.name_exec_operation.value) == ExecOperation.op_eval.value
 
 
 def test_parse_args_log_level():
@@ -121,7 +121,7 @@ def test_parse_args_final_state():
     state = "some_state"
 
     # when:
-    args = parse_args([SubCommand.command_boot.value, SyntaxArg.arg_final_state, state])
+    args = parse_args([ExecOperation.op_boot.value, SyntaxArg.arg_final_state, state])
 
     # then:
     assert getattr(args, ParsedArg.name_final_state.value) == state
@@ -133,7 +133,7 @@ def test_parse_args_final_state():
         (
             [],
             {
-                ParsedArg.name_sub_command.value: SubCommand.command_boot.value,
+                ParsedArg.name_exec_operation.value: ExecOperation.op_boot.value,
                 ParsedArg.name_selected_env_dir.value: None,
                 SyntaxArg.dest_quiet: 0,
                 SyntaxArg.dest_verbose: 0,
@@ -144,7 +144,7 @@ def test_parse_args_final_state():
         (
             ["boot"],
             {
-                ParsedArg.name_sub_command.value: SubCommand.command_boot.value,
+                ParsedArg.name_exec_operation.value: ExecOperation.op_boot.value,
                 ParsedArg.name_selected_env_dir.value: None,
                 ParsedArg.name_final_state.value: None,
                 SyntaxArg.dest_quiet: 0,
@@ -155,7 +155,7 @@ def test_parse_args_final_state():
         (
             ["boot", "--final_state", "some_state"],
             {
-                ParsedArg.name_sub_command.value: SubCommand.command_boot.value,
+                ParsedArg.name_exec_operation.value: ExecOperation.op_boot.value,
                 ParsedArg.name_selected_env_dir.value: None,
                 ParsedArg.name_final_state.value: "some_state",
                 SyntaxArg.dest_quiet: 0,
@@ -166,7 +166,7 @@ def test_parse_args_final_state():
         (
             ["reboot"],
             {
-                ParsedArg.name_sub_command.value: "reboot",
+                ParsedArg.name_exec_operation.value: "reboot",
                 ParsedArg.name_selected_env_dir.value: None,
                 SyntaxArg.dest_quiet: 0,
                 SyntaxArg.dest_verbose: 0,
@@ -175,7 +175,7 @@ def test_parse_args_final_state():
         (
             ["eval"],
             {
-                ParsedArg.name_sub_command.value: "eval",
+                ParsedArg.name_exec_operation.value: "eval",
                 ParsedArg.name_selected_env_dir.value: None,
                 SyntaxArg.dest_quiet: 0,
                 SyntaxArg.dest_verbose: 0,
@@ -184,7 +184,7 @@ def test_parse_args_final_state():
         (
             ["-q", "boot"],
             {
-                ParsedArg.name_sub_command.value: SubCommand.command_boot.value,
+                ParsedArg.name_exec_operation.value: ExecOperation.op_boot.value,
                 ParsedArg.name_selected_env_dir.value: None,
                 ParsedArg.name_final_state.value: None,
                 SyntaxArg.dest_quiet: 1,
@@ -195,7 +195,7 @@ def test_parse_args_final_state():
         (
             ["boot", "-v"],
             {
-                ParsedArg.name_sub_command.value: SubCommand.command_boot.value,
+                ParsedArg.name_exec_operation.value: ExecOperation.op_boot.value,
                 ParsedArg.name_selected_env_dir.value: None,
                 ParsedArg.name_final_state.value: None,
                 SyntaxArg.dest_quiet: 0,
@@ -206,7 +206,7 @@ def test_parse_args_final_state():
         (
             ["boot", "-q"],
             {
-                ParsedArg.name_sub_command.value: SubCommand.command_boot.value,
+                ParsedArg.name_exec_operation.value: ExecOperation.op_boot.value,
                 ParsedArg.name_selected_env_dir.value: None,
                 ParsedArg.name_final_state.value: None,
                 SyntaxArg.dest_quiet: 1,
@@ -217,7 +217,7 @@ def test_parse_args_final_state():
         (
             ["-vvv", "boot"],
             {
-                ParsedArg.name_sub_command.value: SubCommand.command_boot.value,
+                ParsedArg.name_exec_operation.value: ExecOperation.op_boot.value,
                 ParsedArg.name_selected_env_dir.value: None,
                 ParsedArg.name_final_state.value: None,
                 SyntaxArg.dest_quiet: 0,
@@ -228,7 +228,7 @@ def test_parse_args_final_state():
         (
             ["boot", "--env", "some/path"],
             {
-                ParsedArg.name_sub_command.value: SubCommand.command_boot.value,
+                ParsedArg.name_exec_operation.value: ExecOperation.op_boot.value,
                 ParsedArg.name_selected_env_dir.value: "some/path",
                 ParsedArg.name_final_state.value: None,
                 SyntaxArg.dest_quiet: 0,
@@ -239,7 +239,7 @@ def test_parse_args_final_state():
         (
             ["--env", "some/path"],
             {
-                ParsedArg.name_sub_command.value: SubCommand.command_boot.value,
+                ParsedArg.name_exec_operation.value: ExecOperation.op_boot.value,
                 ParsedArg.name_selected_env_dir.value: "some/path",
                 ParsedArg.name_final_state.value: None,
                 SyntaxArg.dest_quiet: 0,
@@ -250,7 +250,7 @@ def test_parse_args_final_state():
         (
             ["--env", "default_env"],
             {
-                ParsedArg.name_sub_command.value: SubCommand.command_boot.value,
+                ParsedArg.name_exec_operation.value: ExecOperation.op_boot.value,
                 ParsedArg.name_selected_env_dir.value: "default_env",
                 ParsedArg.name_final_state.value: None,
                 SyntaxArg.dest_quiet: 0,
@@ -260,7 +260,7 @@ def test_parse_args_final_state():
         ),
     ],
 )
-def test_argparse_subcommands_parametrized(test_argv, expected_dict):
+def test_argparse_execoperations_parametrized(test_argv, expected_dict):
     parsed_args = try_main.parse_args(test_argv)
     assert vars(parsed_args) == expected_dict
 
@@ -290,7 +290,7 @@ def test_argparse_env_common_arg(test_argv, expected_env):
     assert getattr(parsed_args, ParsedArg.name_selected_env_dir.value) == expected_env
 
 
-def test_main_help_contains_subcommand_descriptions():
+def test_main_help_contains_execoperation_descriptions():
     string_io = io.StringIO()
     with redirect_stdout(string_io):
         with pytest.raises(SystemExit):
@@ -315,10 +315,10 @@ def test_main_help_contains_subcommand_descriptions():
     assert normalize_space("eval Evaluate effective config (print it on `stdout`).") in normalized_output
 
 
-def test_subcommand_help_formatting():
+def test_execoperation_help_formatting():
     string_io = io.StringIO()
     with redirect_stdout(string_io):
         with pytest.raises(SystemExit):
             try_main.parse_args(["-h"])
     help_output = string_io.getvalue()
-    assert "Sub commands:\n" in help_output
+    assert "Exec operations:\n" in help_output

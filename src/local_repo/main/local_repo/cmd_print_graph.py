@@ -20,7 +20,7 @@ from protoprimer.primer_kernel import (
     EnvState,
     StateGraph,
     StateNode,
-    SubCommand,
+    ExecOperation,
     TargetState,
 )
 
@@ -57,7 +57,7 @@ def custom_main():
         output_layout=OutputLayout(parsed_args.layout),
         target_state=TargetState[parsed_args.target_state],
         entry_func=EntryFunc[parsed_args.entry_func],
-        sub_command=SubCommand[parsed_args.sub_command] if parsed_args.sub_command else None,
+        exec_operation=ExecOperation[parsed_args.exec_operation] if parsed_args.exec_operation else None,
     )
 
 
@@ -73,18 +73,18 @@ def run_print_graph(
     output_layout: OutputLayout,
     target_state: TargetState,
     entry_func: EntryFunc,
-    sub_command: SubCommand | None,
+    exec_operation: ExecOperation | None,
 ) -> None:
 
     logger.info(f"output_format: {output_format}")
     logger.info(f"output_layout: {output_layout}")
     logger.info(f"target_state: {target_state}")
     logger.info(f"entry_func: {entry_func}")
-    logger.info(f"sub_command: {sub_command}")
+    logger.info(f"exec_operation: {exec_operation}")
 
     env_ctx = (
         ContextBuilder()
-        .sub_command(sub_command)
+        .exec_operation(exec_operation)
         .entry_func(entry_func)
         .is_app(entry_func in [EntryFunc.func_boot_env, EntryFunc.func_run_main])
         .forced_final_state(target_state.value.name)
@@ -163,11 +163,11 @@ def init_arg_parser():
         help="Entry function coordinate.",
     )
     arg_parser.add_argument(
-        "--sub_command",
-        dest="sub_command",
-        choices=[enum_item.name for enum_item in SubCommand],
+        "--exec_operation",
+        dest="exec_operation",
+        choices=[enum_item.name for enum_item in ExecOperation],
         default=None,
-        help="Sub command coordinate.",
+        help="Exec operation coordinate.",
     )
 
     # ===

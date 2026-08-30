@@ -166,19 +166,19 @@ def test_cli_structure_compatibility():
         assert opt_key in expected_main_data
 
     # then:
-    # Subcommand options must match the spec exactly (bidirectional):
+    # ExecOperation options must match the spec exactly (bidirectional):
 
-    for subcommand in ["boot", "reboot", "eval"]:
-        actual_subparser = subparsers_action.choices[subcommand]
+    for execoperation in ["boot", "reboot", "eval"]:
+        actual_subparser = subparsers_action.choices[execoperation]
         actual_sub_data = extract_parser_data(actual_subparser)
 
-        cmd_factory, cmd_name, search_args = spec_app.command_manager.find_command([subcommand])
-        cmd_instance = cmd_factory(spec_app, None, cmd_name=subcommand)
+        cmd_factory, cmd_name, search_args = spec_app.command_manager.find_command([execoperation])
+        cmd_instance = cmd_factory(spec_app, None, cmd_name=execoperation)
         expected_subparser = cmd_instance.get_parser("test")
         expected_sub_data = extract_parser_data(expected_subparser)
 
-        # In cliff, subcommands might inherit global options, but in protoprimer they are shared via parents.
-        # We only check the specific options for each subcommand.
+        # In cliff, execoperations might inherit global options, but in protoprimer they are shared via parents.
+        # We only check the specific options for each execoperation.
         for opt_key, expected_spec in expected_sub_data.items():
             if opt_key in expected_main_data:
                 continue
@@ -223,14 +223,14 @@ def test_parse_args_behavior(argv, expected_dest, expected_val):
     assert getattr(parsed_args, expected_dest) == expected_val
 
 
-def test_default_subcommand():
+def test_default_execoperation():
     """
-    Verify that `boot` is the default subcommand when none is provided.
+    Verify that `boot` is the default execoperation when none is provided.
     """
 
     # given:
 
-    # (no subcommand in argv)
+    # (no execoperation in argv)
 
     # when:
 
@@ -238,5 +238,5 @@ def test_default_subcommand():
 
     # then:
 
-    assert parsed_args.sub_command == "boot"
+    assert parsed_args.exec_operation == "boot"
     assert parsed_args.stderr_log_level_quiet == 1

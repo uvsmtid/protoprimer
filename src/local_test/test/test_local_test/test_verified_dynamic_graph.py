@@ -14,7 +14,7 @@ from protoprimer.primer_kernel import (
     EntryFunc,
     EnvContext,
     EnvState,
-    SubCommand,
+    ExecOperation,
 )
 
 
@@ -30,7 +30,7 @@ def _count_reachable_states(env_ctx: EnvContext) -> int:
 def _env_ctx_to_dict(env_ctx: VerifyingEnvContext) -> dict[str, Any]:
     return {
         "entry_func": env_ctx._entry_func.name if env_ctx._entry_func else None,
-        "sub_command": env_ctx._sub_command.name if env_ctx._sub_command else None,
+        "exec_operation": env_ctx._exec_operation.name if env_ctx._exec_operation else None,
         "prepare_venv": env_ctx._prepare_venv,
         "is_log_enabled": env_ctx._is_log_enabled,
     }
@@ -44,16 +44,16 @@ def _find_max_deps_env_ctx() -> tuple[VerifyingEnvContext, int]:
     best_env_ctx: VerifyingEnvContext | None = None
     max_count: int = -1
 
-    for entry_func, sub_command, prepare_venv, is_log_enabled in itertools.product(
+    for entry_func, exec_operation, prepare_venv, is_log_enabled in itertools.product(
         list(EntryFunc),
-        list(SubCommand),
+        list(ExecOperation),
         [True, False],
         [True, False],
     ):
         env_ctx = VerifyingEnvContext()
         env_ctx._entry_func = entry_func
         env_ctx._is_app = entry_func in (EntryFunc.func_boot_env, EntryFunc.func_run_main)
-        env_ctx._sub_command = sub_command
+        env_ctx._exec_operation = exec_operation
         env_ctx._prepare_venv = prepare_venv
         env_ctx._is_log_enabled = is_log_enabled
         try:

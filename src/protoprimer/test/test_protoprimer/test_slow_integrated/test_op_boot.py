@@ -19,23 +19,23 @@ from protoprimer.primer_kernel import (
     ConfConstInput,
     ConfConstPrimer,
     ConfDst,
-    SubCommand,
+    ExecOperation,
     SyntaxArg,
 )
 
 
 def test_relationship():
-    assert_test_module_name_embeds_str(SubCommand.command_boot.value)
+    assert_test_module_name_embeds_str(ExecOperation.op_boot.value)
 
 
-def test_command_boot(tmp_path: Path):
+def test_op_boot(tmp_path: Path):
     """
     This test runs `proto_code` directly (rather than importing it via `entry_script`).
 
     It uses `create_max_layout` (see FT_59_95_81_63.env_layout.md).
     """
 
-    assert_test_func_name_embeds_str(SubCommand.command_boot.value)
+    assert_test_func_name_embeds_str(ExecOperation.op_boot.value)
 
     # given:
 
@@ -81,6 +81,6 @@ def test_command_boot(tmp_path: Path):
     run_primer_main(
         [
             str(proto_kernel_abs_path),
-            SubCommand.command_eval.value,
+            ExecOperation.op_eval.value,
         ]
     )

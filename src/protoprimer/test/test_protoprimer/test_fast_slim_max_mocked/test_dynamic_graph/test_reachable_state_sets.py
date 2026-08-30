@@ -5,7 +5,7 @@ from protoprimer.primer_kernel import (
     EntryFunc,
     EnvContext,
     EnvState,
-    SubCommand,
+    ExecOperation,
 )
 from local_repo.misc_tools.graph_utils import (
     topological_sort_of_verified_states,
@@ -15,14 +15,14 @@ from local_repo.misc_tools.graph_utils import (
 def _make_env_ctx(
     entry_func: EntryFunc,
     prepare_venv: bool,
-    sub_command: SubCommand | None,
+    exec_operation: ExecOperation | None,
     is_log_enabled: bool,
 ) -> EnvContext:
     env_ctx = VerifyingEnvContext()
     env_ctx._entry_func = entry_func
     env_ctx._is_app = entry_func in (EntryFunc.func_boot_env, EntryFunc.func_run_main)
     env_ctx._prepare_venv = prepare_venv
-    env_ctx._sub_command = sub_command
+    env_ctx._exec_operation = exec_operation
     env_ctx._is_log_enabled = is_log_enabled
     return env_ctx
 
@@ -51,7 +51,7 @@ class TestTopologicalSort:
         env_ctx = _make_env_ctx(
             entry_func=EntryFunc.func_boot_env,
             prepare_venv=True,
-            sub_command=SubCommand.command_boot,
+            exec_operation=ExecOperation.op_boot,
             is_log_enabled=False,
         )
 
@@ -72,7 +72,7 @@ class TestTopologicalSort:
             EnvState.state_args_parsed.name,
             EnvState.state_input_stderr_log_level_eval_finalized.name,
             EnvState.state_input_stderr_log_level_handler_configured.name,
-            EnvState.state_input_sub_command_arg_loaded.name,
+            EnvState.state_input_exec_operation_loaded.name,
             EnvState.state_input_final_state_eval_finalized.name,
             EnvState.state_func_boot_env_executed.name,
             EnvState.state_everything_executed.name,
@@ -86,7 +86,7 @@ class TestTopologicalSort:
         env_ctx = _make_env_ctx(
             entry_func=EntryFunc.func_start_app,
             prepare_venv=False,
-            sub_command=None,
+            exec_operation=None,
             is_log_enabled=False,
         )
 
@@ -114,7 +114,7 @@ class TestTopologicalSort:
         env_ctx = _make_env_ctx(
             entry_func=EntryFunc.func_call_lib,
             prepare_venv=False,
-            sub_command=None,
+            exec_operation=None,
             is_log_enabled=False,
         )
 
@@ -142,7 +142,7 @@ class TestTopologicalSort:
         env_ctx = _make_env_ctx(
             entry_func=EntryFunc.func_boot_env,
             prepare_venv=False,
-            sub_command=SubCommand.command_boot,
+            exec_operation=ExecOperation.op_boot,
             is_log_enabled=False,
         )
 
@@ -163,7 +163,7 @@ class TestTopologicalSort:
             EnvState.state_args_parsed.name,
             EnvState.state_input_stderr_log_level_eval_finalized.name,
             EnvState.state_input_stderr_log_level_handler_configured.name,
-            EnvState.state_input_sub_command_arg_loaded.name,
+            EnvState.state_input_exec_operation_loaded.name,
             EnvState.state_input_final_state_eval_finalized.name,
             EnvState.state_func_boot_env_executed.name,
             EnvState.state_everything_executed.name,

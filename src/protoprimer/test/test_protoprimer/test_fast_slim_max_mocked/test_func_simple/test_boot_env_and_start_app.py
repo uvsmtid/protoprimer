@@ -16,7 +16,7 @@ from protoprimer.primer_kernel import (
     boot_env,
     EntryFunc,
     EnvVar,
-    SubCommand,
+    ExecOperation,
     StateStride,
 )
 

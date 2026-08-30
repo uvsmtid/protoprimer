@@ -324,33 +324,33 @@ class ExecMode(enum.Enum):
     mode_api = "api"
 
 
-class SubCommand(enum.Enum):
+class ExecOperation(enum.Enum):
     """
-    Various sub commands the script can be run with.
+    Various exec operations the script can be run with.
 
-    See FT_11_27_29_83.sub_command.md
+    See FT_11_27_29_83.exec_operation.md
     """
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-    command_boot = "boot"
+    op_boot = "boot"
 
     # TODO: This is not used yet. It should call "some_module:some_main".
-    command_start = "start"
+    op_start = "start"
 
     # FT_42_03_79_73.reboot_env.md
     # UC_61_12_90_59.upgrade_venv.md
-    command_reboot = "reboot"
+    op_reboot = "reboot"
 
     # FT_00_22_19_59.derived_config.md
     # FT_19_44_42_19.effective_config.md
-    command_eval = "eval"
+    op_eval = "eval"
 
-    # TODO: TODO_73_71_31_84.sub_command_check_or_info.md: maybe merge `info` and `check` use cases?
+    # TODO: TODO_73_71_31_84.exec_operation_check_or_info.md: maybe merge `info` and `check` use cases?
     #       If we specify which `StateStride` or which `EnvState` to check things for, it might be useful.
     # TODO: implement? It must find its application to check things before `venv`.
-    command_check = "check"
+    op_check = "check"
 
 
-# TODO: TODO_31_76_38_60.sub_command_for_shell.md: remove "command" (when replaced by `shell_mode` or `run_mode`):
+# TODO: TODO_31_76_38_60.exec_operation_for_shell.md: remove "command" (when replaced by `shell_mode` or `run_mode`):
 class CommandAction(enum.Enum):
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     action_command = "command"
@@ -428,7 +428,7 @@ class ValueName(enum.Enum):
 
     value_stderr_log_level = "stderr_log_level"
 
-    value_sub_command = "sub_command"
+    value_exec_operation = "exec_operation"
 
     value_final_state = "final_state"
 
@@ -515,7 +515,7 @@ class ParsedArg(enum.Enum):
 
     name_command = f"{KeyWord.key_run.value}_{CommandAction.action_command.value}"
 
-    name_sub_command = str(ValueName.value_sub_command.value)
+    name_exec_operation = str(ValueName.value_exec_operation.value)
 
     name_final_state = str(ValueName.value_final_state.value)
 
@@ -1519,14 +1519,14 @@ def _create_parent_argparser():
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
 def _create_child_argparser(parent_argparsers):
-    def _create_boot_parser(sub_command_parsers):
-        sub_command_desc = "Bootstrap whatever is missing in the environment."
-        parser_boot = sub_command_parsers.add_parser(
-            SubCommand.command_boot.value,
-            help=sub_command_desc,
-            description=sub_command_desc,
+    def _create_boot_parser(exec_operation_parsers):
+        exec_operation_desc = "Bootstrap whatever is missing in the environment."
+        parser_boot = exec_operation_parsers.add_parser(
+            ExecOperation.op_boot.value,
+            help=exec_operation_desc,
+            description=exec_operation_desc,
         )
-        parser_boot.set_defaults(sub_command=SubCommand.command_boot.value)
+        parser_boot.set_defaults(exec_operation=ExecOperation.op_boot.value)
         parser_boot.add_argument(
             SyntaxArg.arg_c,
             SyntaxArg.arg_command,
@@ -1551,32 +1551,32 @@ def _create_child_argparser(parent_argparsers):
             help=f"Select final `{EnvState.__name__}` name.",
         )
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-    def _create_reset_parser(sub_command_parsers):
-        sub_command_desc = "Bootstrap from scratch: re-create `venv`, re-install dependencies, re-pin versions, ..."
-        parser_reset = sub_command_parsers.add_parser(
-            SubCommand.command_reboot.value,
-            help=sub_command_desc,
-            description=sub_command_desc,
+    def _create_reset_parser(exec_operation_parsers):
+        exec_operation_desc = "Bootstrap from scratch: re-create `venv`, re-install dependencies, re-pin versions, ..."
+        parser_reset = exec_operation_parsers.add_parser(
+            ExecOperation.op_reboot.value,
+            help=exec_operation_desc,
+            description=exec_operation_desc,
         )
-        parser_reset.set_defaults(sub_command=SubCommand.command_reboot.value)
+        parser_reset.set_defaults(exec_operation=ExecOperation.op_reboot.value)
 
-    def _create_eval_parser(sub_command_parsers):
-        sub_command_desc = "Evaluate effective config (print it on `stdout`)."
-        parser_eval = sub_command_parsers.add_parser(
-            SubCommand.command_eval.value,
-            help=sub_command_desc,
-            description=sub_command_desc,
+    def _create_eval_parser(exec_operation_parsers):
+        exec_operation_desc = "Evaluate effective config (print it on `stdout`)."
+        parser_eval = exec_operation_parsers.add_parser(
+            ExecOperation.op_eval.value,
+            help=exec_operation_desc,
+            description=exec_operation_desc,
         )
-        parser_eval.set_defaults(sub_command=SubCommand.command_eval.value)
+        parser_eval.set_defaults(exec_operation=ExecOperation.op_eval.value)
 
-    def _create_check_parser(sub_command_parsers):
-        sub_command_desc = "Check the environment configuration."
-        parser_check = sub_command_parsers.add_parser(
-            SubCommand.command_check.value,
-            help=sub_command_desc,
-            description=sub_command_desc,
+    def _create_check_parser(exec_operation_parsers):
+        exec_operation_desc = "Check the environment configuration."
+        parser_check = exec_operation_parsers.add_parser(
+            ExecOperation.op_check.value,
+            help=exec_operation_desc,
+            description=exec_operation_desc,
         )
-        parser_check.set_defaults(sub_command=SubCommand.command_check.value)
+        parser_check.set_defaults(exec_operation=ExecOperation.op_check.value)
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     child_argparser = CustomArgumentParser(
         description=f"The early [{PrimerRuntime.runtime_proto.value}] environment bootstrapper [{KeyWord.key_primer.value}].",
@@ -1585,10 +1585,10 @@ def _create_child_argparser(parent_argparsers):
     )
 
     child_argparsers = child_argparser.add_subparsers(
-        dest=ParsedArg.name_sub_command.value,
-        title="Sub commands",
-        description=f"Select one of the following sub commands (default: `{SubCommand.command_boot.value}`):",
-        metavar="sub_command",
+        dest=ParsedArg.name_exec_operation.value,
+        title="Exec operations",
+        description=f"Select one of the following exec operations (default: `{ExecOperation.op_boot.value}`):",
+        metavar="exec_operation",
     )
     child_argparsers.required = False
 
@@ -1596,7 +1596,7 @@ def _create_child_argparser(parent_argparsers):
     _create_reset_parser(child_argparsers)
     _create_eval_parser(child_argparsers)
 
-    # TODO: TODO_73_71_31_84.sub_command_check_or_info.md: implement
+    # TODO: TODO_73_71_31_84.exec_operation_check_or_info.md: implement
     # noinspection PyUnreachableCode
     if False:
         _create_check_parser(child_argparsers)
@@ -1606,12 +1606,12 @@ def _create_child_argparser(parent_argparsers):
 
 def parse_args(remaining_argv=None) -> argparse.Namespace:
     """
-    Parse CLI args by creating parent and child (sub command) parsers.
+    Parse CLI args by creating parent and child (exec operation) parsers.
 
     This function uses a two-phase parsing to allow common options
     which can be placed anywhere:
-    * ... -q boot (option before sub command `SubCommand.command_boot`)
-    * ... boot -q (option after sub command `SubCommand.command_boot`)
+    * ... -q boot (option before exec operation `ExecOperation.op_boot`)
+    * ... boot -q (option after exec operation `ExecOperation.op_boot`)
 
     See also: FT_62_88_55_10.CLI_compatibility.md
     """
@@ -1626,7 +1626,7 @@ def parse_args(remaining_argv=None) -> argparse.Namespace:
         remaining_argv,
     ) = parent_argparser.parse_known_args(remaining_argv)
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-    # Phase 2: parse sub command args:
+    # Phase 2: parse exec operation args:
     child_argparser = _create_child_argparser(
         parent_argparsers=[
             parent_argparser,
@@ -1638,14 +1638,14 @@ def parse_args(remaining_argv=None) -> argparse.Namespace:
         #
     ):
         try:
-            # Try to parse with `SubCommand.command_boot` as the default sub command:
+            # Try to parse with `ExecOperation.op_boot` as the default exec operation:
             parsed_args = child_argparser.parse_args(
-                [SubCommand.command_boot.value] + remaining_argv,
+                [ExecOperation.op_boot.value] + remaining_argv,
                 namespace=argparse.Namespace(**vars(parsed_args)),
             )
         except ValueError:
-            # If that fails, it might be because another sub command was specified.
-            # In that case, parse without any default sub command.
+            # If that fails, it might be because another exec operation was specified.
+            # In that case, parse without any default exec operation.
             try:
                 parsed_args = child_argparser.parse_args(
                     remaining_argv,
@@ -1679,8 +1679,8 @@ def str_to_bool(v: str) -> bool:
 class RunStrategy:
     """
     See related:
-    *   `SubCommand`
-    *   FT_11_27_29_83.sub_command.md
+    *   `ExecOperation`
+    *   FT_11_27_29_83.exec_operation.md
 
     TODO: FT_77_15_06_50.dynamic_DAG.md:
           Currently, `RunStrategy` is degenerated into single implementation `ExitCodeReporter`.
@@ -2128,61 +2128,57 @@ class Bootstrapper_state_input_stderr_log_level_handler_configured(AbstractCachi
 
 # noinspection PyPep8Naming
 @conditional_factory
-class Bootstrapper_state_input_sub_command_arg_loaded_is_app(AbstractCachingStateNode[SubCommand]):
+class Bootstrapper_state_input_exec_operation_loaded_is_app(AbstractCachingStateNode[ExecOperation]):
 
     _parent_states = staticmethod(lambda: [EnvState.state_args_parsed.name])
-    _state_name = staticmethod(lambda: EnvState.state_input_sub_command_arg_loaded.name)
+    _state_name = staticmethod(lambda: EnvState.state_input_exec_operation_loaded.name)
 
     def _eval_state_once(self) -> ValueType:
         state_args_parsed: argparse.Namespace = self.eval_parent_state(EnvState.state_args_parsed.name)
-        state_input_sub_command_arg_loaded: SubCommand = SubCommand(
+        state_input_exec_operation_loaded: ExecOperation = ExecOperation(
             getattr(
                 state_args_parsed,
-                ParsedArg.name_sub_command.value,
+                ParsedArg.name_exec_operation.value,
             )
         )
-        self.env_ctx._sub_command = state_input_sub_command_arg_loaded
-        return state_input_sub_command_arg_loaded
+        self.env_ctx._exec_operation = state_input_exec_operation_loaded
+        return state_input_exec_operation_loaded
 
 
-# TODO: FT_77_15_06_50.dynamic_DAG.md:
-#       Avoid `arg` in the name (CLI is not available for all use cases).
 # noinspection PyPep8Naming
 @conditional_factory
-class Bootstrapper_state_input_sub_command_arg_loaded_func_start_app(AbstractCachingStateNode[SubCommand]):
+class Bootstrapper_state_input_exec_operation_loaded_func_start_app(AbstractCachingStateNode[ExecOperation]):
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-    _state_name = staticmethod(lambda: EnvState.state_input_sub_command_arg_loaded.name)
+    _state_name = staticmethod(lambda: EnvState.state_input_exec_operation_loaded.name)
 
     def _eval_state_once(self) -> ValueType:
-        self.env_ctx._sub_command = SubCommand.command_start
-        return self.env_ctx._sub_command
+        self.env_ctx._exec_operation = ExecOperation.op_start
+        return self.env_ctx._exec_operation
 
 
-# TODO: FT_77_15_06_50.dynamic_DAG.md:
-#       Avoid `arg` in the name (CLI is not available for all use cases).
 # noinspection PyPep8Naming
 @conditional_factory
-class Bootstrapper_state_input_sub_command_arg_loaded_func_call_lib(AbstractCachingStateNode[SubCommand]):
+class Bootstrapper_state_input_exec_operation_loaded_func_call_lib(AbstractCachingStateNode[ExecOperation]):
 
-    _state_name = staticmethod(lambda: EnvState.state_input_sub_command_arg_loaded.name)
+    _state_name = staticmethod(lambda: EnvState.state_input_exec_operation_loaded.name)
 
     def _eval_state_once(self) -> ValueType:
-        self.env_ctx._sub_command = None
+        # TODO: TODO_47_08_90_90.propagate_exec_operation_for_func_call_lib.md:
+        #       Set `ExecOperation.op_get_config`.
+        self.env_ctx._exec_operation = None
         return None
 
 
-# TODO: FT_77_15_06_50.dynamic_DAG.md:
-#       Avoid `arg` in the name (CLI is not available for all use cases).
 # noinspection PyPep8Naming
-class Factory_state_input_sub_command_arg_loaded(NodeFactory[SubCommand]):
+class Factory_state_input_exec_operation_loaded(NodeFactory[ExecOperation]):
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     def create_state_node(self) -> StateNode[ValueType]:
         if self.env_ctx._is_app:
-            return Bootstrapper_state_input_sub_command_arg_loaded_is_app(self.env_ctx)
+            return Bootstrapper_state_input_exec_operation_loaded_is_app(self.env_ctx)
         elif self.env_ctx._entry_func == EntryFunc.func_start_app:
-            return Bootstrapper_state_input_sub_command_arg_loaded_func_start_app(self.env_ctx)
+            return Bootstrapper_state_input_exec_operation_loaded_func_start_app(self.env_ctx)
         elif self.env_ctx._entry_func == EntryFunc.func_call_lib:
-            return Bootstrapper_state_input_sub_command_arg_loaded_func_call_lib(self.env_ctx)
+            return Bootstrapper_state_input_exec_operation_loaded_func_call_lib(self.env_ctx)
         else:
             raise AssertionError(self.env_ctx._entry_func)
 
@@ -2191,12 +2187,12 @@ class Factory_state_input_sub_command_arg_loaded(NodeFactory[SubCommand]):
 @conditional_factory
 class Bootstrapper_state_print_conf_finalized_is_app(AbstractCachingStateNode[bool]):
 
-    _parent_states = staticmethod(lambda: [EnvState.state_input_sub_command_arg_loaded.name])
+    _parent_states = staticmethod(lambda: [EnvState.state_input_exec_operation_loaded.name])
     _state_name = staticmethod(lambda: EnvState.state_print_conf_finalized.name)
 
     def _eval_state_once(self) -> ValueType:
-        sub_command: SubCommand = self.eval_parent_state(EnvState.state_input_sub_command_arg_loaded.name)
-        return sub_command == SubCommand.command_eval
+        exec_operation: ExecOperation = self.eval_parent_state(EnvState.state_input_exec_operation_loaded.name)
+        return exec_operation == ExecOperation.op_eval
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
 # noinspection PyPep8Naming
@@ -2223,12 +2219,12 @@ class Factory_state_print_conf_finalized(NodeFactory[bool]):
 @conditional_factory
 class Bootstrapper_state_prepare_venv_finalized_is_app(AbstractCachingStateNode[bool]):
 
-    _parent_states = staticmethod(lambda: [EnvState.state_input_sub_command_arg_loaded.name])
+    _parent_states = staticmethod(lambda: [EnvState.state_input_exec_operation_loaded.name])
     _state_name = staticmethod(lambda: EnvState.state_prepare_venv_finalized.name)
 
     def _eval_state_once(self) -> ValueType:
-        sub_cmd: SubCommand = self.eval_parent_state(EnvState.state_input_sub_command_arg_loaded.name)
-        self.env_ctx._prepare_venv = sub_cmd != SubCommand.command_start
+        sub_cmd: ExecOperation = self.eval_parent_state(EnvState.state_input_exec_operation_loaded.name)
+        self.env_ctx._prepare_venv = sub_cmd != ExecOperation.op_start
         return self.env_ctx._prepare_venv
 
 
@@ -2267,7 +2263,7 @@ class Bootstrapper_state_input_final_state_eval_finalized_is_app(AbstractCaching
         state_input_final_state_eval_finalized = getattr(
             state_args_parsed,
             ParsedArg.name_final_state.value,
-            # NOTE: The value is only set for `SubCommand.command_boot`, otherwise, this default is used:
+            # NOTE: The value is only set for `ExecOperation.op_boot`, otherwise, this default is used:
             None,
         )
 
@@ -2339,7 +2335,7 @@ class Bootstrapper_state_func_boot_env_executed(AbstractCachingStateNode[bool]):
     _parent_states = staticmethod(
         lambda: [
             EnvState.state_input_stderr_log_level_handler_configured.name,
-            EnvState.state_input_sub_command_arg_loaded.name,
+            EnvState.state_input_exec_operation_loaded.name,
             EnvState.state_input_final_state_eval_finalized.name,
         ]
     )
@@ -2347,27 +2343,27 @@ class Bootstrapper_state_func_boot_env_executed(AbstractCachingStateNode[bool]):
 
     def _eval_state_once(self) -> ValueType:
 
-        state_input_sub_command_arg_loaded: SubCommand = self.eval_parent_state(EnvState.state_input_sub_command_arg_loaded.name)
+        state_input_exec_operation_loaded: ExecOperation = self.eval_parent_state(EnvState.state_input_exec_operation_loaded.name)
         state_input_final_state_eval_finalized: str = self.eval_parent_state(EnvState.state_input_final_state_eval_finalized.name)
 
         state_node: StateNode = self.env_ctx._state_graph.get_state_node(state_input_final_state_eval_finalized)
 
         selected_strategy: RunStrategy
-        if state_input_sub_command_arg_loaded is None:
-            raise ValueError(f"sub command is not defined")
-        elif state_input_sub_command_arg_loaded == SubCommand.command_eval:
+        if state_input_exec_operation_loaded is None:
+            raise ValueError(f"exec operation is not defined")
+        elif state_input_exec_operation_loaded == ExecOperation.op_eval:
             selected_strategy = ExitCodeReporter(self.env_ctx)
             # TODO: FT_77_15_06_50.dynamic_DAG.md:
             #       How does it comply with `EnvContext._forced_final_state`?
             state_node = self.env_ctx._state_graph.get_state_node(EnvState.state_effective_conf_data_printed.name)
-        elif state_input_sub_command_arg_loaded in [
-            SubCommand.command_boot,
-            SubCommand.command_start,
-            SubCommand.command_reboot,
+        elif state_input_exec_operation_loaded in [
+            ExecOperation.op_boot,
+            ExecOperation.op_start,
+            ExecOperation.op_reboot,
         ]:
             selected_strategy = ExitCodeReporter(self.env_ctx)
         else:
-            raise ValueError(f"cannot handle sub command [{state_input_sub_command_arg_loaded}]")
+            raise ValueError(f"cannot handle exec operation [{state_input_exec_operation_loaded}]")
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
         selected_strategy.execute_strategy(state_node)
         return True
@@ -2572,7 +2568,7 @@ class Bootstrapper_state_stride_py_arbitrary_reached_is_app(AbstractCachingState
 
     _parent_states = staticmethod(
         lambda: [
-            EnvState.state_input_sub_command_arg_loaded.name,
+            EnvState.state_input_exec_operation_loaded.name,
             EnvState.state_input_start_id_var_loaded.name,
         ]
     )
@@ -2582,21 +2578,22 @@ class Bootstrapper_state_stride_py_arbitrary_reached_is_app(AbstractCachingState
 
         state_stride_py_arbitrary_reached: StateStride = StateStride.stride_py_arbitrary
 
-        state_input_sub_command_arg_loaded: SubCommand = self.eval_parent_state(EnvState.state_input_sub_command_arg_loaded.name)
+        state_input_exec_operation_loaded: ExecOperation = self.eval_parent_state(EnvState.state_input_exec_operation_loaded.name)
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
         if self.env_ctx.has_stride_reached(next_stride=state_stride_py_arbitrary_reached):
             return self.env_ctx.set_max_stride(state_stride_py_arbitrary_reached)
 
         if (
             (os.environ.get(EnvVar.var_PROTOPRIMER_PROTO_CODE.value, None) is not None)
+            # TODO: TODO_21_72_88_59.use_factory_to_avoid_running_boot_env_related_states.md:
             # TODO: FT_77_15_06_50.dynamic_DAG.md:
-            #       Review and clarify `SubCommand.command_start`, `EnvContext._is_app`, ...
-            and state_input_sub_command_arg_loaded == SubCommand.command_start
+            #       Review and clarify `ExecOperation.op_start`, `EnvContext._is_app`, ...
+            and state_input_exec_operation_loaded == ExecOperation.op_start
             #
         ):
             # The only reason for `EnvState.state_stride_py_arbitrary_reached`
             # is to obtain `proto_code` abs path in `EnvState.state_proto_code_file_abs_path_inited`.
-            # Skip `python` switching for `SubCommand.command_start` as the env var already set:
+            # Skip `python` switching for `ExecOperation.op_start` as the env var already set:
             return self.env_ctx.set_max_stride(state_stride_py_arbitrary_reached)
 
         state_input_start_id_var_loaded: str = self.eval_parent_state(EnvState.state_input_start_id_var_loaded.name)
@@ -2877,7 +2874,7 @@ class Bootstrapper_state_ref_root_dir_abs_path_inited(AbstractCachingStateNode[s
         state_ref_root_dir_abs_path_inited: str
         if field_client_dir_rel_path is None:
             warn_once_at_state_stride(
-                f"Field `{ConfField.field_ref_root_dir_rel_path.value}` is [{field_client_dir_rel_path}] - use [{SubCommand.command_eval.value}] sub command for description.",
+                f"Field `{ConfField.field_ref_root_dir_rel_path.value}` is [{field_client_dir_rel_path}] - use [{ExecOperation.op_eval.value}] exec operation for description.",
                 self.env_ctx.get_stride(),
             )
             state_ref_root_dir_abs_path_inited = proto_code_dir_abs_path
@@ -3042,7 +3039,7 @@ class Base_state_selected_env_dir_rel_path(AbstractCachingStateNode[str]):
             field_default_env_dir_rel_path: str | None = state_client_conf_file_data_loaded.get(ConfField.field_default_env_dir_rel_path.value, None)
             if field_default_env_dir_rel_path is None:
                 warn_once_at_state_stride(
-                    f"Field `{ConfField.field_default_env_dir_rel_path.value}` is [{field_default_env_dir_rel_path}] - use [{SubCommand.command_eval.value}] sub command for description.",
+                    f"Field `{ConfField.field_default_env_dir_rel_path.value}` is [{field_default_env_dir_rel_path}] - use [{ExecOperation.op_eval.value}] exec operation for description.",
                     self.env_ctx.get_stride(),
                 )
                 return None
@@ -3101,7 +3098,7 @@ class Bootstrapper_state_selected_env_dir_rel_path_inited_is_app(Base_state_sele
         env_conf_dir_any_path: str | None = getattr(
             state_args_parsed,
             ParsedArg.name_selected_env_dir.value,
-            # NOTE: The value is only set for `SubCommand.command_boot`, otherwise, this default is used:
+            # NOTE: The value is only set for `ExecOperation.op_boot`, otherwise, this default is used:
             None,
         )
         return env_conf_dir_any_path
@@ -3880,7 +3877,7 @@ class Bootstrapper_state_reboot_triggered_is_app(AbstractCachingStateNode[bool])
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     _parent_states = staticmethod(
         lambda: [
-            EnvState.state_input_sub_command_arg_loaded.name,
+            EnvState.state_input_exec_operation_loaded.name,
             EnvState.state_prepare_venv_finalized.name,
             EnvState.state_input_start_id_var_loaded.name,
             EnvState.state_proto_code_file_abs_path_inited.name,
@@ -3895,19 +3892,20 @@ class Bootstrapper_state_reboot_triggered_is_app(AbstractCachingStateNode[bool])
 
     def _eval_state_once(self) -> ValueType:
 
-        state_input_sub_command_arg_loaded: SubCommand = self.eval_parent_state(EnvState.state_input_sub_command_arg_loaded.name)
+        state_input_exec_operation_loaded: ExecOperation = self.eval_parent_state(EnvState.state_input_exec_operation_loaded.name)
 
+        # TODO: TODO_21_72_88_59.use_factory_to_avoid_running_boot_env_related_states.md:
         # TODO: FT_77_15_06_50.dynamic_DAG.md:
-        #       Review and clarify `SubCommand.command_start`, `EnvContext._is_app`, ...
-        if state_input_sub_command_arg_loaded == SubCommand.command_start:
+        #       Review and clarify `ExecOperation.op_start`, `EnvContext._is_app`, ...
+        if state_input_exec_operation_loaded == ExecOperation.op_start:
             # The only reason for `EnvState.state_reboot_triggered`
             # is to destroy `venv` to recreate it later.
-            # Skip it as `venv` is supposed to be ready in `SubCommand.command_start`:
+            # Skip it as `venv` is supposed to be ready in `ExecOperation.op_start`:
             return False
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
         state_input_start_id_var_loaded: str = self.eval_parent_state(EnvState.state_input_start_id_var_loaded.name)
 
-        reboot_env: bool = state_input_sub_command_arg_loaded == SubCommand.command_reboot
+        reboot_env: bool = state_input_exec_operation_loaded == ExecOperation.op_reboot
 
         state_stride_py_required_reached: StateStride = self.eval_parent_state(EnvState.state_stride_py_required_reached.name)
         assert self.env_ctx.get_stride().value >= StateStride.stride_py_required.value
@@ -3973,7 +3971,7 @@ class Factory_state_reboot_triggered(NodeFactory[bool]):
 class Bootstrapper_state_venv_driver_prepared_is_app(AbstractCachingStateNode[VenvDriverBase]):
     _parent_states = staticmethod(
         lambda: [
-            EnvState.state_input_sub_command_arg_loaded.name,
+            EnvState.state_input_exec_operation_loaded.name,
             EnvState.state_required_python_version_inited.name,
             EnvState.state_selected_python_file_abs_path_inited.name,
             EnvState.state_local_venv_dir_abs_path_inited.name,
@@ -3986,7 +3984,7 @@ class Bootstrapper_state_venv_driver_prepared_is_app(AbstractCachingStateNode[Ve
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     def _eval_state_once(self) -> ValueType:
 
-        state_input_sub_command_arg_loaded: SubCommand = self.eval_parent_state(EnvState.state_input_sub_command_arg_loaded.name)
+        state_input_exec_operation_loaded: ExecOperation = self.eval_parent_state(EnvState.state_input_exec_operation_loaded.name)
 
         state_required_python_version_inited: str = self.eval_parent_state(EnvState.state_required_python_version_inited.name)
 
@@ -4028,7 +4026,7 @@ class Bootstrapper_state_venv_driver_prepared_not_is_app(AbstractCachingStateNod
     def _eval_state_once(self) -> ValueType:
         # The only reason for `EnvState.state_venv_driver_prepared`
         # is to prepare `VenvDriverBase` to create `venv`.
-        # Skip it as `venv` is supposed to be ready in `SubCommand.command_start`:
+        # Skip it as `venv` is supposed to be ready in `ExecOperation.op_start`:
         return VenvDriverBase()
 
 
@@ -4051,7 +4049,7 @@ class Bootstrapper_state_stride_py_venv_reached_is_app(AbstractCachingStateNode[
 
     _parent_states = staticmethod(
         lambda: [
-            EnvState.state_input_sub_command_arg_loaded.name,
+            EnvState.state_input_exec_operation_loaded.name,
             EnvState.state_input_start_id_var_loaded.name,
             EnvState.state_proto_code_file_abs_path_inited.name,
             EnvState.state_local_conf_symlink_abs_path_inited.name,
@@ -4072,7 +4070,7 @@ class Bootstrapper_state_stride_py_venv_reached_is_app(AbstractCachingStateNode[
         if self.env_ctx.has_stride_reached(next_stride=state_stride_py_venv_reached):
             return self.env_ctx.set_max_stride(state_stride_py_venv_reached)
 
-        state_input_sub_command_arg_loaded: SubCommand = self.eval_parent_state(EnvState.state_input_sub_command_arg_loaded.name)
+        state_input_exec_operation_loaded: ExecOperation = self.eval_parent_state(EnvState.state_input_exec_operation_loaded.name)
 
         state_input_start_id_var_loaded: str = self.eval_parent_state(EnvState.state_input_start_id_var_loaded.name)
 
@@ -4097,10 +4095,11 @@ class Bootstrapper_state_stride_py_venv_reached_is_app(AbstractCachingStateNode[
         path_to_curr_python: str = get_path_to_curr_python()
         logger.debug(f"path_to_curr_python: {path_to_curr_python}")
 
+        # TODO: TODO_21_72_88_59.use_factory_to_avoid_running_boot_env_related_states.md:
         # TODO: FT_77_15_06_50.dynamic_DAG.md:
-        #       Review and clarify `SubCommand.command_start`, `EnvContext._is_app`, ...
-        if state_input_sub_command_arg_loaded == SubCommand.command_start:
-            # Skip `venv` validation before switch because `SubCommand.command_start` does not switch outside of `venv`:
+        #       Review and clarify `ExecOperation.op_start`, `EnvContext._is_app`, ...
+        if state_input_exec_operation_loaded == ExecOperation.op_start:
+            # Skip `venv` validation before switch because `ExecOperation.op_start` does not switch outside of `venv`:
             pass
         else:
             if is_sub_path(
@@ -4110,7 +4109,7 @@ class Bootstrapper_state_stride_py_venv_reached_is_app(AbstractCachingStateNode[
                 raise AssertionError(f"Current `python` [{path_to_curr_python}] must be outside of the `venv` [{state_local_venv_dir_abs_path_inited}].")
 
         if os.environ.get(EnvVar.var_PROTOPRIMER_MOCKED_RESTART.value, None) is None:
-            if state_input_sub_command_arg_loaded == SubCommand.command_start:
+            if state_input_exec_operation_loaded == ExecOperation.op_start:
                 # Skip required `python` validation because we do not need it to create `venv`:
                 pass
             else:
@@ -4122,19 +4121,19 @@ class Bootstrapper_state_stride_py_venv_reached_is_app(AbstractCachingStateNode[
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
         assert self.env_ctx.get_stride().value <= StateStride.stride_py_required.value
         if not os.path.exists(state_local_venv_dir_abs_path_inited):
-            if state_input_sub_command_arg_loaded == SubCommand.command_start:
-                # The `venv` is supposed to be ready in `SubCommand.command_start`:
-                raise AssertionError(f"`venv` [{state_local_venv_dir_abs_path_inited}] is supposed to be ready in `SubCommand` [{state_input_sub_command_arg_loaded.name}] execute `SubCommand` [{SubCommand.command_boot.name}] to prepare it.")
+            if state_input_exec_operation_loaded == ExecOperation.op_start:
+                # The `venv` is supposed to be ready in `ExecOperation.op_start`:
+                raise AssertionError(f"`venv` [{state_local_venv_dir_abs_path_inited}] is supposed to be ready in `ExecOperation` [{state_input_exec_operation_loaded.name}] execute `ExecOperation` [{ExecOperation.op_boot.name}] to prepare it.")
             else:
                 state_venv_driver_prepared.create_venv(state_local_venv_dir_abs_path_inited, constraints_txt_path)
         else:
             logger.info(f"reusing existing `venv` [{state_local_venv_dir_abs_path_inited}]")
-            if state_input_sub_command_arg_loaded == SubCommand.command_start:
+            if state_input_exec_operation_loaded == ExecOperation.op_start:
                 # Skip `venv` type validation:
                 pass
             else:
                 if not state_venv_driver_prepared.is_mine_venv(state_local_venv_dir_abs_path_inited):
-                    raise AssertionError(f"`venv` [{state_local_venv_dir_abs_path_inited}] was not created by this driver [{state_venv_driver_prepared.get_type().name}] retry with [{SubCommand.command_reboot.value}] sub command.")
+                    raise AssertionError(f"`venv` [{state_local_venv_dir_abs_path_inited}] was not created by this driver [{state_venv_driver_prepared.get_type().name}] retry with [{ExecOperation.op_reboot.value}] exec operation.")
 
         return switch_python(
             curr_python_path=state_selected_python_file_abs_path_inited,
@@ -4170,7 +4169,7 @@ class Bootstrapper_state_stride_py_venv_reached_not_is_app(AbstractCachingStateN
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
         # The `venv` is supposed to be ready when called as `func_start_app`:
         if not os.path.exists(state_local_venv_dir_abs_path_inited):
-            raise AssertionError(f"`venv` [{state_local_venv_dir_abs_path_inited}] is not found, run `{SubCommand.command_boot.value}` first")
+            raise AssertionError(f"`venv` [{state_local_venv_dir_abs_path_inited}] is not found, run `{ExecOperation.op_boot.value}` first")
 
         venv_path_to_python: str = os.path.join(
             state_local_venv_dir_abs_path_inited,
@@ -4201,7 +4200,7 @@ class Bootstrapper_state_protoprimer_package_installed_is_app(AbstractCachingSta
 
     _parent_states = staticmethod(
         lambda: [
-            EnvState.state_input_sub_command_arg_loaded.name,
+            EnvState.state_input_exec_operation_loaded.name,
             EnvState.state_ref_root_dir_abs_path_inited.name,
             EnvState.state_local_conf_symlink_abs_path_inited.name,
             EnvState.state_version_constraints_file_basename_inited.name,
@@ -4215,14 +4214,15 @@ class Bootstrapper_state_protoprimer_package_installed_is_app(AbstractCachingSta
 
     def _eval_state_once(self) -> ValueType:
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-        state_input_sub_command_arg_loaded: SubCommand = self.eval_parent_state(EnvState.state_input_sub_command_arg_loaded.name)
+        state_input_exec_operation_loaded: ExecOperation = self.eval_parent_state(EnvState.state_input_exec_operation_loaded.name)
 
+        # TODO: TODO_21_72_88_59.use_factory_to_avoid_running_boot_env_related_states.md:
         # TODO: FT_77_15_06_50.dynamic_DAG.md:
-        #       Review and clarify `SubCommand.command_start`, `EnvContext._is_app`, ...
-        if state_input_sub_command_arg_loaded == SubCommand.command_start:
+        #       Review and clarify `ExecOperation.op_start`, `EnvContext._is_app`, ...
+        if state_input_exec_operation_loaded == ExecOperation.op_start:
             # The only reason for `EnvState.state_protoprimer_package_installed`
             # is to install dependencies into `venv`.
-            # Skip it as `venv` is supposed to be ready in `SubCommand.command_start`:
+            # Skip it as `venv` is supposed to be ready in `ExecOperation.op_start`:
             return False
 
         state_stride_py_venv_reached: StateStride = self.eval_parent_state(EnvState.state_stride_py_venv_reached.name)
@@ -4357,7 +4357,7 @@ class Bootstrapper_state_version_constraints_generated_is_app(AbstractCachingSta
 
     _parent_states = staticmethod(
         lambda: [
-            EnvState.state_input_sub_command_arg_loaded.name,
+            EnvState.state_input_exec_operation_loaded.name,
             EnvState.state_local_conf_symlink_abs_path_inited.name,
             EnvState.state_version_constraints_file_basename_inited.name,
             EnvState.state_venv_driver_prepared.name,
@@ -4368,14 +4368,15 @@ class Bootstrapper_state_version_constraints_generated_is_app(AbstractCachingSta
 
     def _eval_state_once(self) -> ValueType:
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-        state_input_sub_command_arg_loaded: SubCommand = self.eval_parent_state(EnvState.state_input_sub_command_arg_loaded.name)
+        state_input_exec_operation_loaded: ExecOperation = self.eval_parent_state(EnvState.state_input_exec_operation_loaded.name)
 
+        # TODO: TODO_21_72_88_59.use_factory_to_avoid_running_boot_env_related_states.md:
         # TODO: FT_77_15_06_50.dynamic_DAG.md:
-        #       Review and clarify `SubCommand.command_start`, `EnvContext._is_app`, ...
-        if state_input_sub_command_arg_loaded == SubCommand.command_start:
+        #       Review and clarify `ExecOperation.op_start`, `EnvContext._is_app`, ...
+        if state_input_exec_operation_loaded == ExecOperation.op_start:
             # The only reason for `EnvState.state_version_constraints_generated`
             # is to re-generate the `version_constraints.txt` file based on `venv`.
-            # Skip it as `venv` is supposed to be ready in `SubCommand.command_start`:
+            # Skip it as `venv` is supposed to be ready in `ExecOperation.op_start`:
             return False
 
         state_protoprimer_package_installed: bool = self.eval_parent_state(EnvState.state_protoprimer_package_installed.name)
@@ -4426,7 +4427,7 @@ class Bootstrapper_state_stride_deps_updated_reached_is_app(AbstractCachingState
 
     _parent_states = staticmethod(
         lambda: [
-            EnvState.state_input_sub_command_arg_loaded.name,
+            EnvState.state_input_exec_operation_loaded.name,
             EnvState.state_input_start_id_var_loaded.name,
             EnvState.state_proto_code_file_abs_path_inited.name,
             EnvState.state_local_venv_dir_abs_path_inited.name,
@@ -4442,14 +4443,15 @@ class Bootstrapper_state_stride_deps_updated_reached_is_app(AbstractCachingState
         if self.env_ctx.has_stride_reached(next_stride=state_stride_deps_updated_reached):
             return self.env_ctx.set_max_stride(state_stride_deps_updated_reached)
 
-        state_input_sub_command_arg_loaded: SubCommand = self.eval_parent_state(EnvState.state_input_sub_command_arg_loaded.name)
+        state_input_exec_operation_loaded: ExecOperation = self.eval_parent_state(EnvState.state_input_exec_operation_loaded.name)
 
+        # TODO: TODO_21_72_88_59.use_factory_to_avoid_running_boot_env_related_states.md:
         # TODO: FT_77_15_06_50.dynamic_DAG.md:
-        #       Review and clarify `SubCommand.command_start`, `EnvContext._is_app`, ...
-        if state_input_sub_command_arg_loaded == SubCommand.command_start:
+        #       Review and clarify `ExecOperation.op_start`, `EnvContext._is_app`, ...
+        if state_input_exec_operation_loaded == ExecOperation.op_start:
             # The only reason for `EnvState.state_stride_deps_updated_reached`
             # is to make `venv` dependencies effective.
-            # Skip it as `venv` is supposed to be ready in `SubCommand.command_start`:
+            # Skip it as `venv` is supposed to be ready in `ExecOperation.op_start`:
             return self.env_ctx.set_max_stride(state_stride_deps_updated_reached)
 
         state_proto_code_file_abs_path_inited: str = self.eval_parent_state(EnvState.state_proto_code_file_abs_path_inited.name)
@@ -4503,7 +4505,7 @@ class Bootstrapper_state_proto_code_updated_is_app(AbstractCachingStateNode[bool
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     _parent_states = staticmethod(
         lambda: [
-            EnvState.state_input_sub_command_arg_loaded.name,
+            EnvState.state_input_exec_operation_loaded.name,
             EnvState.state_proto_code_file_abs_path_inited.name,
             EnvState.state_stride_deps_updated_reached.name,
         ]
@@ -4518,13 +4520,14 @@ class Bootstrapper_state_proto_code_updated_is_app(AbstractCachingStateNode[bool
             # Update only after package installation, otherwise, nothing to do:
             return False
 
-        state_input_sub_command_arg_loaded: SubCommand = self.eval_parent_state(EnvState.state_input_sub_command_arg_loaded.name)
+        state_input_exec_operation_loaded: ExecOperation = self.eval_parent_state(EnvState.state_input_exec_operation_loaded.name)
 
+        # TODO: TODO_21_72_88_59.use_factory_to_avoid_running_boot_env_related_states.md:
         # TODO: FT_77_15_06_50.dynamic_DAG.md:
-        #       Review and clarify `SubCommand.command_start`, `EnvContext._is_app`, ...
-        if state_input_sub_command_arg_loaded == SubCommand.command_start:
+        #       Review and clarify `ExecOperation.op_start`, `EnvContext._is_app`, ...
+        if state_input_exec_operation_loaded == ExecOperation.op_start:
             # The only reason for `EnvState.state_proto_code_updated`
-            # is to update sources, but that has to be done in `SubCommand.command_boot`.
+            # is to update sources, but that has to be done in `ExecOperation.op_boot`.
             # Skip:
             return False
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
@@ -4678,7 +4681,7 @@ class Factory_state_input_command_line(NodeFactory[str]):
 
 
 # TODO: FT_77_15_06_50.dynamic_DAG.md:
-#       Evaluating this should be impossible for other future `shell` sub_command.
+#       Evaluating this should be impossible for other future `shell` exec_operation.
 # noinspection PyPep8Naming
 @trivial_factory
 class Bootstrapper_state_command_executed(AbstractCachingStateNode[int]):
@@ -4749,9 +4752,7 @@ class EnvState(enum.Enum):
 
     state_input_stderr_log_level_handler_configured = Bootstrapper_state_input_stderr_log_level_handler_configured
 
-    # TODO: FT_77_15_06_50.dynamic_DAG.md:
-    #       Avoid `arg` in the name (CLI is not available for all use cases).
-    state_input_sub_command_arg_loaded = Factory_state_input_sub_command_arg_loaded
+    state_input_exec_operation_loaded = Factory_state_input_exec_operation_loaded
 
     state_print_conf_finalized = Factory_state_print_conf_finalized
 
@@ -4760,9 +4761,9 @@ class EnvState(enum.Enum):
     state_input_final_state_eval_finalized = Factory_state_input_final_state_eval_finalized
 
     state_func_boot_env_executed = Bootstrapper_state_func_boot_env_executed
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-    state_func_start_app_executed = Factory_state_func_start_app_executed
 
+    state_func_start_app_executed = Factory_state_func_start_app_executed
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     state_func_call_lib_executed = Factory_state_func_call_lib_executed
 
     # Special case: triggers everything:
@@ -4781,9 +4782,9 @@ class EnvState(enum.Enum):
 
     # `ConfLeap.leap_primer`:
     state_primer_conf_file_data_loaded = Bootstrapper_state_primer_conf_file_data_loaded
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-    state_ref_root_dir_abs_path_inited = Bootstrapper_state_ref_root_dir_abs_path_inited
 
+    state_ref_root_dir_abs_path_inited = Bootstrapper_state_ref_root_dir_abs_path_inited
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     state_global_conf_dir_abs_path_inited = Bootstrapper_state_global_conf_dir_abs_path_inited
 
     state_global_conf_file_abs_path_inited = Bootstrapper_state_global_conf_file_abs_path_inited
@@ -4964,6 +4965,8 @@ class EnvContext:
         # Set by `EnvState.state_is_app_defined`:
         # FT_58_74_37_70.boot_vs_start.md
         # FT_62_88_55_10.CLI_compatibility.md
+        # FT_93_57_03_75.app_vs_lib.md
+        # TODO: Rename: `_is_app` is confusing: Is it about user code or `protoprimer` code? It is about `protoprimer`.
         self._is_app: bool | None = None
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
         # Set by `EnvState.state_prepare_venv_finalized`:
@@ -4972,11 +4975,7 @@ class EnvContext:
         # FT_05_08_64_67.start_app.md: False
         self._prepare_venv: bool | None = None
 
-        # TODO: FT_77_15_06_50.dynamic_DAG.md:
-        #       Do not use `_sub_command` directly.
-        #       Instead, use it to set a more specific field based on `SubCommand`
-        #       (which may also be set based on other input).
-        self._sub_command: SubCommand | None = None
+        self._exec_operation: ExecOperation | None = None
 
         # Set by `EnvState.state_input_is_stderr_log_enabled`:
         self._is_log_enabled: bool | None = None
@@ -4987,11 +4986,11 @@ class EnvContext:
         # This is an override for global `_proto_kernel_abs_path`.
         # Same as `EnvVar.var_PROTOPRIMER_PROTO_CODE`, but for non-restart-able `EntryFunc.func_call_lib`.
         self._forced_proto_kernel_abs_path: str | None = None
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
         self._state_graph: StateGraph = self._create_state_graph()
 
         self._register_graph_node_factories()
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     def _create_state_graph(self) -> StateGraph:
         return StateGraph()
 
@@ -5010,7 +5009,7 @@ class EnvContext:
         state_name: str,
     ) -> typing.Any:
         return self._state_graph.eval_state(state_name)
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     def register_factory(
         self,
         state_name: str,
@@ -5018,7 +5017,7 @@ class EnvContext:
         replace_existing: bool = False,
     ) -> NodeFactory | None:
         return self._state_graph.register_factory(state_name, factory_class(self), replace_existing)
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     def get_stride(self) -> StateStride:
         assert self._state_stride is not None
         return self._state_stride
@@ -5032,7 +5031,7 @@ class EnvContext:
         assert self._state_stride is not None
         log_stride.set(self._state_stride)
         return self._state_stride
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     def has_stride_reached(
         self,
         next_stride: StateStride,
@@ -5043,7 +5042,7 @@ class EnvContext:
         if self._state_stride is None:
             return False
         return self._state_stride.value >= next_stride.value
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     def print_exit_line(
         self,
         exit_code: int,
@@ -5054,7 +5053,7 @@ class EnvContext:
         """
         if type(exit_code) is not int:
             raise AssertionError("`exit_code` must be an `int`")
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
         state_default_stderr_log_handler_configured: logging.Handler = self._state_graph.eval_state(EnvState.state_default_stderr_log_handler_configured.name)
 
         status_name: str
@@ -5071,7 +5070,7 @@ class EnvContext:
             else:
                 status_name = "FAILURE"
                 color_status = f"{TermColor.back_dark_red.value}{TermColor.fore_bright_white.value}"
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
             is_reportable = state_default_stderr_log_handler_configured.level <= logging.CRITICAL
 
         if is_reportable:
@@ -5080,7 +5079,7 @@ class EnvContext:
                 file=sys.stderr,
                 flush=True,
             )
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
 
 class ContextBuilder:
     """
@@ -5093,7 +5092,7 @@ class ContextBuilder:
     def entry_func(self, value: EntryFunc | None) -> ContextBuilder:
         self._env_ctx._entry_func = value
         return self
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     def state_stride(self, value: StateStride | None) -> ContextBuilder:
         self._env_ctx._state_stride = value
         return self
@@ -5101,13 +5100,13 @@ class ContextBuilder:
     def is_app(self, value: bool | None) -> ContextBuilder:
         self._env_ctx._is_app = value
         return self
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     def prepare_venv(self, value: bool | None) -> ContextBuilder:
         self._env_ctx._prepare_venv = value
         return self
 
-    def sub_command(self, value: SubCommand | None) -> ContextBuilder:
-        self._env_ctx._sub_command = value
+    def exec_operation(self, value: ExecOperation | None) -> ContextBuilder:
+        self._env_ctx._exec_operation = value
         return self
 
     def is_log_enabled(self, value: bool | None) -> ContextBuilder:
@@ -5117,7 +5116,7 @@ class ContextBuilder:
     def forced_final_state(self, value: str | None) -> ContextBuilder:
         self._env_ctx._forced_final_state = value
         return self
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     def forced_proto_kernel_abs_path(self, value: str | None) -> ContextBuilder:
         self._env_ctx._forced_proto_kernel_abs_path = value
         return self
@@ -5125,7 +5124,7 @@ class ContextBuilder:
     def build_context(self) -> EnvContext:
         assert self._env_ctx._entry_func is not None
         return self._env_ctx
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
 
 class StateStrideFilter(logging.Filter):
     """
@@ -5145,8 +5144,8 @@ class StateStrideFilter(logging.Filter):
         record.state_stride = log_stride.get(StateStride.stride_py_unknown)
         # Do not filter:
         return True
-
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
 class UtcTimeFormatter(logging.Formatter):
     """
     Custom formatter with the proper timestamp.
@@ -5411,7 +5410,7 @@ def rename_to_moved_state_name(state_name: str) -> str:
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
 def missing_conf_file_message(file_abs_path: str) -> str:
-    return f"File [{file_abs_path}] does not exist - use [{SubCommand.command_eval.value}] sub command for description."
+    return f"File [{file_abs_path}] does not exist - use [{ExecOperation.op_eval.value}] exec operation for description."
 
 
 def warn_once_at_state_stride(
@@ -5999,7 +5998,8 @@ def get_config(conf_leap: ConfLeap) -> dict:
         .entry_func(EntryFunc.func_call_lib)
         .state_stride(StateStride.stride_py_arbitrary)
         .forced_final_state(_conf_leap_to_state[conf_leap])
-        #
+        # TODO: TODO_47_08_90_90.propagate_exec_operation_for_func_call_lib.md:
+        #       Set `ExecOperation.op_get_config`.
         .build_context()
     )
     env_ctx.eval_state(TargetState.target_everything_executed.value.name)
@@ -6123,7 +6123,7 @@ def _start_main(
         if curr_py_exec.value >= StateStride.stride_py_venv.value and entry_func == EntryFunc.func_start_app:
             raise AssertionError(
                 f"Failed to import `{import_error.name}` at [{curr_py_exec.name}]. "
-                f"Has `{KeyWord.key_venv.value}` been initialized via `{SubCommand.command_boot.value}` sub command? "
+                f"Has `{KeyWord.key_venv.value}` been initialized via `{ExecOperation.op_boot.value}` exec operation? "
                 #
             ) from import_error
         if import_error.name == installed_kernel_name:

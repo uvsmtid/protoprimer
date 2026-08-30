@@ -105,7 +105,7 @@ class TestEvaluatedStateSets:
             EnvState.state_args_parsed.name,
             EnvState.state_input_stderr_log_level_eval_finalized.name,
             EnvState.state_input_stderr_log_level_handler_configured.name,
-            EnvState.state_input_sub_command_arg_loaded.name,
+            EnvState.state_input_exec_operation_loaded.name,
             EnvState.state_input_final_state_eval_finalized.name,
             EnvState.state_input_proto_code_file_abs_path_var_loaded.name,
             EnvState.state_input_start_id_var_loaded.name,
@@ -231,7 +231,7 @@ class TestEvaluatedStateSets:
 
         prohibited_state_names = [
             # args:
-            EnvState.state_input_sub_command_arg_loaded.name,
+            EnvState.state_input_exec_operation_loaded.name,
             # python:
             EnvState.state_required_python_version_inited.name,
             EnvState.state_python_selector_file_abs_path_inited.name,
@@ -311,7 +311,7 @@ class TestEvaluatedStateSets:
 
         prohibited_state_names = [
             # args:
-            EnvState.state_input_sub_command_arg_loaded.name,
+            EnvState.state_input_exec_operation_loaded.name,
             # logs:
             EnvState.state_input_stderr_log_level_handler_configured.name,
             EnvState.state_default_file_log_handler_configured.name,
