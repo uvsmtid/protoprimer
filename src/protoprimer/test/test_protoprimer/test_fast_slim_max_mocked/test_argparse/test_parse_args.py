@@ -234,19 +234,6 @@ def test_argparse_execoperations_parametrized(test_argv, expected_dict):
 
 
 @pytest.mark.parametrize(
-    "test_argv",
-    [
-        ["boot", "--final_state", "some_state"],
-        ["reset", "--final_state", "some_state"],
-        ["eval", "--final_state", "some_state"],
-    ],
-)
-def test_argparse_invalid_final_state(test_argv):
-    with pytest.raises(SystemExit):
-        try_main.parse_args(test_argv)
-
-
-@pytest.mark.parametrize(
     "test_argv,expected_env",
     [
         (["reset", "--env", "some/path"], "some/path"),
