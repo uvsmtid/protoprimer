@@ -1535,22 +1535,7 @@ def _create_child_argparser(parent_argparsers):
             metavar=ParsedArg.name_command.value,
             help="Command to execute after the bootstrap.",
         )
-        parser_boot.add_argument(
-            # TODO: Remove this arg - it does not support any strong use case:
-            # TODO: Use "env_state" as `dest` and `metavar`, but `--state` as option name:
-            SyntaxArg.arg_final_state,
-            type=str,
-            # TODO: Decide to print choices or not (they look too excessive). Maybe print those in `TargetState` only?
-            # choices=[state_name.name for state_name in EnvState],
-            # Keep the default `None` to indicate there was no user override
-            # (and select the actual default in code):
-            default=None,
-            # TODO: Use "env_state" as `dest` and `metavar`, but `--state` as option name:
-            dest=ParsedArg.name_final_state.value,
-            metavar=ParsedArg.name_final_state.value,
-            help=f"Select final `{EnvState.__name__}` name.",
-        )
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     def _create_reset_parser(exec_operation_parsers):
         exec_operation_desc = "Bootstrap from scratch: re-create `venv`, re-install dependencies, re-pin versions, ..."
         parser_reset = exec_operation_parsers.add_parser(
@@ -1559,7 +1544,7 @@ def _create_child_argparser(parent_argparsers):
             description=exec_operation_desc,
         )
         parser_reset.set_defaults(exec_operation=ExecOperation.op_reset.value)
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     def _create_eval_parser(exec_operation_parsers):
         exec_operation_desc = "Evaluate effective config (print it on `stdout`)."
         parser_eval = exec_operation_parsers.add_parser(
@@ -1577,13 +1562,13 @@ def _create_child_argparser(parent_argparsers):
             description=exec_operation_desc,
         )
         parser_check.set_defaults(exec_operation=ExecOperation.op_check.value)
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     child_argparser = CustomArgumentParser(
         description=f"The early [{PrimerRuntime.runtime_proto.value}] environment bootstrapper [{KeyWord.key_primer.value}].",
         parents=parent_argparsers,
         epilog=f"Version: {__version__} | {ConfConstGeneral.name_protoprimer_site_link} | {pathlib.Path(__file__).resolve()}",
     )
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     child_argparsers = child_argparser.add_subparsers(
         dest=ParsedArg.name_exec_operation.value,
         title="Exec operations",
@@ -1600,14 +1585,14 @@ def _create_child_argparser(parent_argparsers):
     # noinspection PyUnreachableCode
     if False:
         _create_check_parser(child_argparsers)
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     return child_argparser
 
 
 def parse_args(remaining_argv=None) -> argparse.Namespace:
     """
     Parse CLI args by creating parent and child (exec operation) parsers.
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     This function uses a two-phase parsing to allow common options
     which can be placed anywhere:
     * ... -q boot (option before exec operation `ExecOperation.op_boot`)
@@ -1625,7 +1610,7 @@ def parse_args(remaining_argv=None) -> argparse.Namespace:
         parsed_args,
         remaining_argv,
     ) = parent_argparser.parse_known_args(remaining_argv)
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     # Phase 2: parse exec operation args:
     child_argparser = _create_child_argparser(
         parent_argparsers=[
@@ -1635,7 +1620,7 @@ def parse_args(remaining_argv=None) -> argparse.Namespace:
     if (
         SyntaxArg.arg_h not in remaining_argv
         and SyntaxArg.arg_help not in remaining_argv
-        #
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     ):
         try:
             # Try to parse with `ExecOperation.op_boot` as the default exec operation:

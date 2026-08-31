@@ -1535,21 +1535,6 @@ def _create_child_argparser(parent_argparsers):
             metavar=ParsedArg.name_command.value,
             help="Command to execute after the bootstrap.",
         )
-        parser_boot.add_argument(
-            # TODO: Remove this arg - it does not support any strong use case:
-            # TODO: Use "env_state" as `dest` and `metavar`, but `--state` as option name:
-            SyntaxArg.arg_final_state,
-            type=str,
-            # TODO: Decide to print choices or not (they look too excessive). Maybe print those in `TargetState` only?
-            # choices=[state_name.name for state_name in EnvState],
-            # Keep the default `None` to indicate there was no user override
-            # (and select the actual default in code):
-            default=None,
-            # TODO: Use "env_state" as `dest` and `metavar`, but `--state` as option name:
-            dest=ParsedArg.name_final_state.value,
-            metavar=ParsedArg.name_final_state.value,
-            help=f"Select final `{EnvState.__name__}` name.",
-        )
 
     def _create_reset_parser(exec_operation_parsers):
         exec_operation_desc = "Bootstrap from scratch: re-create `venv`, re-install dependencies, re-pin versions, ..."
