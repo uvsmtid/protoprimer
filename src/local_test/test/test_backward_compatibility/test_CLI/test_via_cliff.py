@@ -27,11 +27,6 @@ class Boot(Command):
             dest="run_command",
             metavar="run_command",
         )
-        parser.add_argument(
-            "--final_state",
-            dest="final_state",
-            metavar="final_state",
-        )
         return parser
 
     def take_action(self, parsed_args):

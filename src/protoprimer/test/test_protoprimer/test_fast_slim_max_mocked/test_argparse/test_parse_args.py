@@ -25,7 +25,6 @@ def test_parse_args_defaults():
 
     # then:
     assert getattr(args, ParsedArg.name_exec_operation.value) == ExecOperation.op_boot.value
-    assert getattr(args, ParsedArg.name_final_state.value) is None
     assert getattr(args, SyntaxArg.dest_quiet) == 0
     assert getattr(args, SyntaxArg.dest_verbose) == 0
 
@@ -116,17 +115,6 @@ def test_parse_args_log_level():
     assert getattr(args_verbose_3, SyntaxArg.dest_verbose) == 3
 
 
-def test_parse_args_final_state():
-    # given:
-    state = "some_state"
-
-    # when:
-    args = parse_args([ExecOperation.op_boot.value, SyntaxArg.arg_final_state, state])
-
-    # then:
-    assert getattr(args, ParsedArg.name_final_state.value) == state
-
-
 @pytest.mark.parametrize(
     "test_argv,expected_dict",
     [
@@ -137,7 +125,6 @@ def test_parse_args_final_state():
                 ParsedArg.name_selected_env_dir.value: None,
                 SyntaxArg.dest_quiet: 0,
                 SyntaxArg.dest_verbose: 0,
-                ParsedArg.name_final_state.value: None,
                 ParsedArg.name_command.value: None,
             },
         ),
@@ -146,18 +133,6 @@ def test_parse_args_final_state():
             {
                 ParsedArg.name_exec_operation.value: ExecOperation.op_boot.value,
                 ParsedArg.name_selected_env_dir.value: None,
-                ParsedArg.name_final_state.value: None,
-                SyntaxArg.dest_quiet: 0,
-                SyntaxArg.dest_verbose: 0,
-                ParsedArg.name_command.value: None,
-            },
-        ),
-        (
-            ["boot", "--final_state", "some_state"],
-            {
-                ParsedArg.name_exec_operation.value: ExecOperation.op_boot.value,
-                ParsedArg.name_selected_env_dir.value: None,
-                ParsedArg.name_final_state.value: "some_state",
                 SyntaxArg.dest_quiet: 0,
                 SyntaxArg.dest_verbose: 0,
                 ParsedArg.name_command.value: None,
@@ -186,7 +161,6 @@ def test_parse_args_final_state():
             {
                 ParsedArg.name_exec_operation.value: ExecOperation.op_boot.value,
                 ParsedArg.name_selected_env_dir.value: None,
-                ParsedArg.name_final_state.value: None,
                 SyntaxArg.dest_quiet: 1,
                 SyntaxArg.dest_verbose: 0,
                 ParsedArg.name_command.value: None,
@@ -197,7 +171,6 @@ def test_parse_args_final_state():
             {
                 ParsedArg.name_exec_operation.value: ExecOperation.op_boot.value,
                 ParsedArg.name_selected_env_dir.value: None,
-                ParsedArg.name_final_state.value: None,
                 SyntaxArg.dest_quiet: 0,
                 SyntaxArg.dest_verbose: 1,
                 ParsedArg.name_command.value: None,
@@ -208,7 +181,6 @@ def test_parse_args_final_state():
             {
                 ParsedArg.name_exec_operation.value: ExecOperation.op_boot.value,
                 ParsedArg.name_selected_env_dir.value: None,
-                ParsedArg.name_final_state.value: None,
                 SyntaxArg.dest_quiet: 1,
                 SyntaxArg.dest_verbose: 0,
                 ParsedArg.name_command.value: None,
@@ -219,7 +191,6 @@ def test_parse_args_final_state():
             {
                 ParsedArg.name_exec_operation.value: ExecOperation.op_boot.value,
                 ParsedArg.name_selected_env_dir.value: None,
-                ParsedArg.name_final_state.value: None,
                 SyntaxArg.dest_quiet: 0,
                 SyntaxArg.dest_verbose: 3,
                 ParsedArg.name_command.value: None,
@@ -230,7 +201,6 @@ def test_parse_args_final_state():
             {
                 ParsedArg.name_exec_operation.value: ExecOperation.op_boot.value,
                 ParsedArg.name_selected_env_dir.value: "some/path",
-                ParsedArg.name_final_state.value: None,
                 SyntaxArg.dest_quiet: 0,
                 SyntaxArg.dest_verbose: 0,
                 ParsedArg.name_command.value: None,
@@ -241,7 +211,6 @@ def test_parse_args_final_state():
             {
                 ParsedArg.name_exec_operation.value: ExecOperation.op_boot.value,
                 ParsedArg.name_selected_env_dir.value: "some/path",
-                ParsedArg.name_final_state.value: None,
                 SyntaxArg.dest_quiet: 0,
                 SyntaxArg.dest_verbose: 0,
                 ParsedArg.name_command.value: None,
@@ -252,7 +221,6 @@ def test_parse_args_final_state():
             {
                 ParsedArg.name_exec_operation.value: ExecOperation.op_boot.value,
                 ParsedArg.name_selected_env_dir.value: "default_env",
-                ParsedArg.name_final_state.value: None,
                 SyntaxArg.dest_quiet: 0,
                 SyntaxArg.dest_verbose: 0,
                 ParsedArg.name_command.value: None,
@@ -263,18 +231,6 @@ def test_parse_args_final_state():
 def test_argparse_execoperations_parametrized(test_argv, expected_dict):
     parsed_args = try_main.parse_args(test_argv)
     assert vars(parsed_args) == expected_dict
-
-
-@pytest.mark.parametrize(
-    "test_argv",
-    [
-        ["reset", "--final_state", "some_state"],
-        ["eval", "--final_state", "some_state"],
-    ],
-)
-def test_argparse_invalid_final_state(test_argv):
-    with pytest.raises(SystemExit):
-        try_main.parse_args(test_argv)
 
 
 @pytest.mark.parametrize(

@@ -517,8 +517,6 @@ class ParsedArg(enum.Enum):
 
     name_exec_operation = str(ValueName.value_exec_operation.value)
 
-    name_final_state = str(ValueName.value_final_state.value)
-
 
 class LogLevel(enum.Enum):
     name_quiet = "quiet"
@@ -529,8 +527,6 @@ class SyntaxArg:
 
     arg_h = f"-{KeyWord.key_help.value[0]}"
     arg_help = f"--{KeyWord.key_help.value}"
-
-    arg_final_state = f"--{ParsedArg.name_final_state.value}"
 
     arg_c = f"-{CommandAction.action_command.value[0]}"
     arg_command = f"--{CommandAction.action_command.value}"
@@ -1535,21 +1531,6 @@ def _create_child_argparser(parent_argparsers):
             metavar=ParsedArg.name_command.value,
             help="Command to execute after the bootstrap.",
         )
-        parser_boot.add_argument(
-            # TODO: Remove this arg - it does not support any strong use case:
-            # TODO: Use "env_state" as `dest` and `metavar`, but `--state` as option name:
-            SyntaxArg.arg_final_state,
-            type=str,
-            # TODO: Decide to print choices or not (they look too excessive). Maybe print those in `TargetState` only?
-            # choices=[state_name.name for state_name in EnvState],
-            # Keep the default `None` to indicate there was no user override
-            # (and select the actual default in code):
-            default=None,
-            # TODO: Use "env_state" as `dest` and `metavar`, but `--state` as option name:
-            dest=ParsedArg.name_final_state.value,
-            metavar=ParsedArg.name_final_state.value,
-            help=f"Select final `{EnvState.__name__}` name.",
-        )
 
     def _create_reset_parser(exec_operation_parsers):
         exec_operation_desc = "Bootstrap from scratch: re-create `venv`, re-install dependencies, re-pin versions, ..."
@@ -2253,26 +2234,14 @@ class Factory_state_prepare_venv_finalized(NodeFactory[bool]):
 @conditional_factory
 class Bootstrapper_state_input_final_state_eval_finalized_is_app(AbstractCachingStateNode[str]):
 
-    _parent_states = staticmethod(lambda: [EnvState.state_args_parsed.name])
     _state_name = staticmethod(lambda: EnvState.state_input_final_state_eval_finalized.name)
 
     def _eval_state_once(self) -> ValueType:
-        state_args_parsed: argparse.Namespace = self.eval_parent_state(EnvState.state_args_parsed.name)
-
-        state_input_final_state_eval_finalized: str | None
-        state_input_final_state_eval_finalized = getattr(
-            state_args_parsed,
-            ParsedArg.name_final_state.value,
-            # NOTE: The value is only set for `ExecOperation.op_boot`, otherwise, this default is used:
-            None,
-        )
-
-        if state_input_final_state_eval_finalized is None:
-            if self.env_ctx._forced_final_state is None:
-                state_input_final_state_eval_finalized = TargetState.target_proto_bootstrap_completed.value.name
-            else:
-                state_input_final_state_eval_finalized = self.env_ctx._forced_final_state
-
+        state_input_final_state_eval_finalized: str
+        if self.env_ctx._forced_final_state is None:
+            state_input_final_state_eval_finalized = TargetState.target_proto_bootstrap_completed.value.name
+        else:
+            state_input_final_state_eval_finalized = self.env_ctx._forced_final_state
         return state_input_final_state_eval_finalized
 
 

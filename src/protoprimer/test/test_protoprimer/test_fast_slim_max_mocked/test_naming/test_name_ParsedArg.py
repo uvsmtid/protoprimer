@@ -76,14 +76,6 @@ class ArgName(enum.Enum):
         ],
     )
 
-    name_final_state = ArgMeta(
-        command_arg=ParsedArg.name_final_state,
-        name_category=NameCategory.category_named_arg_value,
-        name_components=[
-            ValueName.value_final_state.value,
-        ],
-    )
-
 
 class TestParsedArgName(NamingTestBase):
     prod_enum = ParsedArg
