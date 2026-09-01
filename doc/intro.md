@@ -8,21 +8,23 @@
 
 ## When?
 
+When you do **not** like to make conflicting system-wide changes.
+
 When you want:
 
-*   to bootstrap an env for every **fresh** repo clone with a **one-liner**:
+*   to bootstrap an isolated env for every **fresh** repo clone with a **one-liner**:
 
     ```sh
     ./prime
     ```
 
-*   to start an app from **co-existing** repo clones at different versions:
+*   to start an isolated app from **co-existing** repo clones at different versions:
 
     ```sh
     ./some_app
     ```
 
-*   to eliminate **untestable** `shell` scripts and automate with `python`:
+*   to eliminate **untestable** non-modular `shell` scripts and automate with `python`:
 
     <details>
     <summary>[direct execution]</summary>
@@ -35,7 +37,7 @@ When you want:
 
 ## What?
 
-`protoprimer` is an **arg-less** stand-alone **idempotent** script that switches:
+`protoprimer` is an **arg-less** stand-alone **idempotent** code that switches:
 
 *   from **chaos** (the many conditions in which a user may invoke it)
 *   into **order** (an env-specific `venv` with the **required** `python` version)
