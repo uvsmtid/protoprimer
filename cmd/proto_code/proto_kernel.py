@@ -3305,7 +3305,7 @@ class Bootstrapper_required_python_version_inited(AbstractOverriddenFieldCaching
 
         # Validate it is parseable, but keep the original (possibly partial, e.g. "3.11") string as-is:
         # zero-padding it into a full "X.Y.Z" would corrupt the version passed to `uv python install`
-        # (e.g. "3.11" -> "3.11.0" pins exactly patch 0 instead of "latest 3.11.x"):
+        # (e.g. "3.11" -> "3.11.0" pins patch 0 exactly instead of "latest 3.11.x"):
         parse_python_version(state_required_python_version_inited)
 
         return state_required_python_version_inited
@@ -5769,9 +5769,9 @@ def get_python_version(path_to_python: str) -> tuple[int, int, int]:
 # noinspection PyTypeChecker
 def parse_python_version(python_version: str) -> tuple[int, int, int]:
     """
-    Converts a version `str` version "X.Y.Z" into a `tuple` of integers (X, Y, Z) handling:
-    *   "3.13.4-beta" -> (3.13.4)
-    *   "3" -> (3.0.0)
+    Converts a `str` version "X.Y.Z" into a `tuple` of integers (X, Y, Z) handling:
+    *   "3.13.4-beta" -> (3, 13, 4,)
+    *   "3" -> (3, 0, 0,)
     """
     import re
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
@@ -5786,11 +5786,10 @@ def parse_python_version(python_version: str) -> tuple[int, int, int]:
 
 def parse_python_version_prefix(python_version: str) -> tuple[int, ...]:
     """
-    Unlike `parse_python_version`, does NOT zero-pad missing components -
-    it preserves exactly the specificity the caller wrote:
+    Unlike `parse_python_version`, does NOT zero-pad missing components:
     *   "3" -> (3,)
-    *   "3.11" -> (3, 11)
-    *   "3.11.4" -> (3, 11, 4)
+    *   "3.11" -> (3, 11,)
+    *   "3.11.4" -> (3, 11, 4,)
     """
     import re
 
@@ -5806,19 +5805,14 @@ def assert_python_version_matches(
     required_python_version: str,
 ) -> None:
     """
-    Verify `python_file_abs_path`'s version satisfies `required_python_version`
-    at the specificity it was given - e.g. "3.11" only checks major.minor,
-    "3.11.4" checks the exact patch too.
-
-    Used by `VenvDriverPip`, which (unlike `VenvDriverUv`) cannot install a missing `python`,
-    so a mismatch has to be caught here instead of silently creating a wrong-version `venv`.
+    Verify `python_file_abs_path` satisfies `required_python_version`.
     """
     required_version_prefix: tuple[int, ...] = parse_python_version_prefix(required_python_version)
     actual_version: tuple[int, int, int] = get_python_version(python_file_abs_path)
     actual_version_prefix: tuple[int, ...] = actual_version[: len(required_version_prefix)]
     if actual_version_prefix != required_version_prefix:
         raise AssertionError(f"`python` [{python_file_abs_path}] version {actual_version} " f"does not satisfy required version [{required_python_version}].")
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
 
 def import_proto_module(
     proto_module_name: str,
@@ -5829,7 +5823,7 @@ def import_proto_module(
     """
     import types
     import importlib.util
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     module_spec = importlib.util.spec_from_file_location(
         proto_module_name,
         proto_module_abs_path,
@@ -5839,7 +5833,7 @@ def import_proto_module(
     assert module_spec.loader is not None
     module_spec.loader.exec_module(loaded_proto_module)
     return loaded_proto_module
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
 
 def select_python_file_abs_path(
     required_version: tuple[int, int, int],
@@ -5858,12 +5852,12 @@ def select_python_file_abs_path(
         proto_module_name,
         state_python_selector_file_abs_path_inited,
     )
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     external_select_python_file_abs_path = getattr(
         python_selector_module,
         SelectorFunc.select_python_file_abs_path.value,
     )
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     logger.debug(f"running `{SelectorFunc.select_python_file_abs_path.value}` from `{proto_module_name}`")
     selected_python_abs_path: str | None = external_select_python_file_abs_path(required_version)
     logger.debug(f"returned `selected_python_abs_path` value [{selected_python_abs_path}]")
@@ -5879,7 +5873,7 @@ def select_python_file_abs_path(
             selected_python_abs_path = None
 
     return selected_python_abs_path
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
 def search_python_file_abs_path_by_basename(required_version: tuple[int, int, int]) -> str | None:
     """
