@@ -808,11 +808,7 @@ class VenvDriverPip(VenvDriverBase):
         required_python_version: str,
         selected_python_file_abs_path: str,
         state_local_venv_dir_abs_path_inited: str,
-        # `VenvDriverUv` reuses `VenvDriverPip` internally to bootstrap a throwaway `venv`
-        # for installing `uv` itself, using whatever `python` happens to be selected -
-        # that scratch `venv` is never meant to satisfy `required_python_version`,
-        # so it must opt out of this check:
-        enforce_version_match: bool = True,
+        enforce_version_match: bool,
     ):
         self.required_python_version: str = required_python_version
         self.selected_python_file_abs_path: str = selected_python_file_abs_path
@@ -828,8 +824,6 @@ class VenvDriverPip(VenvDriverBase):
         local_venv_dir_abs_path: str,
         constraints_file_abs_path: str,
     ) -> None:
-        # Unlike `VenvDriverUv`, `pip` cannot install a missing `python` -
-        # catch a version mismatch here instead of silently creating a wrong-version `venv`:
         if self.enforce_version_match:
             assert_python_version_matches(
                 self.selected_python_file_abs_path,
@@ -3303,9 +3297,7 @@ class Bootstrapper_required_python_version_inited(AbstractOverriddenFieldCaching
         assert state_required_python_version_inited is not None
         logger.debug(f"raw `state_required_python_version_inited` [{state_required_python_version_inited}]")
 
-        # Validate it is parseable, but keep the original (possibly partial, e.g. "3.11") string as-is:
-        # zero-padding it into a full "X.Y.Z" would corrupt the version passed to `uv python install`
-        # (e.g. "3.11" -> "3.11.0" pins patch 0 exactly instead of "latest 3.11.x"):
+        # validate:
         parse_python_version(state_required_python_version_inited)
 
         return state_required_python_version_inited
@@ -3999,6 +3991,7 @@ class Bootstrapper_state_venv_driver_prepared_is_app(AbstractCachingStateNode[Ve
                 required_python_version=state_required_python_version_inited,
                 selected_python_file_abs_path=state_selected_python_file_abs_path_inited,
                 state_local_venv_dir_abs_path_inited=state_local_venv_dir_abs_path_inited,
+                enforce_version_match=True,
             )
         else:
             raise AssertionError(f"unsupported `{VenvDriverType.__name__}` [{state_venv_driver_inited.name}]")

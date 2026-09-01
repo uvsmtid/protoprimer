@@ -43,6 +43,7 @@ def test_create_venv_when_constraints_file_does_not_exist(mock_check_call, mock_
         required_python_version=test_python_version,
         selected_python_file_abs_path=python_path,
         state_local_venv_dir_abs_path_inited=venv_dir_abs_path,
+        enforce_version_match=True,
     )
 
     # when:
@@ -108,6 +109,7 @@ def test_create_venv_when_constraints_file_exists(mock_check_call, mock_check_ou
         required_python_version=test_python_version,
         selected_python_file_abs_path=python_path,
         state_local_venv_dir_abs_path_inited=venv_dir_abs_path,
+        enforce_version_match=True,
     )
 
     # when:
@@ -237,6 +239,7 @@ def test_create_venv_upgrades_all_seeded_packages(mock_check_call, mock_check_ou
         required_python_version=test_python_version,
         selected_python_file_abs_path=python_path,
         state_local_venv_dir_abs_path_inited=venv_dir_abs_path,
+        enforce_version_match=True,
     )
 
     # when:
@@ -271,6 +274,7 @@ def test_install_dependencies(mock_subprocess_check_call):
         required_python_version=test_python_version,
         selected_python_file_abs_path=selected_python_file_abs_path,
         state_local_venv_dir_abs_path_inited="/tmp/venv",
+        enforce_version_match=True,
     )
     constraints_file_abs_path = "/tmp/constraints.txt"
     project_descriptors = [
@@ -324,6 +328,7 @@ def test_pin_versions(mock_subprocess_check_call):
         required_python_version=test_python_version,
         selected_python_file_abs_path=venv_python_file_abs_path,
         state_local_venv_dir_abs_path_inited="/tmp/venv",
+        enforce_version_match=True,
     )
     constraints_file_abs_path = "/tmp/constraints.txt"
 
@@ -361,6 +366,7 @@ def test_is_mine_venv_when_pip_venv(mock_get_venv_type):
         required_python_version=test_python_version,
         selected_python_file_abs_path="/tmp/python",
         state_local_venv_dir_abs_path_inited=venv_path,
+        enforce_version_match=True,
     )
 
     mock_get_venv_type.return_value = primer_kernel.VenvDriverType.venv_pip
@@ -384,6 +390,7 @@ def test_is_mine_venv_when_uv_venv(mock_get_venv_type):
         required_python_version=test_python_version,
         selected_python_file_abs_path="/tmp/python",
         state_local_venv_dir_abs_path_inited="/tmp/venv",
+        enforce_version_match=True,
     )
 
     venv_path = "/fake/venv"
@@ -408,6 +415,7 @@ def test_is_mine_venv_when_cfg_not_exists(mock_exists):
         required_python_version=test_python_version,
         selected_python_file_abs_path="/tmp/python",
         state_local_venv_dir_abs_path_inited="/tmp/venv",
+        enforce_version_match=True,
     )
 
     venv_path = "/fake/venv"

@@ -844,6 +844,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             test_python_abs_path,
             test_python_version,
             path_to_venv,
+            enforce_version_match=True,
         )
 
         # when:

@@ -36,6 +36,7 @@ def installed_venv(tmp_path_factory) -> tuple[str, str, dict[str, str]]:
         required_python_version=platform.python_version(),
         selected_python_file_abs_path=sys.executable,
         state_local_venv_dir_abs_path_inited=str(venv_dir),
+        enforce_version_match=True,
     )
     venv_driver.create_venv(str(venv_dir), "")
 
