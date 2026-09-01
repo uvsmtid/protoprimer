@@ -5805,12 +5805,7 @@ def assert_python_version_matches(
     required_python_version: str,
 ) -> None:
     """
-    Verify `python_file_abs_path`'s version satisfies `required_python_version`
-    at the specificity it was given - e.g. "3.11" only checks major.minor,
-    "3.11.4" checks the exact patch too.
-
-    Used by `VenvDriverPip`, which (unlike `VenvDriverUv`) cannot install a missing `python`,
-    so a mismatch has to be caught here instead of silently creating a wrong-version `venv`.
+    Verify `python_file_abs_path` satisfies `required_python_version`.
     """
     required_version_prefix: tuple[int, ...] = parse_python_version_prefix(required_python_version)
     actual_version: tuple[int, int, int] = get_python_version(python_file_abs_path)
