@@ -3305,7 +3305,7 @@ class Bootstrapper_required_python_version_inited(AbstractOverriddenFieldCaching
 
         # Validate it is parseable, but keep the original (possibly partial, e.g. "3.11") string as-is:
         # zero-padding it into a full "X.Y.Z" would corrupt the version passed to `uv python install`
-        # (e.g. "3.11" -> "3.11.0" pins exactly patch 0 instead of "latest 3.11.x"):
+        # (e.g. "3.11" -> "3.11.0" pins patch 0 exactly instead of "latest 3.11.x"):
         parse_python_version(state_required_python_version_inited)
 
         return state_required_python_version_inited
@@ -5769,9 +5769,9 @@ def get_python_version(path_to_python: str) -> tuple[int, int, int]:
 # noinspection PyTypeChecker
 def parse_python_version(python_version: str) -> tuple[int, int, int]:
     """
-    Converts a version `str` version "X.Y.Z" into a `tuple` of integers (X, Y, Z) handling:
-    *   "3.13.4-beta" -> (3.13.4)
-    *   "3" -> (3.0.0)
+    Converts a `str` version "X.Y.Z" into a `tuple` of integers (X, Y, Z) handling:
+    *   "3.13.4-beta" -> (3, 13, 4,)
+    *   "3" -> (3, 0, 0,)
     """
     import re
 
@@ -5786,11 +5786,10 @@ def parse_python_version(python_version: str) -> tuple[int, int, int]:
 
 def parse_python_version_prefix(python_version: str) -> tuple[int, ...]:
     """
-    Unlike `parse_python_version`, does NOT zero-pad missing components -
-    it preserves exactly the specificity the caller wrote:
+    Unlike `parse_python_version`, does NOT zero-pad missing components:
     *   "3" -> (3,)
-    *   "3.11" -> (3, 11)
-    *   "3.11.4" -> (3, 11, 4)
+    *   "3.11" -> (3, 11,)
+    *   "3.11.4" -> (3, 11, 4,)
     """
     import re
 
