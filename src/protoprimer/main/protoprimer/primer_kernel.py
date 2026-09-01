@@ -808,10 +808,16 @@ class VenvDriverPip(VenvDriverBase):
         required_python_version: str,
         selected_python_file_abs_path: str,
         state_local_venv_dir_abs_path_inited: str,
+        # `VenvDriverUv` reuses `VenvDriverPip` internally to bootstrap a throwaway `venv`
+        # for installing `uv` itself, using whatever `python` happens to be selected -
+        # that scratch `venv` is never meant to satisfy `required_python_version`,
+        # so it must opt out of this check:
+        enforce_version_match: bool = True,
     ):
         self.required_python_version: str = required_python_version
         self.selected_python_file_abs_path: str = selected_python_file_abs_path
         self.state_local_venv_dir_abs_path_inited: str = state_local_venv_dir_abs_path_inited
+        self.enforce_version_match: bool = enforce_version_match
 
     def get_type(self) -> VenvDriverType:
         return VenvDriverType.venv_pip
@@ -824,10 +830,11 @@ class VenvDriverPip(VenvDriverBase):
     ) -> None:
         # Unlike `VenvDriverUv`, `pip` cannot install a missing `python` -
         # catch a version mismatch here instead of silently creating a wrong-version `venv`:
-        assert_python_version_matches(
-            self.selected_python_file_abs_path,
-            self.required_python_version,
-        )
+        if self.enforce_version_match:
+            assert_python_version_matches(
+                self.selected_python_file_abs_path,
+                self.required_python_version,
+            )
 
         subprocess.check_call(
             [
@@ -931,6 +938,10 @@ class VenvDriverUv(VenvDriverBase):
                 # Instead of `self.state_local_venv_dir_abs_path_inited`,
                 # this intermediate driver uses ` self.uv_venv_abs_path`:
                 state_local_venv_dir_abs_path_inited=self.uv_venv_abs_path,
+                # This scratch `venv` intentionally uses whatever `python` is currently selected
+                # (only needs to be new enough for `uv` itself, see TODO above) -
+                # it is not supposed to satisfy `required_python_version`:
+                enforce_version_match=False,
             )
             # NOTE: This is a throwaway `venv` used only to install `uv` itself -
             #       it is not governed by the project's `version_constraints.txt`:
