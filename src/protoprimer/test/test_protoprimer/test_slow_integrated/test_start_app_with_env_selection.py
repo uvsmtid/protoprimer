@@ -52,6 +52,9 @@ def test_start_app_from_env_default(tmp_path: pathlib.Path):
         test_python_version,
         sys.executable,
         str(arbitrary_venv_dir),
+        # This is just a throwaway starting `venv` for the test scenario below -
+        # it is not meant to satisfy `test_python_version`:
+        enforce_version_match=False,
     )
     venv_driver.create_venv(str(arbitrary_venv_dir), "")
     arbitrary_venv_python = arbitrary_venv_dir / ConfConstGeneral.file_rel_path_venv_python
@@ -181,6 +184,9 @@ def test_app_started_from_env_special(tmp_path: pathlib.Path):
         test_python_version,
         sys.executable,
         str(arbitrary_venv_dir),
+        # This is just a throwaway starting `venv` for the test scenario below -
+        # it is not meant to satisfy `test_python_version`:
+        enforce_version_match=False,
     )
     venv_driver.create_venv(str(arbitrary_venv_dir), "")
     arbitrary_venv_python = arbitrary_venv_dir / ConfConstGeneral.file_rel_path_venv_python
@@ -316,6 +322,9 @@ def test_app_started_with_symlink_to_env_special_but_config_to_env_common(
         test_python_version,
         sys.executable,
         str(arbitrary_venv_dir),
+        # This is just a throwaway starting `venv` for the test scenario below -
+        # it is not meant to satisfy `test_python_version`:
+        enforce_version_match=False,
     )
     venv_driver.create_venv(str(arbitrary_venv_dir), "")
     arbitrary_venv_python = arbitrary_venv_dir / ConfConstGeneral.file_rel_path_venv_python
