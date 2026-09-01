@@ -822,6 +822,13 @@ class VenvDriverPip(VenvDriverBase):
         local_venv_dir_abs_path: str,
         constraints_file_abs_path: str,
     ) -> None:
+        # Unlike `VenvDriverUv`, `pip` cannot install a missing `python` -
+        # catch a version mismatch here instead of silently creating a wrong-version `venv`:
+        assert_python_version_matches(
+            self.selected_python_file_abs_path,
+            self.required_python_version,
+        )
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
         subprocess.check_call(
             [
                 self.selected_python_file_abs_path,
@@ -3285,9 +3292,10 @@ class Bootstrapper_required_python_version_inited(AbstractOverriddenFieldCaching
         assert state_required_python_version_inited is not None
         logger.debug(f"raw `state_required_python_version_inited` [{state_required_python_version_inited}]")
 
-        # normalize:
-        python_version: tuple[int, int, int] = parse_python_version(state_required_python_version_inited)
-        state_required_python_version_inited = f"{python_version[0]}.{python_version[1]}.{python_version[2]}"
+        # Validate it is parseable, but keep the original (possibly partial, e.g. "3.11") string as-is:
+        # zero-padding it into a full "X.Y.Z" would corrupt the version passed to `uv python install`
+        # (e.g. "3.11" -> "3.11.0" pins exactly patch 0 instead of "latest 3.11.x"):
+        parse_python_version(state_required_python_version_inited)
 
         return state_required_python_version_inited
 
@@ -5764,6 +5772,42 @@ def parse_python_version(python_version: str) -> tuple[int, int, int]:
     version_tuple: tuple[int, int, int] = tuple(_parse_version_int(part) for part in version_parts)
     return version_tuple
 
+
+def parse_python_version_prefix(python_version: str) -> tuple[int, ...]:
+    """
+    Unlike `parse_python_version`, does NOT zero-pad missing components -
+    it preserves exactly the specificity the caller wrote:
+    *   "3" -> (3,)
+    *   "3.11" -> (3, 11)
+    *   "3.11.4" -> (3, 11, 4)
+    """
+    import re
+
+    def _parse_version_int(version_part: str) -> int:
+        number_match = re.search(r"\d+", version_part)
+        return int(number_match.group()) if number_match else 0
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+    return tuple(_parse_version_int(part) for part in python_version.split("."))[:3]
+
+
+def assert_python_version_matches(
+    python_file_abs_path: str,
+    required_python_version: str,
+) -> None:
+    """
+    Verify `python_file_abs_path`'s version satisfies `required_python_version`
+    at the specificity it was given - e.g. "3.11" only checks major.minor,
+    "3.11.4" checks the exact patch too.
+
+    Used by `VenvDriverPip`, which (unlike `VenvDriverUv`) cannot install a missing `python`,
+    so a mismatch has to be caught here instead of silently creating a wrong-version `venv`.
+    """
+    required_version_prefix: tuple[int, ...] = parse_python_version_prefix(required_python_version)
+    actual_version: tuple[int, int, int] = get_python_version(python_file_abs_path)
+    actual_version_prefix: tuple[int, ...] = actual_version[: len(required_version_prefix)]
+    if actual_version_prefix != required_version_prefix:
+        raise AssertionError(f"`python` [{python_file_abs_path}] version {actual_version} " f"does not satisfy required version [{required_python_version}].")
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
 def import_proto_module(
     proto_module_name: str,
