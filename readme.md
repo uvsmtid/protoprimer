@@ -33,7 +33,7 @@ Please [read the docs][protoprimer_readthedocs] for an intro.
 `protoprimer` employs ubiquitous `python` for version pinning to provide a robust alternative to `shell`:
 
 *   First, a shim is executed by a **wild** `python` version found in `PATH` invoking `protoprimer`.
-*   Last, `protoprimer` executes target code by the **required** `python` version from configured `venv`.
+*   Last, `protoprimer` executes user code by the **required** `python` version from configured `venv`.
 
 It works without `shebang` for `venv` to **avoid hardcoding** absolute paths and keep repo clones **relocatable**.
 
