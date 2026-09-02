@@ -12,13 +12,13 @@ FT_84_11_73_28.supported_python_versions.md: see above.
 TODO: Use links to FC/UC docs under `./doc` (when ready) from this readme to navigate to details.
 -->
 
+# `protoprimer`
+
 Your bootstrapper eliminating `shell` scripts.
 
 <!-- NOTE: style="width: 11ch" ~ 11 chars = len("protoprimer"); snippet locked to height: 11ch so both track the same ch unit -->
 
 # <code><a href="https://protoprimer.readthedocs.io/"><img src="doc/_static/protoprimer.logo.svg" alt="logo" style="width: 11ch; height: auto;"></a></code> <code><img src="doc/_static/shell_snippet.svg" alt="shell snippet" style="height: 11ch; width: auto;"></code>
-
-# `protoprimer`
 
 Want your users to run software straight from a `git` repo with a single, zero-argument, healing command?
 
