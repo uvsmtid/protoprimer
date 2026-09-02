@@ -14,7 +14,7 @@ TODO: Use links to FC/UC docs under `./doc` (when ready) from this readme to nav
 
 # `protoprimer`
 
-Your bootstrapper eliminating `shell` scripts.
+\- bootstrapper eliminating `shell` scripts...
 
 <!-- NOTE: style="width: 11ch" ~ 11 chars = len("protoprimer"); snippet locked to height: 11ch so both track the same ch unit -->
 
