@@ -21,8 +21,9 @@ pad_x_px = 16
 pad_top_px = 12
 pad_bottom_px = 12
 
-background_color = "#f0f0f0"
-border_color = "#d0d7de"
+# Black, to match the logo (`doc/_static/protoprimer.logo.svg`):
+background_color = "#000000"
+border_color = "#000000"
 
 _svg_group_re = re.compile(r'<g font-family="monospace".*?</g>', re.DOTALL)
 
@@ -70,8 +71,8 @@ def init_arg_parser():
         "-s",
         dest="color_style",
         type=str,
-        default="friendly",
-        help="`pygments` color style name (default: `friendly`).",
+        default="github-dark",
+        help="`pygments` color style name (default: `github-dark`).",
     )
     return arg_parser_instance
 
