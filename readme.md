@@ -16,25 +16,7 @@ TODO: Use links to FC/UC docs under `./doc` (when ready) from this readme to nav
 
 <code><a href="https://protoprimer.readthedocs.io/"><img src="doc/_static/protoprimer.logo.svg" alt="logo" align="left" style="width: 11ch; height: auto;"></a></code>
 
-```sh
-echo blah blah blah blah blah blah blah blah blah blah blah blah blahblah
-echo blah blah blah blah blah blah blah blah blah blah blah blah blahblah
-echo blah blah blah blah blah blah blah blah blah blah blah blah blahblah
-echo blah blah blah blah blah blah blah blah blah blah blah blah blahblah
-echo blah blah blah blah blah blah blah blah blah blah blah blah blahblah
-echo blah blah blah blah blah blah blah blah blah blah blah blah blahblah
-echo blah blah blah blah blah blah blah blah blah blah blah blah blahblah
-echo blah blah blah blah blah blah blah blah blah blah blah blah blahblah
-echo blah blah blah blah blah blah blah blah blah blah blah blah blahblah
-echo blah blah blah blah blah blah blah blah blah blah blah blah blahblah
-echo blah blah blah blah blah blah blah blah blah blah blah blah blahblah
-echo blah blah blah blah blah blah blah blah blah blah blah blah blahblah
-echo blah blah blah blah blah blah blah blah blah blah blah blah blahblah
-echo blah blah blah blah blah blah blah blah blah blah blah blah blahblah
-echo blah blah blah blah blah blah blah blah blah blah blah blah blahblah
-echo blah blah blah blah blah blah blah blah blah blah blah blah blahblah
-echo blah blah blah blah blah blah blah blah blah blah blah blah blahblah
-```
+<img src="doc/_static/echo_snippet.svg" alt="echo blah blah blah" align="left">
 
 <br clear="left">
 
