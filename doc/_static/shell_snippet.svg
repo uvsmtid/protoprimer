@@ -1,5 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="595" height="418" viewBox="0 0 595 418" role="img" aria-label="shell example: OS-detecting directory size report">
-  <rect x="0.5" y="0.5" width="594" height="417" rx="6" fill="#0d1117" stroke="#30363d"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="595" height="399" viewBox="0 0 595 399" role="img" aria-label="shell snippet">
+  <rect x="0.5" y="0.5" width="594" height="398" rx="6" fill="#0d1117" stroke="#30363d"/>
   <g transform="translate(16,12)">
   <g font-family="monospace" font-size="14px">
 <text x="0" y="14" xml:space="preserve"><tspan fill="#e6edf3">:</tspan><tspan fill="#6e7681">&#160;</tspan><tspan fill="#a5d6ff">${</tspan><tspan fill="#79c0ff">1</tspan><tspan fill="#e6edf3">?No&#160;input</tspan><tspan fill="#a5d6ff">}</tspan><tspan fill="#e6edf3">;</tspan><tspan fill="#6e7681">&#160;</tspan><tspan fill="#e6edf3">trap</tspan><tspan fill="#6e7681">&#160;</tspan><tspan fill="#a5d6ff">&#39;echo&#160;&quot;err&#160;at&#160;line&#160;$LINENO&quot;&#160;&gt;&amp;2&#39;</tspan><tspan fill="#6e7681">&#160;</tspan><tspan fill="#e6edf3">ERR</tspan><tspan fill="#e6edf3">;</tspan><tspan fill="#6e7681">&#160;</tspan><tspan fill="#e6edf3">set</tspan><tspan fill="#6e7681">&#160;</tspan><tspan fill="#e6edf3">-eu</tspan><tspan fill="#6e7681"></tspan></text>
