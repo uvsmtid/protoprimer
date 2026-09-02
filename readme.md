@@ -14,13 +14,13 @@ TODO: Use links to FC/UC docs under `./doc` (when ready) from this readme to nav
 
 # `protoprimer`
 
-\- bootstrapper eliminating `shell` scripts...
+... eliminates `shell` scripts right off the bootstrap:
 
 <!-- NOTE: style="width: 11ch" ~ 11 chars = len("protoprimer"); snippet locked to height: 11ch so both track the same ch unit -->
 
 # <code><a href="https://protoprimer.readthedocs.io/"><img src="doc/_static/protoprimer.logo.svg" alt="logo" style="width: 11ch; height: auto;"></a></code> <code><img src="doc/_static/shell_snippet.svg" alt="shell snippet" style="height: 11ch; width: auto;"></code>
 
-Want your users to run software straight from a `git` repo with a single, zero-argument, healing command?
+Want your users to run software **isolated** in a `git` repo after a single, zero-argument, healing command?
 
 ```sh
 ./prime
