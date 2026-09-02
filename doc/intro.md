@@ -8,17 +8,17 @@
 
 ## When?
 
-When you do **not** like to make conflicting system-wide changes.
+When you **avoid conflicting system-wide changes**.
 
 When you want:
 
-*   to bootstrap an isolated env for every **fresh** repo clone with a **one-liner**:
+*   to bootstrap an **isolated** repo clone environment with a **one-liner**:
 
     ```sh
     ./prime
     ```
 
-*   to start an isolated app from **co-existing** repo clones at different versions:
+*   to start an **isolated** app from **co-existing** repo clones at **different versions**:
 
     ```sh
     ./some_app
