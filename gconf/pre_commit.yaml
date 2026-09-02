@@ -80,6 +80,16 @@ repos:
 
     -   repo: local
         hooks:
+        -   id: shell-snippet-svg-lint
+            name: shell_snippet.svg is pretty-printed
+            entry: cmd/render_shell lint doc/_static/shell_snippet.svg
+            language: system
+            files: "^doc/_static/shell_snippet\\.svg$"
+            pass_filenames: false
+            stages: [
+                "pre-commit",
+            ]
+
         -   id: forbid-binary
             name: forbid binary files
             entry: "Binary files are not allowed:"
