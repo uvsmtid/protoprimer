@@ -14,14 +14,7 @@ TODO: Use links to FC/UC docs under `./doc` (when ready) from this readme to nav
 
 <!-- NOTE: style="width: 11ch" ~ 11 chars = len("protoprimer") -->
 
-<table>
-<tr>
-<td>
-
-# <code><a href="https://protoprimer.readthedocs.io/"><img src="doc/_static/protoprimer.logo.svg" alt="logo" style="width: 11ch; height: auto;"></a></code>
-
-</td>
-<td>
+<code><a href="https://protoprimer.readthedocs.io/"><img src="doc/_static/protoprimer.logo.svg" alt="logo" align="left" style="width: 11ch; height: auto;"></a></code>
 
 ```sh
 echo blah blah blah blah blah blah blah blah blah blah blah blah blahblah
@@ -43,9 +36,7 @@ echo blah blah blah blah blah blah blah blah blah blah blah blah blahblah
 echo blah blah blah blah blah blah blah blah blah blah blah blah blahblah
 ```
 
-</td>
-</tr>
-</table>
+<br clear="left">
 
 # `protoprimer`
 
