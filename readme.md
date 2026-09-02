@@ -12,9 +12,9 @@ FT_84_11_73_28.supported_python_versions.md: see above.
 TODO: Use links to FC/UC docs under `./doc` (when ready) from this readme to navigate to details.
 -->
 
-<!-- NOTE: style="width: 11ch" ~ 11 chars = len("protoprimer"); snippet uses 70ch ~ its line width -->
+<!-- NOTE: style="width: 11ch" ~ 11 chars = len("protoprimer"); snippet uses 42ch -->
 
-# <code><a href="https://protoprimer.readthedocs.io/"><img src="doc/_static/protoprimer.logo.svg" alt="logo" style="width: 11ch; height: auto;"></a></code> <code><img src="doc/_static/echo_snippet.svg" alt="echo blah blah blah" style="width: 70ch; height: auto;"></code>
+# <code><a href="https://protoprimer.readthedocs.io/"><img src="doc/_static/protoprimer.logo.svg" alt="logo" style="width: 11ch; height: auto;"></a></code> <code><img src="doc/_static/echo_snippet.svg" alt="echo blah blah blah" style="width: 42ch; height: auto;"></code>
 
 # `protoprimer`
 
