@@ -6,7 +6,7 @@ from local_test.fat_mocked_helper import (
     run_primer_main,
 )
 from local_test.integrated_helper import (
-    create_max_layout,
+    create_max_leaps_shape,
     test_package_name,
 )
 from local_test.name_assertion import (
@@ -32,7 +32,7 @@ def test_op_boot(tmp_path: Path):
     """
     This test runs `proto_code` directly (rather than importing it via `entry_script`).
 
-    It uses `create_max_layout` (see FT_59_95_81_63.env_layout.md).
+    It uses `create_max_leaps_shape` (see FT_59_95_81_63.tree_shape.md).
     """
 
     assert_test_func_name_embeds_str(ExecOperation.op_boot.value)
@@ -43,7 +43,7 @@ def test_op_boot(tmp_path: Path):
         proto_kernel_abs_path,
         ref_root_abs_path,
         project_dir_abs_path,
-    ) = create_max_layout(tmp_path)
+    ) = create_max_leaps_shape(tmp_path)
 
     # when:
 

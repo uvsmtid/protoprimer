@@ -1422,7 +1422,7 @@ class ConfConstClient:
     # TODO: Is this used? If link_name is not specified, the env conf dir becomes ref root dir:
     default_dir_rel_path_leap_env_link_name: str = os.path.join(ConfDst.dst_local.value)
 
-    # FT_59_95_81_63.env_layout.md / max layout
+    # FT_59_95_81_63.tree_shape.md / max leaps shape
     default_default_env_dir_rel_path: str = os.path.join(
         # TODO: Use constant:
         "dst",

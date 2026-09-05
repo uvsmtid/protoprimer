@@ -3,7 +3,7 @@ import subprocess
 from pathlib import Path
 
 from local_test.integrated_helper import (
-    create_max_layout,
+    create_max_leaps_shape,
 )
 from local_test.name_assertion import (
     assert_test_module_name_embeds_str,
@@ -25,7 +25,7 @@ def test_subprocess_error(tmp_path: Path):
     """
     Ensure protoprimer fails correctly when a subprocess (e.g. `pip`) returns a non-zero exit code.
 
-    It uses `create_max_layout` (see FT_59_95_81_63.env_layout.md).
+    It uses `create_max_leaps_shape` (see FT_59_95_81_63.tree_shape.md).
     """
 
     # given:
@@ -34,7 +34,7 @@ def test_subprocess_error(tmp_path: Path):
         proto_kernel_abs_path,
         ref_root_abs_path,
         project_dir_abs_path,
-    ) = create_max_layout(tmp_path)
+    ) = create_max_leaps_shape(tmp_path)
 
     # Misconfigure the env config file to cause a failure during `pip install`:
     conf_env_dir_abs_path = ref_root_abs_path / ConfConstClient.default_default_env_dir_rel_path

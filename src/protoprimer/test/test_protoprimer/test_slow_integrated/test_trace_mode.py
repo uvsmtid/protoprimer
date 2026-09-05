@@ -10,7 +10,7 @@ from local_test.fat_mocked_helper import (
     run_primer_main,
 )
 from local_test.integrated_helper import (
-    create_max_layout,
+    create_max_leaps_shape,
     test_package_name,
 )
 from local_test.name_assertion import assert_test_module_name_embeds_str
@@ -34,13 +34,13 @@ def test_trace_mode_boot_env(tmp_path: Path):
     """
 
     # given:
-    # fresh max layout boot environment
+    # fresh max leaps shape boot environment
 
     (
         proto_kernel_abs_path,
         _ref_root_abs_path,
         project_dir_abs_path,
-    ) = create_max_layout(tmp_path)
+    ) = create_max_leaps_shape(tmp_path)
 
     stdout_log_path = tmp_path / "trace.stdout.log"
     stderr_log_path = tmp_path / "trace.stderr.log"
@@ -103,7 +103,7 @@ def test_trace_mode_start_app(tmp_path: Path):
         proto_kernel_abs_path,
         ref_root_abs_path,
         _project_dir_abs_path,
-    ) = create_max_layout(tmp_path)
+    ) = create_max_leaps_shape(tmp_path)
 
     run_primer_main(
         [

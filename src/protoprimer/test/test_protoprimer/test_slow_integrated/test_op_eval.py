@@ -5,8 +5,8 @@ from local_test.fat_mocked_helper import (
     run_primer_main,
 )
 from local_test.integrated_helper import (
-    create_max_layout,
-    create_min_layout,
+    create_max_leaps_shape,
+    create_min_leaps_shape,
 )
 from local_test.name_assertion import (
     assert_test_func_name_embeds_str,
@@ -22,7 +22,7 @@ def test_relationship():
     assert_test_module_name_embeds_str(ExecOperation.op_eval.value)
 
 
-def test_op_eval_with_min_layout(tmp_path: Path):
+def test_op_eval_with_min_leaps_shape(tmp_path: Path):
 
     assert_test_func_name_embeds_str(ExecOperation.op_eval.value)
 
@@ -32,7 +32,7 @@ def test_op_eval_with_min_layout(tmp_path: Path):
         proto_kernel_abs_path,
         ref_root_abs_path,
         project_dir_abs_path,
-    ) = create_min_layout(tmp_path)
+    ) = create_min_leaps_shape(tmp_path)
 
     # when:
 
@@ -50,7 +50,7 @@ def test_op_eval_with_min_layout(tmp_path: Path):
     assert not os.path.exists(ref_root_abs_path / TopDir.dir_cache.value)
 
 
-def test_op_eval_with_max_layout(tmp_path: Path):
+def test_op_eval_with_max_leaps_shape(tmp_path: Path):
 
     assert_test_func_name_embeds_str(ExecOperation.op_eval.value)
 
@@ -60,7 +60,7 @@ def test_op_eval_with_max_layout(tmp_path: Path):
         proto_kernel_abs_path,
         ref_root_abs_path,
         project_dir_abs_path,
-    ) = create_max_layout(tmp_path)
+    ) = create_max_leaps_shape(tmp_path)
 
     # when:
 
