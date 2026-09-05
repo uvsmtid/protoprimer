@@ -808,10 +808,12 @@ class VenvDriverPip(VenvDriverBase):
         required_python_version: str,
         selected_python_file_abs_path: str,
         state_local_venv_dir_abs_path_inited: str,
+        enforce_version_match: bool,
     ):
         self.required_python_version: str = required_python_version
         self.selected_python_file_abs_path: str = selected_python_file_abs_path
         self.state_local_venv_dir_abs_path_inited: str = state_local_venv_dir_abs_path_inited
+        self.enforce_version_match: bool = enforce_version_match
 
     def get_type(self) -> VenvDriverType:
         return VenvDriverType.venv_pip
@@ -822,6 +824,12 @@ class VenvDriverPip(VenvDriverBase):
         local_venv_dir_abs_path: str,
         constraints_file_abs_path: str,
     ) -> None:
+        if self.enforce_version_match:
+            assert_python_version_matches(
+                self.selected_python_file_abs_path,
+                self.required_python_version,
+            )
+
         subprocess.check_call(
             [
                 self.selected_python_file_abs_path,
@@ -924,6 +932,10 @@ class VenvDriverUv(VenvDriverBase):
                 # Instead of `self.state_local_venv_dir_abs_path_inited`,
                 # this intermediate driver uses ` self.uv_venv_abs_path`:
                 state_local_venv_dir_abs_path_inited=self.uv_venv_abs_path,
+                # This scratch `venv` intentionally uses whatever `python` is currently selected
+                # (only needs to be new enough for `uv` itself, see TODO above) -
+                # it is not supposed to satisfy `required_python_version`:
+                enforce_version_match=False,
             )
             # NOTE: This is a throwaway `venv` used only to install `uv` itself -
             #       it is not governed by the project's `version_constraints.txt`:
@@ -3285,9 +3297,8 @@ class Bootstrapper_required_python_version_inited(AbstractOverriddenFieldCaching
         assert state_required_python_version_inited is not None
         logger.debug(f"raw `state_required_python_version_inited` [{state_required_python_version_inited}]")
 
-        # normalize:
-        python_version: tuple[int, int, int] = parse_python_version(state_required_python_version_inited)
-        state_required_python_version_inited = f"{python_version[0]}.{python_version[1]}.{python_version[2]}"
+        # validate:
+        parse_python_version(state_required_python_version_inited)
 
         return state_required_python_version_inited
 
@@ -3980,6 +3991,7 @@ class Bootstrapper_state_venv_driver_prepared_is_app(AbstractCachingStateNode[Ve
                 required_python_version=state_required_python_version_inited,
                 selected_python_file_abs_path=state_selected_python_file_abs_path_inited,
                 state_local_venv_dir_abs_path_inited=state_local_venv_dir_abs_path_inited,
+                enforce_version_match=True,
             )
         else:
             raise AssertionError(f"unsupported `{VenvDriverType.__name__}` [{state_venv_driver_inited.name}]")
@@ -5750,9 +5762,9 @@ def get_python_version(path_to_python: str) -> tuple[int, int, int]:
 # noinspection PyTypeChecker
 def parse_python_version(python_version: str) -> tuple[int, int, int]:
     """
-    Converts a version `str` version "X.Y.Z" into a `tuple` of integers (X, Y, Z) handling:
-    *   "3.13.4-beta" -> (3.13.4)
-    *   "3" -> (3.0.0)
+    Converts a `str` version "X.Y.Z" into a `tuple` of integers (X, Y, Z) handling:
+    *   "3.13.4-beta" -> (3, 13, 4,)
+    *   "3" -> (3, 0, 0,)
     """
     import re
 
@@ -5763,6 +5775,36 @@ def parse_python_version(python_version: str) -> tuple[int, int, int]:
     version_parts: tuple[str, str, str] = tuple((python_version.split(".") + ["0", "0", "0"])[:3])
     version_tuple: tuple[int, int, int] = tuple(_parse_version_int(part) for part in version_parts)
     return version_tuple
+
+
+def parse_python_version_prefix(python_version: str) -> tuple[int, ...]:
+    """
+    Unlike `parse_python_version`, does NOT zero-pad missing components:
+    *   "3" -> (3,)
+    *   "3.11" -> (3, 11,)
+    *   "3.11.4" -> (3, 11, 4,)
+    """
+    import re
+
+    def _parse_version_int(version_part: str) -> int:
+        number_match = re.search(r"\d+", version_part)
+        return int(number_match.group()) if number_match else 0
+
+    return tuple(_parse_version_int(part) for part in python_version.split("."))[:3]
+
+
+def assert_python_version_matches(
+    python_file_abs_path: str,
+    required_python_version: str,
+) -> None:
+    """
+    Verify `python_file_abs_path` satisfies `required_python_version`.
+    """
+    required_version_prefix: tuple[int, ...] = parse_python_version_prefix(required_python_version)
+    actual_version: tuple[int, int, int] = get_python_version(python_file_abs_path)
+    actual_version_prefix: tuple[int, ...] = actual_version[: len(required_version_prefix)]
+    if actual_version_prefix != required_version_prefix:
+        raise AssertionError(f"`python` [{python_file_abs_path}] version {actual_version} " f"does not satisfy required version [{required_python_version}].")
 
 
 def import_proto_module(

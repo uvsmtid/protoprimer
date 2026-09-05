@@ -133,7 +133,7 @@ There are two entry functions - see details in [boot_vs_start][FT_58_74_37_70.bo
 | Function:    | [start_app][FT_05_08_64_67.start_app.md]                     | [boot_env][FT_85_17_35_21.boot_env.md]                |
 |--------------|--------------------------------------------------------------|-------------------------------------------------------|
 | Purpose:     | run **arbitrary** script<br>from `venv` by required `python` | **extend** the default bootstrap<br>with custom steps |
-| Cardinality: | **many** per project                                         | **one** per project                                   |
+| Cardinality: | **many** scripts per project                                 | **one** script per project                            |
 | Executes:    | smaller part of `proto_kernel`                               | bigger part of `proto_kernel`                         |
 | Example:     | `./cmd/start_app_example`                                    | `./cmd/boot_env_example`                              |
 

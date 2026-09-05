@@ -53,6 +53,7 @@ def test_python_from_arbitrary_venv(
         required_python_version=platform.python_version(),
         selected_python_file_abs_path=sys.executable,
         state_local_venv_dir_abs_path_inited=str(arbitrary_venv_dir),
+        enforce_version_match=True,
     )
     venv_driver.create_venv(str(arbitrary_venv_dir), "")
     arbitrary_venv_python = arbitrary_venv_dir / ConfConstGeneral.file_rel_path_venv_python
@@ -129,6 +130,7 @@ def test_python_from_required_venv(
             required_python_version=platform.python_version(),
             selected_python_file_abs_path=sys.executable,
             state_local_venv_dir_abs_path_inited=str(required_venv_dir_abs_path),
+            enforce_version_match=True,
         )
     else:
         venv_driver = VenvDriverUv(
