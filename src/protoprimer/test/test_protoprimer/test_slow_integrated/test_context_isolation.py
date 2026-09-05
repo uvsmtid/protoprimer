@@ -49,8 +49,7 @@ def test_start_app_cleans_protoprimer_env_vars(tmp_path: pathlib.Path):
         test_python_version,
         sys.executable,
         str(arbitrary_venv_dir),
-        # This is just a throwaway starting `venv` for the test scenario below -
-        # it is not meant to satisfy `test_python_version`:
+        # A throwaway starting `venv` not matching `test_python_version`:
         enforce_version_match=False,
     )
     venv_driver.create_venv(str(arbitrary_venv_dir), "")
