@@ -42,7 +42,7 @@ When you want:
 *   from **chaos** (the many conditions in which a user may invoke it)
 *   into **order** (an env-specific `venv` with the **required** `python` version)
 
-Eventually, it transfers control to your code:
+Eventually, it transfers control to user code:
 
 <details>
 <summary>[guaranteed environment]</summary>
