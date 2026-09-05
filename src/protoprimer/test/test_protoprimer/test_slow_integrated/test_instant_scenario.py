@@ -36,7 +36,7 @@ def test_instant_scenario(tmp_path: Path):
     """
     This test runs `proto_code` directly (rather than importing it via `entry_script`).
 
-    It uses `create_min_layout` (see FT_59_95_81_63.env_layout.md).
+    It uses `create_min_layout` (see FT_59_95_81_63.tree_shape.md).
     """
 
     # given:

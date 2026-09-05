@@ -25,7 +25,7 @@ def test_subprocess_error(tmp_path: Path):
     """
     Ensure protoprimer fails correctly when a subprocess (e.g. `pip`) returns a non-zero exit code.
 
-    It uses `create_max_layout` (see FT_59_95_81_63.env_layout.md).
+    It uses `create_max_layout` (see FT_59_95_81_63.tree_shape.md).
     """
 
     # given:

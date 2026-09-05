@@ -332,7 +332,7 @@ def create_conf_env_file(
 
 def create_min_layout(tmp_path: Path) -> Tuple[Path, Path, Path]:
     """
-    See "min" layout: FT_59_95_81_63.env_layout.md
+    See "min" layout: FT_59_95_81_63.tree_shape.md
     """
 
     ref_root_abs_path = switch_to_ref_root_abs_path(tmp_path)
@@ -365,7 +365,7 @@ def create_min_layout(tmp_path: Path) -> Tuple[Path, Path, Path]:
 
 def create_max_layout(tmp_path: Path) -> Tuple[Path, Path, Path]:
     """
-    See "max" layout: FT_59_95_81_63.env_layout.md
+    See "max" layout: FT_59_95_81_63.tree_shape.md
     """
 
     ref_root_abs_path: pathlib.Path = switch_to_ref_root_abs_path(tmp_path)
