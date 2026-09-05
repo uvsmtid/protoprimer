@@ -330,14 +330,14 @@ def create_conf_env_file(
     )
 
 
-def create_min_layout(tmp_path: Path) -> Tuple[Path, Path, Path]:
+def create_min_leaps_shape(tmp_path: Path) -> Tuple[Path, Path, Path]:
     """
-    See "min" layout: FT_59_95_81_63.tree_shape.md
+    See "min leaps shape": FT_59_95_81_63.tree_shape.md
     """
 
     ref_root_abs_path = switch_to_ref_root_abs_path(tmp_path)
 
-    # Use the `ConfConstGeneral.python_version_file_basename` file in the min layout:
+    # Use the `ConfConstGeneral.python_version_file_basename` file in the min leaps shape:
     create_python_version_file(str(ref_root_abs_path), test_python_version)
 
     # === create `pyproject.toml`
@@ -363,9 +363,9 @@ def create_min_layout(tmp_path: Path) -> Tuple[Path, Path, Path]:
     )
 
 
-def create_max_layout(tmp_path: Path) -> Tuple[Path, Path, Path]:
+def create_max_leaps_shape(tmp_path: Path) -> Tuple[Path, Path, Path]:
     """
-    See "max" layout: FT_59_95_81_63.tree_shape.md
+    See "max leaps shape": FT_59_95_81_63.tree_shape.md
     """
 
     ref_root_abs_path: pathlib.Path = switch_to_ref_root_abs_path(tmp_path)

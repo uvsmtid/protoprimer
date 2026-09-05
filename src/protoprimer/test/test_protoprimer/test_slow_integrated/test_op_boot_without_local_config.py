@@ -6,7 +6,7 @@ from local_test.fat_mocked_helper import (
     run_primer_main,
 )
 from local_test.integrated_helper import (
-    create_max_layout,
+    create_max_leaps_shape,
     create_python_version_file,
     test_python_version,
 )
@@ -37,7 +37,7 @@ def test_op_boot_without_local_config(tmp_path: Path):
         proto_kernel_abs_path,
         ref_root_abs_path,
         project_dir_abs_path,
-    ) = create_max_layout(tmp_path)
+    ) = create_max_leaps_shape(tmp_path)
 
     # Use the `ConfConstGeneral.python_version_file_basename` file for this case of missing global config:
     create_python_version_file(str(ref_root_abs_path), test_python_version)

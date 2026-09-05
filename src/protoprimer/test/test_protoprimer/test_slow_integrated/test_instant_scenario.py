@@ -11,7 +11,7 @@ from local_test.fat_mocked_helper import (
     run_primer_main,
 )
 from local_test.integrated_helper import (
-    create_min_layout,
+    create_min_leaps_shape,
     test_package_name,
 )
 from protoprimer.primer_kernel import (
@@ -36,7 +36,7 @@ def test_instant_scenario(tmp_path: Path):
     """
     This test runs `proto_code` directly (rather than importing it via `entry_script`).
 
-    It uses `create_min_layout` (see FT_59_95_81_63.tree_shape.md).
+    It uses `create_min_leaps_shape` (see FT_59_95_81_63.tree_shape.md).
     """
 
     # given:
@@ -45,7 +45,7 @@ def test_instant_scenario(tmp_path: Path):
         proto_kernel_abs_path,
         ref_root_abs_path,
         project_dir_abs_path,
-    ) = create_min_layout(tmp_path)
+    ) = create_min_leaps_shape(tmp_path)
 
     # when:
 

@@ -11,7 +11,7 @@ from local_test.fat_mocked_helper import (
     _ExitCalled,
     fat_mock_wrapper,
 )
-from local_test.integrated_helper import create_max_layout
+from local_test.integrated_helper import create_max_leaps_shape
 from local_test.verified_dynamic_graph import (
     TrackingEnvContext,
     TrackingStateGraph,
@@ -70,7 +70,7 @@ class TestEvaluatedStateSets:
     Each function uses a meaningful `EnvContext` coordinate combination.
 
     Each test method:
-    *   Use fake filesystem with `create_max_layout` (inside `fat_mock_wrapper`).
+    *   Use fake filesystem with `create_max_leaps_shape` (inside `fat_mock_wrapper`).
     *   Use `StateStride.stride_src_updated` to skip process-restart transitions.
     *   Runs the graph inside `fat_mock_wrapper` (which mocks execution side effects).
     *   Asserts the collected state names match the expected list.
@@ -85,7 +85,7 @@ class TestEvaluatedStateSets:
         mock_test_dir = fs.create_dir("/mock_test_dir")
 
         with fat_mock_wrapper(fs):
-            (proto_kernel_abs_path, _, _) = create_max_layout(pathlib.Path(mock_test_dir.path))
+            (proto_kernel_abs_path, _, _) = create_max_leaps_shape(pathlib.Path(mock_test_dir.path))
 
             env_ctx = _make_tracking_env_ctx(
                 entry_func=EntryFunc.func_boot_env,
@@ -183,7 +183,7 @@ class TestEvaluatedStateSets:
         mock_test_dir = fs.create_dir("/mock_test_dir")
 
         with fat_mock_wrapper(fs):
-            (proto_kernel_abs_path, _, _) = create_max_layout(pathlib.Path(mock_test_dir.path))
+            (proto_kernel_abs_path, _, _) = create_max_leaps_shape(pathlib.Path(mock_test_dir.path))
 
             env_ctx = _make_tracking_env_ctx(
                 entry_func=EntryFunc.func_start_app,
@@ -257,7 +257,7 @@ class TestEvaluatedStateSets:
         mock_test_dir = fs.create_dir("/mock_test_dir")
 
         with fat_mock_wrapper(fs):
-            (proto_kernel_abs_path, _, _) = create_max_layout(pathlib.Path(mock_test_dir.path))
+            (proto_kernel_abs_path, _, _) = create_max_leaps_shape(pathlib.Path(mock_test_dir.path))
 
             env_ctx = _make_tracking_env_ctx(
                 entry_func=EntryFunc.func_call_lib,
