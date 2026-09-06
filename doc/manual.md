@@ -254,9 +254,14 @@ assert proto_kernel_path.stat().st_mode & 0o111, "not executable"
 python_version_path = repo_dir / ".python-version"
 assert python_version_path.exists(), python_version_path
 
-import platform
+expected_python_version = subprocess.run(
+    ["python3", "-c", "import platform; print(platform.python_version())"],
+    capture_output=True,
+    text=True,
+    check=True,
+).stdout.strip()
 
-assert python_version_path.read_text().strip() == platform.python_version(), (
+assert python_version_path.read_text().strip() == expected_python_version, (
     python_version_path.read_text()
 )
 
