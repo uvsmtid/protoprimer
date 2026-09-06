@@ -48,7 +48,7 @@ repos:
                 # to enforce line breaks in specific places.
                 "--line-length", "999",
                 "--force-exclude",
-                "cmd/proto_code/proto_kernel.py",
+                "src/proto_code/proto_kernel.py",
             ]
             stages: [
                 "pre-commit",
