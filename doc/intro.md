@@ -6,43 +6,12 @@
 
 # [![logo](/_static/protoprimer.logo.16x16.png)][protoprimer_github] [`protoprimer`][protoprimer_github]
 
-## When?
-
-When you **avoid conflicting system-wide changes**.
-
-When you want:
-
-*   to bootstrap an **isolated** repo clone environment with a **one-liner**:
-
-    ```sh
-    ./prime
-    ```
-
-*   to start an **isolated** app from **co-existing** repo clones at **different versions**:
-
-    ```sh
-    ./some_app
-    ```
-
-*   to eliminate **untestable** non-modular `shell` scripts and automate with `python`:
-
-    <details>
-    <summary>[direct execution]</summary>
-
-    *   **no** explicit activation of individual `venv`-s **per repo clone**
-    *   **no** worrying about incompatibility between branches **per repo clone**
-    *   **no** #!shebang absolute path exposure and length limit **per repo clone**
-
-    </details>
-
-## What?
-
 `protoprimer` is an **arg-less** stand-alone **idempotent** code that switches:
 
 *   from **chaos** (the many conditions in which a user may invoke it)
 *   into **order** (an env-specific `venv` with the **required** `python` version)
 
-Eventually, it transfers control to your code:
+Eventually, it transfers control to user code:
 
 <details>
 <summary>[guaranteed environment]</summary>
@@ -69,6 +38,26 @@ Eventually, it transfers control to your code:
 
 </details>
 
+## When?
+
+When you **avoid conflicting system-wide changes**.
+
+When you want:
+
+*   to bootstrap an **isolated** repo clone environment with a **one-liner**:
+
+    ```sh
+    ./prime
+    ```
+
+*   to start an **isolated** app from **co-existing** repo clones at **different versions**:
+
+    ```sh
+    ./some_app
+    ```
+
+*   to eliminate **untestable** non-modular `shell` scripts and automate with `python`.
+
 ## Why?
 
 You want a **single reproducible step** to run anything.
@@ -79,7 +68,7 @@ You want a **single reproducible step** to run anything.
 Multiple manual steps are **tedious and error-prone**:
 *   **permute** steps by the number of **users** and repo **clones**
 *   any subsequent update **avalanches** into re-execution of steps
-*   partial failures, re-ordering, mistakes, ... turn into **support nightmare**
+*   partial failures, re-ordering, mistakes, ... turn into **a support nightmare**
 
 </details>
 
@@ -177,7 +166,7 @@ In other words, it must become **both** "the chicken" **and** "the egg".
 
 ## How?
 
-`protoprimer` **restarts** iteratively preparing the environment:
+`protoprimer` **iteratively restarts** to prepare the environment:
 
 *   Takes off with a **wild** `python` version (whatever is in the `PATH` env var).
 
@@ -189,7 +178,23 @@ In other words, it must become **both** "the chicken" **and** "the egg".
 
     > The custom steps **take over** here.
 
-It runs ubiquitously - **any** `python` is **trivial** to satisfy.
+## Python?
+
+It has to be `python` to run right off the bootstrap:
+
+<details>
+<summary>[have no doubts]</summary>
+
+*   ubiquitous - **any** `python` must be **trivial** to satisfy
+*   script - to be hosted in user repos as **text** (not binary)
+*   compilation-free - otherwise, it **spirals** (other tools have to build the tools)
+*   cross-platform - to avoid excessive branching
+*   widely adopted - to be easily maintainable
+*   ...
+
+</details>
+
+User code may run **anything** else.
 
 <!--
 

@@ -124,9 +124,12 @@ sitemap_url_scheme = "{link}"
 # html_theme = "alabaster"
 html_theme = "alabaster"
 
+# Pygments syntax-highlighting style for code blocks:
+pygments_style = "friendly"
+
 html_static_path = ["_static"]
 
-html_css_files = ["custom.css"]
+html_css_files = ["overrides.css"]
 
 # -- Options for EPUB output
 epub_show_urls = "footnote"

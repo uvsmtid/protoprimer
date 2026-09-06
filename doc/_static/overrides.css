@@ -17,9 +17,47 @@ body {
 /* Use `monospace` everywhere: */
 * {
     font-family: "Roboto Mono", "Consolas", "Courier New", monospace !important;
-    color: black !important;
     hyphens: none !important;
     overflow-wrap: anywhere;
+}
+
+/* Force black text everywhere EXCEPT Pygments-highlighted code
+   (otherwise `color: black !important` overrides all syntax token colors): */
+*:not(.highlight):not(.highlight *) {
+    color: black !important;
+}
+
+/* Remove border/background around the `{contents}` local TOC: */
+div.topic.contents,
+nav.contents {
+    border: none !important;
+    background: none !important;
+    padding-left: 0 !important;
+}
+
+/* No underline on `{contents}` local TOC links or the heading backref links it adds: */
+div.topic.contents a,
+nav.contents a,
+a.toc-backref {
+    text-decoration: none !important;
+}
+
+/* Render code comments in green, non-italic (override Pygments `friendly` style): */
+.highlight .c,
+.highlight .ch,
+.highlight .cm,
+.highlight .cp,
+.highlight .cpf,
+.highlight .c1,
+.highlight .cs {
+    color: #2e7d32 !important;
+    font-style: normal !important;
+}
+
+/* In `shell` blocks, render bash builtins (`cd`, `echo`, ...) like any other commands. */
+.highlight-shell .highlight .nb {
+    color: inherit !important;
+    font-weight: inherit !important;
 }
 
 /* Keep bullet lists indented on narrow viewports: */

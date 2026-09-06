@@ -33,6 +33,9 @@ dependencies = [
 
     # Used for `./cmd/render_shell` (shell snippet -> SVG):
     "pygments",
+
+    # Used to execute sample code embedded in files under `./doc/` as `pytest` tests:
+    "sybil[pytest]",
 ]
 
 [tool.setuptools.packages.find]

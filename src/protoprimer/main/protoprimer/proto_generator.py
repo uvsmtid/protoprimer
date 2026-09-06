@@ -53,6 +53,7 @@ def import_proto_kernel(proto_kernel_rel_path: str):
 
     module_spec = importlib.util.spec_from_file_location(
         "proto_kernel",
+        # FT_18_38_32_22.script_dir.md
         os.path.join(
             os.path.dirname(str(__file__)),
             proto_kernel_rel_path,
