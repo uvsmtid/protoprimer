@@ -25,7 +25,7 @@ def proto_kernel_abs_path():
     with change_to_known_repo_path("."):
         if not os.path.islink("./lconf") or os.readlink("./lconf") != _lconf_expected_target:
             pytest.skip(f"`./lconf` does not point to {_lconf_expected_target}")
-        abs_path = os.path.abspath("./cmd/proto_code/proto_kernel.py")
+        abs_path = os.path.abspath("./src/proto_code/proto_kernel.py")
         with patch("protoprimer.primer_kernel.get_proto_kernel_abs_path", return_value=abs_path):
             yield abs_path
 
@@ -61,7 +61,7 @@ def test_get_config_with_leap_client(proto_kernel_abs_path):
 
     assert conf_data[ConfField.field_required_python_version.value] == "3.14.0"
 
-    assert conf_data[ConfField.field_python_selector_file_rel_path.value] == "cmd/proto_code/python_selector_same.py"
+    assert conf_data[ConfField.field_python_selector_file_rel_path.value] == "src/proto_code/python_selector_same.py"
 
     assert conf_data[ConfField.field_venv_driver.value] == "venv_uv"
 
@@ -128,7 +128,7 @@ def test_get_config_with_leap_env(proto_kernel_abs_path):
 
     # then:
 
-    assert conf_data[ConfField.field_python_selector_file_rel_path.value] == "cmd/proto_code/python_selector_py.py"
+    assert conf_data[ConfField.field_python_selector_file_rel_path.value] == "src/proto_code/python_selector_py.py"
 
 
 def test_get_config_with_leap_derived(proto_kernel_abs_path):

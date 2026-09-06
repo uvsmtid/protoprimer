@@ -6,7 +6,7 @@ Run `./cmd/test_python_version --python min` and fix any errors.
 
 To speed test iteration, test only specific file which fails via `--test_file` CLI arg.
 
-Do not change `./cmd/proto_code/proto_kernel.py`.
+Do not change `./src/proto_code/proto_kernel.py`.
 Instead, change `./src/protoprimer/main/protoprimer/primer_kernel.py` and
-run `./prime` which copies changes into `./cmd/proto_code/proto_kernel.py`.
+run `./prime` which copies changes into `./src/proto_code/proto_kernel.py`.
 """
