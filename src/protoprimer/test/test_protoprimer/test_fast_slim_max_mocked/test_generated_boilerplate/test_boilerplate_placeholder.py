@@ -82,9 +82,9 @@ def test_kernel_files_line_count():
     # given:
 
     primer_kernel_file_path = pathlib.Path(primer_kernel.__file__)
-    # The `proto_kernel.py` is located in `cmd/proto_code/` relative to the repo root.
+    # The `proto_kernel.py` is located in `src/proto_code/` relative to the repo root.
     repo_root = primer_kernel_file_path.parents[4]
-    proto_kernel_file_path = repo_root / "cmd" / "proto_code" / "proto_kernel.py"
+    proto_kernel_file_path = repo_root / "src" / "proto_code" / "proto_kernel.py"
 
     # when:
 

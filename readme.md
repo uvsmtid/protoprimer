@@ -215,7 +215,7 @@ They are convenient wrappers to invoke any function - the **easy** part as they 
 
 [protoprimer_readthedocs]: https://protoprimer.readthedocs.io/
 
-[local_proto_kernel.py]: cmd/proto_code/proto_kernel.py
+[local_proto_kernel.py]: src/proto_code/proto_kernel.py
 
 [FT_90_65_67_62.proto_code.md]: doc/feature_topic/FT_90_65_67_62.proto_code.md
 [FT_87_17_49_36.proto_kernel.md]: doc/feature_topic/FT_87_17_49_36.proto_kernel.md

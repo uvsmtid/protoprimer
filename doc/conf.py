@@ -35,7 +35,7 @@ def import_proto_kernel(proto_kernel_rel_path):
     return loaded_proto_kernel
 
 
-proto_kernel = import_proto_kernel("../cmd/proto_code/proto_kernel.py")
+proto_kernel = import_proto_kernel("../src/proto_code/proto_kernel.py")
 __version__ = proto_kernel.__version__
 
 

@@ -5,7 +5,7 @@ Uses approach described in UC_39_44_27_45.single_proto_kernel_per_repo.md.
 
 if __name__ == "__main__":
 
-    proto_kernel_rel_path = "./cmd/proto_code/proto_kernel.py"
+    proto_kernel_rel_path = "src/proto_code/proto_kernel.py"
 
     # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     # Boilerplate to import `proto_kernel` from `protoprimer`
