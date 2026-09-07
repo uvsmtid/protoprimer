@@ -34,8 +34,10 @@ import os
 import pathlib
 import shlex
 import shutil
+import stat
 import subprocess
 import sys
+import textwrap
 import typing
 
 # The release process ensures that content in this file matches the version below while tagging the release commit
@@ -218,6 +220,8 @@ class KeyWord(enum.Enum):
     key_func = "func"
     key_level = "level"
     key_basename = "basename"
+    key_script = "script"
+    key_path = "path"
 
     key_mocked = "mocked"
     key_default = "default"
@@ -348,6 +352,9 @@ class ExecOperation(enum.Enum):
     #       If we specify which `StateStride` or which `EnvState` to check things for, it might be useful.
     # TODO: implement? It must find its application to check things before `venv`.
     op_check = "check"
+
+    # UC_71_59_90_97.generated_entry_script.md
+    op_wrap = "wrap"
 
 
 # TODO: TODO_31_76_38_60.exec_operation_for_shell.md: remove "command" (when replaced by `shell_mode` or `run_mode`):
@@ -517,6 +524,11 @@ class ParsedArg(enum.Enum):
 
     name_exec_operation = str(ValueName.value_exec_operation.value)
 
+    # UC_71_59_90_97.generated_entry_script.md
+    name_entry_func = f"{KeyWord.key_entry.value}_{KeyWord.key_func.value}"
+    name_entry_script_path = f"{KeyWord.key_entry.value}_{KeyWord.key_script.value}_{KeyWord.key_path.value}"
+    name_main_func = f"{KeyWord.key_main.value}_{KeyWord.key_func.value}"
+
 
 class LogLevel(enum.Enum):
     name_quiet = "quiet"
@@ -541,6 +553,13 @@ class SyntaxArg:
 
     arg_e = f"-{KeyWord.key_env.value[0]}"
     arg_env = f"--{KeyWord.key_env.value}"
+
+    # UC_71_59_90_97.generated_entry_script.md
+    arg_s = f"-{KeyWord.key_script.value[0]}"
+    arg_entry_script_path = f"--{ParsedArg.name_entry_script_path.value}"
+
+    arg_m = f"-{KeyWord.key_main.value[0]}"
+    arg_main_func = f"--{ParsedArg.name_main_func.value}"
 
 
 class SelectorFunc(enum.Enum):
@@ -1364,6 +1383,11 @@ class ConfConstGeneral:
 """
     )
 
+    # FT_56_85_65_41.generated_boilerplate.md
+    # UC_71_59_90_97.generated_entry_script.md
+    entry_script_boilerplate_begin_marker = "# <<< BEGIN: FT_56_85_65_41.generated_boilerplate"
+    entry_script_boilerplate_end_marker = "# >>> END: FT_56_85_65_41.generated_boilerplate"
+
     relative_path_field_note: str = f"The path is relative to the `{PathName.path_ref_root.value}` dir specified in the `{ConfField.field_ref_root_dir_rel_path.value}` field."
     common_field_global_note: str = f"This field can be specified in global config (see `{ConfLeap.leap_client.name}`) but it is override-able by local environment-specific config (see `{ConfLeap.leap_env.name}`)."
     common_field_local_note: str = f"This local environment-specific field overrides the global one (see description in `{ConfLeap.leap_client.name}`)."
@@ -1571,6 +1595,53 @@ def _create_child_argparser(parent_argparsers):
         )
         parser_check.set_defaults(exec_operation=ExecOperation.op_check.value)
 
+    def _create_wrap_parser(exec_operation_parsers):
+        exec_operation_desc = "Generate an `entry_script` boilerplate."
+        parser_wrap = exec_operation_parsers.add_parser(
+            ExecOperation.op_wrap.value,
+            help=exec_operation_desc,
+            description=exec_operation_desc,
+        )
+        parser_wrap.set_defaults(exec_operation=ExecOperation.op_wrap.value)
+
+        entry_func_parsers = parser_wrap.add_subparsers(
+            dest=ParsedArg.name_entry_func.value,
+            title="Entry funcs",
+            description="Select which function the generated `entry_script` calls:",
+            metavar="entry_func",
+        )
+        entry_func_parsers.required = True
+
+        for selected_entry_func in [
+            EntryFunc.func_boot_env,
+            EntryFunc.func_start_app,
+        ]:
+            entry_func_desc = f"Generate an `entry_script` which calls `{selected_entry_func.value}`."
+            parser_entry_func = entry_func_parsers.add_parser(
+                selected_entry_func.value,
+                help=entry_func_desc,
+                description=entry_func_desc,
+            )
+            parser_entry_func.set_defaults(entry_func=selected_entry_func.value)
+            parser_entry_func.add_argument(
+                SyntaxArg.arg_s,
+                SyntaxArg.arg_entry_script_path,
+                type=str,
+                required=True,
+                dest=ParsedArg.name_entry_script_path.value,
+                metavar=ParsedArg.name_entry_script_path.value,
+                help="Path to the `entry_script` to generate.",
+            )
+            parser_entry_func.add_argument(
+                SyntaxArg.arg_m,
+                SyntaxArg.arg_main_func,
+                type=str,
+                required=True,
+                dest=ParsedArg.name_main_func.value,
+                metavar=ParsedArg.name_main_func.value,
+                help="The `module_name:function_name` to invoke inside `venv`.",
+            )
+
     child_argparser = CustomArgumentParser(
         description=f"The early [{PrimerRuntime.runtime_proto.value}] environment bootstrapper [{KeyWord.key_primer.value}].",
         parents=parent_argparsers,
@@ -1588,6 +1659,7 @@ def _create_child_argparser(parent_argparsers):
     _create_boot_parser(child_argparsers)
     _create_reset_parser(child_argparsers)
     _create_eval_parser(child_argparsers)
+    _create_wrap_parser(child_argparsers)
 
     # TODO: TODO_73_71_31_84.exec_operation_check_or_info.md: implement
     # noinspection PyUnreachableCode
@@ -2337,6 +2409,9 @@ class Bootstrapper_state_func_boot_env_executed(AbstractCachingStateNode[bool]):
             # TODO: FT_77_15_06_50.dynamic_DAG.md:
             #       How does it comply with `EnvContext._forced_final_state`?
             state_node = self.env_ctx._state_graph.get_state_node(EnvState.state_effective_conf_data_printed.name)
+        elif state_input_exec_operation_loaded == ExecOperation.op_wrap:
+            selected_strategy = ExitCodeReporter(self.env_ctx)
+            state_node = self.env_ctx._state_graph.get_state_node(EnvState.state_wrap_executed.name)
         elif state_input_exec_operation_loaded in [
             ExecOperation.op_boot,
             ExecOperation.op_start,
@@ -2724,6 +2799,80 @@ class Factory_state_proto_code_file_abs_path_inited(NodeFactory[StateStride]):
             return Bootstrapper_state_proto_code_file_abs_path_inited_func_call_lib(self.env_ctx)
         else:
             return Bootstrapper_state_proto_code_file_abs_path_inited_not_func_call_lib(self.env_ctx)
+
+
+# noinspection PyPep8Naming
+@trivial_factory
+class Bootstrapper_state_wrap_executed(AbstractCachingStateNode[int]):
+    """
+    UC_71_59_90_97.generated_entry_script.md
+    """
+
+    _parent_states = staticmethod(
+        lambda: [
+            EnvState.state_args_parsed.name,
+            EnvState.state_proto_code_file_abs_path_inited.name,
+        ]
+    )
+    _state_name = staticmethod(lambda: EnvState.state_wrap_executed.name)
+
+    def _eval_state_once(self) -> ValueType:
+
+        state_args_parsed: argparse.Namespace = self.eval_parent_state(EnvState.state_args_parsed.name)
+
+        entry_func: str = getattr(state_args_parsed, ParsedArg.name_entry_func.value)
+        entry_script_path_arg: str = getattr(state_args_parsed, ParsedArg.name_entry_script_path.value)
+        main_func: str = getattr(state_args_parsed, ParsedArg.name_main_func.value)
+
+        if ConfConstGeneral.module_func_separator not in main_func:
+            raise ValueError(f"`{SyntaxArg.arg_main_func}` [{main_func}] does not match expected format `module_name:function_name`.")
+        (
+            module_name,
+            func_name,
+        ) = main_func.split(
+            ConfConstGeneral.module_func_separator,
+            1,
+        )
+
+        proto_kernel_abs_path: str = self.eval_parent_state(EnvState.state_proto_code_file_abs_path_inited.name)
+        proto_kernel_dir_abs_path: str = os.path.dirname(proto_kernel_abs_path)
+
+        entry_script_abs_path: str = os.path.normpath(
+            os.path.join(
+                proto_kernel_dir_abs_path,
+                entry_script_path_arg,
+            )
+        )
+
+        entry_script_content: str = generate_entry_script_content(
+            entry_func,
+            proto_kernel_abs_path,
+            entry_script_abs_path,
+            module_name,
+            func_name,
+        )
+
+        existing_entry_script_content: str | None = None
+        if os.path.isfile(entry_script_abs_path):
+            existing_entry_script_content = read_text_file(entry_script_abs_path)
+
+        entry_script_content = merge_entry_script_content(
+            existing_entry_script_content,
+            entry_script_content,
+        )
+
+        write_text_file(
+            file_path=entry_script_abs_path,
+            file_data=entry_script_content,
+        )
+
+        entry_script_stat = os.stat(entry_script_abs_path)
+        os.chmod(
+            entry_script_abs_path,
+            entry_script_stat.st_mode | stat.S_IXUSR,
+        )
+
+        return 0
 
 
 # noinspection PyPep8Naming
@@ -4759,6 +4908,9 @@ class EnvState(enum.Enum):
 
     state_proto_code_file_abs_path_inited = Factory_state_proto_code_file_abs_path_inited
 
+    # UC_71_59_90_97.generated_entry_script.md
+    state_wrap_executed = Bootstrapper_state_wrap_executed
+
     state_primer_conf_file_abs_path_inited = Bootstrapper_state_primer_conf_file_abs_path_inited
 
     # `ConfLeap.leap_primer`:
@@ -6015,6 +6167,125 @@ def get_config(conf_leap: ConfLeap) -> dict:
     )
     env_ctx.eval_state(TargetState.target_everything_executed.value.name)
     return env_ctx.eval_state(_conf_leap_to_state[conf_leap])
+
+
+def generate_entry_script_content(
+    entry_func: str,
+    proto_kernel_abs_path: str,
+    entry_script_abs_path: str,
+    module_name: str,
+    func_name: str,
+    env_vars: dict[str, str] = None,
+) -> str:
+    """
+    FT_75_87_82_46.entry_script.md
+    """
+
+    if entry_func not in [
+        EntryFunc.func_boot_env.value,
+        EntryFunc.func_start_app.value,
+    ]:
+        raise AssertionError(f"Unrecognized `entry_func` [{entry_func}]")
+
+    env_vars_lines = ""
+    if env_vars:
+        env_vars_lines = "\n".join(
+            [
+                f'os.environ["{var_name}"] = "{var_value}"'
+                for var_name, var_value in env_vars.items()
+                #
+            ]
+        )
+        env_vars_lines = textwrap.indent(env_vars_lines, "    ")
+
+    proto_kernel_rel_path = os.path.relpath(
+        proto_kernel_abs_path,
+        os.path.dirname(entry_script_abs_path),
+    )
+
+    # FT_56_85_65_41.generated_boilerplate.md:
+    # Built as a list of lines to survive stamped boilerplate lines.
+    content_lines = [
+        "#!/usr/bin/env python3",
+        ConfConstGeneral.entry_script_boilerplate_begin_marker,
+        "",
+        "",
+        "def import_proto_kernel(proto_kernel_rel_path: str):",
+        '    """',
+        "    `protoprimer` entry script boilerplate function to import `proto_kernel`.",
+        '    """',
+        "",
+        "    import os",
+        "    import importlib.util",
+        "",
+        "    module_spec = importlib.util.spec_from_file_location(",
+        '        "proto_kernel",',
+        "        # FT_18_38_32_22.script_dir.md",
+        "        os.path.join(",
+        "            os.path.dirname(str(__file__)),",
+        "            proto_kernel_rel_path,",
+        "        ),",
+        "    )",
+        "    assert module_spec is not None",
+        "    loaded_proto_module = importlib.util.module_from_spec(module_spec)",
+        "    assert module_spec.loader is not None",
+        "    module_spec.loader.exec_module(loaded_proto_module)",
+        "    return loaded_proto_module",
+        "",
+        "",
+        'if __name__ == "__main__":',
+        "    import os",
+        "",
+    ]
+
+    if env_vars_lines:
+        content_lines.append(env_vars_lines)
+        content_lines.append("")
+
+    content_lines.extend(
+        [
+            f'    proto_kernel = import_proto_kernel("{proto_kernel_rel_path}")',
+            f'    proto_kernel.{entry_func}("{module_name}:{func_name}")',
+            ConfConstGeneral.entry_script_boilerplate_end_marker,
+        ]
+    )
+
+    return "\n".join(content_lines) + "\n"
+
+
+def merge_entry_script_content(
+    existing_entry_script_content: str | None,
+    generated_entry_script_content: str,
+) -> str:
+    """
+    FT_56_85_65_41.generated_boilerplate.md
+
+    If `existing_entry_script_content` already has the begin/end markers,
+    preserve everything outside them (e.g. a hand-added header comment)
+    and only replace the marked region with the freshly generated one.
+    """
+
+    if existing_entry_script_content is None:
+        return generated_entry_script_content
+
+    begin_marker = ConfConstGeneral.entry_script_boilerplate_begin_marker
+    end_marker = ConfConstGeneral.entry_script_boilerplate_end_marker
+
+    existing_lines = existing_entry_script_content.splitlines()
+    if begin_marker not in existing_lines or end_marker not in existing_lines:
+        return generated_entry_script_content
+
+    generated_lines = generated_entry_script_content.splitlines()
+    assert begin_marker in generated_lines
+    assert end_marker in generated_lines
+
+    existing_begin_index = existing_lines.index(begin_marker)
+    existing_end_index = existing_lines.index(end_marker)
+    generated_begin_index = generated_lines.index(begin_marker)
+    generated_end_index = generated_lines.index(end_marker)
+
+    merged_lines = existing_lines[:existing_begin_index] + generated_lines[generated_begin_index : generated_end_index + 1] + existing_lines[existing_end_index + 1 :]
+    return "\n".join(merged_lines) + "\n"
 
 
 def boot_env(venv_main_func: str):

@@ -213,6 +213,27 @@ git fetch https://github.com/uvsmtid/protoprimer.git
 git show FETCH_HEAD:src/proto_code/proto_kernel.py > proto_kernel.py
 ```
 
+<!--- invisible-code-block: python
+# TODO: Remove once a released `protoprimer` includes `ExecOperation.op_wrap` -
+#       until then, the `git fetch` above only reaches the latest *published* `proto_kernel.py`,
+#       which cannot demo unreleased features (like `wrap`) used further down this doc.
+#       Replace it with the `proto_kernel.py` from this local checkout instead:
+import shutil
+
+source_repo_root = Path(
+    subprocess.run(
+        ["git", "rev-parse", "--show-toplevel"],
+        capture_output=True,
+        text=True,
+        check=True,
+    ).stdout.strip()
+)
+shutil.copyfile(
+    source_repo_root / "src" / "proto_code" / "proto_kernel.py",
+    repo_dir / "proto_kernel.py",
+)
+--->
+
 ```shell
 # Make `proto_kernel.py` executable:
 
@@ -520,40 +541,11 @@ Implement an [entry_script][FT_75_87_82_46.entry_script.md] that switches to `ve
 
 mkdir -p cmd
 
-# TODO: Wrap `generate_entry_script_content` into `protoprimer` CLI command to generate this output:
-cat > cmd/some_app <<'EOF'
-#!/usr/bin/env python3
-
-
-def import_proto_kernel(proto_kernel_rel_path):
-    """
-    `protoprimer` entry script boilerplate function to import `proto_kernel`.
-    """
-    import os
-    import importlib.util
-
-    module_spec = importlib.util.spec_from_file_location(
-        "proto_kernel",
-        os.path.join(
-            os.path.dirname(__file__),
-            proto_kernel_rel_path,
-        ),
-    )
-    loaded_proto_kernel = importlib.util.module_from_spec(module_spec)
-    module_spec.loader.exec_module(loaded_proto_kernel)
-    return loaded_proto_kernel
-
-
-if __name__ == "__main__":
-    proto_kernel = import_proto_kernel("../proto_kernel.py")
-    proto_kernel.start_app("some_app:some_main")
-EOF
-```
-
-```shell
-# Make it executable:
-
-chmod u+x cmd/some_app
+./proto_kernel.py \
+    wrap \
+    start_app \
+    --entry_script_path cmd/some_app \
+    --main_func some_app:some_main
 ```
 
 ```shell

@@ -64,6 +64,7 @@ class TestTargetDependencies:
         allowed_missing_dependencies.update(self.conditionally_missing_func_executed_states)
         allowed_missing_dependencies.add(EnvState.state_derived_conf_data_loaded.name)
         allowed_missing_dependencies.add(EnvState.state_effective_conf_data_printed.name)
+        allowed_missing_dependencies.add(EnvState.state_wrap_executed.name)
         allowed_missing_dependencies.add(EnvState.state_everything_executed.name)
         allowed_missing_dependencies.add(EnvState.state_is_app_defined.name)
 

@@ -1,25 +1,33 @@
 #!/usr/bin/env python3
+# <<< BEGIN: FT_56_85_65_41.generated_boilerplate
 
 
-def import_proto_kernel(proto_kernel_rel_path):
+def import_proto_kernel(proto_kernel_rel_path: str):
     """
     `protoprimer` entry script boilerplate function to import `proto_kernel`.
     """
+
     import os
     import importlib.util
 
     module_spec = importlib.util.spec_from_file_location(
         "proto_kernel",
+        # FT_18_38_32_22.script_dir.md
         os.path.join(
-            os.path.dirname(__file__),
+            os.path.dirname(str(__file__)),
             proto_kernel_rel_path,
         ),
     )
-    loaded_proto_kernel = importlib.util.module_from_spec(module_spec)
-    module_spec.loader.exec_module(loaded_proto_kernel)
-    return loaded_proto_kernel
+    assert module_spec is not None
+    loaded_proto_module = importlib.util.module_from_spec(module_spec)
+    assert module_spec.loader is not None
+    module_spec.loader.exec_module(loaded_proto_module)
+    return loaded_proto_module
 
 
 if __name__ == "__main__":
+    import os
+
     proto_kernel = import_proto_kernel("../src/proto_code/proto_kernel.py")
     proto_kernel.start_app("local_doc.cmd_render_shell:render_shell")
+# >>> END: FT_56_85_65_41.generated_boilerplate

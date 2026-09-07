@@ -1,18 +1,21 @@
 #!/usr/bin/env python3
 # FT_00_22_19_59.derived_config.md
 # FT_19_44_42_19.effective_config.md
-
-
 # noinspection DuplicatedCode
-def import_proto_kernel(proto_kernel_rel_path):
+# <<< BEGIN: FT_56_85_65_41.generated_boilerplate
+
+
+def import_proto_kernel(proto_kernel_rel_path: str):
     """
     `protoprimer` entry script boilerplate function to import `proto_kernel`.
     """
+
     import os
     import importlib.util
 
     module_spec = importlib.util.spec_from_file_location(
         "proto_kernel",
+        # FT_18_38_32_22.script_dir.md
         os.path.join(
             os.path.dirname(str(__file__)),
             proto_kernel_rel_path,
@@ -26,5 +29,8 @@ def import_proto_kernel(proto_kernel_rel_path):
 
 
 if __name__ == "__main__":
+    import os
+
     proto_kernel = import_proto_kernel("../src/proto_code/proto_kernel.py")
     proto_kernel.start_app("metaprimer.cmd_eval_conf:custom_main")
+# >>> END: FT_56_85_65_41.generated_boilerplate

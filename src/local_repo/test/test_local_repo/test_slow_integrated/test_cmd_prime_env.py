@@ -22,9 +22,9 @@ from protoprimer.primer_kernel import (
     ConfConstEnv,
     ConfConstInput,
     ConfConstPrimer,
-    ExecOperation,
+    EntryFunc,
+    generate_entry_script_content,
 )
-from protoprimer.proto_generator import generate_entry_script_content
 
 
 @pytest.mark.skipif(git_is_not_available(), reason="git command is not available")
@@ -76,7 +76,7 @@ def test_prime_env(tmp_path: pathlib.Path):
 
     prime_env_script_abs_path = ref_root_abs_path / "prime_env"
     prime_env_script_content = generate_entry_script_content(
-        ExecOperation.op_boot.value,
+        EntryFunc.func_boot_env.value,
         str(proto_kernel_abs_path),
         str(prime_env_script_abs_path),
         f"{cmd_prime_env.__name__}",
