@@ -104,6 +104,10 @@ class StateMeta(enum.Enum):
         env_state=EnvState.state_proto_code_file_abs_path_inited,
         sub_graph=SubGraph.graph_config,
     )
+    state_wrap_executed = StateNodeMeta(
+        env_state=EnvState.state_wrap_executed,
+        sub_graph=SubGraph.graph_config,
+    )
     state_primer_conf_file_abs_path_inited = StateNodeMeta(
         env_state=EnvState.state_primer_conf_file_abs_path_inited,
         sub_graph=SubGraph.graph_config,

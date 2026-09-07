@@ -76,6 +76,35 @@ class ArgName(enum.Enum):
         ],
     )
 
+    # UC_71_59_90_97.generated_entry_script.md
+    name_entry_func = ArgMeta(
+        command_arg=ParsedArg.name_entry_func,
+        name_category=NameCategory.category_named_arg_value,
+        name_components=[
+            KeyWord.key_entry.value,
+            KeyWord.key_func.value,
+        ],
+    )
+
+    name_entry_script_path = ArgMeta(
+        command_arg=ParsedArg.name_entry_script_path,
+        name_category=NameCategory.category_path_arg_value,
+        name_components=[
+            KeyWord.key_entry.value,
+            KeyWord.key_script.value,
+            KeyWord.key_path.value,
+        ],
+    )
+
+    name_main_func = ArgMeta(
+        command_arg=ParsedArg.name_main_func,
+        name_category=NameCategory.category_named_arg_value,
+        name_components=[
+            KeyWord.key_main.value,
+            KeyWord.key_func.value,
+        ],
+    )
+
 
 class TestParsedArgName(NamingTestBase):
     prod_enum = ParsedArg

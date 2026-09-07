@@ -228,6 +228,16 @@ class StateName(enum.Enum):
         ],
     )
 
+    state_wrap_executed = StateMeta(
+        env_state=EnvState.state_wrap_executed,
+        name_category=NameCategory.category_state_mutation,
+        name_components=[
+            KeyWord.key_state.value,
+            ExecOperation.op_wrap.value,
+            KeyWord.key_executed.value,
+        ],
+    )
+
     state_func_start_app_executed = StateMeta(
         env_state=EnvState.state_func_start_app_executed,
         name_category=NameCategory.category_state_mutation,

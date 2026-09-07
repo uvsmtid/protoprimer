@@ -15,9 +15,9 @@ from protoprimer.primer_kernel import (
     ConfConstClient,
     ConfConstInput,
     ConfConstPrimer,
-    ExecOperation,
+    EntryFunc,
+    generate_entry_script_content,
 )
-from protoprimer.proto_generator import generate_entry_script_content
 
 
 def test_failure_on_import(tmp_path: pathlib.Path):
@@ -58,7 +58,7 @@ def test_failure_on_import(tmp_path: pathlib.Path):
     non_existing_function = "non_existing_function"
     entry_script_abs_path = ref_root_abs_path / "test_entry_script"
     entry_script_content = generate_entry_script_content(
-        ExecOperation.op_boot.value,
+        EntryFunc.func_boot_env.value,
         str(proto_kernel_abs_path),
         str(entry_script_abs_path),
         f"{non_existing_module}",
