@@ -772,19 +772,8 @@ repo_status = subprocess.run(
     check=True,
 ).stdout
 assert repo_status == "", repo_status
---->
 
-The app still starts:
-
-```shell
-./cmd/some_app
-```
-
-```output
-hello world
-```
-
-<!--- invisible-code-block: python
+# The app still starts:
 entry_script_process = subprocess.run(
     ["cmd/some_app"],
     cwd=repo_dir,
