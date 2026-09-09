@@ -130,6 +130,21 @@ section#why details > summary {
     display: none !important;
 }
 
+/*
+Alabaster underlines links with a `1px dotted` border whose left-most dot looks like a stray dot.
+Replace with a uniform solid line: faint at rest, darker on hover.
+*/
+div.sphinxsidebar a,
+a.reference:not(.image-reference),
+a.footnote-reference {
+    border-bottom: 1px solid #eee !important;
+}
+div.sphinxsidebar a:hover,
+a.reference:not(.image-reference):hover,
+a.footnote-reference:hover {
+    border-bottom: 1px solid #999 !important;
+}
+
 /* Custom [+]/[-] marker for <details>/<summary>: */
 summary {
     list-style: none;
