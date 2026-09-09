@@ -187,7 +187,7 @@ Although [A] creating, [B] activating, [C] populating a `venv` is standard pract
 
 ## Solution: bootstrapping the environment
 
-You want to **isolate** users from any **error-prone** special cases using a one-liner:
+You want to **isolate** users from any **error-prone** special cases using a **one-liner**:
 *   arg-less
 *   robust
 *   idempotent
