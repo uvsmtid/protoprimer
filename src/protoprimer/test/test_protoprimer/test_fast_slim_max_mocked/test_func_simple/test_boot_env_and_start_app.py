@@ -11,7 +11,7 @@ from local_test.name_assertion import assert_test_module_name_embeds_str
 # noinspection PyProtectedMember
 from protoprimer.primer_kernel import (
     _start_main,
-    _proto_main,
+    proto_main,
     start_app,
     boot_env,
     EntryFunc,

@@ -23,7 +23,7 @@ from local_test.mock_subprocess import (
 )
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
-    _proto_main,
+    proto_main,
     ConfConstGeneral,
     EnvVar,
     VenvDriverBase,
@@ -212,7 +212,7 @@ def _run_primer_main_in_mock_env(
                     "argv",
                     cli_args,
                 ):
-                    _proto_main()
+                    proto_main()
             break
         except _ExecCalled as e:
             exec_args, exec_kwargs = e.args
