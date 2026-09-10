@@ -407,10 +407,9 @@ class EnvVar(enum.Enum):
 
     var_PROTOPRIMER_VENV_DRIVER = "PROTOPRIMER_VENV_DRIVER"
 
-    # TODO: Consider splitting `is_test_run()` and `PROTOPRIMER_MOCKED_RESTART` into different `feature_story`-ies.
     var_PROTOPRIMER_MOCKED_RESTART = "PROTOPRIMER_MOCKED_RESTART"
     """
-    See: FT_83_60_72_19.test_perimeter.md / test_fast_fat_min_mocked
+    See: FT_39_94_24_00.fat_mock.md
     """
 
     # FT_41_45_81_49.trace_mode.md
@@ -1334,6 +1333,10 @@ class ConfConstGeneral:
 
     module_func_separator = ":"
 
+    # FT_21_75_54_18.instant_scenario.md:
+    # If `--main_func` is this (empty), run `proto_main`.
+    default_proto_main = ""
+
     # TODO: use lambdas to generate based on input (instead of None):
     # This is a value declared for completeness,
     # but unused (evaluated dynamically via the bootstrap process):
@@ -1632,14 +1635,16 @@ def _create_child_argparser(parent_argparsers):
                 metavar=ParsedArg.name_entry_script_path.value,
                 help="Path to the `entry_script` to generate.",
             )
+            main_func_required: bool = selected_entry_func is not EntryFunc.func_boot_env
             parser_entry_func.add_argument(
                 SyntaxArg.arg_m,
                 SyntaxArg.arg_main_func,
                 type=str,
-                required=True,
+                required=main_func_required,
+                default=ConfConstGeneral.default_proto_main,
                 dest=ParsedArg.name_main_func.value,
                 metavar=ParsedArg.name_main_func.value,
-                help="The `module_name:function_name` to invoke inside `venv`.",
+                help=f"The `module_name:function_name` to invoke inside `venv` (for `{EntryFunc.func_boot_env.value}`, empty runs the default bootstrap).",
             )
 
     child_argparser = CustomArgumentParser(
@@ -2822,17 +2827,28 @@ class Bootstrapper_state_wrap_executed(AbstractCachingStateNode[int]):
 
         entry_func: str = getattr(state_args_parsed, ParsedArg.name_entry_func.value)
         entry_script_path_arg: str = getattr(state_args_parsed, ParsedArg.name_entry_script_path.value)
-        main_func: str = getattr(state_args_parsed, ParsedArg.name_main_func.value)
+        main_func: str = getattr(state_args_parsed, ParsedArg.name_main_func.value) or ConfConstGeneral.default_proto_main
 
-        if ConfConstGeneral.module_func_separator not in main_func:
+        module_name: str | None
+        func_name: str | None
+        if main_func == ConfConstGeneral.default_proto_main:
+            if entry_func == EntryFunc.func_boot_env.value:
+                # FT_21_75_54_18.instant_scenario.md
+                # Run `proto_main`:
+                module_name = None
+                func_name = None
+            else:
+                raise ValueError(f"`{SyntaxArg.arg_main_func}` is required for `{entry_func}`.")
+        elif ConfConstGeneral.module_func_separator in main_func:
+            (
+                module_name,
+                func_name,
+            ) = main_func.split(
+                ConfConstGeneral.module_func_separator,
+                1,
+            )
+        else:
             raise ValueError(f"`{SyntaxArg.arg_main_func}` [{main_func}] does not match expected format `module_name:function_name`.")
-        (
-            module_name,
-            func_name,
-        ) = main_func.split(
-            ConfConstGeneral.module_func_separator,
-            1,
-        )
 
         proto_kernel_abs_path: str = self.eval_parent_state(EnvState.state_proto_code_file_abs_path_inited.name)
         proto_kernel_dir_abs_path: str = os.path.dirname(proto_kernel_abs_path)
@@ -4675,7 +4691,7 @@ class Bootstrapper_state_proto_code_updated_is_app(AbstractCachingStateNode[bool
                 f"{get_import_error_hint(ConfConstGeneral.name_protoprimer_package)} "
                 #
             )
-            # These must be "instant" conditions.
+            # FT_21_75_54_18.instant_scenario.md:
             # No module => no update:
             return False
 
@@ -6173,8 +6189,8 @@ def generate_entry_script_content(
     entry_func: str,
     proto_kernel_abs_path: str,
     entry_script_abs_path: str,
-    module_name: str,
-    func_name: str,
+    module_name: str | None,
+    func_name: str | None,
     env_vars: dict[str, str] = None,
 ) -> str:
     """
@@ -6242,10 +6258,17 @@ def generate_entry_script_content(
         content_lines.append(env_vars_lines)
         content_lines.append("")
 
+    if module_name is None:
+        # FT_21_75_54_18.instant_scenario.md
+        # Run `proto_main`:
+        main_func_arg = ConfConstGeneral.default_proto_main
+    else:
+        main_func_arg = f"{module_name}{ConfConstGeneral.module_func_separator}{func_name}"
+
     content_lines.extend(
         [
             f'    proto_kernel = import_proto_kernel("{proto_kernel_rel_path}")',
-            f'    proto_kernel.{entry_func}("{module_name}:{func_name}")',
+            f'    proto_kernel.{entry_func}("{main_func_arg}")',
             ConfConstGeneral.entry_script_boilerplate_end_marker,
         ]
     )
@@ -6330,9 +6353,17 @@ def _start_main(
 
     os.environ[EnvVar.var_PROTOPRIMER_MAIN_FUNC.value] = venv_main_func
 
-    module_name: str
-    func_name: str
-    if ConfConstGeneral.module_func_separator in venv_main_func:
+    module_name: str | None
+    func_name: str | None
+    if venv_main_func == ConfConstGeneral.default_proto_main:
+        # FT_21_75_54_18.instant_scenario.md
+        # Run `proto_main`:
+        if entry_func is EntryFunc.func_boot_env:
+            module_name = None
+            func_name = None
+        else:
+            raise ValueError(f"The empty main function is only valid for `{EntryFunc.func_boot_env.value}`.")
+    elif ConfConstGeneral.module_func_separator in venv_main_func:
         (
             module_name,
             func_name,
@@ -6356,37 +6387,68 @@ def _start_main(
         if curr_py_exec.value >= StateStride.stride_src_updated.value:
             # FT_74_10_40_33.DAG_extension.md:
             # Complete `EntryFunc.func_boot_env` with extension (if any).
-            venv_module = importlib.import_module(module_name)
-            selected_main = getattr(venv_module, func_name)
-            selected_main()
+            if module_name is None:
+                # FT_21_75_54_18.instant_scenario.md
+                # Run `proto_main`:
+                env_ctx = (
+                    ContextBuilder()
+                    .entry_func(entry_func)
+                    .state_stride(curr_py_exec)
+                    #
+                    .build_context()
+                )
+                run_process(env_ctx)
+            else:
+                venv_module = importlib.import_module(module_name)
+                selected_main = getattr(venv_module, func_name)
+                selected_main()
         elif curr_py_exec.value >= StateStride.stride_deps_updated.value:
-            # TODO: FT_21_75_54_18.instant_scenario.md:
-            #       It may not work in instant cases when `protoprimer` is not a dependency (not installed).
-            # FT_14_52_73_23.primer_runtime.md:
-            # Switch from running `proto_code` to installed `venv` code:
-            imported_kernel = importlib.import_module(installed_kernel_name)
-            # noinspection PyPep8Naming
-            imported_EnvContext = getattr(imported_kernel, EnvContext.__name__)
-            # noinspection PyPep8Naming
-            imported_EntryFunc = getattr(imported_kernel, EntryFunc.__name__)
-            imported_run_process = getattr(imported_kernel, run_process.__name__)
-            # noinspection PyPep8Naming
-            imported_ContextBuilder = getattr(imported_kernel, ContextBuilder.__name__)
-            env_ctx = (
-                imported_ContextBuilder()
-                .entry_func(imported_EntryFunc[entry_func.name])
-                .state_stride(curr_py_exec)
-                #
-                .build_context()
-            )
-            imported_run_process(env_ctx)
+            try:
+                # FT_14_52_73_23.primer_runtime.md:
+                # Switch from running `proto_code` to installed `venv` code:
+                imported_kernel = importlib.import_module(installed_kernel_name)
+            except ImportError:
+                # FT_21_75_54_18.instant_scenario.md:
+                # `protoprimer` may not be a dependency:
+                imported_kernel = None
+            if imported_kernel is not None:
+                # noinspection PyPep8Naming
+                imported_EnvContext = getattr(imported_kernel, EnvContext.__name__)
+                # noinspection PyPep8Naming
+                imported_EntryFunc = getattr(imported_kernel, EntryFunc.__name__)
+                imported_run_process = getattr(imported_kernel, run_process.__name__)
+                # noinspection PyPep8Naming
+                imported_ContextBuilder = getattr(imported_kernel, ContextBuilder.__name__)
+                env_ctx = (
+                    imported_ContextBuilder()
+                    .entry_func(imported_EntryFunc[entry_func.name])
+                    .state_stride(curr_py_exec)
+                    #
+                    .build_context()
+                )
+                imported_run_process(env_ctx)
+            else:
+                env_ctx = (
+                    ContextBuilder()
+                    .entry_func(entry_func)
+                    .state_stride(curr_py_exec)
+                    #
+                    .build_context()
+                )
+                run_process(env_ctx)
         elif curr_py_exec.value >= StateStride.stride_py_venv.value and entry_func == EntryFunc.func_start_app:
             venv_module = importlib.import_module(module_name)
             selected_main = getattr(venv_module, func_name)
-            # FT_96_50_58_75.context_propagation.md:
-            # Switch from running `proto_code` to installed `venv` code:
-            imported_kernel = importlib.import_module(installed_kernel_name)
-            setattr(imported_kernel, "_proto_kernel_abs_path", os.environ[EnvVar.var_PROTOPRIMER_PROTO_CODE.value])
+            try:
+                # FT_96_50_58_75.context_propagation.md:
+                # Switch from running `proto_code` to installed `venv` code:
+                imported_kernel = importlib.import_module(installed_kernel_name)
+            except ImportError:
+                # FT_21_75_54_18.instant_scenario.md:
+                # `protoprimer` may not be a dependency:
+                imported_kernel = None
+            if imported_kernel is not None:
+                setattr(imported_kernel, "_proto_kernel_abs_path", os.environ[EnvVar.var_PROTOPRIMER_PROTO_CODE.value])
             remove_protoprimer_env_vars(os.environ)
             selected_main()
         else:
@@ -6402,22 +6464,22 @@ def _start_main(
             run_process(env_ctx)
 
     except ImportError as import_error:
-        if curr_py_exec.value >= StateStride.stride_py_venv.value and entry_func == EntryFunc.func_start_app:
-            raise AssertionError(
-                f"Failed to import `{import_error.name}` at [{curr_py_exec.name}]. "
-                f"Has `{KeyWord.key_venv.value}` been initialized via `{ExecOperation.op_boot.value}` exec operation? "
-                #
-            ) from import_error
         if import_error.name == installed_kernel_name:
             raise AssertionError(
                 f"Failed to import `{installed_kernel_name}` at [{curr_py_exec.name}]. "
                 f"{get_import_error_hint(installed_kernel_name)} "
                 #
             ) from import_error
+        if curr_py_exec.value >= StateStride.stride_py_venv.value and entry_func == EntryFunc.func_start_app:
+            raise AssertionError(
+                f"Failed to import `{import_error.name}` at [{curr_py_exec.name}]. "
+                f"Has `{KeyWord.key_venv.value}` been initialized via `{ExecOperation.op_boot.value}` exec operation? "
+                #
+            ) from import_error
         raise import_error
 
 
-def _proto_main() -> None:
+def proto_main() -> None:
     env_ctx = (
         ContextBuilder()
         #
@@ -6429,4 +6491,4 @@ def _proto_main() -> None:
 
 
 if __name__ == "__main__":
-    _proto_main()
+    proto_main()

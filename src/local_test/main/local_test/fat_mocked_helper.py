@@ -23,7 +23,7 @@ from local_test.mock_subprocess import (
 )
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
-    _proto_main,
+    proto_main,
     ConfConstGeneral,
     EnvVar,
     VenvDriverBase,
@@ -49,7 +49,7 @@ def fat_mock_wrapper(
     *   call the old `integrated_test` test case (to reuse it)
     *   call `run_primer_main` (which selects the test mode) from the old `integrated_test` test case
 
-    See: FT_83_60_72_19.test_perimeter.md / test_fast_fat_min_mocked
+    FT_39_94_24_00.fat_mock.md
     """
 
     mock_env = {
@@ -161,7 +161,7 @@ def run_primer_main(
     1.  in a separate process (integrated)
     2.  in a mock for the current process test runner
 
-    See: FT_83_60_72_19.test_perimeter.md / test_fast_fat_min_mocked
+    See: FT_39_94_24_00.fat_mock.md
 
     NOTE: When it runs in the 2nd (mock env):
     *   many things have already been mocked by `mocking_wrapper`
@@ -196,7 +196,7 @@ def _run_primer_main_in_mock_env(
     It handles intercepted calls to `os.exec*` and `sys.exit` functions
     and ensures the tests continue to in the test runner process.
 
-    See: FT_83_60_72_19.test_perimeter.md / test_fast_fat_min_mocked
+    See: FT_39_94_24_00.fat_mock.md
     """
     mocked_env = copy.deepcopy(os.environ)
     loop_limit: int = 10
@@ -212,7 +212,7 @@ def _run_primer_main_in_mock_env(
                     "argv",
                     cli_args,
                 ):
-                    _proto_main()
+                    proto_main()
             break
         except _ExecCalled as e:
             exec_args, exec_kwargs = e.args

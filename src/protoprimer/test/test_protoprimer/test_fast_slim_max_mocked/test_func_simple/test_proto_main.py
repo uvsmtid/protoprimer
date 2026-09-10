@@ -9,7 +9,7 @@ import pytest
 import protoprimer.primer_kernel
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer.primer_kernel import (
-    _proto_main,
+    proto_main,
     run_process,
     TargetState,
 )
@@ -17,7 +17,7 @@ from protoprimer.primer_kernel import (
 
 def test_relationship():
     assert_test_module_name_embeds_str(
-        _proto_main.__name__,
+        proto_main.__name__,
     )
 
 
@@ -35,7 +35,7 @@ def test_main_success(
     mock_env_ctx_instance.eval_state.return_value = True
 
     # when:
-    _proto_main()
+    proto_main()
 
     # then:
     mock_ensure_min_python_version.assert_called_once()
@@ -61,7 +61,7 @@ def test_main_assertion_error(
 
     # when/then:
     with pytest.raises(AssertionError):
-        _proto_main()
+        proto_main()
 
     # then:
     mock_ensure_min_python_version.assert_called_once()
@@ -87,7 +87,7 @@ def test_main_system_exit(
 
     # when/then:
     with pytest.raises(SystemExit):
-        _proto_main()
+        proto_main()
 
     # then:
     mock_ensure_min_python_version.assert_called_once()
@@ -113,7 +113,7 @@ def test_main_generic_exception(
 
     # when/then:
     with pytest.raises(Exception, match="Test Exception"):
-        _proto_main()
+        proto_main()
 
     # then:
     mock_ensure_min_python_version.assert_called_once()
@@ -162,7 +162,7 @@ def test_main_atexit_on_success(
     mock_env_ctx_instance.eval_state.return_value = True
 
     # when:
-    _proto_main()
+    proto_main()
 
     # then:
     mock_atexit_register.assert_called_once()
@@ -188,7 +188,7 @@ def test_main_system_exit_0(
 
     # when/then:
     with pytest.raises(SystemExit):
-        _proto_main()
+        proto_main()
 
     # then:
     mock_atexit_register.assert_called_once()
@@ -214,7 +214,7 @@ def test_main_system_exit_none(
 
     # when/then:
     with pytest.raises(SystemExit):
-        _proto_main()
+        proto_main()
 
     # then:
     mock_atexit_register.assert_called_once()
@@ -247,7 +247,7 @@ def test_called_process_error_raises_runtime_error(
 
     # when/then:
     with pytest.raises(RuntimeError) as exc_info:
-        _proto_main()
+        proto_main()
 
     # then:
     assert str(_failing_exit_code) in str(exc_info.value)
@@ -278,7 +278,7 @@ def test_called_process_error_with_shell_string_raises_runtime_error(
 
     # when/then:
     with pytest.raises(RuntimeError) as exc_info:
-        _proto_main()
+        proto_main()
 
     # then:
     assert str(_failing_exit_code) in str(exc_info.value)

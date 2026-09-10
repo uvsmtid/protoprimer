@@ -194,7 +194,7 @@ It has to be `python` to run right off the bootstrap:
 
 </details>
 
-User code may run **anything** else.
+User code may prepare to [run **anything** else][pypl_index].
 
 <!--
 
@@ -244,3 +244,4 @@ Those early bootstrap steps:
 -->
 
 [protoprimer_github]: https://github.com/uvsmtid/protoprimer
+[pypl_index]: https://pypl.github.io/

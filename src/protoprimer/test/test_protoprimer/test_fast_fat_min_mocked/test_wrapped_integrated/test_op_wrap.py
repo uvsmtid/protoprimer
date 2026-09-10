@@ -32,3 +32,13 @@ def test_wrap_start_app(fs: FakeFilesystem):
 
     with fat_mock_wrapper(fs):
         test_op_wrap.test_wrap_start_app(pathlib.Path(mock_test_dir.path))
+
+
+def test_wrap_boot_env_without_main_func(fs: FakeFilesystem):
+
+    assert_test_func_name_embeds_str(test_op_wrap.test_wrap_boot_env_without_main_func.__name__)
+
+    mock_test_dir = fs.create_dir("/mock_test_dir")
+
+    with fat_mock_wrapper(fs):
+        test_op_wrap.test_wrap_boot_env_without_main_func(pathlib.Path(mock_test_dir.path))
