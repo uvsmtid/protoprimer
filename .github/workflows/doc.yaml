@@ -3,6 +3,8 @@ on:
     push:
         branches:
         -   "*"
+permissions:
+    contents: read
 jobs:
     bootstrap_scenarios:
         runs-on: ubuntu-latest
