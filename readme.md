@@ -20,7 +20,7 @@ TODO: Use links to FC/UC docs under `./doc` (when ready) from this readme to nav
 
 # <code><a href="https://protoprimer.readthedocs.io/"><img src="doc/_static/protoprimer.logo.svg" alt="logo" style="width: 11ch; height: auto;"></a></code> <code><img src="doc/_static/shell_snippet.svg" alt="shell snippet" style="height: 11ch; width: auto;"></code>
 
-Want your users to run software **isolated** in a `git` repo after a single, zero-argument, healing command?
+Want your users to run software **isolated** in a `git` repo after a single zero-argument command?
 
 ```sh
 ./prime
@@ -32,8 +32,8 @@ Please [read the docs][protoprimer_readthedocs] for an intro.
 
 `protoprimer` employs ubiquitous `python` for version pinning to provide a robust alternative to `shell`:
 
-*   First, a shim is executed by a **wild** `python` version found in `PATH` invoking `protoprimer`.
-*   Last, `protoprimer` executes user code by the **required** `python` version from configured `venv`.
+*   First, a **wild** `python` version found in `PATH` executes a shim that invokes `protoprimer`.
+*   Last, `protoprimer` executes user code by the **required** `python` version from the configured `venv`.
 
 It works without `shebang` for `venv` to **avoid hardcoding** absolute paths and keep repo clones **relocatable**.
 
@@ -130,12 +130,12 @@ graph LR;
 
 There are two entry functions - see details in [boot_vs_start][FT_58_74_37_70.boot_vs_start.md]:
 
-| Function:    | [start_app][FT_05_08_64_67.start_app.md]                     | [boot_env][FT_85_17_35_21.boot_env.md]                |
-|--------------|--------------------------------------------------------------|-------------------------------------------------------|
-| Purpose:     | run **arbitrary** script<br>from `venv` by required `python` | **extend** the default bootstrap<br>with custom steps |
-| Cardinality: | **many** scripts per project                                 | **one** script per project                            |
-| Executes:    | smaller part of `proto_kernel`                               | bigger part of `proto_kernel`                         |
-| Example:     | `./cmd/start_app_example`                                    | `./cmd/boot_env_example`                              |
+| Function:    | [start_app][FT_05_08_64_67.start_app.md]                              | [boot_env][FT_85_17_35_21.boot_env.md]                 |
+|--------------|-----------------------------------------------------------------------|--------------------------------------------------------|
+| Purpose:     | run an **arbitrary** script<br>from `venv` with the required `python` | **extend** the default bootstrap<br>with custom steps  |
+| Cardinality: | **many** scripts per project                                          | **one** script per project                             |
+| Executes:    | smaller part of `proto_kernel`                                        | bigger part of `proto_kernel`                          |
+| Example:     | `./cmd/start_app_example`                                             | `./cmd/boot_env_example`                               |
 
 <a id="protoprimer-first-examples"></a>
 

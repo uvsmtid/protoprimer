@@ -145,6 +145,13 @@ a.footnote-reference:hover {
     border-bottom: 1px solid #999 !important;
 }
 
+/* Link to page source on GitHub, injected at top of body in page.html: */
+.edit-on-github {
+    text-align: right;
+    margin-bottom: 1.5em;
+    font-size: 85%;
+}
+
 /* Custom [+]/[-] marker for <details>/<summary>: */
 summary {
     list-style: none;

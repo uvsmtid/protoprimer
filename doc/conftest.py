@@ -36,6 +36,6 @@ pytest_collect_file = Sybil(
         SkipParser(),
     ],
     patterns=[
-        "manual.md",
+        "runtime.md",
     ],
 ).pytest()

@@ -158,6 +158,8 @@ html_context = {
     "github_repo": "protoprimer",
     "github_version": "main",
     "conf_py_path": "/doc/",
+    # Used by `_templates/page.html` to link each page to its source on GitHub:
+    "github_source_base": f"{github_url}/blob/main/doc/",
 }
 
 html_theme_options = {
