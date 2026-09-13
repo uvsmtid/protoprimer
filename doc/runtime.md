@@ -1,17 +1,23 @@
-# Manual
+# Runtime
 
-```{contents} On this page
+```{contents}
 :local:
 :depth: 1
 ```
 
-The more complex your repo, the more valuable `protoprimer` is.
+## Purpose
 
-But we need to demo the simplest case first.
+This page walks through the main use cases for running `protoprimer`:
+*   A `git` repo is modified from scratch to gradually introduce concepts and features.
+*   The results from examples will match yours only if no steps are skipped.
 
-## Flat repo
+The more complex your repo setup, the more valuable `protoprimer` is.
 
-Let's create a simple flat repo with a basic `python` project:
+But we start the demo with the simplest case...
+
+## Init flat repo
+
+Consider a basic `python` project:
 
 ```diff
  ^/                                      # repo_root
@@ -42,6 +48,12 @@ from pathlib import Path
 # The actual dir used below - name/location does not matter:
 repo_dir = Path(tempfile.mkdtemp(prefix="protoprimer_manual_"))
 --->
+
+```shell
+# Disable non-`venv` site-packages for this demo:
+
+export PYTHONNOUSERSITE=1
+```
 
 ```shell
 # Init the repo:
@@ -142,7 +154,7 @@ assert repo_status == "", repo_status
 
 ## Problem: bootstrapping the environment
 
-The first most **obvious** problem is missing dependencies:
+The first and most **obvious** problem is missing dependencies:
 
 <!--- skip: next --->
 
@@ -154,8 +166,8 @@ python some_app.py
 ModuleNotFoundError: No module named 'click'
 ```
 
-*   You do **not** want yourself to **write** manuals.
-*   You do **not** want users to **read** manuals.
+*   You do **not** want to **write** manuals.
+*   You do **not** want your users to **read** manuals.
 
 <!--- invisible-code-block: python
 import sys
@@ -179,7 +191,7 @@ assert some_app_process.returncode != 0, some_app_process.stdout + some_app_proc
 assert some_app_process.stderr.endswith(expected_import_error), some_app_process.stderr
 --->
 
-Although [A] creating, [B] activating, [C] populating a `venv` is standard practice:
+Although [A] creating, [B] activating, and [C] populating a `venv` is standard practice:
 *   You do **not** want users to do [A], [B], and [C] on each repo **clone**.
 *   You do **not** want users to redo [B] and [C] on each repo **update**.
 *   You do **not** want users to install anything **system-wide** that causes havoc.
@@ -218,27 +230,6 @@ Seed the repo with `proto_kernel.py` from `protoprimer`:
 git fetch https://github.com/uvsmtid/protoprimer.git
 git show FETCH_HEAD:src/proto_code/proto_kernel.py > proto_kernel.py
 ```
-
-<!--- invisible-code-block: python
-# TODO: Remove once a released `protoprimer` includes `ExecOperation.op_wrap` -
-#       until then, the `git fetch` above only reaches the latest *published* `proto_kernel.py`,
-#       which cannot demo unreleased features (like `wrap`) used further down this doc.
-#       Replace it with the `proto_kernel.py` from this local checkout instead:
-import shutil
-
-source_repo_root = Path(
-    subprocess.run(
-        ["git", "rev-parse", "--show-toplevel"],
-        capture_output=True,
-        text=True,
-        check=True,
-    ).stdout.strip()
-)
-shutil.copyfile(
-    source_repo_root / "src" / "proto_code" / "proto_kernel.py",
-    repo_dir / "proto_kernel.py",
-)
---->
 
 ```shell
 # Make `proto_kernel.py` executable:
@@ -349,7 +340,7 @@ assert some_app_run_process.returncode == 0, some_app_run_process.stdout + some_
 assert some_app_run_process.stdout == "hello world\n", some_app_run_process.stdout
 --->
 
-## Nested repo
+## Transform into nested repo
 
 Let's move project files into the `src` directory.
 
@@ -423,7 +414,7 @@ EOF
 ```
 
 ```shell
-# Explain to `proto_kernel.py` the updated project structure:
+# Configure `proto_kernel.py` for the updated project structure:
 
 cat > proto_kernel.json <<'EOF'
 {
@@ -584,7 +575,7 @@ assert repo_status == "", repo_status
 
 </details>
 
-Now you can start the app **without** specifying `path/to/python` or `path/to/some_app.py`:
+Now you can start the app via the dedicated entry script:
 
 ```shell
 ./cmd/some_app
@@ -615,7 +606,7 @@ assert entry_script_process.stdout == "hello world\n", entry_script_process.stdo
 
 We can move `proto_code` under a dedicated dir to avoid clutter in the repo root.
 
-We can also wrap bootstrapper into an `entry_script` - `./prime`.
+We can also wrap the bootstrapper in an `entry_script` - `./prime`.
 
 ```diff
  ^/
@@ -707,7 +698,7 @@ EOF
 
 ```shell
 # Generate `./prime` with empty `main_func` as a special case to
-# run default main implemented by `protoprimer` itself:
+# run the default `main_func` implemented by `protoprimer` itself:
 
 ./src/proto_code/proto_kernel.py wrap boot_env \
     --entry_script_path "../../prime" \
@@ -801,6 +792,113 @@ entry_script_process = subprocess.run(
 assert entry_script_process.returncode == 0, entry_script_process.stdout + entry_script_process.stderr
 assert entry_script_process.stdout == "hello world\n", entry_script_process.stdout
 --->
+
+## Enable auto-updates
+
+`proto_kernel.py` is both:
+*   a standalone script
+*   a copy of the `protoprimer.primer_kernel` module
+
+To keep it up-to-date, add `protoprimer` as a dependency in `pyproject.toml`.
+
+<details>
+<summary>[copy & paste & execute]</summary>
+
+```shell
+# Add `protoprimer` as a dependency in `pyproject.toml`:
+
+cat > src/some_app/pyproject.toml <<'EOF'
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "some-app"
+version = "0.0.0"
+dependencies = [
+    "pytest",
+    "click",
+    # TODO: Point to specific released version compatible with this doc:
+    "protoprimer @ git+https://github.com/uvsmtid/protoprimer.git#subdirectory=src/protoprimer",
+]
+
+[tool.setuptools]
+py-modules = ["some_app"]
+
+[tool.setuptools.package-dir]
+"" = "main"
+EOF
+```
+
+```shell
+# Commit everything:
+
+git add --all
+git commit --message "Add protoprimer as a dependency"
+```
+
+<!--- invisible-code-block: python
+pyproject_toml_text = (repo_dir / "src" / "some_app" / "pyproject.toml").read_text()
+assert "protoprimer @ git+" in pyproject_toml_text, pyproject_toml_text
+
+commit_count = subprocess.run(
+    ["git", "rev-list", "--count", "HEAD"],
+    cwd=repo_dir,
+    capture_output=True,
+    text=True,
+    check=True,
+).stdout.strip()
+assert commit_count == "6", commit_count
+
+repo_status = subprocess.run(
+    ["git", "status", "--porcelain"],
+    cwd=repo_dir,
+    capture_output=True,
+    text=True,
+    check=True,
+).stdout
+assert repo_status == "", repo_status
+--->
+
+</details>
+
+<!--- invisible-code-block: python
+proto_kernel_copy_path = repo_dir / "src" / "proto_code" / "proto_kernel.py"
+--->
+
+Re-run the bootstrap to update:
+
+```shell
+./prime
+```
+
+<!--- invisible-code-block: python
+proto_kernel_text_after_update = proto_kernel_copy_path.read_text()
+assert "protoprimer.primer_kernel" in proto_kernel_text_after_update
+
+# Any resulting change is confined to `proto_kernel.py` (nothing else is touched):
+repo_status = subprocess.run(
+    ["git", "status", "--porcelain"],
+    cwd=repo_dir,
+    capture_output=True,
+    text=True,
+    check=True,
+).stdout
+for status_line in repo_status.splitlines():
+    assert status_line.endswith("src/proto_code/proto_kernel.py"), repo_status
+
+# The app still starts:
+entry_script_process = subprocess.run(
+    ["cmd/some_app"],
+    cwd=repo_dir,
+    capture_output=True,
+    text=True,
+)
+assert entry_script_process.returncode == 0, entry_script_process.stdout + entry_script_process.stderr
+assert entry_script_process.stdout == "hello world\n", entry_script_process.stdout
+--->
+
+`proto_kernel.py` will match the version of `protoprimer.primer_kernel` pinned in the `venv`.
 
 ## Conclusion
 

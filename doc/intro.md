@@ -6,12 +6,19 @@
 
 # [![logo](/_static/protoprimer.logo.16x16.png)][protoprimer_github] [`protoprimer`][protoprimer_github]
 
-`protoprimer` is an **arg-less** stand-alone **idempotent** code that switches:
+Do not write manuals. Instead:
+
+```sh
+./prime
+# your repo clone
+```
+
+`protoprimer` provides **arg-less** stand-alone **idempotent** bootstrap code that transitions:
 
 *   from **chaos** (the many conditions in which a user may invoke it)
 *   into **order** (an env-specific `venv` with the **required** `python` version)
 
-Eventually, it transfers control to user code:
+It handles messy init details, then it **hands off control** to user code in:
 
 <details>
 <summary>[guaranteed environment]</summary>
@@ -24,7 +31,7 @@ Eventually, it transfers control to user code:
 
     *   build required dependencies from sources
 
-    *   assert system and user config (local or cloud)
+    *   assert system and user config
 
     *   download env-specific data
 
@@ -38,37 +45,71 @@ Eventually, it transfers control to user code:
 
 </details>
 
+## Python?
+
+It has to be `python` to run **right off the bootstrap**:
+
+<details>
+<summary>[have no doubts]</summary>
+
+*   ubiquitous: **any** `python` is a **trivial** requirement to satisfy
+*   script (**text**, not binary): hosted in user repos, providing audit and security
+*   **no** compilation: immediately runnable on the command line after a change
+*   **rich** core SDK: zero dependencies to be useful
+*   cross-platform: avoids excessive branching
+*   vast mindshare: easily maintainable
+*   ...
+
+</details>
+
+User code may prepare to [run **anything** else][pypl_index].
+
 ## When?
 
 When you **avoid conflicting system-wide changes**.
 
-When you want:
+When you want direct execution:
 
 *   to bootstrap an **isolated** repo clone environment with a **one-liner**:
 
     ```sh
-    ./prime
+    ./boot_env
     ```
 
 *   to start an **isolated** app from **co-existing** repo clones at **different versions**:
 
     ```sh
-    ./some_app
+    ./start_app
     ```
-
-*   to eliminate **untestable** non-modular `shell` scripts and automate with `python`.
 
 ## Why?
 
-You want a **single reproducible step** to run anything.
+Everyone likes a **single reproducible step** to run anything - an end-to-end command.
 
 <details>
 <summary>[imagine otherwise]</summary>
 
 Multiple manual steps are **tedious and error-prone**:
-*   **permute** steps by the number of **users** and repo **clones**
-*   any subsequent update **avalanches** into re-execution of steps
+*   **users**, and repo **clones** they maintain, **multiply**
+*   subsequent update **avalanches** into re-execution of steps
+*   environment conditions **interfere with** the sequence of steps
 *   partial failures, re-ordering, mistakes, ... turn into **a support nightmare**
+*   LLMs fix that with **increased complexity**, wasting more time and money
+
+</details>
+
+<!-- markdownlint-disable-next-line MD026 -->
+## Consider:
+
+Replacing **untested** non-modular init `shell` scripts with **pure** `python` requires:
+
+<details>
+<summary>[robust initialization]</summary>
+
+*   Bootstrapping a cloned repo (local or cloud) to run stuff from it.
+*   Preparing a continuous integration job (after cloning a repo).
+*   Spinning up a container from a minimal base image.
+*   ...
 
 </details>
 
@@ -78,7 +119,7 @@ Multiple manual steps are **tedious and error-prone**:
 The **single-step** bootstrap is a **non-trivial** "chicken and egg" problem!
 
 <details class="indented">
-<summary>[formal proof]</summary>
+<summary>["formal" proof]</summary>
 
 <details class="indented">
 
@@ -160,9 +201,7 @@ You need to break that 5-to-1 loop.
 
 </details>
 
-The entry script must **evolve while building the environment** end-to-end.
-
-In other words, it must become **both** "the chicken" **and** "the egg".
+The entry script has to **dynamically evolve** with the environment it builds step-by-step.
 
 ## How?
 
@@ -176,25 +215,7 @@ In other words, it must become **both** "the chicken" **and** "the egg".
 
 *   Lands inside a comfy isolated `venv` with all dependencies **pinned**.
 
-    > The custom steps **take over** here.
-
-## Python?
-
-It has to be `python` to run right off the bootstrap:
-
-<details>
-<summary>[have no doubts]</summary>
-
-*   ubiquitous - **any** `python` must be **trivial** to satisfy
-*   script - to be hosted in user repos as **text** (not binary)
-*   compilation-free - otherwise, it **spirals** (other tools have to build the tools)
-*   cross-platform - to avoid excessive branching
-*   widely adopted - to be easily maintainable
-*   ...
-
-</details>
-
-User code may prepare to [run **anything** else][pypl_index].
+    > The user code **takes over** here.
 
 <!--
 
