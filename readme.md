@@ -66,7 +66,7 @@ It works without `shebang` for `venv` to **avoid hardcoding** absolute paths and
 *   Start an interactive `shell` with an activated `venv`:
 
     ```
-    ./cmd/venv_shell
+    ./prime shell
     ```
 
 *   Run a function from a module in `venv` via an `entry_script` wrapper:

@@ -348,6 +348,10 @@ class ExecOperation(enum.Enum):
     # FT_19_44_42_19.effective_config.md
     op_eval = "eval"
 
+    # TODO: TODO_31_76_38_60.sub_command_for_shell.md:
+    # FT_99_89_51_06.venv_shell.md
+    command_shell = "shell"
+
     # TODO: TODO_73_71_31_84.exec_operation_check_or_info.md: maybe merge `info` and `check` use cases?
     #       If we specify which `StateStride` or which `EnvState` to check things for, it might be useful.
     # TODO: implement? It must find its application to check things before `venv`.
@@ -1589,6 +1593,23 @@ def _create_child_argparser(parent_argparsers):
         )
         parser_eval.set_defaults(exec_operation=ExecOperation.op_eval.value)
 
+    def _create_shell_parser(exec_operation_parsers):
+        exec_operation_desc = "Start shell with activated `venv` (`venv` must already exist - see `boot`)."
+        parser_shell = exec_operation_parsers.add_parser(
+            ExecOperation.command_shell.value,
+            help=exec_operation_desc,
+            description=exec_operation_desc,
+        )
+        parser_shell.set_defaults(exec_operation=ExecOperation.command_shell.value)
+        parser_shell.add_argument(
+            SyntaxArg.arg_c,
+            SyntaxArg.arg_command,
+            type=str,
+            dest=ParsedArg.name_command.value,
+            metavar=ParsedArg.name_command.value,
+            help="Shell command to execute (non-interactive).",
+        )
+
     def _create_check_parser(exec_operation_parsers):
         exec_operation_desc = "Check the environment configuration."
         parser_check = exec_operation_parsers.add_parser(
@@ -1665,6 +1686,7 @@ def _create_child_argparser(parent_argparsers):
     _create_reset_parser(child_argparsers)
     _create_eval_parser(child_argparsers)
     _create_wrap_parser(child_argparsers)
+    _create_shell_parser(child_argparsers)
 
     # TODO: TODO_73_71_31_84.exec_operation_check_or_info.md: implement
     # noinspection PyUnreachableCode
@@ -2294,7 +2316,10 @@ class Bootstrapper_state_prepare_venv_finalized_is_app(AbstractCachingStateNode[
 
     def _eval_state_once(self) -> ValueType:
         sub_cmd: ExecOperation = self.eval_parent_state(EnvState.state_input_exec_operation_loaded.name)
-        self.env_ctx._prepare_venv = sub_cmd != ExecOperation.op_start
+        self.env_ctx._prepare_venv = sub_cmd not in (
+            ExecOperation.op_start,
+            ExecOperation.command_shell,
+        )
         return self.env_ctx._prepare_venv
 
 
@@ -2417,6 +2442,9 @@ class Bootstrapper_state_func_boot_env_executed(AbstractCachingStateNode[bool]):
         elif state_input_exec_operation_loaded == ExecOperation.op_wrap:
             selected_strategy = ExitCodeReporter(self.env_ctx)
             state_node = self.env_ctx._state_graph.get_state_node(EnvState.state_wrap_executed.name)
+        elif state_input_exec_operation_loaded == ExecOperation.command_shell:
+            selected_strategy = ExitCodeReporter(self.env_ctx)
+            state_node = self.env_ctx._state_graph.get_state_node(EnvState.state_shell_executed.name)
         elif state_input_exec_operation_loaded in [
             ExecOperation.op_boot,
             ExecOperation.op_start,
@@ -4042,10 +4070,13 @@ class Bootstrapper_state_reset_triggered_is_app(AbstractCachingStateNode[bool]):
         # TODO: TODO_21_72_88_59.use_factory_to_avoid_running_boot_env_related_states.md:
         # TODO: FT_77_15_06_50.dynamic_DAG.md:
         #       Review and clarify `ExecOperation.op_start`, `EnvContext._is_app`, ...
-        if state_input_exec_operation_loaded == ExecOperation.op_start:
+        if state_input_exec_operation_loaded in (
+            ExecOperation.op_start,
+            ExecOperation.command_shell,
+        ):
             # The only reason for `EnvState.state_reset_triggered`
             # is to destroy `venv` to recreate it later.
-            # Skip it as `venv` is supposed to be ready in `ExecOperation.op_start`:
+            # Skip it as `venv` is supposed to be ready in `ExecOperation.op_start`/`ExecOperation.command_shell`:
             return False
 
         state_input_start_id_var_loaded: str = self.eval_parent_state(EnvState.state_input_start_id_var_loaded.name)
@@ -4244,8 +4275,11 @@ class Bootstrapper_state_stride_py_venv_reached_is_app(AbstractCachingStateNode[
         # TODO: TODO_21_72_88_59.use_factory_to_avoid_running_boot_env_related_states.md:
         # TODO: FT_77_15_06_50.dynamic_DAG.md:
         #       Review and clarify `ExecOperation.op_start`, `EnvContext._is_app`, ...
-        if state_input_exec_operation_loaded == ExecOperation.op_start:
-            # Skip `venv` validation before switch because `ExecOperation.op_start` does not switch outside of `venv`:
+        if state_input_exec_operation_loaded in (
+            ExecOperation.op_start,
+            ExecOperation.command_shell,
+        ):
+            # Skip `venv` validation before switch because `ExecOperation.op_start`/`ExecOperation.command_shell` does not switch outside of `venv`:
             pass
         else:
             if is_sub_path(
@@ -4255,7 +4289,10 @@ class Bootstrapper_state_stride_py_venv_reached_is_app(AbstractCachingStateNode[
                 raise AssertionError(f"Current `python` [{path_to_curr_python}] must be outside of the `venv` [{state_local_venv_dir_abs_path_inited}].")
 
         if os.environ.get(EnvVar.var_PROTOPRIMER_MOCKED_RESTART.value, None) is None:
-            if state_input_exec_operation_loaded == ExecOperation.op_start:
+            if state_input_exec_operation_loaded in (
+                ExecOperation.op_start,
+                ExecOperation.command_shell,
+            ):
                 # Skip required `python` validation because we do not need it to create `venv`:
                 pass
             else:
@@ -4267,14 +4304,20 @@ class Bootstrapper_state_stride_py_venv_reached_is_app(AbstractCachingStateNode[
 
         assert self.env_ctx.get_stride().value <= StateStride.stride_py_required.value
         if not os.path.exists(state_local_venv_dir_abs_path_inited):
-            if state_input_exec_operation_loaded == ExecOperation.op_start:
-                # The `venv` is supposed to be ready in `ExecOperation.op_start`:
+            if state_input_exec_operation_loaded in (
+                ExecOperation.op_start,
+                ExecOperation.command_shell,
+            ):
+                # The `venv` is supposed to be ready in `ExecOperation.op_start`/`ExecOperation.command_shell`:
                 raise AssertionError(f"`venv` [{state_local_venv_dir_abs_path_inited}] is supposed to be ready in `ExecOperation` [{state_input_exec_operation_loaded.name}] execute `ExecOperation` [{ExecOperation.op_boot.name}] to prepare it.")
             else:
                 state_venv_driver_prepared.create_venv(state_local_venv_dir_abs_path_inited, constraints_txt_path)
         else:
             logger.info(f"reusing existing `venv` [{state_local_venv_dir_abs_path_inited}]")
-            if state_input_exec_operation_loaded == ExecOperation.op_start:
+            if state_input_exec_operation_loaded in (
+                ExecOperation.op_start,
+                ExecOperation.command_shell,
+            ):
                 # Skip `venv` type validation:
                 pass
             else:
@@ -4365,10 +4408,13 @@ class Bootstrapper_state_protoprimer_package_installed_is_app(AbstractCachingSta
         # TODO: TODO_21_72_88_59.use_factory_to_avoid_running_boot_env_related_states.md:
         # TODO: FT_77_15_06_50.dynamic_DAG.md:
         #       Review and clarify `ExecOperation.op_start`, `EnvContext._is_app`, ...
-        if state_input_exec_operation_loaded == ExecOperation.op_start:
+        if state_input_exec_operation_loaded in (
+            ExecOperation.op_start,
+            ExecOperation.command_shell,
+        ):
             # The only reason for `EnvState.state_protoprimer_package_installed`
             # is to install dependencies into `venv`.
-            # Skip it as `venv` is supposed to be ready in `ExecOperation.op_start`:
+            # Skip it as `venv` is supposed to be ready in `ExecOperation.op_start`/`ExecOperation.command_shell`:
             return False
 
         state_stride_py_venv_reached: StateStride = self.eval_parent_state(EnvState.state_stride_py_venv_reached.name)
@@ -4519,10 +4565,13 @@ class Bootstrapper_state_version_constraints_generated_is_app(AbstractCachingSta
         # TODO: TODO_21_72_88_59.use_factory_to_avoid_running_boot_env_related_states.md:
         # TODO: FT_77_15_06_50.dynamic_DAG.md:
         #       Review and clarify `ExecOperation.op_start`, `EnvContext._is_app`, ...
-        if state_input_exec_operation_loaded == ExecOperation.op_start:
+        if state_input_exec_operation_loaded in (
+            ExecOperation.op_start,
+            ExecOperation.command_shell,
+        ):
             # The only reason for `EnvState.state_version_constraints_generated`
             # is to re-generate the `version_constraints.txt` file based on `venv`.
-            # Skip it as `venv` is supposed to be ready in `ExecOperation.op_start`:
+            # Skip it as `venv` is supposed to be ready in `ExecOperation.op_start`/`ExecOperation.command_shell`:
             return False
 
         state_protoprimer_package_installed: bool = self.eval_parent_state(EnvState.state_protoprimer_package_installed.name)
@@ -4594,10 +4643,13 @@ class Bootstrapper_state_stride_deps_updated_reached_is_app(AbstractCachingState
         # TODO: TODO_21_72_88_59.use_factory_to_avoid_running_boot_env_related_states.md:
         # TODO: FT_77_15_06_50.dynamic_DAG.md:
         #       Review and clarify `ExecOperation.op_start`, `EnvContext._is_app`, ...
-        if state_input_exec_operation_loaded == ExecOperation.op_start:
+        if state_input_exec_operation_loaded in (
+            ExecOperation.op_start,
+            ExecOperation.command_shell,
+        ):
             # The only reason for `EnvState.state_stride_deps_updated_reached`
             # is to make `venv` dependencies effective.
-            # Skip it as `venv` is supposed to be ready in `ExecOperation.op_start`:
+            # Skip it as `venv` is supposed to be ready in `ExecOperation.op_start`/`ExecOperation.command_shell`:
             return self.env_ctx.set_max_stride(state_stride_deps_updated_reached)
 
         state_proto_code_file_abs_path_inited: str = self.eval_parent_state(EnvState.state_proto_code_file_abs_path_inited.name)
@@ -4671,7 +4723,10 @@ class Bootstrapper_state_proto_code_updated_is_app(AbstractCachingStateNode[bool
         # TODO: TODO_21_72_88_59.use_factory_to_avoid_running_boot_env_related_states.md:
         # TODO: FT_77_15_06_50.dynamic_DAG.md:
         #       Review and clarify `ExecOperation.op_start`, `EnvContext._is_app`, ...
-        if state_input_exec_operation_loaded == ExecOperation.op_start:
+        if state_input_exec_operation_loaded in (
+            ExecOperation.op_start,
+            ExecOperation.command_shell,
+        ):
             # The only reason for `EnvState.state_proto_code_updated`
             # is to update sources, but that has to be done in `ExecOperation.op_boot`.
             # Skip:
@@ -4826,8 +4881,6 @@ class Factory_state_input_command_line(NodeFactory[str]):
             return Bootstrapper_state_input_command_line_not_is_app(self.env_ctx)
 
 
-# TODO: FT_77_15_06_50.dynamic_DAG.md:
-#       Evaluating this should be impossible for other future `shell` exec_operation.
 # noinspection PyPep8Naming
 @trivial_factory
 class Bootstrapper_state_command_executed(AbstractCachingStateNode[int]):
@@ -4859,6 +4912,43 @@ class Bootstrapper_state_command_executed(AbstractCachingStateNode[int]):
 
         return shell_driver.run_shell(
             False,
+            command_line,
+            state_local_venv_dir_abs_path_inited,
+        )
+
+
+# noinspection PyPep8Naming
+@trivial_factory
+class Bootstrapper_state_shell_executed(AbstractCachingStateNode[int]):
+    """
+    For `ExecOperation.command_shell`: replaces the current process with an interactive shell
+    (with activated `venv`), optionally running `ParsedArg.name_command` in it.
+    """
+
+    _parent_states = staticmethod(
+        lambda: [
+            EnvState.state_local_venv_dir_abs_path_inited.name,
+            EnvState.state_local_cache_dir_abs_path_inited.name,
+            EnvState.state_stride_src_updated_reached.name,
+            EnvState.state_input_command_line.name,
+        ]
+    )
+    _state_name = staticmethod(lambda: EnvState.state_shell_executed.name)
+
+    def _eval_state_once(self) -> ValueType:
+
+        assert self.env_ctx.get_stride().value >= StateStride.stride_src_updated.value
+
+        command_line: str | None = self.eval_parent_state(EnvState.state_input_command_line.name)
+
+        state_local_venv_dir_abs_path_inited: str = self.eval_parent_state(EnvState.state_local_venv_dir_abs_path_inited.name)
+
+        state_local_cache_dir_abs_path_inited: str = self.eval_parent_state(EnvState.state_local_cache_dir_abs_path_inited.name)
+
+        shell_driver: ShellDriverBase = _get_shell_driver(state_local_cache_dir_abs_path_inited)
+
+        return shell_driver.run_shell(
+            True,
             command_line,
             state_local_venv_dir_abs_path_inited,
         )
@@ -5013,6 +5103,8 @@ class EnvState(enum.Enum):
     state_input_command_line = Factory_state_input_command_line
 
     state_command_executed = Bootstrapper_state_command_executed
+
+    state_shell_executed = Bootstrapper_state_shell_executed
 
 
 class TargetState(enum.Enum):
