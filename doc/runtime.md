@@ -2,14 +2,14 @@
 
 ```{contents}
 :local:
-:depth: 1
+:depth: 2
 ```
 
 ## Purpose
 
 This page walks through the main use cases for running `protoprimer`:
 *   A `git` repo is modified from scratch to gradually introduce concepts and features.
-*   The results from examples will match yours only if no steps are skipped.
+*   The results from the examples will match yours only if no steps are skipped.
 
 The more complex your repo setup, the more valuable `protoprimer` is.
 
@@ -152,7 +152,9 @@ assert repo_status == "", repo_status
 
 </details>
 
-## Problem: bootstrapping the environment
+## Bootstrap the environment
+
+### Bootstrap problem
 
 The first and most **obvious** problem is missing dependencies:
 
@@ -197,7 +199,7 @@ Although [A] creating, [B] activating, and [C] populating a `venv` is standard p
 *   You do **not** want users to install anything **system-wide** that causes havoc.
 *   You do **not** want two different repo clones to **overwrite** each other.
 
-## Solution: bootstrapping the environment
+### Bootstrap solution
 
 You want to **isolate** users from any **error-prone** special cases using a **one-liner**:
 *   arg-less
@@ -496,7 +498,9 @@ repo_status = subprocess.run(
 assert repo_status == "", repo_status
 --->
 
-## Problem: starting the application
+## Start the application
+
+### Start problem
 
 The next most obvious problem is the inconvenience of:
 
@@ -507,7 +511,7 @@ The next most obvious problem is the inconvenience of:
 *   specifying correct `path/to/python` interpreter
 *   specifying correct `path/to/some_app.py` within sources
 
-## Solution: starting the application
+### Start solution
 
 Implement an [entry_script][FT_75_87_82_46.entry_script.md] that switches to `venv` to invoke the app:
 

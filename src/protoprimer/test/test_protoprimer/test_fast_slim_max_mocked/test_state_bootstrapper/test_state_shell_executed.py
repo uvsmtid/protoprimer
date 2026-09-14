@@ -1,0 +1,195 @@
+import os
+from unittest.mock import patch
+
+import pytest
+
+from local_test.mock_verifier import (
+    assert_parent_factories_mocked,
+)
+from local_test.name_assertion import assert_test_module_name_embeds_str
+from protoprimer import primer_kernel
+from protoprimer.primer_kernel import (
+    Factory_state_input_command_line,
+    Bootstrapper_state_local_cache_dir_abs_path_inited,
+    Bootstrapper_state_local_venv_dir_abs_path_inited,
+    Bootstrapper_state_stride_src_updated_reached,
+    EnvContext,
+    EnvState,
+    StateStride,
+)
+
+
+@pytest.fixture
+def env_ctx():
+    return EnvContext()
+
+
+def test_relationship():
+    assert_test_module_name_embeds_str(EnvState.state_shell_executed.name)
+
+
+@patch(f"{primer_kernel.__name__}.{EnvContext.__name__}.{EnvContext.get_stride.__name__}")
+@patch(f"{primer_kernel.__name__}.os.execve")
+@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_stride_src_updated_reached.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_cache_dir_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Factory_state_input_command_line.__name__}.create_state_node")
+@patch.dict(
+    os.environ,
+    {
+        "SHELL": "/bin/bash",
+    },
+    clear=True,
+)
+def test_shell_executed_in_bash(
+    mock_state_input_command_line,
+    mock_state_local_cache_dir_abs_path_inited,
+    mock_state_local_venv_dir_abs_path_inited,
+    mock_state_stride_src_updated_reached,
+    mock_os_execve,
+    mock_get_stride,
+    env_ctx,
+    fs,
+):
+    # given:
+    fs.create_dir("/fake")
+    assert_parent_factories_mocked(
+        env_ctx,
+        EnvState.state_shell_executed.name,
+    )
+    mock_state_input_command_line.return_value.eval_own_state.return_value = "echo hello"
+    mock_get_stride.return_value = StateStride.stride_src_updated
+    mock_state_stride_src_updated_reached.return_value.eval_own_state.return_value = StateStride.stride_src_updated
+    mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = "/fake/venv"
+    mock_state_local_cache_dir_abs_path_inited.return_value.eval_own_state.return_value = "/fake/cache"
+
+    # when:
+    env_ctx.eval_state(EnvState.state_shell_executed.name)
+
+    # then:
+    mock_os_execve.assert_called_once_with(
+        "/bin/bash",
+        [
+            "/bin/bash",
+            "--init-file",
+            "/fake/cache/bash/.bashrc",
+            "-i",
+            "-c",
+            "echo hello",
+        ],
+        {
+            "SHELL": "/bin/bash",
+        },
+    )
+
+
+@patch(f"{primer_kernel.__name__}.{EnvContext.__name__}.{EnvContext.get_stride.__name__}")
+@patch(f"{primer_kernel.__name__}.os.execve")
+@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_stride_src_updated_reached.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_cache_dir_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Factory_state_input_command_line.__name__}.create_state_node")
+@patch.dict(
+    os.environ,
+    {
+        "SHELL": "/bin/zsh",
+    },
+    clear=True,
+)
+def test_shell_executed_in_zsh(
+    mock_state_input_command_line,
+    mock_state_local_cache_dir_abs_path_inited,
+    mock_state_local_venv_dir_abs_path_inited,
+    mock_state_stride_src_updated_reached,
+    mock_os_execve,
+    mock_get_stride,
+    env_ctx,
+    fs,
+):
+    # given:
+    fs.create_dir("/fake")
+    assert_parent_factories_mocked(
+        env_ctx,
+        EnvState.state_shell_executed.name,
+    )
+    mock_state_input_command_line.return_value.eval_own_state.return_value = "echo hello"
+    mock_get_stride.return_value = StateStride.stride_src_updated
+    mock_state_stride_src_updated_reached.return_value.eval_own_state.return_value = StateStride.stride_src_updated
+    mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = "/fake/venv"
+    mock_state_local_cache_dir_abs_path_inited.return_value.eval_own_state.return_value = "/fake/cache"
+
+    # when:
+    env_ctx.eval_state(EnvState.state_shell_executed.name)
+
+    # then:
+    # In ShellDriverZsh, there are no extra shell_args, just an env var `ZDOTDIR`.
+    mock_os_execve.assert_called_once_with(
+        "/bin/zsh",
+        [
+            "/bin/zsh",
+            "-i",
+            "-c",
+            "echo hello",
+        ],
+        {
+            "SHELL": "/bin/zsh",
+            "ZDOTDIR": "/fake/cache/zsh",
+        },
+    )
+
+
+@patch(f"{primer_kernel.__name__}.{EnvContext.__name__}.{EnvContext.get_stride.__name__}")
+@patch(f"{primer_kernel.__name__}.os.execve")
+@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_stride_src_updated_reached.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_cache_dir_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Factory_state_input_command_line.__name__}.create_state_node")
+@patch.dict(
+    os.environ,
+    {
+        "SHELL": "/bin/bash",
+    },
+    clear=True,
+)
+def test_shell_executed_interactive_without_command(
+    mock_state_input_command_line,
+    mock_state_local_cache_dir_abs_path_inited,
+    mock_state_local_venv_dir_abs_path_inited,
+    mock_state_stride_src_updated_reached,
+    mock_os_execve,
+    mock_get_stride,
+    env_ctx,
+    fs,
+):
+    """
+    Unlike `EnvState.state_command_executed`, this state must start an interactive shell
+    even when no `ParsedArg.name_command` is given.
+    """
+    # given:
+    fs.create_dir("/fake")
+    assert_parent_factories_mocked(
+        env_ctx,
+        EnvState.state_shell_executed.name,
+    )
+    mock_state_input_command_line.return_value.eval_own_state.return_value = None
+    mock_get_stride.return_value = StateStride.stride_src_updated
+    mock_state_stride_src_updated_reached.return_value.eval_own_state.return_value = StateStride.stride_src_updated
+    mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = "/fake/venv"
+    mock_state_local_cache_dir_abs_path_inited.return_value.eval_own_state.return_value = "/fake/cache"
+
+    # when:
+    env_ctx.eval_state(EnvState.state_shell_executed.name)
+
+    # then:
+    mock_os_execve.assert_called_once_with(
+        "/bin/bash",
+        [
+            "/bin/bash",
+            "--init-file",
+            "/fake/cache/bash/.bashrc",
+            "-i",
+        ],
+        {
+            "SHELL": "/bin/bash",
+        },
+    )
