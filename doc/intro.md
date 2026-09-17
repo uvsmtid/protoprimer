@@ -249,6 +249,10 @@ User configures it to prepare:
 
 </details>
 
+## Uninstall?
+
+Remove the repo clone.
+
 <div style="text-align: center; margin-top: 8em; margin-bottom: 8em;">
 
 Poke your LLM to see where it fits...
