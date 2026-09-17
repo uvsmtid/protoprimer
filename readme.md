@@ -26,7 +26,7 @@ Want your users to run software **isolated** in a `git` repo after a single zero
 ./prime
 ```
 
-Please [read the docs][protoprimer_readthedocs] for an intro.
+See the [intro][protoprimer_readthedocs].
 
 ## TL;DR
 
@@ -77,7 +77,7 @@ It works without `shebang` for `venv` to **avoid hardcoding** absolute paths and
 
 <a id="protoprimer-quick-start"></a>
 
-## Quick start
+## Initial step
 
 You need to "seed" your repo with a copy of the [`proto_kernel.py`][local_proto_kernel.py] script:
 
@@ -126,9 +126,11 @@ graph LR;
     ./proto_kernel.py
     ```
 
+See the [runtime][protoprimer_readthedocs].
+
 ## Entry functions
 
-There are two entry functions - see details in [boot_vs_start][FT_58_74_37_70.boot_vs_start.md]:
+There are two primary entry functions - see details in [boot_vs_start][FT_58_74_37_70.boot_vs_start.md]:
 
 | Function:    | [start_app][FT_05_08_64_67.start_app.md]                              | [boot_env][FT_85_17_35_21.boot_env.md]                 |
 |--------------|-----------------------------------------------------------------------|--------------------------------------------------------|
@@ -226,9 +228,3 @@ They are convenient wrappers to invoke any function - the **easy** part as they 
 
 [cmd_boot_env_example]: src/local_doc/main/local_doc/cmd_boot_env_example.py
 [cmd_start_app_example]: src/local_doc/main/local_doc/cmd_start_app_example.py
-
-<!-- markdownlint-disable MD051 -->
-<!--
-NOTE: This "user-content-" prefix is added by github.com when it renders the Markdown into HTML.
--->
-<!-- markdownlint-enable -->
