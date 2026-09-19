@@ -53,6 +53,23 @@ def test_parse_args_command():
     assert getattr(args_c, ParsedArg.name_command.value) == cmd
 
 
+def test_parse_args_start():
+    main_func = "my_module:my_func"
+
+    # when:
+    args = parse_args([ExecOperation.op_start.value, main_func])
+
+    # then:
+    assert getattr(args, ParsedArg.name_exec_operation.value) == ExecOperation.op_start.value
+    assert getattr(args, ParsedArg.name_main_func.value) == main_func
+
+
+def test_parse_args_start_requires_main_func():
+    # when/then:
+    with pytest.raises(SystemExit):
+        parse_args([ExecOperation.op_start.value])
+
+
 def test_parse_args_env():
     env_dir = "/path/to/env"
 

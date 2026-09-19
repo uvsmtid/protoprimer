@@ -256,6 +256,10 @@ class StateMeta(enum.Enum):
         env_state=EnvState.state_shell_executed,
         sub_graph=None,
     )
+    state_start_executed = StateNodeMeta(
+        env_state=EnvState.state_start_executed,
+        sub_graph=None,
+    )
 
 
 def compose_python_output(sorted_state_names: list[str]) -> str:
