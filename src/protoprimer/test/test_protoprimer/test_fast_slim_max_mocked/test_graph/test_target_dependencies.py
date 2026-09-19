@@ -64,6 +64,9 @@ class TestTargetDependencies:
         allowed_missing_dependencies.update(self.conditionally_missing_func_executed_states)
         allowed_missing_dependencies.add(EnvState.state_derived_conf_data_loaded.name)
         allowed_missing_dependencies.add(EnvState.state_effective_conf_data_printed.name)
+        # `state_local_run_dir_abs_path_inited` is only reached via `state_derived_conf_data_loaded`
+        # (nothing else consumes the `run` dir yet, unlike `venv`/`log`/`tmp`/`cache`):
+        allowed_missing_dependencies.add(EnvState.state_local_run_dir_abs_path_inited.name)
         allowed_missing_dependencies.add(EnvState.state_wrap_executed.name)
         allowed_missing_dependencies.add(EnvState.state_shell_executed.name)
         allowed_missing_dependencies.add(EnvState.state_everything_executed.name)

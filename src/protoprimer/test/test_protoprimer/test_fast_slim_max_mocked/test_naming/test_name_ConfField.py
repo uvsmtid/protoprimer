@@ -187,6 +187,16 @@ class FieldName(enum.Enum):
         ],
     )
 
+    field_local_run_dir_rel_path = FieldMeta(
+        conf_field=ConfField.field_local_run_dir_rel_path,
+        name_category=NameCategory.category_derived_path_field,
+        name_components=[
+            PathName.path_local_run.value,
+            FilesystemObject.fs_object_dir.value,
+            PathType.path_rel.value,
+        ],
+    )
+
     field_local_tmp_dir_rel_path = FieldMeta(
         conf_field=ConfField.field_local_tmp_dir_rel_path,
         name_category=NameCategory.category_derived_path_field,
