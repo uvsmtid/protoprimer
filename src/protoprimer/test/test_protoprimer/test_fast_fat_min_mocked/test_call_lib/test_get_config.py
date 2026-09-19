@@ -154,6 +154,7 @@ def test_get_config_with_leap_derived(proto_kernel_abs_path):
         EnvState.state_selected_python_file_abs_path_inited.name,
         EnvState.state_local_venv_dir_abs_path_inited.name,
         EnvState.state_local_log_dir_abs_path_inited.name,
+        EnvState.state_local_run_dir_abs_path_inited.name,
         EnvState.state_local_tmp_dir_abs_path_inited.name,
         EnvState.state_local_cache_dir_abs_path_inited.name,
         EnvState.state_venv_driver_inited.name,

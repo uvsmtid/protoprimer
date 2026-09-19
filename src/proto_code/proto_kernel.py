@@ -196,11 +196,13 @@ class KeyWord(enum.Enum):
     key_var = "var"
     key_tmp = "tmp"
     key_log = "log"
+    key_run = "run"
+    # TODO: Use `gen` instead of `cache`:
+    key_gen = "gen"
     key_venv = "venv"
     key_cache = "cache"
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     key_do = "do"
-    key_run = "run"
     key_start = "start"
     key_install = "install"
     key_restart = "restart"
@@ -245,12 +247,15 @@ class KeyWord(enum.Enum):
 
 class TopDir(enum.Enum):
     """
-    Top-level directories (or dirs under `TopDir.dir_var`).
-    """
+    FT_20_13_95_11.reusable_dir.md
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+    TODO: TODO_04_67_81_16.refactor_reusable_dirs.md
+    """
+
     dir_var = f"{KeyWord.key_var.value}"
     dir_tmp = f"{KeyWord.key_tmp.value}"
     dir_log = f"{KeyWord.key_log.value}"
+    dir_run = f"{KeyWord.key_run.value}"
     dir_venv = f"{KeyWord.key_venv.value}"
     dir_cache = f"{KeyWord.key_cache.value}"
 
@@ -264,12 +269,12 @@ class ConfLeap(enum.Enum):
     leap_input = f"{KeyWord.key_input.value}"
 
     leap_primer = f"{KeyWord.key_primer.value}"
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     # TODO: Rename, use `global` instead:
     #       FT_23_37_64_44.global_vs_local.md
     #       FT_89_41_35_82.conf_leap.md
     leap_client = f"{KeyWord.key_client.value}"
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     # TODO: Remove, use `local` instead:
     #       FT_23_37_64_44.global_vs_local.md
     #       FT_89_41_35_82.conf_leap.md
@@ -288,9 +293,9 @@ class PrimerRuntime(enum.Enum):
     """
     See FT_14_52_73_23.primer_runtime.md
     """
-
-    runtime_proto = "proto"
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+    runtime_proto = "proto"
+
     runtime_meta = "meta"
 
 
@@ -310,10 +315,10 @@ class EntryFunc(enum.Enum):
     # FT_85_17_35_21.call_lib.md:
     # A lib function call (e.g. `get_config`):
     func_call_lib = "call_lib"
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     # Direct CLI execution via (e.g.) `./proto_kernel.py` executing `__main__` section:
     func_run_main = "run_main"
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
 
 class ExecMode(enum.Enum):
     """
@@ -331,10 +336,10 @@ class ExecMode(enum.Enum):
 class ExecOperation(enum.Enum):
     """
     Various exec operations the script can be run with.
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     See FT_11_27_29_83.exec_operation.md
     """
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     op_boot = "boot"
 
     # TODO: This is not used yet. It should call "some_module:some_main".
@@ -512,6 +517,8 @@ class PathName(enum.Enum):
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     path_local_log = "local_log"
 
+    path_local_run = "local_run"
+
     path_local_tmp = "local_tmp"
 
     path_local_cache = "local_cache"
@@ -624,6 +631,10 @@ class ConfField(enum.Enum):
     field_local_log_dir_rel_path = f"{PathName.path_local_log.value}_{FilesystemObject.fs_object_dir.value}_{PathType.path_rel.value}"
 
     # TODO: combine by parent dir (~ `./var`):
+    # state_local_run_dir_abs_path_inited:
+    field_local_run_dir_rel_path = f"{PathName.path_local_run.value}_{FilesystemObject.fs_object_dir.value}_{PathType.path_rel.value}"
+
+    # TODO: combine by parent dir (~ `./var`):
     # state_local_tmp_dir_abs_path_inited:
     field_local_tmp_dir_rel_path = f"{PathName.path_local_tmp.value}_{FilesystemObject.fs_object_dir.value}_{PathType.path_rel.value}"
 
@@ -636,11 +647,11 @@ class ConfField(enum.Enum):
 
     # state_version_constraints_file_basename_inited:
     field_version_constraints_file_basename = f"{ValueName.value_version_constraints.value}_{ValueName.value_file_basename.value}"
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     # parent of `field_build_root_dir_rel_path` & `field_install_extras`:
     # state_project_descriptors_inited:
     field_project_descriptors = f"{ValueName.value_project_descriptors.value}"
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     field_install_specs = f"{ValueName.value_install_specs.value}"
 
     ####################################################################################################################
@@ -658,10 +669,10 @@ class ConfField(enum.Enum):
 
     # child of `field_install_specs`:
     field_extra_command_args = f"{ValueName.value_extra_command_args.value}"
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
 ########################################################################################################################
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
 
 class VenvDriverBase:
 
@@ -681,14 +692,14 @@ class VenvDriverBase:
     ) -> None:
         logger.info(f"creating `venv` [{local_venv_dir_abs_path}]")
         self._create_venv_impl(local_venv_dir_abs_path, constraints_file_abs_path)
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     def _create_venv_impl(
         self,
         local_venv_dir_abs_path: str,
         constraints_file_abs_path: str,
     ) -> None:
         raise NotImplementedError()
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     def install_packages(
         self,
         selected_python_file_abs_path: str,
@@ -702,7 +713,7 @@ class VenvDriverBase:
         """
         sub_proc_args: list[str] = self.get_install_dependencies_cmd(selected_python_file_abs_path)
         sub_proc_args.extend(given_packages)
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
         logger.info(f"installing packages: {' '.join(sub_proc_args)}")
 
         subprocess.check_call(sub_proc_args)
@@ -717,14 +728,14 @@ class VenvDriverBase:
     ) -> None:
         """
         Install each project from the `project_descriptors`.
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
         The assumption is that they use `pyproject.toml`.
 
         See also:
         *   UC_78_58_06_54.no_stray_packages.md
         *   FT_46_37_27_11.editable_install.md
         """
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
         editable_project_install_args = []
         for project_descriptor in project_descriptors:
             project_build_root_dir_rel_path = project_descriptor[ConfField.field_build_root_dir_rel_path.value]
@@ -738,7 +749,7 @@ class VenvDriverBase:
                 install_extras = project_descriptor[ConfField.field_install_extras.value]
             else:
                 install_extras = []
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
             editable_project_install_args.append("--editable")
             if len(install_extras) > 0:
                 editable_project_install_args.append(f"{project_build_root_dir_abs_path}[{','.join(install_extras)}]")
@@ -753,13 +764,13 @@ class VenvDriverBase:
             ]
         )
         sub_proc_args.extend(extra_command_args)
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
         sub_proc_args.extend(editable_project_install_args)
 
         logger.info(f"installing projects: {' '.join(sub_proc_args)}")
 
         env_vars = os.environ.copy()
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
         # Adding `venv/bin` is required for `uv` to access `keyring`.
         # See: FT_17_41_51_83.private_artifact_repo.md
         env_vars[ConfConstInput.ext_env_var_PATH] = f"{os.path.dirname(venv_python_file_abs_path)}:{env_vars[ConfConstInput.ext_env_var_PATH]}"
@@ -774,7 +785,7 @@ class VenvDriverBase:
         venv_python_file_abs_path: str,
     ) -> list[str]:
         raise NotImplementedError()
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     @staticmethod
     def _list_installed_pkg_names(
         venv_python_file_abs_path: str,
@@ -782,7 +793,7 @@ class VenvDriverBase:
         """
         Returns names (without versions) of all packages currently
         installed in the `venv` behind `venv_python_file_abs_path`.
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
         Used to re-pin with `--constraint` whatever
         a `venv`-seeding mechanism (`ensurepip`, `uv --seed`, ...)
         happens to install (e.g. `pip`/`setuptools`/`wheel`).
@@ -798,12 +809,12 @@ class VenvDriverBase:
             ]
         )
         return [
-            #
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
             output_line.split("==")[0]
             for output_line in freeze_output.decode().splitlines()
             if output_line.strip()
         ]
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     def pin_versions(
         self,
         venv_python_file_abs_path: str,
@@ -821,10 +832,10 @@ class VenvDriverBase:
         venv_python_file_abs_path: str,
     ) -> list[str]:
         raise NotImplementedError()
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
 class VenvDriverPip(VenvDriverBase):
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     def __init__(
         self,
         required_python_version: str,
@@ -1480,8 +1491,10 @@ class ConfConstEnv:
 
     default_dir_rel_path_log = str(KeyWord.key_log.value)
 
-    default_dir_rel_path_tmp = str(KeyWord.key_tmp.value)
+    default_dir_rel_path_run = str(KeyWord.key_run.value)
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+    default_dir_rel_path_tmp = str(KeyWord.key_tmp.value)
+
     default_dir_rel_path_cache = str(KeyWord.key_cache.value)
 
     # NOTE: FT_84_11_73_28.supported_python_versions.md:
@@ -3625,6 +3638,38 @@ class Bootstrapper_state_local_log_dir_abs_path_inited(AbstractOverriddenFieldCa
 
 # noinspection PyPep8Naming
 @trivial_factory
+class Bootstrapper_state_local_run_dir_abs_path_inited(AbstractOverriddenFieldCachingStateNode[str]):
+
+    _parent_states = staticmethod(
+        lambda: [
+            EnvState.state_ref_root_dir_abs_path_inited.name,
+            EnvState.state_client_conf_file_data_loaded.name,
+            EnvState.state_env_conf_file_data_loaded.name,
+        ]
+    )
+    _state_name = staticmethod(lambda: EnvState.state_local_run_dir_abs_path_inited.name)
+
+    def _eval_state_once(self) -> ValueType:
+
+        field_local_run_dir_rel_path: str = self._get_overridden_value_or_default(
+            ConfField.field_local_run_dir_rel_path.value,
+            ConfConstEnv.default_dir_rel_path_run,
+        )
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+        state_ref_root_dir_abs_path_inited: str = self.eval_parent_state(EnvState.state_ref_root_dir_abs_path_inited.name)
+
+        state_local_run_dir_abs_path_inited = os.path.join(
+            state_ref_root_dir_abs_path_inited,
+            field_local_run_dir_rel_path,
+        )
+        state_local_run_dir_abs_path_inited = os.path.normpath(state_local_run_dir_abs_path_inited)
+
+        assert os.path.isabs(state_local_run_dir_abs_path_inited)
+        return state_local_run_dir_abs_path_inited
+
+
+# noinspection PyPep8Naming
+@trivial_factory
 class Bootstrapper_state_local_tmp_dir_abs_path_inited(AbstractOverriddenFieldCachingStateNode[str]):
 
     _parent_states = staticmethod(
@@ -3635,14 +3680,14 @@ class Bootstrapper_state_local_tmp_dir_abs_path_inited(AbstractOverriddenFieldCa
         ]
     )
     _state_name = staticmethod(lambda: EnvState.state_local_tmp_dir_abs_path_inited.name)
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     def _eval_state_once(self) -> ValueType:
 
         field_local_tmp_dir_rel_path: str = self._get_overridden_value_or_default(
             ConfField.field_local_tmp_dir_rel_path.value,
             ConfConstEnv.default_dir_rel_path_tmp,
         )
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
         state_ref_root_dir_abs_path_inited: str = self.eval_parent_state(EnvState.state_ref_root_dir_abs_path_inited.name)
 
         state_local_tmp_dir_abs_path_inited = os.path.join(
@@ -3658,7 +3703,7 @@ class Bootstrapper_state_local_tmp_dir_abs_path_inited(AbstractOverriddenFieldCa
 # noinspection PyPep8Naming
 @trivial_factory
 class Bootstrapper_state_local_cache_dir_abs_path_inited(AbstractOverriddenFieldCachingStateNode[str]):
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     _parent_states = staticmethod(
         lambda: [
             EnvState.state_ref_root_dir_abs_path_inited.name,
@@ -3667,7 +3712,7 @@ class Bootstrapper_state_local_cache_dir_abs_path_inited(AbstractOverriddenField
         ]
     )
     _state_name = staticmethod(lambda: EnvState.state_local_cache_dir_abs_path_inited.name)
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     def _eval_state_once(self) -> ValueType:
 
         field_local_cache_dir_rel_path: str = self._get_overridden_value_or_default(
@@ -3682,7 +3727,7 @@ class Bootstrapper_state_local_cache_dir_abs_path_inited(AbstractOverriddenField
             field_local_cache_dir_rel_path,
         )
         state_local_cache_dir_abs_path_inited = os.path.normpath(state_local_cache_dir_abs_path_inited)
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
         assert os.path.isabs(state_local_cache_dir_abs_path_inited)
         return state_local_cache_dir_abs_path_inited
 
@@ -3690,7 +3735,7 @@ class Bootstrapper_state_local_cache_dir_abs_path_inited(AbstractOverriddenField
 # noinspection PyPep8Naming
 @trivial_factory
 class Bootstrapper_state_venv_driver_inited(AbstractOverriddenFieldCachingStateNode[VenvDriverType]):
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     _parent_states = staticmethod(
         lambda: [
             EnvState.state_client_conf_file_data_loaded.name,
@@ -3703,7 +3748,7 @@ class Bootstrapper_state_venv_driver_inited(AbstractOverriddenFieldCachingStateN
     def _eval_state_once(self) -> ValueType:
 
         state_selected_python_file_abs_path_inited: str = self.eval_parent_state(EnvState.state_selected_python_file_abs_path_inited.name)
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
         # FT_84_11_73_28.supported_python_versions.md:
         uv_min_version: tuple[int, int, int] = (3, 8, 0)
         selected_version: tuple[int, int, int] = get_python_version(state_selected_python_file_abs_path_inited)
@@ -3713,7 +3758,7 @@ class Bootstrapper_state_venv_driver_inited(AbstractOverriddenFieldCachingStateN
             default_venv_driver = VenvDriverType.venv_pip.name
         else:
             default_venv_driver = ConfConstEnv.default_venv_driver
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
         state_venv_driver_inited: VenvDriverType
         venv_driver_name: str | None = os.environ.get(EnvVar.var_PROTOPRIMER_VENV_DRIVER.value, None)
         if venv_driver_name is None:
@@ -3725,7 +3770,7 @@ class Bootstrapper_state_venv_driver_inited(AbstractOverriddenFieldCachingStateN
             ]
         else:
             state_venv_driver_inited = VenvDriverType[venv_driver_name]
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
         if (
             selected_version < uv_min_version
             and state_venv_driver_inited == VenvDriverType.venv_uv
@@ -3735,7 +3780,7 @@ class Bootstrapper_state_venv_driver_inited(AbstractOverriddenFieldCachingStateN
             state_venv_driver_inited = VenvDriverType.venv_pip
 
         return state_venv_driver_inited
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
 
 # noinspection PyPep8Naming
 @trivial_factory
@@ -3748,7 +3793,7 @@ class Bootstrapper_state_version_constraints_file_basename_inited(AbstractOverri
         ]
     )
     _state_name = staticmethod(lambda: EnvState.state_version_constraints_file_basename_inited.name)
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     def _eval_state_once(self) -> ValueType:
         return self._get_overridden_value_or_default(
             ConfField.field_version_constraints_file_basename.value,
@@ -3759,7 +3804,7 @@ class Bootstrapper_state_version_constraints_file_basename_inited(AbstractOverri
 # noinspection PyPep8Naming
 @trivial_factory
 class Bootstrapper_state_project_descriptors_inited(AbstractOverriddenFieldCachingStateNode[list]):
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     _parent_states = staticmethod(
         lambda: [
             EnvState.state_client_conf_file_data_loaded.name,
@@ -3769,7 +3814,7 @@ class Bootstrapper_state_project_descriptors_inited(AbstractOverriddenFieldCachi
     _state_name = staticmethod(lambda: EnvState.state_project_descriptors_inited.name)
 
     def _eval_state_once(self) -> ValueType:
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
         project_descriptors: list = self._get_overridden_value_or_default(
             ConfField.field_project_descriptors.value,
             ConfConstEnv.default_project_descriptors,
@@ -3781,7 +3826,7 @@ class Bootstrapper_state_project_descriptors_inited(AbstractOverriddenFieldCachi
 # noinspection PyPep8Naming
 @trivial_factory
 class Bootstrapper_state_install_specs_inited(AbstractOverriddenFieldCachingStateNode[list]):
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     _parent_states = staticmethod(
         lambda: [
             EnvState.state_client_conf_file_data_loaded.name,
@@ -3791,7 +3836,7 @@ class Bootstrapper_state_install_specs_inited(AbstractOverriddenFieldCachingStat
     _state_name = staticmethod(lambda: EnvState.state_install_specs_inited.name)
 
     def _eval_state_once(self) -> ValueType:
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
         install_specs: list = self._get_overridden_value_or_default(
             ConfField.field_install_specs.value,
             ConfConstEnv.default_install_specs,
@@ -3806,7 +3851,7 @@ class Bootstrapper_state_derived_conf_data_loaded(AbstractCachingStateNode[dict]
     """
     Implements: FT_00_22_19_59.derived_config.md
     """
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     _state_name = staticmethod(lambda: EnvState.state_derived_conf_data_loaded.name)
 
     def __init__(
@@ -3837,6 +3882,7 @@ class Bootstrapper_state_derived_conf_data_loaded(AbstractCachingStateNode[dict]
             EnvState.state_selected_python_file_abs_path_inited.name,
             EnvState.state_local_venv_dir_abs_path_inited.name,
             EnvState.state_local_log_dir_abs_path_inited.name,
+            EnvState.state_local_run_dir_abs_path_inited.name,
             EnvState.state_local_tmp_dir_abs_path_inited.name,
             EnvState.state_local_cache_dir_abs_path_inited.name,
             EnvState.state_venv_driver_inited.name,
@@ -5054,6 +5100,9 @@ class EnvState(enum.Enum):
     state_local_log_dir_abs_path_inited = Bootstrapper_state_local_log_dir_abs_path_inited
 
     # TODO: log, tmp, venv, ... dirs should better be configured at client level:
+    state_local_run_dir_abs_path_inited = Bootstrapper_state_local_run_dir_abs_path_inited
+
+    # TODO: log, tmp, venv, ... dirs should better be configured at client level:
     state_local_tmp_dir_abs_path_inited = Bootstrapper_state_local_tmp_dir_abs_path_inited
 
     # TODO: log, tmp, venv, ... dirs should better be configured at client level:
@@ -5062,11 +5111,11 @@ class EnvState(enum.Enum):
     state_venv_driver_inited = Bootstrapper_state_venv_driver_inited
 
     state_version_constraints_file_basename_inited = Bootstrapper_state_version_constraints_file_basename_inited
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     state_project_descriptors_inited = Bootstrapper_state_project_descriptors_inited
 
     state_install_specs_inited = Bootstrapper_state_install_specs_inited
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     # `ConfLeap.leap_derived`:
     state_derived_conf_data_loaded = Bootstrapper_state_derived_conf_data_loaded
 
@@ -5085,9 +5134,9 @@ class EnvState(enum.Enum):
 
     # restart: `StateStride.stride_py_required` -> `StateStride.stride_py_venv`:
     state_stride_py_venv_reached = Factory_state_stride_py_venv_reached
-
-    state_protoprimer_package_installed = Factory_state_protoprimer_package_installed
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+    state_protoprimer_package_installed = Factory_state_protoprimer_package_installed
+
     state_version_constraints_generated = Factory_state_version_constraints_generated
 
     # restart: `StateStride.stride_py_venv` -> `StateStride.stride_deps_updated`:
@@ -5106,12 +5155,12 @@ class EnvState(enum.Enum):
 
     state_shell_executed = Bootstrapper_state_shell_executed
 
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 class TargetState(enum.Enum):
     """
     Special `EnvState`-s.
     """
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     # A special state that triggers execution of everything else:
     target_everything_executed = EnvState.state_everything_executed
 
@@ -5131,11 +5180,11 @@ class StateGraph:
     """
     It is a graph, which must be a DAG.
     """
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     def __init__(self):
         self.state_nodes: dict[str, StateNode] = {}
         self.state_factories: dict[str, NodeFactory] = {}
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     def register_factory(
         self,
         state_name: str,

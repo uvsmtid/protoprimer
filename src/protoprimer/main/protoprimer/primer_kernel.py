@@ -196,11 +196,13 @@ class KeyWord(enum.Enum):
     key_var = "var"
     key_tmp = "tmp"
     key_log = "log"
+    key_run = "run"
+    # TODO: Use `gen` instead of `cache`:
+    key_gen = "gen"
     key_venv = "venv"
     key_cache = "cache"
 
     key_do = "do"
-    key_run = "run"
     key_start = "start"
     key_install = "install"
     key_restart = "restart"
@@ -245,12 +247,15 @@ class KeyWord(enum.Enum):
 
 class TopDir(enum.Enum):
     """
-    Top-level directories (or dirs under `TopDir.dir_var`).
+    FT_20_13_95_11.reusable_dir.md
+
+    TODO: TODO_04_67_81_16.refactor_reusable_dirs.md
     """
 
     dir_var = f"{KeyWord.key_var.value}"
     dir_tmp = f"{KeyWord.key_tmp.value}"
     dir_log = f"{KeyWord.key_log.value}"
+    dir_run = f"{KeyWord.key_run.value}"
     dir_venv = f"{KeyWord.key_venv.value}"
     dir_cache = f"{KeyWord.key_cache.value}"
 
@@ -512,6 +517,8 @@ class PathName(enum.Enum):
 
     path_local_log = "local_log"
 
+    path_local_run = "local_run"
+
     path_local_tmp = "local_tmp"
 
     path_local_cache = "local_cache"
@@ -622,6 +629,10 @@ class ConfField(enum.Enum):
     # TODO: combine by parent dir (~ `./var`):
     # state_local_log_dir_abs_path_inited:
     field_local_log_dir_rel_path = f"{PathName.path_local_log.value}_{FilesystemObject.fs_object_dir.value}_{PathType.path_rel.value}"
+
+    # TODO: combine by parent dir (~ `./var`):
+    # state_local_run_dir_abs_path_inited:
+    field_local_run_dir_rel_path = f"{PathName.path_local_run.value}_{FilesystemObject.fs_object_dir.value}_{PathType.path_rel.value}"
 
     # TODO: combine by parent dir (~ `./var`):
     # state_local_tmp_dir_abs_path_inited:
@@ -1479,6 +1490,8 @@ class ConfConstEnv:
     default_dir_rel_path_venv = str(KeyWord.key_venv.value)
 
     default_dir_rel_path_log = str(KeyWord.key_log.value)
+
+    default_dir_rel_path_run = str(KeyWord.key_run.value)
 
     default_dir_rel_path_tmp = str(KeyWord.key_tmp.value)
 
@@ -3625,6 +3638,38 @@ class Bootstrapper_state_local_log_dir_abs_path_inited(AbstractOverriddenFieldCa
 
 # noinspection PyPep8Naming
 @trivial_factory
+class Bootstrapper_state_local_run_dir_abs_path_inited(AbstractOverriddenFieldCachingStateNode[str]):
+
+    _parent_states = staticmethod(
+        lambda: [
+            EnvState.state_ref_root_dir_abs_path_inited.name,
+            EnvState.state_client_conf_file_data_loaded.name,
+            EnvState.state_env_conf_file_data_loaded.name,
+        ]
+    )
+    _state_name = staticmethod(lambda: EnvState.state_local_run_dir_abs_path_inited.name)
+
+    def _eval_state_once(self) -> ValueType:
+
+        field_local_run_dir_rel_path: str = self._get_overridden_value_or_default(
+            ConfField.field_local_run_dir_rel_path.value,
+            ConfConstEnv.default_dir_rel_path_run,
+        )
+
+        state_ref_root_dir_abs_path_inited: str = self.eval_parent_state(EnvState.state_ref_root_dir_abs_path_inited.name)
+
+        state_local_run_dir_abs_path_inited = os.path.join(
+            state_ref_root_dir_abs_path_inited,
+            field_local_run_dir_rel_path,
+        )
+        state_local_run_dir_abs_path_inited = os.path.normpath(state_local_run_dir_abs_path_inited)
+
+        assert os.path.isabs(state_local_run_dir_abs_path_inited)
+        return state_local_run_dir_abs_path_inited
+
+
+# noinspection PyPep8Naming
+@trivial_factory
 class Bootstrapper_state_local_tmp_dir_abs_path_inited(AbstractOverriddenFieldCachingStateNode[str]):
 
     _parent_states = staticmethod(
@@ -3837,6 +3882,7 @@ class Bootstrapper_state_derived_conf_data_loaded(AbstractCachingStateNode[dict]
             EnvState.state_selected_python_file_abs_path_inited.name,
             EnvState.state_local_venv_dir_abs_path_inited.name,
             EnvState.state_local_log_dir_abs_path_inited.name,
+            EnvState.state_local_run_dir_abs_path_inited.name,
             EnvState.state_local_tmp_dir_abs_path_inited.name,
             EnvState.state_local_cache_dir_abs_path_inited.name,
             EnvState.state_venv_driver_inited.name,
@@ -5052,6 +5098,9 @@ class EnvState(enum.Enum):
 
     # TODO: log, tmp, venv, ... dirs should better be configured at client level:
     state_local_log_dir_abs_path_inited = Bootstrapper_state_local_log_dir_abs_path_inited
+
+    # TODO: log, tmp, venv, ... dirs should better be configured at client level:
+    state_local_run_dir_abs_path_inited = Bootstrapper_state_local_run_dir_abs_path_inited
 
     # TODO: log, tmp, venv, ... dirs should better be configured at client level:
     state_local_tmp_dir_abs_path_inited = Bootstrapper_state_local_tmp_dir_abs_path_inited

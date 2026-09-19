@@ -490,6 +490,18 @@ class StateName(enum.Enum):
         ],
     )
 
+    state_local_run_dir_abs_path_inited = StateMeta(
+        env_state=EnvState.state_local_run_dir_abs_path_inited,
+        name_category=NameCategory.category_path_value,
+        name_components=[
+            KeyWord.key_state.value,
+            PathName.path_local_run.value,
+            FilesystemObject.fs_object_dir.value,
+            PathType.path_abs.value,
+            CompletedAction.action_inited.value,
+        ],
+    )
+
     state_local_tmp_dir_abs_path_inited = StateMeta(
         env_state=EnvState.state_local_tmp_dir_abs_path_inited,
         name_category=NameCategory.category_path_value,

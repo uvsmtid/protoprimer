@@ -168,6 +168,10 @@ class StateMeta(enum.Enum):
         env_state=EnvState.state_local_log_dir_abs_path_inited,
         sub_graph=SubGraph.graph_config,
     )
+    state_local_run_dir_abs_path_inited = StateNodeMeta(
+        env_state=EnvState.state_local_run_dir_abs_path_inited,
+        sub_graph=SubGraph.graph_config,
+    )
     state_local_tmp_dir_abs_path_inited = StateNodeMeta(
         env_state=EnvState.state_local_tmp_dir_abs_path_inited,
         sub_graph=SubGraph.graph_config,
