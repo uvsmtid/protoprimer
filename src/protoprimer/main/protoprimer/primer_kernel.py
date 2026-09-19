@@ -42,7 +42,7 @@ import typing
 
 # The release process ensures that content in this file matches the version below while tagging the release commit
 # (otherwise, if the file comes from a different commit, the version is irrelevant):
-__version__ = "0.13.0.dev2"
+__version__ = "0.13.0"
 
 logger: logging.Logger = logging.getLogger()
 
@@ -197,7 +197,6 @@ class KeyWord(enum.Enum):
     key_tmp = "tmp"
     key_log = "log"
     key_run = "run"
-    # TODO: Use `gen` instead of `cache`:
     key_gen = "gen"
     key_venv = "venv"
     key_cache = "cache"
@@ -248,8 +247,6 @@ class KeyWord(enum.Enum):
 class TopDir(enum.Enum):
     """
     FT_20_13_95_11.reusable_dir.md
-
-    TODO: TODO_04_67_81_16.refactor_reusable_dirs.md
     """
 
     dir_var = f"{KeyWord.key_var.value}"
@@ -257,6 +254,7 @@ class TopDir(enum.Enum):
     dir_log = f"{KeyWord.key_log.value}"
     dir_run = f"{KeyWord.key_run.value}"
     dir_venv = f"{KeyWord.key_venv.value}"
+    # TODO: TODO_04_67_81_16.refactor_reusable_dirs.md: use `gen` instead of `cache`.
     dir_cache = f"{KeyWord.key_cache.value}"
 
 
@@ -354,6 +352,7 @@ class ExecOperation(enum.Enum):
     op_eval = "eval"
 
     # TODO: TODO_31_76_38_60.sub_command_for_shell.md:
+    #       Rename `command_shell` to `op_shell`:
     # FT_99_89_51_06.venv_shell.md
     command_shell = "shell"
 
@@ -1538,6 +1537,35 @@ class CustomArgumentParser(argparse.ArgumentParser):
         raise ValueError(message)
 
 
+def parse_main_func(
+    main_func: str,
+    allow_default_proto_main: bool,
+) -> tuple[str | None, str | None]:
+    """
+    Parses the `module_name:function_name` format.
+
+    Returns `(None, None)` only when both:
+    *   `main_func` is `ConfConstGeneral.default_proto_main`
+    *   `allow_default_proto_main` is `True`
+    """
+    if main_func == ConfConstGeneral.default_proto_main:
+        if allow_default_proto_main:
+            # FT_21_75_54_18.instant_scenario.md
+            # Run `proto_main`:
+            return None, None
+        raise ValueError(f"`{SyntaxArg.arg_main_func}` must specify `module_name:function_name`.")
+    if ConfConstGeneral.module_func_separator not in main_func:
+        raise ValueError(f"`{SyntaxArg.arg_main_func}` [{main_func}] does not match expected format `module_name:function_name`.")
+    (
+        module_name,
+        func_name,
+    ) = main_func.split(
+        ConfConstGeneral.module_func_separator,
+        1,
+    )
+    return module_name, func_name
+
+
 def _create_parent_argparser():
     parent_argparser = CustomArgumentParser(add_help=False)
     parent_argparser.add_argument(
@@ -1623,6 +1651,21 @@ def _create_child_argparser(parent_argparsers):
             help="Shell command to execute (non-interactive).",
         )
 
+    def _create_start_parser(exec_operation_parsers):
+        exec_operation_desc = "Start `main_func` with activated `venv` (`venv` must already exist - see `boot`)."
+        parser_start = exec_operation_parsers.add_parser(
+            ExecOperation.op_start.value,
+            help=exec_operation_desc,
+            description=exec_operation_desc,
+        )
+        parser_start.set_defaults(exec_operation=ExecOperation.op_start.value)
+        parser_start.add_argument(
+            ParsedArg.name_main_func.value,
+            type=str,
+            metavar=ParsedArg.name_main_func.value,
+            help="The `module_name:function_name` to invoke inside `venv`.",
+        )
+
     def _create_check_parser(exec_operation_parsers):
         exec_operation_desc = "Check the environment configuration."
         parser_check = exec_operation_parsers.add_parser(
@@ -1700,6 +1743,7 @@ def _create_child_argparser(parent_argparsers):
     _create_eval_parser(child_argparsers)
     _create_wrap_parser(child_argparsers)
     _create_shell_parser(child_argparsers)
+    _create_start_parser(child_argparsers)
 
     # TODO: TODO_73_71_31_84.exec_operation_check_or_info.md: implement
     # noinspection PyUnreachableCode
@@ -2458,9 +2502,11 @@ class Bootstrapper_state_func_boot_env_executed(AbstractCachingStateNode[bool]):
         elif state_input_exec_operation_loaded == ExecOperation.command_shell:
             selected_strategy = ExitCodeReporter(self.env_ctx)
             state_node = self.env_ctx._state_graph.get_state_node(EnvState.state_shell_executed.name)
+        elif state_input_exec_operation_loaded == ExecOperation.op_start:
+            selected_strategy = ExitCodeReporter(self.env_ctx)
+            state_node = self.env_ctx._state_graph.get_state_node(EnvState.state_start_executed.name)
         elif state_input_exec_operation_loaded in [
             ExecOperation.op_boot,
-            ExecOperation.op_start,
             ExecOperation.op_reset,
         ]:
             selected_strategy = ExitCodeReporter(self.env_ctx)
@@ -2870,26 +2916,13 @@ class Bootstrapper_state_wrap_executed(AbstractCachingStateNode[int]):
         entry_script_path_arg: str = getattr(state_args_parsed, ParsedArg.name_entry_script_path.value)
         main_func: str = getattr(state_args_parsed, ParsedArg.name_main_func.value) or ConfConstGeneral.default_proto_main
 
-        module_name: str | None
-        func_name: str | None
-        if main_func == ConfConstGeneral.default_proto_main:
-            if entry_func == EntryFunc.func_boot_env.value:
-                # FT_21_75_54_18.instant_scenario.md
-                # Run `proto_main`:
-                module_name = None
-                func_name = None
-            else:
-                raise ValueError(f"`{SyntaxArg.arg_main_func}` is required for `{entry_func}`.")
-        elif ConfConstGeneral.module_func_separator in main_func:
-            (
-                module_name,
-                func_name,
-            ) = main_func.split(
-                ConfConstGeneral.module_func_separator,
-                1,
-            )
-        else:
-            raise ValueError(f"`{SyntaxArg.arg_main_func}` [{main_func}] does not match expected format `module_name:function_name`.")
+        (
+            module_name,
+            func_name,
+        ) = parse_main_func(
+            main_func,
+            allow_default_proto_main=(entry_func == EntryFunc.func_boot_env.value),
+        )
 
         proto_kernel_abs_path: str = self.eval_parent_state(EnvState.state_proto_code_file_abs_path_inited.name)
         proto_kernel_dir_abs_path: str = os.path.dirname(proto_kernel_abs_path)
@@ -5000,6 +5033,55 @@ class Bootstrapper_state_shell_executed(AbstractCachingStateNode[int]):
         )
 
 
+# noinspection PyPep8Naming
+@trivial_factory
+class Bootstrapper_state_start_executed(AbstractCachingStateNode[int]):
+
+    _parent_states = staticmethod(
+        lambda: [
+            EnvState.state_args_parsed.name,
+            EnvState.state_proto_code_file_abs_path_inited.name,
+            EnvState.state_local_venv_dir_abs_path_inited.name,
+            EnvState.state_local_cache_dir_abs_path_inited.name,
+            EnvState.state_stride_src_updated_reached.name,
+        ]
+    )
+    _state_name = staticmethod(lambda: EnvState.state_start_executed.name)
+
+    def _eval_state_once(self) -> ValueType:
+
+        assert self.env_ctx.get_stride().value >= StateStride.stride_src_updated.value
+
+        state_args_parsed: argparse.Namespace = self.eval_parent_state(EnvState.state_args_parsed.name)
+        main_func: str = getattr(state_args_parsed, ParsedArg.name_main_func.value)
+
+        (
+            module_name,
+            func_name,
+        ) = parse_main_func(
+            main_func,
+            allow_default_proto_main=False,
+        )
+
+        state_proto_code_file_abs_path_inited: str = self.eval_parent_state(EnvState.state_proto_code_file_abs_path_inited.name)
+
+        # Provide consistent environment for `selected_main`:
+        os.environ[EnvVar.var_PROTOPRIMER_PROTO_CODE.value] = state_proto_code_file_abs_path_inited
+        os.environ[EnvVar.var_PROTOPRIMER_MAIN_FUNC.value] = main_func
+
+        selected_module = importlib.import_module(module_name)
+        selected_main = getattr(selected_module, func_name)
+
+        # Present `selected_main` with a clean `sys.argv`, as if it were started via a
+        # dedicated `entry_script` (which would have its own, unrelated argv), instead
+        # of leaking `ExecOperation.op_start`/`ParsedArg.name_main_func` CLI args into it:
+        sys.argv = sys.argv[:1]
+
+        selected_main()
+
+        return 0
+
+
 ########################################################################################################################
 
 
@@ -5154,6 +5236,8 @@ class EnvState(enum.Enum):
     state_command_executed = Bootstrapper_state_command_executed
 
     state_shell_executed = Bootstrapper_state_shell_executed
+
+    state_start_executed = Bootstrapper_state_start_executed
 
 
 class TargetState(enum.Enum):
@@ -6494,26 +6578,13 @@ def _start_main(
 
     os.environ[EnvVar.var_PROTOPRIMER_MAIN_FUNC.value] = venv_main_func
 
-    module_name: str | None
-    func_name: str | None
-    if venv_main_func == ConfConstGeneral.default_proto_main:
-        # FT_21_75_54_18.instant_scenario.md
-        # Run `proto_main`:
-        if entry_func is EntryFunc.func_boot_env:
-            module_name = None
-            func_name = None
-        else:
-            raise ValueError(f"The empty main function is only valid for `{EntryFunc.func_boot_env.value}`.")
-    elif ConfConstGeneral.module_func_separator in venv_main_func:
-        (
-            module_name,
-            func_name,
-        ) = venv_main_func.split(
-            ConfConstGeneral.module_func_separator,
-            1,
-        )
-    else:
-        raise ValueError(f"The specified main function [{venv_main_func}] does not match expected format `module_name:function_name`.")
+    (
+        module_name,
+        func_name,
+    ) = parse_main_func(
+        venv_main_func,
+        allow_default_proto_main=(entry_func is EntryFunc.func_boot_env),
+    )
 
     curr_py_exec = StateStride[
         os.getenv(
