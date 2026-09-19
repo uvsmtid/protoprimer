@@ -3,6 +3,7 @@ FT_21_75_54_18.instant_scenario.md
 """
 
 import os
+import subprocess
 from pathlib import Path
 
 from local_test.case_condition import requires_max_python
@@ -79,3 +80,47 @@ def test_instant_scenario(tmp_path: Path):
             ExecOperation.op_eval.value,
         ]
     )
+
+
+@requires_max_python
+def test_instant_scenario_start_presents_clean_argv(tmp_path: Path):
+    """
+    This test runs `ExecOperation.op_start` directly via `proto_code`
+    (rather than via a dedicated `entry_script`).
+
+    Unlike a dedicated `entry_script` (whose own `sys.argv` is naturally clean),
+    `op_start` runs in the same process/argv as `proto_kernel.py start <main_func>` itself,
+    so it must strip its own `start`/`main_func` CLI args before calling the target function -
+    otherwise a target function that inspects `sys.argv` on its own sees unexpected extra arguments.
+
+    TODO: TODO_19_13_09_01.propagate_start_sub_command_cli_args.md:
+          Extend to support extra arg propagation.
+    """
+
+    # given:
+
+    (
+        proto_kernel_abs_path,
+        ref_root_abs_path,
+        project_dir_abs_path,
+    ) = create_min_leaps_shape(tmp_path)
+
+    run_primer_main([str(proto_kernel_abs_path)])
+
+    # when:
+
+    sub_proc = subprocess.run(
+        [
+            str(proto_kernel_abs_path),
+            ExecOperation.op_start.value,
+            "local_doc.cmd_echo_app:custom_echo_app_main",
+        ],
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+
+    # then:
+    # no positional args leaked into the echoed `sys.argv`:
+
+    assert sub_proc.stdout.strip() == "[]"

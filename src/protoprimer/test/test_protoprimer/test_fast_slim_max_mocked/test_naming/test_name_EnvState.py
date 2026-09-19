@@ -704,6 +704,16 @@ class StateName(enum.Enum):
         ],
     )
 
+    state_start_executed = StateMeta(
+        env_state=EnvState.state_start_executed,
+        name_category=NameCategory.category_state_mutation,
+        name_components=[
+            KeyWord.key_state.value,
+            ExecOperation.op_start.value,
+            KeyWord.key_executed.value,
+        ],
+    )
+
     state_everything_executed = StateMeta(
         env_state=EnvState.state_everything_executed,
         name_category=NameCategory.category_state_mutation,

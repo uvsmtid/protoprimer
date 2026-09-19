@@ -226,12 +226,36 @@ Seed the repo with `proto_kernel.py` from `protoprimer`:
 <details>
 <summary>[copy & paste & execute]</summary>
 
+<!--- skip: next --->
+
 ```shell
 # Download `proto_kernel.py` from `protoprimer`, for example:
 
 git fetch https://github.com/uvsmtid/protoprimer.git
 git show FETCH_HEAD:src/proto_code/proto_kernel.py > proto_kernel.py
 ```
+
+<!--- invisible-code-block: python
+# Fetch from the current branch (already pushed to `origin`) - `main` may be outdated:
+current_branch = subprocess.run(
+    ["git", "rev-parse", "--abbrev-ref", "HEAD"],
+    capture_output=True,
+    text=True,
+    check=True,
+).stdout.strip()
+
+subprocess.run(
+    ["git", "fetch", "https://github.com/uvsmtid/protoprimer.git", current_branch],
+    cwd=repo_dir,
+    check=True,
+)
+subprocess.run(
+    "git show FETCH_HEAD:src/proto_code/proto_kernel.py > proto_kernel.py",
+    cwd=repo_dir,
+    shell=True,
+    check=True,
+)
+--->
 
 ```shell
 # Make `proto_kernel.py` executable:
@@ -508,8 +532,8 @@ The next most obvious problem is the inconvenience of:
 ./venv/bin/python src/some_app/main/some_app.py
 ```
 
-*   specifying correct `path/to/python` interpreter
-*   specifying correct `path/to/some_app.py` within sources
+*   specifying the correct `path/to/python` interpreter
+*   specifying the correct `path/to/some_app.py` within sources
 
 ### Start solution
 
@@ -579,7 +603,7 @@ assert repo_status == "", repo_status
 
 </details>
 
-Now you can start the app via the dedicated entry script:
+Now you can start the app via the dedicated `entry_script`:
 
 ```shell
 ./cmd/some_app
@@ -602,6 +626,22 @@ entry_script_process = subprocess.run(
 )
 assert entry_script_process.returncode == 0, entry_script_process.stdout + entry_script_process.stderr
 assert entry_script_process.stdout == "hello world\n", entry_script_process.stdout
+--->
+
+<!--- invisible-code-block: python
+# Any function can be called without a dedicated `entry_script`:
+start_process = subprocess.run(
+    [
+        "./proto_kernel.py",
+        "start",
+        "some_app:some_main",
+    ],
+    cwd=repo_dir,
+    capture_output=True,
+    text=True,
+)
+assert start_process.returncode == 0, start_process.stdout + start_process.stderr
+assert start_process.stdout == "hello world\n", start_process.stdout
 --->
 
 ## Clean repo root
