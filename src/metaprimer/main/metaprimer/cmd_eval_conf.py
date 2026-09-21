@@ -26,7 +26,7 @@ def custom_main():
 
     derived_data: dict = configure_script(script_basename=os.path.basename(sys.argv[0]))
 
-    state_proto_code_file_abs_path_inited = derived_data[EnvState.state_proto_code_file_abs_path_inited.name]
+    state_proto_kernel_file_abs_path_inited = derived_data[EnvState.state_proto_kernel_file_abs_path_inited.name]
     state_primer_conf_file_abs_path_inited = derived_data[EnvState.state_primer_conf_file_abs_path_inited.name]
     state_global_conf_file_abs_path_inited = derived_data[EnvState.state_global_conf_file_abs_path_inited.name]
     state_local_conf_file_abs_path_inited = derived_data[EnvState.state_local_conf_file_abs_path_inited.name]
@@ -34,7 +34,7 @@ def custom_main():
     conf_input = RootNode_input(
         node_indent=0,
         orig_data={
-            EnvState.state_proto_code_file_abs_path_inited.name: state_proto_code_file_abs_path_inited,
+            EnvState.state_proto_kernel_file_abs_path_inited.name: state_proto_kernel_file_abs_path_inited,
             EnvState.state_primer_conf_file_abs_path_inited.name: state_primer_conf_file_abs_path_inited,
         },
     )

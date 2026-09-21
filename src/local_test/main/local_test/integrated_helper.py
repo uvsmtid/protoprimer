@@ -71,36 +71,36 @@ def switch_to_ref_root_abs_path(tmp_path: pathlib.Path) -> pathlib.Path:
     return tmp_dir_abs_path
 
 
-def create_plain_proto_code(
-    proto_code_dir_abs_path: pathlib.Path,
+def create_plain_proto_kernel(
+    proto_kernel_dir_abs_path: pathlib.Path,
 ) -> pathlib.Path:
     """
-    Creates a test dir with FT_90_65_67_62.proto_code.md.
+    Creates a test copy of FT_87_17_49_36.proto_kernel.md.
     """
 
     primer_kernel_abs_path = protoprimer.primer_kernel.__file__
     logger.info(f"primer_kernel_abs_path: {primer_kernel_abs_path}")
 
     # Create a `proto_code` directory:
-    proto_code_dir_abs_path = proto_code_dir_abs_path
-    proto_code_dir_abs_path.mkdir(
+    proto_kernel_dir_abs_path = proto_kernel_dir_abs_path
+    proto_kernel_dir_abs_path.mkdir(
         parents=True,
         # It can exists if `proto_code` is placed into `ref_root` dir ~ "instant_scenario":
         exist_ok=True,
     )
 
     # Copy `primer_kernel.py` to `proto_code/proto_kernel.py`:
-    proto_kernel_abs_path = proto_code_dir_abs_path / "proto_kernel.py"
+    proto_kernel_abs_path = proto_kernel_dir_abs_path / "proto_kernel.py"
 
     shutil.copy(primer_kernel_abs_path, proto_kernel_abs_path)
 
-    # Make the `primer_kernel.py` executable:
+    # Make the `proto_kernel.py` executable:
     if proto_kernel_abs_path.exists():
         curr_stat = os.stat(proto_kernel_abs_path)
         next_stat = curr_stat.st_mode | stat.S_IXUSR | stat.S_IRUSR | stat.S_IWUSR
         os.chmod(proto_kernel_abs_path, next_stat)
 
-    # TODO: Instead of returning, set `EvnVar.var_PROTOPRIMER_PROTO_CODE` in case of `EnvVar.var_PROTOPRIMER_MOCKED_RESTART`.
+    # TODO: Instead of returning, set `EvnVar.var_PROTOPRIMER_PROTO_KERNEL` in case of `EnvVar.var_PROTOPRIMER_MOCKED_RESTART`.
     #       This would allow running `test_slow_integrated` wrapped in mocks set by `test_fast_slim_max_mocked`
     #       without modifications.
     return proto_kernel_abs_path
@@ -186,12 +186,12 @@ def select_python_file_abs_path(required_version: tuple[int, int, int]) -> str |
 
 def create_conf_primer_file(
     ref_root_abs_path: pathlib.Path,
-    proto_code_dir_abs_path: pathlib.Path,
+    proto_kernel_dir_abs_path: pathlib.Path,
 ) -> None:
 
     ref_root_dir_rel_path: str = os.path.relpath(
         ref_root_abs_path,
-        proto_code_dir_abs_path,
+        proto_kernel_dir_abs_path,
     )
 
     prime_conf_data = {
@@ -199,7 +199,7 @@ def create_conf_primer_file(
         ConfField.field_global_conf_dir_rel_path.value: ConfConstPrimer.default_client_conf_dir_rel_path,
     }
 
-    conf_primer_file_abs_path = proto_code_dir_abs_path / ConfConstInput.default_file_basename_conf_primer
+    conf_primer_file_abs_path = proto_kernel_dir_abs_path / ConfConstInput.default_file_basename_conf_primer
 
     write_json_file(
         str(conf_primer_file_abs_path),
@@ -348,7 +348,7 @@ def create_min_leaps_shape(tmp_path: Path) -> Tuple[Path, Path, Path]:
 
     # === no `ConfLeap.leap_primer` config file
 
-    proto_kernel_abs_path: Path = create_plain_proto_code(ref_root_abs_path)
+    proto_kernel_abs_path: Path = create_plain_proto_kernel(ref_root_abs_path)
 
     # === no `ConfLeap.leap_env` config file
 
@@ -372,11 +372,11 @@ def create_max_leaps_shape(tmp_path: Path) -> Tuple[Path, Path, Path]:
 
     # === create `ConfLeap.leap_primer`
 
-    proto_code_dir_abs_path = ref_root_abs_path / ConfConstInput.default_proto_conf_dir_rel_path
-    proto_kernel_abs_path: Path = create_plain_proto_code(proto_code_dir_abs_path)
+    proto_kernel_dir_abs_path = ref_root_abs_path / ConfConstInput.default_proto_conf_dir_rel_path
+    proto_kernel_abs_path: Path = create_plain_proto_kernel(proto_kernel_dir_abs_path)
     create_conf_primer_file(
         ref_root_abs_path,
-        proto_code_dir_abs_path,
+        proto_kernel_dir_abs_path,
     )
 
     # === create `pyproject.toml`

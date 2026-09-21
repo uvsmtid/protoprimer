@@ -775,13 +775,13 @@ class Builder_RootNode_input(AbstractConfLeapNodeBuilder):
 
         field_node = self._create_used_dict_field(
             dict_node=dict_node,
-            field_name=EnvState.state_proto_code_file_abs_path_inited.name,
+            field_name=EnvState.state_proto_kernel_file_abs_path_inited.name,
             node_class=AbstractValueNode,
             conf_leap=conf_leap,
             **kwargs,
         )
         field_node.note_text = (
-            f"Value `{EnvState.state_proto_code_file_abs_path_inited.name}` is an absolute path to `{ConfConstGeneral.name_proto_code}`.\n"
+            f"Value `{EnvState.state_proto_kernel_file_abs_path_inited.name}` is an absolute path to `{ConfConstGeneral.default_proto_kernel_module}`.\n"
             f"It allows resolving all other relative paths (via `{PathName.path_ref_root.value}` - see field `{ConfField.field_ref_root_dir_rel_path.value}`).\n"
             #
         )
@@ -798,7 +798,7 @@ class Builder_RootNode_input(AbstractConfLeapNodeBuilder):
             f"Value `{EnvState.state_primer_conf_file_abs_path_inited.name}` is an absolute path to `{ConfLeap.leap_primer}` config file.\n"
             f"The config file is selected from the list of possible candidates (whichever is found first, replacing extension to `.{ConfConstInput.conf_file_ext}`):\n"
             f"*   basename of the entry script,\n"
-            f"*   basename of the `{ConfConstGeneral.name_proto_code}` file,\n"
+            f"*   basename of the `{ConfConstGeneral.default_proto_kernel_module}` file,\n"
             f"*   default `{ConfConstInput.default_file_basename_conf_primer}`.\n"
             f"Note that the selected config file basename is subsequently re-used for others:\n"
             f"*   see `{EnvState.state_global_conf_file_abs_path_inited.name}` for `{ConfLeap.leap_client.name}`,\n"
@@ -906,7 +906,7 @@ class Node_field_ref_root_dir_rel_path(AbstractValueNode[str]):
         self.state_primer_conf_file_abs_path_inited: str = state_primer_conf_file_abs_path_inited
         self.note_text = (
             f"Field `{ConfField.field_ref_root_dir_rel_path.value}` points to the dir called `{PathName.path_ref_root.value}`.\n"
-            f"The path is relative to the `{ConfConstGeneral.name_proto_code}` file [{self.state_primer_conf_file_abs_path_inited}].\n"
+            f"The path is relative to the `{ConfConstGeneral.default_proto_kernel_module}` file [{self.state_primer_conf_file_abs_path_inited}].\n"
             f"Normally, the `{PathName.path_ref_root.value}` dir is the client repo root, but it can be anything.\n"
             f"See `{EnvState.state_ref_root_dir_abs_path_inited.name}` in `{ConfLeap.leap_derived.name}` -\n"
             f"the derived abs path is the base path for all the configured relative paths (except for this field itself, obviously).\n"
@@ -1407,12 +1407,12 @@ class Builder_RootNode_derived(AbstractConfLeapNodeBuilder):
 
         field_node = self._create_used_dict_field(
             dict_node=dict_node,
-            field_name=EnvState.state_proto_code_file_abs_path_inited.name,
+            field_name=EnvState.state_proto_kernel_file_abs_path_inited.name,
             node_class=AbstractValueNode,
             conf_leap=conf_leap,
             **kwargs,
         )
-        field_node.note_text = f"{ConfConstGeneral.func_note_derived_based_on_conf_leap_field(EnvState.state_proto_code_file_abs_path_inited.name, ConfLeap.leap_input)}\n"
+        field_node.note_text = f"{ConfConstGeneral.func_note_derived_based_on_conf_leap_field(EnvState.state_proto_kernel_file_abs_path_inited.name, ConfLeap.leap_input)}\n"
 
         field_node = self._create_used_dict_field(
             dict_node=dict_node,
@@ -1640,7 +1640,7 @@ class Bootstrapper_state_primer_conf_file_data_loaded_rendered(AbstractCachingSt
             EnvState.state_stride_src_updated_reached.name,
             EnvState.state_input_stderr_log_level_eval_finalized.name,
             EnvState.state_input_exec_operation_loaded.name,
-            EnvState.state_proto_code_file_abs_path_inited.name,
+            EnvState.state_proto_kernel_file_abs_path_inited.name,
             EnvState.state_primer_conf_file_abs_path_inited.name,
         ]
     )
@@ -1649,7 +1649,7 @@ class Bootstrapper_state_primer_conf_file_data_loaded_rendered(AbstractCachingSt
     def _eval_state_once(
         self,
     ) -> ValueType:
-        state_proto_code_file_abs_path_inited: str = self.eval_parent_state(EnvState.state_proto_code_file_abs_path_inited.name)
+        state_proto_kernel_file_abs_path_inited: str = self.eval_parent_state(EnvState.state_proto_kernel_file_abs_path_inited.name)
         state_primer_conf_file_abs_path_inited: str = self.eval_parent_state(EnvState.state_primer_conf_file_abs_path_inited.name)
 
         file_data: dict
@@ -1673,7 +1673,7 @@ class Bootstrapper_state_primer_conf_file_data_loaded_rendered(AbstractCachingSt
             conf_input = RootNode_input(
                 node_indent=0,
                 orig_data={
-                    EnvState.state_proto_code_file_abs_path_inited.name: state_proto_code_file_abs_path_inited,
+                    EnvState.state_proto_kernel_file_abs_path_inited.name: state_proto_kernel_file_abs_path_inited,
                     EnvState.state_primer_conf_file_abs_path_inited.name: state_primer_conf_file_abs_path_inited,
                 },
             )
@@ -1804,7 +1804,7 @@ class Bootstrapper_state_derived_conf_data_loaded_rendered(AbstractCachingStateN
         self.derived_data_env_states: list[str] = [
             # ===
             # `ConfLeap.leap_input`
-            EnvState.state_proto_code_file_abs_path_inited.name,
+            EnvState.state_proto_kernel_file_abs_path_inited.name,
             EnvState.state_primer_conf_file_abs_path_inited.name,
             # ===
             # `ConfLeap.leap_primer`

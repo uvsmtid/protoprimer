@@ -142,7 +142,7 @@ def test_get_config_with_leap_derived(proto_kernel_abs_path):
     # then:
 
     assert conf_data.keys() == {
-        EnvState.state_proto_code_file_abs_path_inited.name,
+        EnvState.state_proto_kernel_file_abs_path_inited.name,
         EnvState.state_primer_conf_file_abs_path_inited.name,
         EnvState.state_ref_root_dir_abs_path_inited.name,
         EnvState.state_global_conf_dir_abs_path_inited.name,

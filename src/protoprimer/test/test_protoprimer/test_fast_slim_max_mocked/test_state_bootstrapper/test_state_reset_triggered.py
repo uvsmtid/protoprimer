@@ -18,7 +18,7 @@ from protoprimer.primer_kernel import (
     ContextBuilder,
     EntryFunc,
     Factory_state_prepare_venv_finalized,
-    Factory_state_proto_code_file_abs_path_inited,
+    Factory_state_proto_kernel_file_abs_path_inited,
     Factory_state_stride_py_required_reached,
     CommandAction,
     ConfConstEnv,
@@ -55,13 +55,13 @@ def test_relationship():
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_version_constraints_file_basename_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Factory_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Factory_state_proto_kernel_file_abs_path_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Factory_state_prepare_venv_finalized.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
 def test_reset_true(
     mock_state_input_exec_operation_loaded,
     mock_state_prepare_venv_finalized,
-    mock_state_proto_code_file_abs_path_inited,
+    mock_state_proto_kernel_file_abs_path_inited,
     mock_state_local_venv_dir_abs_path_inited,
     mock_state_local_conf_symlink_abs_path_inited,
     mock_state_version_constraints_file_basename_inited,
@@ -111,13 +111,13 @@ def test_reset_true(
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_version_constraints_file_basename_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Factory_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Factory_state_proto_kernel_file_abs_path_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Factory_state_prepare_venv_finalized.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
 def test_reset_false(
     mock_state_input_exec_operation_loaded,
     mock_state_prepare_venv_finalized,
-    mock_state_proto_code_file_abs_path_inited,
+    mock_state_proto_kernel_file_abs_path_inited,
     mock_state_local_venv_dir_abs_path_inited,
     mock_state_local_conf_symlink_abs_path_inited,
     mock_state_version_constraints_file_basename_inited,
@@ -158,13 +158,13 @@ def test_reset_false(
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_version_constraints_file_basename_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Factory_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Factory_state_proto_kernel_file_abs_path_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Factory_state_prepare_venv_finalized.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
 def test_reset_true_but_py_exec_not_required(
     mock_state_input_exec_operation_loaded,
     mock_state_prepare_venv_finalized,
-    mock_state_proto_code_file_abs_path_inited,
+    mock_state_proto_kernel_file_abs_path_inited,
     mock_state_local_venv_dir_abs_path_inited,
     mock_state_local_conf_symlink_abs_path_inited,
     mock_state_version_constraints_file_basename_inited,

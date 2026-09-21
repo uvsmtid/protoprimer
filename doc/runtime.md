@@ -882,7 +882,22 @@ git commit --message "Add protoprimer as a dependency"
 ```
 
 <!--- invisible-code-block: python
-pyproject_toml_text = (repo_dir / "src" / "some_app" / "pyproject.toml").read_text()
+# Pin to the current branch (already pushed to `origin`) - `main` may be outdated:
+some_app_pyproject_toml_path = repo_dir / "src" / "some_app" / "pyproject.toml"
+some_app_pyproject_toml_text = some_app_pyproject_toml_path.read_text()
+some_app_pyproject_toml_text = some_app_pyproject_toml_text.replace(
+    "protoprimer @ git+https://github.com/uvsmtid/protoprimer.git#subdirectory=src/protoprimer",
+    f"protoprimer @ git+https://github.com/uvsmtid/protoprimer.git@{current_branch}#subdirectory=src/protoprimer",
+)
+some_app_pyproject_toml_path.write_text(some_app_pyproject_toml_text)
+
+subprocess.run(
+    ["git", "commit", "--all", "--message", "Pin `protoprimer` dependency to the current branch for this test"],
+    cwd=repo_dir,
+    check=True,
+)
+
+pyproject_toml_text = some_app_pyproject_toml_path.read_text()
 assert "protoprimer @ git+" in pyproject_toml_text, pyproject_toml_text
 
 commit_count = subprocess.run(
@@ -892,7 +907,7 @@ commit_count = subprocess.run(
     text=True,
     check=True,
 ).stdout.strip()
-assert commit_count == "6", commit_count
+assert commit_count == "7", commit_count
 
 repo_status = subprocess.run(
     ["git", "status", "--porcelain"],

@@ -9,7 +9,7 @@ from local_test.integrated_helper import (
     create_conf_env_file,
     create_conf_primer_file,
     create_max_leaps_shape,
-    create_plain_proto_code,
+    create_plain_proto_kernel,
     create_test_pyproject_toml,
     switch_to_ref_root_abs_path,
     test_pyproject_src_dir_rel_path,
@@ -37,7 +37,7 @@ def test_relationship():
 
 def test_start_requires_boot_first(tmp_path: Path):
     """
-    `ExecOperation.op_start` is a fast path (like `ExecOperation.command_shell`):
+    `ExecOperation.op_start` is a fast path (like `ExecOperation.op_shell`):
     unlike `boot`, it must not create `venv` itself.
     """
 
@@ -111,11 +111,11 @@ def test_start_does_not_reinstall_dependencies(tmp_path: Path):
 
     ref_root_abs_path = switch_to_ref_root_abs_path(tmp_path)
 
-    proto_code_dir_abs_path = ref_root_abs_path / ConfConstInput.default_proto_conf_dir_rel_path
-    proto_kernel_abs_path = create_plain_proto_code(proto_code_dir_abs_path)
+    proto_kernel_dir_abs_path = ref_root_abs_path / ConfConstInput.default_proto_conf_dir_rel_path
+    proto_kernel_abs_path = create_plain_proto_kernel(proto_kernel_dir_abs_path)
     create_conf_primer_file(
         ref_root_abs_path,
-        proto_code_dir_abs_path,
+        proto_kernel_dir_abs_path,
     )
 
     project_dir_abs_path = ref_root_abs_path / test_pyproject_src_dir_rel_path

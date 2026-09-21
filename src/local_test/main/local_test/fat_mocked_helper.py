@@ -157,7 +157,7 @@ def run_primer_main(
     cli_args: List[str],
 ) -> None:
     """
-    Run the `proto_code` in different test modes (depending on `EnvVar.var_PROTOPRIMER_MOCKED_RESTART`):
+    Run `proto_kernel` in different test modes (depending on `EnvVar.var_PROTOPRIMER_MOCKED_RESTART`):
     1.  in a separate process (integrated)
     2.  in a mock for the current process test runner
 
@@ -170,7 +170,7 @@ def run_primer_main(
 
     if EnvVar.var_PROTOPRIMER_MOCKED_RESTART.value in os.environ:
         proto_kernel_abs_path = cli_args[0]
-        os.environ[EnvVar.var_PROTOPRIMER_PROTO_CODE.value] = proto_kernel_abs_path
+        os.environ[EnvVar.var_PROTOPRIMER_PROTO_KERNEL.value] = proto_kernel_abs_path
         _run_primer_main_in_mock_env(cli_args)
     else:
         subprocess.run(
@@ -191,7 +191,7 @@ def _run_primer_main_in_mock_env(
     cli_args: List[str],
 ):
     """
-    This function simulates the execution of the `proto_code` main function.
+    This function simulates the execution of the `proto_kernel` main function.
 
     It handles intercepted calls to `os.exec*` and `sys.exit` functions
     and ensures the tests continue to in the test runner process.

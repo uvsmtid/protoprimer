@@ -4,7 +4,7 @@ import stat
 
 from local_test.fat_mocked_helper import run_primer_main
 from local_test.integrated_helper import (
-    create_plain_proto_code,
+    create_plain_proto_kernel,
     switch_to_ref_root_abs_path,
 )
 from local_test.name_assertion import (
@@ -30,7 +30,7 @@ def _wrap_and_assert(
     # given:
 
     ref_root_abs_path = switch_to_ref_root_abs_path(tmp_path)
-    proto_kernel_abs_path = create_plain_proto_code(ref_root_abs_path)
+    proto_kernel_abs_path = create_plain_proto_kernel(ref_root_abs_path)
 
     entry_script_abs_path = ref_root_abs_path / "cmd" / "some_app"
     entry_script_abs_path.parent.mkdir(parents=True)
@@ -89,7 +89,7 @@ def test_wrap_boot_env_without_main_func(tmp_path: pathlib.Path):
     # given:
 
     ref_root_abs_path = switch_to_ref_root_abs_path(tmp_path)
-    proto_kernel_abs_path = create_plain_proto_code(ref_root_abs_path)
+    proto_kernel_abs_path = create_plain_proto_kernel(ref_root_abs_path)
 
     entry_script_abs_path = ref_root_abs_path / "prime"
 

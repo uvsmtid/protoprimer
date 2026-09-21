@@ -15,7 +15,7 @@ from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     Factory_state_args_parsed,
-    Factory_state_proto_code_file_abs_path_inited,
+    Factory_state_proto_kernel_file_abs_path_inited,
     Bootstrapper_state_local_cache_dir_abs_path_inited,
     Bootstrapper_state_local_venv_dir_abs_path_inited,
     Bootstrapper_state_stride_src_updated_reached,
@@ -40,12 +40,12 @@ def test_relationship():
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_stride_src_updated_reached.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_cache_dir_abs_path_inited.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Factory_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Factory_state_proto_kernel_file_abs_path_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Factory_state_args_parsed.__name__}.create_state_node")
 @patch.dict(os.environ, {}, clear=True)
 def test_start_executed_imports_and_calls_main_func(
     mock_state_args_parsed,
-    mock_state_proto_code_file_abs_path_inited,
+    mock_state_proto_kernel_file_abs_path_inited,
     mock_state_local_cache_dir_abs_path_inited,
     mock_state_local_venv_dir_abs_path_inited,
     mock_state_stride_src_updated_reached,
@@ -59,7 +59,7 @@ def test_start_executed_imports_and_calls_main_func(
         EnvState.state_start_executed.name,
     )
     mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(main_func="my_module:my_func")
-    mock_state_proto_code_file_abs_path_inited.return_value.eval_own_state.return_value = "/fake/proto_kernel.py"
+    mock_state_proto_kernel_file_abs_path_inited.return_value.eval_own_state.return_value = "/fake/proto_kernel.py"
     mock_state_local_cache_dir_abs_path_inited.return_value.eval_own_state.return_value = "/fake/cache"
     mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = "/fake/venv"
     mock_state_stride_src_updated_reached.return_value.eval_own_state.return_value = StateStride.stride_src_updated
@@ -77,7 +77,7 @@ def test_start_executed_imports_and_calls_main_func(
     assert result == 0
     mock_import_module.assert_called_once_with("my_module")
     mock_func.assert_called_once()
-    assert os.environ[EnvVar.var_PROTOPRIMER_PROTO_CODE.value] == "/fake/proto_kernel.py"
+    assert os.environ[EnvVar.var_PROTOPRIMER_PROTO_KERNEL.value] == "/fake/proto_kernel.py"
     assert os.environ[EnvVar.var_PROTOPRIMER_MAIN_FUNC.value] == "my_module:my_func"
 
 
@@ -86,12 +86,12 @@ def test_start_executed_imports_and_calls_main_func(
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_stride_src_updated_reached.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_cache_dir_abs_path_inited.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Factory_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Factory_state_proto_kernel_file_abs_path_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Factory_state_args_parsed.__name__}.create_state_node")
 @patch.dict(os.environ, {}, clear=True)
 def test_start_executed_resets_argv_before_calling_main_func(
     mock_state_args_parsed,
-    mock_state_proto_code_file_abs_path_inited,
+    mock_state_proto_kernel_file_abs_path_inited,
     mock_state_local_cache_dir_abs_path_inited,
     mock_state_local_venv_dir_abs_path_inited,
     mock_state_stride_src_updated_reached,
@@ -109,7 +109,7 @@ def test_start_executed_resets_argv_before_calling_main_func(
         EnvState.state_start_executed.name,
     )
     mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(main_func="my_module:my_func")
-    mock_state_proto_code_file_abs_path_inited.return_value.eval_own_state.return_value = "/fake/proto_kernel.py"
+    mock_state_proto_kernel_file_abs_path_inited.return_value.eval_own_state.return_value = "/fake/proto_kernel.py"
     mock_state_local_cache_dir_abs_path_inited.return_value.eval_own_state.return_value = "/fake/cache"
     mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = "/fake/venv"
     mock_state_stride_src_updated_reached.return_value.eval_own_state.return_value = StateStride.stride_src_updated
@@ -133,12 +133,12 @@ def test_start_executed_resets_argv_before_calling_main_func(
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_stride_src_updated_reached.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_cache_dir_abs_path_inited.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Factory_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Factory_state_proto_kernel_file_abs_path_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Factory_state_args_parsed.__name__}.create_state_node")
 @patch.dict(os.environ, {}, clear=True)
 def test_start_executed_rejects_malformed_main_func(
     mock_state_args_parsed,
-    mock_state_proto_code_file_abs_path_inited,
+    mock_state_proto_kernel_file_abs_path_inited,
     mock_state_local_cache_dir_abs_path_inited,
     mock_state_local_venv_dir_abs_path_inited,
     mock_state_stride_src_updated_reached,
@@ -156,7 +156,7 @@ def test_start_executed_rejects_malformed_main_func(
         EnvState.state_start_executed.name,
     )
     mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(main_func="invalid_format")
-    mock_state_proto_code_file_abs_path_inited.return_value.eval_own_state.return_value = "/fake/proto_kernel.py"
+    mock_state_proto_kernel_file_abs_path_inited.return_value.eval_own_state.return_value = "/fake/proto_kernel.py"
     mock_state_local_cache_dir_abs_path_inited.return_value.eval_own_state.return_value = "/fake/cache"
     mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = "/fake/venv"
     mock_state_stride_src_updated_reached.return_value.eval_own_state.return_value = StateStride.stride_src_updated

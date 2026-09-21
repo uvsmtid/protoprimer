@@ -272,13 +272,13 @@ class StateName(enum.Enum):
         ],
     )
 
-    state_input_proto_code_file_abs_path_var_loaded = StateMeta(
-        env_state=EnvState.state_input_proto_code_file_abs_path_var_loaded,
+    state_input_proto_kernel_file_abs_path_var_loaded = StateMeta(
+        env_state=EnvState.state_input_proto_kernel_file_abs_path_var_loaded,
         name_category=NameCategory.category_path_value_deprecated,
         name_components=[
             KeyWord.key_state.value,
             ConfLeap.leap_input.value,
-            PathName.path_proto_code.value,
+            PathName.path_proto_kernel.value,
             FilesystemObject.fs_object_file.value,
             PathType.path_abs.value,
             ValueSource.value_var.value,
@@ -296,12 +296,12 @@ class StateName(enum.Enum):
         ],
     )
 
-    state_proto_code_file_abs_path_inited = StateMeta(
-        env_state=EnvState.state_proto_code_file_abs_path_inited,
+    state_proto_kernel_file_abs_path_inited = StateMeta(
+        env_state=EnvState.state_proto_kernel_file_abs_path_inited,
         name_category=NameCategory.category_path_value,
         name_components=[
             KeyWord.key_state.value,
-            PathName.path_proto_code.value,
+            PathName.path_proto_kernel.value,
             FilesystemObject.fs_object_file.value,
             PathType.path_abs.value,
             CompletedAction.action_inited.value,
@@ -653,12 +653,12 @@ class StateName(enum.Enum):
         ],
     )
 
-    state_proto_code_updated = StateMeta(
-        env_state=EnvState.state_proto_code_updated,
+    state_proto_kernel_updated = StateMeta(
+        env_state=EnvState.state_proto_kernel_updated,
         name_category=NameCategory.category_state_mutation,
         name_components=[
             KeyWord.key_state.value,
-            PathName.path_proto_code.value,
+            PathName.path_proto_kernel.value,
             KeyWord.key_updated.value,
         ],
     )
@@ -699,7 +699,7 @@ class StateName(enum.Enum):
         name_category=NameCategory.category_state_mutation,
         name_components=[
             KeyWord.key_state.value,
-            ExecOperation.command_shell.value,
+            ExecOperation.op_shell.value,
             KeyWord.key_executed.value,
         ],
     )

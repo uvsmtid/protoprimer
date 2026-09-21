@@ -92,16 +92,16 @@ class StateMeta(enum.Enum):
         env_state=EnvState.state_input_start_id_var_loaded,
         sub_graph=SubGraph.graph_input,
     )
-    state_input_proto_code_file_abs_path_var_loaded = StateNodeMeta(
-        env_state=EnvState.state_input_proto_code_file_abs_path_var_loaded,
+    state_input_proto_kernel_file_abs_path_var_loaded = StateNodeMeta(
+        env_state=EnvState.state_input_proto_kernel_file_abs_path_var_loaded,
         sub_graph=SubGraph.graph_input,
     )
     state_stride_py_arbitrary_reached = StateNodeMeta(
         env_state=EnvState.state_stride_py_arbitrary_reached,
         sub_graph=SubGraph.graph_input,
     )
-    state_proto_code_file_abs_path_inited = StateNodeMeta(
-        env_state=EnvState.state_proto_code_file_abs_path_inited,
+    state_proto_kernel_file_abs_path_inited = StateNodeMeta(
+        env_state=EnvState.state_proto_kernel_file_abs_path_inited,
         sub_graph=SubGraph.graph_config,
     )
     state_wrap_executed = StateNodeMeta(
@@ -236,8 +236,8 @@ class StateMeta(enum.Enum):
         env_state=EnvState.state_stride_deps_updated_reached,
         sub_graph=SubGraph.graph_runtime,
     )
-    state_proto_code_updated = StateNodeMeta(
-        env_state=EnvState.state_proto_code_updated,
+    state_proto_kernel_updated = StateNodeMeta(
+        env_state=EnvState.state_proto_kernel_updated,
         sub_graph=SubGraph.graph_runtime,
     )
     state_stride_src_updated_reached = StateNodeMeta(

@@ -75,12 +75,12 @@ class EnvVarName(enum.Enum):
             ValueName.value_py_exec.value.upper(),
         ],
     )
-    var_PROTOPRIMER_PROTO_CODE = EnvVarMeta(
-        env_var=EnvVar.var_PROTOPRIMER_PROTO_CODE,
+    var_PROTOPRIMER_PROTO_KERNEL = EnvVarMeta(
+        env_var=EnvVar.var_PROTOPRIMER_PROTO_KERNEL,
         name_category=NameCategory.category_name_only,
         name_components=[
             ConfConstGeneral.name_protoprimer_package.upper(),
-            PathName.path_proto_code.value.upper(),
+            PathName.path_proto_kernel.value.upper(),
         ],
     )
     var_PROTOPRIMER_CONF_BASENAME = EnvVarMeta(

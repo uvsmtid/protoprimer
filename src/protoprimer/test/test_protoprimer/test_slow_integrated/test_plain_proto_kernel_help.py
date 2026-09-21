@@ -4,7 +4,7 @@ from local_repo.sub_proc_util import (
     get_command_output,
 )
 from local_test.integrated_helper import (
-    create_plain_proto_code,
+    create_plain_proto_kernel,
     switch_to_ref_root_abs_path,
 )
 
@@ -17,7 +17,7 @@ def test_help(tmp_path: pathlib.Path):
 
     # ===
 
-    create_plain_proto_code(ref_root_abs_path / "proto_code")
+    create_plain_proto_kernel(ref_root_abs_path / "proto_code")
 
     # when:
 
