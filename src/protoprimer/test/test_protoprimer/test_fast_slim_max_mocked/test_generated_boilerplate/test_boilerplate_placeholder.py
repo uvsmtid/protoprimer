@@ -36,7 +36,7 @@ def test_single_header_placeholder():
     # given:
 
     file_lines = _primer_kernel_content.splitlines()
-    boilerplate_text = ConfConstGeneral.func_get_proto_code_generated_boilerplate_single_header(primer_kernel)
+    boilerplate_text = ConfConstGeneral.func_get_proto_kernel_generated_boilerplate_single_header(primer_kernel)
     boilerplate_height = len(boilerplate_text.splitlines())
 
     # when:

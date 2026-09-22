@@ -18,7 +18,7 @@ from protoprimer.primer_kernel import (
 def custom_main():
 
     print(
-        "WARNING: `venv_shell` is deprecated - " "use `ExecOperation.command_shell` (the `shell` sub-command of `proto_code`) instead. " "See TODO_31_76_38_60.exec_operation_for_shell.md.",
+        "WARNING: `venv_shell` is deprecated - " "use `ExecOperation.op_shell` (the `shell` sub-command of `proto_kernel`) instead. " "See TODO_31_76_38_60.exec_operation_for_shell.md.",
         file=sys.stderr,
     )
 
@@ -42,7 +42,7 @@ def custom_main():
 def _init_arg_parser() -> argparse.ArgumentParser:
 
     arg_parser = argparse.ArgumentParser(
-        description="[DEPRECATED - use `proto_code shell` instead] Start shell with activated `venv`.",
+        description="[DEPRECATED - use `proto_kernel shell` instead] Start shell with activated `venv`.",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
 

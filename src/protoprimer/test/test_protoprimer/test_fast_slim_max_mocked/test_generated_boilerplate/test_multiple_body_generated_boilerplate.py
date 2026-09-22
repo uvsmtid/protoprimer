@@ -10,14 +10,14 @@ from protoprimer.primer_kernel import (
     write_text_file,
 )
 
-_boilerplate_text = ConfConstGeneral.func_get_proto_code_generated_boilerplate_multiple_body(primer_kernel).strip("\n")
+_boilerplate_text = ConfConstGeneral.func_get_proto_kernel_generated_boilerplate_multiple_body(primer_kernel).strip("\n")
 
 
 def _call(fs, input_content: str) -> str:
     input_path = "/test_input.py"
     output_path = "/test_output.py"
     fs.create_file(input_path, contents=input_content)
-    boilerplate_text = ConfConstGeneral.func_get_proto_code_generated_boilerplate_multiple_body(primer_kernel)
+    boilerplate_text = ConfConstGeneral.func_get_proto_kernel_generated_boilerplate_multiple_body(primer_kernel)
     output_text = _replace_multiple_body_in_empty_lines(
         input_text=read_text_file(input_path),
         boilerplate_text=boilerplate_text,

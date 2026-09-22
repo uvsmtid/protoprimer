@@ -2,7 +2,7 @@ import pathlib
 import subprocess
 
 from local_test.integrated_helper import (
-    create_plain_proto_code,
+    create_plain_proto_kernel,
     switch_to_ref_root_abs_path,
 )
 
@@ -16,7 +16,7 @@ def test_primer_kernel_invalid_args_fails(
 
     # ===
 
-    create_plain_proto_code(ref_root_abs_path / "proto_code")
+    create_plain_proto_kernel(ref_root_abs_path / "proto_code")
 
     # ===
 

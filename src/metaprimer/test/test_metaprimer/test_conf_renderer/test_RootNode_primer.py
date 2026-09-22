@@ -39,7 +39,7 @@ leap_primer = (
     {{
         \n\
         {TermColor.config_comment.value}# Field `ref_root_dir_rel_path` points to the dir called `ref_root`.{TermColor.reset_style.value}
-        {TermColor.config_comment.value}# The path is relative to the `proto_code` file [/abs/path/to/file.json].{TermColor.reset_style.value}
+        {TermColor.config_comment.value}# The path is relative to the `proto_kernel` file [/abs/path/to/file.json].{TermColor.reset_style.value}
         {TermColor.config_comment.value}# Normally, the `ref_root` dir is the client repo root, but it can be anything.{TermColor.reset_style.value}
         {TermColor.config_comment.value}# See `state_ref_root_dir_abs_path_inited` in `leap_derived` -{TermColor.reset_style.value}
         {TermColor.config_comment.value}# the derived abs path is the base path for all the configured relative paths (except for this field itself, obviously).{TermColor.reset_style.value}
@@ -77,7 +77,7 @@ leap_primer = (
     {{
         \n\
         {TermColor.config_missing.value}# Field `ref_root_dir_rel_path` points to the dir called `ref_root`.{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# The path is relative to the `proto_code` file [/abs/path/to/empty_file.json].{TermColor.reset_style.value}
+        {TermColor.config_missing.value}# The path is relative to the `proto_kernel` file [/abs/path/to/empty_file.json].{TermColor.reset_style.value}
         {TermColor.config_missing.value}# Normally, the `ref_root` dir is the client repo root, but it can be anything.{TermColor.reset_style.value}
         {TermColor.config_missing.value}# See `state_ref_root_dir_abs_path_inited` in `leap_derived` -{TermColor.reset_style.value}
         {TermColor.config_missing.value}# the derived abs path is the base path for all the configured relative paths (except for this field itself, obviously).{TermColor.reset_style.value}

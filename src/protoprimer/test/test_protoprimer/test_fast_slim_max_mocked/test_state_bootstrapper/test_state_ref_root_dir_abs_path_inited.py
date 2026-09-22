@@ -9,7 +9,7 @@ from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     Bootstrapper_state_primer_conf_file_data_loaded,
-    Factory_state_proto_code_file_abs_path_inited,
+    Factory_state_proto_kernel_file_abs_path_inited,
     ConfField,
     EnvContext,
     EnvState,
@@ -24,7 +24,7 @@ def env_ctx():
 
 
 @pytest.fixture
-def mock_proto_code_dir(fs):
+def mock_proto_kernel_dir(fs):
     path = "/path/to/proto/code"
     fs.create_dir(path)
     return os.path.join(path, "proto_kernel.py")
@@ -34,23 +34,23 @@ def test_relationship():
     assert_test_module_name_embeds_str(EnvState.state_ref_root_dir_abs_path_inited.name)
 
 
-@patch(f"{primer_kernel.__name__}.{Factory_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Factory_state_proto_kernel_file_abs_path_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_primer_conf_file_data_loaded.__name__}.create_state_node")
 def test_success_when_field_present(
     mock_state_primer_conf_file_data_loaded,
-    state_proto_code_file_abs_path_inited,
+    state_proto_kernel_file_abs_path_inited,
     env_ctx,
-    mock_proto_code_dir,
+    mock_proto_kernel_dir,
 ):
     # given:
     assert_parent_factories_mocked(
         env_ctx,
         EnvState.state_ref_root_dir_abs_path_inited.name,
     )
-    state_proto_code_file_abs_path_inited.return_value.eval_own_state.return_value = mock_proto_code_dir
+    state_proto_kernel_file_abs_path_inited.return_value.eval_own_state.return_value = mock_proto_kernel_dir
 
     ref_root_rel_path = "../../ref_root"
-    ref_root_abs_path = os.path.normpath(os.path.join(os.path.dirname(mock_proto_code_dir), ref_root_rel_path))
+    ref_root_abs_path = os.path.normpath(os.path.join(os.path.dirname(mock_proto_kernel_dir), ref_root_rel_path))
 
     primer_conf_data = {ConfField.field_ref_root_dir_rel_path.value: ref_root_rel_path}
     mock_state_primer_conf_file_data_loaded.return_value.eval_own_state.return_value = primer_conf_data
@@ -63,14 +63,14 @@ def test_success_when_field_present(
 
 
 @patch(f"{primer_kernel.__name__}.EnvContext.get_stride")
-@patch(f"{primer_kernel.__name__}.{Factory_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Factory_state_proto_kernel_file_abs_path_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_primer_conf_file_data_loaded.__name__}.create_state_node")
 def test_warning_when_field_missing(
     mock_state_primer_conf_file_data_loaded,
-    state_proto_code_file_abs_path_inited,
+    state_proto_kernel_file_abs_path_inited,
     mock_get_stride,
     env_ctx,
-    mock_proto_code_dir,
+    mock_proto_kernel_dir,
     caplog,
 ):
     # given:
@@ -78,7 +78,7 @@ def test_warning_when_field_missing(
         env_ctx,
         EnvState.state_ref_root_dir_abs_path_inited.name,
     )
-    state_proto_code_file_abs_path_inited.return_value.eval_own_state.return_value = mock_proto_code_dir
+    state_proto_kernel_file_abs_path_inited.return_value.eval_own_state.return_value = mock_proto_kernel_dir
 
     mock_state_primer_conf_file_data_loaded.return_value.eval_own_state.return_value = {}
     mock_get_stride.return_value = StateStride.stride_py_arbitrary
@@ -88,5 +88,5 @@ def test_warning_when_field_missing(
     result = env_ctx.eval_state(EnvState.state_ref_root_dir_abs_path_inited.name)
 
     # then:
-    assert result == os.path.dirname(mock_proto_code_dir)
+    assert result == os.path.dirname(mock_proto_kernel_dir)
     assert f"Field `{ConfField.field_ref_root_dir_rel_path.value}` is [None] - use [{ExecOperation.op_eval.value}] exec operation for description." in caplog.text

@@ -90,7 +90,7 @@ class TestEvaluatedStateSets:
             env_ctx = _make_tracking_env_ctx(
                 entry_func=EntryFunc.func_boot_env,
             )
-            os.environ[EnvVar.var_PROTOPRIMER_PROTO_CODE.value] = str(proto_kernel_abs_path)
+            os.environ[EnvVar.var_PROTOPRIMER_PROTO_KERNEL.value] = str(proto_kernel_abs_path)
 
             # Patch `argv` - otherwise, `argparse` will see args of the test runner:
             with patch.object(sys, "argv", [str(proto_kernel_abs_path)]):
@@ -107,10 +107,10 @@ class TestEvaluatedStateSets:
             EnvState.state_input_stderr_log_level_handler_configured.name,
             EnvState.state_input_exec_operation_loaded.name,
             EnvState.state_input_final_state_eval_finalized.name,
-            EnvState.state_input_proto_code_file_abs_path_var_loaded.name,
+            EnvState.state_input_proto_kernel_file_abs_path_var_loaded.name,
             EnvState.state_input_start_id_var_loaded.name,
             EnvState.state_stride_py_arbitrary_reached.name,
-            EnvState.state_proto_code_file_abs_path_inited.name,
+            EnvState.state_proto_kernel_file_abs_path_inited.name,
             EnvState.state_print_conf_finalized.name,
             EnvState.state_primer_conf_file_abs_path_inited.name,
             EnvState.state_primer_conf_file_data_loaded.name,
@@ -142,7 +142,7 @@ class TestEvaluatedStateSets:
             EnvState.state_protoprimer_package_installed.name,
             EnvState.state_version_constraints_generated.name,
             EnvState.state_stride_deps_updated_reached.name,
-            EnvState.state_proto_code_updated.name,
+            EnvState.state_proto_kernel_updated.name,
             EnvState.state_stride_src_updated_reached.name,
             EnvState.state_input_command_line.name,
             EnvState.state_command_executed.name,
@@ -188,7 +188,7 @@ class TestEvaluatedStateSets:
             env_ctx = _make_tracking_env_ctx(
                 entry_func=EntryFunc.func_start_app,
             )
-            os.environ[EnvVar.var_PROTOPRIMER_PROTO_CODE.value] = str(proto_kernel_abs_path)
+            os.environ[EnvVar.var_PROTOPRIMER_PROTO_KERNEL.value] = str(proto_kernel_abs_path)
 
             actual_state_names = _eval_and_collect(env_ctx)
 
@@ -197,9 +197,9 @@ class TestEvaluatedStateSets:
             EnvState.state_input_is_stderr_log_enabled.name,
             EnvState.state_input_final_state_eval_finalized.name,
             EnvState.state_input_start_id_var_loaded.name,
-            EnvState.state_input_proto_code_file_abs_path_var_loaded.name,
+            EnvState.state_input_proto_kernel_file_abs_path_var_loaded.name,
             EnvState.state_stride_py_arbitrary_reached.name,
-            EnvState.state_proto_code_file_abs_path_inited.name,
+            EnvState.state_proto_kernel_file_abs_path_inited.name,
             EnvState.state_print_conf_finalized.name,
             EnvState.state_primer_conf_file_abs_path_inited.name,
             EnvState.state_primer_conf_file_data_loaded.name,
@@ -271,7 +271,7 @@ class TestEvaluatedStateSets:
             EnvState.state_input_is_stderr_log_enabled.name,
             EnvState.state_input_final_state_eval_finalized.name,
             EnvState.state_print_conf_finalized.name,
-            EnvState.state_proto_code_file_abs_path_inited.name,
+            EnvState.state_proto_kernel_file_abs_path_inited.name,
             EnvState.state_primer_conf_file_abs_path_inited.name,
             EnvState.state_primer_conf_file_data_loaded.name,
             EnvState.state_ref_root_dir_abs_path_inited.name,

@@ -9,7 +9,7 @@ from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     Bootstrapper_state_input_start_id_var_loaded,
-    Factory_state_proto_code_file_abs_path_inited,
+    Factory_state_proto_kernel_file_abs_path_inited,
     Factory_state_version_constraints_generated,
     ContextBuilder,
     EntryFunc,
@@ -41,7 +41,7 @@ def test_relationship():
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.get_path_to_curr_python")
 @patch(f"{primer_kernel.__name__}.switch_python")
-@patch(f"{primer_kernel.__name__}.{Factory_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Factory_state_proto_kernel_file_abs_path_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Factory_state_version_constraints_generated.__name__}.create_state_node")
@@ -49,7 +49,7 @@ def test_stride_py_required_to_next_stride_deps_updated(
     mock_state_version_constraints_generated,
     mock_state_input_exec_operation_loaded,
     mock_state_local_venv_dir_abs_path_inited,
-    mock_state_proto_code_file_abs_path_inited,
+    mock_state_proto_kernel_file_abs_path_inited,
     mock_switch_python,
     mock_get_path_to_curr_python,
     mock_state_input_start_id_var_loaded,
@@ -70,7 +70,7 @@ def test_stride_py_required_to_next_stride_deps_updated(
     env_ctx._state_stride = StateStride.stride_py_required
     mock_switch_python.return_value = StateStride.stride_deps_updated
 
-    mock_state_proto_code_file_abs_path_inited.return_value.eval_own_state.return_value = "path/to/whatever"
+    mock_state_proto_kernel_file_abs_path_inited.return_value.eval_own_state.return_value = "path/to/whatever"
 
     mock_get_path_to_curr_python.return_value = "/path/to/venv/bin/python"
     mock_state_input_exec_operation_loaded.return_value.eval_own_state.return_value = ExecOperation.op_boot
@@ -87,14 +87,14 @@ def test_stride_py_required_to_next_stride_deps_updated(
         next_py_exec=StateStride.stride_deps_updated,
         next_python_path=mock_get_path_to_curr_python.return_value,
         start_id="mock_start_id",
-        proto_code_abs_file_path=mock_state_proto_code_file_abs_path_inited.return_value.eval_own_state.return_value,
+        proto_kernel_abs_file_path=mock_state_proto_kernel_file_abs_path_inited.return_value.eval_own_state.return_value,
     )
 
     assert state_value == StateStride.stride_deps_updated
 
 
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Factory_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Factory_state_proto_kernel_file_abs_path_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Factory_state_version_constraints_generated.__name__}.create_state_node")
@@ -104,7 +104,7 @@ def test_stride_deps_updated_to_same_stride_deps_updated(
     mock_state_version_constraints_generated,
     mock_state_input_exec_operation_loaded,
     mock_state_local_venv_dir_abs_path_inited,
-    mock_state_proto_code_file_abs_path_inited,
+    mock_state_proto_kernel_file_abs_path_inited,
     mock_state_input_start_id_var_loaded,
     env_ctx,
 ):
@@ -123,7 +123,7 @@ def test_stride_deps_updated_to_same_stride_deps_updated(
 
     env_ctx._state_stride = py_exec
 
-    mock_state_proto_code_file_abs_path_inited.return_value.eval_own_state.return_value = "path/to/whatever"
+    mock_state_proto_kernel_file_abs_path_inited.return_value.eval_own_state.return_value = "path/to/whatever"
     mock_state_input_exec_operation_loaded.return_value.eval_own_state.return_value = ExecOperation.op_boot
     mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = "/path/to/venv"
 

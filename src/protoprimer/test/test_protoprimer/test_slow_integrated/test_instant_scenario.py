@@ -35,7 +35,7 @@ from protoprimer.primer_kernel import (
 @requires_max_python
 def test_instant_scenario(tmp_path: Path):
     """
-    This test runs `proto_code` directly (rather than importing it via `entry_script`).
+    This test runs `proto_kernel` directly (rather than importing it via `entry_script`).
 
     It uses `create_min_leaps_shape` (see FT_59_95_81_63.tree_shape.md).
     """
@@ -85,7 +85,7 @@ def test_instant_scenario(tmp_path: Path):
 @requires_max_python
 def test_instant_scenario_start_presents_clean_argv(tmp_path: Path):
     """
-    This test runs `ExecOperation.op_start` directly via `proto_code`
+    This test runs `ExecOperation.op_start` directly via `proto_kernel`
     (rather than via a dedicated `entry_script`).
 
     Unlike a dedicated `entry_script` (whose own `sys.argv` is naturally clean),

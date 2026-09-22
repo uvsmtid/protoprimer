@@ -15,7 +15,7 @@ from protoprimer.primer_kernel import (
     Bootstrapper_state_local_tmp_dir_abs_path_inited,
     Bootstrapper_state_local_venv_dir_abs_path_inited,
     Factory_state_prepare_venv_finalized,
-    Factory_state_proto_code_file_abs_path_inited,
+    Factory_state_proto_kernel_file_abs_path_inited,
     Bootstrapper_state_selected_python_file_abs_path_inited,
     Factory_state_input_exec_operation_loaded,
     ConfConstEnv,
@@ -29,9 +29,9 @@ from protoprimer.primer_kernel import (
 )
 
 mock_client_dir = "/mock_client_dir"
-state_proto_code_file_abs_path_inited = os.path.join(
+state_proto_kernel_file_abs_path_inited = os.path.join(
     mock_client_dir,
-    ConfConstGeneral.default_proto_code_basename,
+    ConfConstGeneral.default_proto_kernel_basename,
 )
 target_dst_dir_path = "target_dst_dir"
 
@@ -59,7 +59,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.fs.create_dir(mock_client_dir)
         os.chdir(mock_client_dir)
 
-        self.fs.create_file(state_proto_code_file_abs_path_inited)
+        self.fs.create_file(state_proto_kernel_file_abs_path_inited)
 
         self.fs.create_dir(target_dst_dir_path)
 
@@ -82,7 +82,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_tmp_dir_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_default_file_log_handler_configured.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Factory_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_proto_kernel_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_selected_python_file_abs_path_inited.__name__}.create_state_node")
@@ -102,7 +102,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_selected_python_file_abs_path_inited,
         mock_state_local_venv_dir_abs_path_inited,
         mock_state_local_conf_file_abs_path_inited,
-        mock_state_proto_code_file_abs_path_inited,
+        mock_state_proto_kernel_file_abs_path_inited,
         mock_state_default_file_log_handler_configured,
         mock_state_local_tmp_dir_abs_path_inited,
         mock_state_input_start_id_var_loaded,
@@ -119,7 +119,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_prepare_venv_finalized.return_value.eval_own_state.return_value = True
 
         mock_state_input_start_id_var_loaded.return_value.eval_own_state.return_value = "mock_start_id"
-        mock_state_proto_code_file_abs_path_inited.return_value.eval_own_state.return_value = "any/path"
+        mock_state_proto_kernel_file_abs_path_inited.return_value.eval_own_state.return_value = "any/path"
 
         # Make sure `path_to_curr_python` != `configured python`:
         mock_state_selected_python_file_abs_path_inited.return_value.eval_own_state.return_value = "/a/different/python"
@@ -148,7 +148,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_tmp_dir_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_default_file_log_handler_configured.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Factory_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_proto_kernel_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_selected_python_file_abs_path_inited.__name__}.create_state_node")
@@ -170,7 +170,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_selected_python_file_abs_path_inited,
         mock_state_local_venv_dir_abs_path_inited,
         mock_state_local_conf_file_abs_path_inited,
-        mock_state_proto_code_file_abs_path_inited,
+        mock_state_proto_kernel_file_abs_path_inited,
         mock_state_default_file_log_handler_configured,
         mock_state_local_tmp_dir_abs_path_inited,
         mock_state_input_start_id_var_loaded,
@@ -201,7 +201,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_tmp_dir_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_default_file_log_handler_configured.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Factory_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_proto_kernel_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_selected_python_file_abs_path_inited.__name__}.create_state_node")
@@ -223,7 +223,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_selected_python_file_abs_path_inited,
         mock_state_local_venv_dir_abs_path_inited,
         mock_state_local_conf_file_abs_path_inited,
-        mock_state_proto_code_file_abs_path_inited,
+        mock_state_proto_kernel_file_abs_path_inited,
         mock_state_default_file_log_handler_configured,
         mock_state_local_tmp_dir_abs_path_inited,
         mock_state_input_start_id_var_loaded,

@@ -13,7 +13,7 @@ from protoprimer.primer_kernel import (
     Factory_state_input_exec_operation_loaded,
     Factory_state_input_stderr_log_level_eval_finalized,
     Bootstrapper_state_primer_conf_file_abs_path_inited,
-    Factory_state_proto_code_file_abs_path_inited,
+    Factory_state_proto_kernel_file_abs_path_inited,
     Bootstrapper_state_stride_src_updated_reached,
     EnvState,
     StateStride,
@@ -32,11 +32,11 @@ def test_relationship():
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_stride_src_updated_reached.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Factory_state_input_stderr_log_level_eval_finalized.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Factory_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Factory_state_proto_kernel_file_abs_path_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_primer_conf_file_abs_path_inited.__name__}.create_state_node")
 def test_conf_file_exists(
     mock_factory_primer_conf_file_abs_path_inited,
-    mock_factory_proto_code_file_abs_path_inited,
+    mock_factory_proto_kernel_file_abs_path_inited,
     mock_factory_input_exec_operation_loaded,
     mock_factory_input_stderr_log_level_eval_finalized,
     mock_factory_stride_src_updated_reached,
@@ -70,11 +70,11 @@ def test_conf_file_exists(
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_stride_src_updated_reached.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Factory_state_input_stderr_log_level_eval_finalized.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Factory_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Factory_state_proto_kernel_file_abs_path_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_primer_conf_file_abs_path_inited.__name__}.create_state_node")
 def test_conf_file_missing(
     mock_factory_primer_conf_file_abs_path_inited,
-    mock_factory_proto_code_file_abs_path_inited,
+    mock_factory_proto_kernel_file_abs_path_inited,
     mock_factory_input_exec_operation_loaded,
     mock_factory_input_stderr_log_level_eval_finalized,
     mock_factory_stride_src_updated_reached,
@@ -112,11 +112,11 @@ def test_conf_file_missing(
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_stride_src_updated_reached.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Factory_state_input_stderr_log_level_eval_finalized.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Factory_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Factory_state_proto_kernel_file_abs_path_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_primer_conf_file_abs_path_inited.__name__}.create_state_node")
 def test_conf_file_malformed(
     mock_factory_primer_conf_file_abs_path_inited,
-    mock_factory_proto_code_file_abs_path_inited,
+    mock_factory_proto_kernel_file_abs_path_inited,
     mock_factory_input_exec_operation_loaded,
     mock_factory_input_stderr_log_level_eval_finalized,
     mock_factory_stride_src_updated_reached,

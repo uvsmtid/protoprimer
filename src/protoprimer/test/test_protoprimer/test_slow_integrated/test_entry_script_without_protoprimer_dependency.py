@@ -15,7 +15,7 @@ import subprocess
 
 from local_test.fat_mocked_helper import run_primer_main
 from local_test.integrated_helper import (
-    create_plain_proto_code,
+    create_plain_proto_kernel,
     create_python_version_file,
     switch_to_ref_root_abs_path,
     test_python_version,
@@ -73,7 +73,7 @@ def _create_instant_scenario_without_protoprimer(
 
     (ref_root_abs_path / "some_app.py").write_text("def some_main():\n" '    print("Hello, world!")\n')
 
-    proto_kernel_abs_path = create_plain_proto_code(ref_root_abs_path)
+    proto_kernel_abs_path = create_plain_proto_kernel(ref_root_abs_path)
 
     return proto_kernel_abs_path
 
