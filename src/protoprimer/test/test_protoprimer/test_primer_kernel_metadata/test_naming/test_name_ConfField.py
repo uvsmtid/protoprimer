@@ -10,11 +10,11 @@ from protoprimer.primer_kernel import (
     PathType,
     ValueName,
 )
-from test_protoprimer.test_fast_slim_max_mocked.test_naming.naming_metadata import (
+from test_protoprimer.test_primer_kernel_metadata.test_naming.naming_metadata import (
     AbstractMeta,
     NameCategory,
 )
-from test_protoprimer.test_fast_slim_max_mocked.test_naming.naming_test_base import (
+from test_protoprimer.test_primer_kernel_metadata.test_naming.naming_test_base import (
     NamingTestBase,
 )
 

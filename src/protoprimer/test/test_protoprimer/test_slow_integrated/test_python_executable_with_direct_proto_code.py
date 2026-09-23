@@ -20,11 +20,13 @@ from protoprimer.primer_kernel import (
     ConfConstGeneral,
     ConfConstInput,
     ConfConstPrimer,
-    KeyWord,
     SyntaxArg,
     VenvDriverBase,
     VenvDriverPip,
     VenvDriverUv,
+)
+from test_protoprimer.test_primer_kernel_metadata.test_metadata.test_key_word import (
+    KeyWord,
 )
 
 

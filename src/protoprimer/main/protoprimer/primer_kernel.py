@@ -178,84 +178,20 @@ class TermColor(enum.Enum):
     reset_style = "\033[0m"
 
 
-class KeyWord(enum.Enum):
-    """
-    Reused words for semantic linking via these definitions.
-    """
-
-    key_input = "input"
-    key_primer = "primer"
-    key_client = "client"
-    key_global = "global"
-    key_env = "env"
-    key_local = "local"
-    key_derived = "derived"
-
-    key_help = "help"
-
-    key_var = "var"
-    key_tmp = "tmp"
-    key_log = "log"
-    key_run = "run"
-    key_gen = "gen"
-    key_venv = "venv"
-    key_cache = "cache"
-
-    key_do = "do"
-    key_start = "start"
-    key_install = "install"
-    key_restart = "restart"
-    key_print = "print"
-    key_prepare = "prepare"
-
-    key_id = "id"
-    key_state = "state"
-    key_args = "args"
-    key_stderr = "stderr"
-    key_handler = "handler"
-    key_data = "data"
-    key_package = "package"
-    key_constraints = "constraints"
-    key_main = "main"
-    key_entry = "entry"
-    key_func = "func"
-    key_level = "level"
-    key_basename = "basename"
-    key_script = "script"
-    key_path = "path"
-
-    key_mocked = "mocked"
-    key_default = "default"
-    key_conf = "conf"
-    key_effective = "effective"
-
-    key_trace = "trace"
-    key_execution = "execution"
-
-    key_configured = "configured"
-    key_parsed = "parsed"
-    key_executed = "executed"
-    key_reached = "reached"
-    key_printed = "printed"
-    key_triggered = "triggered"
-    key_installed = "installed"
-    key_updated = "updated"
-    key_generated = "generated"
-    key_prepared = "prepared"
-
-
 class TopDir(enum.Enum):
     """
     FT_20_13_95_11.reusable_dir.md
     """
 
-    dir_var = f"{KeyWord.key_var.value}"
-    dir_tmp = f"{KeyWord.key_tmp.value}"
-    dir_log = f"{KeyWord.key_log.value}"
-    dir_run = f"{KeyWord.key_run.value}"
-    dir_venv = f"{KeyWord.key_venv.value}"
+    dir_var = "var"
+    dir_tmp = "tmp"
+    dir_log = "log"
+    dir_run = "run"
+    # TODO: TODO_04_67_81_16.refactor_reusable_dirs.md: add support for `net` dir.
+    dir_net = "net"
+    dir_venv = "venv"
     # TODO: TODO_04_67_81_16.refactor_reusable_dirs.md: use `gen` instead of `cache`.
-    dir_cache = f"{KeyWord.key_cache.value}"
+    dir_cache = "cache"
 
 
 class ConfLeap(enum.Enum):
@@ -264,27 +200,27 @@ class ConfLeap(enum.Enum):
     """
 
     # surrogate: no associated config file:
-    leap_input = f"{KeyWord.key_input.value}"
+    leap_input = "input"
 
-    leap_primer = f"{KeyWord.key_primer.value}"
+    leap_primer = "primer"
 
     # TODO: Rename, use `global` instead:
     #       FT_23_37_64_44.global_vs_local.md
     #       FT_89_41_35_82.conf_leap.md
-    leap_client = f"{KeyWord.key_client.value}"
+    leap_client = "client"
 
     # TODO: Remove, use `local` instead:
     #       FT_23_37_64_44.global_vs_local.md
     #       FT_89_41_35_82.conf_leap.md
-    leap_env = f"{KeyWord.key_env.value}"
+    leap_env = "env"
 
     # surrogate: no associated config file:
-    leap_derived = f"{KeyWord.key_derived.value}"
+    leap_derived = "derived"
 
     # TODO: Consolidate `leap_global` and `leap_local` are not really `ConfLeap`-s.
     #       Instead, see `leap_client` and `leap_env`.
-    leap_global = f"{KeyWord.key_global.value}"
-    leap_local = f"{KeyWord.key_local.value}"
+    leap_global = "global"
+    leap_local = "local"
 
 
 class PrimerRuntime(enum.Enum):
@@ -524,14 +460,14 @@ class ParsedArg(enum.Enum):
 
     name_selected_env_dir = f"{PathName.path_selected_env.value}_{FilesystemObject.fs_object_dir.value}"
 
-    name_command = f"{KeyWord.key_run.value}_{CommandAction.action_command.value}"
+    name_command = f"run_{CommandAction.action_command.value}"
 
     name_exec_operation = str(ValueName.value_exec_operation.value)
 
     # UC_71_59_90_97.generated_entry_script.md
-    name_entry_func = f"{KeyWord.key_entry.value}_{KeyWord.key_func.value}"
-    name_entry_script_path = f"{KeyWord.key_entry.value}_{KeyWord.key_script.value}_{KeyWord.key_path.value}"
-    name_main_func = f"{KeyWord.key_main.value}_{KeyWord.key_func.value}"
+    name_entry_func = "entry_func"
+    name_entry_script_path = "entry_script_path"
+    name_main_func = "main_func"
 
 
 class LogLevel(enum.Enum):
@@ -541,28 +477,28 @@ class LogLevel(enum.Enum):
 
 class SyntaxArg:
 
-    arg_h = f"-{KeyWord.key_help.value[0]}"
-    arg_help = f"--{KeyWord.key_help.value}"
+    arg_h = "-h"
+    arg_help = "--help"
 
-    arg_c = f"-{CommandAction.action_command.value[0]}"
+    arg_c = "-c"
     arg_command = f"--{CommandAction.action_command.value}"
 
-    arg_q = f"-{LogLevel.name_quiet.value[0]}"
+    arg_q = "-q"
     arg_quiet = f"--{LogLevel.name_quiet.value}"
     dest_quiet = f"{ValueName.value_stderr_log_level.value}_{LogLevel.name_quiet.value}"
 
-    arg_v = f"-{LogLevel.name_verbose.value[0]}"
+    arg_v = "-v"
     arg_verbose = f"--{LogLevel.name_verbose.value}"
     dest_verbose = f"{ValueName.value_stderr_log_level.value}_{LogLevel.name_verbose.value}"
 
-    arg_e = f"-{KeyWord.key_env.value[0]}"
-    arg_env = f"--{KeyWord.key_env.value}"
+    arg_e = "-e"
+    arg_env = "--env"
 
     # UC_71_59_90_97.generated_entry_script.md
-    arg_s = f"-{KeyWord.key_script.value[0]}"
+    arg_s = "-s"
     arg_entry_script_path = f"--{ParsedArg.name_entry_script_path.value}"
 
-    arg_m = f"-{KeyWord.key_main.value[0]}"
+    arg_m = "-m"
     arg_main_func = f"--{ParsedArg.name_main_func.value}"
 
 
@@ -1478,15 +1414,15 @@ class ConfConstEnv:
     Constants for FT_89_41_35_82.conf_leap.md / leap_env
     """
 
-    default_dir_rel_path_venv = str(KeyWord.key_venv.value)
+    default_dir_rel_path_venv = str(TopDir.dir_venv.value)
 
-    default_dir_rel_path_log = str(KeyWord.key_log.value)
+    default_dir_rel_path_log = str(TopDir.dir_log.value)
 
-    default_dir_rel_path_run = str(KeyWord.key_run.value)
+    default_dir_rel_path_run = str(TopDir.dir_run.value)
 
-    default_dir_rel_path_tmp = str(KeyWord.key_tmp.value)
+    default_dir_rel_path_tmp = str(TopDir.dir_tmp.value)
 
-    default_dir_rel_path_cache = str(KeyWord.key_cache.value)
+    default_dir_rel_path_cache = str(TopDir.dir_cache.value)
 
     # NOTE: FT_84_11_73_28.supported_python_versions.md:
     #       The default is `uv` only if it is supported by the selected `python` version:
@@ -1717,7 +1653,7 @@ def _create_child_argparser(parent_argparsers):
             )
 
     child_argparser = CustomArgumentParser(
-        description=f"The early [{PrimerRuntime.runtime_proto.value}] environment bootstrapper [{KeyWord.key_primer.value}].",
+        description=f"The early [proto] environment bootstrapper [primer].",
         parents=parent_argparsers,
         epilog=f"Version: {__version__} | {ConfConstGeneral.name_protoprimer_site_link} | {pathlib.Path(__file__).resolve()}",
     )
@@ -6600,6 +6536,7 @@ def _start_main(
                 )
                 run_process(env_ctx)
             else:
+                assert func_name is not None
                 venv_module = importlib.import_module(module_name)
                 selected_main = getattr(venv_module, func_name)
                 selected_main()
@@ -6637,7 +6574,9 @@ def _start_main(
                     .build_context()
                 )
                 run_process(env_ctx)
-        elif curr_py_exec.value >= StateStride.stride_py_venv.value and entry_func == EntryFunc.func_start_app:
+        elif curr_py_exec.value >= StateStride.stride_py_venv.value and entry_func is EntryFunc.func_start_app:
+            assert module_name is not None
+            assert func_name is not None
             venv_module = importlib.import_module(module_name)
             selected_main = getattr(venv_module, func_name)
             try:
@@ -6674,7 +6613,7 @@ def _start_main(
         if curr_py_exec.value >= StateStride.stride_py_venv.value and entry_func == EntryFunc.func_start_app:
             raise AssertionError(
                 f"Failed to import `{import_error.name}` at [{curr_py_exec.name}]. "
-                f"Has `{KeyWord.key_venv.value}` been initialized via `{ExecOperation.op_boot.value}` exec operation? "
+                f"Has `{TopDir.dir_venv.value}` been initialized via `{ExecOperation.op_boot.value}` exec operation? "
                 #
             ) from import_error
         raise import_error

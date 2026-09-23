@@ -28,12 +28,14 @@ from protoprimer.primer_kernel import (
     ConfConstPrimer,
     EntryFunc,
     EnvVar,
-    KeyWord,
     SyntaxArg,
     VenvDriverBase,
     VenvDriverPip,
     VenvDriverUv,
     generate_entry_script_content,
+)
+from test_protoprimer.test_primer_kernel_metadata.test_metadata.test_key_word import (
+    KeyWord,
 )
 
 
