@@ -21,7 +21,6 @@ from protoprimer.primer_kernel import (
     Bootstrapper_state_selected_python_file_abs_path_inited,
     ContextBuilder,
     EntryFunc,
-    EnvContext,
     EnvState,
     EnvVar,
     StateNode,
@@ -38,7 +37,7 @@ class TestEnvContext(BasePyfakefsTestClass):
         self.fs.create_file("/usr/bin/python", contents="foo")
 
     def test_relationship(self):
-        assert_test_module_name_embeds_str(EnvContext.__name__)
+        assert_test_module_name_embeds_str(EnvState.state_venv_driver_prepared.name)
 
     @patch("sys.argv", ["script_name"])
     @patch(

@@ -13,19 +13,21 @@ from protoprimer.primer_kernel import (
     EnvState,
     ExecOperation,
     FilesystemObject,
-    KeyWord,
     PathName,
     PathType,
     StateStride,
     ValueName,
 )
-from test_protoprimer.test_fast_slim_max_mocked.test_naming.naming_metadata import (
+from test_protoprimer.test_primer_kernel_metadata.test_metadata.test_key_word import (
+    KeyWord,
+)
+from test_protoprimer.test_primer_kernel_metadata.test_naming.naming_metadata import (
     AbstractMeta,
     CompletedAction,
     NameCategory,
     ValueSource,
 )
-from test_protoprimer.test_fast_slim_max_mocked.test_naming.naming_test_base import (
+from test_protoprimer.test_primer_kernel_metadata.test_naming.naming_test_base import (
     NamingTestBase,
 )
 
