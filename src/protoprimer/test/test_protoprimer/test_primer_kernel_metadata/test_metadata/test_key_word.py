@@ -25,6 +25,8 @@ class KeyWord(enum.Enum):
     key_gen = "gen"
     key_venv = "venv"
     key_cache = "cache"
+    key_shell = "shell"
+    key_command = "command"
 
     key_do = "do"
     key_start = "start"

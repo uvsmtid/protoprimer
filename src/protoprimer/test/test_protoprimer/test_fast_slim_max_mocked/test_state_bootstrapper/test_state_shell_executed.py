@@ -163,7 +163,7 @@ def test_shell_executed_interactive_without_command(
 ):
     """
     Unlike `EnvState.state_command_executed`, this state must start an interactive shell
-    even when no `ParsedArg.name_command` is given.
+    even when no `ParsedArg.name_shell_command` is given.
     """
     # given:
     fs.create_dir("/fake")

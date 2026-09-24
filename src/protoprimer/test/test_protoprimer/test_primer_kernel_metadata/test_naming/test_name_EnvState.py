@@ -6,7 +6,6 @@ from local_test.name_assertion import (
     assert_test_module_name_embeds_str,
 )
 from protoprimer.primer_kernel import (
-    CommandAction,
     ConfConstGeneral,
     ConfLeap,
     EntryFunc,
@@ -681,7 +680,7 @@ class StateName(enum.Enum):
         name_components=[
             KeyWord.key_state.value,
             ConfLeap.leap_input.value,
-            CommandAction.action_command.value,
+            KeyWord.key_command.value,
             "line",
         ],
     )
@@ -691,7 +690,7 @@ class StateName(enum.Enum):
         name_category=NameCategory.category_state_mutation,
         name_components=[
             KeyWord.key_state.value,
-            CommandAction.action_command.value,
+            KeyWord.key_command.value,
             KeyWord.key_executed.value,
         ],
     )
