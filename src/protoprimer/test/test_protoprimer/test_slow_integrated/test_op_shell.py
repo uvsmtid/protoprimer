@@ -1,3 +1,7 @@
+"""
+FT_99_89_51_06.venv_shell.md
+"""
+
 import subprocess
 from pathlib import Path
 
@@ -186,8 +190,7 @@ def test_shell_does_not_reinstall_dependencies(tmp_path: Path):
 
 def test_shell_interactive(tmp_path: Path):
     """
-    Unlike `boot -c` (`ExecOperation.op_boot`), `shell` with no command
-    must still start an interactive shell.
+    `shell` with no command must start an interactive shell
     """
 
     assert_test_func_name_embeds_str(ExecOperation.op_shell.value)

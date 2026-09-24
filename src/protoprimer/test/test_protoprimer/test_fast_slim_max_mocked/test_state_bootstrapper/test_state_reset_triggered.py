@@ -20,7 +20,6 @@ from protoprimer.primer_kernel import (
     Factory_state_prepare_venv_finalized,
     Factory_state_proto_kernel_file_abs_path_inited,
     Factory_state_stride_py_required_reached,
-    CommandAction,
     ConfConstEnv,
     EnvState,
     ExecOperation,

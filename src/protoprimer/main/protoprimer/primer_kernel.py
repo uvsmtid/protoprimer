@@ -298,12 +298,6 @@ class ExecOperation(enum.Enum):
     op_wrap = "wrap"
 
 
-# TODO: TODO_31_76_38_60.exec_operation_for_shell.md: remove "command" (when replaced by `shell_mode` or `run_mode`):
-class CommandAction(enum.Enum):
-
-    action_command = "command"
-
-
 class FilesystemObject(enum.Enum):
 
     fs_object_file = "file"
@@ -460,7 +454,7 @@ class ParsedArg(enum.Enum):
 
     name_selected_env_dir = f"{PathName.path_selected_env.value}_{FilesystemObject.fs_object_dir.value}"
 
-    name_command = f"run_{CommandAction.action_command.value}"
+    name_shell_command = "shell_command"
 
     name_exec_operation = str(ValueName.value_exec_operation.value)
 
@@ -481,7 +475,7 @@ class SyntaxArg:
     arg_help = "--help"
 
     arg_c = "-c"
-    arg_command = f"--{CommandAction.action_command.value}"
+    arg_command = "--command"
 
     arg_q = "-q"
     arg_quiet = f"--{LogLevel.name_quiet.value}"
@@ -1535,14 +1529,6 @@ def _create_child_argparser(parent_argparsers):
             description=exec_operation_desc,
         )
         parser_boot.set_defaults(exec_operation=ExecOperation.op_boot.value)
-        parser_boot.add_argument(
-            SyntaxArg.arg_c,
-            SyntaxArg.arg_command,
-            type=str,
-            dest=ParsedArg.name_command.value,
-            metavar=ParsedArg.name_command.value,
-            help="Command to execute after the bootstrap.",
-        )
 
     def _create_reset_parser(exec_operation_parsers):
         exec_operation_desc = "Bootstrap from scratch: re-create `venv`, re-install dependencies, re-pin versions, ..."
@@ -1574,8 +1560,8 @@ def _create_child_argparser(parent_argparsers):
             SyntaxArg.arg_c,
             SyntaxArg.arg_command,
             type=str,
-            dest=ParsedArg.name_command.value,
-            metavar=ParsedArg.name_command.value,
+            dest=ParsedArg.name_shell_command.value,
+            metavar=ParsedArg.name_shell_command.value,
             help="Shell command to execute (non-interactive).",
         )
 
@@ -4861,7 +4847,7 @@ class Bootstrapper_state_input_command_line_is_app(AbstractCachingStateNode[str]
         state_args_parsed: argparse.Namespace = self.eval_parent_state(EnvState.state_args_parsed.name)
         return getattr(
             state_args_parsed,
-            ParsedArg.name_command.value,
+            ParsedArg.name_shell_command.value,
             None,
         )
 
@@ -4890,7 +4876,7 @@ class Factory_state_input_command_line(NodeFactory[str]):
 @trivial_factory
 class Bootstrapper_state_command_executed(AbstractCachingStateNode[int]):
     """
-    If `ParsedArg.name_command`, this state replaces the current process with a shell executing the given command.
+    If `ParsedArg.name_shell_command`, this state replaces the current process with a shell executing the given command.
     """
 
     _parent_states = staticmethod(
@@ -4927,7 +4913,7 @@ class Bootstrapper_state_command_executed(AbstractCachingStateNode[int]):
 class Bootstrapper_state_shell_executed(AbstractCachingStateNode[int]):
     """
     For `ExecOperation.op_shell`: replaces the current process with an interactive shell
-    (with activated `venv`), optionally running `ParsedArg.name_command` in it.
+    (with activated `venv`), optionally running `ParsedArg.name_shell_command` in it.
     """
 
     _parent_states = staticmethod(

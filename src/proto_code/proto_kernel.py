@@ -298,21 +298,15 @@ class ExecOperation(enum.Enum):
     op_wrap = "wrap"
 
 
-# TODO: TODO_31_76_38_60.exec_operation_for_shell.md: remove "command" (when replaced by `shell_mode` or `run_mode`):
-class CommandAction(enum.Enum):
-
-    action_command = "command"
-
-
 class FilesystemObject(enum.Enum):
 
     fs_object_file = "file"
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     fs_object_dir = "dir"
 
     fs_object_symlink = "symlink"
 
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 class PathType(enum.Enum):
 
     # If both paths are possible (absolute or relative):
@@ -329,14 +323,14 @@ class EnvVar(enum.Enum):
     """
     See FT_08_92_69_92.env_var.md
     """
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     # FT_87_17_49_36.proto_kernel.md
     var_PROTOPRIMER_PROTO_KERNEL = "PROTOPRIMER_PROTO_KERNEL"
 
     # FT_58_74_37_70.boot_vs_start.md
     # Selects the main function to run, for example, "sup_module.sub_module:some_main".
     var_PROTOPRIMER_MAIN_FUNC = "PROTOPRIMER_MAIN_FUNC"
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     var_PROTOPRIMER_STDERR_LOG_LEVEL = "PROTOPRIMER_STDERR_LOG_LEVEL"
 
     var_PROTOPRIMER_PY_EXEC = "PROTOPRIMER_PY_EXEC"
@@ -351,7 +345,7 @@ class EnvVar(enum.Enum):
     """
     See: FT_39_94_24_00.fat_mock.md
     """
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     # FT_41_45_81_49.trace_mode.md
     var_PROTOPRIMER_TRACE_EXECUTION = "PROTOPRIMER_TRACE_EXECUTION"
 
@@ -359,7 +353,7 @@ class EnvVar(enum.Enum):
 class ConfDst(enum.Enum):
     """
     See FT_23_37_64_44.global_vs_local.md
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     TODO: Is this supposed to be called conf src (instead of `conf dst`)?
     """
 
@@ -373,7 +367,7 @@ class ConfDst(enum.Enum):
 class ValueName(enum.Enum):
 
     value_stderr_log_level = "stderr_log_level"
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     value_exec_operation = "exec_operation"
 
     value_final_state = "final_state"
@@ -381,7 +375,7 @@ class ValueName(enum.Enum):
     value_py_exec = "py_exec"
 
     value_primer_runtime = "primer_runtime"
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     value_start_id = "start_id"
 
     value_project_descriptors = "project_descriptors"
@@ -395,7 +389,7 @@ class ValueName(enum.Enum):
     value_extra_command_args = "extra_command_args"
 
     value_venv_driver = "venv_driver"
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     value_python = "python"
 
     value_version = "version"
@@ -403,7 +397,7 @@ class ValueName(enum.Enum):
     value_file_basename = "file_basename"
 
     value_version_constraints = "version_constraints"
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
 class PathName(enum.Enum):
 
@@ -418,7 +412,7 @@ class PathName(enum.Enum):
 
     # See FT_89_41_35_82.conf_leap.md / primer
     path_primer_conf = f"{ConfLeap.leap_primer.value}_conf"
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     # TODO: Instead of `path_conf_client`, use `path_global_conf`:
     # See FT_89_41_35_82.conf_leap.md / client
     path_conf_client = f"conf_{ConfLeap.leap_client.value}"
@@ -428,7 +422,7 @@ class PathName(enum.Enum):
     # See FT_89_41_35_82.conf_leap.md / env
     path_conf_env = f"conf_{ConfLeap.leap_env.value}"
     path_local_conf = f"{ConfLeap.leap_local.value}_conf"
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     # TODO: Rename to "lconf_link" (otherwise, `local_conf_symlink_rel_path` does not reflect anything about `lconf` or `leap_env`):
     path_link_name = "link_name"
 
@@ -440,7 +434,7 @@ class PathName(enum.Enum):
 
     # TODO: TODO_41_10_50_01.implement_env_selector.md: What is the FT (feature_topic)?
     path_python_selector = "python_selector"
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     path_selected_python = "selected_python"
 
     path_local_venv = "local_venv"
@@ -450,7 +444,7 @@ class PathName(enum.Enum):
     path_local_run = "local_run"
 
     path_local_tmp = "local_tmp"
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     path_local_cache = "local_cache"
 
     path_build_root = "build_root"
@@ -460,8 +454,8 @@ class ParsedArg(enum.Enum):
 
     name_selected_env_dir = f"{PathName.path_selected_env.value}_{FilesystemObject.fs_object_dir.value}"
 
-    name_command = f"run_{CommandAction.action_command.value}"
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+    name_shell_command = "shell_command"
+
     name_exec_operation = str(ValueName.value_exec_operation.value)
 
     # UC_71_59_90_97.generated_entry_script.md
@@ -473,7 +467,7 @@ class ParsedArg(enum.Enum):
 class LogLevel(enum.Enum):
     name_quiet = "quiet"
     name_verbose = "verbose"
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
 class SyntaxArg:
 
@@ -481,8 +475,8 @@ class SyntaxArg:
     arg_help = "--help"
 
     arg_c = "-c"
-    arg_command = f"--{CommandAction.action_command.value}"
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+    arg_command = "--command"
+
     arg_q = "-q"
     arg_quiet = f"--{LogLevel.name_quiet.value}"
     dest_quiet = f"{ValueName.value_stderr_log_level.value}_{LogLevel.name_quiet.value}"
@@ -497,7 +491,7 @@ class SyntaxArg:
     # UC_71_59_90_97.generated_entry_script.md
     arg_s = "-s"
     arg_entry_script_path = f"--{ParsedArg.name_entry_script_path.value}"
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     arg_m = "-m"
     arg_main_func = f"--{ParsedArg.name_main_func.value}"
 
@@ -506,7 +500,7 @@ class SelectorFunc(enum.Enum):
     """
     Lists selector functions (called from standalone `python` scripts).
     """
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     # TODO: TODO_41_10_50_01.implement_env_selector.md: What is the FT (feature_topic)?
     # A function of this signature:
     # def select_python_file_abs_path(required_version: tuple[int, int, int]) -> str | None:
@@ -520,7 +514,7 @@ class ConfField(enum.Enum):
 
     ####################################################################################################################
     # `ConfLeap.leap_primer`-specific
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     # state_ref_root_dir_abs_path_inited:
     field_ref_root_dir_rel_path = f"{PathName.path_ref_root.value}_{FilesystemObject.fs_object_dir.value}_{PathType.path_rel.value}"
 
@@ -529,7 +523,7 @@ class ConfField(enum.Enum):
 
     ####################################################################################################################
     # `ConfLeap.leap_client`-specific
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     # FT_92_51_35_07.local_env_link.md: symlink name:
     # state_local_conf_symlink_abs_path_inited:
     field_local_conf_symlink_rel_path = f"{PathName.path_local_conf.value}_{FilesystemObject.fs_object_symlink.value}_{PathType.path_rel.value}"
@@ -542,7 +536,7 @@ class ConfField(enum.Enum):
     # `ConfLeap.leap_env`-specific
 
     # None at the moment.
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     ####################################################################################################################
     # Common overridable `global` and `local` fields: FT_23_37_64_44.global_vs_local.md
 
@@ -552,7 +546,7 @@ class ConfField(enum.Enum):
     # TODO: TODO_41_10_50_01.implement_env_selector.md: What is the FT (feature_topic)?
     # state_python_selector_file_abs_path_inited:
     field_python_selector_file_rel_path = f"{PathName.path_python_selector.value}_{FilesystemObject.fs_object_file.value}_{PathType.path_rel.value}"
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     # state_local_venv_dir_abs_path_inited:
     field_local_venv_dir_rel_path = f"{PathName.path_local_venv.value}_{FilesystemObject.fs_object_dir.value}_{PathType.path_rel.value}"
 
@@ -563,7 +557,7 @@ class ConfField(enum.Enum):
     # TODO: combine by parent dir (~ `./var`):
     # state_local_run_dir_abs_path_inited:
     field_local_run_dir_rel_path = f"{PathName.path_local_run.value}_{FilesystemObject.fs_object_dir.value}_{PathType.path_rel.value}"
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     # TODO: combine by parent dir (~ `./var`):
     # state_local_tmp_dir_abs_path_inited:
     field_local_tmp_dir_rel_path = f"{PathName.path_local_tmp.value}_{FilesystemObject.fs_object_dir.value}_{PathType.path_rel.value}"
@@ -574,7 +568,7 @@ class ConfField(enum.Enum):
 
     # state_venv_driver_inited:
     field_venv_driver = f"{ValueName.value_venv_driver.value}"
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     # state_version_constraints_file_basename_inited:
     field_version_constraints_file_basename = f"{ValueName.value_version_constraints.value}_{ValueName.value_file_basename.value}"
 
@@ -585,7 +579,7 @@ class ConfField(enum.Enum):
     field_install_specs = f"{ValueName.value_install_specs.value}"
 
     ####################################################################################################################
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     # child of `field_project_descriptors`:
     field_build_root_dir_rel_path = f"{PathName.path_build_root.value}_{FilesystemObject.fs_object_dir.value}_{PathType.path_rel.value}"
 
@@ -596,7 +590,7 @@ class ConfField(enum.Enum):
     field_install_group = f"{ValueName.value_install_group.value}"
 
     ####################################################################################################################
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     # child of `field_install_specs`:
     field_extra_command_args = f"{ValueName.value_extra_command_args.value}"
 
@@ -608,7 +602,7 @@ class VenvDriverBase:
 
     def get_type(self) -> VenvDriverType:
         raise NotImplementedError()
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     def is_mine_venv(
         self,
         local_venv_dir_abs_path: str,
@@ -622,14 +616,14 @@ class VenvDriverBase:
     ) -> None:
         logger.info(f"creating `venv` [{local_venv_dir_abs_path}]")
         self._create_venv_impl(local_venv_dir_abs_path, constraints_file_abs_path)
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     def _create_venv_impl(
         self,
         local_venv_dir_abs_path: str,
         constraints_file_abs_path: str,
     ) -> None:
         raise NotImplementedError()
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     def install_packages(
         self,
         selected_python_file_abs_path: str,
@@ -643,7 +637,7 @@ class VenvDriverBase:
         """
         sub_proc_args: list[str] = self.get_install_dependencies_cmd(selected_python_file_abs_path)
         sub_proc_args.extend(given_packages)
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
         logger.info(f"installing packages: {' '.join(sub_proc_args)}")
 
         subprocess.check_call(sub_proc_args)
@@ -658,14 +652,14 @@ class VenvDriverBase:
     ) -> None:
         """
         Install each project from the `project_descriptors`.
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
         The assumption is that they use `pyproject.toml`.
 
         See also:
         *   UC_78_58_06_54.no_stray_packages.md
         *   FT_46_37_27_11.editable_install.md
         """
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
         editable_project_install_args = []
         for project_descriptor in project_descriptors:
             project_build_root_dir_rel_path = project_descriptor[ConfField.field_build_root_dir_rel_path.value]
@@ -679,7 +673,7 @@ class VenvDriverBase:
                 install_extras = project_descriptor[ConfField.field_install_extras.value]
             else:
                 install_extras = []
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
             editable_project_install_args.append("--editable")
             if len(install_extras) > 0:
                 editable_project_install_args.append(f"{project_build_root_dir_abs_path}[{','.join(install_extras)}]")
@@ -694,13 +688,13 @@ class VenvDriverBase:
             ]
         )
         sub_proc_args.extend(extra_command_args)
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
         sub_proc_args.extend(editable_project_install_args)
 
         logger.info(f"installing projects: {' '.join(sub_proc_args)}")
 
         env_vars = os.environ.copy()
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
         # Adding `venv/bin` is required for `uv` to access `keyring`.
         # See: FT_17_41_51_83.private_artifact_repo.md
         env_vars[ConfConstInput.ext_env_var_PATH] = f"{os.path.dirname(venv_python_file_abs_path)}:{env_vars[ConfConstInput.ext_env_var_PATH]}"
@@ -715,7 +709,7 @@ class VenvDriverBase:
         venv_python_file_abs_path: str,
     ) -> list[str]:
         raise NotImplementedError()
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     @staticmethod
     def _list_installed_pkg_names(
         venv_python_file_abs_path: str,
@@ -723,7 +717,7 @@ class VenvDriverBase:
         """
         Returns names (without versions) of all packages currently
         installed in the `venv` behind `venv_python_file_abs_path`.
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
         Used to re-pin with `--constraint` whatever
         a `venv`-seeding mechanism (`ensurepip`, `uv --seed`, ...)
         happens to install (e.g. `pip`/`setuptools`/`wheel`).
@@ -739,12 +733,12 @@ class VenvDriverBase:
             ]
         )
         return [
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+            #
             output_line.split("==")[0]
             for output_line in freeze_output.decode().splitlines()
             if output_line.strip()
         ]
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     def pin_versions(
         self,
         venv_python_file_abs_path: str,
@@ -762,10 +756,10 @@ class VenvDriverBase:
         venv_python_file_abs_path: str,
     ) -> list[str]:
         raise NotImplementedError()
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
 
 class VenvDriverPip(VenvDriverBase):
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     def __init__(
         self,
         required_python_version: str,
@@ -1535,14 +1529,6 @@ def _create_child_argparser(parent_argparsers):
             description=exec_operation_desc,
         )
         parser_boot.set_defaults(exec_operation=ExecOperation.op_boot.value)
-        parser_boot.add_argument(
-            SyntaxArg.arg_c,
-            SyntaxArg.arg_command,
-            type=str,
-            dest=ParsedArg.name_command.value,
-            metavar=ParsedArg.name_command.value,
-            help="Command to execute after the bootstrap.",
-        )
 
     def _create_reset_parser(exec_operation_parsers):
         exec_operation_desc = "Bootstrap from scratch: re-create `venv`, re-install dependencies, re-pin versions, ..."
@@ -1552,7 +1538,7 @@ def _create_child_argparser(parent_argparsers):
             description=exec_operation_desc,
         )
         parser_reset.set_defaults(exec_operation=ExecOperation.op_reset.value)
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     def _create_eval_parser(exec_operation_parsers):
         exec_operation_desc = "Evaluate effective config (print it on `stdout`)."
         parser_eval = exec_operation_parsers.add_parser(
@@ -1561,7 +1547,7 @@ def _create_child_argparser(parent_argparsers):
             description=exec_operation_desc,
         )
         parser_eval.set_defaults(exec_operation=ExecOperation.op_eval.value)
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     def _create_shell_parser(exec_operation_parsers):
         exec_operation_desc = "Start shell with activated `venv` (`venv` must already exist - see `boot`)."
         parser_shell = exec_operation_parsers.add_parser(
@@ -1574,11 +1560,11 @@ def _create_child_argparser(parent_argparsers):
             SyntaxArg.arg_c,
             SyntaxArg.arg_command,
             type=str,
-            dest=ParsedArg.name_command.value,
-            metavar=ParsedArg.name_command.value,
+            dest=ParsedArg.name_shell_command.value,
+            metavar=ParsedArg.name_shell_command.value,
             help="Shell command to execute (non-interactive).",
         )
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     def _create_start_parser(exec_operation_parsers):
         exec_operation_desc = "Start `main_func` with activated `venv` (`venv` must already exist - see `boot`)."
         parser_start = exec_operation_parsers.add_parser(
@@ -1593,7 +1579,7 @@ def _create_child_argparser(parent_argparsers):
             metavar=ParsedArg.name_main_func.value,
             help="The `module_name:function_name` to invoke inside `venv`.",
         )
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     def _create_check_parser(exec_operation_parsers):
         exec_operation_desc = "Check the environment configuration."
         parser_check = exec_operation_parsers.add_parser(
@@ -1602,7 +1588,7 @@ def _create_child_argparser(parent_argparsers):
             description=exec_operation_desc,
         )
         parser_check.set_defaults(exec_operation=ExecOperation.op_check.value)
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     def _create_wrap_parser(exec_operation_parsers):
         exec_operation_desc = "Generate an `entry_script` boilerplate."
         parser_wrap = exec_operation_parsers.add_parser(
@@ -1619,7 +1605,7 @@ def _create_child_argparser(parent_argparsers):
             metavar="entry_func",
         )
         entry_func_parsers.required = True
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
         for selected_entry_func in [
             EntryFunc.func_boot_env,
             EntryFunc.func_start_app,
@@ -4861,7 +4847,7 @@ class Bootstrapper_state_input_command_line_is_app(AbstractCachingStateNode[str]
         state_args_parsed: argparse.Namespace = self.eval_parent_state(EnvState.state_args_parsed.name)
         return getattr(
             state_args_parsed,
-            ParsedArg.name_command.value,
+            ParsedArg.name_shell_command.value,
             None,
         )
 
@@ -4890,7 +4876,7 @@ class Factory_state_input_command_line(NodeFactory[str]):
 @trivial_factory
 class Bootstrapper_state_command_executed(AbstractCachingStateNode[int]):
     """
-    If `ParsedArg.name_command`, this state replaces the current process with a shell executing the given command.
+    If `ParsedArg.name_shell_command`, this state replaces the current process with a shell executing the given command.
     """
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     _parent_states = staticmethod(
@@ -4927,7 +4913,7 @@ class Bootstrapper_state_command_executed(AbstractCachingStateNode[int]):
 class Bootstrapper_state_shell_executed(AbstractCachingStateNode[int]):
     """
     For `ExecOperation.op_shell`: replaces the current process with an interactive shell
-    (with activated `venv`), optionally running `ParsedArg.name_command` in it.
+    (with activated `venv`), optionally running `ParsedArg.name_shell_command` in it.
     """
 
     _parent_states = staticmethod(

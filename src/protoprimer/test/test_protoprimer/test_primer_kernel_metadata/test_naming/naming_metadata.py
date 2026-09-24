@@ -8,7 +8,6 @@ import enum
 import typing
 
 from protoprimer.primer_kernel import (
-    CommandAction,
     ConfLeap,
     FilesystemObject,
     PathName,
@@ -137,9 +136,7 @@ class NameCategory(enum.Enum):
     )
 
     category_named_arg_action = CategoryMeta(
-        name_enums=[
-            CommandAction,
-        ],
+        name_enums=[],
     )
 
     # Similar:

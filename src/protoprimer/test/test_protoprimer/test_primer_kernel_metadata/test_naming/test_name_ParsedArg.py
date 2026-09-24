@@ -4,7 +4,6 @@ import enum
 
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer.primer_kernel import (
-    CommandAction,
     FilesystemObject,
     ParsedArg,
     PathName,
@@ -61,12 +60,12 @@ class ArgName(enum.Enum):
         ],
     )
 
-    name_command = ArgMeta(
-        command_arg=ParsedArg.name_command,
+    name_shell_command = ArgMeta(
+        command_arg=ParsedArg.name_shell_command,
         name_category=NameCategory.category_named_arg_action,
         name_components=[
-            KeyWord.key_run.value,
-            CommandAction.action_command.value,
+            KeyWord.key_shell.value,
+            KeyWord.key_command.value,
         ],
     )
 

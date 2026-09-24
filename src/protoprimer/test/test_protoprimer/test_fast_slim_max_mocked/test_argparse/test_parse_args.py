@@ -41,16 +41,16 @@ def test_parse_args_command():
     cmd = "ls -l"
 
     # when:
-    args = parse_args([ExecOperation.op_boot.value, SyntaxArg.arg_command, cmd])
+    args = parse_args([ExecOperation.op_shell.value, SyntaxArg.arg_command, cmd])
 
     # then:
-    assert getattr(args, ParsedArg.name_command.value) == cmd
+    assert getattr(args, ParsedArg.name_shell_command.value) == cmd
 
     # when: short arg
-    args_c = parse_args([ExecOperation.op_boot.value, SyntaxArg.arg_c, cmd])
+    args_c = parse_args([ExecOperation.op_shell.value, SyntaxArg.arg_c, cmd])
 
     # then: short arg
-    assert getattr(args_c, ParsedArg.name_command.value) == cmd
+    assert getattr(args_c, ParsedArg.name_shell_command.value) == cmd
 
 
 def test_parse_args_start():
@@ -142,7 +142,6 @@ def test_parse_args_log_level():
                 ParsedArg.name_selected_env_dir.value: None,
                 SyntaxArg.dest_quiet: 0,
                 SyntaxArg.dest_verbose: 0,
-                ParsedArg.name_command.value: None,
             },
         ),
         (
@@ -152,7 +151,6 @@ def test_parse_args_log_level():
                 ParsedArg.name_selected_env_dir.value: None,
                 SyntaxArg.dest_quiet: 0,
                 SyntaxArg.dest_verbose: 0,
-                ParsedArg.name_command.value: None,
             },
         ),
         (
@@ -180,7 +178,6 @@ def test_parse_args_log_level():
                 ParsedArg.name_selected_env_dir.value: None,
                 SyntaxArg.dest_quiet: 1,
                 SyntaxArg.dest_verbose: 0,
-                ParsedArg.name_command.value: None,
             },
         ),
         (
@@ -190,7 +187,6 @@ def test_parse_args_log_level():
                 ParsedArg.name_selected_env_dir.value: None,
                 SyntaxArg.dest_quiet: 0,
                 SyntaxArg.dest_verbose: 1,
-                ParsedArg.name_command.value: None,
             },
         ),
         (
@@ -200,7 +196,6 @@ def test_parse_args_log_level():
                 ParsedArg.name_selected_env_dir.value: None,
                 SyntaxArg.dest_quiet: 1,
                 SyntaxArg.dest_verbose: 0,
-                ParsedArg.name_command.value: None,
             },
         ),
         (
@@ -210,7 +205,6 @@ def test_parse_args_log_level():
                 ParsedArg.name_selected_env_dir.value: None,
                 SyntaxArg.dest_quiet: 0,
                 SyntaxArg.dest_verbose: 3,
-                ParsedArg.name_command.value: None,
             },
         ),
         (
@@ -220,7 +214,6 @@ def test_parse_args_log_level():
                 ParsedArg.name_selected_env_dir.value: "some/path",
                 SyntaxArg.dest_quiet: 0,
                 SyntaxArg.dest_verbose: 0,
-                ParsedArg.name_command.value: None,
             },
         ),
         (
@@ -230,7 +223,6 @@ def test_parse_args_log_level():
                 ParsedArg.name_selected_env_dir.value: "some/path",
                 SyntaxArg.dest_quiet: 0,
                 SyntaxArg.dest_verbose: 0,
-                ParsedArg.name_command.value: None,
             },
         ),
         (
@@ -240,7 +232,6 @@ def test_parse_args_log_level():
                 ParsedArg.name_selected_env_dir.value: "default_env",
                 SyntaxArg.dest_quiet: 0,
                 SyntaxArg.dest_verbose: 0,
-                ParsedArg.name_command.value: None,
             },
         ),
     ],
