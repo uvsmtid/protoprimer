@@ -1,3 +1,8 @@
+```{eval-rst}
+.. meta::
+   :description: Why `protoprimer` exists: avoiding `shell` scripts, bootstrapping `python` with `python`, and wrapping `uv`
+   :keywords: background, rationale, shell, python, uv, bootstrap
+```
 
 # Background
 
@@ -6,20 +11,43 @@
 :depth: 2
 ```
 
-<a id="protoprimer-motivation"></a>
+## First: repo bootstrap
 
-## First: why avoid `shell`?
+Distributing software via repo clones has its benefits:
+*   instant updates in both directions (push or pull)
+*   comprehensive LLM support
+
+<details>
+<summary>Useful requirements to make code runnable automatically:</summary>
+
+*   Bootstrap in a **single** step after a repo clone.
+*   Assume **zero** user preparations.
+*   Make the setup depend on the target **environment**.
+*   Support **flexible** directory layouts to discover repo configs.
+*   **Isolate** runtime per repo clone to allow co-existing versions.
+
+</details>
+
+### Problem: avoid reinventing the wheel
+
+But how do we reuse it without making the user install it first?
+
+### Solution: host a copy
+
+The entire `protoprimer` code (its auto-update-able copy) is committed to the user repo.
+
+## Next: why avoid `shell`?
 
 Main reason:
 > Your org **does not test** `shell` scripts.
 
-<details id="shell-issues">
+<details>
 <summary>Let's expand:</summary>
 
 The `shell` paradox:
 > We start with `shell` because it is "simple" to start, but that is also `shell`:
 
-*   ❌ (unit) test code for `shell` scripts is close to none
+*   ❌ (unit) test code for `shell` scripts is next to none
 *   ❌ no default error detection - forget `set -e` and "everything is fine"
 *   ❌ cryptic "write-only" syntax - `echo "${file_path##*/}"` vs `os.path.basename(file_path)`
 *   ❌ subtle, error-prone pitfalls, `shopt` nuances
@@ -28,9 +56,9 @@ The `shell` paradox:
 *   ❌ no stack traces on failure - instead, noisy and excessive logging
 *   ❌ limited native data structures, no nested ones
 *   ❌ no modularity - code larger than one-page-one-file is cumbersome
-*   ❌ no external libraries/packages, no enforce-able dependencies
-*   ❌ inter-depend for reuse by `source`-ing - an entangled mess
-*   ❌ being so unpredictable makes `shell` scripts high security risks
+*   ❌ no external libraries/packages, no enforceable dependencies
+*   ❌ interdependency via `source`-ing - an entangled mess
+*   ❌ being so unpredictable makes `shell` scripts a high security risk
 *   ❌ slow
 *   ...
 
@@ -47,9 +75,9 @@ In short, `shell` is a very poor language choice for evolving software.
 
 </details>
 
-### Problem: you do not simply avoid `shell`
+### Problem: who bootstraps the bootstrapper?
 
-Every time some `repo.git` is cloned, it has to be prepared to be useful.
+Every time some `repo.git` is cloned, it has to be prepared before it can be useful.
 
 Because `python` is **not** ready, `shell` is used (again!) to make it ready.
 
@@ -70,7 +98,7 @@ Eliminate dependency on `shell`:
 <li>➕ rely on a <code>python</code> executable (any version) to bootstrap <code>python</code> (required version)</li>
 </ul>
 
-An app started via `protoprimer` switches to `venv` - no (explicit) `activate`-tion needed:
+An app started via `protoprimer` switches to `venv` - no (explicit) `activate` needed:
 
 ```sh
 ./hello_world
@@ -119,37 +147,19 @@ flowchart LR;
 
 ## Last: why not `uv`?
 
-Make no mistake: `protoprimer` relies on `uv` (optionally).
+Make no mistake: `protoprimer` (optionally) relies on `uv`.
 
-It starts as a `python` script, then bootstraps `uv`, and only then runs `uv`.
+The `python` script bootstraps `uv`, then runs `uv`.
 
-### Problem: lazy audience
+### Problem: need a wrapper
 
-Distinguish these:
-*   **dev-authors**: know the tools in use (like `uv`), but do not like **writing manuals**
-*   **dev-users**: may not know the tools and the repo, but do not like **reading manuals**
-*   **end-users**: ...
+`uv` is hardly **arg-less** and **single-touch** without a wrapper script:
 
-You want to:
-*   free **dev-authors** from support
-*   reduce the entry barrier for **dev-users**
+*   Its binary has to be prepared.
+*   Its args have to be provided.
+*   Project-specific steps require more than `uv`.
 
-<details>
-<summary><code>uv</code> is hardly <strong>arg-less</strong> and <strong>single-touch</strong> without a <code>shell</code> wrapper:</summary>
-
-*   Its binary has to be prepared. A `shell` wrapper?
-*   Its args have to be provided. A `shell` wrapper?
-*   Project-specific steps require more than `uv`. A `shell` wrapper?
-
-Re-inventing such wrappers for every project is not optimal.
-
-</details>
-
-Relying on `python` first:
-*   is more robust for the **single-touch** bootstrap (`python` is more ubiquitous than `uv`)
-*   uses **easily modifiable** `python` text code to wrap calls to any binary (like `uv`)
-
-### Solution: wrap details
+### Solution: have a wrapper
 
 Feel the difference:
 
@@ -158,3 +168,7 @@ Feel the difference:
 | `./bootstrap` | `uv run python -m module_a.bootstrap` |
 | `./app_1`     | `uv run python -m module_b.app_1`     |
 | `./app_2`     | `uv run python -m module_c.app_2`     |
+
+Relying on `python` first:
+*   is more robust for the **single-touch** bootstrap (`python` is more ubiquitous than `uv`)
+*   uses **easily modifiable** `python` text code to wrap calls to any binary (like `uv`)

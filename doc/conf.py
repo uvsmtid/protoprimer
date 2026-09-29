@@ -5,7 +5,7 @@ import re
 from docutils import nodes
 
 # TODO: This is a temporary option to have a basic `readthedocs` page while the rest of the docs are in progress.
-#       When changed here, it should also be changed in `./index.rst` (automation did not work):
+#       When changed here, it should also be changed in `./index.md` (automation did not work):
 is_draft_doc_protoprimer_content = False
 doc_tag_name: str
 if is_draft_doc_protoprimer_content:

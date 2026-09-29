@@ -1,3 +1,9 @@
+```{eval-rst}
+.. meta::
+   :description: Step-by-step manual walkthrough of `protoprimer` bootstrapping a `python` repo from scratch
+   :keywords: runtime, walkthrough, tutorial, manual, bootstrap, venv, python, repo
+```
+
 # Runtime
 
 ```{contents}
