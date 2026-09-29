@@ -1,12 +1,16 @@
 ```{eval-rst}
 .. meta::
-   :description: ``protoprimer`` is an arg-less ``python`` one-liner to bootstrap a ``venv`` for repo clones
-   :keywords: bootstrap, venv, install, python, required, version
+   :description: `protoprimer` is an arg-less `python` one-liner to bootstrap a `venv` for repo clones
+   :keywords: bootstrap, venv, install, python, required, version, isolated, repo, clone
 ```
 
 # [![logo](/_static/protoprimer.logo.16x16.png)][protoprimer_github] [`protoprimer`][protoprimer_github]
 
-Do not write manuals. Instead:
+Do you distribute software via repo clone?
+
+Do **not** write manuals to make it runnable.
+
+Instead:
 
 ```sh
 ./prime
@@ -243,7 +247,7 @@ User configures it to prepare:
 *   handle global (repo-wide) and local (environment-specific) config
 *   provide authn and authz for internal artifact repositories
 *   use "editable install" for local packages
-*   switch to required `python` version
+*   switch to the required `python` version
 *   execute user-specific code
 *   ...
 
