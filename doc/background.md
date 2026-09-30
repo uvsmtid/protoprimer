@@ -145,6 +145,8 @@ flowchart LR;
     style invis_block fill:none,stroke:none;
 ```
 
+Looks identical, yet `protoprimer` **pins** and **isolates**, while `shell` does **not**.
+
 ## Last: why not `uv`?
 
 Make no mistake: `protoprimer` (optionally) relies on `uv`.
