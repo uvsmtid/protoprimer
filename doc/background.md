@@ -45,7 +45,10 @@ Main reason:
 <summary>Let's expand:</summary>
 
 The `shell` paradox:
-> We start with `shell` because it is "simple" to start, but that is also `shell`:
+
+> We start with `shell` because it is "simple" to start.
+>
+> But `shell` is also all of these:
 
 *   ❌ (unit) test code for `shell` scripts is next to none
 *   ❌ no default error detection - forget `set -e` and "everything is fine"
