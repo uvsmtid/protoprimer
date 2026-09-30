@@ -20,7 +20,7 @@ Distributing software via repo clones has its benefits:
 <details>
 <summary>Useful requirements to make code runnable automatically:</summary>
 
-*   Bootstrap in a **single** step after a repo clone.
+*   Bootstrap in a **single** step on repo clone (update on repo pull).
 *   Assume **zero** user preparations.
 *   Make the setup depend on the target **environment**.
 *   Support **flexible** directory layouts to discover repo configs.
