@@ -86,6 +86,8 @@ When you want direct execution:
     ./start_app
     ```
 
+When you need a **universal installer** (`diff`-able code, not binary) living with your sources.
+
 ## Why?
 
 Everyone likes a **single reproducible step** to run anything - an end-to-end command.
