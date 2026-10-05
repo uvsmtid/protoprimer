@@ -11,7 +11,7 @@
 :depth: 2
 ```
 
-## What `protoprimer` is **NOT** an alternative to?
+## What is `protoprimer` **NOT** an alternative to?
 
 `protoprimer` can work together with all these tools:
 
@@ -72,6 +72,10 @@ The question is:
     ```
 
 </details>
+
+Have we missed any details?
+
+What can possibly go wrong when doing it manually?
 
 ## Falling forward to `protoprimer`
 

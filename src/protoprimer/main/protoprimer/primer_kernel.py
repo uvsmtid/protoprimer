@@ -463,6 +463,9 @@ class ParsedArg(enum.Enum):
     name_entry_script_path = "entry_script_path"
     name_main_func = "main_func"
 
+    # TODO: TODO_19_13_09_01.propagate_start_sub_command_cli_args.md
+    name_target_args = "target_args"
+
 
 class LogLevel(enum.Enum):
     name_quiet = "quiet"
@@ -473,6 +476,9 @@ class SyntaxArg:
 
     arg_h = "-h"
     arg_help = "--help"
+
+    # TODO: TODO_19_13_09_01.propagate_start_sub_command_cli_args.md
+    arg_double_dash = "--"
 
     arg_c = "-c"
     arg_command = "--command"
@@ -1566,7 +1572,7 @@ def _create_child_argparser(parent_argparsers):
         )
 
     def _create_start_parser(exec_operation_parsers):
-        exec_operation_desc = "Start `main_func` with activated `venv` (`venv` must already exist - see `boot`)."
+        exec_operation_desc = "Start `main_func` with activated `venv` (`venv` must already exist - see `boot`). " f"All args after a literal `{SyntaxArg.arg_double_dash}` are passed verbatim to `main_func`'s own `sys.argv`."
         parser_start = exec_operation_parsers.add_parser(
             ExecOperation.op_start.value,
             help=exec_operation_desc,
@@ -1682,6 +1688,16 @@ def parse_args(remaining_argv=None) -> argparse.Namespace:
     if remaining_argv is None:
         remaining_argv = sys.argv[1:]
 
+    # TODO: TODO_19_13_09_01.propagate_start_sub_command_cli_args.md:
+    # Split off everything after a literal `--` before `argparse` ever sees it,
+    # so it can never be (re)interpreted as a protoprimer option or sub-command -
+    # it is handed verbatim to `ExecOperation.op_start`'s target function.
+    target_args: list = []
+    if SyntaxArg.arg_double_dash in remaining_argv:
+        dash_index = remaining_argv.index(SyntaxArg.arg_double_dash)
+        target_args = remaining_argv[dash_index + 1 :]
+        remaining_argv = remaining_argv[:dash_index]
+
     # Phase 1: parse common args:
     parent_argparser = _create_parent_argparser()
     (
@@ -1724,6 +1740,10 @@ def parse_args(remaining_argv=None) -> argparse.Namespace:
             remaining_argv,
             namespace=parsed_args,
         )
+
+    if target_args and (getattr(parsed_args, ParsedArg.name_exec_operation.value) != ExecOperation.op_start.value):
+        raise ValueError(f"`{SyntaxArg.arg_double_dash}` is only supported with `{ExecOperation.op_start.value}`.")
+    setattr(parsed_args, ParsedArg.name_target_args.value, target_args)
 
     return parsed_args
 
@@ -4984,8 +5004,8 @@ class Bootstrapper_state_start_executed(AbstractCachingStateNode[int]):
         selected_module = importlib.import_module(module_name)
         selected_main = getattr(selected_module, func_name)
 
-        # TODO: TODO_19_13_09_01.propagate_start_sub_command_cli_args.md
-        sys.argv = sys.argv[:1]
+        target_args: list = getattr(state_args_parsed, ParsedArg.name_target_args.value)
+        sys.argv = [sys.argv[0]] + target_args
 
         selected_main()
 
