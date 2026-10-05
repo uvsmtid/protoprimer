@@ -5,7 +5,7 @@ NOTE: AI-generated
 Every `TODO` in [primer_kernel.py][primer_kernel.py] is associated with a doc file.
 
 All `TODO`-s are grouped by similarity (by meaning).
-Each group gets its own `TODO_*.md` file.
+Each group gets its own `TODO_*.md` file (`task_ref`, [feature_topic][feature_topic], or [use_case][use_case]).
 In addition to the in-place text,
 the file gives a wider explanation with links to associated docs and other `TODO_*.md` files.
 
@@ -49,3 +49,5 @@ a `TODO` which does not fit any group is a group of one and gets its own `TODO_*
     Group `TODO`-s by what they try to do (by meaning), not by the wording of the comment.
 
 [primer_kernel.py]: ../../src/protoprimer/main/protoprimer/primer_kernel.py
+[feature_topic]: ../feature_topic
+[use_case]: ../use_case
