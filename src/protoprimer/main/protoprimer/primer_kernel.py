@@ -5290,6 +5290,7 @@ class EnvContext:
         # FT_58_74_37_70.boot_vs_start.md
         # FT_62_88_55_10.CLI_compatibility.md
         # FT_93_57_03_75.app_vs_lib.md
+        # TODO: TODO_25_82_21_54.rename_is_app_flag.md:
         # TODO: Rename: `_is_app` is confusing: Is it about user code or `protoprimer` code? It is about `protoprimer`.
         self._is_app: bool | None = None
 
