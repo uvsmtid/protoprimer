@@ -2706,6 +2706,7 @@ class Bootstrapper_state_stride_py_arbitrary_reached_is_app(AbstractCachingState
         orig_PYTHONPATH_value = cleaned_env.pop(ConfConstInput.ext_env_var_PYTHONPATH, None)
         orig_PATH_value: str = cleaned_env.get(ConfConstInput.ext_env_var_PATH, "")
 
+        # TODO: TODO_80_28_71_21.review_env_clean_up_after_isolated_mode.md:
         # TODO: Is this (above and below) manual clean-up necessary after we switched to isolated `-I` `python` mode?
         if orig_venv_abs_path is not None:
             # Remove `venv/bin` dir from the `PATH` env var:
