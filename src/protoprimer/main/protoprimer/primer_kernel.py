@@ -429,6 +429,7 @@ class PathName(enum.Enum):
     path_conf_env = f"conf_{ConfLeap.leap_env.value}"
     path_local_conf = f"{ConfLeap.leap_local.value}_conf"
 
+    # TODO: TODO_53_40_17_68.default_env_config_vs_lconf_symlink.md:
     # TODO: Rename to "lconf_link" (otherwise, `local_conf_symlink_rel_path` does not reflect anything about `lconf` or `leap_env`):
     path_link_name = "link_name"
 
@@ -556,18 +557,22 @@ class ConfField(enum.Enum):
     # state_local_venv_dir_abs_path_inited:
     field_local_venv_dir_rel_path = f"{PathName.path_local_venv.value}_{FilesystemObject.fs_object_dir.value}_{PathType.path_rel.value}"
 
+    # TODO: TODO_04_67_81_16.refactor_reusable_dirs.md:
     # TODO: combine by parent dir (~ `./var`):
     # state_local_log_dir_abs_path_inited:
     field_local_log_dir_rel_path = f"{PathName.path_local_log.value}_{FilesystemObject.fs_object_dir.value}_{PathType.path_rel.value}"
 
+    # TODO: TODO_04_67_81_16.refactor_reusable_dirs.md:
     # TODO: combine by parent dir (~ `./var`):
     # state_local_run_dir_abs_path_inited:
     field_local_run_dir_rel_path = f"{PathName.path_local_run.value}_{FilesystemObject.fs_object_dir.value}_{PathType.path_rel.value}"
 
+    # TODO: TODO_04_67_81_16.refactor_reusable_dirs.md:
     # TODO: combine by parent dir (~ `./var`):
     # state_local_tmp_dir_abs_path_inited:
     field_local_tmp_dir_rel_path = f"{PathName.path_local_tmp.value}_{FilesystemObject.fs_object_dir.value}_{PathType.path_rel.value}"
 
+    # TODO: TODO_04_67_81_16.refactor_reusable_dirs.md:
     # TODO: combine by parent dir (~ `./var`):
     # state_local_cache_dir_abs_path_inited:
     field_local_cache_dir_rel_path = f"{PathName.path_local_cache.value}_{FilesystemObject.fs_object_dir.value}_{PathType.path_rel.value}"
@@ -869,6 +874,7 @@ class VenvDriverUv(VenvDriverBase):
         self.selected_python_file_abs_path: str = selected_python_file_abs_path
         self.state_local_venv_dir_abs_path_inited: str = state_local_venv_dir_abs_path_inited
         self.uv_venv_abs_path: str = os.path.join(
+            # TODO: TODO_04_67_81_16.refactor_reusable_dirs.md:
             # TODO: make it relative to "cache/venv" specifically (instead of directly to "cache"):
             state_local_cache_dir_abs_path_inited,
             ConfConstEnv.default_dir_rel_path_venv,
@@ -1402,6 +1408,7 @@ class ConfConstClient:
 
     common_env_name = "common_env"
 
+    # TODO: TODO_53_40_17_68.default_env_config_vs_lconf_symlink.md:
     # TODO: Is this used? If link_name is not specified, the env conf dir becomes ref root dir:
     default_dir_rel_path_leap_env_link_name: str = os.path.join(ConfDst.dst_local.value)
 
@@ -5144,6 +5151,7 @@ class EnvState(enum.Enum):
 
     state_default_file_log_handler_configured = Bootstrapper_state_default_file_log_handler_configured
 
+    # TODO: TODO_73_71_31_84.exec_operation_check_or_info.md:
     # TODO: Add a (replaceable) env_check step to execute before switching to `StateStride.stride_py_required`.
 
     # restart: `StateStride.stride_py_arbitrary` -> `StateStride.stride_py_required`:
