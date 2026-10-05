@@ -5161,9 +5161,11 @@ class EnvState(enum.Enum):
     state_version_constraints_generated = Factory_state_version_constraints_generated
 
     # restart: `StateStride.stride_py_venv` -> `StateStride.stride_deps_updated`:
+    # TODO: TODO_49_40_51_46.rename_state_names_to_final.md:
     # TODO: rename - "reached" sounds weird (and makes no sense):
     state_stride_deps_updated_reached = Factory_state_stride_deps_updated_reached
 
+    # TODO: TODO_49_40_51_46.rename_state_names_to_final.md:
     # TODO: rename according to the final name:
     state_proto_kernel_updated = Factory_state_proto_kernel_updated
 
