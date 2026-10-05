@@ -1304,6 +1304,7 @@ class ConfConstGeneral:
     # If `--main_func` is this (empty), run `proto_main`.
     default_proto_main = ""
 
+    # TODO: TODO_16_35_39_74.simplify_input_based_default.md:
     # TODO: use lambdas to generate based on input (instead of None):
     # This is a value declared for completeness,
     # but unused (evaluated dynamically via the bootstrap process):
