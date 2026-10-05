@@ -12,7 +12,7 @@ the file gives a wider explanation with links to associated docs and other `TODO
 There are no "unrelated" `TODO`-s:
 a `TODO` which does not fit any group is a group of one and gets its own `TODO_*.md` file.
 
-## Process
+## Conventions
 
 *   Create a new `TODO_*.md` file for one group at a time:
 
@@ -32,6 +32,23 @@ a `TODO` which does not fit any group is a group of one and gets its own `TODO_*
     ```
 
 *   Update the sub-sections below (the number of references) after each step.
+
+*   A `TODO` already associated with another doc (e.g. `FT_*` or `UC_*` - not under `doc/task_ref/`) needs no additional `TODO_*.md` file.
+
+*   A `TODO` directly under an already tagged `TODO` (the same block) is not tagged again.
+
+*   Inside a docstring, the tag line has the same form but without the leading `#`:
+
+    ```python
+    """
+    TODO: TODO_NN_NN_NN_NN.some_semantic_name.md:
+    TODO: <original text stays here>
+    """
+    ```
+
+*   Before creating a new `TODO_*.md` file, check the existing ones (to avoid duplicating the same issue):
+
+    Group `TODO`-s by what they try to do (by meaning), not by the wording of the comment.
 
 ## Status
 
