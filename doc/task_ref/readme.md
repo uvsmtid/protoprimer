@@ -1,29 +1,30 @@
 NOTE: AI-generated
 
-TODO: TODO_36_60_85_31.associate_all_kernel_TODO_with_files.md
-
 ## Purpose
 
-Every `TODO` in [primer_kernel.py][primer_kernel.py] should be associated with a file under `doc/task_ref/`.
+Every `TODO` in [primer_kernel.py][primer_kernel.py] is associated with a file under `doc/task_ref/`.
 
-Many in-place `TODO`-s are bare (not associated with any file).
-Bare `TODO`-s which are about the same thing are grouped by similarity (by meaning, not by wording).
-Each group gets its own `TODO_*.md` file
-(in addition to the in-place text, it gives a wider explanation with links to associated docs and other `TODO_*.md` files).
-
-Before creating a new file for a group,
-the group is matched against the existing `TODO_*.md` files to avoid duplicating the same issue.
+All `TODO`-s are grouped by similarity (by meaning).
+Each group gets its own `TODO_*.md` file.
+In addition to the in-place text,
+the file gives a wider explanation with links to associated docs and other `TODO_*.md` files.
 
 There are no "unrelated" `TODO`-s:
 a `TODO` which does not fit any group is a group of one and gets its own `TODO_*.md` file.
 
-Process:
+## Process
 
 *   Create a new `TODO_*.md` file for one group at a time:
-    generate its tag (with `./cmd/gen_next_doc_id doc/task_ref`) only after the file for the previous tag is created.
+
+    Generate its tag only after the file for the previous tag is created:
+
+    ```shell
+    ./cmd/gen_next_doc_id doc/task_ref
+    ```
 
 *   Associate the in-place `TODO`-s with the file (only after the file exists):
-    keep the original `TODO` text as is and add a comment line above it (with the same indentation):
+
+    Keep the original `TODO` text as is and add a comment line above it (with the same indentation):
 
     ```python
     # TODO: TODO_NN_NN_NN_NN.some_semantic_name.md:
