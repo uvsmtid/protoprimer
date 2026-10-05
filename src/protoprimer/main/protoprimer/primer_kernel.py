@@ -6046,6 +6046,7 @@ def is_venv() -> bool:
     #       Most of the commands avoid using `shell` (that is the goal for `protoprimer`).
     # NOTE: Restriction on `field_selected_python_file_abs_path`: it should not lead to `venv/bin/python`.
     #       It should use `sys.base_prefix` - see `get_path_to_base_python`.
+    # TODO: TODO_15_25_41_72.convert_selected_python_to_base_python.md:
     # TODO: Maybe it is possible to convert `field_selected_python_file_abs_path` to its base version automatically?
     if sys.prefix != sys.base_prefix:
         return True
