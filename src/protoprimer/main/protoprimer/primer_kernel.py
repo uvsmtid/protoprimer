@@ -869,6 +869,7 @@ class VenvDriverUv(VenvDriverBase):
             # TODO: make it relative to "cache/venv" specifically (instead of directly to "cache"):
             state_local_cache_dir_abs_path_inited,
             ConfConstEnv.default_dir_rel_path_venv,
+            # TODO: TODO_20_07_74_69.configure_dirs_at_client_level.md:
             # TODO: take from config (or default constant):
             "uv.venv",
         )
@@ -3540,6 +3541,7 @@ class Bootstrapper_state_local_venv_dir_abs_path_inited(AbstractOverriddenFieldC
 
         state_local_venv_dir_abs_path_inited: str = self._get_overridden_value_or_default(
             ConfField.field_local_venv_dir_rel_path.value,
+            # TODO: TODO_20_07_74_69.configure_dirs_at_client_level.md:
             # TODO: Do not use default values directly - resolve it differently at the prev|next step based on the need:
             ConfConstEnv.default_dir_rel_path_venv,
         )
@@ -5091,18 +5093,23 @@ class EnvState(enum.Enum):
 
     state_selected_python_file_abs_path_inited = Bootstrapper_state_selected_python_file_abs_path_inited
 
+    # TODO: TODO_20_07_74_69.configure_dirs_at_client_level.md:
     # TODO: log, tmp, venv, ... dirs should better be configured at client level:
     state_local_venv_dir_abs_path_inited = Bootstrapper_state_local_venv_dir_abs_path_inited
 
+    # TODO: TODO_20_07_74_69.configure_dirs_at_client_level.md:
     # TODO: log, tmp, venv, ... dirs should better be configured at client level:
     state_local_log_dir_abs_path_inited = Bootstrapper_state_local_log_dir_abs_path_inited
 
+    # TODO: TODO_20_07_74_69.configure_dirs_at_client_level.md:
     # TODO: log, tmp, venv, ... dirs should better be configured at client level:
     state_local_run_dir_abs_path_inited = Bootstrapper_state_local_run_dir_abs_path_inited
 
+    # TODO: TODO_20_07_74_69.configure_dirs_at_client_level.md:
     # TODO: log, tmp, venv, ... dirs should better be configured at client level:
     state_local_tmp_dir_abs_path_inited = Bootstrapper_state_local_tmp_dir_abs_path_inited
 
+    # TODO: TODO_20_07_74_69.configure_dirs_at_client_level.md:
     # TODO: log, tmp, venv, ... dirs should better be configured at client level:
     state_local_cache_dir_abs_path_inited = Bootstrapper_state_local_cache_dir_abs_path_inited
 
