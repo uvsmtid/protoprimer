@@ -899,6 +899,7 @@ class VenvDriverUv(VenvDriverBase):
             # To use `VenvDriverType.venv_uv`, use `VenvDriverType.venv_pip` to install `uv` first:
             pip_driver = VenvDriverPip(
                 required_python_version=self.required_python_version,
+                # TODO: TODO_65_18_47_30.uv_bootstrap_venv_python_version.md:
                 # TODO: assert python version suitable for `uv` (because this `venv` will be used to install `uv`).
                 # NOTE: Create this `venv` (to install `uv`) with whatever `python` runs now:
                 selected_python_file_abs_path=self.selected_python_file_abs_path,
