@@ -204,11 +204,13 @@ class ConfLeap(enum.Enum):
 
     leap_primer = "primer"
 
+    # TODO: TODO_39_94_67_54.rename_client_env_to_global_local.md:
     # TODO: Rename, use `global` instead:
     #       FT_23_37_64_44.global_vs_local.md
     #       FT_89_41_35_82.conf_leap.md
     leap_client = "client"
 
+    # TODO: TODO_39_94_67_54.rename_client_env_to_global_local.md:
     # TODO: Remove, use `local` instead:
     #       FT_23_37_64_44.global_vs_local.md
     #       FT_89_41_35_82.conf_leap.md
@@ -217,6 +219,7 @@ class ConfLeap(enum.Enum):
     # surrogate: no associated config file:
     leap_derived = "derived"
 
+    # TODO: TODO_39_94_67_54.rename_client_env_to_global_local.md:
     # TODO: Consolidate `leap_global` and `leap_local` are not really `ConfLeap`-s.
     #       Instead, see `leap_client` and `leap_env`.
     leap_global = "global"
@@ -354,6 +357,7 @@ class ConfDst(enum.Enum):
     """
     See FT_23_37_64_44.global_vs_local.md
 
+    TODO: TODO_39_94_67_54.rename_client_env_to_global_local.md:
     TODO: Is this supposed to be called conf src (instead of `conf dst`)?
     """
 
@@ -413,11 +417,13 @@ class PathName(enum.Enum):
     # See FT_89_41_35_82.conf_leap.md / primer
     path_primer_conf = f"{ConfLeap.leap_primer.value}_conf"
 
+    # TODO: TODO_39_94_67_54.rename_client_env_to_global_local.md:
     # TODO: Instead of `path_conf_client`, use `path_global_conf`:
     # See FT_89_41_35_82.conf_leap.md / client
     path_conf_client = f"conf_{ConfLeap.leap_client.value}"
     path_global_conf = f"{ConfLeap.leap_global.value}_conf"
 
+    # TODO: TODO_39_94_67_54.rename_client_env_to_global_local.md:
     # TODO: Instead of `path_conf_env`, use `path_local_conf`:
     # See FT_89_41_35_82.conf_leap.md / env
     path_conf_env = f"conf_{ConfLeap.leap_env.value}"
