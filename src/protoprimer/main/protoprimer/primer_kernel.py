@@ -1221,12 +1221,15 @@ def _get_shell_driver(
     shell_driver_type: type[ShellDriverBase]
 
     if shell_abs_path is None:
+        # TODO: TODO_74_35_76_27.shell_driver_fallback_to_sh.md:
         # TODO: Implement `ShellDriverSh` using `/bin/sh` instead:
         logger.warning(f"env var `{var_shell}` is not set - assuming `bash` as default")
 
+        # TODO: TODO_74_35_76_27.shell_driver_fallback_to_sh.md:
         # TODO: How will work on Windows without `shutil`? And without POSIX shell?
         # noinspection PyDeprecation
         shell_abs_path = shutil.which("bash")
+        # TODO: TODO_74_35_76_27.shell_driver_fallback_to_sh.md:
         # TODO: If `bash` is not in the `PATH`, fall back to `/bin/sh` instead:
         assert shell_abs_path is not None
 
