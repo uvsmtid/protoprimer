@@ -20,7 +20,7 @@ Distributing software via repo clones has its benefits:
 <details>
 <summary>Useful requirements to make code runnable automatically:</summary>
 
-*   Bootstrap in a **single** step after a repo clone.
+*   Bootstrap in a **single** step on repo clone (update on repo pull).
 *   Assume **zero** user preparations.
 *   Make the setup depend on the target **environment**.
 *   Support **flexible** directory layouts to discover repo configs.
@@ -45,7 +45,10 @@ Main reason:
 <summary>Let's expand:</summary>
 
 The `shell` paradox:
-> We start with `shell` because it is "simple" to start, but that is also `shell`:
+
+> We start with `shell` because it is "simple" to start.
+>
+> But `shell` is also all of these:
 
 *   ❌ (unit) test code for `shell` scripts is next to none
 *   ❌ no default error detection - forget `set -e` and "everything is fine"
@@ -144,6 +147,8 @@ flowchart LR;
 
     style invis_block fill:none,stroke:none;
 ```
+
+Looks identical, yet `protoprimer` **pins** and **isolates**, while `shell` does **not**.
 
 ## Last: why not `uv`?
 

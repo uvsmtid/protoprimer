@@ -93,8 +93,8 @@ def test_instant_scenario_start_presents_clean_argv(tmp_path: Path):
     so it must strip its own `start`/`main_func` CLI args before calling the target function -
     otherwise a target function that inspects `sys.argv` on its own sees unexpected extra arguments.
 
-    TODO: TODO_19_13_09_01.propagate_start_sub_command_cli_args.md:
-          Extend to support extra arg propagation.
+    See also `test_instant_scenario_start_propagates_target_args_after_double_dash` below:
+    TODO: TODO_19_13_09_01.propagate_start_sub_command_cli_args.md.
     """
 
     # given:
@@ -124,3 +124,137 @@ def test_instant_scenario_start_presents_clean_argv(tmp_path: Path):
     # no positional args leaked into the echoed `sys.argv`:
 
     assert sub_proc.stdout.strip() == "[]"
+
+
+@requires_max_python
+def test_instant_scenario_start_propagates_target_args_after_double_dash(tmp_path: Path):
+    """
+    TODO: TODO_19_13_09_01.propagate_start_sub_command_cli_args.md:
+    Tokens placed after a literal `--` are handed verbatim to the target function's own
+    `sys.argv`, while tokens before it (even ones that look like target args) are still
+    parsed as `proto_kernel`'s own CLI args.
+    """
+
+    # given:
+
+    (
+        proto_kernel_abs_path,
+        ref_root_abs_path,
+        project_dir_abs_path,
+    ) = create_min_leaps_shape(tmp_path)
+
+    run_primer_main([str(proto_kernel_abs_path)])
+
+    # when:
+
+    sub_proc = subprocess.run(
+        [
+            str(proto_kernel_abs_path),
+            ExecOperation.op_start.value,
+            "local_doc.cmd_echo_app:custom_echo_app_main",
+            SyntaxArg.arg_double_dash,
+            "foo",
+            "bar",
+        ],
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+
+    # then:
+    # args after `--` reach the target verbatim:
+
+    assert sub_proc.stdout.strip() == "['foo', 'bar']"
+
+
+# FT_05_08_64_67.start_app.md
+@requires_max_python
+def test_instant_scenario_start_recurses_through_proto_main(tmp_path: Path):
+    """
+    TODO: TODO_19_13_09_01.propagate_start_sub_command_cli_args.md:
+    `protoprimer.primer_kernel:proto_main` is an ordinary importable function, so it can be
+    given to `op_start` as `main_func` like any other target. Since `proto_main` itself
+    re-parses whatever `sys.argv` it is handed (the same as running `proto_kernel.py` directly),
+    chaining `start protoprimer.primer_kernel:proto_main -- start <next> -- ...` recurses one
+    more level per chain link, with each `--` unwrapping exactly one level - regardless of
+    chain depth or how many args follow the final `--`.
+    """
+
+    # given:
+
+    (
+        proto_kernel_abs_path,
+        ref_root_abs_path,
+        project_dir_abs_path,
+    ) = create_min_leaps_shape(tmp_path)
+
+    run_primer_main([str(proto_kernel_abs_path)])
+
+    proto_main = "protoprimer.primer_kernel:proto_main"
+    echo_app = "local_doc.cmd_echo_app:custom_echo_app_main"
+
+    # when/then:
+    # one level of `proto_main` recursion, one target arg:
+
+    sub_proc_1 = subprocess.run(
+        [
+            str(proto_kernel_abs_path),
+            ExecOperation.op_start.value,
+            proto_main,
+            SyntaxArg.arg_double_dash,
+            ExecOperation.op_start.value,
+            echo_app,
+            SyntaxArg.arg_double_dash,
+            "qwer",
+        ],
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    assert sub_proc_1.stdout.strip() == "['qwer']"
+
+    # when/then:
+    # one level of `proto_main` recursion, two target args:
+
+    sub_proc_2 = subprocess.run(
+        [
+            str(proto_kernel_abs_path),
+            ExecOperation.op_start.value,
+            proto_main,
+            SyntaxArg.arg_double_dash,
+            ExecOperation.op_start.value,
+            echo_app,
+            SyntaxArg.arg_double_dash,
+            "qwer",
+            "asdf",
+        ],
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    assert sub_proc_2.stdout.strip() == "['qwer', 'asdf']"
+
+    # when/then:
+    # two levels of `proto_main` recursion, three target args:
+
+    sub_proc_3 = subprocess.run(
+        [
+            str(proto_kernel_abs_path),
+            ExecOperation.op_start.value,
+            proto_main,
+            SyntaxArg.arg_double_dash,
+            ExecOperation.op_start.value,
+            proto_main,
+            SyntaxArg.arg_double_dash,
+            ExecOperation.op_start.value,
+            echo_app,
+            SyntaxArg.arg_double_dash,
+            "qwer",
+            "asdf",
+            "zxcv",
+        ],
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    assert sub_proc_3.stdout.strip() == "['qwer', 'asdf', 'zxcv']"

@@ -1,7 +1,7 @@
 ```{eval-rst}
 .. meta::
-   :description: `protoprimer` is an arg-less `python` one-liner to bootstrap a `venv` for repo clones
-   :keywords: bootstrap, venv, install, python, required, version, isolated, repo, clone
+   :description: `protoprimer` is an arg-less one-liner to bootstrap isolated repo clones with environment-specific config
+   :keywords: protoprimer, primer, bootstrap, venv, install, python, required, version, isolated, repo, clone, environment, config
 ```
 
 # [![logo](/_static/protoprimer.logo.16x16.png)][protoprimer_github] [`protoprimer`][protoprimer_github]
@@ -85,6 +85,8 @@ When you want direct execution:
     ```sh
     ./start_app
     ```
+
+When you need a **universal installer** (`diff`-able code, not binary) living with your sources.
 
 ## Why?
 
