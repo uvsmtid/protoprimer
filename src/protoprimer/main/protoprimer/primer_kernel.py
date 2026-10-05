@@ -407,7 +407,9 @@ class PathName(enum.Enum):
 
     path_proto_kernel = "proto_kernel"
 
+    # TODO: TODO_90_53_85_78.proto_dir_path_name.md:
     # TODO: use another suffix (not `dir`) as `dir` is specified by `FilesystemObject.fs_object_dir`
+    # TODO: TODO_90_53_85_78.proto_dir_path_name.md:
     # TODO: make use of it in naming states (instead of using only `path_proto_kernel`):
     path_proto_dir = "proto_dir"
 
