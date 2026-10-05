@@ -12,8 +12,14 @@ def custom_echo_app_main():
 
     FT_05_08_64_67.start_app.md
     """
-    arg_parser = argparse.ArgumentParser()
-    arg_parser.add_argument("args", nargs="*")
+    arg_parser = argparse.ArgumentParser(
+        description="Echo-print all args in `python` syntax.",
+    )
+    arg_parser.add_argument(
+        "args",
+        nargs="*",
+        help="Args to echo-print back.",
+    )
     parsed_args = arg_parser.parse_args()
     print(parsed_args.args)
 

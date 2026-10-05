@@ -106,6 +106,16 @@ class ArgName(enum.Enum):
         ],
     )
 
+    # TODO: TODO_19_13_09_01.propagate_start_sub_command_cli_args.md
+    name_target_args = ArgMeta(
+        command_arg=ParsedArg.name_target_args,
+        name_category=NameCategory.category_named_arg_value,
+        name_components=[
+            KeyWord.key_target.value,
+            KeyWord.key_args.value,
+        ],
+    )
+
 
 class TestParsedArgName(NamingTestBase):
     prod_enum = ParsedArg

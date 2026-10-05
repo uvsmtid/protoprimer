@@ -38,6 +38,7 @@ class KeyWord(enum.Enum):
     key_id = "id"
     key_state = "state"
     key_args = "args"
+    key_target = "target"
     key_stderr = "stderr"
     key_handler = "handler"
     key_data = "data"

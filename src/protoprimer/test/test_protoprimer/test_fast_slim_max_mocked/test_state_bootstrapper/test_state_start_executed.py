@@ -58,7 +58,10 @@ def test_start_executed_imports_and_calls_main_func(
         env_ctx,
         EnvState.state_start_executed.name,
     )
-    mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(main_func="my_module:my_func")
+    mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(
+        main_func="my_module:my_func",
+        target_args=[],
+    )
     mock_state_proto_kernel_file_abs_path_inited.return_value.eval_own_state.return_value = "/fake/proto_kernel.py"
     mock_state_local_cache_dir_abs_path_inited.return_value.eval_own_state.return_value = "/fake/cache"
     mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = "/fake/venv"
@@ -108,7 +111,10 @@ def test_start_executed_resets_argv_before_calling_main_func(
         env_ctx,
         EnvState.state_start_executed.name,
     )
-    mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(main_func="my_module:my_func")
+    mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(
+        main_func="my_module:my_func",
+        target_args=[],
+    )
     mock_state_proto_kernel_file_abs_path_inited.return_value.eval_own_state.return_value = "/fake/proto_kernel.py"
     mock_state_local_cache_dir_abs_path_inited.return_value.eval_own_state.return_value = "/fake/cache"
     mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = "/fake/venv"
@@ -126,6 +132,61 @@ def test_start_executed_resets_argv_before_calling_main_func(
 
     # then:
     assert argv_at_call_time == [["/fake/proto_kernel.py"]]
+
+
+@patch(f"{primer_kernel.__name__}.importlib.import_module")
+@patch(f"{primer_kernel.__name__}.{EnvContext.__name__}.{EnvContext.get_stride.__name__}")
+@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_stride_src_updated_reached.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_cache_dir_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Factory_state_proto_kernel_file_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Factory_state_args_parsed.__name__}.create_state_node")
+@patch.dict(os.environ, {}, clear=True)
+def test_start_executed_propagates_target_args_after_double_dash(
+    mock_state_args_parsed,
+    mock_state_proto_kernel_file_abs_path_inited,
+    mock_state_local_cache_dir_abs_path_inited,
+    mock_state_local_venv_dir_abs_path_inited,
+    mock_state_stride_src_updated_reached,
+    mock_get_stride,
+    mock_import_module,
+    env_ctx,
+):
+    """
+    TODO: TODO_19_13_09_01.propagate_start_sub_command_cli_args.md:
+    Tokens captured after a literal `--` (as `ParsedArg.name_target_args`) must reach
+    the target function's `sys.argv`, in order, after the program name.
+    """
+    # given:
+    assert_parent_factories_mocked(
+        env_ctx,
+        EnvState.state_start_executed.name,
+    )
+    mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(
+        main_func="my_module:my_func",
+        target_args=["--foo", "bar", "-v"],
+    )
+    mock_state_proto_kernel_file_abs_path_inited.return_value.eval_own_state.return_value = "/fake/proto_kernel.py"
+    mock_state_local_cache_dir_abs_path_inited.return_value.eval_own_state.return_value = "/fake/cache"
+    mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = "/fake/venv"
+    mock_state_stride_src_updated_reached.return_value.eval_own_state.return_value = StateStride.stride_src_updated
+    mock_get_stride.return_value = StateStride.stride_src_updated
+
+    mock_module = MagicMock()
+    argv_at_call_time = []
+    mock_module.my_func = lambda: argv_at_call_time.append(list(sys.argv))
+    mock_import_module.return_value = mock_module
+
+    # when:
+    with patch.object(
+        sys,
+        "argv",
+        ["/fake/proto_kernel.py", "start", "my_module:my_func", "--", "--foo", "bar", "-v"],
+    ):
+        env_ctx.eval_state(EnvState.state_start_executed.name)
+
+    # then:
+    assert argv_at_call_time == [["/fake/proto_kernel.py", "--foo", "bar", "-v"]]
 
 
 @patch(f"{primer_kernel.__name__}.importlib.import_module")
