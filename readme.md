@@ -75,6 +75,12 @@ It works without `shebang` for `venv` to **avoid hardcoding** absolute paths and
     ./prime start "some_module:some_func"
     ```
 
+*   Run a function from a module in `venv` with some args:
+
+    ```
+    ./prime start "some_module:some_func" -- some args
+    ```
+
 <a id="protoprimer-quick-start"></a>
 
 ## Initial integration
