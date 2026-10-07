@@ -30,7 +30,7 @@ def test_relationship():
 
 def test_op_boot(tmp_path: Path):
     """
-    This test runs `proto_code` directly (rather than importing it via `entry_script`).
+    This test runs `proto_kernel` directly (rather than importing it via `entry_script`).
 
     It uses `create_max_leaps_shape` (see FT_59_95_81_63.tree_shape.md).
     """

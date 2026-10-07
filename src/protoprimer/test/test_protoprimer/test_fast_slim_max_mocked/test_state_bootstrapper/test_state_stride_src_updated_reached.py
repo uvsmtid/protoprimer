@@ -8,8 +8,8 @@ from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     Bootstrapper_state_input_start_id_var_loaded,
-    Factory_state_proto_code_file_abs_path_inited,
-    Factory_state_proto_code_updated,
+    Factory_state_proto_kernel_file_abs_path_inited,
+    Factory_state_proto_kernel_updated,
     ContextBuilder,
     EntryFunc,
     EnvState,
@@ -38,16 +38,16 @@ class ThisTestClass(BasePyfakefsTestClass):
         assert_test_module_name_embeds_str(EnvState.state_stride_src_updated_reached.name)
 
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Factory_state_proto_code_updated.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Factory_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_proto_kernel_updated.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_proto_kernel_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.switch_python")
     def test_not_yet_at_required_python(
         self,
         mock_switch_python,
         mock_state_local_venv_dir_abs_path_inited,
-        mock_state_proto_code_file_abs_path_inited,
-        mock_state_proto_code_updated,
+        mock_state_proto_kernel_file_abs_path_inited,
+        mock_state_proto_kernel_updated,
         mock_state_input_start_id_var_loaded,
     ):
 
@@ -60,9 +60,9 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         mock_state_input_start_id_var_loaded.return_value.eval_own_state.return_value = "mock_start_id"
 
-        mock_state_proto_code_file_abs_path_inited.return_value.eval_own_state.return_value = "path/to/whatever"
+        mock_state_proto_kernel_file_abs_path_inited.return_value.eval_own_state.return_value = "path/to/whatever"
 
-        mock_state_proto_code_updated.return_value.eval_own_state.return_value = True
+        mock_state_proto_kernel_updated.return_value.eval_own_state.return_value = True
 
         self.env_ctx._state_stride = StateStride.stride_py_unknown
 
@@ -80,20 +80,20 @@ class ThisTestClass(BasePyfakefsTestClass):
             next_py_exec=StateStride.stride_src_updated,
             next_python_path="/path/to/venv/bin/python",
             start_id="mock_start_id",
-            proto_code_abs_file_path=mock_state_proto_code_file_abs_path_inited.return_value.eval_own_state.return_value,
+            proto_kernel_abs_file_path=mock_state_proto_kernel_file_abs_path_inited.return_value.eval_own_state.return_value,
         )
 
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Factory_state_proto_code_updated.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Factory_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_proto_kernel_updated.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_proto_kernel_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.switch_python")
     def test_already_required_python(
         self,
         mock_switch_python,
         mock_state_local_venv_dir_abs_path_inited,
-        mock_state_proto_code_file_abs_path_inited,
-        mock_state_proto_code_updated,
+        mock_state_proto_kernel_file_abs_path_inited,
+        mock_state_proto_kernel_updated,
         mock_state_input_start_id_var_loaded,
     ):
         """
@@ -109,9 +109,9 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         mock_state_input_start_id_var_loaded.return_value.eval_own_state.return_value = "mock_start_id"
 
-        mock_state_proto_code_file_abs_path_inited.return_value.eval_own_state.return_value = "path/to/whatever"
+        mock_state_proto_kernel_file_abs_path_inited.return_value.eval_own_state.return_value = "path/to/whatever"
 
-        mock_state_proto_code_updated.return_value.eval_own_state.return_value = False
+        mock_state_proto_kernel_updated.return_value.eval_own_state.return_value = False
 
         self.env_ctx._state_stride = StateStride.stride_src_updated
 

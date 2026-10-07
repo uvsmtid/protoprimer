@@ -1,17 +1,28 @@
 ```{eval-rst}
 .. meta::
-   :description: ``protoprimer`` is an arg-less ``python`` one-liner to bootstrap a ``venv`` for repo clones
-   :keywords: bootstrap, venv, install, python, required, version
+   :description: `protoprimer` is an arg-less one-liner to bootstrap isolated repo clones with environment-specific config
+   :keywords: protoprimer, primer, bootstrap, venv, install, python, required, version, isolated, repo, clone, environment, config
 ```
 
 # [![logo](/_static/protoprimer.logo.16x16.png)][protoprimer_github] [`protoprimer`][protoprimer_github]
 
-`protoprimer` is an **arg-less** stand-alone **idempotent** code that switches:
+Do you distribute software via repo clone?
+
+Do **not** write manuals to make it runnable.
+
+Instead:
+
+```sh
+./prime
+# your repo clone
+```
+
+`protoprimer` provides **arg-less** stand-alone **idempotent** bootstrap code that transitions:
 
 *   from **chaos** (the many conditions in which a user may invoke it)
 *   into **order** (an env-specific `venv` with the **required** `python` version)
 
-Eventually, it transfers control to user code:
+It handles messy init details, then it **hands off control** to user code in:
 
 <details>
 <summary>[guaranteed environment]</summary>
@@ -24,7 +35,7 @@ Eventually, it transfers control to user code:
 
     *   build required dependencies from sources
 
-    *   assert system and user config (local or cloud)
+    *   assert system and user config
 
     *   download env-specific data
 
@@ -38,37 +49,73 @@ Eventually, it transfers control to user code:
 
 </details>
 
+## Python?
+
+It has to be `python` to run **right off the bootstrap**:
+
+<details>
+<summary>[have no doubts]</summary>
+
+*   ubiquitous: **any** `python` is a **trivial** requirement to satisfy
+*   script (**text**, not binary): hosted in user repos, providing audit and security
+*   **no** compilation: immediately runnable on the command line after a change
+*   **rich** core SDK: zero dependencies to be useful
+*   cross-platform: avoids excessive branching
+*   vast mind-share: easily maintainable
+*   ...
+
+</details>
+
+User code may prepare to [run **anything** else][pypl_index].
+
 ## When?
 
 When you **avoid conflicting system-wide changes**.
 
-When you want:
+When you want direct execution:
 
 *   to bootstrap an **isolated** repo clone environment with a **one-liner**:
 
     ```sh
-    ./prime
+    ./boot_env
     ```
 
 *   to start an **isolated** app from **co-existing** repo clones at **different versions**:
 
     ```sh
-    ./some_app
+    ./start_app
     ```
 
-*   to eliminate **untestable** non-modular `shell` scripts and automate with `python`.
+When you need a **universal installer** (`diff`-able code, not binary) living with your sources.
 
 ## Why?
 
-You want a **single reproducible step** to run anything.
+Everyone likes a **single reproducible step** to run anything - an end-to-end command.
 
 <details>
 <summary>[imagine otherwise]</summary>
 
 Multiple manual steps are **tedious and error-prone**:
-*   **permute** steps by the number of **users** and repo **clones**
-*   any subsequent update **avalanches** into re-execution of steps
+*   **users**, and repo **clones** they maintain, **multiply**
+*   subsequent update **avalanches** into re-execution of steps
+*   environment conditions **interfere with** the sequence of steps
 *   partial failures, re-ordering, mistakes, ... turn into **a support nightmare**
+*   LLMs fix that with **increased complexity**, wasting more time and money
+
+</details>
+
+<!-- markdownlint-disable-next-line MD026 -->
+## Cases:
+
+Replacing **untested** non-modular init `shell` scripts with **pure** `python` requires:
+
+<details>
+<summary>[robust initialization]</summary>
+
+*   Bootstrapping a cloned repo (local or cloud) to run stuff from it.
+*   Preparing a continuous integration job (after cloning a repo).
+*   Spinning up a container from a minimal base image.
+*   ...
 
 </details>
 
@@ -78,7 +125,7 @@ Multiple manual steps are **tedious and error-prone**:
 The **single-step** bootstrap is a **non-trivial** "chicken and egg" problem!
 
 <details class="indented">
-<summary>[formal proof]</summary>
+<summary>["formal" proof]</summary>
 
 <details class="indented">
 
@@ -95,7 +142,7 @@ The **single-step** bootstrap is a **non-trivial** "chicken and egg" problem!
 <summary>1. <em>"What is the <strong>best</strong> glue for automation, if not <code>python</code>?"</em></summary>
 
 *   readable, testable, modular, cross-platform, ...
-*   huge mind-share, a gazillion packages, ...
+*   vast mind-share, a gazillion packages, ...
 
 **Next:** you need an isolated `venv` for dependencies.
 
@@ -160,9 +207,7 @@ You need to break that 5-to-1 loop.
 
 </details>
 
-The entry script must **evolve while building the environment** end-to-end.
-
-In other words, it must become **both** "the chicken" **and** "the egg".
+The entry script has to **dynamically evolve** with the environment it builds step-by-step.
 
 ## How?
 
@@ -176,72 +221,50 @@ In other words, it must become **both** "the chicken" **and** "the egg".
 
 *   Lands inside a comfy isolated `venv` with all dependencies **pinned**.
 
-    > The custom steps **take over** here.
+    > The user code **takes over** here.
 
-## Python?
+<!-- markdownlint-disable-next-line MD026 -->
+## Specifically...
 
-It has to be `python` to run right off the bootstrap:
+User repo hosts [proto_kernel.py][proto_kernel] - the single script that **survives**:
 
 <details>
-<summary>[have no doubts]</summary>
+<summary>[minimal pre-conditions]</summary>
 
-*   ubiquitous - **any** `python` must be **trivial** to satisfy
-*   script - to be hosted in user repos as **text** (not binary)
-*   compilation-free - otherwise, it **spirals** (other tools have to build the tools)
-*   cross-platform - to avoid excessive branching
-*   widely adopted - to be easily maintainable
+*   only naked `python` of **unpredictable version** in `PATH`
+*   **no** pre-installed dependencies (ignored if any)
+*   **no** pre-activated `venv` (ignored if any)
+*   **no** special `shell` config
+*   **no** user CLI args (by default)
 *   ...
 
 </details>
 
-User code may prepare to [run **anything** else][pypl_index].
+User configures it to prepare:
 
-<!--
+<details>
+<summary>[target environment]</summary>
 
-TODO: Move those sections into main `readme.md`, itemize them with links to `FC_` docs (`feature_topic`-s).
-
-## Details
-
-```{include} /draft_doc/02_advanced/01_solutions.md
-:start-after: final_doc_include_start
-:end-before: final_doc_include_stop
-```
-
--->
-
-<!--
-
-TODO: Put it somewhere: or is it already obvious?
-
-## Why `proto*`?
-
-`proto` = early, when nothing exists yet.
-
-`protoprimer` design aims to survive with **minimal pre-conditions**:
-
-*   no pre-installed dependencies
-*   no pre-initialized `venv`
-*   no required `python` version in `PATH`
-*   no special shell config
-*   no user CLI args to guess (by default)
+*   navigate the user repo directory structure to discover config and packages
+*   handle global (repo-wide) and local (environment-specific) config
+*   provide authn and authz for internal artifact repositories
+*   use "editable install" for local packages
+*   switch to the required `python` version
+*   execute user-specific code
 *   ...
-*   just naked `python` (relatively omnipresent) + [a stand-alone copy][FT_90_65_67_62.proto_code.md] of `protoprimer`.
-
-##
-
-Those early bootstrap steps:
-*   distinguish (A) global repo-wide and (B) local environment-specific configuration
-*   office-friendly: supporting limited permissions, mirrors for package indexes, proxies, etc.
-*   respect flexible repo filesystem layouts - from min to max (choices made by the target client repo)
-*   init `venv`, install the necessary dependencies, pin package versions
-*   switch initial arbitrary OS-picked `python` binary from the `PATH` to the required version
-*   propagate param overrides: config fields - env vars - CLI args
-*   delegate to client-specific modules to do the rest\
-    (**to run more interesting stuff**)
 
 </details>
 
--->
+## Uninstall?
+
+Remove the repo clone.
+
+<div style="text-align: center; margin-top: 8em; margin-bottom: 8em;">
+
+Poke your LLM to see where it fits...
+
+</div>
 
 [protoprimer_github]: https://github.com/uvsmtid/protoprimer
 [pypl_index]: https://pypl.github.io/
+[proto_kernel]: https://github.com/uvsmtid/protoprimer/blob/main/src/proto_code/proto_kernel.py

@@ -15,7 +15,7 @@ import subprocess
 
 from local_test.fat_mocked_helper import run_primer_main
 from local_test.integrated_helper import (
-    create_plain_proto_code,
+    create_plain_proto_kernel,
     create_python_version_file,
     switch_to_ref_root_abs_path,
     test_python_version,
@@ -73,7 +73,7 @@ def _create_instant_scenario_without_protoprimer(
 
     (ref_root_abs_path / "some_app.py").write_text("def some_main():\n" '    print("Hello, world!")\n')
 
-    proto_kernel_abs_path = create_plain_proto_code(ref_root_abs_path)
+    proto_kernel_abs_path = create_plain_proto_kernel(ref_root_abs_path)
 
     return proto_kernel_abs_path
 
@@ -81,17 +81,21 @@ def _create_instant_scenario_without_protoprimer(
 def _generate_and_run_entry_script(
     proto_kernel_abs_path: pathlib.Path,
     entry_func: EntryFunc,
+    with_main_func: bool = True,
 ) -> subprocess.CompletedProcess:
 
     ref_root_abs_path = proto_kernel_abs_path.parent
     entry_script_abs_path = ref_root_abs_path / entry_func.value
 
+    module_name = "some_app" if with_main_func else None
+    func_name = "some_main" if with_main_func else None
+
     entry_script_content = generate_entry_script_content(
         entry_func.value,
         str(proto_kernel_abs_path),
         str(entry_script_abs_path),
-        "some_app",
-        "some_main",
+        module_name,
+        func_name,
     )
     entry_script_abs_path.write_text(entry_script_content)
     entry_script_abs_path.chmod(entry_script_abs_path.stat().st_mode | stat.S_IEXEC)
@@ -151,3 +155,26 @@ def test_boot_env_entry_script_without_protoprimer_dependency(tmp_path: pathlib.
 
     assert entry_script_process.returncode == 0, entry_script_process.stdout + entry_script_process.stderr
     assert "Hello, world!" in entry_script_process.stdout
+
+
+# FT_39_94_24_00.fat_mock.md
+# Not wrapped: needs a real `venv` where `protoprimer` genuinely fails to import.
+def test_boot_env_entry_script_with_empty_main_func(tmp_path: pathlib.Path):
+    """
+    FT_21_75_54_18.instant_scenario.md:
+    `boot_env()` with an empty `--main_func` runs the standard bootstrap
+    to completion and calls no `module:function` - so the app's own
+    `some_main` must NOT run.
+    """
+
+    proto_kernel_abs_path = _create_instant_scenario_without_protoprimer(tmp_path)
+
+    entry_script_process = _generate_and_run_entry_script(
+        proto_kernel_abs_path,
+        EntryFunc.func_boot_env,
+        with_main_func=False,
+    )
+
+    assert entry_script_process.returncode == 0, entry_script_process.stdout + entry_script_process.stderr
+    assert "Hello, world!" not in entry_script_process.stdout
+    assert (proto_kernel_abs_path.parent / "venv").is_dir()

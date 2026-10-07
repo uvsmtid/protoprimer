@@ -41,16 +41,82 @@ def test_parse_args_command():
     cmd = "ls -l"
 
     # when:
-    args = parse_args([ExecOperation.op_boot.value, SyntaxArg.arg_command, cmd])
+    args = parse_args([ExecOperation.op_shell.value, SyntaxArg.arg_command, cmd])
 
     # then:
-    assert getattr(args, ParsedArg.name_command.value) == cmd
+    assert getattr(args, ParsedArg.name_shell_command.value) == cmd
 
     # when: short arg
-    args_c = parse_args([ExecOperation.op_boot.value, SyntaxArg.arg_c, cmd])
+    args_c = parse_args([ExecOperation.op_shell.value, SyntaxArg.arg_c, cmd])
 
     # then: short arg
-    assert getattr(args_c, ParsedArg.name_command.value) == cmd
+    assert getattr(args_c, ParsedArg.name_shell_command.value) == cmd
+
+
+def test_parse_args_start():
+    main_func = "my_module:my_func"
+
+    # when:
+    args = parse_args([ExecOperation.op_start.value, main_func])
+
+    # then:
+    assert getattr(args, ParsedArg.name_exec_operation.value) == ExecOperation.op_start.value
+    assert getattr(args, ParsedArg.name_main_func.value) == main_func
+
+
+def test_parse_args_start_requires_main_func():
+    # when/then:
+    with pytest.raises(SystemExit):
+        parse_args([ExecOperation.op_start.value])
+
+
+def test_parse_args_start_target_args_defaults_to_empty():
+    main_func = "my_module:my_func"
+
+    # when:
+    args = parse_args([ExecOperation.op_start.value, main_func])
+
+    # then:
+    assert getattr(args, ParsedArg.name_target_args.value) == []
+
+
+def test_parse_args_start_captures_target_args_after_double_dash():
+    main_func = "my_module:my_func"
+
+    # when:
+    args = parse_args(
+        [
+            ExecOperation.op_start.value,
+            main_func,
+            SyntaxArg.arg_double_dash,
+            SyntaxArg.arg_verbose,
+            "--foo",
+            "bar",
+        ]
+    )
+
+    # then:
+    assert getattr(args, ParsedArg.name_exec_operation.value) == ExecOperation.op_start.value
+    assert getattr(args, ParsedArg.name_main_func.value) == main_func
+    assert getattr(args, ParsedArg.name_target_args.value) == [SyntaxArg.arg_verbose, "--foo", "bar"]
+    # A `--verbose` placed after `--` must NOT be consumed as protoprimer's own flag:
+    assert getattr(args, SyntaxArg.dest_verbose) == 0
+
+
+def test_parse_args_double_dash_before_exec_operation_is_rejected():
+    main_func = "my_module:my_func"
+
+    # when/then:
+    # `--` eats everything after it (including the `exec_operation` token itself),
+    # leaving `boot` selected by default with a non-empty `target_args`:
+    with pytest.raises(ValueError):
+        parse_args([SyntaxArg.arg_double_dash, ExecOperation.op_start.value, main_func])
+
+
+def test_parse_args_double_dash_with_non_start_op_is_rejected():
+    # when/then:
+    with pytest.raises(ValueError):
+        parse_args([ExecOperation.op_boot.value, SyntaxArg.arg_double_dash, "foo"])
 
 
 def test_parse_args_env():
@@ -125,7 +191,7 @@ def test_parse_args_log_level():
                 ParsedArg.name_selected_env_dir.value: None,
                 SyntaxArg.dest_quiet: 0,
                 SyntaxArg.dest_verbose: 0,
-                ParsedArg.name_command.value: None,
+                ParsedArg.name_target_args.value: [],
             },
         ),
         (
@@ -135,7 +201,7 @@ def test_parse_args_log_level():
                 ParsedArg.name_selected_env_dir.value: None,
                 SyntaxArg.dest_quiet: 0,
                 SyntaxArg.dest_verbose: 0,
-                ParsedArg.name_command.value: None,
+                ParsedArg.name_target_args.value: [],
             },
         ),
         (
@@ -145,6 +211,7 @@ def test_parse_args_log_level():
                 ParsedArg.name_selected_env_dir.value: None,
                 SyntaxArg.dest_quiet: 0,
                 SyntaxArg.dest_verbose: 0,
+                ParsedArg.name_target_args.value: [],
             },
         ),
         (
@@ -154,6 +221,7 @@ def test_parse_args_log_level():
                 ParsedArg.name_selected_env_dir.value: None,
                 SyntaxArg.dest_quiet: 0,
                 SyntaxArg.dest_verbose: 0,
+                ParsedArg.name_target_args.value: [],
             },
         ),
         (
@@ -163,7 +231,7 @@ def test_parse_args_log_level():
                 ParsedArg.name_selected_env_dir.value: None,
                 SyntaxArg.dest_quiet: 1,
                 SyntaxArg.dest_verbose: 0,
-                ParsedArg.name_command.value: None,
+                ParsedArg.name_target_args.value: [],
             },
         ),
         (
@@ -173,7 +241,7 @@ def test_parse_args_log_level():
                 ParsedArg.name_selected_env_dir.value: None,
                 SyntaxArg.dest_quiet: 0,
                 SyntaxArg.dest_verbose: 1,
-                ParsedArg.name_command.value: None,
+                ParsedArg.name_target_args.value: [],
             },
         ),
         (
@@ -183,7 +251,7 @@ def test_parse_args_log_level():
                 ParsedArg.name_selected_env_dir.value: None,
                 SyntaxArg.dest_quiet: 1,
                 SyntaxArg.dest_verbose: 0,
-                ParsedArg.name_command.value: None,
+                ParsedArg.name_target_args.value: [],
             },
         ),
         (
@@ -193,7 +261,7 @@ def test_parse_args_log_level():
                 ParsedArg.name_selected_env_dir.value: None,
                 SyntaxArg.dest_quiet: 0,
                 SyntaxArg.dest_verbose: 3,
-                ParsedArg.name_command.value: None,
+                ParsedArg.name_target_args.value: [],
             },
         ),
         (
@@ -203,7 +271,7 @@ def test_parse_args_log_level():
                 ParsedArg.name_selected_env_dir.value: "some/path",
                 SyntaxArg.dest_quiet: 0,
                 SyntaxArg.dest_verbose: 0,
-                ParsedArg.name_command.value: None,
+                ParsedArg.name_target_args.value: [],
             },
         ),
         (
@@ -213,7 +281,7 @@ def test_parse_args_log_level():
                 ParsedArg.name_selected_env_dir.value: "some/path",
                 SyntaxArg.dest_quiet: 0,
                 SyntaxArg.dest_verbose: 0,
-                ParsedArg.name_command.value: None,
+                ParsedArg.name_target_args.value: [],
             },
         ),
         (
@@ -223,7 +291,7 @@ def test_parse_args_log_level():
                 ParsedArg.name_selected_env_dir.value: "default_env",
                 SyntaxArg.dest_quiet: 0,
                 SyntaxArg.dest_verbose: 0,
-                ParsedArg.name_command.value: None,
+                ParsedArg.name_target_args.value: [],
             },
         ),
     ],

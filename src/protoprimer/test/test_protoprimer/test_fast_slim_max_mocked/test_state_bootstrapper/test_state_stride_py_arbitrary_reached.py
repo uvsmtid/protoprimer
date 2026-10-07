@@ -89,7 +89,7 @@ def test_py_exec_stride_py_unknown_in_venv(
         next_py_exec=StateStride.stride_py_arbitrary,
         next_python_path=mock_get_path_to_base_python.return_value,
         start_id="mock_start_id",
-        proto_code_abs_file_path=None,
+        proto_kernel_abs_file_path=None,
         required_environ={
             ConfConstInput.ext_env_var_PATH: "/usr/bin",
             # NOTE: No more `ConfConstInput.ext_env_var_VIRTUAL_ENV`.
@@ -150,7 +150,7 @@ def test_py_exec_stride_py_unknown_not_in_venv(
         next_py_exec=StateStride.stride_py_arbitrary,
         next_python_path=mock_get_path_to_base_python.return_value,
         start_id="mock_start_id",
-        proto_code_abs_file_path=None,
+        proto_kernel_abs_file_path=None,
         required_environ={
             ConfConstInput.ext_env_var_PATH: "/path/to/venv/bin:/usr/bin",
         },

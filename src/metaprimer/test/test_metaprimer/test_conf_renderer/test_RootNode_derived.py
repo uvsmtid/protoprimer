@@ -27,7 +27,7 @@ def test_render_derived_config_data_with_unused_fields():
                 ],
             },
         ],
-        EnvState.state_proto_code_file_abs_path_inited.name: "/abs/path/to/proto.py",
+        EnvState.state_proto_kernel_file_abs_path_inited.name: "/abs/path/to/proto.py",
         "whatever_test": 5,
     }
 
@@ -45,8 +45,8 @@ leap_derived = (
     \n\
     {{
         \n\
-        {TermColor.config_comment.value}# This value is derived from `state_proto_code_file_abs_path_inited` - see description in `leap_input`.{TermColor.reset_style.value}
-        "{EnvState.state_proto_code_file_abs_path_inited.name}": "/abs/path/to/proto.py",
+        {TermColor.config_comment.value}# This value is derived from `state_proto_kernel_file_abs_path_inited` - see description in `leap_input`.{TermColor.reset_style.value}
+        "{EnvState.state_proto_kernel_file_abs_path_inited.name}": "/abs/path/to/proto.py",
         \n\
         {TermColor.config_missing.value}# This value is derived from `state_primer_conf_file_abs_path_inited` - see description in `leap_input`.{TermColor.reset_style.value}
         {TermColor.config_missing.value}# "state_primer_conf_file_abs_path_inited": None,{TermColor.reset_style.value}
@@ -127,7 +127,7 @@ def test_render_derived_config_data_with_unused_fields_quiet():
                 ],
             },
         ],
-        EnvState.state_proto_code_file_abs_path_inited.name: "/abs/path/to/proto.py",
+        EnvState.state_proto_kernel_file_abs_path_inited.name: "/abs/path/to/proto.py",
         "whatever_test": 5,
     }
 
@@ -139,7 +139,7 @@ def test_render_derived_config_data_with_unused_fields_quiet():
     expected_output = f"""\
 leap_derived = (
     {{
-        "state_proto_code_file_abs_path_inited": "/abs/path/to/proto.py",
+        "state_proto_kernel_file_abs_path_inited": "/abs/path/to/proto.py",
         "state_project_descriptors_inited": [
             {{
                 "build_root_dir_rel_path": "src/test_project",

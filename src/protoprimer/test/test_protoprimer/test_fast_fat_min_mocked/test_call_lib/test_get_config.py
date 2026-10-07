@@ -142,7 +142,7 @@ def test_get_config_with_leap_derived(proto_kernel_abs_path):
     # then:
 
     assert conf_data.keys() == {
-        EnvState.state_proto_code_file_abs_path_inited.name,
+        EnvState.state_proto_kernel_file_abs_path_inited.name,
         EnvState.state_primer_conf_file_abs_path_inited.name,
         EnvState.state_ref_root_dir_abs_path_inited.name,
         EnvState.state_global_conf_dir_abs_path_inited.name,
@@ -154,6 +154,7 @@ def test_get_config_with_leap_derived(proto_kernel_abs_path):
         EnvState.state_selected_python_file_abs_path_inited.name,
         EnvState.state_local_venv_dir_abs_path_inited.name,
         EnvState.state_local_log_dir_abs_path_inited.name,
+        EnvState.state_local_run_dir_abs_path_inited.name,
         EnvState.state_local_tmp_dir_abs_path_inited.name,
         EnvState.state_local_cache_dir_abs_path_inited.name,
         EnvState.state_venv_driver_inited.name,

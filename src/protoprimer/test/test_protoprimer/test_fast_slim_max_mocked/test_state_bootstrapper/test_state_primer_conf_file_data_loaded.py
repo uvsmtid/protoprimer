@@ -13,7 +13,7 @@ from protoprimer.primer_kernel import (
     ContextBuilder,
     EntryFunc,
     Factory_state_print_conf_finalized,
-    Factory_state_proto_code_file_abs_path_inited,
+    Factory_state_proto_kernel_file_abs_path_inited,
     EnvContext,
     EnvState,
     StateStride,
@@ -42,12 +42,12 @@ class ThisTestClass(BasePyfakefsTestClass):
         assert_test_module_name_embeds_str(EnvState.state_primer_conf_file_data_loaded.name)
 
     @patch(f"{primer_kernel.__name__}.{Factory_state_print_conf_finalized.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Factory_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_proto_kernel_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_primer_conf_file_abs_path_inited.__name__}.create_state_node")
     def test_conf_file_exists(
         self,
         mock_state_primer_conf_file_abs_path_inited,
-        mock_state_proto_code_file_abs_path_inited,
+        mock_state_proto_kernel_file_abs_path_inited,
         mock_state_print_conf_finalized,
     ):
 
@@ -72,12 +72,12 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.assertEqual(state_value, {"test": "data"})
 
     @patch(f"{primer_kernel.__name__}.{Factory_state_print_conf_finalized.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Factory_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_proto_kernel_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_primer_conf_file_abs_path_inited.__name__}.create_state_node")
     def test_conf_file_missing(
         self,
         mock_state_primer_conf_file_abs_path_inited,
-        mock_state_proto_code_file_abs_path_inited,
+        mock_state_proto_kernel_file_abs_path_inited,
         mock_state_print_conf_finalized,
     ):
 
@@ -104,12 +104,12 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.assertEqual({}, state_value)
 
     @patch(f"{primer_kernel.__name__}.{Factory_state_print_conf_finalized.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Factory_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_proto_kernel_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_primer_conf_file_abs_path_inited.__name__}.create_state_node")
     def test_conf_file_malformed(
         self,
         mock_state_primer_conf_file_abs_path_inited,
-        mock_state_proto_code_file_abs_path_inited,
+        mock_state_proto_kernel_file_abs_path_inited,
         mock_state_print_conf_finalized,
     ):
 

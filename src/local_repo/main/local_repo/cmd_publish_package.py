@@ -40,8 +40,6 @@ logger: logging.Logger = logging.getLogger()
 
 def custom_main():
 
-    parsed_args = init_arg_parser().parse_args()
-
     derived_data = configure_script(script_basename=os.path.basename(sys.argv[0]))
 
     ref_root_abs_path: str = derived_data[EnvState.state_ref_root_dir_abs_path_inited.name]
@@ -50,10 +48,12 @@ def custom_main():
     script_conf_path = os.path.join(env_conf_dir, "publish_package.json")
     script_conf = read_json_file(script_conf_path) if os.path.exists(script_conf_path) else {}
 
+    parsed_args = init_arg_parser(default_repository_url=script_conf.get("repository_url")).parse_args()
+
     _publish_package(
         ref_root_abs_path=ref_root_abs_path,
         package_name=parsed_args.package_name,
-        repository_url=parsed_args.repository_url or script_conf.get("repository_url"),
+        repository_url=parsed_args.repository_url,
         no_tag=parsed_args.no_tag or parsed_args.dry_run,
         allow_dirty=parsed_args.allow_dirty,
         dry_run=parsed_args.dry_run,
@@ -83,7 +83,7 @@ re_local_version = r"^\d+\.\d+\.\d+\+\w+$"
 re_release_version = r"^\d+\.\d+\.\d+$"
 
 
-def init_arg_parser():
+def init_arg_parser(default_repository_url: Optional[str] = None):
 
     arg_parser = argparse.ArgumentParser(
         description="Publish given package to pypi.org",
@@ -98,7 +98,7 @@ def init_arg_parser():
     arg_parser.add_argument(
         "--repository_url",
         type=str,
-        default=None,
+        default=default_repository_url,
         help="Repository URL for twine upload.",
     )
     arg_parser.add_argument(

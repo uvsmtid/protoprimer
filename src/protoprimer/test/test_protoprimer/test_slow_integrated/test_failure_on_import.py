@@ -6,7 +6,7 @@ from local_test.integrated_helper import (
     create_conf_client_file,
     create_conf_env_file,
     create_conf_primer_file,
-    create_plain_proto_code,
+    create_plain_proto_kernel,
     create_test_pyproject_toml,
     switch_to_ref_root_abs_path,
     test_pyproject_src_dir_rel_path,
@@ -25,11 +25,11 @@ def test_failure_on_import(tmp_path: pathlib.Path):
     ref_root_abs_path = switch_to_ref_root_abs_path(tmp_path)
 
     # ===
-    proto_code_dir_abs_path = ref_root_abs_path / ConfConstInput.default_proto_conf_dir_rel_path
-    proto_kernel_abs_path = create_plain_proto_code(proto_code_dir_abs_path)
+    proto_kernel_dir_abs_path = ref_root_abs_path / ConfConstInput.default_proto_conf_dir_rel_path
+    proto_kernel_abs_path = create_plain_proto_kernel(proto_kernel_dir_abs_path)
     create_conf_primer_file(
         ref_root_abs_path,
-        proto_code_dir_abs_path,
+        proto_kernel_dir_abs_path,
     )
 
     # ===

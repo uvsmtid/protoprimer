@@ -1,0 +1,138 @@
+import os
+from unittest.mock import patch
+
+import protoprimer
+from local_test.base_test_class import BasePyfakefsTestClass
+from local_test.mock_verifier import (
+    assert_parent_factories_mocked,
+)
+from local_test.name_assertion import assert_test_module_name_embeds_str
+from protoprimer import primer_kernel
+from protoprimer.primer_kernel import (
+    Factory_state_proto_kernel_file_abs_path_inited,
+    Factory_state_stride_deps_updated_reached,
+    ConfConstGeneral,
+    ContextBuilder,
+    EntryFunc,
+    EnvContext,
+    EnvState,
+    ExecOperation,
+    StateStride,
+    Factory_state_input_exec_operation_loaded,
+)
+
+
+# noinspection PyPep8Naming
+class ThisTestClass(BasePyfakefsTestClass):
+
+    def setUp(self):
+        self.setUpPyfakefs()
+        self.env_ctx = (
+            ContextBuilder()
+            #
+            .entry_func(EntryFunc.func_boot_env)
+            #
+            .is_app(True)
+            #
+            .build_context()
+        )
+
+    # noinspection PyMethodMayBeStatic
+    def test_relationship(self):
+        assert_test_module_name_embeds_str(EnvState.state_proto_kernel_updated.name)
+
+    @patch(f"{primer_kernel.__name__}.{Factory_state_proto_kernel_file_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_stride_deps_updated_reached.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{EnvContext.__name__}.{EnvContext.get_stride.__name__}")
+    def test_state_proto_kernel_updated(
+        self,
+        mock_get_stride,
+        mock_state_input_exec_operation_loaded,
+        mock_state_stride_deps_updated_reached,
+        mock_state_proto_kernel_file_abs_path_inited,
+    ):
+
+        # given:
+
+        assert_parent_factories_mocked(
+            self.env_ctx,
+            EnvState.state_proto_kernel_updated.name,
+        )
+
+        mock_client_dir = "/mock_client_dir"
+        self.fs.create_dir(mock_client_dir)
+        os.chdir(mock_client_dir)
+
+        # proto_kernel copy:
+        proto_kernel_abs_file_path = os.path.join(
+            mock_client_dir,
+            ConfConstGeneral.default_proto_kernel_basename,
+        )
+        self.fs.create_file(proto_kernel_abs_file_path)
+
+        # proto_kernel orig (in fake filesystem):
+        self.fs.create_file(
+            protoprimer.primer_kernel.__file__,
+            # Not real code, just 1000 empty lines:
+            contents="\n" * 1000,
+        )
+        mock_get_stride.return_value = StateStride.stride_deps_updated
+
+        mock_state_stride_deps_updated_reached.return_value.eval_own_state.return_value = StateStride.stride_deps_updated
+
+        mock_state_proto_kernel_file_abs_path_inited.return_value.eval_own_state.return_value = proto_kernel_abs_file_path
+        mock_state_input_exec_operation_loaded.return_value.eval_own_state.return_value = ExecOperation.op_boot
+
+        # when:
+
+        self.env_ctx.eval_state(EnvState.state_proto_kernel_updated.name)
+
+        # then:
+
+        proto_kernel_obj = self.fs.get_object(proto_kernel_abs_file_path)
+        self.assertIn(
+            ConfConstGeneral.func_get_proto_kernel_generated_boilerplate_single_header(protoprimer.primer_kernel),
+            proto_kernel_obj.contents,
+        )
+        self.assertIn(
+            ConfConstGeneral.func_get_proto_kernel_generated_boilerplate_multiple_body(protoprimer.primer_kernel),
+            proto_kernel_obj.contents,
+        )
+
+    @patch(
+        f"{primer_kernel.__name__}.is_venv",
+        return_value=True,
+    )
+    @patch(f"{primer_kernel.__name__}.{Factory_state_proto_kernel_file_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_stride_deps_updated_reached.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{EnvContext.__name__}.{EnvContext.get_stride.__name__}")
+    @patch(f"{primer_kernel.__name__}.{Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
+    def test_import_error_when_protoprimer_is_missing(
+        self,
+        mock_state_input_exec_operation_loaded,
+        mock_get_stride,
+        mock_state_stride_deps_updated_reached,
+        mock_state_proto_kernel_file_abs_path_inited,
+        mock_is_venv,
+    ):
+        # given:
+        assert_parent_factories_mocked(
+            self.env_ctx,
+            EnvState.state_proto_kernel_updated.name,
+        )
+        mock_get_stride.return_value = StateStride.stride_deps_updated
+
+        fake_path = "/fake/path"
+        self.fs.create_file(fake_path)
+        mock_state_proto_kernel_file_abs_path_inited.return_value.eval_own_state.return_value = fake_path
+        mock_state_input_exec_operation_loaded.return_value.eval_own_state.return_value = ExecOperation.op_boot
+
+        # when:
+        with patch.dict("sys.modules", {"protoprimer": None}):
+            with self.assertLogs(primer_kernel.logger, level="WARNING") as cm:
+                result = self.env_ctx.eval_state(EnvState.state_proto_kernel_updated.name)
+
+        # then:
+        self.assertFalse(result)
+        self.assertIn("Module `protoprimer` is missing in `venv`", cm.output[0])

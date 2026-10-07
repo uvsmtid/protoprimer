@@ -7,6 +7,8 @@ on:
         # Keep running periodically to detect issues with newly released dependencies:
         # Every day at 18:00 SGT:
         -   cron: "0 10 * * *"
+permissions:
+    contents: read
 jobs:
     bootstrap_scenarios:
         runs-on: ubuntu-latest
@@ -47,5 +49,7 @@ jobs:
             -   run: |
                     ${{ github.workspace }}/venv/bin/python --version
                     ${{ github.workspace }}/venv/bin/python -m pytest
+                env:
+                    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
             -   run: "echo job.status: ${{ job.status }}"

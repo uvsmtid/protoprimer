@@ -19,16 +19,6 @@ class Boot(Command):
     Bootstrap the environment to make it ready to use.
     """
 
-    def get_parser(self, prog_name):
-        parser = super().get_parser(prog_name)
-        parser.add_argument(
-            "-c",
-            "--command",
-            dest="run_command",
-            metavar="run_command",
-        )
-        return parser
-
     def take_action(self, parsed_args):
         pass
 
@@ -196,8 +186,6 @@ def test_cli_structure_compatibility():
         (["boot", "--env", "my_env"], "selected_env_dir", "my_env"),
         (["-e", "my_env", "eval"], "selected_env_dir", "my_env"),
         (["eval", "-e", "my_env"], "selected_env_dir", "my_env"),
-        (["boot", "-c", "my_cmd"], "run_command", "my_cmd"),
-        (["boot", "--command", "my_cmd"], "run_command", "my_cmd"),
     ],
 )
 def test_parse_args_behavior(argv, expected_dest, expected_val):

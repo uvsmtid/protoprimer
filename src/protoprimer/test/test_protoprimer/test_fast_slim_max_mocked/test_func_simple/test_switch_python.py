@@ -31,7 +31,7 @@ def test_switch_python(
     next_py_exec = StateStride.stride_py_required
     next_python_path = "/usr/bin/python3.9"
     start_id = "test_start_id"
-    proto_code_abs_file_path = "/path/to/proto_kernel.py"
+    proto_kernel_abs_file_path = "/path/to/proto_kernel.py"
 
     # when:
     switch_python(
@@ -39,7 +39,7 @@ def test_switch_python(
         next_py_exec,
         next_python_path,
         start_id,
-        proto_code_abs_file_path,
+        proto_kernel_abs_file_path,
     )
 
     # then:
@@ -55,7 +55,7 @@ def test_switch_python(
         env={
             EnvVar.var_PROTOPRIMER_PY_EXEC.value: StateStride.stride_py_required.name,
             EnvVar.var_PROTOPRIMER_START_ID.value: start_id,
-            EnvVar.var_PROTOPRIMER_PROTO_CODE.value: proto_code_abs_file_path,
+            EnvVar.var_PROTOPRIMER_PROTO_KERNEL.value: proto_kernel_abs_file_path,
         },
     )
 
@@ -75,7 +75,7 @@ def test_switch_python_trace_execution(
     next_py_exec = StateStride.stride_py_required
     next_python_path = "/usr/bin/python3.9"
     start_id = "test_start_id"
-    proto_code_abs_file_path = "/path/to/proto_kernel.py"
+    proto_kernel_abs_file_path = "/path/to/proto_kernel.py"
 
     # when:
     switch_python(
@@ -83,7 +83,7 @@ def test_switch_python_trace_execution(
         next_py_exec,
         next_python_path,
         start_id,
-        proto_code_abs_file_path,
+        proto_kernel_abs_file_path,
     )
 
     # then:
@@ -103,7 +103,7 @@ def test_switch_python_trace_execution(
             EnvVar.var_PROTOPRIMER_TRACE_EXECUTION.value: "true",
             EnvVar.var_PROTOPRIMER_PY_EXEC.value: StateStride.stride_py_required.name,
             EnvVar.var_PROTOPRIMER_START_ID.value: start_id,
-            EnvVar.var_PROTOPRIMER_PROTO_CODE.value: proto_code_abs_file_path,
+            EnvVar.var_PROTOPRIMER_PROTO_KERNEL.value: proto_kernel_abs_file_path,
         },
     )
 
@@ -111,7 +111,7 @@ def test_switch_python_trace_execution(
 @patch.dict(f"{os.__name__}.environ", {}, clear=True)
 @patch.object(sys, "argv", ["/path/to/script.py", "--some-arg"])
 @patch(f"{os.__name__}.execve")
-def test_switch_python_no_proto_code(
+def test_switch_python_no_proto_kernel(
     mock_execve: MagicMock,
 ):
     # given:
@@ -120,7 +120,7 @@ def test_switch_python_no_proto_code(
     next_py_exec = StateStride.stride_py_required
     next_python_path = "/usr/bin/python3.9"
     start_id = "test_start_id"
-    proto_code_abs_file_path = None
+    proto_kernel_abs_file_path = None
 
     # when:
     switch_python(
@@ -128,7 +128,7 @@ def test_switch_python_no_proto_code(
         next_py_exec,
         next_python_path,
         start_id,
-        proto_code_abs_file_path,
+        proto_kernel_abs_file_path,
     )
 
     # then:

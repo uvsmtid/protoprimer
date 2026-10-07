@@ -1,0 +1,6 @@
+{% extends "!page.html" %}
+
+{% block body %}
+<p class="edit-on-github">[<a class="reference external" href="{{ github_source_base }}{{ pagename }}{{ page_source_suffix }}">source</a>]</p>
+{{ super() }}
+{% endblock %}

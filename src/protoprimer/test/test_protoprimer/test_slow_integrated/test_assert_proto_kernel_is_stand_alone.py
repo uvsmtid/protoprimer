@@ -120,7 +120,7 @@ def test_assert_proto_kernel_is_stand_alone_passes_for_standalone_copy(
         clean_env,
     ) = installed_venv
 
-    standalone_copy = tmp_path / ConfConstGeneral.default_proto_code_basename
+    standalone_copy = tmp_path / ConfConstGeneral.default_proto_kernel_basename
     shutil.copy(
         primer_kernel_abs_path_in_venv,
         standalone_copy,

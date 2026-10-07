@@ -23,7 +23,7 @@ from protoprimer.primer_kernel import (
     Bootstrapper_state_local_venv_dir_abs_path_inited,
     Bootstrapper_state_primer_conf_file_abs_path_inited,
     Bootstrapper_state_project_descriptors_inited,
-    Factory_state_proto_code_file_abs_path_inited,
+    Factory_state_proto_kernel_file_abs_path_inited,
     Bootstrapper_state_ref_root_dir_abs_path_inited,
     Factory_state_selected_env_dir_rel_path_inited,
     Bootstrapper_state_selected_python_file_abs_path_inited,
@@ -39,7 +39,7 @@ def test_relationship():
 @patch("sys.argv", [""])
 @patch(f"{primer_kernel.__name__}.{Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Factory_state_input_stderr_log_level_eval_finalized.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Factory_state_proto_code_file_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Factory_state_proto_kernel_file_abs_path_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_primer_conf_file_abs_path_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_global_conf_dir_abs_path_inited.__name__}.create_state_node")
@@ -73,7 +73,7 @@ def test_state_evaluation(
     mock_create_state_global_conf_dir_abs_path_inited,
     mock_create_state_ref_root_dir_abs_path_inited,
     mock_create_state_primer_conf_file_abs_path_inited,
-    mock_create_state_proto_code_file_abs_path_inited,
+    mock_create_state_proto_kernel_file_abs_path_inited,
     mock_create_state_input_stderr_log_level_eval_finalized,
     mock_create_state_input_exec_operation_loaded,
 ):
@@ -87,7 +87,7 @@ def test_state_evaluation(
         Bootstrapper_state_derived_conf_data_loaded_rendered._state_name(),
     )
 
-    mock_create_state_proto_code_file_abs_path_inited.return_value.eval_own_state.return_value = "/mock/proto_code/proto_kernel.json"
+    mock_create_state_proto_kernel_file_abs_path_inited.return_value.eval_own_state.return_value = "/mock/proto_code/proto_kernel.json"
     mock_create_state_primer_conf_file_abs_path_inited.return_value.eval_own_state.return_value = "/mock/primer.json"
     mock_create_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = "/mock/ref_root"
     mock_create_state_global_conf_dir_abs_path_inited.return_value.eval_own_state.return_value = "/mock/gconf"

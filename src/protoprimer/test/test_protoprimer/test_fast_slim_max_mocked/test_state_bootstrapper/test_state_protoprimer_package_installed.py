@@ -15,7 +15,6 @@ from protoprimer.primer_kernel import (
     Factory_state_stride_py_venv_reached,
     Factory_state_venv_driver_prepared,
     Bootstrapper_state_version_constraints_file_basename_inited,
-    CommandAction,
     ConfConstClient,
     ConfField,
     ContextBuilder,

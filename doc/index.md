@@ -16,6 +16,8 @@ myst:
 :maxdepth: 1
 
 Intro <intro>
-Manual <manual>
-reference
+Runtime <runtime>
+Reference <reference>
+Background <background>
+Alternatives <alternatives>
 ```

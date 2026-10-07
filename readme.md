@@ -20,24 +20,24 @@ TODO: Use links to FC/UC docs under `./doc` (when ready) from this readme to nav
 
 # <code><a href="https://protoprimer.readthedocs.io/"><img src="doc/_static/protoprimer.logo.svg" alt="logo" style="width: 11ch; height: auto;"></a></code> <code><img src="doc/_static/shell_snippet.svg" alt="shell snippet" style="height: 11ch; width: auto;"></code>
 
-Want your users to run software **isolated** in a `git` repo after a single, zero-argument, healing command?
+Want your users to run software **isolated** in a `git` repo after a single zero-argument command?
 
 ```sh
 ./prime
 ```
 
-Please [read the docs][protoprimer_readthedocs] for an intro.
+See the [Intro][protoprimer_readthedocs] doc.
 
 ## TL;DR
 
 `protoprimer` employs ubiquitous `python` for version pinning to provide a robust alternative to `shell`:
 
-*   First, a shim is executed by a **wild** `python` version found in `PATH` invoking `protoprimer`.
-*   Last, `protoprimer` executes user code by the **required** `python` version from configured `venv`.
+*   First, a **wild** `python` version found in `PATH` executes a shim that invokes `protoprimer`.
+*   Last, `protoprimer` executes user code by the **required** `python` version from the configured `venv`.
 
 It works without `shebang` for `venv` to **avoid hardcoding** absolute paths and keep repo clones **relocatable**.
 
-## Typical usage
+## Direct usage
 
 *   Bootstrap (default env):
 
@@ -66,18 +66,20 @@ It works without `shebang` for `venv` to **avoid hardcoding** absolute paths and
 *   Start an interactive `shell` with an activated `venv`:
 
     ```
-    ./cmd/venv_shell
+    ./prime shell
     ```
 
-*   Run a function from a module in `venv` via an `entry_script` wrapper:
+*   Run a function from a module in `venv`:
 
     ```
-    ./cmd/start_app_example
+    ./prime start "some_module:some_func"
     ```
 
 <a id="protoprimer-quick-start"></a>
 
-## Quick start
+## Initial integration
+
+See the [Runtime][protoprimer_readthedocs] doc.
 
 You need to "seed" your repo with a copy of the [`proto_kernel.py`][local_proto_kernel.py] script:
 
@@ -128,14 +130,14 @@ graph LR;
 
 ## Entry functions
 
-There are two entry functions - see details in [boot_vs_start][FT_58_74_37_70.boot_vs_start.md]:
+There are two primary entry functions - see details in [boot_vs_start][FT_58_74_37_70.boot_vs_start.md]:
 
-| Function:    | [start_app][FT_05_08_64_67.start_app.md]                     | [boot_env][FT_85_17_35_21.boot_env.md]                |
-|--------------|--------------------------------------------------------------|-------------------------------------------------------|
-| Purpose:     | run **arbitrary** script<br>from `venv` by required `python` | **extend** the default bootstrap<br>with custom steps |
-| Cardinality: | **many** scripts per project                                 | **one** script per project                            |
-| Executes:    | smaller part of `proto_kernel`                               | bigger part of `proto_kernel`                         |
-| Example:     | `./cmd/start_app_example`                                    | `./cmd/boot_env_example`                              |
+| Function:    | [start_app][FT_05_08_64_67.start_app.md]                              | [boot_env][FT_85_17_35_21.boot_env.md]                 |
+|--------------|-----------------------------------------------------------------------|--------------------------------------------------------|
+| Purpose:     | run an **arbitrary** script<br>from `venv` with the required `python` | **extend** the default bootstrap<br>with custom steps  |
+| Cardinality: | **many** scripts per project                                          | **one** script per project                             |
+| Executes:    | smaller part of `proto_kernel`                                        | bigger part of `proto_kernel`                          |
+| Example:     | `./cmd/start_app_example`                                             | `./cmd/boot_env_example`                               |
 
 <a id="protoprimer-first-examples"></a>
 
@@ -149,7 +151,10 @@ This `entry_script` invokes the [cmd_start_app_example][cmd_start_app_example] s
 ./cmd/start_app_example
 ```
 
-`proto_kernel.start_app` **delegates** execution to an arbitrary `custom_start_app_main` function:
+<details>
+<summary><code>proto_kernel.start_app</code> <strong>delegates</strong> execution to a user function:</summary>
+
+<br>
 
 ```py
 # ./cmd/start_app_example:
@@ -160,6 +165,8 @@ proto_kernel.start_app(
 )
 ```
 
+</details>
+
 ### Baseline bootstrap script invoked via `boot_env`
 
 This `entry_script` extends the bootstrap sequence via the [cmd_boot_env_example][cmd_boot_env_example] script:
@@ -168,7 +175,10 @@ This `entry_script` extends the bootstrap sequence via the [cmd_boot_env_example
 ./cmd/boot_env_example
 ```
 
-`proto_kernel.boot_env` **triggers** all the bootstrap steps before invoking the `custom_boot_env_main` function:
+<details>
+<summary><code>proto_kernel.boot_env</code> <strong>triggers</strong> the bootstrap process before invoking a user function:</summary>
+
+<br>
 
 ```py
 # ./cmd/boot_env_example:
@@ -179,19 +189,21 @@ proto_kernel.boot_env(
 )
 ```
 
+</details>
+
 ## Basic terms
 
 <a id="protoprimer-proto-code"></a>
 
-### Any [proto_code][FT_90_65_67_62.proto_code.md]
+### [proto_code][FT_90_65_67_62.proto_code.md]
 
 Any code designed to be executed by an arbitrary (wild) `python` version is called `proto_code`.
 
-In short, `proto_code` is what runs outside `venv` before switching into it.
+In short, `proto_code` is what runs **outside** `venv` (before switching into it).
 
 <a id="protoprimer-proto-kernel"></a>
 
-### Single [proto_kernel][FT_87_17_49_36.proto_kernel.md]
+### [proto_kernel][FT_87_17_49_36.proto_kernel.md]
 
 Your own copy of `proto_kernel.py` is an example of `proto_code`.
 
@@ -199,11 +211,11 @@ It implements in-flight `python` runtime switching - the **hard** part provided 
 
 <a id="protoprimer-entry-script"></a>
 
-### Multiple [entry_script][FT_75_87_82_46.entry_script.md]-s
+### [entry_script][FT_75_87_82_46.entry_script.md]
 
 An `entry_script` is also `proto_code` - a shim to invoke `proto_kernel`.
 
-They are convenient wrappers to invoke any function - the **easy** part as they only delegate:
+It is a convenient wrapper around `venv` function - the **easy** part as they only delegate:
 
 ```sh
 ./cmd/start_app_example
@@ -226,9 +238,3 @@ They are convenient wrappers to invoke any function - the **easy** part as they 
 
 [cmd_boot_env_example]: src/local_doc/main/local_doc/cmd_boot_env_example.py
 [cmd_start_app_example]: src/local_doc/main/local_doc/cmd_start_app_example.py
-
-<!-- markdownlint-disable MD051 -->
-<!--
-NOTE: This "user-content-" prefix is added by github.com when it renders the Markdown into HTML.
--->
-<!-- markdownlint-enable -->

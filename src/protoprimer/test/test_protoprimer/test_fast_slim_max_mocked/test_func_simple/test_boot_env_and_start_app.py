@@ -14,6 +14,7 @@ from protoprimer.primer_kernel import (
     proto_main,
     start_app,
     boot_env,
+    ConfConstGeneral,
     EntryFunc,
     EnvVar,
     ExecOperation,
@@ -40,6 +41,25 @@ class TestStartMain:
     def test_invalid_main_func_format(self):
         with pytest.raises(ValueError):
             _start_main(EntryFunc.func_boot_env, "invalid_format")
+
+    @patch.dict(os.environ, {}, clear=True)
+    def test_empty_main_func_rejected_for_start_app(self):
+        with pytest.raises(ValueError):
+            _start_main(EntryFunc.func_start_app, ConfConstGeneral.default_proto_main)
+
+    @patch.dict(
+        os.environ,
+        {EnvVar.var_PROTOPRIMER_PY_EXEC.value: StateStride.stride_src_updated.name},
+        clear=True,
+    )
+    def test_empty_main_func_boot_env_runs_standard_bootstrap(self):
+        # when
+        _start_main(EntryFunc.func_boot_env, ConfConstGeneral.default_proto_main)
+
+        # then
+        assert os.environ[EnvVar.var_PROTOPRIMER_MAIN_FUNC.value] == ConfConstGeneral.default_proto_main
+        self.mock_import_module.assert_not_called()
+        self.mock_run_process.assert_called_once()
 
     @patch.dict(
         os.environ,

@@ -37,7 +37,7 @@ def test_replace_single_header_in_empty_lines(fs):
 
     # when:
 
-    header_text = ConfConstGeneral.func_get_proto_code_generated_boilerplate_single_header(pk_mod)
+    header_text = ConfConstGeneral.func_get_proto_kernel_generated_boilerplate_single_header(pk_mod)
     result = _replace_single_header_in_empty_lines(
         input_text=read_text_file(input_path),
         boilerplate_text=header_text,
