@@ -16,6 +16,7 @@ myst:
 :maxdepth: 1
 
 Intro <intro>
+Config <config>
 Runtime <runtime>
 Reference <reference>
 Background <background>

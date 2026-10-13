@@ -215,6 +215,11 @@ You want to **isolate** users from any **error-prone** special cases using a **o
 
 Seed the repo with `proto_kernel.py` from `protoprimer`:
 
+```{include} ../readme.md
+:start-after: <!-- diagram:proto_kernel_copy:start -->
+:end-before: <!-- diagram:proto_kernel_copy:end -->
+```
+
 ```diff
  ^/
  │

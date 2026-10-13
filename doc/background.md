@@ -109,43 +109,9 @@ An app started via `protoprimer` switches to `venv` - no (explicit) `activate` n
 
 See the difference:
 
-```mermaid
-flowchart LR;
-    heavy_minus["➖"];
-    shell_exec["any<br>`shell`<br>executable"];
-    subgraph "sh"
-        sh_entry_script["entry script<br>like<br>`prime`"];
-        embedded_code["re-invented<br>ad-hoc<br>non-modular<br>`shell` script"];
-    end
-
-    heavy_plus["➕"];
-    python_exec["any<br>`python`<br>executable"];
-    subgraph "py"
-        py_entry_script["entry script<br>like<br>`prime`"];
-        py_bootstrap_code["tested<br>bootstrap code<br>from<br>`protoprimer`"];
-    end
-
-    external_exec["other<br>(external)<br>executables"];
-
-    invis_block[ ];
-
-    heavy_minus ~~~ shell_exec;
-    shell_exec --runs--> sh_entry_script;
-    sh_entry_script --with--> embedded_code;
-
-    heavy_plus ~~~ python_exec;
-    python_exec --runs--> py_entry_script;
-    py_entry_script --with--> py_bootstrap_code;
-
-    embedded_code --invokes--> external_exec;
-    py_bootstrap_code --invokes--> external_exec;
-
-    external_exec ~~~ invis_block;
-
-    style heavy_minus fill:none,stroke:none;
-    style heavy_plus fill:none,stroke:none;
-
-    style invis_block fill:none,stroke:none;
+```{include} ../readme.md
+:start-after: <!-- diagram:sh_vs_py:start -->
+:end-before: <!-- diagram:sh_vs_py:end -->
 ```
 
 Looks identical, yet `protoprimer` **pins** and **isolates**, while `shell` does **not**.

@@ -14,7 +14,7 @@ TODO: Use links to FC/UC docs under `./doc` (when ready) from this readme to nav
 
 # `protoprimer`
 
-... eliminates `shell` scripts right off the bootstrap:
+... eliminates `shell` scripts **right off the bootstrap**:
 
 <!-- NOTE: style="width: 11ch" ~ 11 chars = len("protoprimer"); snippet locked to height: 11ch so both track the same ch unit -->
 
@@ -35,6 +35,53 @@ See the [Intro][protoprimer_readthedocs] doc.
 *   First, a **wild** `python` version found in `PATH` executes a shim that invokes `protoprimer`.
 *   Last, `protoprimer` executes user code by the **required** `python` version from the configured `venv`.
 
+Compare:
+
+<!-- diagram:sh_vs_py:start -->
+```mermaid
+%%{init: {"look": "handDrawn", "theme": "neutral"}}%%
+flowchart LR;
+    heavy_minus["➖ del `*.sh`"];
+    shell_exec["any<br>`shell`<br>executable"];
+    subgraph "sh"
+        sh_entry_script["entry script<br>like<br>`prime`"];
+        embedded_code["re-invented<br>ad-hoc<br>non-modular<br>`shell` script"];
+    end
+
+    heavy_plus["➕ add `*.py`"];
+    python_exec["any<br>`python`<br>executable"];
+    subgraph "py"
+        py_entry_script["entry script<br>like<br>`prime`"];
+        py_bootstrap_code["tested<br>bootstrap code<br>from<br>`protoprimer`"];
+    end
+
+    pinned_python["<br>user code<br>in<br>pinned<br>`python`<br>with<br>dependencies<br>&nbsp;"];
+
+    invis_block[ ];
+
+    heavy_minus ~~~ shell_exec;
+    shell_exec --runs--> sh_entry_script;
+    sh_entry_script --with--> embedded_code;
+
+    heavy_plus ~~~ python_exec;
+    python_exec --runs--> py_entry_script;
+    py_entry_script --with--> py_bootstrap_code;
+
+    embedded_code --bootstraps--> pinned_python;
+    py_bootstrap_code --bootstraps--> pinned_python;
+
+    pinned_python ~~~ invis_block;
+
+    style heavy_minus fill:none,stroke:none;
+    style heavy_plus fill:none,stroke:none;
+
+    style sh fill:none;
+    style py fill:none;
+
+    style invis_block fill:none,stroke:none;
+```
+<!-- diagram:sh_vs_py:end -->
+
 It works without `shebang` for `venv` to **avoid hardcoding** absolute paths and keep repo clones **relocatable**.
 
 ## Direct usage
@@ -50,6 +97,15 @@ It works without `shebang` for `venv` to **avoid hardcoding** absolute paths and
     ```
     ./prime --env dst/special_env
     ```
+
+*   Run some app **without** `venv` activation:
+
+    ```
+    ./some_app
+    ```
+
+<details>
+<summary>and more...</summary>
 
 *   From scratch: re-create venv, re-solve and re-install deps, re-pin versions:
 
@@ -75,6 +131,14 @@ It works without `shebang` for `venv` to **avoid hardcoding** absolute paths and
     ./prime start "some_module:some_func"
     ```
 
+*   Run a function from a module in `venv` with some args:
+
+    ```
+    ./prime start "some_module:some_func" -- some args
+    ```
+
+</details>
+
 <a id="protoprimer-quick-start"></a>
 
 ## Initial integration
@@ -83,12 +147,9 @@ See the [Runtime][protoprimer_readthedocs] doc.
 
 You need to "seed" your repo with a copy of the [`proto_kernel.py`][local_proto_kernel.py] script:
 
+<!-- diagram:proto_kernel_copy:start -->
 ```mermaid
----
-config:
-  look: handDrawn
-  theme: neutral
----
+%%{init: {"look": "handDrawn", "theme": "neutral"}}%%
 graph LR;
 
     install_link["<b>1 x install:</b>"]
@@ -108,6 +169,7 @@ graph LR;
     style install_link fill:none,stroke:none;
     style bootstrap_link fill:none,stroke:none;
 ```
+<!-- diagram:proto_kernel_copy:end -->
 
 *   Copy (one time):
 
