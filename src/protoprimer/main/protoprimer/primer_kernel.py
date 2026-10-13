@@ -204,11 +204,13 @@ class ConfLeap(enum.Enum):
 
     leap_primer = "primer"
 
+    # TODO: TODO_39_94_67_54.rename_client_env_to_global_local.md:
     # TODO: Rename, use `global` instead:
     #       FT_23_37_64_44.global_vs_local.md
     #       FT_89_41_35_82.conf_leap.md
     leap_client = "client"
 
+    # TODO: TODO_39_94_67_54.rename_client_env_to_global_local.md:
     # TODO: Remove, use `local` instead:
     #       FT_23_37_64_44.global_vs_local.md
     #       FT_89_41_35_82.conf_leap.md
@@ -217,6 +219,7 @@ class ConfLeap(enum.Enum):
     # surrogate: no associated config file:
     leap_derived = "derived"
 
+    # TODO: TODO_39_94_67_54.rename_client_env_to_global_local.md:
     # TODO: Consolidate `leap_global` and `leap_local` are not really `ConfLeap`-s.
     #       Instead, see `leap_client` and `leap_env`.
     leap_global = "global"
@@ -354,6 +357,7 @@ class ConfDst(enum.Enum):
     """
     See FT_23_37_64_44.global_vs_local.md
 
+    TODO: TODO_39_94_67_54.rename_client_env_to_global_local.md:
     TODO: Is this supposed to be called conf src (instead of `conf dst`)?
     """
 
@@ -403,26 +407,32 @@ class PathName(enum.Enum):
 
     path_proto_kernel = "proto_kernel"
 
+    # TODO: TODO_90_53_85_78.proto_dir_path_name.md:
     # TODO: use another suffix (not `dir`) as `dir` is specified by `FilesystemObject.fs_object_dir`
+    # TODO: TODO_90_53_85_78.proto_dir_path_name.md:
     # TODO: make use of it in naming states (instead of using only `path_proto_kernel`):
     path_proto_dir = "proto_dir"
 
+    # TODO: TODO_56_99_72_68.feature_topic_for_ref_root.md:
     # TODO: Add a `feature_topic` for `ref root` (explaining how everything is relative to it):
     path_ref_root = "ref_root"
 
     # See FT_89_41_35_82.conf_leap.md / primer
     path_primer_conf = f"{ConfLeap.leap_primer.value}_conf"
 
+    # TODO: TODO_39_94_67_54.rename_client_env_to_global_local.md:
     # TODO: Instead of `path_conf_client`, use `path_global_conf`:
     # See FT_89_41_35_82.conf_leap.md / client
     path_conf_client = f"conf_{ConfLeap.leap_client.value}"
     path_global_conf = f"{ConfLeap.leap_global.value}_conf"
 
+    # TODO: TODO_39_94_67_54.rename_client_env_to_global_local.md:
     # TODO: Instead of `path_conf_env`, use `path_local_conf`:
     # See FT_89_41_35_82.conf_leap.md / env
     path_conf_env = f"conf_{ConfLeap.leap_env.value}"
     path_local_conf = f"{ConfLeap.leap_local.value}_conf"
 
+    # TODO: TODO_53_40_17_68.default_env_config_vs_lconf_symlink.md:
     # TODO: Rename to "lconf_link" (otherwise, `local_conf_symlink_rel_path` does not reflect anything about `lconf` or `leap_env`):
     path_link_name = "link_name"
 
@@ -556,18 +566,22 @@ class ConfField(enum.Enum):
     # state_local_venv_dir_abs_path_inited:
     field_local_venv_dir_rel_path = f"{PathName.path_local_venv.value}_{FilesystemObject.fs_object_dir.value}_{PathType.path_rel.value}"
 
+    # TODO: TODO_04_67_81_16.refactor_reusable_dirs.md:
     # TODO: combine by parent dir (~ `./var`):
     # state_local_log_dir_abs_path_inited:
     field_local_log_dir_rel_path = f"{PathName.path_local_log.value}_{FilesystemObject.fs_object_dir.value}_{PathType.path_rel.value}"
 
+    # TODO: TODO_04_67_81_16.refactor_reusable_dirs.md:
     # TODO: combine by parent dir (~ `./var`):
     # state_local_run_dir_abs_path_inited:
     field_local_run_dir_rel_path = f"{PathName.path_local_run.value}_{FilesystemObject.fs_object_dir.value}_{PathType.path_rel.value}"
 
+    # TODO: TODO_04_67_81_16.refactor_reusable_dirs.md:
     # TODO: combine by parent dir (~ `./var`):
     # state_local_tmp_dir_abs_path_inited:
     field_local_tmp_dir_rel_path = f"{PathName.path_local_tmp.value}_{FilesystemObject.fs_object_dir.value}_{PathType.path_rel.value}"
 
+    # TODO: TODO_04_67_81_16.refactor_reusable_dirs.md:
     # TODO: combine by parent dir (~ `./var`):
     # state_local_cache_dir_abs_path_inited:
     field_local_cache_dir_rel_path = f"{PathName.path_local_cache.value}_{FilesystemObject.fs_object_dir.value}_{PathType.path_rel.value}"
@@ -783,6 +797,7 @@ class VenvDriverPip(VenvDriverBase):
 
     def _create_venv_impl(
         self,
+        # TODO: TODO_87_26_62_66.clean_up_venv_driver_args.md:
         # TODO: Do we need this arg if we have `state_local_venv_dir_abs_path_inited`?
         local_venv_dir_abs_path: str,
         constraints_file_abs_path: str,
@@ -828,6 +843,7 @@ class VenvDriverPip(VenvDriverBase):
 
     def get_install_dependencies_cmd(
         self,
+        # TODO: TODO_87_26_62_66.clean_up_venv_driver_args.md:
         # TODO: Do we need this arg if we have `state_local_venv_dir_abs_path_inited`?
         venv_python_file_abs_path: str,
     ) -> list[str]:
@@ -840,6 +856,7 @@ class VenvDriverPip(VenvDriverBase):
 
     def _get_pin_versions_cmd(
         self,
+        # TODO: TODO_87_26_62_66.clean_up_venv_driver_args.md:
         # TODO: Do we need this arg if we have `state_local_venv_dir_abs_path_inited`?
         venv_python_file_abs_path: str,
     ) -> list[str]:
@@ -866,9 +883,11 @@ class VenvDriverUv(VenvDriverBase):
         self.selected_python_file_abs_path: str = selected_python_file_abs_path
         self.state_local_venv_dir_abs_path_inited: str = state_local_venv_dir_abs_path_inited
         self.uv_venv_abs_path: str = os.path.join(
+            # TODO: TODO_04_67_81_16.refactor_reusable_dirs.md:
             # TODO: make it relative to "cache/venv" specifically (instead of directly to "cache"):
             state_local_cache_dir_abs_path_inited,
             ConfConstEnv.default_dir_rel_path_venv,
+            # TODO: TODO_20_07_74_69.configure_dirs_at_client_level.md:
             # TODO: take from config (or default constant):
             "uv.venv",
         )
@@ -889,6 +908,7 @@ class VenvDriverUv(VenvDriverBase):
             # To use `VenvDriverType.venv_uv`, use `VenvDriverType.venv_pip` to install `uv` first:
             pip_driver = VenvDriverPip(
                 required_python_version=self.required_python_version,
+                # TODO: TODO_65_18_47_30.uv_bootstrap_venv_python_version.md:
                 # TODO: assert python version suitable for `uv` (because this `venv` will be used to install `uv`).
                 # NOTE: Create this `venv` (to install `uv`) with whatever `python` runs now:
                 selected_python_file_abs_path=self.selected_python_file_abs_path,
@@ -927,6 +947,7 @@ class VenvDriverUv(VenvDriverBase):
 
     def _create_venv_impl(
         self,
+        # TODO: TODO_87_26_62_66.clean_up_venv_driver_args.md:
         # TODO: Do we need this arg if we have `state_local_venv_dir_abs_path_inited`?
         local_venv_dir_abs_path: str,
         constraints_file_abs_path: str,
@@ -978,6 +999,7 @@ class VenvDriverUv(VenvDriverBase):
 
     def get_install_dependencies_cmd(
         self,
+        # TODO: TODO_87_26_62_66.clean_up_venv_driver_args.md:
         # TODO: Do we need this arg if we have `state_local_venv_dir_abs_path_inited`?
         venv_python_file_abs_path: str,
     ) -> list[str]:
@@ -989,6 +1011,7 @@ class VenvDriverUv(VenvDriverBase):
             "pip",
             "install",
             "--python",
+            # TODO: TODO_87_26_62_66.clean_up_venv_driver_args.md:
             # TODO: Clean up `venv_python_file_abs_path` arg:
             # NOTE: Use simple relative path like `${venv_abs_path}/bin/python`.
             #       The `venv_python_file_abs_path` arg passed to this function might be
@@ -998,6 +1021,7 @@ class VenvDriverUv(VenvDriverBase):
 
     def _get_pin_versions_cmd(
         self,
+        # TODO: TODO_87_26_62_66.clean_up_venv_driver_args.md:
         # TODO: Do we need this arg if we have `state_local_venv_dir_abs_path_inited`?
         venv_python_file_abs_path: str,
     ) -> list[str]:
@@ -1010,6 +1034,7 @@ class VenvDriverUv(VenvDriverBase):
             "freeze",
             "--exclude-editable",
             "--python",
+            # TODO: TODO_87_26_62_66.clean_up_venv_driver_args.md:
             # TODO: Clean up `venv_python_file_abs_path` arg:
             # NOTE: Use simple relative path like `${venv_abs_path}/bin/python`.
             #       The `venv_python_file_abs_path` arg passed to this function might be
@@ -1197,6 +1222,7 @@ class ShellDriverZsh(ShellDriverBase):
                 ]
             )
         # `zsh` takes "dot dir" path to find overridden `.zshrc`:
+        # TODO: TODO_68_40_26_10.define_env_vars_in_known_env_var_enum.md:
         # TODO: Define in KnownEnvVar enum:
         self.shell_env_vars["ZDOTDIR"] = os.path.dirname(self.get_init_file_abs_path())
 
@@ -1206,18 +1232,22 @@ def _get_shell_driver(
     activate_venv: bool = True,
 ) -> ShellDriverBase:
 
+    # TODO: TODO_68_40_26_10.define_env_vars_in_known_env_var_enum.md:
     # TODO: Define in KnownEnvVar enum:
     var_shell = "SHELL"
     shell_abs_path: str | None = os.environ.get(var_shell, None)
     shell_driver_type: type[ShellDriverBase]
 
     if shell_abs_path is None:
+        # TODO: TODO_74_35_76_27.shell_driver_fallback_to_sh.md:
         # TODO: Implement `ShellDriverSh` using `/bin/sh` instead:
         logger.warning(f"env var `{var_shell}` is not set - assuming `bash` as default")
 
+        # TODO: TODO_74_35_76_27.shell_driver_fallback_to_sh.md:
         # TODO: How will work on Windows without `shutil`? And without POSIX shell?
         # noinspection PyDeprecation
         shell_abs_path = shutil.which("bash")
+        # TODO: TODO_74_35_76_27.shell_driver_fallback_to_sh.md:
         # TODO: If `bash` is not in the `PATH`, fall back to `/bin/sh` instead:
         assert shell_abs_path is not None
 
@@ -1280,6 +1310,7 @@ class ConfConstGeneral:
     # If `--main_func` is this (empty), run `proto_main`.
     default_proto_main = ""
 
+    # TODO: TODO_16_35_39_74.simplify_input_based_default.md:
     # TODO: use lambdas to generate based on input (instead of None):
     # This is a value declared for completeness,
     # but unused (evaluated dynamically via the bootstrap process):
@@ -1374,6 +1405,7 @@ class ConfConstPrimer:
     # Next FT_89_41_35_82.conf_leap.md: `ConfLeap.leap_client`:
     default_file_basename_leap_client: str = ConfConstInput.default_file_basename_conf_primer
 
+    # TODO: TODO_32_41_01_30.review_default_client_conf_file_rel_path.md:
     # TODO: Is this still needed if we propagate conf file base name primer -> client -> env?
     default_client_conf_file_rel_path: str = os.path.join(
         default_client_conf_dir_rel_path,
@@ -1388,11 +1420,13 @@ class ConfConstClient:
 
     common_env_name = "common_env"
 
+    # TODO: TODO_53_40_17_68.default_env_config_vs_lconf_symlink.md:
     # TODO: Is this used? If link_name is not specified, the env conf dir becomes ref root dir:
     default_dir_rel_path_leap_env_link_name: str = os.path.join(ConfDst.dst_local.value)
 
     # FT_59_95_81_63.tree_shape.md / max leaps shape
     default_default_env_dir_rel_path: str = os.path.join(
+        # TODO: TODO_79_50_81_23.use_constant_for_dst_dir_name.md:
         # TODO: Use constant:
         "dst",
         common_env_name,
@@ -2692,6 +2726,7 @@ class Bootstrapper_state_stride_py_arbitrary_reached_is_app(AbstractCachingState
         orig_PYTHONPATH_value = cleaned_env.pop(ConfConstInput.ext_env_var_PYTHONPATH, None)
         orig_PATH_value: str = cleaned_env.get(ConfConstInput.ext_env_var_PATH, "")
 
+        # TODO: TODO_80_28_71_21.review_env_clean_up_after_isolated_mode.md:
         # TODO: Is this (above and below) manual clean-up necessary after we switched to isolated `-I` `python` mode?
         if orig_venv_abs_path is not None:
             # Remove `venv/bin` dir from the `PATH` env var:
@@ -2964,6 +2999,7 @@ class Bootstrapper_state_primer_conf_file_data_loaded(AbstractCachingStateNode[d
         if os.path.exists(state_primer_conf_file_abs_path_inited):
             file_data = read_json_file(state_primer_conf_file_abs_path_inited)
         else:
+            # TODO: TODO_99_29_89_80.warn_only_when_conf_is_required.md:
             # TODO: Be able to detect min scenario and avoid warning:
             warn_once_at_state_stride(
                 missing_conf_file_message(state_primer_conf_file_abs_path_inited),
@@ -3124,6 +3160,7 @@ class Bootstrapper_state_client_conf_file_data_loaded(AbstractCachingStateNode[d
         if os.path.exists(state_global_conf_file_abs_path_inited):
             file_data = read_json_file(state_global_conf_file_abs_path_inited)
         else:
+            # TODO: TODO_99_29_89_80.warn_only_when_conf_is_required.md:
             # TODO: Be able to detect min scenario and avoid warning:
             warn_once_at_state_stride(
                 missing_conf_file_message(state_global_conf_file_abs_path_inited),
@@ -3414,6 +3451,7 @@ class Bootstrapper_state_env_conf_file_data_loaded(AbstractCachingStateNode[dict
         if os.path.exists(state_local_conf_file_abs_path_inited):
             file_data = read_json_file(state_local_conf_file_abs_path_inited)
         else:
+            # TODO: TODO_99_29_89_80.warn_only_when_conf_is_required.md:
             # TODO: Be able to detect min scenario and avoid warning:
             # TODO: Still warn when required for some fields:
             # noinspection PyUnreachableCode
@@ -3554,6 +3592,7 @@ class Bootstrapper_state_local_venv_dir_abs_path_inited(AbstractOverriddenFieldC
 
         state_local_venv_dir_abs_path_inited: str = self._get_overridden_value_or_default(
             ConfField.field_local_venv_dir_rel_path.value,
+            # TODO: TODO_20_07_74_69.configure_dirs_at_client_level.md:
             # TODO: Do not use default values directly - resolve it differently at the prev|next step based on the need:
             ConfConstEnv.default_dir_rel_path_venv,
         )
@@ -3855,6 +3894,7 @@ class Bootstrapper_state_derived_conf_data_loaded(AbstractCachingStateNode[dict]
             EnvState.state_project_descriptors_inited.name,
         ]
 
+        # TODO: TODO_05_17_21_85.review_parent_states_list.md:
         # TODO: Is this needed given the list of dependencies in `derived_data_env_states`?
         parent_states = [
             EnvState.state_print_conf_finalized.name,
@@ -5105,18 +5145,23 @@ class EnvState(enum.Enum):
 
     state_selected_python_file_abs_path_inited = Bootstrapper_state_selected_python_file_abs_path_inited
 
+    # TODO: TODO_20_07_74_69.configure_dirs_at_client_level.md:
     # TODO: log, tmp, venv, ... dirs should better be configured at client level:
     state_local_venv_dir_abs_path_inited = Bootstrapper_state_local_venv_dir_abs_path_inited
 
+    # TODO: TODO_20_07_74_69.configure_dirs_at_client_level.md:
     # TODO: log, tmp, venv, ... dirs should better be configured at client level:
     state_local_log_dir_abs_path_inited = Bootstrapper_state_local_log_dir_abs_path_inited
 
+    # TODO: TODO_20_07_74_69.configure_dirs_at_client_level.md:
     # TODO: log, tmp, venv, ... dirs should better be configured at client level:
     state_local_run_dir_abs_path_inited = Bootstrapper_state_local_run_dir_abs_path_inited
 
+    # TODO: TODO_20_07_74_69.configure_dirs_at_client_level.md:
     # TODO: log, tmp, venv, ... dirs should better be configured at client level:
     state_local_tmp_dir_abs_path_inited = Bootstrapper_state_local_tmp_dir_abs_path_inited
 
+    # TODO: TODO_20_07_74_69.configure_dirs_at_client_level.md:
     # TODO: log, tmp, venv, ... dirs should better be configured at client level:
     state_local_cache_dir_abs_path_inited = Bootstrapper_state_local_cache_dir_abs_path_inited
 
@@ -5135,6 +5180,7 @@ class EnvState(enum.Enum):
 
     state_default_file_log_handler_configured = Bootstrapper_state_default_file_log_handler_configured
 
+    # TODO: TODO_73_71_31_84.exec_operation_check_or_info.md:
     # TODO: Add a (replaceable) env_check step to execute before switching to `StateStride.stride_py_required`.
 
     # restart: `StateStride.stride_py_arbitrary` -> `StateStride.stride_py_required`:
@@ -5152,9 +5198,11 @@ class EnvState(enum.Enum):
     state_version_constraints_generated = Factory_state_version_constraints_generated
 
     # restart: `StateStride.stride_py_venv` -> `StateStride.stride_deps_updated`:
+    # TODO: TODO_49_40_51_46.rename_state_names_to_final.md:
     # TODO: rename - "reached" sounds weird (and makes no sense):
     state_stride_deps_updated_reached = Factory_state_stride_deps_updated_reached
 
+    # TODO: TODO_49_40_51_46.rename_state_names_to_final.md:
     # TODO: rename according to the final name:
     state_proto_kernel_updated = Factory_state_proto_kernel_updated
 
@@ -5270,6 +5318,7 @@ class EnvContext:
         # FT_58_74_37_70.boot_vs_start.md
         # FT_62_88_55_10.CLI_compatibility.md
         # FT_93_57_03_75.app_vs_lib.md
+        # TODO: TODO_25_82_21_54.rename_is_app_flag.md:
         # TODO: Rename: `_is_app` is confusing: Is it about user code or `protoprimer` code? It is about `protoprimer`.
         self._is_app: bool | None = None
 
@@ -5669,6 +5718,7 @@ def _configure_primer_file_log_handler(
         log_file_basename,
     )
 
+    # TODO: TODO_43_30_90_54.configure_max_file_log_level.md:
     # TODO: Configure MAX file log level in the config file (NOTE: the higher the level the fewer the log entries):
     file_log_level: int = logging.INFO
     # Increase the log level at most to what is used by stderr:
@@ -5786,6 +5836,7 @@ def switch_python(
         )
     ]
 
+    # TODO: TODO_69_28_79_76.skip_exec_argv_args_with_same_value.md:
     # TODO: Do not add args if they have been parsed and already have the same value:
     exec_argv: list[str] = [
         next_python_path,
@@ -6015,6 +6066,7 @@ def is_venv() -> bool:
     #       Most of the commands avoid using `shell` (that is the goal for `protoprimer`).
     # NOTE: Restriction on `field_selected_python_file_abs_path`: it should not lead to `venv/bin/python`.
     #       It should use `sys.base_prefix` - see `get_path_to_base_python`.
+    # TODO: TODO_15_25_41_72.convert_selected_python_to_base_python.md:
     # TODO: Maybe it is possible to convert `field_selected_python_file_abs_path` to its base version automatically?
     if sys.prefix != sys.base_prefix:
         return True
@@ -6309,6 +6361,7 @@ def get_config(conf_leap: ConfLeap) -> dict:
     UC_54_26_66_63.lib_access_to_config_data.md:
     Retrieve config data for the specified `conf_leap` as a function call (without the process restarts).
 
+    # TODO: TODO_71_33_38_11.override_proto_kernel_abs_path_in_conf_getter.md:
     TODO: Maybe support proto_kernel_abs_path (default to None) to override _proto_kernel_abs_path?
     """
 
