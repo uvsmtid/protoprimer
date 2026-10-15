@@ -1132,7 +1132,7 @@ test -f ~/{self.get_init_file_basename()} && {self.get_source_builtin()} ~/{self
 # Activate `venv`:
 if [ "{str(self.activate_venv).lower()}" = "true" ]
 then
-    {self.get_source_builtin()} {self.get_venv_activate_script_abs_path(venv_abs_path)}
+    {self.get_source_builtin()} {shlex.quote(self.get_venv_activate_script_abs_path(venv_abs_path))}
 fi
 """,
         )
@@ -1235,7 +1235,8 @@ class ShellDriverZsh(ShellDriverBase):
 
 class ShellDriverSh(ShellDriverBase):
     """
-    Fallback for minimal systems (e.g. containers) with POSIX `sh` only.
+    POSIX `sh` (any implementation: `dash`, `busybox` `ash`, `bash` invoked as `sh`, ...):
+    used when `SHELL` is `sh` or not set (e.g. in minimal containers).
     """
 
     def get_type(self) -> ShellType:
@@ -1251,7 +1252,8 @@ class ShellDriverSh(ShellDriverBase):
         self,
         has_command: bool,
     ) -> None:
-        # POSIX `sh` has no `--init-file`: interactive `sh` reads the file named by the `ENV` env var instead:
+        # POSIX `sh` has no `--init-file`: interactive `sh` reads the file named by the `ENV` env var instead
+        # (it is always interactive - see `-i` in `run_shell`):
         # TODO: TODO_68_40_26_10.define_env_vars_in_known_env_var_enum.md:
         # TODO: Define in KnownEnvVar enum:
         self.shell_env_vars["ENV"] = self.get_init_file_abs_path()
