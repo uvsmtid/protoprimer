@@ -243,21 +243,22 @@ def test_shell_interactive_with_sh(tmp_path: Path):
     env = dict(subprocess.os.environ)
     env["SHELL"] = "/bin/sh"
 
-    run_primer_main([str(proto_kernel_abs_path)])
+    with patch.dict(subprocess.os.environ, {"SHELL": "/bin/sh"}):
+        run_primer_main([str(proto_kernel_abs_path)])
 
-    # when:
-    # Run the interactive shell with SHELL=/bin/sh and check that VIRTUAL_ENV is set by the init file.
-    output_file = ref_root_abs_path / "sh_venv_check.txt"
-    sub_proc = subprocess.run(
-        [
-            str(proto_kernel_abs_path),
-            ExecOperation.op_shell.value,
-        ],
-        input=f'echo "VIRTUAL_ENV=$VIRTUAL_ENV" > {output_file}\nexit 0\n',
-        text=True,
-        env=env,
-        capture_output=True,
-    )
+        # when:
+        # Run the interactive shell with SHELL=/bin/sh and check that VIRTUAL_ENV is set by the init file.
+        output_file = ref_root_abs_path / "sh_venv_check.txt"
+        sub_proc = subprocess.run(
+            [
+                str(proto_kernel_abs_path),
+                ExecOperation.op_shell.value,
+            ],
+            input=f'echo "VIRTUAL_ENV=$VIRTUAL_ENV" > {output_file}\nexit 0\n',
+            text=True,
+            env=env,
+            capture_output=True,
+        )
 
     # then:
 
