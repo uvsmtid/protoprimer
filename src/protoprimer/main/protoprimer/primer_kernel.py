@@ -1058,6 +1058,8 @@ class VenvDriverType(enum.Enum):
 
 class ShellType(enum.Enum):
 
+    shell_sh = "sh"
+
     shell_bash = "bash"
 
     shell_zsh = "zsh"
@@ -1202,6 +1204,42 @@ class ShellDriverBash(ShellDriverBase):
         )
 
 
+class ShellDriverSh(ShellDriverBase):
+
+    def get_type(self) -> ShellType:
+        return ShellType.shell_sh
+
+    def get_init_file_basename(self):
+        return ".profile"
+
+    def write_init_file(
+        self,
+        venv_abs_path: str,
+    ):
+        pathlib.Path(os.path.dirname(self.get_init_file_abs_path())).mkdir(
+            parents=True,
+            exist_ok=True,
+        )
+        write_text_file(
+            self.get_init_file_abs_path(),
+            f"""
+# Load user settings if available:
+test -f ~/.profile && . ~/.profile || true
+# Activate `venv`:
+if [ "{str(self.activate_venv).lower()}" = "true" ]
+then
+    . {self.get_venv_activate_script_abs_path(venv_abs_path)}
+fi
+""",
+        )
+
+    def configure_interactive_shell(
+        self,
+        has_command: bool,
+    ) -> None:
+        self.shell_env_vars["ENV"] = self.get_init_file_abs_path()
+
+
 class ShellDriverZsh(ShellDriverBase):
 
     def get_type(self) -> ShellType:
@@ -1239,19 +1277,11 @@ def _get_shell_driver(
     shell_driver_type: type[ShellDriverBase]
 
     if shell_abs_path is None:
-        # TODO: TODO_74_35_76_27.shell_driver_fallback_to_sh.md:
-        # TODO: Implement `ShellDriverSh` using `/bin/sh` instead:
-        logger.warning(f"env var `{var_shell}` is not set - assuming `bash` as default")
-
-        # TODO: TODO_74_35_76_27.shell_driver_fallback_to_sh.md:
-        # TODO: How will work on Windows without `shutil`? And without POSIX shell?
-        # noinspection PyDeprecation
-        shell_abs_path = shutil.which("bash")
-        # TODO: TODO_74_35_76_27.shell_driver_fallback_to_sh.md:
-        # TODO: If `bash` is not in the `PATH`, fall back to `/bin/sh` instead:
-        assert shell_abs_path is not None
-
-        shell_driver_type = ShellDriverBash
+        logger.warning(f"env var `{var_shell}` is not set - using `/bin/sh` as default")
+        shell_abs_path = "/bin/sh"
+        shell_driver_type = ShellDriverSh
+    elif os.path.basename(shell_abs_path) == ShellType.shell_sh.value:
+        shell_driver_type = ShellDriverSh
     elif os.path.basename(shell_abs_path) == ShellType.shell_bash.value:
         shell_driver_type = ShellDriverBash
     elif os.path.basename(shell_abs_path) == ShellType.shell_zsh.value:
