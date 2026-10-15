@@ -41,6 +41,20 @@ def test_get_init_file_basename():
     assert basename == ".shrc"
 
 
+def test_get_source_builtin():
+    # given:
+    driver = ShellDriverSh(
+        shell_abs_path="/bin/sh",
+        shell_env_vars={},
+        cache_dir_abs_path="/fake/cache",
+    )
+    # when:
+    source_builtin = driver.get_source_builtin()
+    # then:
+    # POSIX `sh` has no `source`:
+    assert source_builtin == "."
+
+
 def test_configure_interactive_shell(fs):
     # given:
     fs.create_dir("/fake/cache/sh")
@@ -82,6 +96,27 @@ then
     . /fake/venv/bin/activate
 fi
 """,
+    )
+
+
+@patch("os.execve")
+@patch.object(ShellDriverSh, "write_init_file")
+def test_run_shell_passes_init_file_via_ENV(mock_write, mock_execve):
+    # given:
+    driver = ShellDriverSh(
+        shell_abs_path="/bin/sh",
+        shell_env_vars={"VAR": "value"},
+        cache_dir_abs_path="/fake/cache",
+    )
+    # when:
+    driver.run_shell(False, "echo hello", "/fake/venv")
+    # then:
+    mock_write.assert_called_once_with("/fake/venv")
+    # Interactive (`-i`) for `sh` to read `ENV` (no `--init-file`):
+    mock_execve.assert_called_once_with(
+        "/bin/sh",
+        ["/bin/sh", "-i", "-c", "echo hello"],
+        {"VAR": "value", "ENV": "/fake/cache/sh/.shrc"},
     )
 
 
