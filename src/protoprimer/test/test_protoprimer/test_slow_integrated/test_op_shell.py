@@ -4,6 +4,7 @@ FT_99_89_51_06.venv_shell.md
 
 import subprocess
 from pathlib import Path
+from unittest.mock import patch
 
 from local_repo.sub_proc_util import get_command_output
 from local_test.fat_mocked_helper import run_primer_main
@@ -220,3 +221,49 @@ def test_shell_interactive(tmp_path: Path):
     # then:
 
     assert sub_proc.returncode == 42
+
+
+def test_shell_interactive_with_sh(tmp_path: Path):
+    """
+    Acceptance criteria: One integration test runs an interactive shell
+    (e.g. sh -i; ENV is ignored by non-interactive shells) using SHELL=/bin/sh
+    against whatever /bin/sh the environment has, and verifies that the init file is applied.
+    """
+
+    assert_test_func_name_embeds_str(ExecOperation.op_shell.value)
+
+    # given:
+
+    (
+        proto_kernel_abs_path,
+        ref_root_abs_path,
+        project_dir_abs_path,
+    ) = create_max_leaps_shape(tmp_path)
+
+    env = dict(subprocess.os.environ)
+    env["SHELL"] = "/bin/sh"
+
+    run_primer_main([str(proto_kernel_abs_path)])
+
+    # when:
+    # Run the interactive shell with SHELL=/bin/sh and check that VIRTUAL_ENV is set by the init file.
+    output_file = ref_root_abs_path / "sh_venv_check.txt"
+    sub_proc = subprocess.run(
+        [
+            str(proto_kernel_abs_path),
+            ExecOperation.op_shell.value,
+        ],
+        input=f'echo "VIRTUAL_ENV=$VIRTUAL_ENV" > {output_file}\nexit 0\n',
+        text=True,
+        env=env,
+        capture_output=True,
+    )
+
+    # then:
+
+    assert sub_proc.returncode == 0
+    assert output_file.exists()
+    content = output_file.read_text()
+    assert "VIRTUAL_ENV=" in content
+    expected_venv = str(ref_root_abs_path / ConfConstEnv.default_dir_rel_path_venv)
+    assert expected_venv in content

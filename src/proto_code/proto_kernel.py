@@ -1062,6 +1062,8 @@ class ShellType(enum.Enum):
 
     shell_zsh = "zsh"
 
+    shell_sh = "sh"
+
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 def remove_protoprimer_env_vars(env_vars: typing.MutableMapping[str, str]) -> None:
     """
@@ -1122,11 +1124,11 @@ class ShellDriverBase:
             self.get_init_file_abs_path(),
             f"""
 # Load user settings if available:
-test -f ~/{self.get_init_file_basename()} && source ~/{self.get_init_file_basename()} || true
+test -f ~/{self.get_init_file_basename()} && . ~/{self.get_init_file_basename()} || true
 # Activate `venv`:
 if [ "{str(self.activate_venv).lower()}" = "true" ]
 then
-    source {self.get_venv_activate_script_abs_path(venv_abs_path)}
+    . {self.get_venv_activate_script_abs_path(venv_abs_path)}
 fi
 """,
         )
@@ -1227,6 +1229,21 @@ class ShellDriverZsh(ShellDriverBase):
         self.shell_env_vars["ZDOTDIR"] = os.path.dirname(self.get_init_file_abs_path())
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+class ShellDriverSh(ShellDriverBase):
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+    def get_type(self) -> ShellType:
+        return ShellType.shell_sh
+
+    def get_init_file_basename(self):
+        return ".shrc"
+
+    def configure_interactive_shell(
+        self,
+        has_command: bool,
+    ) -> None:
+        self.shell_env_vars["ENV"] = self.get_init_file_abs_path()
+
+
 def _get_shell_driver(
     cache_dir_abs_path: str,
     activate_venv: bool = True,
@@ -1239,23 +1256,14 @@ def _get_shell_driver(
     shell_driver_type: type[ShellDriverBase]
 
     if shell_abs_path is None:
-        # TODO: TODO_74_35_76_27.shell_driver_fallback_to_sh.md:
-        # TODO: Implement `ShellDriverSh` using `/bin/sh` instead:
-        logger.warning(f"env var `{var_shell}` is not set - assuming `bash` as default")
-
-        # TODO: TODO_74_35_76_27.shell_driver_fallback_to_sh.md:
-        # TODO: How will work on Windows without `shutil`? And without POSIX shell?
-        # noinspection PyDeprecation
-        shell_abs_path = shutil.which("bash")
-        # TODO: TODO_74_35_76_27.shell_driver_fallback_to_sh.md:
-        # TODO: If `bash` is not in the `PATH`, fall back to `/bin/sh` instead:
-        assert shell_abs_path is not None
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-        shell_driver_type = ShellDriverBash
+        shell_abs_path = "/bin/sh"
+        shell_driver_type = ShellDriverSh
     elif os.path.basename(shell_abs_path) == ShellType.shell_bash.value:
         shell_driver_type = ShellDriverBash
     elif os.path.basename(shell_abs_path) == ShellType.shell_zsh.value:
         shell_driver_type = ShellDriverZsh
+    elif os.path.basename(shell_abs_path) == ShellType.shell_sh.value:
+        shell_driver_type = ShellDriverSh
     else:
         raise ValueError(f"env var `{var_shell}` has unknown value [{shell_abs_path}]")
 
