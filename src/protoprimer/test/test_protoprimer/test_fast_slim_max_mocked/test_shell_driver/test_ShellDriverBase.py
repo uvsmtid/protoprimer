@@ -87,6 +87,32 @@ fi
     )
 
 
+@patch("protoprimer.primer_kernel.write_text_file")
+def test_write_init_file_quotes_venv_path(mock_write_text_file, fs):
+    # given:
+    fs.create_dir("/fake/cache")
+    driver = ShellDriverConcrete(
+        shell_abs_path="/bin/bash",
+        shell_env_vars={},
+        cache_dir_abs_path="/fake/cache",
+    )
+    # when:
+    driver.write_init_file("/fake/some venv")
+    # then:
+    mock_write_text_file.assert_called_once_with(
+        "/fake/cache/bash/.bashrc",
+        """
+# Load user settings if available:
+test -f ~/.bashrc && source ~/.bashrc || true
+# Activate `venv`:
+if [ "true" = "true" ]
+then
+    source '/fake/some venv/bin/activate'
+fi
+""",
+    )
+
+
 @patch("os.execve")
 @patch.object(ShellDriverConcrete, "write_init_file")
 @patch.object(ShellDriverConcrete, "configure_interactive_shell")
