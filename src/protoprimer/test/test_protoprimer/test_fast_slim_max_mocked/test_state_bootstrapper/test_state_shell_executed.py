@@ -147,6 +147,62 @@ def test_shell_executed_in_zsh(
 @patch.dict(
     os.environ,
     {
+        "SHELL": "/bin/sh",
+    },
+    clear=True,
+)
+def test_shell_executed_in_sh(
+    mock_state_input_command_line,
+    mock_state_local_cache_dir_abs_path_inited,
+    mock_state_local_venv_dir_abs_path_inited,
+    mock_state_stride_src_updated_reached,
+    mock_os_execve,
+    mock_get_stride,
+    env_ctx,
+    fs,
+):
+    # given:
+    fs.create_dir("/fake")
+    assert_parent_factories_mocked(
+        env_ctx,
+        EnvState.state_shell_executed.name,
+    )
+    mock_state_input_command_line.return_value.eval_own_state.return_value = "echo hello"
+    mock_get_stride.return_value = StateStride.stride_src_updated
+    mock_state_stride_src_updated_reached.return_value.eval_own_state.return_value = StateStride.stride_src_updated
+    mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = "/fake/venv"
+    mock_state_local_cache_dir_abs_path_inited.return_value.eval_own_state.return_value = "/fake/cache"
+
+    # when:
+    env_ctx.eval_state(EnvState.state_shell_executed.name)
+
+    # then:
+    # In ShellDriverSh, the init file is passed via ENV, no --init-file.
+    mock_os_execve.assert_called_once_with(
+        "/bin/sh",
+        [
+            "/bin/sh",
+            "-i",
+            "-c",
+            "echo hello",
+        ],
+        {
+            "SHELL": "/bin/sh",
+            "ENV": "/fake/cache/sh/.shrc",
+        },
+    )
+
+
+
+@patch(f"{primer_kernel.__name__}.{EnvContext.__name__}.{EnvContext.get_stride.__name__}")
+@patch(f"{primer_kernel.__name__}.os.execve")
+@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_stride_src_updated_reached.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_cache_dir_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{Factory_state_input_command_line.__name__}.create_state_node")
+@patch.dict(
+    os.environ,
+    {
         "SHELL": "/bin/bash",
     },
     clear=True,

@@ -1,5 +1,9 @@
+import os
+from unittest.mock import patch
+
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer.primer_kernel import (
+    _get_shell_driver,
     ShellDriverBash,
     ShellType,
 )
@@ -53,3 +57,16 @@ def test_configure_interactive_shell(fs):
         "--init-file",
         "/fake/cache/bash/.bashrc",
     ]
+
+
+def test_get_shell_driver_bash():
+    # given:
+    shell_path = f"/bin/{ShellType.shell_bash.value}"
+    with patch.dict(os.environ, {"SHELL": shell_path}, clear=True):
+        # when:
+        driver = _get_shell_driver("/fake/cache")
+
+        # then:
+        assert isinstance(driver, ShellDriverBash)
+        assert driver.shell_abs_path == shell_path
+

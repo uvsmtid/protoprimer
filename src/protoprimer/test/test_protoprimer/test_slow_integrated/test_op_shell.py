@@ -2,8 +2,12 @@
 FT_99_89_51_06.venv_shell.md
 """
 
+import os
 import subprocess
 from pathlib import Path
+
+import pytest
+
 
 from local_repo.sub_proc_util import get_command_output
 from local_test.fat_mocked_helper import run_primer_main
@@ -220,3 +224,46 @@ def test_shell_interactive(tmp_path: Path):
     # then:
 
     assert sub_proc.returncode == 42
+
+
+def test_shell_sh_interactive_applies_init_file(tmp_path: Path):
+    """
+    Verify that `ExecOperation.op_shell` with SHELL=/bin/sh runs an interactive shell
+    and applies the init file via ENV (activating the venv).
+    """
+
+    assert_test_func_name_embeds_str(ExecOperation.op_shell.value)
+
+    if not os.path.exists("/bin/sh"):
+        pytest.skip("/bin/sh not available in this environment")
+
+    # given:
+
+    (
+        proto_kernel_abs_path,
+        ref_root_abs_path,
+        project_dir_abs_path,
+    ) = create_max_leaps_shape(tmp_path)
+
+    run_primer_main([str(proto_kernel_abs_path)])
+
+    # when:
+    # Run interactive shell with SHELL=/bin/sh and verify that VIRTUAL_ENV is set by the init file (via ENV):
+
+    env = os.environ.copy()
+    env["SHELL"] = "/bin/sh"
+
+    sub_proc = subprocess.run(
+        [
+            str(proto_kernel_abs_path),
+            ExecOperation.op_shell.value,
+        ],
+        input='test -n "$VIRTUAL_ENV" && exit 42 || exit 1\n',
+        text=True,
+        env=env,
+    )
+
+    # then:
+
+    assert sub_proc.returncode == 42
+
