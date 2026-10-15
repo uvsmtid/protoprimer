@@ -2,6 +2,7 @@
 FT_99_89_51_06.venv_shell.md
 """
 
+import os
 import subprocess
 from pathlib import Path
 
@@ -215,6 +216,43 @@ def test_shell_interactive(tmp_path: Path):
         ],
         input="exit 42\n",
         text=True,
+    )
+
+    # then:
+
+    assert sub_proc.returncode == 42
+
+
+def test_shell_interactive_sh(tmp_path: Path):
+    """
+    `shell` with `SHELL=/bin/sh` runs an interactive shell using `ENV` init file
+    """
+
+    assert_test_func_name_embeds_str(ExecOperation.op_shell.value)
+
+    # given:
+
+    (
+        proto_kernel_abs_path,
+        ref_root_abs_path,
+        project_dir_abs_path,
+    ) = create_max_leaps_shape(tmp_path)
+
+    run_primer_main([str(proto_kernel_abs_path)])
+
+    # when:
+    # Set SHELL=/bin/sh and verify that the init file was applied (VIRTUAL_ENV is set).
+    env = os.environ.copy()
+    env["SHELL"] = "/bin/sh"
+
+    sub_proc = subprocess.run(
+        [
+            str(proto_kernel_abs_path),
+            ExecOperation.op_shell.value,
+        ],
+        input='test -n "$VIRTUAL_ENV" && exit 42 || exit 1\n',
+        text=True,
+        env=env,
     )
 
     # then:
