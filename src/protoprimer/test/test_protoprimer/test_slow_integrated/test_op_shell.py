@@ -228,8 +228,8 @@ def test_shell_interactive(tmp_path: Path):
 
 def test_shell_sh_interactive_applies_init_file(tmp_path: Path):
     """
-    Verify that `ExecOperation.op_shell` with SHELL=/bin/sh runs an interactive shell
-    and applies the init file via ENV (activating the venv).
+    Verify that `ExecOperation.op_shell` with fallback to /bin/sh runs an interactive shell
+    and applies the init file via ENV (activating the venv, isolated from parent environment).
     """
 
     assert_test_func_name_embeds_str(ExecOperation.op_shell.value)
@@ -247,18 +247,22 @@ def test_shell_sh_interactive_applies_init_file(tmp_path: Path):
 
     run_primer_main([str(proto_kernel_abs_path)])
 
+    expected_venv = str(ref_root_abs_path / ConfConstEnv.default_dir_rel_path_venv)
+
     # when:
-    # Run interactive shell with SHELL=/bin/sh and verify that VIRTUAL_ENV is set by the init file (via ENV):
+    # Run interactive shell with SHELL unset (verifying /bin/sh fallback) and VIRTUAL_ENV explicitly
+    # cleared from the environment so we guarantee activation happens solely through the generated .shrc:
 
     env = os.environ.copy()
-    env["SHELL"] = "/bin/sh"
+    env.pop("VIRTUAL_ENV", None)
+    env.pop("SHELL", None)
 
     sub_proc = subprocess.run(
         [
             str(proto_kernel_abs_path),
             ExecOperation.op_shell.value,
         ],
-        input='test -n "$VIRTUAL_ENV" && exit 42 || exit 1\n',
+        input=f'test "$VIRTUAL_ENV" = "{expected_venv}" && exit 42 || exit 1\n',
         text=True,
         env=env,
     )
