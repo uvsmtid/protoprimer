@@ -7,6 +7,7 @@ from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer.primer_kernel import (
     _get_shell_driver,
     ShellDriverBash,
+    ShellDriverSh,
     ShellDriverZsh,
     ShellType,
 )
@@ -117,10 +118,15 @@ def test_get_shell_driver_no_shell_env_no_bash(mock_warning, mock_which):
     # given:
     mock_which.return_value = None
 
-    # when/then:
-    with pytest.raises(AssertionError):
-        _get_shell_driver("/fake/cache")
-    mock_warning.assert_called_once_with("env var `SHELL` is not set - assuming `bash` as default")
+    # when:
+    driver = _get_shell_driver("/fake/cache")
+
+    # then:
+    # `bash` is not in `PATH`: fall back to `/bin/sh` (TODO_74_35_76_27):
+    mock_warning.assert_any_call("env var `SHELL` is not set - assuming `bash` as default")
+    mock_warning.assert_any_call("`bash` is not in `PATH` - falling back to `sh`")
+    assert isinstance(driver, ShellDriverSh)
+    assert driver.shell_abs_path == "/bin/sh"
 
 
 def test_get_shell_driver_unknown_shell():

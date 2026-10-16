@@ -1062,7 +1062,9 @@ class ShellType(enum.Enum):
 
     shell_zsh = "zsh"
 
+    shell_sh = "sh"
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
 def remove_protoprimer_env_vars(env_vars: typing.MutableMapping[str, str]) -> None:
     """
     FT_66_02_54_56.context_isolation.md
@@ -1110,6 +1112,12 @@ class ShellDriverBase:
             ConfConstGeneral.file_rel_path_venv_activate,
         )
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+    def get_source_builtin(self) -> str:
+        # POSIX `sh` has no `source` builtin: it uses `.` to source a file.
+        # Both `bash` and `zsh` support the POSIX `.` builtin as well,
+        # but they also provide the (non-POSIX) `source` builtin.
+        return "source"
+
     def write_init_file(
         self,
         venv_abs_path: str,
@@ -1122,11 +1130,11 @@ class ShellDriverBase:
             self.get_init_file_abs_path(),
             f"""
 # Load user settings if available:
-test -f ~/{self.get_init_file_basename()} && source ~/{self.get_init_file_basename()} || true
+test -f ~/{self.get_init_file_basename()} && {self.get_source_builtin()} ~/{self.get_init_file_basename()} || true
 # Activate `venv`:
 if [ "{str(self.activate_venv).lower()}" = "true" ]
 then
-    source {self.get_venv_activate_script_abs_path(venv_abs_path)}
+    {self.get_source_builtin()} {self.get_venv_activate_script_abs_path(venv_abs_path)}
 fi
 """,
         )
@@ -1227,6 +1235,30 @@ class ShellDriverZsh(ShellDriverBase):
         self.shell_env_vars["ZDOTDIR"] = os.path.dirname(self.get_init_file_abs_path())
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+class ShellDriverSh(ShellDriverBase):
+
+    def get_type(self) -> ShellType:
+        return ShellType.shell_sh
+
+    def get_init_file_basename(self):
+        return ".shrc"
+
+    def get_source_builtin(self) -> str:
+        # POSIX `sh` (e.g. `dash`, `ash`) has no `source` builtin:
+        return "."
+
+    def configure_interactive_shell(
+        self,
+        has_command: bool,
+    ) -> None:
+        # POSIX `sh` has no `--init-file` option:
+        # an interactive `sh` reads the file named by the `ENV` env var
+        # (`run_shell` always starts an interactive shell).
+        # TODO: TODO_68_40_26_10.define_env_vars_in_known_env_var_enum.md:
+        # TODO: Define in KnownEnvVar enum:
+        self.shell_env_vars["ENV"] = self.get_init_file_abs_path()
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
 def _get_shell_driver(
     cache_dir_abs_path: str,
     activate_venv: bool = True,
@@ -1239,23 +1271,27 @@ def _get_shell_driver(
     shell_driver_type: type[ShellDriverBase]
 
     if shell_abs_path is None:
-        # TODO: TODO_74_35_76_27.shell_driver_fallback_to_sh.md:
-        # TODO: Implement `ShellDriverSh` using `/bin/sh` instead:
         logger.warning(f"env var `{var_shell}` is not set - assuming `bash` as default")
 
-        # TODO: TODO_74_35_76_27.shell_driver_fallback_to_sh.md:
+        # TODO: TODO_50_98_96_87.support_windows.md:
         # TODO: How will work on Windows without `shutil`? And without POSIX shell?
         # noinspection PyDeprecation
         shell_abs_path = shutil.which("bash")
-        # TODO: TODO_74_35_76_27.shell_driver_fallback_to_sh.md:
-        # TODO: If `bash` is not in the `PATH`, fall back to `/bin/sh` instead:
-        assert shell_abs_path is not None
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
         shell_driver_type = ShellDriverBash
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+        if shell_abs_path is None:
+            # TODO_74_35_76_27.shell_driver_fallback_to_sh.md:
+            # Minimal systems (e.g. containers) might not have `bash`:
+            # fall back to the POSIX `sh` instead of failing.
+            logger.warning(f"`bash` is not in `PATH` - falling back to `{ShellType.shell_sh.value}`")
+            shell_abs_path = shutil.which(ShellType.shell_sh.value) or f"/bin/{ShellType.shell_sh.value}"
+            shell_driver_type = ShellDriverSh
     elif os.path.basename(shell_abs_path) == ShellType.shell_bash.value:
         shell_driver_type = ShellDriverBash
     elif os.path.basename(shell_abs_path) == ShellType.shell_zsh.value:
         shell_driver_type = ShellDriverZsh
+    elif os.path.basename(shell_abs_path) == ShellType.shell_sh.value:
+        shell_driver_type = ShellDriverSh
     else:
         raise ValueError(f"env var `{var_shell}` has unknown value [{shell_abs_path}]")
 
@@ -1267,11 +1303,11 @@ def _get_shell_driver(
         cache_dir_abs_path=cache_dir_abs_path,
         activate_venv=activate_venv,
     )
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
 ########################################################################################################################
 
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
 class ConfConstGeneral:
 
     # The project name = package name:
@@ -1288,12 +1324,12 @@ class ConfConstGeneral:
     # The default name of for the client own copy of `name_primer_kernel_module` module.
     # It is a different name from `name_primer_kernel_module` to avoid name clash.
     default_proto_kernel_module = "proto_kernel"
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     # File name of the FT_87_17_49_36.proto_kernel.md:
     default_proto_kernel_basename = f"{default_proto_kernel_module}.py"
 
     python_version_file_basename = ".python-version"
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     venv_config_file_basename = "pyvenv.cfg"
 
     pytest_module = "pytest"
@@ -1309,13 +1345,13 @@ class ConfConstGeneral:
     # FT_21_75_54_18.instant_scenario.md:
     # If `--main_func` is this (empty), run `proto_main`.
     default_proto_main = ""
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     # TODO: TODO_16_35_39_74.simplify_input_based_default.md:
     # TODO: use lambdas to generate based on input (instead of None):
     # This is a value declared for completeness,
     # but unused (evaluated dynamically via the bootstrap process):
     input_based = None
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     file_rel_path_venv_bin = os.path.join("bin")
 
     file_rel_path_venv_python = os.path.join(
@@ -1332,11 +1368,11 @@ class ConfConstGeneral:
         file_rel_path_venv_bin,
         name_uv_package,
     )
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     log_section_delimiter = "=" * 5
 
     min_lines_between_generated_boilerplate = 20
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     # FT_56_85_65_41.generated_boilerplate.md
     func_get_proto_kernel_generated_boilerplate_single_header = lambda module_obj: (
         f"""

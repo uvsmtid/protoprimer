@@ -2,6 +2,7 @@
 FT_99_89_51_06.venv_shell.md
 """
 
+import os
 import subprocess
 from pathlib import Path
 
@@ -215,6 +216,53 @@ def test_shell_interactive(tmp_path: Path):
         ],
         input="exit 42\n",
         text=True,
+    )
+
+    # then:
+
+    assert sub_proc.returncode == 42
+
+
+def test_shell_sh_interactive_applies_init_file(tmp_path: Path):
+    """
+    `ExecOperation.op_shell` with POSIX `sh` (TODO_74_35_76_27.shell_driver_fallback_to_sh.md)
+    applies the init file via the `ENV` env var (activating the `venv`)
+    isolated from the parent process environment.
+    """
+
+    assert_test_func_name_embeds_str(ExecOperation.op_shell.value)
+
+    # given:
+
+    (
+        proto_kernel_abs_path,
+        ref_root_abs_path,
+        project_dir_abs_path,
+    ) = create_max_leaps_shape(tmp_path)
+
+    run_primer_main([str(proto_kernel_abs_path)])
+
+    expected_venv = str(ref_root_abs_path / ConfConstEnv.default_dir_rel_path_venv)
+
+    # when:
+    # `SHELL` explicitly points to POSIX `sh`.
+    # Environment vars that could pre-set the `venv` or the init file
+    # are removed so that the activation can only come from the generated `.shrc`:
+
+    sub_proc_env = os.environ.copy()
+    sub_proc_env["SHELL"] = "/bin/sh"
+    sub_proc_env.pop("VIRTUAL_ENV", None)
+    sub_proc_env.pop("ENV", None)
+    sub_proc_env.pop("BASH_ENV", None)
+
+    sub_proc = subprocess.run(
+        [
+            str(proto_kernel_abs_path),
+            ExecOperation.op_shell.value,
+        ],
+        input=f'test "$VIRTUAL_ENV" = "{expected_venv}" && exit 42 || exit 1\n',
+        text=True,
+        env=sub_proc_env,
     )
 
     # then:
