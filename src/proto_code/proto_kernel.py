@@ -1063,8 +1063,8 @@ class ShellType(enum.Enum):
     shell_zsh = "zsh"
 
     shell_sh = "sh"
-
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
 def remove_protoprimer_env_vars(env_vars: typing.MutableMapping[str, str]) -> None:
     """
     FT_66_02_54_56.context_isolation.md
@@ -1248,7 +1248,7 @@ def _get_shell_driver(
     cache_dir_abs_path: str,
     activate_venv: bool = True,
 ) -> ShellDriverBase:
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     # TODO: TODO_68_40_26_10.define_env_vars_in_known_env_var_enum.md:
     # TODO: Define in KnownEnvVar enum:
     var_shell = "SHELL"
@@ -1273,7 +1273,7 @@ def _get_shell_driver(
         shell_driver_type = ShellDriverSh
     else:
         raise ValueError(f"env var `{var_shell}` has unknown value [{shell_abs_path}]")
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     shell_env_vars = os.environ.copy()
     remove_protoprimer_env_vars(shell_env_vars)
     return shell_driver_type(
@@ -1286,7 +1286,7 @@ def _get_shell_driver(
 
 ########################################################################################################################
 
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
 class ConfConstGeneral:
 
     # The project name = package name:
@@ -1296,7 +1296,7 @@ class ConfConstGeneral:
 
     # Concept name of the FT_90_65_67_62.proto_code.md:
     name_proto_code = "proto_code"
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     # The main module of the `protoprimer` package (this file):
     name_primer_kernel_module = "primer_kernel"
 
@@ -1308,7 +1308,7 @@ class ConfConstGeneral:
     default_proto_kernel_basename = f"{default_proto_kernel_module}.py"
 
     python_version_file_basename = ".python-version"
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     venv_config_file_basename = "pyvenv.cfg"
 
     pytest_module = "pytest"
@@ -1318,7 +1318,7 @@ class ConfConstGeneral:
     name_uv_package = "uv"
 
     curr_dir_rel_path = "."
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     module_func_separator = ":"
 
     # FT_21_75_54_18.instant_scenario.md:
@@ -1330,7 +1330,7 @@ class ConfConstGeneral:
     # This is a value declared for completeness,
     # but unused (evaluated dynamically via the bootstrap process):
     input_based = None
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     file_rel_path_venv_bin = os.path.join("bin")
 
     file_rel_path_venv_python = os.path.join(
@@ -1342,7 +1342,7 @@ class ConfConstGeneral:
         file_rel_path_venv_bin,
         "activate",
     )
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     file_rel_path_venv_uv = os.path.join(
         file_rel_path_venv_bin,
         name_uv_package,
@@ -1351,7 +1351,7 @@ class ConfConstGeneral:
     log_section_delimiter = "=" * 5
 
     min_lines_between_generated_boilerplate = 20
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     # FT_56_85_65_41.generated_boilerplate.md
     func_get_proto_kernel_generated_boilerplate_single_header = lambda module_obj: (
         f"""
@@ -1366,14 +1366,14 @@ class ConfConstGeneral:
 ################################################################################
 """
     )
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     # FT_56_85_65_41.generated_boilerplate.md
     func_get_proto_kernel_generated_boilerplate_multiple_body = lambda module_obj: (
         f"""
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 """
     )
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     # FT_56_85_65_41.generated_boilerplate.md
     # UC_71_59_90_97.generated_entry_script.md
     entry_script_boilerplate_begin_marker = "# <<< BEGIN: FT_56_85_65_41.generated_boilerplate"
@@ -1390,12 +1390,12 @@ class ConfConstInput:
     """
     Constants for FT_89_41_35_82.conf_leap.md / leap_input
     """
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     file_abs_path_script = ConfConstGeneral.input_based
     dir_abs_path_current = ConfConstGeneral.input_based
 
     default_proto_conf_dir_rel_path: str = f"{ConfConstGeneral.name_proto_code}"
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     conf_file_ext = "json"
 
     # Next FT_89_41_35_82.conf_leap.md: `ConfLeap.leap_primer`:
@@ -1414,9 +1414,9 @@ class ConfConstPrimer:
     """
     Constants for FT_89_41_35_82.conf_leap.md / leap_primer
     """
-
-    default_client_conf_dir_rel_path: str = f"{ConfDst.dst_global.value}"
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+    default_client_conf_dir_rel_path: str = f"{ConfDst.dst_global.value}"
+
     # Next FT_89_41_35_82.conf_leap.md: `ConfLeap.leap_client`:
     default_file_basename_leap_client: str = ConfConstInput.default_file_basename_conf_primer
 
