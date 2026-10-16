@@ -1280,7 +1280,6 @@ def _get_shell_driver(
         shell_driver_type = ShellDriverBash
 
         if shell_abs_path is None:
-            # TODO_74_35_76_27.shell_driver_fallback_to_sh.md:
             # Minimal systems (e.g. containers) might not have `bash`:
             # fall back to the POSIX `sh` instead of failing.
             logger.warning(f"`bash` is not in `PATH` - falling back to `{ShellType.shell_sh.value}`")

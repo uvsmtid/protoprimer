@@ -225,7 +225,7 @@ def test_shell_interactive(tmp_path: Path):
 
 def test_shell_sh_interactive_applies_init_file(tmp_path: Path):
     """
-    `ExecOperation.op_shell` with POSIX `sh` (TODO_74_35_76_27.shell_driver_fallback_to_sh.md)
+    `ExecOperation.op_shell` with POSIX `sh`
     applies the init file via the `ENV` env var (activating the `venv`)
     isolated from the parent process environment.
     """

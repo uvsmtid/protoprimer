@@ -122,7 +122,7 @@ def test_get_shell_driver_no_shell_env_no_bash(mock_warning, mock_which):
     driver = _get_shell_driver("/fake/cache")
 
     # then:
-    # `bash` is not in `PATH`: fall back to `/bin/sh` (TODO_74_35_76_27):
+    # `bash` is not in `PATH`: fall back to `/bin/sh`:
     mock_warning.assert_any_call("env var `SHELL` is not set - assuming `bash` as default")
     mock_warning.assert_any_call("`bash` is not in `PATH` - falling back to `sh`")
     assert isinstance(driver, ShellDriverSh)
