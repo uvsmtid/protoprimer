@@ -101,7 +101,7 @@ def test_write_init_file_quotes_venv_path(mock_write_text_file, fs):
     # when:
     driver.write_init_file("/fake/my venv")
     # then:
-    written_content = mock_write_text_file.call_args.args[1]
+    written_content = mock_write_text_file.call_args[0][1]
     assert "source '/fake/my venv/bin/activate'" in written_content
 
 
@@ -125,7 +125,7 @@ def test_write_init_file_still_uses_source(mock_write_text_file, driver_type, sh
     driver.write_init_file("/fake/venv")
     # then:
     assert driver.get_source_builtin() == "source"
-    written_content = mock_write_text_file.call_args.args[1]
+    written_content = mock_write_text_file.call_args[0][1]
     assert "source /fake/venv/bin/activate" in written_content
     assert "\n. " not in written_content
 
