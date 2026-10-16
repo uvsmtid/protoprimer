@@ -344,6 +344,8 @@ class EnvVar(enum.Enum):
 
     var_PROTOPRIMER_VENV_DRIVER = "PROTOPRIMER_VENV_DRIVER"
 
+    var_PROTOPRIMER_SH_INIT_FILE = "PROTOPRIMER_SH_INIT_FILE"
+
     var_PROTOPRIMER_MOCKED_RESTART = "PROTOPRIMER_MOCKED_RESTART"
     """
     See: FT_39_94_24_00.fat_mock.md
@@ -1060,6 +1062,8 @@ class ShellType(enum.Enum):
 
     shell_bash = "bash"
 
+    shell_sh = "sh"
+
     shell_zsh = "zsh"
 
 
@@ -1202,6 +1206,46 @@ class ShellDriverBash(ShellDriverBase):
         )
 
 
+class ShellDriverSh(ShellDriverBase):
+
+    def get_type(self) -> ShellType:
+        return ShellType.shell_sh
+
+    def get_init_file_basename(self):
+        return ".shrc"
+
+    def write_init_file(
+        self,
+        venv_abs_path: str,
+    ):
+        pathlib.Path(os.path.dirname(self.get_init_file_abs_path())).mkdir(
+            parents=True,
+            exist_ok=True,
+        )
+        write_text_file(
+            self.get_init_file_abs_path(),
+            f"""
+# The startup hook is only needed while this shell initializes:
+unset ENV {EnvVar.var_PROTOPRIMER_SH_INIT_FILE.value}
+# Activate `venv`:
+if [ "{str(self.activate_venv).lower()}" = "true" ]
+then
+    . {shlex.quote(self.get_venv_activate_script_abs_path(venv_abs_path))}
+fi
+""",
+        )
+
+    def configure_interactive_shell(
+        self,
+        has_command: bool,
+    ) -> None:
+        # POSIX shells expand `ENV` in interactive mode, which `run_shell` enables.
+        # Expand a variable once so special characters in the path stay literal:
+        init_file_env_var = EnvVar.var_PROTOPRIMER_SH_INIT_FILE.value
+        self.shell_env_vars[init_file_env_var] = self.get_init_file_abs_path()
+        self.shell_env_vars["ENV"] = "${" + init_file_env_var + "}"
+
+
 class ShellDriverZsh(ShellDriverBase):
 
     def get_type(self) -> ShellType:
@@ -1239,21 +1283,13 @@ def _get_shell_driver(
     shell_driver_type: type[ShellDriverBase]
 
     if shell_abs_path is None:
-        # TODO: TODO_74_35_76_27.shell_driver_fallback_to_sh.md:
-        # TODO: Implement `ShellDriverSh` using `/bin/sh` instead:
-        logger.warning(f"env var `{var_shell}` is not set - assuming `bash` as default")
-
-        # TODO: TODO_74_35_76_27.shell_driver_fallback_to_sh.md:
-        # TODO: How will work on Windows without `shutil`? And without POSIX shell?
-        # noinspection PyDeprecation
-        shell_abs_path = shutil.which("bash")
-        # TODO: TODO_74_35_76_27.shell_driver_fallback_to_sh.md:
-        # TODO: If `bash` is not in the `PATH`, fall back to `/bin/sh` instead:
-        assert shell_abs_path is not None
-
-        shell_driver_type = ShellDriverBash
+        logger.warning(f"env var `{var_shell}` is not set - assuming `sh` as default")
+        shell_abs_path = "/bin/sh"
+        shell_driver_type = ShellDriverSh
     elif os.path.basename(shell_abs_path) == ShellType.shell_bash.value:
         shell_driver_type = ShellDriverBash
+    elif os.path.basename(shell_abs_path) == ShellType.shell_sh.value:
+        shell_driver_type = ShellDriverSh
     elif os.path.basename(shell_abs_path) == ShellType.shell_zsh.value:
         shell_driver_type = ShellDriverZsh
     else:

@@ -344,6 +344,8 @@ class EnvVar(enum.Enum):
 
     var_PROTOPRIMER_VENV_DRIVER = "PROTOPRIMER_VENV_DRIVER"
 
+    var_PROTOPRIMER_SH_INIT_FILE = "PROTOPRIMER_SH_INIT_FILE"
+
     var_PROTOPRIMER_MOCKED_RESTART = "PROTOPRIMER_MOCKED_RESTART"
     """
     See: FT_39_94_24_00.fat_mock.md
@@ -352,11 +354,11 @@ class EnvVar(enum.Enum):
     # FT_41_45_81_49.trace_mode.md
     var_PROTOPRIMER_TRACE_EXECUTION = "PROTOPRIMER_TRACE_EXECUTION"
 
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 class ConfDst(enum.Enum):
     """
     See FT_23_37_64_44.global_vs_local.md
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     TODO: TODO_39_94_67_54.rename_client_env_to_global_local.md:
     TODO: Is this supposed to be called conf src (instead of `conf dst`)?
     """
@@ -373,11 +375,11 @@ class ValueName(enum.Enum):
     value_stderr_log_level = "stderr_log_level"
 
     value_exec_operation = "exec_operation"
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     value_final_state = "final_state"
 
     value_py_exec = "py_exec"
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     value_primer_runtime = "primer_runtime"
 
     value_start_id = "start_id"
@@ -395,11 +397,11 @@ class ValueName(enum.Enum):
     value_venv_driver = "venv_driver"
 
     value_python = "python"
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     value_version = "version"
 
     value_file_basename = "file_basename"
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     value_version_constraints = "version_constraints"
 
 
@@ -416,7 +418,7 @@ class PathName(enum.Enum):
     # TODO: TODO_56_99_72_68.feature_topic_for_ref_root.md:
     # TODO: Add a `feature_topic` for `ref root` (explaining how everything is relative to it):
     path_ref_root = "ref_root"
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     # See FT_89_41_35_82.conf_leap.md / primer
     path_primer_conf = f"{ConfLeap.leap_primer.value}_conf"
 
@@ -425,7 +427,7 @@ class PathName(enum.Enum):
     # See FT_89_41_35_82.conf_leap.md / client
     path_conf_client = f"conf_{ConfLeap.leap_client.value}"
     path_global_conf = f"{ConfLeap.leap_global.value}_conf"
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     # TODO: TODO_39_94_67_54.rename_client_env_to_global_local.md:
     # TODO: Instead of `path_conf_env`, use `path_local_conf`:
     # See FT_89_41_35_82.conf_leap.md / env
@@ -437,7 +439,7 @@ class PathName(enum.Enum):
     path_link_name = "link_name"
 
     path_default_env = "default_env"
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     path_selected_env = f"selected_env"
 
     path_required_python = "required_python"
@@ -446,7 +448,7 @@ class PathName(enum.Enum):
     path_python_selector = "python_selector"
 
     path_selected_python = "selected_python"
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     path_local_venv = "local_venv"
 
     path_local_log = "local_log"
@@ -458,7 +460,7 @@ class PathName(enum.Enum):
     path_local_cache = "local_cache"
 
     path_build_root = "build_root"
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
 class ParsedArg(enum.Enum):
 
@@ -467,7 +469,7 @@ class ParsedArg(enum.Enum):
     name_shell_command = "shell_command"
 
     name_exec_operation = str(ValueName.value_exec_operation.value)
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     # UC_71_59_90_97.generated_entry_script.md
     name_entry_func = "entry_func"
     name_entry_script_path = "entry_script_path"
@@ -480,7 +482,7 @@ class ParsedArg(enum.Enum):
 class LogLevel(enum.Enum):
     name_quiet = "quiet"
     name_verbose = "verbose"
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
 class SyntaxArg:
 
@@ -489,7 +491,7 @@ class SyntaxArg:
 
     # TODO: TODO_19_13_09_01.propagate_start_sub_command_cli_args.md
     arg_double_dash = "--"
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     arg_c = "-c"
     arg_command = "--command"
 
@@ -503,14 +505,14 @@ class SyntaxArg:
 
     arg_e = "-e"
     arg_env = "--env"
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     # UC_71_59_90_97.generated_entry_script.md
     arg_s = "-s"
     arg_entry_script_path = f"--{ParsedArg.name_entry_script_path.value}"
 
     arg_m = "-m"
     arg_main_func = f"--{ParsedArg.name_main_func.value}"
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
 
 class SelectorFunc(enum.Enum):
     """
@@ -527,13 +529,13 @@ class ConfField(enum.Enum):
     """
     Lists all conf fields from persisted files for every `ConfLeap.*`.
     """
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     ####################################################################################################################
     # `ConfLeap.leap_primer`-specific
 
     # state_ref_root_dir_abs_path_inited:
     field_ref_root_dir_rel_path = f"{PathName.path_ref_root.value}_{FilesystemObject.fs_object_dir.value}_{PathType.path_rel.value}"
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     # state_global_conf_dir_abs_path_inited
     field_global_conf_dir_rel_path = f"{PathName.path_global_conf.value}_{FilesystemObject.fs_object_dir.value}_{PathType.path_rel.value}"
 
@@ -550,12 +552,12 @@ class ConfField(enum.Enum):
 
     ####################################################################################################################
     # `ConfLeap.leap_env`-specific
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     # None at the moment.
 
     ####################################################################################################################
     # Common overridable `global` and `local` fields: FT_23_37_64_44.global_vs_local.md
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     # state_required_python_version_inited:
     field_required_python_version = f"{PathName.path_required_python.value}_{ValueName.value_version.value}"
 
@@ -575,12 +577,12 @@ class ConfField(enum.Enum):
     # TODO: combine by parent dir (~ `./var`):
     # state_local_run_dir_abs_path_inited:
     field_local_run_dir_rel_path = f"{PathName.path_local_run.value}_{FilesystemObject.fs_object_dir.value}_{PathType.path_rel.value}"
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     # TODO: TODO_04_67_81_16.refactor_reusable_dirs.md:
     # TODO: combine by parent dir (~ `./var`):
     # state_local_tmp_dir_abs_path_inited:
     field_local_tmp_dir_rel_path = f"{PathName.path_local_tmp.value}_{FilesystemObject.fs_object_dir.value}_{PathType.path_rel.value}"
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     # TODO: TODO_04_67_81_16.refactor_reusable_dirs.md:
     # TODO: combine by parent dir (~ `./var`):
     # state_local_cache_dir_abs_path_inited:
@@ -597,12 +599,12 @@ class ConfField(enum.Enum):
     field_project_descriptors = f"{ValueName.value_project_descriptors.value}"
 
     field_install_specs = f"{ValueName.value_install_specs.value}"
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     ####################################################################################################################
 
     # child of `field_project_descriptors`:
     field_build_root_dir_rel_path = f"{PathName.path_build_root.value}_{FilesystemObject.fs_object_dir.value}_{PathType.path_rel.value}"
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     # child of `field_project_descriptors`:
     field_install_extras = f"{ValueName.value_install_extras.value}"
 
@@ -619,7 +621,7 @@ class ConfField(enum.Enum):
 
 
 class VenvDriverBase:
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     def get_type(self) -> VenvDriverType:
         raise NotImplementedError()
 
@@ -628,7 +630,7 @@ class VenvDriverBase:
         local_venv_dir_abs_path: str,
     ) -> bool:
         return self.get_type() == get_venv_type(local_venv_dir_abs_path)
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     def create_venv(
         self,
         local_venv_dir_abs_path: str,
@@ -643,7 +645,7 @@ class VenvDriverBase:
         constraints_file_abs_path: str,
     ) -> None:
         raise NotImplementedError()
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     def install_packages(
         self,
         selected_python_file_abs_path: str,
@@ -651,7 +653,7 @@ class VenvDriverBase:
     ):
         """
         Install packages (which are not necessarily listed in any of the `pyproject.toml` files).
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
         This is against UC_78_58_06_54.no_stray_packages.md (in relation to the main `venv`),
         but it is required for separate non-main `venv`-s created for tools (like `uv`).
         """
@@ -1060,9 +1062,11 @@ class ShellType(enum.Enum):
 
     shell_bash = "bash"
 
-    shell_zsh = "zsh"
+    shell_sh = "sh"
 
+    shell_zsh = "zsh"
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
 def remove_protoprimer_env_vars(env_vars: typing.MutableMapping[str, str]) -> None:
     """
     FT_66_02_54_56.context_isolation.md
@@ -1202,6 +1206,46 @@ class ShellDriverBash(ShellDriverBase):
         )
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+class ShellDriverSh(ShellDriverBase):
+
+    def get_type(self) -> ShellType:
+        return ShellType.shell_sh
+
+    def get_init_file_basename(self):
+        return ".shrc"
+
+    def write_init_file(
+        self,
+        venv_abs_path: str,
+    ):
+        pathlib.Path(os.path.dirname(self.get_init_file_abs_path())).mkdir(
+            parents=True,
+            exist_ok=True,
+        )
+        write_text_file(
+            self.get_init_file_abs_path(),
+            f"""
+# The startup hook is only needed while this shell initializes:
+unset ENV {EnvVar.var_PROTOPRIMER_SH_INIT_FILE.value}
+# Activate `venv`:
+if [ "{str(self.activate_venv).lower()}" = "true" ]
+then
+    . {shlex.quote(self.get_venv_activate_script_abs_path(venv_abs_path))}
+fi
+""",
+        )
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+    def configure_interactive_shell(
+        self,
+        has_command: bool,
+    ) -> None:
+        # POSIX shells expand `ENV` in interactive mode, which `run_shell` enables.
+        # Expand a variable once so special characters in the path stay literal:
+        init_file_env_var = EnvVar.var_PROTOPRIMER_SH_INIT_FILE.value
+        self.shell_env_vars[init_file_env_var] = self.get_init_file_abs_path()
+        self.shell_env_vars["ENV"] = "${" + init_file_env_var + "}"
+
+
 class ShellDriverZsh(ShellDriverBase):
 
     def get_type(self) -> ShellType:
@@ -1239,26 +1283,18 @@ def _get_shell_driver(
     shell_driver_type: type[ShellDriverBase]
 
     if shell_abs_path is None:
-        # TODO: TODO_74_35_76_27.shell_driver_fallback_to_sh.md:
-        # TODO: Implement `ShellDriverSh` using `/bin/sh` instead:
-        logger.warning(f"env var `{var_shell}` is not set - assuming `bash` as default")
-
-        # TODO: TODO_74_35_76_27.shell_driver_fallback_to_sh.md:
-        # TODO: How will work on Windows without `shutil`? And without POSIX shell?
-        # noinspection PyDeprecation
-        shell_abs_path = shutil.which("bash")
-        # TODO: TODO_74_35_76_27.shell_driver_fallback_to_sh.md:
-        # TODO: If `bash` is not in the `PATH`, fall back to `/bin/sh` instead:
-        assert shell_abs_path is not None
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-        shell_driver_type = ShellDriverBash
+        logger.warning(f"env var `{var_shell}` is not set - assuming `sh` as default")
+        shell_abs_path = "/bin/sh"
+        shell_driver_type = ShellDriverSh
     elif os.path.basename(shell_abs_path) == ShellType.shell_bash.value:
         shell_driver_type = ShellDriverBash
+    elif os.path.basename(shell_abs_path) == ShellType.shell_sh.value:
+        shell_driver_type = ShellDriverSh
     elif os.path.basename(shell_abs_path) == ShellType.shell_zsh.value:
         shell_driver_type = ShellDriverZsh
     else:
         raise ValueError(f"env var `{var_shell}` has unknown value [{shell_abs_path}]")
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     shell_env_vars = os.environ.copy()
     remove_protoprimer_env_vars(shell_env_vars)
     return shell_driver_type(
@@ -1271,7 +1307,7 @@ def _get_shell_driver(
 
 ########################################################################################################################
 
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
 class ConfConstGeneral:
 
     # The project name = package name:
@@ -1281,7 +1317,7 @@ class ConfConstGeneral:
 
     # Concept name of the FT_90_65_67_62.proto_code.md:
     name_proto_code = "proto_code"
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     # The main module of the `protoprimer` package (this file):
     name_primer_kernel_module = "primer_kernel"
 
@@ -1293,7 +1329,7 @@ class ConfConstGeneral:
     default_proto_kernel_basename = f"{default_proto_kernel_module}.py"
 
     python_version_file_basename = ".python-version"
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     venv_config_file_basename = "pyvenv.cfg"
 
     pytest_module = "pytest"
@@ -1303,7 +1339,7 @@ class ConfConstGeneral:
     name_uv_package = "uv"
 
     curr_dir_rel_path = "."
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     module_func_separator = ":"
 
     # FT_21_75_54_18.instant_scenario.md:
@@ -1315,7 +1351,7 @@ class ConfConstGeneral:
     # This is a value declared for completeness,
     # but unused (evaluated dynamically via the bootstrap process):
     input_based = None
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     file_rel_path_venv_bin = os.path.join("bin")
 
     file_rel_path_venv_python = os.path.join(
@@ -1327,7 +1363,7 @@ class ConfConstGeneral:
         file_rel_path_venv_bin,
         "activate",
     )
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     file_rel_path_venv_uv = os.path.join(
         file_rel_path_venv_bin,
         name_uv_package,
@@ -1336,7 +1372,7 @@ class ConfConstGeneral:
     log_section_delimiter = "=" * 5
 
     min_lines_between_generated_boilerplate = 20
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     # FT_56_85_65_41.generated_boilerplate.md
     func_get_proto_kernel_generated_boilerplate_single_header = lambda module_obj: (
         f"""
@@ -1351,14 +1387,14 @@ class ConfConstGeneral:
 ################################################################################
 """
     )
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     # FT_56_85_65_41.generated_boilerplate.md
     func_get_proto_kernel_generated_boilerplate_multiple_body = lambda module_obj: (
         f"""
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 """
     )
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     # FT_56_85_65_41.generated_boilerplate.md
     # UC_71_59_90_97.generated_entry_script.md
     entry_script_boilerplate_begin_marker = "# <<< BEGIN: FT_56_85_65_41.generated_boilerplate"
@@ -1375,12 +1411,12 @@ class ConfConstInput:
     """
     Constants for FT_89_41_35_82.conf_leap.md / leap_input
     """
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     file_abs_path_script = ConfConstGeneral.input_based
     dir_abs_path_current = ConfConstGeneral.input_based
 
     default_proto_conf_dir_rel_path: str = f"{ConfConstGeneral.name_proto_code}"
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     conf_file_ext = "json"
 
     # Next FT_89_41_35_82.conf_leap.md: `ConfLeap.leap_primer`:
@@ -1399,9 +1435,9 @@ class ConfConstPrimer:
     """
     Constants for FT_89_41_35_82.conf_leap.md / leap_primer
     """
-
-    default_client_conf_dir_rel_path: str = f"{ConfDst.dst_global.value}"
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+    default_client_conf_dir_rel_path: str = f"{ConfDst.dst_global.value}"
+
     # Next FT_89_41_35_82.conf_leap.md: `ConfLeap.leap_client`:
     default_file_basename_leap_client: str = ConfConstInput.default_file_basename_conf_primer
 
