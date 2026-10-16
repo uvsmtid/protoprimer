@@ -1278,9 +1278,15 @@ def _get_shell_driver(
     shell_driver_type: type[ShellDriverBase]
 
     if shell_abs_path is None:
-        logger.warning(f"env var `{var_shell}` is not set - assuming `/bin/sh` as default")
-        shell_abs_path = "/bin/sh"
-        shell_driver_type = ShellDriverSh
+        logger.warning(f"env var `{var_shell}` is not set - assuming `bash` as default")
+
+        # noinspection PyDeprecation
+        shell_abs_path = shutil.which("bash")
+        if shell_abs_path is not None:
+            shell_driver_type = ShellDriverBash
+        else:
+            shell_abs_path = "/bin/sh"
+            shell_driver_type = ShellDriverSh
     elif os.path.basename(shell_abs_path) == ShellType.shell_bash.value:
         shell_driver_type = ShellDriverBash
     elif os.path.basename(shell_abs_path) == ShellType.shell_zsh.value:

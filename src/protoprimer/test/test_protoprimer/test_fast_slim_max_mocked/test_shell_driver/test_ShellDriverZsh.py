@@ -96,13 +96,14 @@ def test_configure_interactive_shell_with_command(fs):
 
 
 @patch.dict(os.environ, {}, clear=True)
+@patch("shutil.which", return_value=None)
 @patch("protoprimer.primer_kernel.logger.warning")
-def test_get_shell_driver_no_shell_env(mock_warning):
+def test_get_shell_driver_no_shell_env(mock_warning, mock_which):
     # when:
     driver = _get_shell_driver("/fake/cache")
 
     # then:
-    mock_warning.assert_called_once_with("env var `SHELL` is not set - assuming `/bin/sh` as default")
+    mock_warning.assert_called_once_with("env var `SHELL` is not set - assuming `bash` as default")
     assert isinstance(driver, ShellDriverSh)
     assert driver.shell_abs_path == "/bin/sh"
 
