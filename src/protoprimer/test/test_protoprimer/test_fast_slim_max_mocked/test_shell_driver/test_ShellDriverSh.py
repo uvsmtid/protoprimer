@@ -1,8 +1,6 @@
 import os
 from unittest.mock import patch
 
-import pytest
-
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer.primer_kernel import (
     _get_shell_driver,
@@ -128,36 +126,22 @@ def test_get_shell_driver_shell_env_sh():
         assert driver.shell_abs_path == shell_path
 
 
-@patch.dict(os.environ, {}, clear=True)
-@patch("shutil.which")
-@patch("protoprimer.primer_kernel.logger.warning")
-def test_get_shell_driver_no_shell_env_no_bash_with_sh(mock_warning, mock_which):
+@patch("os.execve")
+@patch.object(ShellDriverSh, "write_init_file")
+def test_run_shell_passes_init_file_via_ENV(mock_write, mock_execve, fs):
     # given:
-    # `bash` is not in `PATH`, but POSIX `sh` is:
-    mock_which.side_effect = [None, "/bin/sh"]
-
+    fs.create_dir("/fake/cache/sh")
+    driver = ShellDriverSh(
+        shell_abs_path="/bin/sh",
+        shell_env_vars={"VAR": "value"},
+        cache_dir_abs_path="/fake/cache",
+    )
     # when:
-    driver = _get_shell_driver("/fake/cache")
-
+    driver.run_shell(False, "echo hello", "/fake/venv")
     # then:
-    mock_warning.assert_any_call("`bash` is not in `PATH` - falling back to `sh`")
-    assert isinstance(driver, ShellDriverSh)
-    assert driver.shell_abs_path == "/bin/sh"
-
-
-@patch.dict(os.environ, {}, clear=True)
-@patch("shutil.which")
-@patch("protoprimer.primer_kernel.logger.warning")
-def test_get_shell_driver_no_shell_env_no_bash_no_sh(mock_warning, mock_which):
-    # given:
-    # Neither `bash` nor `sh` is in `PATH`:
-    mock_which.return_value = None
-
-    # when:
-    driver = _get_shell_driver("/fake/cache")
-
-    # then:
-    # The last resort is the standard location of the POSIX shell:
-    mock_warning.assert_any_call("`bash` is not in `PATH` - falling back to `sh`")
-    assert isinstance(driver, ShellDriverSh)
-    assert driver.shell_abs_path == "/bin/sh"
+    mock_write.assert_called_once_with("/fake/venv")
+    mock_execve.assert_called_once_with(
+        "/bin/sh",
+        ["/bin/sh", "-i", "-c", "echo hello"],
+        {"VAR": "value", "ENV": "/fake/cache/sh/.shrc"},
+    )

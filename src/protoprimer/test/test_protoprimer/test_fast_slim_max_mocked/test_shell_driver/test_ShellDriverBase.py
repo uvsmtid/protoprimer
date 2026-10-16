@@ -4,7 +4,9 @@ import pytest
 
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer.primer_kernel import (
+    ShellDriverBash,
     ShellDriverBase,
+    ShellDriverZsh,
     ShellType,
 )
 
@@ -85,6 +87,47 @@ then
 fi
 """,
     )
+
+
+@patch("protoprimer.primer_kernel.write_text_file")
+def test_write_init_file_quotes_venv_path(mock_write_text_file, fs):
+    # given:
+    fs.create_dir("/fake/cache")
+    driver = ShellDriverConcrete(
+        shell_abs_path="/bin/bash",
+        shell_env_vars={},
+        cache_dir_abs_path="/fake/cache",
+    )
+    # when:
+    driver.write_init_file("/fake/my venv")
+    # then:
+    written_content = mock_write_text_file.call_args.args[1]
+    assert "source '/fake/my venv/bin/activate'" in written_content
+
+
+@pytest.mark.parametrize(
+    "driver_type, shell_abs_path, init_file_rel_path",
+    [
+        (ShellDriverBash, "/bin/bash", "bash/.bashrc"),
+        (ShellDriverZsh, "/bin/zsh", "zsh/.zshrc"),
+    ],
+)
+@patch("protoprimer.primer_kernel.write_text_file")
+def test_write_init_file_still_uses_source(mock_write_text_file, driver_type, shell_abs_path, init_file_rel_path, fs):
+    # given:
+    fs.create_dir("/fake/cache")
+    driver = driver_type(
+        shell_abs_path=shell_abs_path,
+        shell_env_vars={},
+        cache_dir_abs_path="/fake/cache",
+    )
+    # when:
+    driver.write_init_file("/fake/venv")
+    # then:
+    assert driver.get_source_builtin() == "source"
+    written_content = mock_write_text_file.call_args.args[1]
+    assert "source /fake/venv/bin/activate" in written_content
+    assert "\n. " not in written_content
 
 
 @patch("os.execve")

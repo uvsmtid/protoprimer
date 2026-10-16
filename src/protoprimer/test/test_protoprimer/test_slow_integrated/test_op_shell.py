@@ -268,3 +268,51 @@ def test_shell_sh_interactive_applies_init_file(tmp_path: Path):
     # then:
 
     assert sub_proc.returncode == 42
+
+
+def test_shell_sh_command_execution_applies_init_file(tmp_path: Path):
+    """
+    `ExecOperation.op_shell` with POSIX `sh` and a command line
+    (`sh -i -c "<command>"`) still applies the init file via the `ENV` env var
+    (whether `ENV` is read for `-i` together with `-c` is shell-specific behavior).
+    """
+
+    assert_test_func_name_embeds_str(ExecOperation.op_shell.value)
+
+    # given:
+
+    (
+        proto_kernel_abs_path,
+        ref_root_abs_path,
+        project_dir_abs_path,
+    ) = create_max_leaps_shape(tmp_path)
+
+    run_primer_main([str(proto_kernel_abs_path)])
+
+    expected_venv = str(ref_root_abs_path / ConfConstEnv.default_dir_rel_path_venv)
+
+    output_file = ref_root_abs_path / "test_file_sh.txt"
+    assert not output_file.exists()
+
+    sub_proc_env = os.environ.copy()
+    sub_proc_env["SHELL"] = "/bin/sh"
+    sub_proc_env.pop("VIRTUAL_ENV", None)
+    sub_proc_env.pop("ENV", None)
+    sub_proc_env.pop("BASH_ENV", None)
+
+    # when:
+
+    subprocess.run(
+        [
+            str(proto_kernel_abs_path),
+            ExecOperation.op_shell.value,
+            SyntaxArg.arg_c,
+            f'test "$VIRTUAL_ENV" = "{expected_venv}" && touch {output_file}',
+        ],
+        check=True,
+        env=sub_proc_env,
+    )
+
+    # then:
+
+    assert output_file.exists()

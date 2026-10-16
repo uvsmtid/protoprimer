@@ -1134,7 +1134,7 @@ test -f ~/{self.get_init_file_basename()} && {self.get_source_builtin()} ~/{self
 # Activate `venv`:
 if [ "{str(self.activate_venv).lower()}" = "true" ]
 then
-    {self.get_source_builtin()} {self.get_venv_activate_script_abs_path(venv_abs_path)}
+    {self.get_source_builtin()} {shlex.quote(self.get_venv_activate_script_abs_path(venv_abs_path))}
 fi
 """,
         )
@@ -1236,6 +1236,10 @@ class ShellDriverZsh(ShellDriverBase):
 
 
 class ShellDriverSh(ShellDriverBase):
+    """
+    Drives any POSIX `sh` implementation (`dash`, `ash`, `bash` in `sh` mode, etc.):
+    no non-POSIX extensions are used in the generated init file.
+    """
 
     def get_type(self) -> ShellType:
         return ShellType.shell_sh
@@ -1271,20 +1275,11 @@ def _get_shell_driver(
     shell_driver_type: type[ShellDriverBase]
 
     if shell_abs_path is None:
-        logger.warning(f"env var `{var_shell}` is not set - assuming `bash` as default")
-
         # TODO: TODO_50_98_96_87.support_windows.md:
-        # TODO: How will work on Windows without `shutil`? And without POSIX shell?
-        # noinspection PyDeprecation
-        shell_abs_path = shutil.which("bash")
-        shell_driver_type = ShellDriverBash
-
-        if shell_abs_path is None:
-            # Minimal systems (e.g. containers) might not have `bash`:
-            # fall back to the POSIX `sh` instead of failing.
-            logger.warning(f"`bash` is not in `PATH` - falling back to `{ShellType.shell_sh.value}`")
-            shell_abs_path = shutil.which(ShellType.shell_sh.value) or f"/bin/{ShellType.shell_sh.value}"
-            shell_driver_type = ShellDriverSh
+        # TODO: How will it work on Windows without POSIX shell?
+        shell_abs_path = "/bin/sh"
+        logger.warning(f"env var `{var_shell}` is not set - assuming [{shell_abs_path}] as default")
+        shell_driver_type = ShellDriverSh
     elif os.path.basename(shell_abs_path) == ShellType.shell_bash.value:
         shell_driver_type = ShellDriverBash
     elif os.path.basename(shell_abs_path) == ShellType.shell_zsh.value:
