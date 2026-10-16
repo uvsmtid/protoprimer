@@ -6,7 +6,7 @@ import pytest
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer.primer_kernel import (
     _get_shell_driver,
-    ShellDriverBash,
+    ShellDriverSh,
     ShellDriverZsh,
     ShellType,
 )
@@ -99,28 +99,17 @@ def test_configure_interactive_shell_with_command(fs):
 @patch("protoprimer.primer_kernel.logger.warning")
 def test_get_shell_driver_no_shell_env(mock_warning, mock_which):
     # given:
-    mock_which.return_value = "/bin/bash"
+    # `bash` is in `PATH`, but it must not be preferred when `SHELL` is not set:
+    mock_which.return_value = "/usr/bin/bash"
 
     # when:
     driver = _get_shell_driver("/fake/cache")
 
     # then:
-    mock_warning.assert_called_once_with("env var `SHELL` is not set - assuming `bash` as default")
-    assert isinstance(driver, ShellDriverBash)
-    assert driver.shell_abs_path == "/bin/bash"
-
-
-@patch.dict(os.environ, {}, clear=True)
-@patch("shutil.which")
-@patch("protoprimer.primer_kernel.logger.warning")
-def test_get_shell_driver_no_shell_env_no_bash(mock_warning, mock_which):
-    # given:
-    mock_which.return_value = None
-
-    # when/then:
-    with pytest.raises(AssertionError):
-        _get_shell_driver("/fake/cache")
-    mock_warning.assert_called_once_with("env var `SHELL` is not set - assuming `bash` as default")
+    mock_warning.assert_called_once_with("env var `SHELL` is not set - assuming [/bin/sh] as default")
+    assert isinstance(driver, ShellDriverSh)
+    assert driver.shell_abs_path == "/bin/sh"
+    mock_which.assert_not_called()
 
 
 def test_get_shell_driver_unknown_shell():
