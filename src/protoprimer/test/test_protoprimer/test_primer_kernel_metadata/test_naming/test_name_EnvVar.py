@@ -6,7 +6,9 @@ from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer.primer_kernel import (
     ConfConstGeneral,
     EnvVar,
+    FilesystemObject,
     PathName,
+    ShellType,
     ValueName,
 )
 from test_protoprimer.test_primer_kernel_metadata.test_metadata.test_key_word import (
@@ -109,6 +111,16 @@ class EnvVarName(enum.Enum):
         name_components=[
             ConfConstGeneral.name_protoprimer_package.upper(),
             ValueName.value_venv_driver.value.upper(),
+        ],
+    )
+    var_PROTOPRIMER_SH_INIT_FILE = EnvVarMeta(
+        env_var=EnvVar.var_PROTOPRIMER_SH_INIT_FILE,
+        name_category=NameCategory.category_name_only,
+        name_components=[
+            ConfConstGeneral.name_protoprimer_package.upper(),
+            ShellType.shell_sh.value.upper(),
+            "INIT",
+            FilesystemObject.fs_object_file.value.upper(),
         ],
     )
     var_PROTOPRIMER_MOCKED_RESTART = EnvVarMeta(
