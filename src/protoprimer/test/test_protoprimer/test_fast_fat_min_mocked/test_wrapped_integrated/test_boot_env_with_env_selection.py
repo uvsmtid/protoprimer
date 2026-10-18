@@ -7,7 +7,7 @@ from local_test.name_assertion import (
     assert_test_func_name_embeds_str,
     assert_test_module_name_embeds_another_module_name,
 )
-from test_protoprimer.test_slow_integrated import test_boot_env_with_env_selection
+from test_protoprimer.test_slow_integrated.test_contract_compatibility import test_boot_env_with_env_selection
 
 
 def test_relationship():
