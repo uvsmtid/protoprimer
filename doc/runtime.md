@@ -247,25 +247,32 @@ git show FETCH_HEAD:src/proto_code/proto_kernel.py > proto_kernel.py
 ```
 
 <!--- invisible-code-block: python
-# Fetch from the current branch (already pushed to `origin`) - `main` may be outdated:
-current_branch = subprocess.run(
-    ["git", "rev-parse", "--abbrev-ref", "HEAD"],
+# Fetch from the commit checked out here (not from `origin`):
+# it works for a detached `HEAD` (CI for PR-s), for forks, and for commits which are not pushed.
+local_repo_dir = Path(
+    subprocess.run(
+        ["git", "rev-parse", "--show-toplevel"],
+        capture_output=True,
+        text=True,
+        check=True,
+    ).stdout.strip()
+)
+local_commit_sha = subprocess.run(
+    ["git", "rev-parse", "HEAD"],
+    cwd=local_repo_dir,
     capture_output=True,
     text=True,
     check=True,
 ).stdout.strip()
 
-subprocess.run(
-    ["git", "fetch", "https://github.com/uvsmtid/protoprimer.git", current_branch],
-    cwd=repo_dir,
+# Read it directly (`git fetch` from a shallow checkout - the default in CI - is rejected):
+proto_kernel_bytes = subprocess.run(
+    ["git", "show", f"{local_commit_sha}:src/proto_code/proto_kernel.py"],
+    cwd=local_repo_dir,
+    capture_output=True,
     check=True,
-)
-subprocess.run(
-    "git show FETCH_HEAD:src/proto_code/proto_kernel.py > proto_kernel.py",
-    cwd=repo_dir,
-    shell=True,
-    check=True,
-)
+).stdout
+(repo_dir / "proto_kernel.py").write_bytes(proto_kernel_bytes)
 --->
 
 ```shell
@@ -893,17 +900,19 @@ git commit --message "Add protoprimer as a dependency"
 ```
 
 <!--- invisible-code-block: python
-# Pin to the current branch (already pushed to `origin`) - `main` may be outdated:
+# Pin to the commit checked out here (a commit sha works for any `pip` version, unlike a branch name or `HEAD`):
+# `localhost` netloc: older `packaging` (via `setuptools` resolved for Python 3.7) rejects an empty one.
+local_repo_uri = local_repo_dir.as_uri().replace("file:///", "file://localhost/")
 some_app_pyproject_toml_path = repo_dir / "src" / "some_app" / "pyproject.toml"
 some_app_pyproject_toml_text = some_app_pyproject_toml_path.read_text()
 some_app_pyproject_toml_text = some_app_pyproject_toml_text.replace(
     "protoprimer @ git+https://github.com/uvsmtid/protoprimer.git#subdirectory=src/protoprimer",
-    f"protoprimer @ git+https://github.com/uvsmtid/protoprimer.git@{current_branch}#subdirectory=src/protoprimer",
+    f"protoprimer @ git+{local_repo_uri}@{local_commit_sha}#subdirectory=src/protoprimer",
 )
 some_app_pyproject_toml_path.write_text(some_app_pyproject_toml_text)
 
 subprocess.run(
-    ["git", "commit", "--all", "--message", "Pin `protoprimer` dependency to the current branch for this test"],
+    ["git", "commit", "--all", "--message", "Pin `protoprimer` dependency to the current commit for this test"],
     cwd=repo_dir,
     check=True,
 )
