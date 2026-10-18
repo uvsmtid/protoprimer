@@ -1,0 +1,66 @@
+run-name: "${{ github.workflow }}: ${{ github.actor }}: ${{ github.event_name }}: ${{ github.ref_name }}: ${{ github.ref_type }}"
+on:
+    push:
+        branches:
+        -   "*"
+    pull_request:
+        branches:
+        -   "*"
+    schedule:
+        # Keep running periodically to detect issues with newly released dependencies:
+        # Every day at 18:00 SGT:
+        -   cron: "0 10 * * *"
+permissions:
+    contents: read
+jobs:
+    bootstrap_scenarios:
+        # Same-repo PR-s are already covered by `push` (avoid running twice):
+        if: >-
+            github.event_name != 'pull_request'
+            ||
+            github.event.pull_request.head.repo.full_name != github.repository
+        runs-on: ubuntu-latest
+
+        strategy:
+            # When one of the jobs fails, this prevents canceling another job (for another Python version):
+            fail-fast: false
+            matrix:
+                # FT_84_11_73_28.supported_python_versions.md:
+                python-version:
+                    -   "3.14"
+        steps:
+            -   run: "echo runner.os: ${{ runner.os }}"
+            -   run: "echo github.repository: ${{ github.repository }}"
+            -   run: "echo github.ref: ${{ github.ref }}"
+
+            -   name: "matrix.python-version: ${{ matrix.python-version }}"
+                uses: actions/setup-python@v5
+                with:
+                    python-version: ${{ matrix.python-version }}
+
+            # FT_84_11_73_28.supported_python_versions.md:
+            -   run: "which python3.14"
+            -   run: "python --version"
+
+            -   uses: actions/checkout@v4
+                with:
+                    # Full history with tags: `baseline_commit_names` can be arbitrary commit names:
+                    fetch-depth: 0
+
+            -   run: |
+                    ${{ github.workspace }}/prime -vvv --env dst/test_python_max
+                    ${{ github.workspace }}/cmd/prime_env -vvv --env dst/test_python_max
+
+            -   name: ensure git has no local changes and untracked files
+                run: |
+                    git diff || true
+                    git status --porcelain || true
+                    test -z "$(git status --porcelain)"
+
+            -   run: |
+                    ${{ github.workspace }}/venv/bin/python --version
+                    ${{ github.workspace }}/cmd/test_contract_compatibility --package_name protoprimer
+                env:
+                    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+            -   run: "echo job.status: ${{ job.status }}"

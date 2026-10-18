@@ -7,7 +7,7 @@ from local_test.name_assertion import (
     assert_test_func_name_embeds_str,
     assert_test_module_name_embeds_another_module_name,
 )
-from test_protoprimer.test_slow_integrated import test_op_wrap
+from test_protoprimer.test_slow_integrated.test_not_contract_compatibility import test_op_wrap
 
 
 def test_relationship():

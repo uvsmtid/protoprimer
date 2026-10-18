@@ -6,7 +6,7 @@ from local_test.fat_mocked_helper import fat_mock_wrapper
 from local_test.name_assertion import (
     assert_test_module_name_embeds_another_module_name,
 )
-from test_protoprimer.test_slow_integrated import test_op_boot
+from test_protoprimer.test_slow_integrated.test_contract_compatibility import test_op_boot
 
 
 def test_relationship():

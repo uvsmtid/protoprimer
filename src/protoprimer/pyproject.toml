@@ -66,6 +66,11 @@ Repository = "https://github.com/uvsmtid/protoprimer"
 
 [tool]
 
+[tool.local_contract_compatibility]
+baseline_commit_names = [
+    "HEAD",
+]
+
 [tool.setuptools.packages.find]
 where = ["./main"]
 
