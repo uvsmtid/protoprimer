@@ -26,6 +26,7 @@ def proto_kernel_abs_path():
         if not os.path.islink("./lconf") or os.readlink("./lconf") != _lconf_expected_target:
             pytest.skip(f"`./lconf` does not point to {_lconf_expected_target}")
         abs_path = os.path.abspath("./src/proto_code/proto_kernel.py")
+        # TODO: TODO_71_33_38_11.override_proto_kernel_abs_path_in_conf_getter.md:
         with patch("protoprimer.primer_kernel.get_proto_kernel_abs_path", return_value=abs_path):
             yield abs_path
 

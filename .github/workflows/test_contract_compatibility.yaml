@@ -57,9 +57,20 @@ jobs:
                     git status --porcelain || true
                     test -z "$(git status --porcelain)"
 
-            -   run: |
-                    ${{ github.workspace }}/venv/bin/python --version
-                    ${{ github.workspace }}/cmd/test_contract_compatibility --package_name protoprimer
+            -   run: "${{ github.workspace }}/venv/bin/python --version"
+
+            -   name: "old_tests_on_new_changes"
+                run: "${{ github.workspace }}/cmd/test_contract_compatibility --package_name protoprimer --mode_id old_tests_on_new_changes"
+                env:
+                    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+            -   name: "old_proto_on_new_venv"
+                run: "${{ github.workspace }}/cmd/test_contract_compatibility --package_name protoprimer --mode_id old_proto_on_new_venv"
+                env:
+                    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+            -   name: "old_entry_on_new_proto"
+                run: "${{ github.workspace }}/cmd/test_contract_compatibility --package_name protoprimer --mode_id old_entry_on_new_proto"
                 env:
                     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
