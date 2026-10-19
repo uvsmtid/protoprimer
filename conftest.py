@@ -14,6 +14,7 @@ def _get_tmp_dir_abs_path():
         original_cwd = os.getcwd()
         os.chdir(ref_root_abs_path)
         try:
+            # TODO: TODO_71_33_38_11.override_proto_kernel_abs_path_in_conf_getter.md:
             # `get_config` needs `proto_kernel_abs_path` which is not set outside of an entry script:
             with patch("protoprimer.primer_kernel.get_proto_kernel_abs_path", return_value=proto_kernel_abs_path):
                 return get_config(ConfLeap.leap_derived)[EnvState.state_local_tmp_dir_abs_path_inited.name]

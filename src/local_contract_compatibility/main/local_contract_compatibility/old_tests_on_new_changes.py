@@ -5,7 +5,7 @@ import pathlib
 import subprocess
 import sys
 
-mode_id = "old_tests_on_new_changes"
+from local_contract_compatibility.mode_id import ModeId
 
 # Old `local_*` packages which are installed from the baseline worktree (when present there):
 old_local_package_names = [
@@ -15,8 +15,15 @@ old_local_package_names = [
 ]
 
 
-def get_contract_test_dir_rel_path(package_name: str) -> pathlib.Path:
-    return pathlib.Path("src") / package_name / "test" / f"test_{package_name}" / "test_slow_integrated" / "test_contract_compatibility"
+# Perimeter dirs (under `test_<package_name>`) which have their own `test_contract_compatibility` dir:
+contract_perimeter_dir_names = [
+    "test_slow_integrated",
+    "test_fast_not_mocked",
+]
+
+
+def get_contract_test_dir_rel_paths(package_name: str) -> list[pathlib.Path]:
+    return [pathlib.Path("src") / package_name / "test" / f"test_{package_name}" / perimeter_dir_name / "test_contract_compatibility" for perimeter_dir_name in contract_perimeter_dir_names]
 
 
 def resolve_commit_id(
@@ -89,9 +96,14 @@ def run_old_tests_on_new_changes(
     commit_name: str,
     scratch_dir_abs_path: pathlib.Path,
     pytest_args: list[str],
+    contract_test_dir_rel_paths: list[pathlib.Path] | None = None,
 ) -> int:
     """
     Runs the contract tests of the old `commit_name` (from its `git worktree`) against the current `package_name`.
+
+    Only the dirs which exist in the old `commit_name` are run (older ones may lack some), at least one must exist.
+
+    FT_78_72_23_04.backward_compatibility.md
     """
 
     commit_id = resolve_commit_id(repo_dir_abs_path, commit_name)
@@ -100,22 +112,24 @@ def run_old_tests_on_new_changes(
     ensure_worktree(repo_dir_abs_path, commit_id, worktree_abs_path)
     venv_python_abs_path = ensure_venv(repo_dir_abs_path, package_name, worktree_abs_path, commit_dir_abs_path / "venv")
 
-    contract_test_dir_rel_path = get_contract_test_dir_rel_path(package_name)
-    if not (worktree_abs_path / contract_test_dir_rel_path).is_dir():
-        raise AssertionError(f"commit name [{commit_name}] ({commit_id}) has no [{contract_test_dir_rel_path}]")
+    if contract_test_dir_rel_paths is None:
+        contract_test_dir_rel_paths = get_contract_test_dir_rel_paths(package_name)
+    existing_dir_rel_paths = [dir_rel_path for dir_rel_path in contract_test_dir_rel_paths if (worktree_abs_path / dir_rel_path).is_dir()]
+    if not existing_dir_rel_paths:
+        raise AssertionError(f"commit name [{commit_name}] ({commit_id}) has none of [{', '.join(str(dir_rel_path) for dir_rel_path in contract_test_dir_rel_paths)}]")
 
     # `CI` is required, otherwise `test_slow_integrated` tests are skipped:
     sub_env = dict(os.environ)
     sub_env["CI"] = "true"
     exit_code = subprocess.run(
-        [str(venv_python_abs_path), "-m", "pytest", "-p", "no:cacheprovider", str(contract_test_dir_rel_path)] + pytest_args,
+        [str(venv_python_abs_path), "-m", "pytest", "-p", "no:cacheprovider"] + [str(dir_rel_path) for dir_rel_path in existing_dir_rel_paths] + pytest_args,
         cwd=str(worktree_abs_path),
         env=sub_env,
     ).returncode
 
     if exit_code != 0:
         print(
-            f"FAILED: mode [{mode_id}], category [{contract_test_dir_rel_path.name}], commit name [{commit_name}] ({commit_id}): " f"the changes break backward compatibility tests in the baseline - possible actions: " f"[A] fix changes to comply [B] update the baseline",
+            f"FAILED: mode [{ModeId.old_tests_on_new_changes.value}], commit name [{commit_name}] ({commit_id}): " f"the changes break backward compatibility tests in the baseline - possible actions: " f"[A] fix changes to comply [B] update the baseline",
             file=sys.stderr,
         )
     return exit_code
