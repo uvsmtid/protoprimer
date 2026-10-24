@@ -79,6 +79,11 @@ def test_get_config_with_leap_client(proto_kernel_abs_path):
             ConfField.field_install_group.value: "install_auth",
         },
         {
+            ConfField.field_build_root_dir_rel_path.value: "src/local_config_schema",
+            ConfField.field_install_extras.value: [],
+            ConfField.field_install_group.value: "install_main",
+        },
+        {
             ConfField.field_build_root_dir_rel_path.value: "src/local_contract_compatibility",
             ConfField.field_install_extras.value: [],
             ConfField.field_install_group.value: "install_main",
@@ -179,6 +184,11 @@ def test_get_config_with_leap_derived(proto_kernel_abs_path):
             ConfField.field_build_root_dir_rel_path.value: "src/local_auth",
             ConfField.field_install_extras.value: [],
             ConfField.field_install_group.value: "install_auth",
+        },
+        {
+            ConfField.field_build_root_dir_rel_path.value: "src/local_config_schema",
+            ConfField.field_install_extras.value: [],
+            ConfField.field_install_group.value: "install_main",
         },
         {
             ConfField.field_build_root_dir_rel_path.value: "src/local_contract_compatibility",

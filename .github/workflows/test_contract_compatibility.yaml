@@ -65,11 +65,15 @@ jobs:
                     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
             -   name: "old_proto_on_new_venv"
+                # Run even if an earlier mode step failed: each mode fails separately:
+                if: always()
                 run: "${{ github.workspace }}/cmd/test_contract_compatibility --package_name protoprimer --mode_id old_proto_on_new_venv"
                 env:
                     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
             -   name: "old_entry_on_new_proto"
+                # Run even if an earlier mode step failed: each mode fails separately:
+                if: always()
                 run: "${{ github.workspace }}/cmd/test_contract_compatibility --package_name protoprimer --mode_id old_entry_on_new_proto"
                 env:
                     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

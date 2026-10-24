@@ -1,4 +1,5 @@
 alabaster==1.0.0
+annotated-types==0.8.0
 autopage==0.6.0
 babel==2.18.0
 backports-tarfile==1.2.0
@@ -8,6 +9,7 @@ cfgv==3.5.0
 charset-normalizer==3.4.9
 cliff==4.15.0
 cmd2==4.1.2
+colorama==0.4.6
 coverage==7.15.2
 cryptography==50.0.0
 distlib==0.4.3
@@ -19,6 +21,9 @@ google-api-python-client==2.198.0
 google-auth==2.56.2
 google-auth-httplib2==0.4.0
 googleapis-common-protos==1.75.0
+griffe==2.4.1
+griffecli==2.4.1
+griffelib==2.4.1
 httplib2==0.32.0
 identify==2.6.19
 idna==3.18
@@ -51,6 +56,8 @@ protobuf==7.35.1
 pyasn1==0.6.4
 pyasn1-modules==0.4.2
 pycparser==3.0
+pydantic==2.14.1
+pydantic-core==2.50.1
 pyfakefs==6.2.0
 pygments==2.20.0
 pyparsing==3.3.2
@@ -85,6 +92,8 @@ stevedore==5.9.0
 sybil==10.1.0
 tomli==2.4.1
 tomli-w==1.2.0
+typing-extensions==4.16.0
+typing-inspection==0.4.4
 uritemplate==4.2.0
 urllib3==2.7.0
 virtualenv==21.7.1

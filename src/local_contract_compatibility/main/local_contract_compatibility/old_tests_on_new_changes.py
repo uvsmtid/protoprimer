@@ -1,17 +1,18 @@
 from __future__ import annotations
 
-import os
 import pathlib
 import subprocess
 import sys
 
 from local_contract_compatibility.mode_id import ModeId
+from local_contract_compatibility.run_mode_tests import run_pytest_for_mode
 
-# Old `local_*` packages which are installed from the baseline worktree (when present there):
+# Old `local_*` packages which are installed from the baseline worktree (all must be present there):
 old_local_package_names = [
     "local_test",
     "local_repo",
     "local_doc",
+    "local_config_schema",
 ]
 
 
@@ -79,12 +80,10 @@ def ensure_venv(
         return venv_python_abs_path
 
     subprocess.run([sys.executable, "-m", "venv", str(venv_abs_path)], check=True)
-    install_args = [
-        str(worktree_abs_path / "src" / package_name)
-        for package_name in old_local_package_names
-        if (worktree_abs_path / "src" / package_name).exists()
-        #
-    ]
+    missing_package_names = [old_package_name for old_package_name in old_local_package_names if not (worktree_abs_path / "src" / old_package_name).is_dir()]
+    if missing_package_names:
+        raise AssertionError(f"worktree [{worktree_abs_path}] has no [{', '.join(missing_package_names)}]: the baseline is not established")
+    install_args = [str(worktree_abs_path / "src" / old_package_name) for old_package_name in old_local_package_names]
     install_args += ["-e", f"{repo_dir_abs_path / 'src' / package_name}[test]"]
     subprocess.run([str(venv_python_abs_path), "-m", "pip", "install", "-q"] + install_args, check=True)
     return venv_python_abs_path
@@ -101,7 +100,7 @@ def run_old_tests_on_new_changes(
     """
     Runs the contract tests of the old `commit_name` (from its `git worktree`) against the current `package_name`.
 
-    Only the dirs which exist in the old `commit_name` are run (older ones may lack some), at least one must exist.
+    Every contract dir must exist in the old `commit_name`, otherwise the baseline is not established (fails).
 
     FT_78_72_23_04.backward_compatibility.md
     """
@@ -110,26 +109,21 @@ def run_old_tests_on_new_changes(
     commit_dir_abs_path = scratch_dir_abs_path / commit_id
     worktree_abs_path = commit_dir_abs_path / "worktree"
     ensure_worktree(repo_dir_abs_path, commit_id, worktree_abs_path)
-    venv_python_abs_path = ensure_venv(repo_dir_abs_path, package_name, worktree_abs_path, commit_dir_abs_path / "venv")
 
     if contract_test_dir_rel_paths is None:
         contract_test_dir_rel_paths = get_contract_test_dir_rel_paths(package_name)
-    existing_dir_rel_paths = [dir_rel_path for dir_rel_path in contract_test_dir_rel_paths if (worktree_abs_path / dir_rel_path).is_dir()]
-    if not existing_dir_rel_paths:
-        raise AssertionError(f"commit name [{commit_name}] ({commit_id}) has none of [{', '.join(str(dir_rel_path) for dir_rel_path in contract_test_dir_rel_paths)}]")
+    missing_dir_rel_paths = [dir_rel_path for dir_rel_path in contract_test_dir_rel_paths if not (worktree_abs_path / dir_rel_path).is_dir()]
+    if missing_dir_rel_paths:
+        raise AssertionError(f"commit name [{commit_name}] ({commit_id}) has no [{', '.join(str(dir_rel_path) for dir_rel_path in missing_dir_rel_paths)}]: the baseline is not established")
 
-    # `CI` is required, otherwise `test_slow_integrated` tests are skipped:
-    sub_env = dict(os.environ)
-    sub_env["CI"] = "true"
-    exit_code = subprocess.run(
-        [str(venv_python_abs_path), "-m", "pytest", "-p", "no:cacheprovider"] + [str(dir_rel_path) for dir_rel_path in existing_dir_rel_paths] + pytest_args,
-        cwd=str(worktree_abs_path),
-        env=sub_env,
-    ).returncode
+    venv_python_abs_path = ensure_venv(repo_dir_abs_path, package_name, worktree_abs_path, commit_dir_abs_path / "venv")
 
-    if exit_code != 0:
-        print(
-            f"FAILED: mode [{ModeId.old_tests_on_new_changes.value}], commit name [{commit_name}] ({commit_id}): " f"the changes break backward compatibility tests in the baseline - possible actions: " f"[A] fix changes to comply [B] update the baseline",
-            file=sys.stderr,
-        )
-    return exit_code
+    return run_pytest_for_mode(
+        ModeId.old_tests_on_new_changes,
+        venv_python_abs_path,
+        worktree_abs_path,
+        contract_test_dir_rel_paths,
+        commit_name,
+        commit_id,
+        pytest_args,
+    )

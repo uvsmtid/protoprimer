@@ -17,8 +17,8 @@ def read_baseline_commit_names(
     """
 
     pyproject_toml_abs_path = repo_dir_abs_path / "src" / package_name / "pyproject.toml"
-    with open(pyproject_toml_abs_path, "rb") as f:
-        pyproject_data = tomli.load(f)
+    with open(pyproject_toml_abs_path, "rb") as pyproject_file:
+        pyproject_data = tomli.load(pyproject_file)
 
     section_data = pyproject_data.get("tool", {}).get(config_section_name)
     if section_data is None or config_key_baseline_commit_names not in section_data:
