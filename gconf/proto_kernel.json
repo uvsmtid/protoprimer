@@ -20,6 +20,11 @@
             "install_group": "install_auth"
         },
         {
+            "build_root_dir_rel_path": "src/local_config_schema",
+            "install_extras": [],
+            "install_group": "install_main"
+        },
+        {
             "build_root_dir_rel_path": "src/local_contract_compatibility",
             "install_extras": [],
             "install_group": "install_main"

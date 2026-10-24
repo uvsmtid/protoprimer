@@ -30,7 +30,7 @@ def custom_main():
     exit_code = 0
     for commit_name in commit_names:
         if parsed_args.mode_id == ModeId.new_tests_on_new_changes.value:
-            raise NotImplementedError(f"mode [{parsed_args.mode_id}] is not implemented yet")
+            raise NotImplementedError(f"mode [{parsed_args.mode_id}] is not run by the runner: it is defined as running `pytest` normally")
         elif parsed_args.mode_id == ModeId.old_tests_on_new_changes.value:
             mode_exit_code = run_old_tests_on_new_changes(
                 ref_root_abs_path,
@@ -61,13 +61,24 @@ def custom_main():
 
 def init_arg_parser():
     arg_parser = argparse.ArgumentParser(description="Runs old contract tests (of baseline commit names) on new changes.")
-    arg_parser.add_argument("--package_name", required=True, help="Package name under `src/`, e.g. `protoprimer`.")
-    arg_parser.add_argument("--commit_name", help="Run for this commit name only (default: all `baseline_commit_names` from `pyproject.toml`).")
+    arg_parser.add_argument(
+        "--package_name",
+        required=True,
+        help="Package name under `src/`, e.g. `protoprimer`.",
+    )
+    arg_parser.add_argument(
+        "--commit_name",
+        help="Run for this commit name only (default: all `baseline_commit_names` from `pyproject.toml`).",
+    )
     arg_parser.add_argument(
         "--mode_id",
+        required=True,
         choices=[mode_id.value for mode_id in ModeId],
-        default=ModeId.old_tests_on_new_changes.value,
-        help=(f"Compatibility mode to run (only `{ModeId.old_tests_on_new_changes.value}`, " f"`{ModeId.old_proto_on_new_venv.value}` and `{ModeId.old_entry_on_new_proto.value}` are implemented so far)."),
+        help=(f"Compatibility mode to run (only `{ModeId.old_tests_on_new_changes.value}`, " f"`{ModeId.old_proto_on_new_venv.value}` and `{ModeId.old_entry_on_new_proto.value}` are run by the runner; `{ModeId.new_tests_on_new_changes.value}` is plain `pytest`)."),
     )
-    arg_parser.add_argument("pytest_args", nargs="*", help="Extra `pytest` args (after `--`).")
+    arg_parser.add_argument(
+        "pytest_args",
+        nargs="*",
+        help="Extra `pytest` args (after `--`).",
+    )
     return arg_parser

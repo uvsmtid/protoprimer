@@ -1,0 +1,27 @@
+[build-system]
+
+requires = ["setuptools>=42"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "local_config_schema"
+version = "0.0.0"
+
+classifiers = [
+    # This package is local and is never published:
+    "Private :: Do Not Upload",
+]
+
+# FT_84_11_73_28.supported_python_versions.md:
+requires-python = ">=3.7"
+
+dependencies = [
+    # `pydantic` (v2) requires `python` newer than min:
+    "pydantic>=2; python_version >= '3.8'",
+]
+
+[tool.setuptools.packages.find]
+where = ["./main"]
+
+[tool.setuptools.package-dir]
+local_config_schema = "./main/local_config_schema"

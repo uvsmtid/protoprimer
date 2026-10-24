@@ -71,6 +71,15 @@ def switch_to_ref_root_abs_path(tmp_path: pathlib.Path) -> pathlib.Path:
     return tmp_dir_abs_path
 
 
+def get_proto_kernel_source_abs_path() -> str:
+    """
+    The file which `create_plain_proto_kernel` copies (tests may replace it to run an old `proto_kernel.py`).
+
+    See: FT_78_72_23_04.backward_compatibility.md
+    """
+    return protoprimer.primer_kernel.__file__
+
+
 def create_plain_proto_kernel(
     proto_kernel_dir_abs_path: pathlib.Path,
 ) -> pathlib.Path:
@@ -78,7 +87,7 @@ def create_plain_proto_kernel(
     Creates a test copy of FT_87_17_49_36.proto_kernel.md.
     """
 
-    primer_kernel_abs_path = protoprimer.primer_kernel.__file__
+    primer_kernel_abs_path = get_proto_kernel_source_abs_path()
     logger.info(f"primer_kernel_abs_path: {primer_kernel_abs_path}")
 
     # Create a `proto_code` directory:

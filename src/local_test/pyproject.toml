@@ -23,6 +23,8 @@ dependencies = [
     "tomli",
     "tomli_w",
     "cliff",
+    # `griffe` requires `python` newer than min:
+    "griffe; python_version >= '3.8'",
 ]
 
 [tool.setuptools.packages.find]

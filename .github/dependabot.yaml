@@ -8,6 +8,7 @@ updates:
         package-ecosystem: "pip"
         # https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file#directory
         directories:
+            -   "src/local_config_schema"
             -   "src/local_contract_compatibility"
             -   "src/local_repo"
             -   "src/local_test"

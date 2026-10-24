@@ -2,7 +2,8 @@
 See: FT_78_72_23_04.backward_compatibility.md
 
 This test was originally focused on testing just `argparse` configuration.
-See `test_via_cliff.py` which was created specifically to ensure backward compatibility.
+See `test_parse_args_via_cliff.py` (in `test_contract_compatibility`) which was created specifically to ensure backward compatibility
+(it also holds the `--` and required `main_func` cases).
 """
 
 import io
@@ -62,61 +63,6 @@ def test_parse_args_start():
     # then:
     assert getattr(args, ParsedArg.name_exec_operation.value) == ExecOperation.op_start.value
     assert getattr(args, ParsedArg.name_main_func.value) == main_func
-
-
-def test_parse_args_start_requires_main_func():
-    # when/then:
-    with pytest.raises(SystemExit):
-        parse_args([ExecOperation.op_start.value])
-
-
-def test_parse_args_start_target_args_defaults_to_empty():
-    main_func = "my_module:my_func"
-
-    # when:
-    args = parse_args([ExecOperation.op_start.value, main_func])
-
-    # then:
-    assert getattr(args, ParsedArg.name_target_args.value) == []
-
-
-def test_parse_args_start_captures_target_args_after_double_dash():
-    main_func = "my_module:my_func"
-
-    # when:
-    args = parse_args(
-        [
-            ExecOperation.op_start.value,
-            main_func,
-            SyntaxArg.arg_double_dash,
-            SyntaxArg.arg_verbose,
-            "--foo",
-            "bar",
-        ]
-    )
-
-    # then:
-    assert getattr(args, ParsedArg.name_exec_operation.value) == ExecOperation.op_start.value
-    assert getattr(args, ParsedArg.name_main_func.value) == main_func
-    assert getattr(args, ParsedArg.name_target_args.value) == [SyntaxArg.arg_verbose, "--foo", "bar"]
-    # A `--verbose` placed after `--` must NOT be consumed as protoprimer's own flag:
-    assert getattr(args, SyntaxArg.dest_verbose) == 0
-
-
-def test_parse_args_double_dash_before_exec_operation_is_rejected():
-    main_func = "my_module:my_func"
-
-    # when/then:
-    # `--` eats everything after it (including the `exec_operation` token itself),
-    # leaving `boot` selected by default with a non-empty `target_args`:
-    with pytest.raises(ValueError):
-        parse_args([SyntaxArg.arg_double_dash, ExecOperation.op_start.value, main_func])
-
-
-def test_parse_args_double_dash_with_non_start_op_is_rejected():
-    # when/then:
-    with pytest.raises(ValueError):
-        parse_args([ExecOperation.op_boot.value, SyntaxArg.arg_double_dash, "foo"])
 
 
 def test_parse_args_env():
