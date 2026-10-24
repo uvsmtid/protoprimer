@@ -17,7 +17,7 @@ requires-python = ">=3.7"
 
 dependencies = [
     # `pydantic` (v2) requires `python` newer than min:
-    "pydantic>=2; python_version >= '3.8'",
+    "pydantic>=2.14.1; python_version >= '3.8'",
 ]
 
 [tool.setuptools.packages.find]
