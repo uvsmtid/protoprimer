@@ -169,3 +169,15 @@ details[open] > summary::before {
     font-weight: bold;
     color: red;
 }
+
+/* No bullets for sidebar sub-menu items (indent them instead): */
+div.sphinxsidebar ul ul {
+    list-style: none;
+    margin-left: 0.5em;
+}
+
+/* Do not expand `Reference` sub-pages in the sidebar (they are listed on the page itself).
+   On the `Reference` page itself its link is `#`, so detect it by its children: */
+div.sphinxsidebar li.toctree-l1:has(> ul > li > a[href*="feature_topic/"]) > ul {
+    display: none;
+}
