@@ -28,6 +28,7 @@ JSON is used as the [config_format][FT_48_62_07_98.config_format.md]:
 
 <!--
 FT_23_37_64_44.global_vs_local.md
+FT_92_51_35_07.local_env_link.md
 -->
 
 `protoprimer` distinguishes between:
@@ -37,6 +38,8 @@ FT_23_37_64_44.global_vs_local.md
 *   **local** config: environment-specific
 
 The **local** config overrides the **global** config on a per-clone basis.
+
+The currently selected environment is indicated by [local_env_link][FT_92_51_35_07.local_env_link.md].
 
 ## Config leaps
 
@@ -114,4 +117,5 @@ This prints the **effective** config - every field shown with its evaluated valu
 [FT_00_22_19_59.derived_config.md]: feature_topic/FT_00_22_19_59.derived_config.md
 [FT_48_62_07_98.config_format.md]: feature_topic/FT_48_62_07_98.config_format.md
 [FT_89_41_35_82.conf_leap.md]: feature_topic/FT_89_41_35_82.conf_leap.md
+[FT_92_51_35_07.local_env_link.md]: feature_topic/FT_92_51_35_07.local_env_link.md
 [FT_59_95_81_63.tree_shape.md]: feature_topic/FT_59_95_81_63.tree_shape.md

@@ -9,8 +9,6 @@
 [![code coverage](https://img.shields.io/coveralls/github/uvsmtid/protoprimer.svg?style=flat-square&color=palegreen)](https://coveralls.io/github/uvsmtid/protoprimer)
 <!--
 FT_84_11_73_28.supported_python_versions.md: see above.
-
-TODO: Use links to FC/UC docs under `./doc` (when ready) from this readme to navigate to details.
 -->
 
 # `protoprimer`
@@ -27,7 +25,7 @@ Want your users to run software **isolated** in a `git` repo after a single zero
 ./prime
 ```
 
-See the [Intro][protoprimer_readthedocs] doc.
+See the [Intro][protoprimer_readthedocs_intro] doc.
 
 ## TL;DR
 
@@ -144,7 +142,7 @@ It works without `shebang` for `venv` to **avoid hardcoding** absolute paths and
 
 ## Initial integration
 
-See the [Runtime][protoprimer_readthedocs] doc.
+See the [Tutorial][protoprimer_readthedocs_tutorial] doc.
 
 You need to "seed" your repo with a copy of the [`proto_kernel.py`][local_proto_kernel.py] script:
 
@@ -286,9 +284,23 @@ It is a convenient wrapper around `venv` function - the **easy** part as they on
 # ...
 ```
 
+## Docs
+
+*   [Intro][protoprimer_readthedocs_intro]
+*   [Background][protoprimer_readthedocs_background]
+*   [Tutorial][protoprimer_readthedocs_tutorial]
+*   [Config][protoprimer_readthedocs_config]
+*   [Reference][protoprimer_readthedocs_reference]
+*   [Alternatives][protoprimer_readthedocs_alternatives]
+
 <a id="protoprimer-entry-functions"></a>
 
-[protoprimer_readthedocs]: https://protoprimer.readthedocs.io/
+[protoprimer_readthedocs_intro]: https://protoprimer.readthedocs.io/latest/intro.html
+[protoprimer_readthedocs_tutorial]: https://protoprimer.readthedocs.io/latest/tutorial_overview.html
+[protoprimer_readthedocs_background]: https://protoprimer.readthedocs.io/latest/background.html
+[protoprimer_readthedocs_config]: https://protoprimer.readthedocs.io/latest/config.html
+[protoprimer_readthedocs_reference]: https://protoprimer.readthedocs.io/latest/reference.html
+[protoprimer_readthedocs_alternatives]: https://protoprimer.readthedocs.io/latest/alternatives.html
 
 [local_proto_kernel.py]: src/proto_code/proto_kernel.py
 

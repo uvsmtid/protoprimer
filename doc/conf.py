@@ -168,6 +168,8 @@ html_theme_options = {
     "github_repo": "protoprimer",
     "github_banner": False,
     "fixed_sidebar": True,
+    # Keep sub-menu items (like Tutorial pages) shown on all pages, not only under the current one:
+    "sidebar_collapse": False,
     "page_width": "1200px",
     "extra_nav_links": {
         "GitHub": github_url,

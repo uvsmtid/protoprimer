@@ -13,12 +13,13 @@ myst:
 % Custom `Intro` name for navigation side-bar:
 ```{toctree}
 :hidden:
-:maxdepth: 1
+:maxdepth: 2
+:titlesonly:
 
 Intro <intro>
-Config <config>
-Runtime <runtime>
-Reference <reference>
 Background <background>
+Tutorial <tutorial_overview>
+Config <config>
+Reference <reference>
 Alternatives <alternatives>
 ```
