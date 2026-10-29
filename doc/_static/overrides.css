@@ -181,3 +181,35 @@ div.sphinxsidebar ul ul {
 div.sphinxsidebar li.toctree-l1:has(> ul > li > a[href*="feature_topic/"]) > ul {
     display: none;
 }
+
+/* Always render `mermaid` diagrams on a light background (the `neutral` theme has dark text).
+   Inline is `pre.mermaid`; expanded is `.mermaid-container-fullscreen` (made dark by the extension): */
+pre.mermaid,
+.mermaid-container-fullscreen,
+.mermaid-container-fullscreen.dark-theme {
+    background-color: #ffffff;
+    color-scheme: light;
+    border-radius: 4px;
+}
+
+/* Same for the backdrop and buttons (`!important`: the extension injects its own styles at runtime): */
+.mermaid-fullscreen-modal.dark-theme {
+    background: rgba(255, 255, 255, 0.98) !important;
+}
+
+.mermaid-fullscreen-btn.dark-theme,
+.mermaid-fullscreen-btn.dark-theme:hover,
+.mermaid-fullscreen-close.dark-theme,
+.mermaid-fullscreen-close.dark-theme:hover {
+    background: rgba(255, 255, 255, 0.95) !important;
+    border-color: rgba(0, 0, 0, 0.3) !important;
+    color: #333 !important;
+}
+
+/* Intro has its own `toctree` (separate top-level `<ul>`): remove the extra margin between them. */
+div.sphinxsidebarwrapper > ul:has(+ ul) {
+    margin-bottom: 0;
+}
+div.sphinxsidebarwrapper > ul + ul {
+    margin-top: 0;
+}

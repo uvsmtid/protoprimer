@@ -17,15 +17,69 @@ Instead:
 # your repo clone
 ```
 
+```mermaid
+%%{init: {"look": "handDrawn", "theme": "neutral"}}%%
+flowchart TB;
+
+    pull_manual["`clone`"];
+    subgraph manual_steps["manual:"]
+        direction TB;
+        try_a["try A"];
+        do_b["do B"];
+        check_c["check C"];
+        select_d["select D"];
+        more_steps["..."];
+    end
+    run_manual["`run`"];
+
+    pull_prime["`clone`"];
+    subgraph prime_group["protoprimer:"]
+        direction TB;
+        prime_step["`prime`"];
+    end
+    run_prime["`run`"];
+
+    pull_manual --> manual_steps;
+    try_a --> do_b --> check_c --> select_d --> more_steps;
+    manual_steps --> run_manual;
+
+    pull_prime --> prime_group;
+    prime_group --> run_prime;
+
+    style manual_steps fill:none;
+    style prime_group fill:none;
+```
+
 ## Why?
 
-`protoprimer` solves a surprisingly common problem:
+Because there is a surprisingly common problem:
 > Turn a fresh repo clone into an isolated environment with a runnable software version.
 
-It provides **arg-less** stand-alone **idempotent** bootstrap code that transitions:
+`protoprimer` is **arg-less** stand-alone **idempotent** bootstrap code that transitions:
 
 *   from **chaos** (the many conditions in which a user may invoke it)
 *   into **order** (an env-specific `venv` with the **required** `python` version)
+
+```mermaid
+%%{init: {"look": "handDrawn", "theme": "neutral"}}%%
+flowchart LR;
+
+    subgraph chaos["[chaos]"]
+        use_cases["<div style='text-align:left;white-space:nowrap'>• wrong dependencies<br>• different platforms<br>• multiple clones<br>• outside correct venv<br>• inside wrong venv<br>• random cwd<br>• random env vars<br>• nested executions<br>• cloud containers<br>• personal laptops<br>• public artifacts<br>• private artifacts<br>• authn and authz<br>• ...</div>"];
+
+        subgraph proto["protoprimer"]
+            subgraph order["[order]"]
+                user["user code"];
+            end
+        end
+    end
+
+    style chaos fill:none;
+    style use_cases fill:none,stroke:none;
+    style proto fill:none;
+    style order fill:none;
+    style user fill:none;
+```
 
 It handles messy init details, then it **hands off control** to user code in:
 
@@ -130,6 +184,23 @@ When it runs, it **iteratively restarts** to prepare the environment:
 *   Lands inside a comfy isolated `venv` with all dependencies **pinned**.
 
     > The user code **takes over** here.
+
+```mermaid
+sequenceDiagram
+    actor U as actor
+    participant P as protoprimer
+    participant C as user code
+
+    U->>P: prime
+    Note over P: wild python
+    P->>P: obtain required python<br>[restart]
+    Note over P: required python
+    P->>P: create venv<br>[restart]
+    Note over P: venv python
+    P->>P: install dependencies<br>[restart]
+    P->>C: pass control
+    Note over C: custom bootstrap<br>pinned dependencies<br>convenient tools<br>testable logic
+```
 
 <div style="text-align: center; margin-top: 8em; margin-bottom: 8em;">
 

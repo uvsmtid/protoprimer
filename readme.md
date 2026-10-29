@@ -39,18 +39,18 @@ Compare:
 <!-- diagram:sh_vs_py:start -->
 ```mermaid
 %%{init: {"look": "handDrawn", "theme": "neutral"}}%%
-flowchart LR;
+flowchart TD;
     heavy_minus["➖ del `*.sh`"];
     shell_exec["any<br>`shell`<br>executable"];
-    subgraph "sh"
-        sh_entry_script["entry script<br>like<br>`prime`"];
-        embedded_code["re-invented<br>ad-hoc<br>non-modular<br>`shell` script"];
+    subgraph sh[" "]
+        sh_entry_script["&nbsp;`shell`<br>entry script<br>like<br>`prime`"];
+        embedded_code["re-invented<br>ad-hoc<br>non-modular<br>`shell` hacks"];
     end
 
     heavy_plus["➕ add `*.py`"];
     python_exec["any<br>`python`<br>executable"];
-    subgraph "py"
-        py_entry_script["entry script<br>like<br>`prime`"];
+    subgraph py[" "]
+        py_entry_script["&nbsp;`python`<br>entry script<br>like<br>`prime`"];
         py_bootstrap_code["tested<br>bootstrap code<br>from<br>`protoprimer`"];
     end
 
@@ -183,50 +183,9 @@ graph LR;
 
     The location, name, and details can be changed through optional config.
 
-*   Run (any time):
-
-    ```sh
-    ./proto_kernel.py
-    ```
-
-## Entry functions
-
-There are two primary entry functions - see details in [boot_vs_start][FT_58_74_37_70.boot_vs_start.md]:
-
-| Function:    | [start_app][FT_05_08_64_67.start_app.md]                              | [boot_env][FT_85_17_35_21.boot_env.md]                 |
-|--------------|-----------------------------------------------------------------------|--------------------------------------------------------|
-| Purpose:     | run an **arbitrary** script<br>from `venv` with the required `python` | **extend** the default bootstrap<br>with custom steps  |
-| Cardinality: | **many** scripts per project                                          | **one** script per project                             |
-| Executes:    | smaller part of `proto_kernel`                                        | bigger part of `proto_kernel`                          |
-| Example:     | `./cmd/start_app_example`                                             | `./cmd/boot_env_example`                               |
-
 <a id="protoprimer-first-examples"></a>
 
 ## First examples
-
-### Minimal application script invoked via `start_app`
-
-This `entry_script` invokes the [cmd_start_app_example][cmd_start_app_example] script:
-
-```sh
-./cmd/start_app_example
-```
-
-<details>
-<summary><code>proto_kernel.start_app</code> <strong>delegates</strong> execution to a user function:</summary>
-
-<br>
-
-```py
-# ./cmd/start_app_example:
-# ...
-proto_kernel.start_app(
-    # module_name:function_name
-    "local_doc.cmd_start_app_example:custom_start_app_main"
-)
-```
-
-</details>
 
 ### Baseline bootstrap script invoked via `boot_env`
 
@@ -250,9 +209,39 @@ proto_kernel.boot_env(
 )
 ```
 
+See [Boot env][protoprimer_readthedocs_tutorial_boot_env].
+
 </details>
 
-## Basic terms
+### Minimal application script invoked via `start_app`
+
+This `entry_script` invokes the [cmd_start_app_example][cmd_start_app_example] script:
+
+```sh
+./cmd/start_app_example
+```
+
+<details>
+<summary><code>proto_kernel.start_app</code> <strong>delegates</strong> execution to a user function:</summary>
+
+<br>
+
+```py
+# ./cmd/start_app_example:
+# ...
+proto_kernel.start_app(
+    # module_name:function_name
+    "local_doc.cmd_start_app_example:custom_start_app_main"
+)
+```
+
+See [Start app][protoprimer_readthedocs_tutorial_start_app].
+
+</details>
+
+## Main terms
+
+See the [Dictionary][protoprimer_readthedocs_dictionary].
 
 <a id="protoprimer-proto-code"></a>
 
@@ -276,13 +265,26 @@ It implements in-flight `python` runtime switching - the **hard** part provided 
 
 An `entry_script` is also `proto_code` - a shim to invoke `proto_kernel`.
 
-It is a convenient wrapper around `venv` function - the **easy** part as they only delegate:
+It is a convenient wrapper around a `venv` function - the **easy** (generatable) part, as it only delegates:
+
+```sh
+./cmd/boot_env_example
+```
 
 ```sh
 ./cmd/start_app_example
-./cmd/boot_env_example
-# ...
 ```
+
+## Entry functions
+
+There are two primary entry functions - see details in [boot_vs_start][FT_58_74_37_70.boot_vs_start.md]:
+
+| Function:    | [boot_env][FT_85_17_35_21.boot_env.md]                | [start_app][FT_05_08_64_67.start_app.md]                              |
+|--------------|-------------------------------------------------------|-----------------------------------------------------------------------|
+| Purpose:     | **extend** the default bootstrap<br>with custom steps | run an **arbitrary** script<br>from `venv` with the required `python` |
+| Cardinality: | **one** script per project                            | **many** scripts per project                                          |
+| Assumes:     | `venv` is **not** ready                               | `venv` is ready                                                       |
+| Example:     | `./cmd/boot_env_example`                              | `./cmd/start_app_example`                                             |
 
 ## Docs
 
@@ -291,16 +293,20 @@ It is a convenient wrapper around `venv` function - the **easy** part as they on
 *   [Tutorial][protoprimer_readthedocs_tutorial]
 *   [Config][protoprimer_readthedocs_config]
 *   [Reference][protoprimer_readthedocs_reference]
-*   [Alternatives][protoprimer_readthedocs_alternatives]
+*   [Dictionary][protoprimer_readthedocs_dictionary]
+*   [Alternative][protoprimer_readthedocs_alternative]
 
 <a id="protoprimer-entry-functions"></a>
 
 [protoprimer_readthedocs_intro]: https://protoprimer.readthedocs.io/latest/intro.html
 [protoprimer_readthedocs_tutorial]: https://protoprimer.readthedocs.io/latest/tutorial_overview.html
+[protoprimer_readthedocs_tutorial_boot_env]: https://protoprimer.readthedocs.io/latest/tutorial_boot_env.html
+[protoprimer_readthedocs_tutorial_start_app]: https://protoprimer.readthedocs.io/latest/tutorial_start_app.html
 [protoprimer_readthedocs_background]: https://protoprimer.readthedocs.io/latest/background.html
 [protoprimer_readthedocs_config]: https://protoprimer.readthedocs.io/latest/config.html
 [protoprimer_readthedocs_reference]: https://protoprimer.readthedocs.io/latest/reference.html
-[protoprimer_readthedocs_alternatives]: https://protoprimer.readthedocs.io/latest/alternatives.html
+[protoprimer_readthedocs_dictionary]: https://protoprimer.readthedocs.io/latest/dictionary.html
+[protoprimer_readthedocs_alternative]: https://protoprimer.readthedocs.io/latest/alternative.html
 
 [local_proto_kernel.py]: src/proto_code/proto_kernel.py
 

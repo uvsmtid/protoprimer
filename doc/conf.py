@@ -67,10 +67,16 @@ myst_fence_as_directive = [
     "mermaid",
 ]
 
+# Make `[text](#heading_id)` links to headings resolve:
+myst_heading_anchors = 2
+
 mermaid_init_config = {
     "look": "handDrawn",
+    "theme": "neutral",
 }
 mermaid_light_theme = "neutral"
+# Force light theme even when the device/site theme is dark:
+mermaid_dark_theme = "neutral"
 
 source_suffix = {
     ".rst": "restructuredtext",
