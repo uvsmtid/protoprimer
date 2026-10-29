@@ -10,16 +10,23 @@ myst:
 <script>window.location.replace("intro.html");</script>
 ```
 
-% Custom `Intro` name for navigation side-bar:
+% Custom `Intro` name for navigation side-bar (no `:titlesonly:` to show its sections):
+```{toctree}
+:hidden:
+:maxdepth: 2
+
+Intro <intro>
+```
+
 ```{toctree}
 :hidden:
 :maxdepth: 2
 :titlesonly:
 
-Intro <intro>
 Background <background>
 Tutorial <tutorial_overview>
 Config <config>
 Reference <reference>
-Alternatives <alternatives>
+Dictionary <dictionary>
+Alternative <alternative>
 ```
