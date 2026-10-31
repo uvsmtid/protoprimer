@@ -5366,6 +5366,10 @@ class EnvContext:
         # This is an override for default (different value depending on `EntryFunc`).
         self._forced_final_state: str | None = None
 
+        # Set by `ContextBuilder.client_func()`:
+        # TODO: TODO_97_57_86_39.simplify_boot_env_client_func.md
+        self._client_func: typing.Callable[[], int | None] | None = None
+
         # This is an override for global `_proto_kernel_abs_path`.
         # Same as `EnvVar.var_PROTOPRIMER_PROTO_KERNEL`, but for non-restart-able `EntryFunc.func_call_lib`.
         self._forced_proto_kernel_abs_path: str | None = None
@@ -5464,6 +5468,26 @@ class EnvContext:
             )
 
 
+# noinspection PyPep8Naming
+@trivial_factory
+class _Bootstrapper_state_client_func_executed(AbstractCachingStateNode[int]):
+    """
+    Backs `ContextBuilder.client_func()` - TODO_97_57_86_39.simplify_boot_env_client_func.md
+    """
+
+    _parent_states = staticmethod(
+        lambda: [
+            TargetState.target_proto_bootstrap_completed.value.name,
+        ]
+    )
+    _state_name = staticmethod(lambda: "state_client_func_executed")
+
+    def _eval_state_once(self) -> ValueType:
+        assert self.env_ctx._client_func is not None
+        exit_code = self.env_ctx._client_func()
+        return exit_code if exit_code is not None else 0
+
+
 class ContextBuilder:
     """
     Builder for `EnvContext`.
@@ -5499,6 +5523,19 @@ class ContextBuilder:
     def forced_final_state(self, value: str | None) -> ContextBuilder:
         self._env_ctx._forced_final_state = value
         return self
+
+    def client_func(self, value: typing.Callable[[], int | None]) -> ContextBuilder:
+        """
+        Shortcut for the majority of `boot_env` clients - TODO_97_57_86_39.simplify_boot_env_client_func.md
+        For more than one function (or more inputs), use a custom `StateNode` (UC_10_80_27_57.extend_DAG.md).
+        """
+        assert self._env_ctx._client_func is None
+        self._env_ctx._client_func = value
+        self._env_ctx.register_factory(
+            _Bootstrapper_state_client_func_executed._state_name(),
+            _Bootstrapper_state_client_func_executed,
+        )
+        return self.forced_final_state(_Bootstrapper_state_client_func_executed._state_name())
 
     def forced_proto_kernel_abs_path(self, value: str | None) -> ContextBuilder:
         self._env_ctx._forced_proto_kernel_abs_path = value
@@ -6578,6 +6615,16 @@ def start_app(venv_main_func: str):
         EntryFunc.func_start_app,
         venv_main_func,
     )
+
+
+def run_boot_env_client_func(client_func: typing.Callable[[], int | None]) -> None:
+    """
+    Shortcut for the majority of FT_85_17_35_21.boot_env.md use cases:
+    run a single plain function once bootstrap completes, without a custom `StateNode`.
+
+    See TODO_97_57_86_39.simplify_boot_env_client_func.md and UC_10_80_27_57.extend_DAG.md.
+    """
+    run_process(ContextBuilder().entry_func(EntryFunc.func_boot_env).client_func(client_func).build_context())
 
 
 def _start_main(
