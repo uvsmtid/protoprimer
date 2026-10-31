@@ -1,74 +1,17 @@
 # FT_85_17_35_21.boot_env.md: see also `cmd_start_app_example.py`
 from __future__ import annotations
 
-import enum
 import logging
 
 from protoprimer.primer_kernel import (
-    AbstractCachingStateNode,
-    ContextBuilder,
-    EntryFunc,
-    run_process,
-    TargetState,
-    trivial_factory,
-    ValueType,
+    run_boot_env_client_func,
 )
 
 logger = logging.getLogger()
 
 
 def custom_boot_env_main():
-    run_process(customize_env_context())
-
-
-# noinspection PyPep8Naming
-@trivial_factory
-class Bootstrapper_state_hello_world_printed(AbstractCachingStateNode[int]):
-
-    _parent_states = staticmethod(
-        lambda: [
-            TargetState.target_proto_bootstrap_completed.value.name,
-        ]
-    )
-    _state_name = staticmethod(lambda: CustomEnvState.state_hello_world_printed.name)
-
-    def _eval_state_once(
-        self,
-    ) -> ValueType:
-
-        print("Hello, world!")
-
-        return 0
-
-
-class CustomEnvState(enum.Enum):
-
-    state_hello_world_printed = Bootstrapper_state_hello_world_printed
-
-
-def customize_env_context():
-    """
-    See UC_10_80_27_57.extend_DAG.md
-
-    TODO: TODO_97_57_86_39.simplify_boot_env_client_func.md:
-        This is more complex than necessary for the majority of use cases
-        (just delegating to one client function) - see the linked doc for a proposed shortcut.
-    """
-
-    env_ctx = (
-        ContextBuilder()
-        .entry_func(EntryFunc.func_boot_env)
-        .forced_final_state(CustomEnvState.state_hello_world_printed.name)
-        #
-        .build_context()
-    )
-
-    env_ctx.register_factory(
-        CustomEnvState.state_hello_world_printed.name,
-        Bootstrapper_state_hello_world_printed,
-    )
-
-    return env_ctx
+    run_boot_env_client_func(lambda: print("Hello, world!"))
 
 
 if __name__ == "__main__":
