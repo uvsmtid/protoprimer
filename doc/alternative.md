@@ -41,7 +41,13 @@
 
     *   ...
 
-But all of them have to be **pre-installed**.
+*   build systems:
+
+    *   `make`
+
+    *   ...
+
+**But** all of these above have to be **pre-installed**.
 
 The question is:
 > Who bootstraps the bootstrappers?
@@ -79,8 +85,15 @@ What can possibly go wrong when doing it manually?
 
 ## Falling forward to `protoprimer`
 
-For software distributed via repo clone,
-`protoprimer` collapses the **stack** into one committed script that
+Automating away manuals helps.
+
+Using `shell` is an obvious, but limiting option:
+> [Why not `shell`?][doc_background_why_not_shell]
+
+Instead, `protoprimer` collapses the **stack** into one committed script that
 requires nothing but a **wild** `python` executable in `PATH`
 to bootstrap the **required** `python` per repo clone,
-along with **all** the tools for custom steps to complete the process.
+along with **all** the tools version-pinned
+for custom steps to reliably complete the process.
+
+[doc_background_why_not_shell]: background_why_not_shell.md

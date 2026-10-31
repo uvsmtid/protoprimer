@@ -50,63 +50,22 @@ flowchart TB;
     style prime_group fill:none;
 ```
 
+Captain Obvious, automation is great, but why involve `protoprimer`?
+
 ## Why?
 
-Because there is a surprisingly common problem:
+Because there is a **surprisingly** common problem:
 > Turn a fresh repo clone into an isolated environment with a runnable software version.
 
-`protoprimer` is **arg-less** stand-alone **idempotent** bootstrap code that transitions:
+... that is hard to solve in general (see [Background][doc_background]).
 
-*   from **chaos** (the many conditions in which a user may invoke it)
-*   into **order** (an env-specific `venv` with the **required** `python` version)
+Users need a flexible cross-platform one-liner:
 
-```mermaid
-%%{init: {"look": "handDrawn", "theme": "neutral"}}%%
-flowchart LR;
-
-    subgraph chaos["[chaos]"]
-        use_cases["<div style='text-align:left;white-space:nowrap'>• wrong dependencies<br>• different platforms<br>• multiple clones<br>• outside correct venv<br>• inside wrong venv<br>• random cwd<br>• random env vars<br>• nested executions<br>• cloud containers<br>• personal laptops<br>• public artifacts<br>• private artifacts<br>• authn and authz<br>• ...</div>"];
-
-        subgraph proto["protoprimer"]
-            subgraph order["[order]"]
-                user["user code"];
-            end
-        end
-    end
-
-    style chaos fill:none;
-    style use_cases fill:none,stroke:none;
-    style proto fill:none;
-    style order fill:none;
-    style user fill:none;
+```sh
+./bootstrap
 ```
 
-It handles messy init details, then it **hands off control** to user code in:
-
-<details>
-<summary>[guaranteed environment]</summary>
-
-*   As a **bootstrapper**, `protoprimer` lets custom steps prepare **anything** else:
-
-    *   install `git` hooks
-
-    *   provision other SDKs
-
-    *   build required dependencies from sources
-
-    *   assert system and user config
-
-    *   download env-specific data
-
-    *   generate env-specific code
-
-    *   verify authn and authz prerequisites
-
-    *   ... [you name it]
-
-*   As a **starter**, `protoprimer` invokes a specified custom function from `venv`.
-
-</details>
+... instead of prerequisites and instructions (see [Alternative][doc_alternative]).
 
 ## When?
 
@@ -141,6 +100,61 @@ When you need a **universal installer** (`diff`-able code, not binary) in your s
 When you want to **uninstall** a software version by removing its repo clone.
 
 ## What?
+
+`protoprimer` is **arg-less** stand-alone **idempotent** bootstrap code that transitions:
+
+*   from **chaos** (the many conditions in which a user may invoke it)
+*   into **order** (an env-specific `venv` with the **required** `python` version)
+
+```mermaid
+%%{init: {"look": "handDrawn", "theme": "neutral"}}%%
+flowchart LR;
+
+    subgraph chaos["[chaos]"]
+        use_cases["<div style='text-align:left;white-space:nowrap'>• wrong dependencies<br>• different platforms<br>• multiple clones<br>• outside correct venv<br>• inside wrong venv<br>• random cwd<br>• random env vars<br>• nested executions<br>• cloud containers<br>• personal laptops<br>• public artifacts<br>• private artifacts<br>• authn and authz<br>• ...</div>"];
+
+        subgraph proto["protoprimer"]
+            subgraph order["[order]"]
+                user["user code"];
+            end
+        end
+    end
+
+    style chaos fill:none;
+    style use_cases fill:none,stroke:none;
+    style proto fill:none;
+    style order fill:none;
+    style user fill:none;
+```
+
+`protoprimer` handles messy init details that repo users do not want to deal with.
+
+Then, it **hands off control** to user code in:
+
+<details>
+<summary>[guaranteed environment]</summary>
+
+*   As a **bootstrapper**, `protoprimer` lets custom steps prepare **anything** else:
+
+    *   install `git` hooks
+
+    *   provision other SDKs
+
+    *   build required dependencies from sources
+
+    *   assert system and user config
+
+    *   download env-specific data
+
+    *   generate env-specific code
+
+    *   verify authn and authz prerequisites
+
+    *   ... [you name it]
+
+*   As a **starter**, `protoprimer` invokes a specified custom function from `venv`.
+
+</details>
 
 It has to be `python` to run **right off the bootstrap**:
 
@@ -211,3 +225,5 @@ Poke your LLM to see where it fits...
 [protoprimer_github]: https://github.com/uvsmtid/protoprimer
 [pypl_index]: https://pypl.github.io/
 [proto_kernel]: https://github.com/uvsmtid/protoprimer/blob/main/src/proto_code/proto_kernel.py
+[doc_background]: background.md
+[doc_alternative]: alternative.md
