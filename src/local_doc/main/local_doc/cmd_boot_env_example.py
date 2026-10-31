@@ -49,6 +49,10 @@ class CustomEnvState(enum.Enum):
 def customize_env_context():
     """
     See UC_10_80_27_57.extend_DAG.md
+
+    TODO: TODO_97_57_86_39.simplify_boot_env_client_func.md:
+        This is more complex than necessary for the majority of use cases
+        (just delegating to one client function) - see the linked doc for a proposed shortcut.
     """
 
     env_ctx = (
