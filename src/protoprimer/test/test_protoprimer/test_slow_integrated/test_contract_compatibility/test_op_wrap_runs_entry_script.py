@@ -85,6 +85,8 @@ def test_wrap_boot_env_runs(tmp_path: pathlib.Path):
     # then:
 
     assert "Hello, world!" in sub_proc.stdout
+    # `custom_boot_env_main`'s `client_func` returns `None`, coerced to exit code `0` (not discarded):
+    assert sub_proc.returncode == 0
 
 
 def test_wrap_start_app_runs(tmp_path: pathlib.Path):

@@ -5000,6 +5000,28 @@ class Bootstrapper_state_command_executed(AbstractCachingStateNode[int]):
 
 # noinspection PyPep8Naming
 @trivial_factory
+class Bootstrapper_state_client_func_executed(AbstractCachingStateNode[int]):
+    """
+    Supports simplified `boot_env` via `client_func`.
+
+    FT_85_17_35_21.boot_env.md
+    """
+
+    _parent_states = staticmethod(
+        lambda: [
+            TargetState.target_proto_bootstrap_completed.value.name,
+        ]
+    )
+    _state_name = staticmethod(lambda: EnvState.state_client_func_executed.name)
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+    def _eval_state_once(self) -> ValueType:
+        assert self.env_ctx._client_func is not None
+        exit_code = self.env_ctx._client_func()
+        return exit_code if exit_code is not None else 0
+
+
+# noinspection PyPep8Naming
+@trivial_factory
 class Bootstrapper_state_shell_executed(AbstractCachingStateNode[int]):
     """
     For `ExecOperation.op_shell`: replaces the current process with an interactive shell
@@ -5243,6 +5265,8 @@ class EnvState(enum.Enum):
 
     state_command_executed = Bootstrapper_state_command_executed
 
+    state_client_func_executed = Bootstrapper_state_client_func_executed
+
     state_shell_executed = Bootstrapper_state_shell_executed
 
     state_start_executed = Bootstrapper_state_start_executed
@@ -5366,14 +5390,18 @@ class EnvContext:
         # This is an override for default (different value depending on `EntryFunc`).
         self._forced_final_state: str | None = None
 
+        # Set by `ContextBuilder.client_func()`:
+        # FT_85_17_35_21.boot_env.md
+        self._client_func: typing.Callable[[], int | None] | None = None
+
         # This is an override for global `_proto_kernel_abs_path`.
         # Same as `EnvVar.var_PROTOPRIMER_PROTO_KERNEL`, but for non-restart-able `EntryFunc.func_call_lib`.
         self._forced_proto_kernel_abs_path: str | None = None
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
         self._state_graph: StateGraph = self._create_state_graph()
 
         self._register_graph_node_factories()
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     def _create_state_graph(self) -> StateGraph:
         return StateGraph()
 
@@ -5392,7 +5420,7 @@ class EnvContext:
         state_name: str,
     ) -> typing.Any:
         return self._state_graph.eval_state(state_name)
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     def register_factory(
         self,
         state_name: str,
@@ -5400,7 +5428,7 @@ class EnvContext:
         replace_existing: bool = False,
     ) -> NodeFactory | None:
         return self._state_graph.register_factory(state_name, factory_class(self), replace_existing)
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     def get_stride(self) -> StateStride:
         assert self._state_stride is not None
         return self._state_stride
@@ -5414,7 +5442,7 @@ class EnvContext:
         assert self._state_stride is not None
         log_stride.set(self._state_stride)
         return self._state_stride
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     def has_stride_reached(
         self,
         next_stride: StateStride,
@@ -5425,7 +5453,7 @@ class EnvContext:
         if self._state_stride is None:
             return False
         return self._state_stride.value >= next_stride.value
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     def print_exit_line(
         self,
         exit_code: int,
@@ -5436,7 +5464,7 @@ class EnvContext:
         """
         if type(exit_code) is not int:
             raise AssertionError("`exit_code` must be an `int`")
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
         state_default_stderr_log_handler_configured: logging.Handler = self._state_graph.eval_state(EnvState.state_default_stderr_log_handler_configured.name)
 
         status_name: str
@@ -5453,7 +5481,7 @@ class EnvContext:
             else:
                 status_name = "FAILURE"
                 color_status = f"{TermColor.back_dark_red.value}{TermColor.fore_bright_white.value}"
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
             is_reportable = state_default_stderr_log_handler_configured.level <= logging.CRITICAL
 
         if is_reportable:
@@ -5462,7 +5490,7 @@ class EnvContext:
                 file=sys.stderr,
                 flush=True,
             )
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
 class ContextBuilder:
     """
@@ -5475,7 +5503,7 @@ class ContextBuilder:
     def entry_func(self, value: EntryFunc | None) -> ContextBuilder:
         self._env_ctx._entry_func = value
         return self
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     def state_stride(self, value: StateStride | None) -> ContextBuilder:
         self._env_ctx._state_stride = value
         return self
@@ -5483,7 +5511,7 @@ class ContextBuilder:
     def is_app(self, value: bool | None) -> ContextBuilder:
         self._env_ctx._is_app = value
         return self
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     def prepare_venv(self, value: bool | None) -> ContextBuilder:
         self._env_ctx._prepare_venv = value
         return self
@@ -5499,7 +5527,7 @@ class ContextBuilder:
     def forced_final_state(self, value: str | None) -> ContextBuilder:
         self._env_ctx._forced_final_state = value
         return self
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     def forced_proto_kernel_abs_path(self, value: str | None) -> ContextBuilder:
         self._env_ctx._forced_proto_kernel_abs_path = value
         return self
@@ -5507,7 +5535,7 @@ class ContextBuilder:
     def build_context(self) -> EnvContext:
         assert self._env_ctx._entry_func is not None
         return self._env_ctx
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
 class StateStrideFilter(logging.Filter):
     """
@@ -5527,8 +5555,8 @@ class StateStrideFilter(logging.Filter):
         record.state_stride = log_stride.get(StateStride.stride_py_unknown)
         # Do not filter:
         return True
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 class UtcTimeFormatter(logging.Formatter):
     """
     Custom formatter with the proper timestamp.
@@ -6580,12 +6608,30 @@ def start_app(venv_main_func: str):
     )
 
 
+def run_boot_env_client_func(client_func: typing.Callable[[], int | None]) -> None:
+    """
+    Run `client_func` (without a custom `StateNode`) to complete bootstrap in user code.
+
+    FT_85_17_35_21.boot_env.md
+    UC_10_80_27_57.extend_DAG.md
+    """
+    env_ctx = (
+        ContextBuilder()
+        .entry_func(EntryFunc.func_boot_env)
+        .forced_final_state(EnvState.state_client_func_executed.name)
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+        .build_context()
+    )
+    env_ctx._client_func = client_func
+    run_process(env_ctx)
+
+
 def _start_main(
     entry_func: EntryFunc,
     # Same format as in `EnvVar.var_PROTOPRIMER_MAIN_FUNC`:
     venv_main_func: str,
 ) -> None:
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     # NOTE: Assume (no verification) the module is loaded from
     #       (outside venv, outside local packages, outside global packages):
     os.environ[EnvVar.var_PROTOPRIMER_PROTO_KERNEL.value] = os.path.abspath(__file__)
@@ -6599,14 +6645,14 @@ def _start_main(
         venv_main_func,
         allow_default_proto_main=(entry_func is EntryFunc.func_boot_env),
     )
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     curr_py_exec = StateStride[
         os.getenv(
             EnvVar.var_PROTOPRIMER_PY_EXEC.value,
             ConfConstInput.default_PROTOPRIMER_PY_EXEC,
         )
     ]
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     installed_kernel_name = f"{ConfConstGeneral.name_protoprimer_package}.{ConfConstGeneral.name_primer_kernel_module}"
 
     try:
@@ -6620,7 +6666,7 @@ def _start_main(
                     ContextBuilder()
                     .entry_func(entry_func)
                     .state_stride(curr_py_exec)
-                    #
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
                     .build_context()
                 )
                 run_process(env_ctx)

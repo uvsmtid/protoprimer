@@ -187,7 +187,7 @@ graph LR;
 
 ## First examples
 
-### Baseline bootstrap script invoked via `boot_env`
+### Minimal bootstrap invoked via `boot_env`
 
 This `entry_script` extends the bootstrap sequence via the [cmd_boot_env_example][cmd_boot_env_example] script:
 
@@ -213,7 +213,7 @@ See [Boot env][protoprimer_readthedocs_tutorial_boot_env].
 
 </details>
 
-### Minimal application script invoked via `start_app`
+### Minimal application invoked via `start_app`
 
 This `entry_script` invokes the [cmd_start_app_example][cmd_start_app_example] script:
 

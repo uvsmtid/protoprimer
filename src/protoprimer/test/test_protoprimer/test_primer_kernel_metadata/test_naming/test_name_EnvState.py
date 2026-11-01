@@ -695,6 +695,17 @@ class StateName(enum.Enum):
         ],
     )
 
+    state_client_func_executed = StateMeta(
+        env_state=EnvState.state_client_func_executed,
+        name_category=NameCategory.category_state_mutation,
+        name_components=[
+            KeyWord.key_state.value,
+            KeyWord.key_client.value,
+            KeyWord.key_func.value,
+            KeyWord.key_executed.value,
+        ],
+    )
+
     state_shell_executed = StateMeta(
         env_state=EnvState.state_shell_executed,
         name_category=NameCategory.category_state_mutation,
