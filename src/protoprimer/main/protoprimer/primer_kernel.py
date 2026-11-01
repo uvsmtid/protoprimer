@@ -5000,6 +5000,28 @@ class Bootstrapper_state_command_executed(AbstractCachingStateNode[int]):
 
 # noinspection PyPep8Naming
 @trivial_factory
+class Bootstrapper_state_client_func_executed(AbstractCachingStateNode[int]):
+    """
+    Supports simplified `boot_env` via `client_func`.
+
+    FT_85_17_35_21.boot_env.md
+    """
+
+    _parent_states = staticmethod(
+        lambda: [
+            TargetState.target_proto_bootstrap_completed.value.name,
+        ]
+    )
+    _state_name = staticmethod(lambda: EnvState.state_client_func_executed.name)
+
+    def _eval_state_once(self) -> ValueType:
+        assert self.env_ctx._client_func is not None
+        exit_code = self.env_ctx._client_func()
+        return exit_code if exit_code is not None else 0
+
+
+# noinspection PyPep8Naming
+@trivial_factory
 class Bootstrapper_state_shell_executed(AbstractCachingStateNode[int]):
     """
     For `ExecOperation.op_shell`: replaces the current process with an interactive shell
@@ -5243,6 +5265,8 @@ class EnvState(enum.Enum):
 
     state_command_executed = Bootstrapper_state_command_executed
 
+    state_client_func_executed = Bootstrapper_state_client_func_executed
+
     state_shell_executed = Bootstrapper_state_shell_executed
 
     state_start_executed = Bootstrapper_state_start_executed
@@ -5365,6 +5389,10 @@ class EnvContext:
 
         # This is an override for default (different value depending on `EntryFunc`).
         self._forced_final_state: str | None = None
+
+        # Set by `ContextBuilder.client_func()`:
+        # FT_85_17_35_21.boot_env.md
+        self._client_func: typing.Callable[[], int | None] | None = None
 
         # This is an override for global `_proto_kernel_abs_path`.
         # Same as `EnvVar.var_PROTOPRIMER_PROTO_KERNEL`, but for non-restart-able `EntryFunc.func_call_lib`.
@@ -6578,6 +6606,24 @@ def start_app(venv_main_func: str):
         EntryFunc.func_start_app,
         venv_main_func,
     )
+
+
+def run_boot_env_client_func(client_func: typing.Callable[[], int | None]) -> None:
+    """
+    Run `client_func` (without a custom `StateNode`) to complete bootstrap in user code.
+
+    FT_85_17_35_21.boot_env.md
+    UC_10_80_27_57.extend_DAG.md
+    """
+    env_ctx = (
+        ContextBuilder()
+        .entry_func(EntryFunc.func_boot_env)
+        .forced_final_state(EnvState.state_client_func_executed.name)
+        #
+        .build_context()
+    )
+    env_ctx._client_func = client_func
+    run_process(env_ctx)
 
 
 def _start_main(

@@ -12,10 +12,12 @@ from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer.primer_kernel import (
     _start_main,
     proto_main,
+    run_boot_env_client_func,
     start_app,
     boot_env,
     ConfConstGeneral,
     EntryFunc,
+    EnvState,
     EnvVar,
     ExecOperation,
     StateStride,
@@ -187,3 +189,18 @@ class TestBootEnvAndStartApp:
         assert os.environ[EnvVar.var_PROTOPRIMER_MAIN_FUNC.value] == main_func
         self.mock_run_process.assert_called_once()
         self.mock_import_module.assert_not_called()
+
+    def test_run_boot_env_client_func(self):
+        # given
+        my_client_func = MagicMock()
+
+        # when
+        run_boot_env_client_func(my_client_func)
+
+        # then
+        self.mock_run_process.assert_called_once()
+        # FT_84_11_73_28.supported_python_versions.md: `call_args.args` needs Python >= 3.8:
+        called_env_ctx = self.mock_run_process.call_args[0][0]
+        assert called_env_ctx._client_func is my_client_func
+        assert called_env_ctx._entry_func == EntryFunc.func_boot_env
+        assert called_env_ctx._forced_final_state == EnvState.state_client_func_executed.name

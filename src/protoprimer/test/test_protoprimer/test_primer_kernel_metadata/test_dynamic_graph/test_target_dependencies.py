@@ -68,6 +68,7 @@ class TestTargetDependencies:
         # (nothing else consumes the `run` dir yet, unlike `venv`/`log`/`tmp`/`cache`):
         allowed_missing_dependencies.add(EnvState.state_local_run_dir_abs_path_inited.name)
         allowed_missing_dependencies.add(EnvState.state_wrap_executed.name)
+        allowed_missing_dependencies.add(EnvState.state_client_func_executed.name)
         allowed_missing_dependencies.add(EnvState.state_shell_executed.name)
         allowed_missing_dependencies.add(EnvState.state_start_executed.name)
         allowed_missing_dependencies.add(EnvState.state_everything_executed.name)

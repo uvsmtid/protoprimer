@@ -252,6 +252,10 @@ class StateMeta(enum.Enum):
         env_state=EnvState.state_command_executed,
         sub_graph=None,
     )
+    state_client_func_executed = StateNodeMeta(
+        env_state=EnvState.state_client_func_executed,
+        sub_graph=None,
+    )
     state_shell_executed = StateNodeMeta(
         env_state=EnvState.state_shell_executed,
         sub_graph=None,
