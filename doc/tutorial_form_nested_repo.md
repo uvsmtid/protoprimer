@@ -1,6 +1,10 @@
+---
+seo_title: "protoprimer tutorial: form a nested `python` repo"
+---
+
 ```{eval-rst}
 .. meta::
-   :description: Step-by-step: convert a flat repo into a nested one and reconfigure `proto_kernel.py`
+   :description: Tutorial: move Python project files into a src dir and configure proto_kernel.json so protoprimer can still find them.
    :keywords: tutorial, nested repo, project dir, proto_kernel, config
 ```
 

@@ -1,6 +1,10 @@
+---
+seo_title: "protoprimer tutorial: create a flat `python` repo"
+---
+
 ```{eval-rst}
 .. meta::
-   :description: Step-by-step: create a basic flat `python` repo to be bootstrapped with `protoprimer`
+   :description: Tutorial: create a minimal flat Python repo (pyproject.toml, app, tests) as the starting point to be bootstrapped with protoprimer.
    :keywords: tutorial, flat repo, python, git, pyproject
 ```
 

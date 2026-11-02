@@ -1,6 +1,10 @@
+---
+seo_title: "protoprimer tutorial: clean repo root"
+---
+
 ```{eval-rst}
 .. meta::
-   :description: Step-by-step: move `proto_code` away from the repo root and add `./prime`
+   :description: Tutorial: declutter the repo root by moving proto_kernel.py, its config, and .python-version into a dedicated dir and adding ./prime.
    :keywords: tutorial, proto_code, entry_script, prime, repo root
 ```
 

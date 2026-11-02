@@ -1,6 +1,10 @@
+---
+seo_title: "protoprimer tutorial: bootstrap environment"
+---
+
 ```{eval-rst}
 .. meta::
-   :description: Step-by-step: bootstrap a flat `python` repo with `protoprimer` into a working `proto_kernel.py`
+   :description: Tutorial: fix ModuleNotFoundError and missing dependencies by bootstrapping a flat Python repo into a working venv with protoprimer.
    :keywords: tutorial, bootstrap, proto_kernel, boot_env, venv, python, repo
 ```
 

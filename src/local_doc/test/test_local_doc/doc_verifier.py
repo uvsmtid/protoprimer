@@ -116,3 +116,37 @@ def assert_title_tokens_in_title(file_path: Path, title_key: str) -> None:
     name_tokens = [name_token.lower() for name_token in name_slug.split("_") if name_token]
     missing_tokens = [name_token for name_token in name_tokens if name_token not in title_lower]
     assert not missing_tokens
+
+
+_meta_description_re = re.compile(r"^\s*:description:\s*(.*\S)\s*$", re.MULTILINE)
+
+
+def parse_meta_description(file_path: Path) -> str:
+    description_match = _meta_description_re.search(file_path.read_text())
+    return description_match.group(1) if description_match else ""
+
+
+def parse_seo_title(file_path: Path) -> str:
+    # Front matter values may be quoted (e.g. when they contain a colon):
+    return parse_frontmatter(file_path).get("seo_title", "").strip("\"'")
+
+
+def assert_meta_description_valid(
+    file_path: Path,
+    min_len: int,
+    max_len: int,
+) -> None:
+    description = parse_meta_description(file_path)
+    assert description, f"missing `:description:` in {file_path.name}"
+    assert min_len <= len(description) <= max_len, f"{len(description)} chars not in [{min_len}, {max_len}]: {description}"
+    # Backticks are shown literally in search snippets:
+    assert "`" not in description, f"backtick in: {description}"
+
+
+def assert_seo_title_valid(
+    file_path: Path,
+    max_len: int,
+) -> None:
+    seo_title = parse_seo_title(file_path)
+    assert seo_title, f"missing `seo_title` in {file_path.name}"
+    assert len(seo_title) <= max_len, f"{len(seo_title)} chars > {max_len}: {seo_title}"

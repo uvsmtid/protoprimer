@@ -1,6 +1,10 @@
+---
+seo_title: "protoprimer background: shell script pitfalls, use python"
+---
+
 ```{eval-rst}
 .. meta::
-   :description: Why `protoprimer` avoids `shell` scripts and bootstraps `python` with `python`
+   :description: Why protoprimer bootstraps Python with Python, not shell scripts: untested, error-prone, platform-dependent, no stack traces or modularity.
    :keywords: background, shell, python, bootstrap, testing
 ```
 
@@ -28,6 +32,7 @@ The `shell` paradox:
 *   ❌ limited native data structures, no nested ones
 *   ❌ no modularity - code larger than one-page-one-file is cumbersome
 *   ❌ no external libraries/packages, no enforceable dependencies
+*   ❌ no version pinning support to guarantee features
 *   ❌ interdependency via `source`-ing - an entangled mess
 *   ❌ being so unpredictable makes `shell` scripts a high security risk
 *   ❌ slow

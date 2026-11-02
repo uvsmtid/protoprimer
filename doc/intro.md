@@ -1,6 +1,10 @@
+---
+seo_title: protoprimer - bootstrap a repo clone with one command
+---
+
 ```{eval-rst}
 .. meta::
-   :description: `protoprimer` is an arg-less one-liner to bootstrap isolated repo clones with environment-specific config
+   :description: protoprimer is an arg-less one-liner to bootstrap isolated repo clones with environment-specific config: no setup manuals for your users.
    :keywords: protoprimer, primer, bootstrap, venv, install, python, required, version, isolated, repo, clone, environment, config
 ```
 
@@ -50,7 +54,9 @@ flowchart TB;
     style prime_group fill:none;
 ```
 
-Captain Obvious, automation is great, but why involve `protoprimer`?
+Captain Obvious, automation is great!
+
+But why involve `protoprimer`?
 
 ## Why?
 
@@ -73,7 +79,7 @@ When you **avoid conflicting system-wide changes**.
 
 When you want direct execution:
 
-*   to bootstrap an **isolated** repo clone environment with a **one-liner**:
+*   to bootstrap an **isolated** environment for a repo clone with a **one-liner**:
 
     ```sh
     ./boot_env

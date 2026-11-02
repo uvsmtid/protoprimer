@@ -20,16 +20,23 @@ readme = "readme.md"
 # FT_84_11_73_28.supported_python_versions.md:
 requires-python = ">=3.7"
 
+# TODO: TODO_92_43_44_50.migrate_license_to_spdx.md:
+# TODO: Use an SPDX string (the TOML table is deprecated by 2027-Feb-18).
 license = { text = "MIT" }
 
 keywords = [
     "venv",
+    "virtualenv",
     "virtual environment",
 
     "env",
     "environment",
 
+    "python",
+    "pure python",
+
     "dev",
+    "devops",
     "development",
 
     "boot",
@@ -42,12 +49,22 @@ keywords = [
 
     "check",
     "checker",
+
+    "setup",
+    "isolated",
+    "repo",
 ]
 
 classifiers = [
     "Intended Audience :: Information Technology",
+    "Intended Audience :: Developers",
+    "Intended Audience :: End Users/Desktop",
     "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
     "Operating System :: OS Independent",
+    "Topic :: Software Development :: Build Tools",
+    "Topic :: System :: Installation/Setup",
+    "Environment :: Console",
 ]
 
 dependencies = []
@@ -63,6 +80,7 @@ extra = []
 [project.urls]
 Homepage = "https://github.com/uvsmtid/protoprimer"
 Repository = "https://github.com/uvsmtid/protoprimer"
+Documentation = "https://protoprimer.readthedocs.io"
 
 [tool]
 

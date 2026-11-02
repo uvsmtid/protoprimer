@@ -1,6 +1,10 @@
+---
+seo_title: "protoprimer tutorial: integrate repo bootstrap step by step"
+---
+
 ```{eval-rst}
 .. meta::
-   :description: Step-by-step tutorial of `protoprimer` bootstrapping a `python` repo from scratch
+   :description: Step-by-step tutorial: bootstrap a Python repo with protoprimer from scratch, from a flat repo to a one-command setup with auto-updates.
    :keywords: tutorial, walkthrough, bootstrap, venv, python, repo
 ```
 
@@ -23,7 +27,7 @@ The tutorial walks through the main use cases of `protoprimer`.
 
 A `git` repo is developed from scratch to gradually introduce concepts and features.
 
-The pages build on each other and steps have to be executed in order:
+The pages build on each other, and the steps have to be executed in order:
 
 | Page                                             | Outcome                                                           |
 |--------------------------------------------------|-------------------------------------------------------------------|

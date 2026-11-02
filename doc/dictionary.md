@@ -1,6 +1,10 @@
+---
+seo_title: "protoprimer glossary: proto_code, proto_kernel, entry_script"
+---
+
 ```{eval-rst}
 .. meta::
-   :description: Dictionary of `protoprimer` terms: `proto_code`, `proto_kernel`, `entry_script`, `boot_env`, `start_app` and others
+   :description: Glossary of protoprimer terms: proto_code, proto_kernel, entry_script, boot_env, start_app, and more.
    :keywords: dictionary, terms, glossary, protoprimer
 ```
 

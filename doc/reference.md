@@ -1,6 +1,10 @@
+---
+seo_title: "protoprimer reference: use cases and feature topics"
+---
+
 ```{eval-rst}
 .. meta::
-   :description: Dev-level `protoprimer` reference docs, organized as (prefix-tag, semantic name) pairs searchable in the source code
+   :description: Dev-level protoprimer reference: use cases and feature topics, tagged as (prefix, semantic name) so they are searchable in the source code.
    :keywords: reference, use cases, feature topics, dev docs, protoprimer
 ```
 
