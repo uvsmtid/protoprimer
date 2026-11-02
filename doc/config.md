@@ -1,6 +1,10 @@
+---
+seo_title: "protoprimer config: env-specific repo clone bootstrap"
+---
+
 ```{eval-rst}
 .. meta::
-   :description: How `protoprimer` configures a repo clone: global vs. local config, JSON format, and effective config
+   :description: How protoprimer configures a repo clone: global (repo-wide) vs. local (per-clone) JSON config, config leaps, and the effective config.
    :keywords: protoprimer, config, configuration, global config, local config, effective config, json
 ```
 

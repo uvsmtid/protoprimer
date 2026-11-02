@@ -1,6 +1,10 @@
+---
+seo_title: "protoprimer background: why primer, single-step bootstrap"
+---
+
 ```{eval-rst}
 .. meta::
-   :description: Why `protoprimer` is a primer committed to the user repo: repo clones get instant updates and full sources
+   :description: Why protoprimer is a primer committed to your repo: repo clones get instant updates, full sources, and a single reproducible setup step.
    :keywords: background, primer, repo clone, reuse, one-liner, updates
 ```
 
@@ -10,11 +14,11 @@ Distributing software via repo clones has its benefits:
 *   instant updates in both directions (push or pull)
 *   comprehensive LLM support: full sources, fast evolution
 
-To make software runnable in each repo clone, it requires an isolated environment.
+Making software reliably runnable in each repo clone requires an isolated environment.
 
 ## Problem: avoid extra preparations
 
-Ideally, users want a **single reproducible step** to make software runnable - an end-to-end command:
+Users want a **single reproducible step** to make software runnable - an end-to-end command:
 
 <details>
 <summary>[imagine otherwise]</summary>
@@ -35,8 +39,9 @@ But how do we reuse the end-to-end command without making the user install it fi
 The core `protoprimer` functionality is hosted in the user repo:
 > [`proto_kernel.py`][proto_kernel] is an auto-update-able copy of `protoprimer.primer_kernel`.
 
-For users, this essentially combines "cloning a repo" with "installing the reusable primer".
+For users, this essentially equates the two:
+> "installing the reusable primer" == "cloning a repo"
 
-Because the committed primer is a text code (not a binary one), the audit is straightforward.
+Because the committed primer is text (not binary), auditing is straightforward.
 
 [proto_kernel]: https://github.com/uvsmtid/protoprimer/blob/main/src/proto_code/proto_kernel.py

@@ -1,6 +1,10 @@
+---
+seo_title: "protoprimer tutorial: enable protoprimer updates"
+---
+
 ```{eval-rst}
 .. meta::
-   :description: Step-by-step: keep `proto_kernel.py` up-to-date by adding `protoprimer` as a dependency
+   :description: Tutorial: keep proto_kernel.py up-to-date automatically by adding protoprimer as a dependency in pyproject.toml.
    :keywords: tutorial, auto-update, proto_kernel, protoprimer, dependency
 ```
 

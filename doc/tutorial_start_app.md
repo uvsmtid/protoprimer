@@ -1,6 +1,10 @@
+---
+seo_title: "protoprimer tutorial: start application"
+---
+
 ```{eval-rst}
 .. meta::
-   :description: Step-by-step: start an app from `venv` via `protoprimer` with `start_app`
+   :description: Tutorial: start a Python app from its venv with one command, without typing the interpreter or source path, via a protoprimer entry script.
    :keywords: tutorial, start_app, entry_script, venv, python, repo
 ```
 

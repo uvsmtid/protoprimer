@@ -1,7 +1,11 @@
+---
+seo_title: "protoprimer vs: uv, pyenv, mise, direnv - comparison"
+---
+
 ```{eval-rst}
 .. meta::
-   :description: How `protoprimer` compares to `uv`, `pyenv`, `mise`, `direnv`, `pdm`, `hatch`, ...
-   :keywords: protoprimer, alternative, comparison, uv, pyenv, mise, direnv, pdm, hatch, ...
+   :description: How protoprimer compares to uv, pyenv, mise, direnv, pdm, and hatch for bootstrapping an isolated Python environment in a repo clone.
+   :keywords: protoprimer, alternative, comparison, uv, pyenv, mise, direnv, pdm, hatch
 ```
 
 # Alternative
@@ -47,7 +51,7 @@
 
     *   ...
 
-**But** all of these above have to be **pre-installed**.
+**But** all of the above have to be **pre-installed**!
 
 The question is:
 > Who bootstraps the bootstrappers?
@@ -87,13 +91,13 @@ What can possibly go wrong when doing it manually?
 
 Automating away manuals helps.
 
-Using `shell` is an obvious, but limiting option:
+Using `shell` is an obvious but limiting option:
 > [Why not `shell`?][doc_background_why_not_shell]
 
 Instead, `protoprimer` collapses the **stack** into one committed script that
 requires nothing but a **wild** `python` executable in `PATH`
 to bootstrap the **required** `python` per repo clone,
-along with **all** the tools version-pinned
-for custom steps to reliably complete the process.
+along with **all** the version-pinned tools
+for custom steps to complete the process reliably.
 
 [doc_background_why_not_shell]: background_why_not_shell.md

@@ -1,8 +1,14 @@
-# Submit published doc URLs to Google Indexing API.
+# Submit published doc URLs to a search engine index (one sub-command per destination):
+# - `google`: Google Indexing API
+# - `indexnow`: IndexNow (Bing etc.)
 # It is expected to be run under activated `venv`.
 # It must be run from the repo root:
 # ./cmd/submit_to_index -h
-# Requires a Google service account with Indexing API access
+# ./cmd/submit_to_index google -h
+# ./cmd/submit_to_index indexnow -h
+# Shared options go before the sub-command:
+# ./cmd/submit_to_index --dry_run google
+# `google` requires a Google service account with Indexing API access
 # added as Owner in Google Search Console for the property.
 # Set GOOGLE_APPLICATION_CREDENTIALS to override --credentials_file.
 
@@ -12,6 +18,7 @@ import logging
 import os
 import sys
 import urllib.error
+import urllib.parse
 import urllib.request
 import xml.etree.ElementTree as ET
 
@@ -24,6 +31,10 @@ from protoprimer.primer_kernel import EnvState
 
 logger: logging.Logger = logging.getLogger()
 
+_dest_google = "google"
+
+_dest_indexnow = "indexnow"
+
 _credentials_basename = "google_indexer_key.json"
 
 _default_base_url = "https://protoprimer.readthedocs.io/latest/"
@@ -31,6 +42,17 @@ _default_base_url = "https://protoprimer.readthedocs.io/latest/"
 _indexing_api_endpoint = "https://indexing.googleapis.com/v3/urlNotifications:publish"
 
 _indexing_api_scope = "https://www.googleapis.com/auth/indexing"
+
+_indexnow_endpoint = "https://api.indexnow.org/indexnow"
+
+# IndexNow: 200 = submitted, 202 = accepted (key validation pending):
+_indexnow_success_statuses = (
+    200,
+    202,
+)
+
+# Public by design (served as `<key>.txt` next to the docs, see `html_extra_path` in `doc/conf.py`):
+_default_indexnow_key = "7944aac309c3411cba99b6f76c03857a"  # gitleaks:allow
 
 
 def custom_main():
@@ -53,20 +75,36 @@ def custom_main():
         credentials_file_default_rel=credentials_file_rel_display,
     ).parse_args()
 
-    # GOOGLE_APPLICATION_CREDENTIALS overrides --credentials_file:
-    effective_credentials_file = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS") or parsed_args.credentials_file
-    # Resolve relative path against ref root:
-    if not os.path.isabs(effective_credentials_file):
-        effective_credentials_file = os.path.join(
-            ref_root_abs_path,
-            effective_credentials_file,
-        )
+    logger.info(f"base_url: {parsed_args.base_url}")
 
-    _submit_to_index(
-        base_url=parsed_args.base_url,
-        credentials_file=effective_credentials_file,
-        dry_run=parsed_args.dry_run,
-    )
+    discovered_urls = _discover_urls(parsed_args.base_url)
+
+    for page_url in discovered_urls:
+        logger.info(f"url: {page_url}")
+
+    if parsed_args.dry_run:
+        logger.info(f"dry_run: skipping submission of {len(discovered_urls)} URLs to {parsed_args.destination}")
+        return
+
+    if parsed_args.destination == _dest_google:
+        failure_count = _submit_to_google(
+            page_urls=discovered_urls,
+            credentials_file=_resolve_credentials_file(
+                credentials_file=parsed_args.credentials_file,
+                ref_root_abs_path=ref_root_abs_path,
+            ),
+        )
+    elif parsed_args.destination == _dest_indexnow:
+        failure_count = _submit_to_indexnow(
+            base_url=parsed_args.base_url,
+            indexnow_key=parsed_args.indexnow_key,
+            page_urls=discovered_urls,
+        )
+    else:
+        raise AssertionError(f"unsupported destination: {parsed_args.destination}")
+
+    if failure_count > 0:
+        sys.exit(1)
 
 
 def init_arg_parser(
@@ -74,20 +112,16 @@ def init_arg_parser(
 ):
 
     arg_parser = argparse.ArgumentParser(
-        description="Submit published doc URLs to Google Indexing API.",
+        description="Submit published doc URLs to a search engine index.",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
+
+    # Shared options (must be specified before the sub-command):
     arg_parser.add_argument(
         "--base_url",
         type=str,
         default=_default_base_url,
         help="Base URL of the published documentation (must end with /).",
-    )
-    arg_parser.add_argument(
-        "--credentials_file",
-        type=str,
-        default=credentials_file_default_rel,
-        help=("Path to the Google service account JSON key file." " Override-able by GOOGLE_APPLICATION_CREDENTIALS env var."),
     )
     arg_parser.add_argument(
         "-d",
@@ -96,6 +130,40 @@ def init_arg_parser(
         default=False,
         help="Discover and print URLs but skip API submission.",
     )
+
+    sub_parsers = arg_parser.add_subparsers(
+        dest="destination",
+        metavar="destination",
+        required=True,
+        help="Where to submit URLs.",
+    )
+
+    google_parser = sub_parsers.add_parser(
+        _dest_google,
+        help="Submit each URL to Google Indexing API.",
+        description="Submit each URL to Google Indexing API.",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+    )
+    google_parser.add_argument(
+        "--credentials_file",
+        type=str,
+        default=credentials_file_default_rel,
+        help=("Path to the Google service account JSON key file." " Override-able by GOOGLE_APPLICATION_CREDENTIALS env var."),
+    )
+
+    indexnow_parser = sub_parsers.add_parser(
+        _dest_indexnow,
+        help="Submit all URLs in one batch to IndexNow (Bing etc.).",
+        description="Submit all URLs in one batch to IndexNow (Bing etc.).",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+    )
+    indexnow_parser.add_argument(
+        "--indexnow_key",
+        type=str,
+        default=_default_indexnow_key,
+        help="IndexNow key. It must be served as `<INDEXNOW_KEY>.txt` under --base_url and contain only the key.",
+    )
+
     return arg_parser
 
 
@@ -130,6 +198,22 @@ def _discover_urls(base_url: str) -> list:
     return discovered_urls
 
 
+def _resolve_credentials_file(
+    credentials_file: str,
+    ref_root_abs_path: str,
+) -> str:
+
+    # GOOGLE_APPLICATION_CREDENTIALS overrides --credentials_file:
+    effective_credentials_file = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS") or credentials_file
+    # Resolve relative path against ref root:
+    if not os.path.isabs(effective_credentials_file):
+        effective_credentials_file = os.path.join(
+            ref_root_abs_path,
+            effective_credentials_file,
+        )
+    return effective_credentials_file
+
+
 def _build_credentials(credentials_file: str):
 
     logger.info(f"credentials_file: {credentials_file}")
@@ -141,7 +225,7 @@ def _build_credentials(credentials_file: str):
     return credentials
 
 
-def _submit_url(
+def _submit_url_to_google(
     credentials,
     page_url: str,
 ) -> dict:
@@ -183,29 +267,19 @@ def _submit_url(
         }
 
 
-def _submit_to_index(
-    base_url: str,
+# Google: one API call per URL. Returns the number of failures:
+def _submit_to_google(
+    page_urls: list,
     credentials_file: str,
-    dry_run: bool,
-):
-    logger.info(f"base_url: {base_url}")
-
-    discovered_urls = _discover_urls(base_url)
-
-    for page_url in discovered_urls:
-        logger.info(f"url: {page_url}")
-
-    if dry_run:
-        logger.info(f"dry_run: skipping submission of {len(discovered_urls)} URLs")
-        return
+) -> int:
 
     credentials = _build_credentials(credentials_file)
 
     success_count = 0
     failure_count = 0
 
-    for page_url in discovered_urls:
-        result = _submit_url(
+    for page_url in page_urls:
+        result = _submit_url_to_google(
             credentials=credentials,
             page_url=page_url,
         )
@@ -218,5 +292,43 @@ def _submit_to_index(
 
     logger.info(f"done: {success_count} submitted, {failure_count} failed")
 
-    if failure_count > 0:
-        sys.exit(1)
+    return failure_count
+
+
+# IndexNow: one API call for all URLs. Returns the number of failures (0 or 1):
+def _submit_to_indexnow(
+    base_url: str,
+    indexnow_key: str,
+    page_urls: list,
+) -> int:
+
+    request_body = json.dumps(
+        {
+            "host": urllib.parse.urlparse(base_url).netloc,
+            "key": indexnow_key,
+            "keyLocation": f"{base_url}{indexnow_key}.txt",
+            "urlList": page_urls,
+        }
+    ).encode("utf-8")
+
+    req = urllib.request.Request(
+        url=_indexnow_endpoint,
+        data=request_body,
+        headers={"Content-Type": "application/json; charset=utf-8"},
+        method="POST",
+    )
+
+    try:
+        with urllib.request.urlopen(req) as response:
+            response_status = response.status
+            response_body = response.read().decode("utf-8")
+    except urllib.error.HTTPError as http_error:
+        response_status = http_error.code
+        response_body = http_error.read().decode("utf-8")
+
+    if response_status in _indexnow_success_statuses:
+        logger.info(f"indexnow: submitted {len(page_urls)} URLs [{response_status}]")
+        return 0
+    else:
+        logger.error(f"indexnow: failed [{response_status}] — {response_body}")
+        return 1

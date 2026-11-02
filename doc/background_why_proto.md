@@ -1,6 +1,10 @@
+---
+seo_title: "protoprimer background: why proto, chicken and egg"
+---
+
 ```{eval-rst}
 .. meta::
-   :description: Why `protoprimer` starts as immediately runnable `python` code: a single-step bootstrap is a chicken and egg problem
+   :description: Why a Python repo bootstrap must start as immediately runnable Python: running Python to get the required Python is a chicken and egg problem.
    :keywords: background, proto, bootstrap, python, venv, chicken and egg
 ```
 
@@ -12,6 +16,8 @@ The **single-step** pure `python` bootstrap is a **non-trivial** "chicken and eg
 *   first, a **wild** `python` version has to run to obtain the **required** `python` version
 *   then, the **required** `python` version starts to provide versioned dependencies
 *   ...
+
+The "chicken and egg" problem comes down to version pinning and version switching (for both `python` and dependencies).
 
 Consider:
 
@@ -102,16 +108,23 @@ You need to break that 5-to-1 loop.
 
 The (early, first) proto stages of pre-`venv` preparation can be done:
 *   using `shell` - see: [Why not `shell`?][background_why_not_shell.md]
-*   using another pre-installed tool or a manual - see: [Alternative][doc_alternative].
+*   using a manual - see: [Alternative][doc_alternative]
 *   ...
 
-But that would be pushing the problem somewhere else.
+But that would be pushing the problem somewhere else
+rather than addressing it with `python`, the reason the problem has to be solved in the first place.
+Besides, supporting environment-specific config and other features would still call for
+the flexibility of `python` at the early stages.
 
-A pre-installed **wild** `python` is almost everywhere - why not use it instead?
+Note that `shell` also has incompatibility problems between versions -
+even more so with all the dependencies (the outside commands) scripts use.
+But `shell` has no `venv` mechanism to even offer a way to solve them.
+
+A pre-installed **wild** `python` is almost everywhere - why not use it right away instead?
 
 ## Solution: **facing** the "chicken and egg" problem
 
-The approach is to run `python` immediately in one shot but split the runtimes (roughly):
+The approach is to run `python` immediately in one shot, but split the runtime into (roughly) these stages:
 *   pre-`venv`
 *   post-`venv`
 *   user code

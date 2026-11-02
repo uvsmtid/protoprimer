@@ -1,6 +1,10 @@
+---
+seo_title: "protoprimer background: uv wrapper for bootstrap"
+---
+
 ```{eval-rst}
 .. meta::
-   :description: Why `protoprimer` wraps `uv` instead of replacing it
+   :description: protoprimer wraps uv instead of replacing it: one arg-less command prepares the uv binary, its args, and project-specific steps.
    :keywords: background, uv, wrapper, bootstrap
 ```
 
