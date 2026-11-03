@@ -6,7 +6,7 @@ from unittest.mock import (
 
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer.primer_kernel import (
-    Bootstrapper_state_input_py_exec_var_loaded,
+    _Node_state_input_py_exec_var_loaded,
     EnvState,
     EnvVar,
     StateStride,
@@ -24,7 +24,7 @@ def test_stride_py_arbitrary():
     mock_env_ctx.set_max_stride.side_effect = lambda x: x
 
     # when:
-    result = Bootstrapper_state_input_py_exec_var_loaded(mock_env_ctx)._eval_state_once()
+    result = _Node_state_input_py_exec_var_loaded(mock_env_ctx)._eval_state_once()
 
     # then:
     assert result == StateStride.stride_py_arbitrary
@@ -37,7 +37,7 @@ def test_py_exec_stride_py_unknown():
     mock_env_ctx.set_max_stride.side_effect = lambda x: x
 
     # when:
-    result = Bootstrapper_state_input_py_exec_var_loaded(mock_env_ctx)._eval_state_once()
+    result = _Node_state_input_py_exec_var_loaded(mock_env_ctx)._eval_state_once()
 
     # then:
     assert result == StateStride.stride_py_unknown

@@ -1621,7 +1621,7 @@ def can_render_effective_config(
 ) -> bool:
     """
     Like `can_print_effective_config` but for `ExecOperation.op_boot` and without the `StateStride` restriction.
-    The rendered `Bootstrapper_*` only run when the venv module is imported (later `StateStride`).
+    The rendered `_Node_*` only run when the venv module is imported (later `StateStride`).
     """
     # TODO: TODO_28_48_19_20.api_to_traverse_config_when_primed.md:
     #       With access to config, this will change from DAG to simple access of config via `custom_main`.
@@ -1631,7 +1631,7 @@ def can_render_effective_config(
 
 # noinspection PyPep8Naming
 @trivial_factory
-class Bootstrapper_state_primer_conf_file_data_loaded_rendered(AbstractCachingStateNode[dict]):
+class _Node_state_primer_conf_file_data_loaded_rendered(AbstractCachingStateNode[dict]):
     # TODO: TODO_28_48_19_20.api_to_traverse_config_when_primed.md:
     #       With access to config, this will change from DAG to simple access of config via `custom_main`.
 
@@ -1693,7 +1693,7 @@ class Bootstrapper_state_primer_conf_file_data_loaded_rendered(AbstractCachingSt
 
 # noinspection PyPep8Naming
 @trivial_factory
-class Bootstrapper_state_client_conf_file_data_loaded_rendered(AbstractCachingStateNode[dict]):
+class _Node_state_client_conf_file_data_loaded_rendered(AbstractCachingStateNode[dict]):
     # TODO: TODO_28_48_19_20.api_to_traverse_config_when_primed.md:
     #       With access to config, this will change from DAG to simple access of config via `custom_main`.
 
@@ -1739,7 +1739,7 @@ class Bootstrapper_state_client_conf_file_data_loaded_rendered(AbstractCachingSt
 
 # noinspection PyPep8Naming
 @trivial_factory
-class Bootstrapper_state_env_conf_file_data_loaded_rendered(AbstractCachingStateNode[dict]):
+class _Node_state_env_conf_file_data_loaded_rendered(AbstractCachingStateNode[dict]):
     # TODO: TODO_28_48_19_20.api_to_traverse_config_when_primed.md:
     #       With access to config, this will change from DAG to simple access of config via `custom_main`.
 
@@ -1787,7 +1787,7 @@ class Bootstrapper_state_env_conf_file_data_loaded_rendered(AbstractCachingState
 
 # noinspection PyPep8Naming
 @trivial_factory
-class Bootstrapper_state_derived_conf_data_loaded_rendered(AbstractCachingStateNode[dict]):
+class _Node_state_derived_conf_data_loaded_rendered(AbstractCachingStateNode[dict]):
     """
     Implements: FT_00_22_19_59.derived_config.md
     """
@@ -1874,7 +1874,7 @@ class Bootstrapper_state_derived_conf_data_loaded_rendered(AbstractCachingStateN
 
 # noinspection PyPep8Naming
 @trivial_factory
-class Bootstrapper_state_all_conf_data_rendered(AbstractCachingStateNode[int]):
+class _Node_state_all_conf_data_rendered(AbstractCachingStateNode[int]):
     # TODO: TODO_28_48_19_20.api_to_traverse_config_when_primed.md:
     #       With access to config, this will change from DAG to simple access of config via `custom_main`.
 
@@ -1903,24 +1903,24 @@ def customize_env_context():
     )
 
     env_ctx.register_factory(
-        Bootstrapper_state_primer_conf_file_data_loaded_rendered._state_name(),
-        Bootstrapper_state_primer_conf_file_data_loaded_rendered,
+        _Node_state_primer_conf_file_data_loaded_rendered._state_name(),
+        _Node_state_primer_conf_file_data_loaded_rendered,
     )
     env_ctx.register_factory(
-        Bootstrapper_state_client_conf_file_data_loaded_rendered._state_name(),
-        Bootstrapper_state_client_conf_file_data_loaded_rendered,
+        _Node_state_client_conf_file_data_loaded_rendered._state_name(),
+        _Node_state_client_conf_file_data_loaded_rendered,
     )
     env_ctx.register_factory(
-        Bootstrapper_state_env_conf_file_data_loaded_rendered._state_name(),
-        Bootstrapper_state_env_conf_file_data_loaded_rendered,
+        _Node_state_env_conf_file_data_loaded_rendered._state_name(),
+        _Node_state_env_conf_file_data_loaded_rendered,
     )
     env_ctx.register_factory(
-        Bootstrapper_state_derived_conf_data_loaded_rendered._state_name(),
-        Bootstrapper_state_derived_conf_data_loaded_rendered,
+        _Node_state_derived_conf_data_loaded_rendered._state_name(),
+        _Node_state_derived_conf_data_loaded_rendered,
     )
     env_ctx.register_factory(
-        Bootstrapper_state_all_conf_data_rendered._state_name(),
-        Bootstrapper_state_all_conf_data_rendered,
+        _Node_state_all_conf_data_rendered._state_name(),
+        _Node_state_all_conf_data_rendered,
     )
 
     return env_ctx

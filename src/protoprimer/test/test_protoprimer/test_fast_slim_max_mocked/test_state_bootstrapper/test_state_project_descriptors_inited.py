@@ -8,8 +8,8 @@ from local_test.mock_verifier import (
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
-    Bootstrapper_state_client_conf_file_data_loaded,
-    Bootstrapper_state_env_conf_file_data_loaded,
+    _Node_state_client_conf_file_data_loaded,
+    _Node_state_env_conf_file_data_loaded,
     ConfField,
     EnvContext,
     EnvState,
@@ -25,8 +25,8 @@ def test_relationship():
     assert_test_module_name_embeds_str(EnvState.state_project_descriptors_inited.name)
 
 
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_env_conf_file_data_loaded.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Node_state_client_conf_file_data_loaded.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Node_state_env_conf_file_data_loaded.__name__}.create_state_node")
 def test_stride_py_venv(
     mock_state_env_conf_file_data_loaded,
     mock_state_client_conf_file_data_loaded,

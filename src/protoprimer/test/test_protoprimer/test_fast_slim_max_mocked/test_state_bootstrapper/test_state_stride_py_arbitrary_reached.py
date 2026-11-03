@@ -9,8 +9,8 @@ from local_test.mock_verifier import (
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
-    Factory_state_input_exec_operation_loaded,
-    Bootstrapper_state_input_start_id_var_loaded,
+    _Factory_state_input_exec_operation_loaded,
+    _Node_state_input_start_id_var_loaded,
     ConfConstInput,
     ContextBuilder,
     EntryFunc,
@@ -51,8 +51,8 @@ def test_relationship():
 @patch(f"{primer_kernel.__name__}.get_path_to_curr_python")
 @patch(f"{primer_kernel.__name__}.get_path_to_base_python")
 @patch(f"{primer_kernel.__name__}.switch_python")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Node_state_input_start_id_var_loaded.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
 def test_py_exec_stride_py_unknown_in_venv(
     mock_state_input_exec_operation_loaded,
     mock_state_input_start_id_var_loaded,
@@ -112,8 +112,8 @@ def test_py_exec_stride_py_unknown_in_venv(
 @patch(f"{primer_kernel.__name__}.get_path_to_curr_python")
 @patch(f"{primer_kernel.__name__}.get_path_to_base_python")
 @patch(f"{primer_kernel.__name__}.switch_python")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Node_state_input_start_id_var_loaded.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
 def test_py_exec_stride_py_unknown_not_in_venv(
     mock_state_input_exec_operation_loaded,
     mock_state_input_start_id_var_loaded,

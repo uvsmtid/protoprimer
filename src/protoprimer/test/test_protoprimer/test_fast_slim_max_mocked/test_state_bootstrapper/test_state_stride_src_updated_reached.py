@@ -7,14 +7,14 @@ from local_test.mock_verifier import (
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
-    Bootstrapper_state_input_start_id_var_loaded,
-    Factory_state_proto_kernel_file_abs_path_inited,
-    Factory_state_proto_kernel_updated,
+    _Node_state_input_start_id_var_loaded,
+    _Factory_state_proto_kernel_file_abs_path_inited,
+    _Factory_state_proto_kernel_updated,
     ContextBuilder,
     EntryFunc,
     EnvState,
     StateStride,
-    Bootstrapper_state_local_venv_dir_abs_path_inited,
+    _Node_state_local_venv_dir_abs_path_inited,
 )
 
 
@@ -37,10 +37,10 @@ class ThisTestClass(BasePyfakefsTestClass):
     def test_relationship(self):
         assert_test_module_name_embeds_str(EnvState.state_stride_src_updated_reached.name)
 
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Factory_state_proto_kernel_updated.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Factory_state_proto_kernel_file_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Node_state_input_start_id_var_loaded.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Factory_state_proto_kernel_updated.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Factory_state_proto_kernel_file_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Node_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.switch_python")
     def test_not_yet_at_required_python(
         self,
@@ -83,10 +83,10 @@ class ThisTestClass(BasePyfakefsTestClass):
             proto_kernel_abs_file_path=mock_state_proto_kernel_file_abs_path_inited.return_value.eval_own_state.return_value,
         )
 
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Factory_state_proto_kernel_updated.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Factory_state_proto_kernel_file_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Node_state_input_start_id_var_loaded.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Factory_state_proto_kernel_updated.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Factory_state_proto_kernel_file_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Node_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.switch_python")
     def test_already_required_python(
         self,

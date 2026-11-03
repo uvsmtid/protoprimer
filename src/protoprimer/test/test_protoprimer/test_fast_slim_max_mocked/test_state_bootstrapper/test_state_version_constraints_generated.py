@@ -10,16 +10,16 @@ from local_test.mock_verifier import (
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
-    Bootstrapper_state_local_conf_symlink_abs_path_inited,
-    Factory_state_protoprimer_package_installed,
-    Factory_state_venv_driver_prepared,
-    Bootstrapper_state_version_constraints_file_basename_inited,
+    _Node_state_local_conf_symlink_abs_path_inited,
+    _Factory_state_protoprimer_package_installed,
+    _Factory_state_venv_driver_prepared,
+    _Node_state_version_constraints_file_basename_inited,
     ConfConstEnv,
     ContextBuilder,
     EntryFunc,
     EnvContext,
     EnvState,
-    Factory_state_input_exec_operation_loaded,
+    _Factory_state_input_exec_operation_loaded,
 )
 
 
@@ -42,11 +42,11 @@ class ThisTestClass(BasePyfakefsTestClass):
     def test_relationship(self):
         assert_test_module_name_embeds_str(EnvState.state_version_constraints_generated.name)
 
-    @patch(f"{primer_kernel.__name__}.{Factory_state_protoprimer_package_installed.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Factory_state_venv_driver_prepared.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_version_constraints_file_basename_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Factory_state_protoprimer_package_installed.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Factory_state_venv_driver_prepared.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Node_state_version_constraints_file_basename_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Node_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
     def test_constraints_generated(
         self,
         mock_state_input_exec_operation_loaded,
@@ -97,11 +97,11 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.assertTrue(os.path.exists(constraints_txt_path))
         mock_state_venv_driver_prepared.return_value.eval_own_state.return_value.pin_versions.assert_called_once()
 
-    @patch(f"{primer_kernel.__name__}.{Factory_state_protoprimer_package_installed.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Factory_state_venv_driver_prepared.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_version_constraints_file_basename_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Factory_state_protoprimer_package_installed.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Factory_state_venv_driver_prepared.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Node_state_version_constraints_file_basename_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Node_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
     def test_generation_skipped(
         self,
         mock_state_input_exec_operation_loaded,

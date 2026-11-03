@@ -9,10 +9,10 @@ from local_test.mock_verifier import (
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
-    Factory_state_input_command_line,
-    Bootstrapper_state_local_cache_dir_abs_path_inited,
-    Bootstrapper_state_local_venv_dir_abs_path_inited,
-    Bootstrapper_state_stride_src_updated_reached,
+    _Factory_state_input_command_line,
+    _Node_state_local_cache_dir_abs_path_inited,
+    _Node_state_local_venv_dir_abs_path_inited,
+    _Node_state_stride_src_updated_reached,
     EnvContext,
     EnvState,
     StateStride,
@@ -30,10 +30,10 @@ def test_relationship():
 
 @patch(f"{primer_kernel.__name__}.{EnvContext.__name__}.{EnvContext.get_stride.__name__}")
 @patch(f"{primer_kernel.__name__}.os.execve")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_stride_src_updated_reached.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_cache_dir_abs_path_inited.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Factory_state_input_command_line.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Node_state_stride_src_updated_reached.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Node_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Node_state_local_cache_dir_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Factory_state_input_command_line.__name__}.create_state_node")
 @patch.dict(
     os.environ,
     {
@@ -85,10 +85,10 @@ def test_shell_executed_in_bash(
 
 @patch(f"{primer_kernel.__name__}.{EnvContext.__name__}.{EnvContext.get_stride.__name__}")
 @patch(f"{primer_kernel.__name__}.os.execve")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_stride_src_updated_reached.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_cache_dir_abs_path_inited.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Factory_state_input_command_line.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Node_state_stride_src_updated_reached.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Node_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Node_state_local_cache_dir_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Factory_state_input_command_line.__name__}.create_state_node")
 @patch.dict(
     os.environ,
     {
@@ -140,10 +140,10 @@ def test_shell_executed_in_zsh(
 
 @patch(f"{primer_kernel.__name__}.{EnvContext.__name__}.{EnvContext.get_stride.__name__}")
 @patch(f"{primer_kernel.__name__}.os.execve")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_stride_src_updated_reached.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_cache_dir_abs_path_inited.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Factory_state_input_command_line.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Node_state_stride_src_updated_reached.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Node_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Node_state_local_cache_dir_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Factory_state_input_command_line.__name__}.create_state_node")
 @patch.dict(
     os.environ,
     {
@@ -195,10 +195,10 @@ def test_shell_executed_in_sh(
 
 @patch(f"{primer_kernel.__name__}.{EnvContext.__name__}.{EnvContext.get_stride.__name__}")
 @patch(f"{primer_kernel.__name__}.os.execve")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_stride_src_updated_reached.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_cache_dir_abs_path_inited.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Factory_state_input_command_line.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Node_state_stride_src_updated_reached.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Node_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Node_state_local_cache_dir_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Factory_state_input_command_line.__name__}.create_state_node")
 @patch.dict(
     os.environ,
     {

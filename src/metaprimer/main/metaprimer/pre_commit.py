@@ -18,7 +18,7 @@ logger = logging.getLogger()
 
 # noinspection PyPep8Naming
 @trivial_factory
-class Bootstrapper_state_pre_commit_configured(AbstractCachingStateNode[int]):
+class _Node_state_pre_commit_configured(AbstractCachingStateNode[int]):
 
     _state_name = staticmethod(lambda: "state_pre_commit_configured")
 

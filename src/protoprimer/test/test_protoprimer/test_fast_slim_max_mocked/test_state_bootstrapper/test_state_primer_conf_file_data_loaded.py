@@ -9,11 +9,11 @@ from local_test.mock_verifier import (
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
-    Bootstrapper_state_primer_conf_file_abs_path_inited,
+    _Node_state_primer_conf_file_abs_path_inited,
     ContextBuilder,
     EntryFunc,
-    Factory_state_print_conf_finalized,
-    Factory_state_proto_kernel_file_abs_path_inited,
+    _Factory_state_print_conf_finalized,
+    _Factory_state_proto_kernel_file_abs_path_inited,
     EnvContext,
     EnvState,
     StateStride,
@@ -41,9 +41,9 @@ class ThisTestClass(BasePyfakefsTestClass):
     def test_relationship(self):
         assert_test_module_name_embeds_str(EnvState.state_primer_conf_file_data_loaded.name)
 
-    @patch(f"{primer_kernel.__name__}.{Factory_state_print_conf_finalized.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Factory_state_proto_kernel_file_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_primer_conf_file_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Factory_state_print_conf_finalized.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Factory_state_proto_kernel_file_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Node_state_primer_conf_file_abs_path_inited.__name__}.create_state_node")
     def test_conf_file_exists(
         self,
         mock_state_primer_conf_file_abs_path_inited,
@@ -71,9 +71,9 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         self.assertEqual(state_value, {"test": "data"})
 
-    @patch(f"{primer_kernel.__name__}.{Factory_state_print_conf_finalized.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Factory_state_proto_kernel_file_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_primer_conf_file_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Factory_state_print_conf_finalized.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Factory_state_proto_kernel_file_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Node_state_primer_conf_file_abs_path_inited.__name__}.create_state_node")
     def test_conf_file_missing(
         self,
         mock_state_primer_conf_file_abs_path_inited,
@@ -103,9 +103,9 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.assertIn("does not exist", log_dst.output[0])
         self.assertEqual({}, state_value)
 
-    @patch(f"{primer_kernel.__name__}.{Factory_state_print_conf_finalized.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Factory_state_proto_kernel_file_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_primer_conf_file_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Factory_state_print_conf_finalized.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Factory_state_proto_kernel_file_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Node_state_primer_conf_file_abs_path_inited.__name__}.create_state_node")
     def test_conf_file_malformed(
         self,
         mock_state_primer_conf_file_abs_path_inited,

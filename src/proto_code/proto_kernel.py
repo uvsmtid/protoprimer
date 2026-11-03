@@ -42,7 +42,7 @@ import typing
 
 # The release process ensures that content in this file matches the version below while tagging the release commit
 # (otherwise, if the file comes from a different commit, the version is irrelevant):
-__version__ = "0.14.0.dev1"
+__version__ = "0.14.0.dev2"
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 logger: logging.Logger = logging.getLogger()
 
@@ -2026,7 +2026,7 @@ class AbstractOverriddenFieldCachingStateNode(AbstractCachingStateNode[ValueType
 
 # noinspection PyPep8Naming
 @trivial_factory
-class Bootstrapper_state_input_py_exec_var_loaded(AbstractCachingStateNode[StateStride]):
+class _Node_state_input_py_exec_var_loaded(AbstractCachingStateNode[StateStride]):
 
     _state_name = staticmethod(lambda: EnvState.state_input_py_exec_var_loaded.name)
 
@@ -2043,7 +2043,7 @@ class Bootstrapper_state_input_py_exec_var_loaded(AbstractCachingStateNode[State
 
 # noinspection PyPep8Naming
 @trivial_factory
-class Bootstrapper_state_is_app_defined(AbstractCachingStateNode[bool]):
+class _Node_state_is_app_defined(AbstractCachingStateNode[bool]):
 
     _state_name = staticmethod(lambda: EnvState.state_is_app_defined.name)
 
@@ -2057,7 +2057,7 @@ class Bootstrapper_state_is_app_defined(AbstractCachingStateNode[bool]):
 
 # noinspection PyPep8Naming
 @trivial_factory
-class Bootstrapper_state_input_is_stderr_log_enabled(AbstractCachingStateNode[bool]):
+class _Node_state_input_is_stderr_log_enabled(AbstractCachingStateNode[bool]):
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     _parent_states = staticmethod(lambda: [EnvState.state_is_app_defined.name])
     _state_name = staticmethod(lambda: EnvState.state_input_is_stderr_log_enabled.name)
@@ -2073,7 +2073,7 @@ class Bootstrapper_state_input_is_stderr_log_enabled(AbstractCachingStateNode[bo
 
 # noinspection PyPep8Naming
 @trivial_factory
-class Bootstrapper_state_input_stderr_log_level_var_loaded(AbstractCachingStateNode[int]):
+class _Node_state_input_stderr_log_level_var_loaded(AbstractCachingStateNode[int]):
 
     _parent_states = staticmethod(
         lambda: [
@@ -2119,7 +2119,7 @@ class Bootstrapper_state_input_stderr_log_level_var_loaded(AbstractCachingStateN
 
 # noinspection PyPep8Naming
 @trivial_factory
-class Bootstrapper_state_default_stderr_log_handler_configured(AbstractCachingStateNode[logging.Handler]):
+class _Node_state_default_stderr_log_handler_configured(AbstractCachingStateNode[logging.Handler]):
     # TODO: UC_81_50_97_17.do_not_reuse_logger.md: Shell we disable configuring loggers for `EntryFunc.func_start_app`?
 
     _parent_states = staticmethod(lambda: [EnvState.state_input_stderr_log_level_var_loaded.name])
@@ -2139,7 +2139,7 @@ class Bootstrapper_state_default_stderr_log_handler_configured(AbstractCachingSt
 
 # noinspection PyPep8Naming
 @conditional_factory
-class Bootstrapper_state_args_parsed_is_app(AbstractCachingStateNode[argparse.Namespace]):
+class _Node_state_args_parsed_is_app(AbstractCachingStateNode[argparse.Namespace]):
 
     _state_name = staticmethod(lambda: EnvState.state_args_parsed.name)
 
@@ -2149,7 +2149,7 @@ class Bootstrapper_state_args_parsed_is_app(AbstractCachingStateNode[argparse.Na
 
 # noinspection PyPep8Naming
 @conditional_factory
-class Bootstrapper_state_args_parsed_not_is_app(AbstractCachingStateNode[argparse.Namespace]):
+class _Node_state_args_parsed_not_is_app(AbstractCachingStateNode[argparse.Namespace]):
 
     _state_name = staticmethod(lambda: EnvState.state_args_parsed.name)
 
@@ -2158,18 +2158,18 @@ class Bootstrapper_state_args_parsed_not_is_app(AbstractCachingStateNode[argpars
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
 # noinspection PyPep8Naming
-class Factory_state_args_parsed(NodeFactory[StateStride]):
+class _Factory_state_args_parsed(NodeFactory[StateStride]):
 
     def create_state_node(self) -> StateNode[ValueType]:
         if self.env_ctx._is_app:
-            return Bootstrapper_state_args_parsed_is_app(self.env_ctx)
+            return _Node_state_args_parsed_is_app(self.env_ctx)
         else:
-            return Bootstrapper_state_args_parsed_not_is_app(self.env_ctx)
+            return _Node_state_args_parsed_not_is_app(self.env_ctx)
 
 
 # noinspection PyPep8Naming
 @conditional_factory
-class Bootstrapper_state_input_stderr_log_level_eval_finalized_is_app(AbstractCachingStateNode[int]):
+class _Node_state_input_stderr_log_level_eval_finalized_is_app(AbstractCachingStateNode[int]):
 
     _parent_states = staticmethod(
         lambda: [
@@ -2216,7 +2216,7 @@ class Bootstrapper_state_input_stderr_log_level_eval_finalized_is_app(AbstractCa
 
 # noinspection PyPep8Naming
 @conditional_factory
-class Bootstrapper_state_input_stderr_log_level_eval_finalized_not_is_app(AbstractCachingStateNode[int]):
+class _Node_state_input_stderr_log_level_eval_finalized_not_is_app(AbstractCachingStateNode[int]):
 
     _parent_states = staticmethod(lambda: [EnvState.state_input_stderr_log_level_var_loaded.name])
     _state_name = staticmethod(lambda: EnvState.state_input_stderr_log_level_eval_finalized.name)
@@ -2226,18 +2226,18 @@ class Bootstrapper_state_input_stderr_log_level_eval_finalized_not_is_app(Abstra
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 # noinspection PyPep8Naming
-class Factory_state_input_stderr_log_level_eval_finalized(NodeFactory[int]):
+class _Factory_state_input_stderr_log_level_eval_finalized(NodeFactory[int]):
 
     def create_state_node(self) -> StateNode[ValueType]:
         if self.env_ctx._is_app:
-            return Bootstrapper_state_input_stderr_log_level_eval_finalized_is_app(self.env_ctx)
+            return _Node_state_input_stderr_log_level_eval_finalized_is_app(self.env_ctx)
         else:
-            return Bootstrapper_state_input_stderr_log_level_eval_finalized_not_is_app(self.env_ctx)
+            return _Node_state_input_stderr_log_level_eval_finalized_not_is_app(self.env_ctx)
 
 
 # noinspection PyPep8Naming
 @trivial_factory
-class Bootstrapper_state_input_stderr_log_level_handler_configured(AbstractCachingStateNode[logging.Handler]):
+class _Node_state_input_stderr_log_level_handler_configured(AbstractCachingStateNode[logging.Handler]):
     """
     There is a narrow window between the default log level is set and this state is evaluated.
     To control the default log level, see `EnvVar.var_PROTOPRIMER_STDERR_LOG_LEVEL`.
@@ -2275,7 +2275,7 @@ class Bootstrapper_state_input_stderr_log_level_handler_configured(AbstractCachi
 
 # noinspection PyPep8Naming
 @conditional_factory
-class Bootstrapper_state_input_exec_operation_loaded_is_app(AbstractCachingStateNode[ExecOperation]):
+class _Node_state_input_exec_operation_loaded_is_app(AbstractCachingStateNode[ExecOperation]):
 
     _parent_states = staticmethod(lambda: [EnvState.state_args_parsed.name])
     _state_name = staticmethod(lambda: EnvState.state_input_exec_operation_loaded.name)
@@ -2294,7 +2294,7 @@ class Bootstrapper_state_input_exec_operation_loaded_is_app(AbstractCachingState
 
 # noinspection PyPep8Naming
 @conditional_factory
-class Bootstrapper_state_input_exec_operation_loaded_func_start_app(AbstractCachingStateNode[ExecOperation]):
+class _Node_state_input_exec_operation_loaded_func_start_app(AbstractCachingStateNode[ExecOperation]):
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     _state_name = staticmethod(lambda: EnvState.state_input_exec_operation_loaded.name)
 
@@ -2305,7 +2305,7 @@ class Bootstrapper_state_input_exec_operation_loaded_func_start_app(AbstractCach
 
 # noinspection PyPep8Naming
 @conditional_factory
-class Bootstrapper_state_input_exec_operation_loaded_func_call_lib(AbstractCachingStateNode[ExecOperation]):
+class _Node_state_input_exec_operation_loaded_func_call_lib(AbstractCachingStateNode[ExecOperation]):
 
     _state_name = staticmethod(lambda: EnvState.state_input_exec_operation_loaded.name)
 
@@ -2317,22 +2317,22 @@ class Bootstrapper_state_input_exec_operation_loaded_func_call_lib(AbstractCachi
 
 
 # noinspection PyPep8Naming
-class Factory_state_input_exec_operation_loaded(NodeFactory[ExecOperation]):
+class _Factory_state_input_exec_operation_loaded(NodeFactory[ExecOperation]):
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     def create_state_node(self) -> StateNode[ValueType]:
         if self.env_ctx._is_app:
-            return Bootstrapper_state_input_exec_operation_loaded_is_app(self.env_ctx)
+            return _Node_state_input_exec_operation_loaded_is_app(self.env_ctx)
         elif self.env_ctx._entry_func == EntryFunc.func_start_app:
-            return Bootstrapper_state_input_exec_operation_loaded_func_start_app(self.env_ctx)
+            return _Node_state_input_exec_operation_loaded_func_start_app(self.env_ctx)
         elif self.env_ctx._entry_func == EntryFunc.func_call_lib:
-            return Bootstrapper_state_input_exec_operation_loaded_func_call_lib(self.env_ctx)
+            return _Node_state_input_exec_operation_loaded_func_call_lib(self.env_ctx)
         else:
             raise AssertionError(self.env_ctx._entry_func)
 
 
 # noinspection PyPep8Naming
 @conditional_factory
-class Bootstrapper_state_print_conf_finalized_is_app(AbstractCachingStateNode[bool]):
+class _Node_state_print_conf_finalized_is_app(AbstractCachingStateNode[bool]):
 
     _parent_states = staticmethod(lambda: [EnvState.state_input_exec_operation_loaded.name])
     _state_name = staticmethod(lambda: EnvState.state_print_conf_finalized.name)
@@ -2344,7 +2344,7 @@ class Bootstrapper_state_print_conf_finalized_is_app(AbstractCachingStateNode[bo
 
 # noinspection PyPep8Naming
 @conditional_factory
-class Bootstrapper_state_print_conf_finalized_not_is_app(AbstractCachingStateNode[bool]):
+class _Node_state_print_conf_finalized_not_is_app(AbstractCachingStateNode[bool]):
 
     _state_name = staticmethod(lambda: EnvState.state_print_conf_finalized.name)
 
@@ -2353,18 +2353,18 @@ class Bootstrapper_state_print_conf_finalized_not_is_app(AbstractCachingStateNod
 
 
 # noinspection PyPep8Naming
-class Factory_state_print_conf_finalized(NodeFactory[bool]):
+class _Factory_state_print_conf_finalized(NodeFactory[bool]):
 
     def create_state_node(self) -> StateNode[ValueType]:
         if self.env_ctx._is_app:
-            return Bootstrapper_state_print_conf_finalized_is_app(self.env_ctx)
+            return _Node_state_print_conf_finalized_is_app(self.env_ctx)
         else:
-            return Bootstrapper_state_print_conf_finalized_not_is_app(self.env_ctx)
+            return _Node_state_print_conf_finalized_not_is_app(self.env_ctx)
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 # noinspection PyPep8Naming
 @conditional_factory
-class Bootstrapper_state_prepare_venv_finalized_is_app(AbstractCachingStateNode[bool]):
+class _Node_state_prepare_venv_finalized_is_app(AbstractCachingStateNode[bool]):
 
     _parent_states = staticmethod(lambda: [EnvState.state_input_exec_operation_loaded.name])
     _state_name = staticmethod(lambda: EnvState.state_prepare_venv_finalized.name)
@@ -2380,7 +2380,7 @@ class Bootstrapper_state_prepare_venv_finalized_is_app(AbstractCachingStateNode[
 
 # noinspection PyPep8Naming
 @conditional_factory
-class Bootstrapper_state_prepare_venv_finalized_not_is_app(AbstractCachingStateNode[bool]):
+class _Node_state_prepare_venv_finalized_not_is_app(AbstractCachingStateNode[bool]):
 
     _state_name = staticmethod(lambda: EnvState.state_prepare_venv_finalized.name)
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
@@ -2390,18 +2390,18 @@ class Bootstrapper_state_prepare_venv_finalized_not_is_app(AbstractCachingStateN
 
 
 # noinspection PyPep8Naming
-class Factory_state_prepare_venv_finalized(NodeFactory[bool]):
+class _Factory_state_prepare_venv_finalized(NodeFactory[bool]):
 
     def create_state_node(self) -> StateNode[ValueType]:
         if self.env_ctx._is_app:
-            return Bootstrapper_state_prepare_venv_finalized_is_app(self.env_ctx)
+            return _Node_state_prepare_venv_finalized_is_app(self.env_ctx)
         else:
-            return Bootstrapper_state_prepare_venv_finalized_not_is_app(self.env_ctx)
+            return _Node_state_prepare_venv_finalized_not_is_app(self.env_ctx)
 
 
 # noinspection PyPep8Naming
 @conditional_factory
-class Bootstrapper_state_input_final_state_eval_finalized_is_app(AbstractCachingStateNode[str]):
+class _Node_state_input_final_state_eval_finalized_is_app(AbstractCachingStateNode[str]):
 
     _state_name = staticmethod(lambda: EnvState.state_input_final_state_eval_finalized.name)
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
@@ -2416,7 +2416,7 @@ class Bootstrapper_state_input_final_state_eval_finalized_is_app(AbstractCaching
 
 # noinspection PyPep8Naming
 @conditional_factory
-class Bootstrapper_state_input_final_state_eval_finalized_func_start_app(AbstractCachingStateNode[str]):
+class _Node_state_input_final_state_eval_finalized_func_start_app(AbstractCachingStateNode[str]):
 
     _state_name = staticmethod(lambda: EnvState.state_input_final_state_eval_finalized.name)
 
@@ -2431,7 +2431,7 @@ class Bootstrapper_state_input_final_state_eval_finalized_func_start_app(Abstrac
 
 # noinspection PyPep8Naming
 @conditional_factory
-class Bootstrapper_state_input_final_state_eval_finalized_func_call_lib(AbstractCachingStateNode[str]):
+class _Node_state_input_final_state_eval_finalized_func_call_lib(AbstractCachingStateNode[str]):
 
     _state_name = staticmethod(lambda: EnvState.state_input_final_state_eval_finalized.name)
 
@@ -2445,25 +2445,25 @@ class Bootstrapper_state_input_final_state_eval_finalized_func_call_lib(Abstract
 
 
 # noinspection PyPep8Naming
-class Factory_state_input_final_state_eval_finalized(NodeFactory[StateStride]):
+class _Factory_state_input_final_state_eval_finalized(NodeFactory[StateStride]):
 
     def create_state_node(self) -> StateNode[ValueType]:
         if self.env_ctx._entry_func in [
             EntryFunc.func_boot_env,
             EntryFunc.func_run_main,
         ]:
-            return Bootstrapper_state_input_final_state_eval_finalized_is_app(self.env_ctx)
+            return _Node_state_input_final_state_eval_finalized_is_app(self.env_ctx)
         elif self.env_ctx._entry_func == EntryFunc.func_start_app:
-            return Bootstrapper_state_input_final_state_eval_finalized_func_start_app(self.env_ctx)
+            return _Node_state_input_final_state_eval_finalized_func_start_app(self.env_ctx)
         elif self.env_ctx._entry_func == EntryFunc.func_call_lib:
-            return Bootstrapper_state_input_final_state_eval_finalized_func_call_lib(self.env_ctx)
+            return _Node_state_input_final_state_eval_finalized_func_call_lib(self.env_ctx)
         else:
             raise AssertionError(self.env_ctx._entry_func)
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
 # noinspection PyPep8Naming
 @trivial_factory
-class Bootstrapper_state_func_boot_env_executed(AbstractCachingStateNode[bool]):
+class _Node_state_func_boot_env_executed(AbstractCachingStateNode[bool]):
     """
     This is a special node - it traverses ALL nodes for `EntryFunc` cases with parsed args.
 
@@ -2517,7 +2517,7 @@ class Bootstrapper_state_func_boot_env_executed(AbstractCachingStateNode[bool]):
 
 # noinspection PyPep8Naming
 @conditional_factory
-class Base_state_func_start_app_executed(AbstractCachingStateNode[bool]):
+class _BaseNode_state_func_start_app_executed(AbstractCachingStateNode[bool]):
 
     _state_name = staticmethod(lambda: EnvState.state_func_start_app_executed.name)
 
@@ -2530,7 +2530,7 @@ class Base_state_func_start_app_executed(AbstractCachingStateNode[bool]):
 
 # noinspection PyPep8Naming
 @conditional_factory
-class Bootstrapper_state_func_start_app_executed_log_enabled(Base_state_func_start_app_executed):
+class _Node_state_func_start_app_executed_log_enabled(_BaseNode_state_func_start_app_executed):
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     _parent_states = staticmethod(
         lambda: [
@@ -2542,24 +2542,24 @@ class Bootstrapper_state_func_start_app_executed_log_enabled(Base_state_func_sta
 
 # noinspection PyPep8Naming
 @conditional_factory
-class Bootstrapper_state_func_start_app_executed_log_disabled(Base_state_func_start_app_executed):
+class _Node_state_func_start_app_executed_log_disabled(_BaseNode_state_func_start_app_executed):
 
     _parent_states = staticmethod(lambda: [EnvState.state_input_final_state_eval_finalized.name])
 
 
 # noinspection PyPep8Naming
-class Factory_state_func_start_app_executed(NodeFactory[bool]):
+class _Factory_state_func_start_app_executed(NodeFactory[bool]):
 
     def create_state_node(self) -> StateNode[ValueType]:
         if self.env_ctx._is_log_enabled:
-            return Bootstrapper_state_func_start_app_executed_log_enabled(self.env_ctx)
+            return _Node_state_func_start_app_executed_log_enabled(self.env_ctx)
         else:
-            return Bootstrapper_state_func_start_app_executed_log_disabled(self.env_ctx)
+            return _Node_state_func_start_app_executed_log_disabled(self.env_ctx)
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
 # noinspection PyPep8Naming
 @conditional_factory
-class Base_state_func_call_lib_executed(AbstractCachingStateNode[bool]):
+class _BaseNode_state_func_call_lib_executed(AbstractCachingStateNode[bool]):
 
     _state_name = staticmethod(lambda: EnvState.state_func_call_lib_executed.name)
 
@@ -2572,7 +2572,7 @@ class Base_state_func_call_lib_executed(AbstractCachingStateNode[bool]):
 
 # noinspection PyPep8Naming
 @conditional_factory
-class Bootstrapper_state_func_call_lib_executed_log_enabled(Base_state_func_call_lib_executed):
+class _Node_state_func_call_lib_executed_log_enabled(_BaseNode_state_func_call_lib_executed):
 
     _parent_states = staticmethod(
         lambda: [
@@ -2584,24 +2584,24 @@ class Bootstrapper_state_func_call_lib_executed_log_enabled(Base_state_func_call
 
 # noinspection PyPep8Naming
 @conditional_factory
-class Bootstrapper_state_func_call_lib_executed_log_disabled(Base_state_func_call_lib_executed):
+class _Node_state_func_call_lib_executed_log_disabled(_BaseNode_state_func_call_lib_executed):
 
     _parent_states = staticmethod(lambda: [EnvState.state_input_final_state_eval_finalized.name])
 
 
 # noinspection PyPep8Naming
-class Factory_state_func_call_lib_executed(NodeFactory[bool]):
+class _Factory_state_func_call_lib_executed(NodeFactory[bool]):
 
     def create_state_node(self) -> StateNode[ValueType]:
         if self.env_ctx._is_log_enabled:
-            return Bootstrapper_state_func_call_lib_executed_log_enabled(self.env_ctx)
+            return _Node_state_func_call_lib_executed_log_enabled(self.env_ctx)
         else:
-            return Bootstrapper_state_func_call_lib_executed_log_disabled(self.env_ctx)
+            return _Node_state_func_call_lib_executed_log_disabled(self.env_ctx)
 
 
 # noinspection PyPep8Naming
 @conditional_factory
-class Bootstrapper_state_everything_executed_is_app(AbstractCachingStateNode[bool]):
+class _Node_state_everything_executed_is_app(AbstractCachingStateNode[bool]):
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     _parent_states = staticmethod(
         lambda: [
@@ -2618,7 +2618,7 @@ class Bootstrapper_state_everything_executed_is_app(AbstractCachingStateNode[boo
 
 # noinspection PyPep8Naming
 @conditional_factory
-class Bootstrapper_state_everything_executed_func_start_app(AbstractCachingStateNode[bool]):
+class _Node_state_everything_executed_func_start_app(AbstractCachingStateNode[bool]):
 
     _parent_states = staticmethod(
         lambda: [
@@ -2636,7 +2636,7 @@ class Bootstrapper_state_everything_executed_func_start_app(AbstractCachingState
 
 # noinspection PyPep8Naming
 @conditional_factory
-class Bootstrapper_state_everything_executed_func_call_lib(AbstractCachingStateNode[bool]):
+class _Node_state_everything_executed_func_call_lib(AbstractCachingStateNode[bool]):
 
     _parent_states = staticmethod(
         lambda: [
@@ -2653,7 +2653,7 @@ class Bootstrapper_state_everything_executed_func_call_lib(AbstractCachingStateN
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
 # noinspection PyPep8Naming
-class Factory_state_everything_executed(NodeFactory[StateStride]):
+class _Factory_state_everything_executed(NodeFactory[StateStride]):
     """
     This is a special node - it traverses ALL nodes.
     """
@@ -2663,18 +2663,18 @@ class Factory_state_everything_executed(NodeFactory[StateStride]):
             EntryFunc.func_boot_env,
             EntryFunc.func_run_main,
         ]:
-            return Bootstrapper_state_everything_executed_is_app(self.env_ctx)
+            return _Node_state_everything_executed_is_app(self.env_ctx)
         elif self.env_ctx._entry_func == EntryFunc.func_start_app:
-            return Bootstrapper_state_everything_executed_func_start_app(self.env_ctx)
+            return _Node_state_everything_executed_func_start_app(self.env_ctx)
         elif self.env_ctx._entry_func == EntryFunc.func_call_lib:
-            return Bootstrapper_state_everything_executed_func_call_lib(self.env_ctx)
+            return _Node_state_everything_executed_func_call_lib(self.env_ctx)
         else:
             raise AssertionError(self.env_ctx._entry_func)
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 # noinspection PyPep8Naming
 @trivial_factory
-class Bootstrapper_state_input_start_id_var_loaded(AbstractCachingStateNode[str]):
+class _Node_state_input_start_id_var_loaded(AbstractCachingStateNode[str]):
 
     _state_name = staticmethod(lambda: EnvState.state_input_start_id_var_loaded.name)
 
@@ -2687,7 +2687,7 @@ class Bootstrapper_state_input_start_id_var_loaded(AbstractCachingStateNode[str]
 
 # noinspection PyPep8Naming
 @trivial_factory
-class Bootstrapper_state_input_proto_kernel_file_abs_path_var_loaded(AbstractCachingStateNode[str]):
+class _Node_state_input_proto_kernel_file_abs_path_var_loaded(AbstractCachingStateNode[str]):
     _state_name = staticmethod(lambda: EnvState.state_input_proto_kernel_file_abs_path_var_loaded.name)
 
     def _eval_state_once(self) -> ValueType:
@@ -2705,7 +2705,7 @@ class Bootstrapper_state_input_proto_kernel_file_abs_path_var_loaded(AbstractCac
 
 # noinspection PyPep8Naming
 @conditional_factory
-class Bootstrapper_state_stride_py_arbitrary_reached_is_app(AbstractCachingStateNode[StateStride]):
+class _Node_state_stride_py_arbitrary_reached_is_app(AbstractCachingStateNode[StateStride]):
     """
     Implements UC_90_98_17_93.run_under_venv.md.
     """
@@ -2782,7 +2782,7 @@ class Bootstrapper_state_stride_py_arbitrary_reached_is_app(AbstractCachingState
 
 # noinspection PyPep8Naming
 @conditional_factory
-class Bootstrapper_state_stride_py_arbitrary_reached_not_is_app(AbstractCachingStateNode[StateStride]):
+class _Node_state_stride_py_arbitrary_reached_not_is_app(AbstractCachingStateNode[StateStride]):
 
     _state_name = staticmethod(lambda: EnvState.state_stride_py_arbitrary_reached.name)
 
@@ -2793,18 +2793,18 @@ class Bootstrapper_state_stride_py_arbitrary_reached_not_is_app(AbstractCachingS
 
 
 # noinspection PyPep8Naming
-class Factory_state_stride_py_arbitrary_reached(NodeFactory[StateStride]):
+class _Factory_state_stride_py_arbitrary_reached(NodeFactory[StateStride]):
 
     def create_state_node(self) -> StateNode[StateStride]:
         if self.env_ctx._is_app:
-            return Bootstrapper_state_stride_py_arbitrary_reached_is_app(self.env_ctx)
+            return _Node_state_stride_py_arbitrary_reached_is_app(self.env_ctx)
         else:
-            return Bootstrapper_state_stride_py_arbitrary_reached_not_is_app(self.env_ctx)
+            return _Node_state_stride_py_arbitrary_reached_not_is_app(self.env_ctx)
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
 # noinspection PyPep8Naming
 @conditional_factory
-class Bootstrapper_state_proto_kernel_file_abs_path_inited_func_call_lib(AbstractCachingStateNode[str]):
+class _Node_state_proto_kernel_file_abs_path_inited_func_call_lib(AbstractCachingStateNode[str]):
     _state_name = staticmethod(lambda: EnvState.state_proto_kernel_file_abs_path_inited.name)
 
     def _eval_state_once(self) -> ValueType:
@@ -2824,7 +2824,7 @@ class Bootstrapper_state_proto_kernel_file_abs_path_inited_func_call_lib(Abstrac
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 # noinspection PyPep8Naming
 @conditional_factory
-class Bootstrapper_state_proto_kernel_file_abs_path_inited_not_func_call_lib(AbstractCachingStateNode[str]):
+class _Node_state_proto_kernel_file_abs_path_inited_not_func_call_lib(AbstractCachingStateNode[str]):
     _parent_states = staticmethod(
         lambda: [
             EnvState.state_input_proto_kernel_file_abs_path_var_loaded.name,
@@ -2881,18 +2881,18 @@ class Bootstrapper_state_proto_kernel_file_abs_path_inited_not_func_call_lib(Abs
 
 
 # noinspection PyPep8Naming
-class Factory_state_proto_kernel_file_abs_path_inited(NodeFactory[StateStride]):
+class _Factory_state_proto_kernel_file_abs_path_inited(NodeFactory[StateStride]):
 
     def create_state_node(self) -> StateNode[ValueType]:
         if self.env_ctx._entry_func == EntryFunc.func_call_lib:
-            return Bootstrapper_state_proto_kernel_file_abs_path_inited_func_call_lib(self.env_ctx)
+            return _Node_state_proto_kernel_file_abs_path_inited_func_call_lib(self.env_ctx)
         else:
-            return Bootstrapper_state_proto_kernel_file_abs_path_inited_not_func_call_lib(self.env_ctx)
+            return _Node_state_proto_kernel_file_abs_path_inited_not_func_call_lib(self.env_ctx)
 
 
 # noinspection PyPep8Naming
 @trivial_factory
-class Bootstrapper_state_wrap_executed(AbstractCachingStateNode[int]):
+class _Node_state_wrap_executed(AbstractCachingStateNode[int]):
     """
     UC_71_59_90_97.generated_entry_script.md
     """
@@ -2964,7 +2964,7 @@ class Bootstrapper_state_wrap_executed(AbstractCachingStateNode[int]):
 
 # noinspection PyPep8Naming
 @trivial_factory
-class Bootstrapper_state_primer_conf_file_abs_path_inited(AbstractCachingStateNode[str]):
+class _Node_state_primer_conf_file_abs_path_inited(AbstractCachingStateNode[str]):
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     _parent_states = staticmethod(lambda: [EnvState.state_proto_kernel_file_abs_path_inited.name])
     _state_name = staticmethod(lambda: EnvState.state_primer_conf_file_abs_path_inited.name)
@@ -3009,7 +3009,7 @@ class Bootstrapper_state_primer_conf_file_abs_path_inited(AbstractCachingStateNo
 
 # noinspection PyPep8Naming
 @trivial_factory
-class Bootstrapper_state_primer_conf_file_data_loaded(AbstractCachingStateNode[dict]):
+class _Node_state_primer_conf_file_data_loaded(AbstractCachingStateNode[dict]):
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     _parent_states = staticmethod(
         lambda: [
@@ -3070,7 +3070,7 @@ class Bootstrapper_state_primer_conf_file_data_loaded(AbstractCachingStateNode[d
 
 # noinspection PyPep8Naming
 @trivial_factory
-class Bootstrapper_state_ref_root_dir_abs_path_inited(AbstractCachingStateNode[str]):
+class _Node_state_ref_root_dir_abs_path_inited(AbstractCachingStateNode[str]):
 
     _parent_states = staticmethod(
         lambda: [
@@ -3110,7 +3110,7 @@ class Bootstrapper_state_ref_root_dir_abs_path_inited(AbstractCachingStateNode[s
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 # noinspection PyPep8Naming
 @trivial_factory
-class Bootstrapper_state_global_conf_dir_abs_path_inited(AbstractCachingStateNode[str]):
+class _Node_state_global_conf_dir_abs_path_inited(AbstractCachingStateNode[str]):
 
     _parent_states = staticmethod(
         lambda: [
@@ -3145,7 +3145,7 @@ class Bootstrapper_state_global_conf_dir_abs_path_inited(AbstractCachingStateNod
 
 # noinspection PyPep8Naming
 @trivial_factory
-class Bootstrapper_state_global_conf_file_abs_path_inited(AbstractCachingStateNode[str]):
+class _Node_state_global_conf_file_abs_path_inited(AbstractCachingStateNode[str]):
 
     _parent_states = staticmethod(
         lambda: [
@@ -3172,7 +3172,7 @@ class Bootstrapper_state_global_conf_file_abs_path_inited(AbstractCachingStateNo
 
 # noinspection PyPep8Naming
 @trivial_factory
-class Bootstrapper_state_client_conf_file_data_loaded(AbstractCachingStateNode[dict]):
+class _Node_state_client_conf_file_data_loaded(AbstractCachingStateNode[dict]):
 
     _parent_states = staticmethod(
         lambda: [
@@ -3213,7 +3213,7 @@ class Bootstrapper_state_client_conf_file_data_loaded(AbstractCachingStateNode[d
 
 # noinspection PyPep8Naming
 @conditional_factory
-class Base_state_selected_env_dir_rel_path(AbstractCachingStateNode[str]):
+class _BaseNode_state_selected_env_dir_rel_path(AbstractCachingStateNode[str]):
 
     def _eval_state_once(self) -> ValueType:
 
@@ -3301,7 +3301,7 @@ class Base_state_selected_env_dir_rel_path(AbstractCachingStateNode[str]):
 
 # noinspection PyPep8Naming
 @conditional_factory
-class Bootstrapper_state_selected_env_dir_rel_path_inited_is_app(Base_state_selected_env_dir_rel_path):
+class _Node_state_selected_env_dir_rel_path_inited_is_app(_BaseNode_state_selected_env_dir_rel_path):
 
     _parent_states = staticmethod(
         lambda: [
@@ -3325,7 +3325,7 @@ class Bootstrapper_state_selected_env_dir_rel_path_inited_is_app(Base_state_sele
 
 # noinspection PyPep8Naming
 @conditional_factory
-class Bootstrapper_state_selected_env_dir_rel_path_inited_not_is_app(Base_state_selected_env_dir_rel_path):
+class _Node_state_selected_env_dir_rel_path_inited_not_is_app(_BaseNode_state_selected_env_dir_rel_path):
 
     _parent_states = staticmethod(
         lambda: [
@@ -3340,18 +3340,18 @@ class Bootstrapper_state_selected_env_dir_rel_path_inited_not_is_app(Base_state_
 
 
 # noinspection PyPep8Naming
-class Factory_state_selected_env_dir_rel_path_inited(NodeFactory[StateStride]):
+class _Factory_state_selected_env_dir_rel_path_inited(NodeFactory[StateStride]):
 
     def create_state_node(self) -> StateNode[ValueType]:
         if self.env_ctx._is_app:
-            return Bootstrapper_state_selected_env_dir_rel_path_inited_is_app(self.env_ctx)
+            return _Node_state_selected_env_dir_rel_path_inited_is_app(self.env_ctx)
         else:
-            return Bootstrapper_state_selected_env_dir_rel_path_inited_not_is_app(self.env_ctx)
+            return _Node_state_selected_env_dir_rel_path_inited_not_is_app(self.env_ctx)
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
 # noinspection PyPep8Naming
 @trivial_factory
-class Bootstrapper_state_local_conf_symlink_abs_path_inited(AbstractCachingStateNode[str]):
+class _Node_state_local_conf_symlink_abs_path_inited(AbstractCachingStateNode[str]):
 
     _parent_states = staticmethod(
         lambda: [
@@ -3436,7 +3436,7 @@ class Bootstrapper_state_local_conf_symlink_abs_path_inited(AbstractCachingState
 
 # noinspection PyPep8Naming
 @trivial_factory
-class Bootstrapper_state_local_conf_file_abs_path_inited(AbstractCachingStateNode[str]):
+class _Node_state_local_conf_file_abs_path_inited(AbstractCachingStateNode[str]):
 
     _parent_states = staticmethod(
         lambda: [
@@ -3463,7 +3463,7 @@ class Bootstrapper_state_local_conf_file_abs_path_inited(AbstractCachingStateNod
 
 # noinspection PyPep8Naming
 @trivial_factory
-class Bootstrapper_state_env_conf_file_data_loaded(AbstractCachingStateNode[dict]):
+class _Node_state_env_conf_file_data_loaded(AbstractCachingStateNode[dict]):
 
     _parent_states = staticmethod(
         lambda: [
@@ -3507,7 +3507,7 @@ class Bootstrapper_state_env_conf_file_data_loaded(AbstractCachingStateNode[dict
 
 # noinspection PyPep8Naming
 @trivial_factory
-class Bootstrapper_required_python_version_inited(AbstractOverriddenFieldCachingStateNode[str]):
+class _Node_state_required_python_version_inited(AbstractOverriddenFieldCachingStateNode[str]):
 
     _parent_states = staticmethod(
         lambda: [
@@ -3544,7 +3544,7 @@ class Bootstrapper_required_python_version_inited(AbstractOverriddenFieldCaching
 
 # noinspection PyPep8Naming
 @trivial_factory
-class Bootstrapper_state_python_selector_file_abs_path_inited(AbstractOverriddenFieldCachingStateNode[str]):
+class _Node_state_python_selector_file_abs_path_inited(AbstractOverriddenFieldCachingStateNode[str]):
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     _parent_states = staticmethod(
         lambda: [
@@ -3577,7 +3577,7 @@ class Bootstrapper_state_python_selector_file_abs_path_inited(AbstractOverridden
 
 # noinspection PyPep8Naming
 @trivial_factory
-class Bootstrapper_state_selected_python_file_abs_path_inited(AbstractCachingStateNode[str]):
+class _Node_state_selected_python_file_abs_path_inited(AbstractCachingStateNode[str]):
 
     _parent_states = staticmethod(
         lambda: [
@@ -3607,7 +3607,7 @@ class Bootstrapper_state_selected_python_file_abs_path_inited(AbstractCachingSta
 
 # noinspection PyPep8Naming
 @trivial_factory
-class Bootstrapper_state_local_venv_dir_abs_path_inited(AbstractOverriddenFieldCachingStateNode[str]):
+class _Node_state_local_venv_dir_abs_path_inited(AbstractOverriddenFieldCachingStateNode[str]):
 
     _parent_states = staticmethod(
         lambda: [
@@ -3640,7 +3640,7 @@ class Bootstrapper_state_local_venv_dir_abs_path_inited(AbstractOverriddenFieldC
 
 # noinspection PyPep8Naming
 @trivial_factory
-class Bootstrapper_state_local_log_dir_abs_path_inited(AbstractOverriddenFieldCachingStateNode[str]):
+class _Node_state_local_log_dir_abs_path_inited(AbstractOverriddenFieldCachingStateNode[str]):
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     _parent_states = staticmethod(
         lambda: [
@@ -3672,7 +3672,7 @@ class Bootstrapper_state_local_log_dir_abs_path_inited(AbstractOverriddenFieldCa
 
 # noinspection PyPep8Naming
 @trivial_factory
-class Bootstrapper_state_local_run_dir_abs_path_inited(AbstractOverriddenFieldCachingStateNode[str]):
+class _Node_state_local_run_dir_abs_path_inited(AbstractOverriddenFieldCachingStateNode[str]):
 
     _parent_states = staticmethod(
         lambda: [
@@ -3704,7 +3704,7 @@ class Bootstrapper_state_local_run_dir_abs_path_inited(AbstractOverriddenFieldCa
 
 # noinspection PyPep8Naming
 @trivial_factory
-class Bootstrapper_state_local_tmp_dir_abs_path_inited(AbstractOverriddenFieldCachingStateNode[str]):
+class _Node_state_local_tmp_dir_abs_path_inited(AbstractOverriddenFieldCachingStateNode[str]):
 
     _parent_states = staticmethod(
         lambda: [
@@ -3736,7 +3736,7 @@ class Bootstrapper_state_local_tmp_dir_abs_path_inited(AbstractOverriddenFieldCa
 
 # noinspection PyPep8Naming
 @trivial_factory
-class Bootstrapper_state_local_cache_dir_abs_path_inited(AbstractOverriddenFieldCachingStateNode[str]):
+class _Node_state_local_cache_dir_abs_path_inited(AbstractOverriddenFieldCachingStateNode[str]):
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     _parent_states = staticmethod(
         lambda: [
@@ -3768,7 +3768,7 @@ class Bootstrapper_state_local_cache_dir_abs_path_inited(AbstractOverriddenField
 
 # noinspection PyPep8Naming
 @trivial_factory
-class Bootstrapper_state_venv_driver_inited(AbstractOverriddenFieldCachingStateNode[VenvDriverType]):
+class _Node_state_venv_driver_inited(AbstractOverriddenFieldCachingStateNode[VenvDriverType]):
 
     _parent_states = staticmethod(
         lambda: [
@@ -3818,7 +3818,7 @@ class Bootstrapper_state_venv_driver_inited(AbstractOverriddenFieldCachingStateN
 
 # noinspection PyPep8Naming
 @trivial_factory
-class Bootstrapper_state_version_constraints_file_basename_inited(AbstractOverriddenFieldCachingStateNode[str]):
+class _Node_state_version_constraints_file_basename_inited(AbstractOverriddenFieldCachingStateNode[str]):
 
     _parent_states = staticmethod(
         lambda: [
@@ -3837,7 +3837,7 @@ class Bootstrapper_state_version_constraints_file_basename_inited(AbstractOverri
 
 # noinspection PyPep8Naming
 @trivial_factory
-class Bootstrapper_state_project_descriptors_inited(AbstractOverriddenFieldCachingStateNode[list]):
+class _Node_state_project_descriptors_inited(AbstractOverriddenFieldCachingStateNode[list]):
 
     _parent_states = staticmethod(
         lambda: [
@@ -3859,7 +3859,7 @@ class Bootstrapper_state_project_descriptors_inited(AbstractOverriddenFieldCachi
 
 # noinspection PyPep8Naming
 @trivial_factory
-class Bootstrapper_state_install_specs_inited(AbstractOverriddenFieldCachingStateNode[list]):
+class _Node_state_install_specs_inited(AbstractOverriddenFieldCachingStateNode[list]):
 
     _parent_states = staticmethod(
         lambda: [
@@ -3881,7 +3881,7 @@ class Bootstrapper_state_install_specs_inited(AbstractOverriddenFieldCachingStat
 
 # noinspection PyPep8Naming
 @trivial_factory
-class Bootstrapper_state_derived_conf_data_loaded(AbstractCachingStateNode[dict]):
+class _Node_state_derived_conf_data_loaded(AbstractCachingStateNode[dict]):
     """
     Implements: FT_00_22_19_59.derived_config.md
     """
@@ -3965,7 +3965,7 @@ class Bootstrapper_state_derived_conf_data_loaded(AbstractCachingStateNode[dict]
 
 # noinspection PyPep8Naming
 @trivial_factory
-class Bootstrapper_state_effective_conf_data_printed(AbstractCachingStateNode[int]):
+class _Node_state_effective_conf_data_printed(AbstractCachingStateNode[int]):
     """
     Implements: FT_19_44_42_19.effective_config.md
     """
@@ -3982,7 +3982,7 @@ class Bootstrapper_state_effective_conf_data_printed(AbstractCachingStateNode[in
 
 # noinspection PyPep8Naming
 @trivial_factory
-class Bootstrapper_state_default_file_log_handler_configured(AbstractCachingStateNode[logging.Handler]):
+class _Node_state_default_file_log_handler_configured(AbstractCachingStateNode[logging.Handler]):
     # TODO: UC_81_50_97_17.do_not_reuse_logger.md: Shell we disable configuring loggers for `EntryFunc.func_start_app`?
 
     _parent_states = staticmethod(
@@ -4017,7 +4017,7 @@ class Bootstrapper_state_default_file_log_handler_configured(AbstractCachingStat
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 # noinspection PyPep8Naming
 @conditional_factory
-class Bootstrapper_state_stride_py_required_reached_prepare_venv(AbstractCachingStateNode[StateStride]):
+class _Node_state_stride_py_required_reached_prepare_venv(AbstractCachingStateNode[StateStride]):
     """
     Recursively runs this script inside the `python` interpreter required by the client.
 
@@ -4085,7 +4085,7 @@ class Bootstrapper_state_stride_py_required_reached_prepare_venv(AbstractCaching
 
 # noinspection PyPep8Naming
 @conditional_factory
-class Bootstrapper_state_stride_py_required_reached_not_prepare_venv(AbstractCachingStateNode[StateStride]):
+class _Node_state_stride_py_required_reached_not_prepare_venv(AbstractCachingStateNode[StateStride]):
     _parent_states = staticmethod(
         lambda: [
             EnvState.state_prepare_venv_finalized.name,
@@ -4111,20 +4111,20 @@ class Bootstrapper_state_stride_py_required_reached_not_prepare_venv(AbstractCac
 
 
 # noinspection PyPep8Naming
-class Factory_state_stride_py_required_reached(NodeFactory[StateStride]):
+class _Factory_state_stride_py_required_reached(NodeFactory[StateStride]):
 
     def create_state_node(self) -> StateNode[ValueType]:
         # The only reason for `EnvState.state_stride_py_required_reached`
         # is to use the required `python` to create a `venv`.
         if self.env_ctx._prepare_venv:
-            return Bootstrapper_state_stride_py_required_reached_prepare_venv(self.env_ctx)
+            return _Node_state_stride_py_required_reached_prepare_venv(self.env_ctx)
         else:
-            return Bootstrapper_state_stride_py_required_reached_not_prepare_venv(self.env_ctx)
+            return _Node_state_stride_py_required_reached_not_prepare_venv(self.env_ctx)
 
 
 # noinspection PyPep8Naming
 @conditional_factory
-class Bootstrapper_state_reset_triggered_is_app(AbstractCachingStateNode[bool]):
+class _Node_state_reset_triggered_is_app(AbstractCachingStateNode[bool]):
     """
     Removes current `venv` dir and `version_constraints.txt` file (to trigger their re-creation subsequently).
     """
@@ -4205,7 +4205,7 @@ class Bootstrapper_state_reset_triggered_is_app(AbstractCachingStateNode[bool]):
 
 # noinspection PyPep8Naming
 @conditional_factory
-class Bootstrapper_state_reset_triggered_not_is_app(AbstractCachingStateNode[bool]):
+class _Node_state_reset_triggered_not_is_app(AbstractCachingStateNode[bool]):
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     _state_name = staticmethod(lambda: EnvState.state_reset_triggered.name)
 
@@ -4214,18 +4214,18 @@ class Bootstrapper_state_reset_triggered_not_is_app(AbstractCachingStateNode[boo
 
 
 # noinspection PyPep8Naming
-class Factory_state_reset_triggered(NodeFactory[bool]):
+class _Factory_state_reset_triggered(NodeFactory[bool]):
 
     def create_state_node(self) -> StateNode[bool]:
         if self.env_ctx._is_app:
-            return Bootstrapper_state_reset_triggered_is_app(self.env_ctx)
+            return _Node_state_reset_triggered_is_app(self.env_ctx)
         else:
-            return Bootstrapper_state_reset_triggered_not_is_app(self.env_ctx)
+            return _Node_state_reset_triggered_not_is_app(self.env_ctx)
 
 
 # noinspection PyPep8Naming
 @conditional_factory
-class Bootstrapper_state_venv_driver_prepared_is_app(AbstractCachingStateNode[VenvDriverBase]):
+class _Node_state_venv_driver_prepared_is_app(AbstractCachingStateNode[VenvDriverBase]):
     _parent_states = staticmethod(
         lambda: [
             EnvState.state_input_exec_operation_loaded.name,
@@ -4278,7 +4278,7 @@ class Bootstrapper_state_venv_driver_prepared_is_app(AbstractCachingStateNode[Ve
 
 # noinspection PyPep8Naming
 @conditional_factory
-class Bootstrapper_state_venv_driver_prepared_not_is_app(AbstractCachingStateNode[VenvDriverBase]):
+class _Node_state_venv_driver_prepared_not_is_app(AbstractCachingStateNode[VenvDriverBase]):
     _state_name = staticmethod(lambda: EnvState.state_venv_driver_prepared.name)
 
     def _eval_state_once(self) -> ValueType:
@@ -4289,18 +4289,18 @@ class Bootstrapper_state_venv_driver_prepared_not_is_app(AbstractCachingStateNod
 
 
 # noinspection PyPep8Naming
-class Factory_state_venv_driver_prepared(NodeFactory[VenvDriverBase]):
+class _Factory_state_venv_driver_prepared(NodeFactory[VenvDriverBase]):
 
     def create_state_node(self) -> StateNode[VenvDriverBase]:
         if self.env_ctx._is_app:
-            return Bootstrapper_state_venv_driver_prepared_is_app(self.env_ctx)
+            return _Node_state_venv_driver_prepared_is_app(self.env_ctx)
         else:
-            return Bootstrapper_state_venv_driver_prepared_not_is_app(self.env_ctx)
+            return _Node_state_venv_driver_prepared_not_is_app(self.env_ctx)
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
 # noinspection PyPep8Naming
 @conditional_factory
-class Bootstrapper_state_stride_py_venv_reached_is_app(AbstractCachingStateNode[StateStride]):
+class _Node_state_stride_py_venv_reached_is_app(AbstractCachingStateNode[StateStride]):
     """
     Creates `venv` and switches to `python` from there.
     """
@@ -4416,7 +4416,7 @@ class Bootstrapper_state_stride_py_venv_reached_is_app(AbstractCachingStateNode[
 
 # noinspection PyPep8Naming
 @conditional_factory
-class Bootstrapper_state_stride_py_venv_reached_not_is_app(AbstractCachingStateNode[StateStride]):
+class _Node_state_stride_py_venv_reached_not_is_app(AbstractCachingStateNode[StateStride]):
 
     _parent_states = staticmethod(
         lambda: [
@@ -4455,18 +4455,18 @@ class Bootstrapper_state_stride_py_venv_reached_not_is_app(AbstractCachingStateN
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
 # noinspection PyPep8Naming
-class Factory_state_stride_py_venv_reached(NodeFactory[StateStride]):
+class _Factory_state_stride_py_venv_reached(NodeFactory[StateStride]):
 
     def create_state_node(self) -> StateNode[StateStride]:
         if self.env_ctx._is_app:
-            return Bootstrapper_state_stride_py_venv_reached_is_app(self.env_ctx)
+            return _Node_state_stride_py_venv_reached_is_app(self.env_ctx)
         else:
-            return Bootstrapper_state_stride_py_venv_reached_not_is_app(self.env_ctx)
+            return _Node_state_stride_py_venv_reached_not_is_app(self.env_ctx)
 
 
 # noinspection PyPep8Naming
 @conditional_factory
-class Bootstrapper_state_protoprimer_package_installed_is_app(AbstractCachingStateNode[bool]):
+class _Node_state_protoprimer_package_installed_is_app(AbstractCachingStateNode[bool]):
 
     _parent_states = staticmethod(
         lambda: [
@@ -4603,7 +4603,7 @@ class Bootstrapper_state_protoprimer_package_installed_is_app(AbstractCachingSta
 
 # noinspection PyPep8Naming
 @conditional_factory
-class Bootstrapper_state_protoprimer_package_installed_not_is_app(AbstractCachingStateNode[bool]):
+class _Node_state_protoprimer_package_installed_not_is_app(AbstractCachingStateNode[bool]):
 
     _state_name = staticmethod(lambda: EnvState.state_protoprimer_package_installed.name)
 
@@ -4612,18 +4612,18 @@ class Bootstrapper_state_protoprimer_package_installed_not_is_app(AbstractCachin
 
 
 # noinspection PyPep8Naming
-class Factory_state_protoprimer_package_installed(NodeFactory[bool]):
+class _Factory_state_protoprimer_package_installed(NodeFactory[bool]):
 
     def create_state_node(self) -> StateNode[bool]:
         if self.env_ctx._is_app:
-            return Bootstrapper_state_protoprimer_package_installed_is_app(self.env_ctx)
+            return _Node_state_protoprimer_package_installed_is_app(self.env_ctx)
         else:
-            return Bootstrapper_state_protoprimer_package_installed_not_is_app(self.env_ctx)
+            return _Node_state_protoprimer_package_installed_not_is_app(self.env_ctx)
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
 # noinspection PyPep8Naming
 @conditional_factory
-class Bootstrapper_state_version_constraints_generated_is_app(AbstractCachingStateNode[bool]):
+class _Node_state_version_constraints_generated_is_app(AbstractCachingStateNode[bool]):
     """
     Implements UC_44_82_07_30.requirements_lock.md.
     """
@@ -4679,7 +4679,7 @@ class Bootstrapper_state_version_constraints_generated_is_app(AbstractCachingSta
 
 # noinspection PyPep8Naming
 @conditional_factory
-class Bootstrapper_state_version_constraints_generated_not_is_app(AbstractCachingStateNode[bool]):
+class _Node_state_version_constraints_generated_not_is_app(AbstractCachingStateNode[bool]):
 
     _state_name = staticmethod(lambda: EnvState.state_version_constraints_generated.name)
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
@@ -4688,18 +4688,18 @@ class Bootstrapper_state_version_constraints_generated_not_is_app(AbstractCachin
 
 
 # noinspection PyPep8Naming
-class Factory_state_version_constraints_generated(NodeFactory[bool]):
+class _Factory_state_version_constraints_generated(NodeFactory[bool]):
 
     def create_state_node(self) -> StateNode[bool]:
         if self.env_ctx._is_app:
-            return Bootstrapper_state_version_constraints_generated_is_app(self.env_ctx)
+            return _Node_state_version_constraints_generated_is_app(self.env_ctx)
         else:
-            return Bootstrapper_state_version_constraints_generated_not_is_app(self.env_ctx)
+            return _Node_state_version_constraints_generated_not_is_app(self.env_ctx)
 
 
 # noinspection PyPep8Naming
 @conditional_factory
-class Bootstrapper_state_stride_deps_updated_reached_is_app(AbstractCachingStateNode[StateStride]):
+class _Node_state_stride_deps_updated_reached_is_app(AbstractCachingStateNode[StateStride]):
 
     _parent_states = staticmethod(
         lambda: [
@@ -4755,7 +4755,7 @@ class Bootstrapper_state_stride_deps_updated_reached_is_app(AbstractCachingState
 
 # noinspection PyPep8Naming
 @conditional_factory
-class Bootstrapper_state_stride_deps_updated_reached_not_is_app(AbstractCachingStateNode[StateStride]):
+class _Node_state_stride_deps_updated_reached_not_is_app(AbstractCachingStateNode[StateStride]):
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     _state_name = staticmethod(lambda: EnvState.state_stride_deps_updated_reached.name)
 
@@ -4764,18 +4764,18 @@ class Bootstrapper_state_stride_deps_updated_reached_not_is_app(AbstractCachingS
 
 
 # noinspection PyPep8Naming
-class Factory_state_stride_deps_updated_reached(NodeFactory[StateStride]):
+class _Factory_state_stride_deps_updated_reached(NodeFactory[StateStride]):
 
     def create_state_node(self) -> StateNode[StateStride]:
         if self.env_ctx._is_app:
-            return Bootstrapper_state_stride_deps_updated_reached_is_app(self.env_ctx)
+            return _Node_state_stride_deps_updated_reached_is_app(self.env_ctx)
         else:
-            return Bootstrapper_state_stride_deps_updated_reached_not_is_app(self.env_ctx)
+            return _Node_state_stride_deps_updated_reached_not_is_app(self.env_ctx)
 
 
 # noinspection PyPep8Naming
 @conditional_factory
-class Bootstrapper_state_proto_kernel_updated_is_app(AbstractCachingStateNode[bool]):
+class _Node_state_proto_kernel_updated_is_app(AbstractCachingStateNode[bool]):
     """
     Return `True` if content of the `proto_kernel` has changed.
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
@@ -4867,7 +4867,7 @@ class Bootstrapper_state_proto_kernel_updated_is_app(AbstractCachingStateNode[bo
 
 # noinspection PyPep8Naming
 @conditional_factory
-class Bootstrapper_state_proto_kernel_updated_not_is_app(AbstractCachingStateNode[bool]):
+class _Node_state_proto_kernel_updated_not_is_app(AbstractCachingStateNode[bool]):
 
     _state_name = staticmethod(lambda: EnvState.state_proto_kernel_updated.name)
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
@@ -4876,18 +4876,18 @@ class Bootstrapper_state_proto_kernel_updated_not_is_app(AbstractCachingStateNod
 
 
 # noinspection PyPep8Naming
-class Factory_state_proto_kernel_updated(NodeFactory[bool]):
+class _Factory_state_proto_kernel_updated(NodeFactory[bool]):
 
     def create_state_node(self) -> StateNode[bool]:
         if self.env_ctx._is_app:
-            return Bootstrapper_state_proto_kernel_updated_is_app(self.env_ctx)
+            return _Node_state_proto_kernel_updated_is_app(self.env_ctx)
         else:
-            return Bootstrapper_state_proto_kernel_updated_not_is_app(self.env_ctx)
+            return _Node_state_proto_kernel_updated_not_is_app(self.env_ctx)
 
 
 # noinspection PyPep8Naming
 @trivial_factory
-class Bootstrapper_state_stride_src_updated_reached(AbstractCachingStateNode[StateStride]):
+class _Node_state_stride_src_updated_reached(AbstractCachingStateNode[StateStride]):
 
     _parent_states = staticmethod(
         lambda: [
@@ -4928,7 +4928,7 @@ class Bootstrapper_state_stride_src_updated_reached(AbstractCachingStateNode[Sta
 
 # noinspection PyPep8Naming
 @conditional_factory
-class Bootstrapper_state_input_command_line_is_app(AbstractCachingStateNode[str]):
+class _Node_state_input_command_line_is_app(AbstractCachingStateNode[str]):
 
     _parent_states = staticmethod(lambda: [EnvState.state_args_parsed.name])
     _state_name = staticmethod(lambda: EnvState.state_input_command_line.name)
@@ -4944,7 +4944,7 @@ class Bootstrapper_state_input_command_line_is_app(AbstractCachingStateNode[str]
 
 # noinspection PyPep8Naming
 @conditional_factory
-class Bootstrapper_state_input_command_line_not_is_app(AbstractCachingStateNode[str]):
+class _Node_state_input_command_line_not_is_app(AbstractCachingStateNode[str]):
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     _state_name = staticmethod(lambda: EnvState.state_input_command_line.name)
 
@@ -4953,18 +4953,18 @@ class Bootstrapper_state_input_command_line_not_is_app(AbstractCachingStateNode[
 
 
 # noinspection PyPep8Naming
-class Factory_state_input_command_line(NodeFactory[str]):
+class _Factory_state_input_command_line(NodeFactory[str]):
 
     def create_state_node(self) -> StateNode[ValueType]:
         if self.env_ctx._is_app:
-            return Bootstrapper_state_input_command_line_is_app(self.env_ctx)
+            return _Node_state_input_command_line_is_app(self.env_ctx)
         else:
-            return Bootstrapper_state_input_command_line_not_is_app(self.env_ctx)
+            return _Node_state_input_command_line_not_is_app(self.env_ctx)
 
 
 # noinspection PyPep8Naming
 @trivial_factory
-class Bootstrapper_state_command_executed(AbstractCachingStateNode[int]):
+class _Node_state_command_executed(AbstractCachingStateNode[int]):
     """
     If `ParsedArg.name_shell_command`, this state replaces the current process with a shell executing the given command.
     """
@@ -5000,7 +5000,7 @@ class Bootstrapper_state_command_executed(AbstractCachingStateNode[int]):
 
 # noinspection PyPep8Naming
 @trivial_factory
-class Bootstrapper_state_client_func_executed(AbstractCachingStateNode[int]):
+class _Node_state_client_func_executed(AbstractCachingStateNode[int]):
     """
     Supports simplified `boot_env` via `client_func`.
 
@@ -5022,7 +5022,7 @@ class Bootstrapper_state_client_func_executed(AbstractCachingStateNode[int]):
 
 # noinspection PyPep8Naming
 @trivial_factory
-class Bootstrapper_state_shell_executed(AbstractCachingStateNode[int]):
+class _Node_state_shell_executed(AbstractCachingStateNode[int]):
     """
     For `ExecOperation.op_shell`: replaces the current process with an interactive shell
     (with activated `venv`), optionally running `ParsedArg.name_shell_command` in it.
@@ -5059,7 +5059,7 @@ class Bootstrapper_state_shell_executed(AbstractCachingStateNode[int]):
 
 # noinspection PyPep8Naming
 @trivial_factory
-class Bootstrapper_state_start_executed(AbstractCachingStateNode[int]):
+class _Node_state_start_executed(AbstractCachingStateNode[int]):
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     _parent_states = staticmethod(
         lambda: [
@@ -5122,154 +5122,154 @@ class EnvState(enum.Enum):
           In the future, it may change to "state name" -> "impl factory" instead.
     """
 
-    state_input_py_exec_var_loaded = Bootstrapper_state_input_py_exec_var_loaded
+    state_input_py_exec_var_loaded = _Node_state_input_py_exec_var_loaded
 
-    state_is_app_defined = Bootstrapper_state_is_app_defined
+    state_is_app_defined = _Node_state_is_app_defined
 
-    state_input_is_stderr_log_enabled = Bootstrapper_state_input_is_stderr_log_enabled
+    state_input_is_stderr_log_enabled = _Node_state_input_is_stderr_log_enabled
 
-    state_input_stderr_log_level_var_loaded = Bootstrapper_state_input_stderr_log_level_var_loaded
+    state_input_stderr_log_level_var_loaded = _Node_state_input_stderr_log_level_var_loaded
 
-    state_default_stderr_log_handler_configured = Bootstrapper_state_default_stderr_log_handler_configured
+    state_default_stderr_log_handler_configured = _Node_state_default_stderr_log_handler_configured
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-    state_args_parsed = Factory_state_args_parsed
+    state_args_parsed = _Factory_state_args_parsed
 
-    state_input_stderr_log_level_eval_finalized = Factory_state_input_stderr_log_level_eval_finalized
+    state_input_stderr_log_level_eval_finalized = _Factory_state_input_stderr_log_level_eval_finalized
 
-    state_input_stderr_log_level_handler_configured = Bootstrapper_state_input_stderr_log_level_handler_configured
+    state_input_stderr_log_level_handler_configured = _Node_state_input_stderr_log_level_handler_configured
 
-    state_input_exec_operation_loaded = Factory_state_input_exec_operation_loaded
+    state_input_exec_operation_loaded = _Factory_state_input_exec_operation_loaded
 
-    state_print_conf_finalized = Factory_state_print_conf_finalized
+    state_print_conf_finalized = _Factory_state_print_conf_finalized
 
-    state_prepare_venv_finalized = Factory_state_prepare_venv_finalized
+    state_prepare_venv_finalized = _Factory_state_prepare_venv_finalized
 
-    state_input_final_state_eval_finalized = Factory_state_input_final_state_eval_finalized
+    state_input_final_state_eval_finalized = _Factory_state_input_final_state_eval_finalized
 
-    state_func_boot_env_executed = Bootstrapper_state_func_boot_env_executed
+    state_func_boot_env_executed = _Node_state_func_boot_env_executed
 
-    state_func_start_app_executed = Factory_state_func_start_app_executed
+    state_func_start_app_executed = _Factory_state_func_start_app_executed
 
-    state_func_call_lib_executed = Factory_state_func_call_lib_executed
+    state_func_call_lib_executed = _Factory_state_func_call_lib_executed
 
     # Special case: triggers everything:
-    state_everything_executed = Factory_state_everything_executed
+    state_everything_executed = _Factory_state_everything_executed
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-    state_input_start_id_var_loaded = Bootstrapper_state_input_start_id_var_loaded
+    state_input_start_id_var_loaded = _Node_state_input_start_id_var_loaded
 
-    state_input_proto_kernel_file_abs_path_var_loaded = Bootstrapper_state_input_proto_kernel_file_abs_path_var_loaded
+    state_input_proto_kernel_file_abs_path_var_loaded = _Node_state_input_proto_kernel_file_abs_path_var_loaded
 
     # restart: `StateStride.stride_py_unknown` -> `StateStride.stride_py_arbitrary`:
-    state_stride_py_arbitrary_reached = Factory_state_stride_py_arbitrary_reached
+    state_stride_py_arbitrary_reached = _Factory_state_stride_py_arbitrary_reached
 
-    state_proto_kernel_file_abs_path_inited = Factory_state_proto_kernel_file_abs_path_inited
+    state_proto_kernel_file_abs_path_inited = _Factory_state_proto_kernel_file_abs_path_inited
 
     # UC_71_59_90_97.generated_entry_script.md
-    state_wrap_executed = Bootstrapper_state_wrap_executed
+    state_wrap_executed = _Node_state_wrap_executed
 
-    state_primer_conf_file_abs_path_inited = Bootstrapper_state_primer_conf_file_abs_path_inited
+    state_primer_conf_file_abs_path_inited = _Node_state_primer_conf_file_abs_path_inited
 
     # `ConfLeap.leap_primer`:
-    state_primer_conf_file_data_loaded = Bootstrapper_state_primer_conf_file_data_loaded
+    state_primer_conf_file_data_loaded = _Node_state_primer_conf_file_data_loaded
 
-    state_ref_root_dir_abs_path_inited = Bootstrapper_state_ref_root_dir_abs_path_inited
+    state_ref_root_dir_abs_path_inited = _Node_state_ref_root_dir_abs_path_inited
 
-    state_global_conf_dir_abs_path_inited = Bootstrapper_state_global_conf_dir_abs_path_inited
+    state_global_conf_dir_abs_path_inited = _Node_state_global_conf_dir_abs_path_inited
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-    state_global_conf_file_abs_path_inited = Bootstrapper_state_global_conf_file_abs_path_inited
+    state_global_conf_file_abs_path_inited = _Node_state_global_conf_file_abs_path_inited
 
     # `ConfLeap.leap_client`:
-    state_client_conf_file_data_loaded = Bootstrapper_state_client_conf_file_data_loaded
+    state_client_conf_file_data_loaded = _Node_state_client_conf_file_data_loaded
 
-    state_selected_env_dir_rel_path_inited = Factory_state_selected_env_dir_rel_path_inited
+    state_selected_env_dir_rel_path_inited = _Factory_state_selected_env_dir_rel_path_inited
 
-    state_local_conf_symlink_abs_path_inited = Bootstrapper_state_local_conf_symlink_abs_path_inited
+    state_local_conf_symlink_abs_path_inited = _Node_state_local_conf_symlink_abs_path_inited
 
-    state_local_conf_file_abs_path_inited = Bootstrapper_state_local_conf_file_abs_path_inited
+    state_local_conf_file_abs_path_inited = _Node_state_local_conf_file_abs_path_inited
 
     # `ConfLeap.leap_env`:
-    state_env_conf_file_data_loaded = Bootstrapper_state_env_conf_file_data_loaded
+    state_env_conf_file_data_loaded = _Node_state_env_conf_file_data_loaded
 
-    state_required_python_version_inited = Bootstrapper_required_python_version_inited
+    state_required_python_version_inited = _Node_state_required_python_version_inited
 
     # TODO: TODO_41_10_50_01.implement_env_selector.md: What is the FT (feature_topic)?
-    state_python_selector_file_abs_path_inited = Bootstrapper_state_python_selector_file_abs_path_inited
+    state_python_selector_file_abs_path_inited = _Node_state_python_selector_file_abs_path_inited
 
-    state_selected_python_file_abs_path_inited = Bootstrapper_state_selected_python_file_abs_path_inited
+    state_selected_python_file_abs_path_inited = _Node_state_selected_python_file_abs_path_inited
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     # TODO: TODO_20_07_74_69.configure_dirs_at_client_level.md:
     # TODO: log, tmp, venv, ... dirs should better be configured at client level:
-    state_local_venv_dir_abs_path_inited = Bootstrapper_state_local_venv_dir_abs_path_inited
+    state_local_venv_dir_abs_path_inited = _Node_state_local_venv_dir_abs_path_inited
 
     # TODO: TODO_20_07_74_69.configure_dirs_at_client_level.md:
     # TODO: log, tmp, venv, ... dirs should better be configured at client level:
-    state_local_log_dir_abs_path_inited = Bootstrapper_state_local_log_dir_abs_path_inited
+    state_local_log_dir_abs_path_inited = _Node_state_local_log_dir_abs_path_inited
 
     # TODO: TODO_20_07_74_69.configure_dirs_at_client_level.md:
     # TODO: log, tmp, venv, ... dirs should better be configured at client level:
-    state_local_run_dir_abs_path_inited = Bootstrapper_state_local_run_dir_abs_path_inited
+    state_local_run_dir_abs_path_inited = _Node_state_local_run_dir_abs_path_inited
 
     # TODO: TODO_20_07_74_69.configure_dirs_at_client_level.md:
     # TODO: log, tmp, venv, ... dirs should better be configured at client level:
-    state_local_tmp_dir_abs_path_inited = Bootstrapper_state_local_tmp_dir_abs_path_inited
+    state_local_tmp_dir_abs_path_inited = _Node_state_local_tmp_dir_abs_path_inited
 
     # TODO: TODO_20_07_74_69.configure_dirs_at_client_level.md:
     # TODO: log, tmp, venv, ... dirs should better be configured at client level:
-    state_local_cache_dir_abs_path_inited = Bootstrapper_state_local_cache_dir_abs_path_inited
+    state_local_cache_dir_abs_path_inited = _Node_state_local_cache_dir_abs_path_inited
 
-    state_venv_driver_inited = Bootstrapper_state_venv_driver_inited
+    state_venv_driver_inited = _Node_state_venv_driver_inited
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-    state_version_constraints_file_basename_inited = Bootstrapper_state_version_constraints_file_basename_inited
+    state_version_constraints_file_basename_inited = _Node_state_version_constraints_file_basename_inited
 
-    state_project_descriptors_inited = Bootstrapper_state_project_descriptors_inited
+    state_project_descriptors_inited = _Node_state_project_descriptors_inited
 
-    state_install_specs_inited = Bootstrapper_state_install_specs_inited
+    state_install_specs_inited = _Node_state_install_specs_inited
 
     # `ConfLeap.leap_derived`:
-    state_derived_conf_data_loaded = Bootstrapper_state_derived_conf_data_loaded
+    state_derived_conf_data_loaded = _Node_state_derived_conf_data_loaded
 
-    state_effective_conf_data_printed = Bootstrapper_state_effective_conf_data_printed
+    state_effective_conf_data_printed = _Node_state_effective_conf_data_printed
 
-    state_default_file_log_handler_configured = Bootstrapper_state_default_file_log_handler_configured
+    state_default_file_log_handler_configured = _Node_state_default_file_log_handler_configured
 
     # TODO: TODO_73_71_31_84.exec_operation_check_or_info.md:
     # TODO: Add a (replaceable) env_check step to execute before switching to `StateStride.stride_py_required`.
 
     # restart: `StateStride.stride_py_arbitrary` -> `StateStride.stride_py_required`:
-    state_stride_py_required_reached = Factory_state_stride_py_required_reached
+    state_stride_py_required_reached = _Factory_state_stride_py_required_reached
 
-    state_reset_triggered = Factory_state_reset_triggered
+    state_reset_triggered = _Factory_state_reset_triggered
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-    state_venv_driver_prepared = Factory_state_venv_driver_prepared
+    state_venv_driver_prepared = _Factory_state_venv_driver_prepared
 
     # restart: `StateStride.stride_py_required` -> `StateStride.stride_py_venv`:
-    state_stride_py_venv_reached = Factory_state_stride_py_venv_reached
+    state_stride_py_venv_reached = _Factory_state_stride_py_venv_reached
 
-    state_protoprimer_package_installed = Factory_state_protoprimer_package_installed
+    state_protoprimer_package_installed = _Factory_state_protoprimer_package_installed
 
-    state_version_constraints_generated = Factory_state_version_constraints_generated
+    state_version_constraints_generated = _Factory_state_version_constraints_generated
 
     # restart: `StateStride.stride_py_venv` -> `StateStride.stride_deps_updated`:
     # TODO: TODO_49_40_51_46.rename_state_names_to_final.md:
     # TODO: rename - "reached" sounds weird (and makes no sense):
-    state_stride_deps_updated_reached = Factory_state_stride_deps_updated_reached
+    state_stride_deps_updated_reached = _Factory_state_stride_deps_updated_reached
 
     # TODO: TODO_49_40_51_46.rename_state_names_to_final.md:
     # TODO: rename according to the final name:
-    state_proto_kernel_updated = Factory_state_proto_kernel_updated
+    state_proto_kernel_updated = _Factory_state_proto_kernel_updated
 
     # restart: `StateStride.stride_deps_updated` -> `StateStride.stride_src_updated`:
-    state_stride_src_updated_reached = Bootstrapper_state_stride_src_updated_reached
+    state_stride_src_updated_reached = _Node_state_stride_src_updated_reached
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-    state_input_command_line = Factory_state_input_command_line
+    state_input_command_line = _Factory_state_input_command_line
 
-    state_command_executed = Bootstrapper_state_command_executed
+    state_command_executed = _Node_state_command_executed
 
-    state_client_func_executed = Bootstrapper_state_client_func_executed
+    state_client_func_executed = _Node_state_client_func_executed
 
-    state_shell_executed = Bootstrapper_state_shell_executed
+    state_shell_executed = _Node_state_shell_executed
 
-    state_start_executed = Bootstrapper_state_start_executed
+    state_start_executed = _Node_state_start_executed
 
 
 class TargetState(enum.Enum):

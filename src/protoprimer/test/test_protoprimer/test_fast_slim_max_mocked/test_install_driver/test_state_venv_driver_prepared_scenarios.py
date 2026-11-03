@@ -12,13 +12,13 @@ from local_test.mock_subprocess import mock_get_python_version_by_current
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
-    Bootstrapper_required_python_version_inited,
-    Bootstrapper_state_client_conf_file_data_loaded,
-    Bootstrapper_state_env_conf_file_data_loaded,
-    Bootstrapper_state_local_cache_dir_abs_path_inited,
-    Bootstrapper_state_local_venv_dir_abs_path_inited,
-    Bootstrapper_state_reset_triggered_is_app,
-    Bootstrapper_state_selected_python_file_abs_path_inited,
+    _Node_state_required_python_version_inited,
+    _Node_state_client_conf_file_data_loaded,
+    _Node_state_env_conf_file_data_loaded,
+    _Node_state_local_cache_dir_abs_path_inited,
+    _Node_state_local_venv_dir_abs_path_inited,
+    _Node_state_reset_triggered_is_app,
+    _Node_state_selected_python_file_abs_path_inited,
     ContextBuilder,
     EntryFunc,
     EnvState,
@@ -45,31 +45,31 @@ class TestEnvContext(BasePyfakefsTestClass):
         new=mock_get_python_version_by_current,
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_required_python_version_inited.__name__}.{StateNode.eval_own_state.__name__}",
+        f"{primer_kernel.__name__}.{_Node_state_required_python_version_inited.__name__}.{StateNode.eval_own_state.__name__}",
         return_value=test_python_version,
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_selected_python_file_abs_path_inited.__name__}.{StateNode.eval_own_state.__name__}",
+        f"{primer_kernel.__name__}.{_Node_state_selected_python_file_abs_path_inited.__name__}.{StateNode.eval_own_state.__name__}",
         return_value="/usr/bin/python",
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_reset_triggered_is_app.__name__}.{StateNode.eval_own_state.__name__}",
+        f"{primer_kernel.__name__}.{_Node_state_reset_triggered_is_app.__name__}.{StateNode.eval_own_state.__name__}",
         return_value=False,
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.{StateNode.eval_own_state.__name__}",
+        f"{primer_kernel.__name__}.{_Node_state_client_conf_file_data_loaded.__name__}.{StateNode.eval_own_state.__name__}",
         return_value={},
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_env_conf_file_data_loaded.__name__}.{StateNode.eval_own_state.__name__}",
+        f"{primer_kernel.__name__}.{_Node_state_env_conf_file_data_loaded.__name__}.{StateNode.eval_own_state.__name__}",
         return_value={},
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_local_cache_dir_abs_path_inited.__name__}.{StateNode.eval_own_state.__name__}",
+        f"{primer_kernel.__name__}.{_Node_state_local_cache_dir_abs_path_inited.__name__}.{StateNode.eval_own_state.__name__}",
         return_value="/tmp",
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.{StateNode.eval_own_state.__name__}",
+        f"{primer_kernel.__name__}.{_Node_state_local_venv_dir_abs_path_inited.__name__}.{StateNode.eval_own_state.__name__}",
         return_value="/tmp/venv",
     )
     @patch("subprocess.check_call")
@@ -113,31 +113,31 @@ class TestEnvContext(BasePyfakefsTestClass):
         new=mock_get_python_version_by_current,
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_required_python_version_inited.__name__}.{StateNode.eval_own_state.__name__}",
+        f"{primer_kernel.__name__}.{_Node_state_required_python_version_inited.__name__}.{StateNode.eval_own_state.__name__}",
         return_value=test_python_version,
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_selected_python_file_abs_path_inited.__name__}.{StateNode.eval_own_state.__name__}",
+        f"{primer_kernel.__name__}.{_Node_state_selected_python_file_abs_path_inited.__name__}.{StateNode.eval_own_state.__name__}",
         return_value="/usr/bin/python",
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_reset_triggered_is_app.__name__}.{StateNode.eval_own_state.__name__}",
+        f"{primer_kernel.__name__}.{_Node_state_reset_triggered_is_app.__name__}.{StateNode.eval_own_state.__name__}",
         return_value=False,
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.{StateNode.eval_own_state.__name__}",
+        f"{primer_kernel.__name__}.{_Node_state_client_conf_file_data_loaded.__name__}.{StateNode.eval_own_state.__name__}",
         return_value={},
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_env_conf_file_data_loaded.__name__}.{StateNode.eval_own_state.__name__}",
+        f"{primer_kernel.__name__}.{_Node_state_env_conf_file_data_loaded.__name__}.{StateNode.eval_own_state.__name__}",
         return_value={},
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_local_cache_dir_abs_path_inited.__name__}.{StateNode.eval_own_state.__name__}",
+        f"{primer_kernel.__name__}.{_Node_state_local_cache_dir_abs_path_inited.__name__}.{StateNode.eval_own_state.__name__}",
         return_value="/tmp",
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.{StateNode.eval_own_state.__name__}",
+        f"{primer_kernel.__name__}.{_Node_state_local_venv_dir_abs_path_inited.__name__}.{StateNode.eval_own_state.__name__}",
         return_value="/tmp/venv",
     )
     @patch("subprocess.check_call")
@@ -181,31 +181,31 @@ class TestEnvContext(BasePyfakefsTestClass):
         new=mock_get_python_version_by_current,
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_required_python_version_inited.__name__}.{StateNode.eval_own_state.__name__}",
+        f"{primer_kernel.__name__}.{_Node_state_required_python_version_inited.__name__}.{StateNode.eval_own_state.__name__}",
         return_value=test_python_version,
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_selected_python_file_abs_path_inited.__name__}.{StateNode.eval_own_state.__name__}",
+        f"{primer_kernel.__name__}.{_Node_state_selected_python_file_abs_path_inited.__name__}.{StateNode.eval_own_state.__name__}",
         return_value="/usr/bin/python",
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_reset_triggered_is_app.__name__}.{StateNode.eval_own_state.__name__}",
+        f"{primer_kernel.__name__}.{_Node_state_reset_triggered_is_app.__name__}.{StateNode.eval_own_state.__name__}",
         return_value=False,
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.{StateNode.eval_own_state.__name__}",
+        f"{primer_kernel.__name__}.{_Node_state_client_conf_file_data_loaded.__name__}.{StateNode.eval_own_state.__name__}",
         return_value={},
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_env_conf_file_data_loaded.__name__}.{StateNode.eval_own_state.__name__}",
+        f"{primer_kernel.__name__}.{_Node_state_env_conf_file_data_loaded.__name__}.{StateNode.eval_own_state.__name__}",
         return_value={},
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_local_cache_dir_abs_path_inited.__name__}.{StateNode.eval_own_state.__name__}",
+        f"{primer_kernel.__name__}.{_Node_state_local_cache_dir_abs_path_inited.__name__}.{StateNode.eval_own_state.__name__}",
         return_value="/tmp",
     )
     @patch(
-        f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.{StateNode.eval_own_state.__name__}",
+        f"{primer_kernel.__name__}.{_Node_state_local_venv_dir_abs_path_inited.__name__}.{StateNode.eval_own_state.__name__}",
         return_value="/tmp/venv",
     )
     def test_init_without_uv(

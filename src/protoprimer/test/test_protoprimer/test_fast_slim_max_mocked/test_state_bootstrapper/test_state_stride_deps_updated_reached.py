@@ -8,16 +8,16 @@ from local_test.mock_verifier import (
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
-    Bootstrapper_state_input_start_id_var_loaded,
-    Factory_state_proto_kernel_file_abs_path_inited,
-    Factory_state_version_constraints_generated,
+    _Node_state_input_start_id_var_loaded,
+    _Factory_state_proto_kernel_file_abs_path_inited,
+    _Factory_state_version_constraints_generated,
     ContextBuilder,
     EntryFunc,
     EnvState,
     ExecOperation,
     StateStride,
-    Bootstrapper_state_local_venv_dir_abs_path_inited,
-    Factory_state_input_exec_operation_loaded,
+    _Node_state_local_venv_dir_abs_path_inited,
+    _Factory_state_input_exec_operation_loaded,
 )
 
 
@@ -38,13 +38,13 @@ def test_relationship():
     assert_test_module_name_embeds_str(EnvState.state_stride_deps_updated_reached.name)
 
 
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Node_state_input_start_id_var_loaded.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.get_path_to_curr_python")
 @patch(f"{primer_kernel.__name__}.switch_python")
-@patch(f"{primer_kernel.__name__}.{Factory_state_proto_kernel_file_abs_path_inited.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Factory_state_version_constraints_generated.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Factory_state_proto_kernel_file_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Node_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Factory_state_version_constraints_generated.__name__}.create_state_node")
 def test_stride_py_required_to_next_stride_deps_updated(
     mock_state_version_constraints_generated,
     mock_state_input_exec_operation_loaded,
@@ -93,11 +93,11 @@ def test_stride_py_required_to_next_stride_deps_updated(
     assert state_value == StateStride.stride_deps_updated
 
 
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Factory_state_proto_kernel_file_abs_path_inited.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Factory_state_version_constraints_generated.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Node_state_input_start_id_var_loaded.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Factory_state_proto_kernel_file_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Node_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Factory_state_version_constraints_generated.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.get_path_to_curr_python")
 def test_stride_deps_updated_to_same_stride_deps_updated(
     mock_switch_python,
