@@ -7,8 +7,8 @@ from local_test.mock_verifier import assert_parent_factories_mocked
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
-    Bootstrapper_state_global_conf_dir_abs_path_inited,
-    Bootstrapper_state_primer_conf_file_abs_path_inited,
+    _Node_state_global_conf_dir_abs_path_inited,
+    _Node_state_primer_conf_file_abs_path_inited,
     ConfConstPrimer,
     EnvContext,
     EnvState,
@@ -31,8 +31,8 @@ def test_relationship():
     assert_test_module_name_embeds_str(EnvState.state_global_conf_file_abs_path_inited.name)
 
 
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_primer_conf_file_abs_path_inited.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_global_conf_dir_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Node_state_primer_conf_file_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Node_state_global_conf_dir_abs_path_inited.__name__}.create_state_node")
 def test_success_when_field_present(
     mock_state_global_conf_dir_abs_path_inited,
     mock_state_primer_conf_file_abs_path_inited,

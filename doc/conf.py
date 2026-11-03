@@ -311,6 +311,9 @@ def _on_html_page_context_for_json_ld(
     seo_title = (context.get("meta") or {}).get("seo_title")
     if not seo_title:
         return
+    # Redirect pages (`noindex`) get no structured data:
+    if "noindex" in context.get("metatags", ""):
+        return
     site_url = app.config.html_baseurl
     page_url = urljoin(site_url, app.builder.get_target_uri(pagename))
     description = _get_meta_description(context)

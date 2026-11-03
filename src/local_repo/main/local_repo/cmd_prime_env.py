@@ -4,7 +4,7 @@ import enum
 import logging
 
 from metaprimer.pre_commit import (
-    Bootstrapper_state_pre_commit_configured,
+    _Node_state_pre_commit_configured,
 )
 from protoprimer.primer_kernel import (
     ContextBuilder,
@@ -21,7 +21,7 @@ def custom_main():
 
 class CustomEnvState(enum.Enum):
 
-    state_pre_commit_configured = Bootstrapper_state_pre_commit_configured
+    state_pre_commit_configured = _Node_state_pre_commit_configured
 
 
 def customize_env_context():
@@ -39,8 +39,8 @@ def customize_env_context():
     )
 
     env_ctx.register_factory(
-        Bootstrapper_state_pre_commit_configured._state_name(),
-        Bootstrapper_state_pre_commit_configured,
+        _Node_state_pre_commit_configured._state_name(),
+        _Node_state_pre_commit_configured,
     )
 
     return env_ctx

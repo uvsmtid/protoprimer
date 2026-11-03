@@ -7,14 +7,14 @@ import pytest
 from local_test.mock_verifier import assert_parent_factories_mocked
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from metaprimer.conf_renderer import customize_env_context
-from metaprimer.conf_renderer import Bootstrapper_state_primer_conf_file_data_loaded_rendered
+from metaprimer.conf_renderer import _Node_state_primer_conf_file_data_loaded_rendered
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
-    Factory_state_input_exec_operation_loaded,
-    Factory_state_input_stderr_log_level_eval_finalized,
-    Bootstrapper_state_primer_conf_file_abs_path_inited,
-    Factory_state_proto_kernel_file_abs_path_inited,
-    Bootstrapper_state_stride_src_updated_reached,
+    _Factory_state_input_exec_operation_loaded,
+    _Factory_state_input_stderr_log_level_eval_finalized,
+    _Node_state_primer_conf_file_abs_path_inited,
+    _Factory_state_proto_kernel_file_abs_path_inited,
+    _Node_state_stride_src_updated_reached,
     EnvState,
     StateStride,
 )
@@ -26,14 +26,14 @@ def env_ctx():
 
 
 def test_relationship():
-    assert_test_module_name_embeds_str(Bootstrapper_state_primer_conf_file_data_loaded_rendered.__name__)
+    assert_test_module_name_embeds_str(_Node_state_primer_conf_file_data_loaded_rendered.__name__)
 
 
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_stride_src_updated_reached.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Factory_state_input_stderr_log_level_eval_finalized.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Factory_state_proto_kernel_file_abs_path_inited.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_primer_conf_file_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Node_state_stride_src_updated_reached.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Factory_state_input_stderr_log_level_eval_finalized.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Factory_state_proto_kernel_file_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Node_state_primer_conf_file_abs_path_inited.__name__}.create_state_node")
 def test_conf_file_exists(
     mock_factory_primer_conf_file_abs_path_inited,
     mock_factory_proto_kernel_file_abs_path_inited,
@@ -48,7 +48,7 @@ def test_conf_file_exists(
 
     assert_parent_factories_mocked(
         env_ctx,
-        Bootstrapper_state_primer_conf_file_data_loaded_rendered._state_name(),
+        _Node_state_primer_conf_file_data_loaded_rendered._state_name(),
     )
 
     mock_file_path = "/mock/path/to/primer.json"
@@ -58,7 +58,7 @@ def test_conf_file_exists(
     # when:
 
     state_value = env_ctx.eval_state(
-        Bootstrapper_state_primer_conf_file_data_loaded_rendered._state_name(),
+        _Node_state_primer_conf_file_data_loaded_rendered._state_name(),
     )
 
     # then:
@@ -67,11 +67,11 @@ def test_conf_file_exists(
 
 
 @patch(f"{primer_kernel.__name__}.EnvContext.get_stride")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_stride_src_updated_reached.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Factory_state_input_stderr_log_level_eval_finalized.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Factory_state_proto_kernel_file_abs_path_inited.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_primer_conf_file_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Node_state_stride_src_updated_reached.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Factory_state_input_stderr_log_level_eval_finalized.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Factory_state_proto_kernel_file_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Node_state_primer_conf_file_abs_path_inited.__name__}.create_state_node")
 def test_conf_file_missing(
     mock_factory_primer_conf_file_abs_path_inited,
     mock_factory_proto_kernel_file_abs_path_inited,
@@ -88,7 +88,7 @@ def test_conf_file_missing(
 
     assert_parent_factories_mocked(
         env_ctx,
-        Bootstrapper_state_primer_conf_file_data_loaded_rendered._state_name(),
+        _Node_state_primer_conf_file_data_loaded_rendered._state_name(),
     )
 
     mock_file_path = "/mock/path/to/primer.json"
@@ -100,7 +100,7 @@ def test_conf_file_missing(
 
     caplog.set_level(WARNING)
     state_value = env_ctx.eval_state(
-        Bootstrapper_state_primer_conf_file_data_loaded_rendered._state_name(),
+        _Node_state_primer_conf_file_data_loaded_rendered._state_name(),
     )
 
     # then:
@@ -109,11 +109,11 @@ def test_conf_file_missing(
     assert "does not exist" in caplog.text
 
 
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_stride_src_updated_reached.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Factory_state_input_stderr_log_level_eval_finalized.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Factory_state_proto_kernel_file_abs_path_inited.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_primer_conf_file_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Node_state_stride_src_updated_reached.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Factory_state_input_stderr_log_level_eval_finalized.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Factory_state_proto_kernel_file_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Node_state_primer_conf_file_abs_path_inited.__name__}.create_state_node")
 def test_conf_file_malformed(
     mock_factory_primer_conf_file_abs_path_inited,
     mock_factory_proto_kernel_file_abs_path_inited,
@@ -128,7 +128,7 @@ def test_conf_file_malformed(
 
     assert_parent_factories_mocked(
         env_ctx,
-        Bootstrapper_state_primer_conf_file_data_loaded_rendered._state_name(),
+        _Node_state_primer_conf_file_data_loaded_rendered._state_name(),
     )
 
     mock_file_path = "/mock/path/to/primer.json"
@@ -139,5 +139,5 @@ def test_conf_file_malformed(
 
     with pytest.raises(json.decoder.JSONDecodeError):
         env_ctx.eval_state(
-            Bootstrapper_state_primer_conf_file_data_loaded_rendered._state_name(),
+            _Node_state_primer_conf_file_data_loaded_rendered._state_name(),
         )

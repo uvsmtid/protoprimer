@@ -11,9 +11,9 @@ from local_test.mock_verifier import (
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
-    Factory_state_input_final_state_eval_finalized,
-    Factory_state_input_exec_operation_loaded,
-    Bootstrapper_state_input_stderr_log_level_handler_configured,
+    _Factory_state_input_final_state_eval_finalized,
+    _Factory_state_input_exec_operation_loaded,
+    _Node_state_input_stderr_log_level_handler_configured,
     ContextBuilder,
     EntryFunc,
     EnvState,
@@ -38,9 +38,9 @@ def test_relationship():
     assert_test_module_name_embeds_str(EnvState.state_func_boot_env_executed.name)
 
 
-@patch(f"{primer_kernel.__name__}.{Factory_state_input_final_state_eval_finalized.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_stderr_log_level_handler_configured.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Factory_state_input_final_state_eval_finalized.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Node_state_input_stderr_log_level_handler_configured.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
 def test_exec_operation_boot(
     mock_state_input_exec_operation_loaded,
     mock_state_input_stderr_log_level_handler_configured,
@@ -70,9 +70,9 @@ def test_exec_operation_boot(
     assert exc_info.value.code == 0
 
 
-@patch(f"{primer_kernel.__name__}.{Factory_state_input_final_state_eval_finalized.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_stderr_log_level_handler_configured.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Factory_state_input_final_state_eval_finalized.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Node_state_input_stderr_log_level_handler_configured.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
 def test_exec_operation_none(
     mock_state_input_exec_operation_loaded,
     mock_state_input_stderr_log_level_handler_configured,
@@ -97,9 +97,9 @@ def test_exec_operation_none(
         env_ctx.eval_state(EnvState.state_func_boot_env_executed.name)
 
 
-@patch(f"{primer_kernel.__name__}.{Factory_state_input_final_state_eval_finalized.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_stderr_log_level_handler_configured.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Factory_state_input_final_state_eval_finalized.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Node_state_input_stderr_log_level_handler_configured.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
 def test_exec_operation_invalid(
     mock_state_input_exec_operation_loaded,
     mock_state_input_stderr_log_level_handler_configured,

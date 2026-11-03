@@ -25,6 +25,7 @@ dependencies = [
     "sphinxcontrib-mermaid",
     "myst-parser",
     "sphinx-sitemap",
+    # FT_84_11_73_28.supported_python_versions.md:
     # Docs are not built under `python` 3.7 (and its latest version requires `matplotlib`):
     "sphinxext-opengraph; python_version >= '3.9'",
 

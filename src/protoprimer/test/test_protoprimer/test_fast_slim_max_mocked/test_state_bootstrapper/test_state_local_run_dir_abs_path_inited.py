@@ -7,9 +7,9 @@ from local_test.mock_verifier import assert_parent_factories_mocked
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
-    Bootstrapper_state_client_conf_file_data_loaded,
-    Bootstrapper_state_env_conf_file_data_loaded,
-    Bootstrapper_state_ref_root_dir_abs_path_inited,
+    _Node_state_client_conf_file_data_loaded,
+    _Node_state_env_conf_file_data_loaded,
+    _Node_state_ref_root_dir_abs_path_inited,
     ConfConstEnv,
     ConfField,
     EnvContext,
@@ -26,9 +26,9 @@ def test_relationship():
     assert_test_module_name_embeds_str(EnvState.state_local_run_dir_abs_path_inited.name)
 
 
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_env_conf_file_data_loaded.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Node_state_env_conf_file_data_loaded.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Node_state_client_conf_file_data_loaded.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Node_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
 def test_default_when_field_absent(
     mock_state_ref_root_dir_abs_path_inited,
     mock_state_client_conf_file_data_loaded,
@@ -52,9 +52,9 @@ def test_default_when_field_absent(
     assert result == os.path.join(ref_root_abs_path, ConfConstEnv.default_dir_rel_path_run)
 
 
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_env_conf_file_data_loaded.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Node_state_env_conf_file_data_loaded.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Node_state_client_conf_file_data_loaded.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Node_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
 def test_client_conf_overrides_default(
     mock_state_ref_root_dir_abs_path_inited,
     mock_state_client_conf_file_data_loaded,
@@ -80,9 +80,9 @@ def test_client_conf_overrides_default(
     assert result == os.path.join(ref_root_abs_path, "client_run")
 
 
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_env_conf_file_data_loaded.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_client_conf_file_data_loaded.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Node_state_env_conf_file_data_loaded.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Node_state_client_conf_file_data_loaded.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Node_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
 def test_env_conf_overrides_client_conf(
     mock_state_ref_root_dir_abs_path_inited,
     mock_state_client_conf_file_data_loaded,

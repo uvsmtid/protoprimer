@@ -5,57 +5,57 @@ from local_test.name_assertion import assert_test_module_name_embeds_str
 from metaprimer import conf_renderer
 from metaprimer.conf_renderer import customize_env_context
 from metaprimer.conf_renderer import (
-    Bootstrapper_state_derived_conf_data_loaded_rendered,
-    Bootstrapper_state_env_conf_file_data_loaded_rendered,
+    _Node_state_derived_conf_data_loaded_rendered,
+    _Node_state_env_conf_file_data_loaded_rendered,
 )
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
-    Bootstrapper_required_python_version_inited,
-    Bootstrapper_state_global_conf_dir_abs_path_inited,
-    Bootstrapper_state_global_conf_file_abs_path_inited,
-    Factory_state_input_exec_operation_loaded,
-    Factory_state_input_stderr_log_level_eval_finalized,
-    Bootstrapper_state_local_cache_dir_abs_path_inited,
-    Bootstrapper_state_local_conf_file_abs_path_inited,
-    Bootstrapper_state_local_conf_symlink_abs_path_inited,
-    Bootstrapper_state_local_log_dir_abs_path_inited,
-    Bootstrapper_state_local_tmp_dir_abs_path_inited,
-    Bootstrapper_state_local_venv_dir_abs_path_inited,
-    Bootstrapper_state_primer_conf_file_abs_path_inited,
-    Bootstrapper_state_project_descriptors_inited,
-    Factory_state_proto_kernel_file_abs_path_inited,
-    Bootstrapper_state_ref_root_dir_abs_path_inited,
-    Factory_state_selected_env_dir_rel_path_inited,
-    Bootstrapper_state_selected_python_file_abs_path_inited,
-    Bootstrapper_state_venv_driver_inited,
+    _Node_state_required_python_version_inited,
+    _Node_state_global_conf_dir_abs_path_inited,
+    _Node_state_global_conf_file_abs_path_inited,
+    _Factory_state_input_exec_operation_loaded,
+    _Factory_state_input_stderr_log_level_eval_finalized,
+    _Node_state_local_cache_dir_abs_path_inited,
+    _Node_state_local_conf_file_abs_path_inited,
+    _Node_state_local_conf_symlink_abs_path_inited,
+    _Node_state_local_log_dir_abs_path_inited,
+    _Node_state_local_tmp_dir_abs_path_inited,
+    _Node_state_local_venv_dir_abs_path_inited,
+    _Node_state_primer_conf_file_abs_path_inited,
+    _Node_state_project_descriptors_inited,
+    _Factory_state_proto_kernel_file_abs_path_inited,
+    _Node_state_ref_root_dir_abs_path_inited,
+    _Factory_state_selected_env_dir_rel_path_inited,
+    _Node_state_selected_python_file_abs_path_inited,
+    _Node_state_venv_driver_inited,
     EnvState,
 )
 
 
 def test_relationship():
-    assert_test_module_name_embeds_str(Bootstrapper_state_derived_conf_data_loaded_rendered.__name__)
+    assert_test_module_name_embeds_str(_Node_state_derived_conf_data_loaded_rendered.__name__)
 
 
 @patch("sys.argv", [""])
-@patch(f"{primer_kernel.__name__}.{Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Factory_state_input_stderr_log_level_eval_finalized.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Factory_state_proto_kernel_file_abs_path_inited.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_primer_conf_file_abs_path_inited.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_global_conf_dir_abs_path_inited.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_global_conf_file_abs_path_inited.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Factory_state_selected_env_dir_rel_path_inited.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_file_abs_path_inited.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_required_python_version_inited.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_selected_python_file_abs_path_inited.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_log_dir_abs_path_inited.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_tmp_dir_abs_path_inited.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_cache_dir_abs_path_inited.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_venv_driver_inited.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_project_descriptors_inited.__name__}.create_state_node")
-@patch(f"{conf_renderer.__name__}.{Bootstrapper_state_env_conf_file_data_loaded_rendered.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Factory_state_input_stderr_log_level_eval_finalized.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Factory_state_proto_kernel_file_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Node_state_primer_conf_file_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Node_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Node_state_global_conf_dir_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Node_state_global_conf_file_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Factory_state_selected_env_dir_rel_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Node_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Node_state_local_conf_file_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Node_state_required_python_version_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Node_state_selected_python_file_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Node_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Node_state_local_log_dir_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Node_state_local_tmp_dir_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Node_state_local_cache_dir_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Node_state_venv_driver_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Node_state_project_descriptors_inited.__name__}.create_state_node")
+@patch(f"{conf_renderer.__name__}.{_Node_state_env_conf_file_data_loaded_rendered.__name__}.create_state_node")
 def test_state_evaluation(
     mock_create_state_env_conf_file_data_loaded_rendered,
     mock_create_state_project_descriptors_inited,
@@ -84,7 +84,7 @@ def test_state_evaluation(
 
     assert_parent_factories_mocked(
         env_ctx,
-        Bootstrapper_state_derived_conf_data_loaded_rendered._state_name(),
+        _Node_state_derived_conf_data_loaded_rendered._state_name(),
     )
 
     mock_create_state_proto_kernel_file_abs_path_inited.return_value.eval_own_state.return_value = "/mock/proto_code/proto_kernel.json"
@@ -106,7 +106,7 @@ def test_state_evaluation(
     # when:
 
     result = env_ctx.eval_state(
-        Bootstrapper_state_derived_conf_data_loaded_rendered._state_name(),
+        _Node_state_derived_conf_data_loaded_rendered._state_name(),
     )
 
     # then:

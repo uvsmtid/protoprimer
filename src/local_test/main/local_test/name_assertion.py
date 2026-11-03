@@ -49,4 +49,5 @@ def _assert_test_name_embeds_prod_name(
     that defeats the purpose as strings easily diverge.
     Instead, an appropriate wrapper function should be called with references (e.g., to classes).
     """
-    assert prod_name in test_name
+    # A private prod name (leading `_`) should not force `test__` (double underscore) in test names:
+    assert prod_name.lstrip("_") in test_name

@@ -8,8 +8,8 @@ from local_test.mock_verifier import (
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
-    Bootstrapper_state_input_proto_kernel_file_abs_path_var_loaded,
-    Factory_state_stride_py_arbitrary_reached,
+    _Node_state_input_proto_kernel_file_abs_path_var_loaded,
+    _Factory_state_stride_py_arbitrary_reached,
     EnvContext,
     EnvState,
     StateStride,
@@ -27,8 +27,8 @@ def test_relationship():
 
 @patch(f"{primer_kernel.__name__}.{EnvContext.__name__}.{EnvContext.get_stride.__name__}")
 @patch(f"{primer_kernel.__name__}.is_venv")
-@patch(f"{primer_kernel.__name__}.{Factory_state_stride_py_arbitrary_reached.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_proto_kernel_file_abs_path_var_loaded.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Factory_state_stride_py_arbitrary_reached.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Node_state_input_proto_kernel_file_abs_path_var_loaded.__name__}.create_state_node")
 def test_stride_py_arbitrary_not_in_venv(
     mock_state_input_proto_kernel_file_abs_path_var_loaded,
     mock_state_stride_py_arbitrary_reached,
@@ -61,8 +61,8 @@ def test_stride_py_arbitrary_not_in_venv(
 
 
 @patch(f"{primer_kernel.__name__}.{EnvContext.__name__}.{EnvContext.get_stride.__name__}")
-@patch(f"{primer_kernel.__name__}.{Factory_state_stride_py_arbitrary_reached.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_proto_kernel_file_abs_path_var_loaded.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Factory_state_stride_py_arbitrary_reached.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Node_state_input_proto_kernel_file_abs_path_var_loaded.__name__}.create_state_node")
 def test_stride_py_venv(
     mock_state_input_proto_kernel_file_abs_path_var_loaded,
     mock_state_stride_py_arbitrary_reached,
@@ -91,8 +91,8 @@ def test_stride_py_venv(
 
 
 @patch(f"{primer_kernel.__name__}.{EnvContext.__name__}.{EnvContext.get_stride.__name__}")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_proto_kernel_file_abs_path_var_loaded.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Factory_state_stride_py_arbitrary_reached.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Node_state_input_proto_kernel_file_abs_path_var_loaded.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Factory_state_stride_py_arbitrary_reached.__name__}.create_state_node")
 def test_stride_py_venv_no_arg(
     mock_state_stride_py_arbitrary_reached,
     mock_state_input_proto_kernel_file_abs_path_var_loaded,

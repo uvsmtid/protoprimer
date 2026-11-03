@@ -8,9 +8,9 @@ from local_test.mock_verifier import assert_parent_factories_mocked
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
-    Bootstrapper_state_input_start_id_var_loaded,
-    Bootstrapper_state_input_stderr_log_level_handler_configured,
-    Bootstrapper_state_local_log_dir_abs_path_inited,
+    _Node_state_input_start_id_var_loaded,
+    _Node_state_input_stderr_log_level_handler_configured,
+    _Node_state_local_log_dir_abs_path_inited,
     EnvContext,
     EnvState,
     _PrimerFileLogFormatter,
@@ -36,9 +36,9 @@ class ThisTestClass(BasePyfakefsTestClass):
         assert_test_module_name_embeds_str(EnvState.state_default_file_log_handler_configured.name)
 
     @patch("sys.argv", ["/path/to/script.py"])
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_log_dir_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_stderr_log_level_handler_configured.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Node_state_input_start_id_var_loaded.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Node_state_local_log_dir_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Node_state_input_stderr_log_level_handler_configured.__name__}.create_state_node")
     def test_success_creation(
         self,
         mock_state_input_stderr_log_level_handler_configured,
@@ -74,9 +74,9 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.assertIn(file_handler, logging.getLogger().handlers)
 
     @patch("sys.argv", ["/path/to/script.py"])
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_log_dir_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_stderr_log_level_handler_configured.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Node_state_input_start_id_var_loaded.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Node_state_local_log_dir_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Node_state_input_stderr_log_level_handler_configured.__name__}.create_state_node")
     def test_log_level_lower_than_default(
         self,
         mock_state_input_stderr_log_level_handler_configured,
@@ -104,9 +104,9 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.assertEqual(file_handler.level, logging.DEBUG)
 
     @patch("sys.argv", ["/path/to/script.py"])
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_log_dir_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_stderr_log_level_handler_configured.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Node_state_input_start_id_var_loaded.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Node_state_local_log_dir_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Node_state_input_stderr_log_level_handler_configured.__name__}.create_state_node")
     def test_log_level_higher_than_default(
         self,
         mock_state_input_stderr_log_level_handler_configured,

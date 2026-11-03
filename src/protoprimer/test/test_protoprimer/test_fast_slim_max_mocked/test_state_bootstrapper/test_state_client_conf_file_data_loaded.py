@@ -10,13 +10,13 @@ from local_test.mock_verifier import (
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
-    Bootstrapper_state_global_conf_file_abs_path_inited,
+    _Node_state_global_conf_file_abs_path_inited,
     ConfConstPrimer,
     ContextBuilder,
     EntryFunc,
     EnvContext,
     EnvState,
-    Factory_state_print_conf_finalized,
+    _Factory_state_print_conf_finalized,
     StateStride,
 )
 
@@ -42,8 +42,8 @@ class ThisTestClass(BasePyfakefsTestClass):
     def test_relationship(self):
         assert_test_module_name_embeds_str(EnvState.state_client_conf_file_data_loaded.name)
 
-    @patch(f"{primer_kernel.__name__}.{Factory_state_print_conf_finalized.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_global_conf_file_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Factory_state_print_conf_finalized.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Node_state_global_conf_file_abs_path_inited.__name__}.create_state_node")
     def test_state_global_conf_file_abs_path_inited_exists(
         self,
         mock_factory_global_conf_file_abs_path_inited,
@@ -79,8 +79,8 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # no exception happens
 
-    @patch(f"{primer_kernel.__name__}.{Factory_state_print_conf_finalized.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{Bootstrapper_state_global_conf_file_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Factory_state_print_conf_finalized.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Node_state_global_conf_file_abs_path_inited.__name__}.create_state_node")
     def test_state_global_conf_file_abs_path_inited_missing(
         self,
         mock_factory_global_conf_file_abs_path_inited,

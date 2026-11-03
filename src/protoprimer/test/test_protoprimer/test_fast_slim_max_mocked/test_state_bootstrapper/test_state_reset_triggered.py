@@ -10,21 +10,21 @@ from local_test.mock_verifier import (
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
-    Bootstrapper_state_input_start_id_var_loaded,
-    Bootstrapper_state_local_conf_symlink_abs_path_inited,
-    Bootstrapper_state_local_tmp_dir_abs_path_inited,
-    Bootstrapper_state_local_venv_dir_abs_path_inited,
-    Bootstrapper_state_version_constraints_file_basename_inited,
+    _Node_state_input_start_id_var_loaded,
+    _Node_state_local_conf_symlink_abs_path_inited,
+    _Node_state_local_tmp_dir_abs_path_inited,
+    _Node_state_local_venv_dir_abs_path_inited,
+    _Node_state_version_constraints_file_basename_inited,
     ContextBuilder,
     EntryFunc,
-    Factory_state_prepare_venv_finalized,
-    Factory_state_proto_kernel_file_abs_path_inited,
-    Factory_state_stride_py_required_reached,
+    _Factory_state_prepare_venv_finalized,
+    _Factory_state_proto_kernel_file_abs_path_inited,
+    _Factory_state_stride_py_required_reached,
     ConfConstEnv,
     EnvState,
     ExecOperation,
     StateStride,
-    Factory_state_input_exec_operation_loaded,
+    _Factory_state_input_exec_operation_loaded,
 )
 
 
@@ -45,18 +45,18 @@ def test_relationship():
     assert_test_module_name_embeds_str(EnvState.state_reset_triggered.name)
 
 
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Node_state_input_start_id_var_loaded.__name__}.create_state_node")
 @patch("os.path.exists")
 @patch("os.remove")
 @patch(f"{primer_kernel.__name__}.shutil.move")
-@patch(f"{primer_kernel.__name__}.{Factory_state_stride_py_required_reached.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_tmp_dir_abs_path_inited.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_version_constraints_file_basename_inited.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Factory_state_proto_kernel_file_abs_path_inited.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Factory_state_prepare_venv_finalized.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Factory_state_stride_py_required_reached.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Node_state_local_tmp_dir_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Node_state_version_constraints_file_basename_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Node_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Node_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Factory_state_proto_kernel_file_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Factory_state_prepare_venv_finalized.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
 def test_reset_true(
     mock_state_input_exec_operation_loaded,
     mock_state_prepare_venv_finalized,
@@ -104,15 +104,15 @@ def test_reset_true(
 @patch("os.path.exists")
 @patch("os.remove")
 @patch("shutil.move")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Factory_state_stride_py_required_reached.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_tmp_dir_abs_path_inited.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_version_constraints_file_basename_inited.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Factory_state_proto_kernel_file_abs_path_inited.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Factory_state_prepare_venv_finalized.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Node_state_input_start_id_var_loaded.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Factory_state_stride_py_required_reached.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Node_state_local_tmp_dir_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Node_state_version_constraints_file_basename_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Node_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Node_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Factory_state_proto_kernel_file_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Factory_state_prepare_venv_finalized.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
 def test_reset_false(
     mock_state_input_exec_operation_loaded,
     mock_state_prepare_venv_finalized,
@@ -151,15 +151,15 @@ def test_reset_false(
 @patch("os.path.exists")
 @patch("os.remove")
 @patch("shutil.move")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_input_start_id_var_loaded.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Factory_state_stride_py_required_reached.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_tmp_dir_abs_path_inited.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_version_constraints_file_basename_inited.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Bootstrapper_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Factory_state_proto_kernel_file_abs_path_inited.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Factory_state_prepare_venv_finalized.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Node_state_input_start_id_var_loaded.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Factory_state_stride_py_required_reached.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Node_state_local_tmp_dir_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Node_state_version_constraints_file_basename_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Node_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Node_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Factory_state_proto_kernel_file_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Factory_state_prepare_venv_finalized.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
 def test_reset_true_but_py_exec_not_required(
     mock_state_input_exec_operation_loaded,
     mock_state_prepare_venv_finalized,

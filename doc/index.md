@@ -1,7 +1,10 @@
 ---
+# The site root is this redirect page: crawlers (link previews) do not follow the redirect, so repeat the `intro` metadata here:
+seo_title: protoprimer - bootstrap a repo clone with one command
 myst:
   html_meta:
     "robots": "noindex, follow"
+    "description": "protoprimer is an arg-less one-liner to bootstrap isolated repo clones with environment-specific config: no setup manuals for your users."
 ---
 
 % Redirect to "intro":
