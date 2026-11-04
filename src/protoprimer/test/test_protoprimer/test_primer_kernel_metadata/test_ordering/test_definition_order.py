@@ -70,7 +70,7 @@ class TestEnvStateOrdering:
 
         _report_order_violations(order_violations)
 
-    def test_bootstrapper_class_definition_order(
+    def test_node_class_definition_order(
         self,
     ) -> None:
         """
@@ -112,7 +112,7 @@ class TestEnvStateOrdering:
 
         _report_order_violations(order_violations)
 
-    def test_bootstrapper_class_definition_matches_env_state_order(self) -> None:
+    def test_node_class_definition_matches_env_state_order(self) -> None:
         """
         Verify that implementation classes appear in the file in the exact same order as their `EnvState` enum members.
         """
