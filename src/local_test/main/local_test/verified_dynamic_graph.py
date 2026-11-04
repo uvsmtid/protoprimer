@@ -128,7 +128,7 @@ def _verify_start_app_exec_operation_is_not_boot(
     node_factory: NodeFactory,
 ) -> None:
     """
-    `_Node_state_args_parsed_not_func_boot_env` always sets `op_start` for `func_start_app`.
+    `_Node_state_input_exec_operation_loaded_func_start_app` always sets `op_start` for `func_start_app`.
     """
     if (
         #
