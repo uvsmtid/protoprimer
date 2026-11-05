@@ -26,7 +26,7 @@ def test_relationship():
     new_callable=StringIO,
 )
 @patch("local_repo.cmd_print_graph.get_transitive_dependencies")
-@patch("local_repo.cmd_print_graph.ContextBuilder")
+@patch("local_repo.cmd_print_graph._ContextBuilder")
 @patch("local_repo.cmd_print_graph.configure_script")
 @patch.object(
     sys,

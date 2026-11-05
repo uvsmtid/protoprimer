@@ -17,9 +17,9 @@ from protoprimer.primer_kernel import (
     ConfConstInput,
     ConfField,
     ConfLeap,
-    EntryFunc,
-    ContextBuilder,
-    EnvContext,
+    _EntryFunc,
+    _ContextBuilder,
+    _EnvContext,
     EnvState,
     missing_conf_file_message,
     PathName,
@@ -1799,7 +1799,7 @@ class _Node_state_derived_conf_data_loaded_rendered(AbstractCachingStateNode[dic
 
     def __init__(
         self,
-        env_ctx: EnvContext,
+        env_ctx: _EnvContext,
     ):
         self.derived_data_env_states: list[str] = [
             # ===
@@ -1894,8 +1894,8 @@ class _Node_state_all_conf_data_rendered(AbstractCachingStateNode[int]):
 def customize_env_context():
 
     env_ctx = (
-        ContextBuilder()
-        .entry_func(EntryFunc.func_boot_env)
+        _ContextBuilder()
+        .entry_func(_EntryFunc.func_boot_env)
         .is_app(True)
         .forced_final_state(RendererState.state_all_conf_data_rendered.name)
         #

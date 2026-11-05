@@ -1,7 +1,7 @@
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer.primer_kernel import (
     ConfConstGeneral,
-    EntryFunc,
+    _EntryFunc,
     generate_entry_script_content,
     merge_entry_script_content,
 )
@@ -13,7 +13,7 @@ def test_relationship():
 
 def _generate() -> str:
     return generate_entry_script_content(
-        EntryFunc.func_boot_env.value,
+        _EntryFunc.func_boot_env.value,
         "/dummy/path/proto_kernel.py",
         "/dummy/path/entry.py",
         "my_module",
@@ -73,7 +73,7 @@ def test_merge_preserves_header_and_footer_outside_markers():
 def test_merge_replaces_stale_marked_region():
 
     stale_generated_content = generate_entry_script_content(
-        EntryFunc.func_boot_env.value,
+        _EntryFunc.func_boot_env.value,
         "/dummy/path/proto_kernel.py",
         "/dummy/path/entry.py",
         "old_module",

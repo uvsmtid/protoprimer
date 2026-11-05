@@ -11,7 +11,7 @@ from protoprimer.primer_kernel import (
     _Node_state_primer_conf_file_data_loaded,
     _Factory_state_proto_kernel_file_abs_path_inited,
     ConfField,
-    EnvContext,
+    _EnvContext,
     EnvState,
     ExecOperation,
     StateStride,
@@ -20,7 +20,7 @@ from protoprimer.primer_kernel import (
 
 @pytest.fixture
 def env_ctx():
-    return EnvContext()
+    return _EnvContext()
 
 
 @pytest.fixture
@@ -62,7 +62,7 @@ def test_success_when_field_present(
     assert result == ref_root_abs_path
 
 
-@patch(f"{primer_kernel.__name__}.EnvContext.get_stride")
+@patch(f"{primer_kernel.__name__}._EnvContext.get_stride")
 @patch(f"{primer_kernel.__name__}.{_Factory_state_proto_kernel_file_abs_path_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{_Node_state_primer_conf_file_data_loaded.__name__}.create_state_node")
 def test_warning_when_field_missing(

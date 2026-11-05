@@ -1,7 +1,7 @@
 from unittest.mock import MagicMock
 
 from protoprimer.primer_kernel import (
-    EnvContext,
+    _EnvContext,
     EnvState,
     StateNode,
 )
@@ -9,7 +9,7 @@ from protoprimer.primer_kernel import (
 
 def assert_parent_factories_mocked(
     # TODO: pass `StateGraph`.
-    env_ctx: EnvContext,
+    env_ctx: _EnvContext,
     state_name: str,
     # UC_27_40_17_59.replace_by_new_and_use_old.md:
     is_replaced_impl: bool = False,

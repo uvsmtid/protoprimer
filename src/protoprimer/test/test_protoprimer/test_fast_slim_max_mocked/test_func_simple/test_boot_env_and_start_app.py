@@ -11,12 +11,12 @@ from local_test.name_assertion import assert_test_module_name_embeds_str
 # noinspection PyProtectedMember
 from protoprimer.primer_kernel import (
     _start_main,
-    proto_main,
+    _proto_main,
     run_boot_env_client_func,
     start_app,
     boot_env,
     ConfConstGeneral,
-    EntryFunc,
+    _EntryFunc,
     EnvState,
     EnvVar,
     ExecOperation,
@@ -33,21 +33,21 @@ class TestStartMain:
 
     @pytest.fixture(autouse=True)
     def setup_mocks(self, mocker):
-        self.mock_run_process = mocker.patch("protoprimer.primer_kernel.run_process")
-        self.mock_run_process.__name__ = "run_process"
-        self.mock_EnvContext = mocker.patch("protoprimer.primer_kernel.EnvContext")
-        self.mock_EnvContext.__name__ = "EnvContext"
+        self.mock_run_process = mocker.patch("protoprimer.primer_kernel._run_process")
+        self.mock_run_process.__name__ = "_run_process"
+        self.mock_EnvContext = mocker.patch("protoprimer.primer_kernel._EnvContext")
+        self.mock_EnvContext.__name__ = "_EnvContext"
         self.mock_import_module = mocker.patch("protoprimer.primer_kernel.importlib.import_module")
 
     @patch.dict(os.environ, {}, clear=True)
     def test_invalid_main_func_format(self):
         with pytest.raises(ValueError):
-            _start_main(EntryFunc.func_boot_env, "invalid_format")
+            _start_main(_EntryFunc.func_boot_env, "invalid_format")
 
     @patch.dict(os.environ, {}, clear=True)
     def test_empty_main_func_rejected_for_start_app(self):
         with pytest.raises(ValueError):
-            _start_main(EntryFunc.func_start_app, ConfConstGeneral.default_proto_main)
+            _start_main(_EntryFunc.func_start_app, ConfConstGeneral.default_proto_main)
 
     @patch.dict(
         os.environ,
@@ -56,7 +56,7 @@ class TestStartMain:
     )
     def test_empty_main_func_boot_env_runs_standard_bootstrap(self):
         # when
-        _start_main(EntryFunc.func_boot_env, ConfConstGeneral.default_proto_main)
+        _start_main(_EntryFunc.func_boot_env, ConfConstGeneral.default_proto_main)
 
         # then
         assert os.environ[EnvVar.var_PROTOPRIMER_MAIN_FUNC.value] == ConfConstGeneral.default_proto_main
@@ -76,7 +76,7 @@ class TestStartMain:
         self.mock_import_module.return_value = mock_module
 
         # when
-        _start_main(EntryFunc.func_boot_env, "my_module:my_func")
+        _start_main(_EntryFunc.func_boot_env, "my_module:my_func")
 
         # then
         self.mock_import_module.assert_called_once_with("my_module")
@@ -92,11 +92,11 @@ class TestStartMain:
         # given
         mock_module = MagicMock()
         mock_func = MagicMock()
-        mock_module.run_process = mock_func
+        mock_module._run_process = mock_func
         self.mock_import_module.return_value = mock_module
 
         # when
-        _start_main(EntryFunc.func_boot_env, "my_module:my_func")
+        _start_main(_EntryFunc.func_boot_env, "my_module:my_func")
 
         # then
         self.mock_import_module.assert_called_once_with("protoprimer.primer_kernel")
@@ -114,7 +114,7 @@ class TestStartMain:
 
         # when/then
         with pytest.raises(ImportError):
-            _start_main(EntryFunc.func_boot_env, "my_module:my_func")
+            _start_main(_EntryFunc.func_boot_env, "my_module:my_func")
 
     @patch.dict(
         os.environ,
@@ -126,7 +126,7 @@ class TestStartMain:
         self.mock_import_module.side_effect = ImportError
 
         # when
-        _start_main(EntryFunc.func_boot_env, "my_module:my_func")
+        _start_main(_EntryFunc.func_boot_env, "my_module:my_func")
 
         # then
         self.mock_run_process.assert_called_once()
@@ -138,7 +138,7 @@ class TestStartMain:
     )
     def test_default_case(self):
         # when
-        _start_main(EntryFunc.func_boot_env, "my_module:my_func")
+        _start_main(_EntryFunc.func_boot_env, "my_module:my_func")
 
         # then
         self.mock_import_module.assert_not_called()
@@ -147,7 +147,7 @@ class TestStartMain:
     @patch.dict(os.environ, {}, clear=True)
     def test_entry_func_and_main_func_env_vars_set(self):
         # when
-        _start_main(EntryFunc.func_start_app, "my_module:my_func")
+        _start_main(_EntryFunc.func_start_app, "my_module:my_func")
 
         # then
         assert os.environ[EnvVar.var_PROTOPRIMER_MAIN_FUNC.value] == "my_module:my_func"
@@ -158,10 +158,10 @@ class TestBootEnvAndStartApp:
 
     @pytest.fixture(autouse=True)
     def setup_mocks(self, mocker):
-        self.mock_run_process = mocker.patch("protoprimer.primer_kernel.run_process")
-        self.mock_run_process.__name__ = "run_process"
-        self.mock_EnvContext = mocker.patch("protoprimer.primer_kernel.EnvContext")
-        self.mock_EnvContext.__name__ = "EnvContext"
+        self.mock_run_process = mocker.patch("protoprimer.primer_kernel._run_process")
+        self.mock_run_process.__name__ = "_run_process"
+        self.mock_EnvContext = mocker.patch("protoprimer.primer_kernel._EnvContext")
+        self.mock_EnvContext.__name__ = "_EnvContext"
         self.mock_import_module = mocker.patch("protoprimer.primer_kernel.importlib.import_module")
 
     @patch.dict(os.environ, {}, clear=True)
@@ -202,5 +202,5 @@ class TestBootEnvAndStartApp:
         # FT_84_11_73_28.supported_python_versions.md: `call_args.args` needs Python >= 3.8:
         called_env_ctx = self.mock_run_process.call_args[0][0]
         assert called_env_ctx._client_func is my_client_func
-        assert called_env_ctx._entry_func == EntryFunc.func_boot_env
+        assert called_env_ctx._entry_func == _EntryFunc.func_boot_env
         assert called_env_ctx._forced_final_state == EnvState.state_client_func_executed.name

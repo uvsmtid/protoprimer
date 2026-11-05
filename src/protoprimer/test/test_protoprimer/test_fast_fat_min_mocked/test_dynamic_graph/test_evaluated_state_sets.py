@@ -17,7 +17,7 @@ from local_test.verified_dynamic_graph import (
     TrackingStateGraph,
 )
 from protoprimer.primer_kernel import (
-    EntryFunc,
+    _EntryFunc,
     EnvState,
     EnvVar,
     StateStride,
@@ -25,11 +25,11 @@ from protoprimer.primer_kernel import (
 
 
 def _make_tracking_env_ctx(
-    entry_func: EntryFunc,
+    entry_func: _EntryFunc,
 ) -> TrackingEnvContext:
     env_ctx = TrackingEnvContext()
     env_ctx._entry_func = entry_func
-    env_ctx._is_app = entry_func in (EntryFunc.func_boot_env, EntryFunc.func_run_main)
+    env_ctx._is_app = entry_func in (_EntryFunc.func_boot_env, _EntryFunc.func_run_main)
     env_ctx._state_stride = StateStride.stride_src_updated
     return env_ctx
 
@@ -67,7 +67,7 @@ class TestEvaluatedStateSets:
     """
     Verifies the actual set of `EnvState` names evaluated during graph execution.
 
-    Each function uses a meaningful `EnvContext` coordinate combination.
+    Each function uses a meaningful `_EnvContext` coordinate combination.
 
     Each test method:
     *   Use fake filesystem with `create_max_leaps_shape` (inside `fat_mock_wrapper`).
@@ -80,7 +80,7 @@ class TestEvaluatedStateSets:
 
     def test_func_boot_env(self, fs: FakeFilesystem):
         """
-        `EntryFunc.func_boot_env`, `prepare_venv=True`: bootstrap creates venv.
+        `_EntryFunc.func_boot_env`, `prepare_venv=True`: bootstrap creates venv.
         """
         mock_test_dir = fs.create_dir("/mock_test_dir")
 
@@ -88,7 +88,7 @@ class TestEvaluatedStateSets:
             (proto_kernel_abs_path, _, _) = create_max_leaps_shape(pathlib.Path(mock_test_dir.path))
 
             env_ctx = _make_tracking_env_ctx(
-                entry_func=EntryFunc.func_boot_env,
+                entry_func=_EntryFunc.func_boot_env,
             )
             os.environ[EnvVar.var_PROTOPRIMER_PROTO_KERNEL.value] = str(proto_kernel_abs_path)
 
@@ -178,7 +178,7 @@ class TestEvaluatedStateSets:
 
     def test_func_start_app(self, fs: FakeFilesystem):
         """
-        `EntryFunc.func_start_app`, `prepare_venv=False`: app start (venv already exists).
+        `_EntryFunc.func_start_app`, `prepare_venv=False`: app start (venv already exists).
         """
         mock_test_dir = fs.create_dir("/mock_test_dir")
 
@@ -186,7 +186,7 @@ class TestEvaluatedStateSets:
             (proto_kernel_abs_path, _, _) = create_max_leaps_shape(pathlib.Path(mock_test_dir.path))
 
             env_ctx = _make_tracking_env_ctx(
-                entry_func=EntryFunc.func_start_app,
+                entry_func=_EntryFunc.func_start_app,
             )
             os.environ[EnvVar.var_PROTOPRIMER_PROTO_KERNEL.value] = str(proto_kernel_abs_path)
 
@@ -252,7 +252,7 @@ class TestEvaluatedStateSets:
 
     def test_func_call_lib(self, fs: FakeFilesystem):
         """
-        `EntryFunc.func_call_lib`: library call path (e.g., `get_config`).
+        `_EntryFunc.func_call_lib`: library call path (e.g., `get_config`).
         """
         mock_test_dir = fs.create_dir("/mock_test_dir")
 
@@ -260,7 +260,7 @@ class TestEvaluatedStateSets:
             (proto_kernel_abs_path, _, _) = create_max_leaps_shape(pathlib.Path(mock_test_dir.path))
 
             env_ctx = _make_tracking_env_ctx(
-                entry_func=EntryFunc.func_call_lib,
+                entry_func=_EntryFunc.func_call_lib,
             )
             env_ctx._forced_proto_kernel_abs_path = str(proto_kernel_abs_path)
 

@@ -19,8 +19,8 @@ from protoprimer.primer_kernel import (
     _Node_state_local_venv_dir_abs_path_inited,
     _Node_state_reset_triggered_is_app,
     _Node_state_selected_python_file_abs_path_inited,
-    ContextBuilder,
-    EntryFunc,
+    _ContextBuilder,
+    _EntryFunc,
     EnvState,
     EnvVar,
     StateNode,
@@ -88,8 +88,8 @@ class TestEnvContext(BasePyfakefsTestClass):
         self.fs.create_file("/tmp/venv/uv.venv/bin/uv", contents="foo")
         # when:
         env_ctx = (
-            ContextBuilder()
-            .entry_func(EntryFunc.func_boot_env)
+            _ContextBuilder()
+            .entry_func(_EntryFunc.func_boot_env)
             .is_app(True)
             #
             .build_context()
@@ -156,8 +156,8 @@ class TestEnvContext(BasePyfakefsTestClass):
         self.fs.create_file("/tmp/venv/uv.venv/bin/uv", contents="foo")
         # when:
         env_ctx = (
-            ContextBuilder()
-            .entry_func(EntryFunc.func_boot_env)
+            _ContextBuilder()
+            .entry_func(_EntryFunc.func_boot_env)
             .is_app(True)
             #
             .build_context()
@@ -221,8 +221,8 @@ class TestEnvContext(BasePyfakefsTestClass):
         # given:
         # when:
         env_ctx = (
-            ContextBuilder()
-            .entry_func(EntryFunc.func_boot_env)
+            _ContextBuilder()
+            .entry_func(_EntryFunc.func_boot_env)
             .is_app(True)
             #
             .build_context()

@@ -13,9 +13,9 @@ from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     _Node_state_local_conf_file_abs_path_inited,
-    ContextBuilder,
-    EntryFunc,
-    EnvContext,
+    _ContextBuilder,
+    _EntryFunc,
+    _EnvContext,
     EnvState,
     _Factory_state_print_conf_finalized,
     StateStride,
@@ -28,9 +28,9 @@ class ThisTestClass(BasePyfakefsTestClass):
     def setUp(self):
         self.setUpPyfakefs()
         self.env_ctx = (
-            ContextBuilder()
+            _ContextBuilder()
             #
-            .entry_func(EntryFunc.func_boot_env)
+            .entry_func(_EntryFunc.func_boot_env)
             #
             .is_app(True)
             #

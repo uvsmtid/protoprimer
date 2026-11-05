@@ -10,7 +10,7 @@ from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     _Node_state_input_proto_kernel_file_abs_path_var_loaded,
     _Factory_state_stride_py_arbitrary_reached,
-    EnvContext,
+    _EnvContext,
     EnvState,
     StateStride,
 )
@@ -18,15 +18,15 @@ from protoprimer.primer_kernel import (
 
 @pytest.fixture
 def env_ctx():
-    return EnvContext()
+    return _EnvContext()
 
 
 def test_relationship():
     assert_test_module_name_embeds_str(EnvState.state_proto_kernel_file_abs_path_inited.name)
 
 
-@patch(f"{primer_kernel.__name__}.{EnvContext.__name__}.{EnvContext.get_stride.__name__}")
-@patch(f"{primer_kernel.__name__}.is_venv")
+@patch(f"{primer_kernel.__name__}.{_EnvContext.__name__}.{_EnvContext.get_stride.__name__}")
+@patch(f"{primer_kernel.__name__}._is_venv")
 @patch(f"{primer_kernel.__name__}.{_Factory_state_stride_py_arbitrary_reached.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{_Node_state_input_proto_kernel_file_abs_path_var_loaded.__name__}.create_state_node")
 def test_stride_py_arbitrary_not_in_venv(
@@ -60,7 +60,7 @@ def test_stride_py_arbitrary_not_in_venv(
     assert state_value == primer_kernel.__file__
 
 
-@patch(f"{primer_kernel.__name__}.{EnvContext.__name__}.{EnvContext.get_stride.__name__}")
+@patch(f"{primer_kernel.__name__}.{_EnvContext.__name__}.{_EnvContext.get_stride.__name__}")
 @patch(f"{primer_kernel.__name__}.{_Factory_state_stride_py_arbitrary_reached.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{_Node_state_input_proto_kernel_file_abs_path_var_loaded.__name__}.create_state_node")
 def test_stride_py_venv(
@@ -90,7 +90,7 @@ def test_stride_py_venv(
     assert state_value == proto_kernel_abs_file_path
 
 
-@patch(f"{primer_kernel.__name__}.{EnvContext.__name__}.{EnvContext.get_stride.__name__}")
+@patch(f"{primer_kernel.__name__}.{_EnvContext.__name__}.{_EnvContext.get_stride.__name__}")
 @patch(f"{primer_kernel.__name__}.{_Node_state_input_proto_kernel_file_abs_path_var_loaded.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{_Factory_state_stride_py_arbitrary_reached.__name__}.create_state_node")
 def test_stride_py_venv_no_arg(

@@ -12,9 +12,9 @@ from protoprimer.primer_kernel import (
     _Factory_state_proto_kernel_file_abs_path_inited,
     _Factory_state_stride_deps_updated_reached,
     ConfConstGeneral,
-    ContextBuilder,
-    EntryFunc,
-    EnvContext,
+    _ContextBuilder,
+    _EntryFunc,
+    _EnvContext,
     EnvState,
     ExecOperation,
     StateStride,
@@ -28,9 +28,9 @@ class ThisTestClass(BasePyfakefsTestClass):
     def setUp(self):
         self.setUpPyfakefs()
         self.env_ctx = (
-            ContextBuilder()
+            _ContextBuilder()
             #
-            .entry_func(EntryFunc.func_boot_env)
+            .entry_func(_EntryFunc.func_boot_env)
             #
             .is_app(True)
             #
@@ -44,7 +44,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(f"{primer_kernel.__name__}.{_Factory_state_proto_kernel_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_stride_deps_updated_reached.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{EnvContext.__name__}.{EnvContext.get_stride.__name__}")
+    @patch(f"{primer_kernel.__name__}.{_EnvContext.__name__}.{_EnvContext.get_stride.__name__}")
     def test_state_proto_kernel_updated(
         self,
         mock_get_stride,
@@ -101,12 +101,12 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
 
     @patch(
-        f"{primer_kernel.__name__}.is_venv",
+        f"{primer_kernel.__name__}._is_venv",
         return_value=True,
     )
     @patch(f"{primer_kernel.__name__}.{_Factory_state_proto_kernel_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_stride_deps_updated_reached.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{EnvContext.__name__}.{EnvContext.get_stride.__name__}")
+    @patch(f"{primer_kernel.__name__}.{_EnvContext.__name__}.{_EnvContext.get_stride.__name__}")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
     def test_import_error_when_protoprimer_is_missing(
         self,

@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from local_test.verified_dynamic_graph import VerifyingEnvContext
 from protoprimer.primer_kernel import (
-    EntryFunc,
-    EnvContext,
+    _EntryFunc,
+    _EnvContext,
     EnvState,
     ExecOperation,
 )
@@ -13,14 +13,14 @@ from local_repo.misc_tools.graph_utils import (
 
 
 def _make_env_ctx(
-    entry_func: EntryFunc,
+    entry_func: _EntryFunc,
     prepare_venv: bool,
     exec_operation: ExecOperation | None,
     is_log_enabled: bool,
-) -> EnvContext:
+) -> _EnvContext:
     env_ctx = VerifyingEnvContext()
     env_ctx._entry_func = entry_func
-    env_ctx._is_app = entry_func in (EntryFunc.func_boot_env, EntryFunc.func_run_main)
+    env_ctx._is_app = entry_func in (_EntryFunc.func_boot_env, _EntryFunc.func_run_main)
     env_ctx._prepare_venv = prepare_venv
     env_ctx._exec_operation = exec_operation
     env_ctx._is_log_enabled = is_log_enabled
@@ -29,11 +29,11 @@ def _make_env_ctx(
 
 class TestTopologicalSort:
     """
-    Verifies the topologically sorted list of `EnvState.name`-s for each meaningful `EnvContext` coordinate combination.
+    Verifies the topologically sorted list of `EnvState.name`-s for each meaningful `_EnvContext` coordinate combination.
 
     Each test method:
-    *   Constructs an `EnvContext` with specific graph coordinates.
-    *   Calls `topological_sort` (which instantiates nodes via factories - factories use `EnvContext` coordinates).
+    *   Constructs an `_EnvContext` with specific graph coordinates.
+    *   Calls `topological_sort` (which instantiates nodes via factories - factories use `_EnvContext` coordinates).
     *   Asserts the sorted list equals the expected hardcoded list.
 
     The expected list serves as a reviewable snapshot:
@@ -44,12 +44,12 @@ class TestTopologicalSort:
 
     def test_func_boot_env_and_prepare_venv_true(self):
         """
-        `EntryFunc.func_boot_env`, `prepare_venv=True`: the primary bootstrap path.
+        `_EntryFunc.func_boot_env`, `prepare_venv=True`: the primary bootstrap path.
         """
 
         # given:
         env_ctx = _make_env_ctx(
-            entry_func=EntryFunc.func_boot_env,
+            entry_func=_EntryFunc.func_boot_env,
             prepare_venv=True,
             exec_operation=ExecOperation.op_boot,
             is_log_enabled=False,
@@ -80,11 +80,11 @@ class TestTopologicalSort:
 
     def test_func_start_app_and_prepare_venv_false(self):
         """
-        `EntryFunc.func_start_app`, `prepare_venv=False`: application start path (venv already exists).
+        `_EntryFunc.func_start_app`, `prepare_venv=False`: application start path (venv already exists).
         """
         # given:
         env_ctx = _make_env_ctx(
-            entry_func=EntryFunc.func_start_app,
+            entry_func=_EntryFunc.func_start_app,
             prepare_venv=False,
             exec_operation=None,
             is_log_enabled=False,
@@ -108,11 +108,11 @@ class TestTopologicalSort:
 
     def test_func_call_lib(self):
         """
-        `EntryFunc.func_call_lib`: library call path (e.g., `get_config`).
+        `_EntryFunc.func_call_lib`: library call path (e.g., `get_config`).
         """
         # given:
         env_ctx = _make_env_ctx(
-            entry_func=EntryFunc.func_call_lib,
+            entry_func=_EntryFunc.func_call_lib,
             prepare_venv=False,
             exec_operation=None,
             is_log_enabled=False,
@@ -136,11 +136,11 @@ class TestTopologicalSort:
 
     def test_func_boot_env_and_prepare_venv_false(self):
         """
-        `EntryFunc.func_boot_env`, `prepare_venv=False`: bootstrap without creating/updating `venv`.
+        `_EntryFunc.func_boot_env`, `prepare_venv=False`: bootstrap without creating/updating `venv`.
         """
         # given:
         env_ctx = _make_env_ctx(
-            entry_func=EntryFunc.func_boot_env,
+            entry_func=_EntryFunc.func_boot_env,
             prepare_venv=False,
             exec_operation=ExecOperation.op_boot,
             is_log_enabled=False,

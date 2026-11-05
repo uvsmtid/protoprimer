@@ -172,10 +172,10 @@ def test_instant_scenario_start_propagates_target_args_after_double_dash(tmp_pat
 def test_instant_scenario_start_recurses_through_proto_main(tmp_path: Path):
     """
     TODO: TODO_19_13_09_01.propagate_start_sub_command_cli_args.md:
-    `protoprimer.primer_kernel:proto_main` is an ordinary importable function, so it can be
-    given to `op_start` as `main_func` like any other target. Since `proto_main` itself
+    `protoprimer.primer_kernel:_proto_main` is an ordinary importable function, so it can be
+    given to `op_start` as `main_func` like any other target. Since `_proto_main` itself
     re-parses whatever `sys.argv` it is handed (the same as running `proto_kernel.py` directly),
-    chaining `start protoprimer.primer_kernel:proto_main -- start <next> -- ...` recurses one
+    chaining `start protoprimer.primer_kernel:_proto_main -- start <next> -- ...` recurses one
     more level per chain link, with each `--` unwrapping exactly one level - regardless of
     chain depth or how many args follow the final `--`.
     """
@@ -190,17 +190,17 @@ def test_instant_scenario_start_recurses_through_proto_main(tmp_path: Path):
 
     run_primer_main([str(proto_kernel_abs_path)])
 
-    proto_main = "protoprimer.primer_kernel:proto_main"
+    _proto_main = "protoprimer.primer_kernel:_proto_main"
     echo_app = "local_doc.cmd_echo_app:custom_echo_app_main"
 
     # when/then:
-    # one level of `proto_main` recursion, one target arg:
+    # one level of `_proto_main` recursion, one target arg:
 
     sub_proc_1 = subprocess.run(
         [
             str(proto_kernel_abs_path),
             ExecOperation.op_start.value,
-            proto_main,
+            _proto_main,
             SyntaxArg.arg_double_dash,
             ExecOperation.op_start.value,
             echo_app,
@@ -214,13 +214,13 @@ def test_instant_scenario_start_recurses_through_proto_main(tmp_path: Path):
     assert sub_proc_1.stdout.strip() == "['qwer']"
 
     # when/then:
-    # one level of `proto_main` recursion, two target args:
+    # one level of `_proto_main` recursion, two target args:
 
     sub_proc_2 = subprocess.run(
         [
             str(proto_kernel_abs_path),
             ExecOperation.op_start.value,
-            proto_main,
+            _proto_main,
             SyntaxArg.arg_double_dash,
             ExecOperation.op_start.value,
             echo_app,
@@ -235,16 +235,16 @@ def test_instant_scenario_start_recurses_through_proto_main(tmp_path: Path):
     assert sub_proc_2.stdout.strip() == "['qwer', 'asdf']"
 
     # when/then:
-    # two levels of `proto_main` recursion, three target args:
+    # two levels of `_proto_main` recursion, three target args:
 
     sub_proc_3 = subprocess.run(
         [
             str(proto_kernel_abs_path),
             ExecOperation.op_start.value,
-            proto_main,
+            _proto_main,
             SyntaxArg.arg_double_dash,
             ExecOperation.op_start.value,
-            proto_main,
+            _proto_main,
             SyntaxArg.arg_double_dash,
             ExecOperation.op_start.value,
             echo_app,

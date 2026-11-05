@@ -7,7 +7,7 @@ from local_test.verified_dynamic_graph import (
     max_deps_env_ctx,
 )
 from protoprimer.primer_kernel import (
-    EntryFunc,
+    _EntryFunc,
     EnvState,
     StateNode,
 )
@@ -27,7 +27,7 @@ def test_EnvState_parent_order() -> None:
     # given:
 
     env_ctx = VerifyingEnvContext()
-    env_ctx._entry_func = EntryFunc.func_boot_env
+    env_ctx._entry_func = _EntryFunc.func_boot_env
     env_ctx._is_app = True
     env_ctx._exec_operation = max_deps_env_ctx._exec_operation
     env_ctx._is_log_enabled = max_deps_env_ctx._is_log_enabled

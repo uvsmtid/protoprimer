@@ -36,7 +36,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(f"{pre_commit.__name__}.subprocess.check_output")
     @patch(f"{primer_kernel.__name__}.os.execve")
     @patch("sys.argv", [""])
-    @patch(f"{primer_kernel.__name__}.is_venv", return_value=False)
+    @patch(f"{primer_kernel.__name__}._is_venv", return_value=False)
     @patch(f"{primer_kernel.__name__}.{_Node_state_command_executed.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Node_state_global_conf_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Node_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")

@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 from protoprimer.primer_kernel import (
-    ContextBuilder,
-    EntryFunc,
+    _ContextBuilder,
+    _EntryFunc,
     EnvState,
     ExecOperation,
     TargetState,
@@ -36,8 +36,8 @@ class TestTargetDependencies:
         # given:
 
         env_context_instance = (
-            ContextBuilder()
-            .entry_func(EntryFunc.func_boot_env)
+            _ContextBuilder()
+            .entry_func(_EntryFunc.func_boot_env)
             .is_app(True)
             .exec_operation(ExecOperation.op_boot)
             #
@@ -91,8 +91,8 @@ class TestTargetDependencies:
         # given:
 
         env_context_instance = (
-            ContextBuilder()
-            .entry_func(EntryFunc.func_boot_env)
+            _ContextBuilder()
+            .entry_func(_EntryFunc.func_boot_env)
             .is_app(True)
             .exec_operation(ExecOperation.op_boot)
             #

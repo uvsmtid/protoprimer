@@ -8,7 +8,7 @@ from local_test.mock_verifier import (
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
-    EnvContext,
+    _EnvContext,
     EnvState,
     _Node_state_required_python_version_inited,
     _Node_state_client_conf_file_data_loaded,
@@ -19,7 +19,7 @@ from protoprimer.primer_kernel import (
 
 @pytest.fixture
 def env_ctx():
-    return EnvContext()
+    return _EnvContext()
 
 
 def test_relationship():

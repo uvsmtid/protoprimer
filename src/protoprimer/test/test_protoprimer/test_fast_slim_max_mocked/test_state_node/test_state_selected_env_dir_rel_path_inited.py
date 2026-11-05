@@ -14,7 +14,7 @@ from protoprimer.primer_kernel import (
     _Node_state_client_conf_file_data_loaded,
     _Node_state_ref_root_dir_abs_path_inited,
     ConfField,
-    ContextBuilder,
+    _ContextBuilder,
     EnvState,
     StateStride,
 )
@@ -26,9 +26,9 @@ class ThisTestClass(BasePyfakefsTestClass):
     def setUp(self):
         self.setUpPyfakefs()
         self.env_ctx = (
-            ContextBuilder()
+            _ContextBuilder()
             #
-            .entry_func(primer_kernel.EntryFunc.func_boot_env)
+            .entry_func(primer_kernel._EntryFunc.func_boot_env)
             .is_app(True)
             .build_context()
         )
@@ -141,7 +141,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         # then:
         self.assertEqual(state_selected_env_dir_rel_path_inited, "my_env_dir")
 
-    @patch(f"{primer_kernel.__name__}.EnvContext.get_stride")
+    @patch(f"{primer_kernel.__name__}._EnvContext.get_stride")
     @patch(f"{primer_kernel.__name__}.{_Node_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_args_parsed.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Node_state_client_conf_file_data_loaded.__name__}.create_state_node")

@@ -21,7 +21,7 @@ from local_test.name_assertion import (
     assert_test_module_name_embeds_str,
 )
 from protoprimer.primer_kernel import (
-    EntryFunc,
+    _EntryFunc,
     ExecOperation,
     SyntaxArg,
 )
@@ -33,7 +33,7 @@ def test_relationship():
 
 def wrap(
     proto_kernel_abs_path: pathlib.Path,
-    entry_func: EntryFunc,
+    entry_func: _EntryFunc,
     entry_script_abs_path: pathlib.Path,
     main_func: str,
 ) -> None:
@@ -54,7 +54,7 @@ def wrap(
 
 def test_wrap_boot_env_runs(tmp_path: pathlib.Path):
 
-    assert_test_func_name_embeds_str(EntryFunc.func_boot_env.value)
+    assert_test_func_name_embeds_str(_EntryFunc.func_boot_env.value)
 
     # given:
 
@@ -68,7 +68,7 @@ def test_wrap_boot_env_runs(tmp_path: pathlib.Path):
 
     wrap(
         proto_kernel_abs_path,
-        EntryFunc.func_boot_env,
+        _EntryFunc.func_boot_env,
         entry_script_abs_path,
         f"{cmd_boot_env_example.__name__}:{cmd_boot_env_example.custom_boot_env_main.__name__}",
     )
@@ -91,7 +91,7 @@ def test_wrap_boot_env_runs(tmp_path: pathlib.Path):
 
 def test_wrap_start_app_runs(tmp_path: pathlib.Path):
 
-    assert_test_func_name_embeds_str(EntryFunc.func_start_app.value)
+    assert_test_func_name_embeds_str(_EntryFunc.func_start_app.value)
 
     # given:
 
@@ -114,7 +114,7 @@ def test_wrap_start_app_runs(tmp_path: pathlib.Path):
 
     wrap(
         proto_kernel_abs_path,
-        EntryFunc.func_start_app,
+        _EntryFunc.func_start_app,
         entry_script_abs_path,
         f"{cmd_start_app_example.__name__}:{cmd_start_app_example.custom_start_app_main.__name__}",
     )

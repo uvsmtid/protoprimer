@@ -3,7 +3,7 @@ from __future__ import annotations
 import pytest
 
 from protoprimer.primer_kernel import (
-    EnvContext,
+    _EnvContext,
     StateNode,
     trivial_factory,
 )
@@ -16,7 +16,7 @@ from local_repo.misc_tools.graph_utils import (
 class TestTopologicalSort:
 
     def test_empty_graph(self):
-        env_context_instance = EnvContext()
+        env_context_instance = _EnvContext()
         state_graph_instance = env_context_instance._state_graph
         state_graph_instance.state_nodes = {}
         state_graph_instance.state_factories = {}
@@ -25,7 +25,7 @@ class TestTopologicalSort:
 
     def test_single_node_graph(self):
         # given:
-        env_context_instance = EnvContext()
+        env_context_instance = _EnvContext()
         state_graph_instance = env_context_instance._state_graph
         # Clear default nodes for this specific test
         state_graph_instance.state_nodes = {}
@@ -50,7 +50,7 @@ class TestTopologicalSort:
 
     def test_simple_dag(self):
         # given:
-        env_context_instance = EnvContext()
+        env_context_instance = _EnvContext()
         state_graph_instance = env_context_instance._state_graph
         state_graph_instance.state_nodes = {}
         state_graph_instance.state_factories = {}
@@ -86,7 +86,7 @@ class TestTopologicalSort:
 
     def test_complex_dag(self):
         # given:
-        env_context_instance = EnvContext()
+        env_context_instance = _EnvContext()
         state_graph_instance = env_context_instance._state_graph
         state_graph_instance.state_nodes = {}
         state_graph_instance.state_factories = {}
@@ -130,7 +130,7 @@ class TestTopologicalSort:
 
     def test_cycle_detection(self):
         # given:
-        env_context_instance = EnvContext()
+        env_context_instance = _EnvContext()
         state_graph_instance = env_context_instance._state_graph
         state_graph_instance.state_nodes = {}
         state_graph_instance.state_factories = {}
@@ -156,7 +156,7 @@ class TestTopologicalSort:
 
     def test_self_loop_cycle_detection(self):
         # given:
-        env_context_instance = EnvContext()
+        env_context_instance = _EnvContext()
         state_graph_instance = env_context_instance._state_graph
         state_graph_instance.state_nodes = {}
         state_graph_instance.state_factories = {}
@@ -180,7 +180,7 @@ class TestTopologicalSort:
 
     def test_node_not_found(self):
         # given:
-        env_context_instance = EnvContext()
+        env_context_instance = _EnvContext()
         state_graph_instance = env_context_instance._state_graph
         state_graph_instance.state_nodes = {}
         state_graph_instance.state_factories = {}
@@ -208,7 +208,7 @@ class TestGetTransitiveDependencies:
 
         # given:
 
-        env_context_instance = EnvContext()
+        env_context_instance = _EnvContext()
         state_graph_instance = env_context_instance._state_graph
         state_graph_instance.state_nodes = {}
         state_graph_instance.state_factories = {}
@@ -243,7 +243,7 @@ class TestGetTransitiveDependencies:
 
         # given:
 
-        env_context_instance = EnvContext()
+        env_context_instance = _EnvContext()
         state_graph_instance = env_context_instance._state_graph
         state_graph_instance.state_nodes = {}
         state_graph_instance.state_factories = {}
@@ -282,7 +282,7 @@ class TestGetTransitiveDependencies:
 
         # given:
 
-        env_context_instance = EnvContext()
+        env_context_instance = _EnvContext()
         state_graph_instance = env_context_instance._state_graph
         state_graph_instance.state_nodes = {}
         state_graph_instance.state_factories = {}

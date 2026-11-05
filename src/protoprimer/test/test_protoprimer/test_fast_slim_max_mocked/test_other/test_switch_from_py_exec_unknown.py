@@ -11,7 +11,7 @@ from local_test.mock_subprocess import (
 from local_test.name_assertion import assert_test_func_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
-    proto_main,
+    _proto_main,
     _Node_state_proto_kernel_file_abs_path_inited_not_func_call_lib,
     ConfConstClient,
     ConfConstEnv,
@@ -139,7 +139,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         with patch.object(sys, "argv", test_args):
             # this assertion comes from `mock_execve`:
             with self.assertRaises(AssertionError) as cm:
-                proto_main()
+                _proto_main()
             self.assertEqual(execv_args, cm.exception.args[0])
 
         # then:

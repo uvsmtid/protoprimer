@@ -11,14 +11,14 @@ from local_test.name_assertion import (
     assert_test_module_name_embeds_str,
 )
 from protoprimer.primer_kernel import (
-    EnvContext,
+    _EnvContext,
     EnvVar,
 )
 
 
 def test_relationship():
     assert_test_module_name_embeds_str(
-        EnvContext.print_exit_line.__name__,
+        _EnvContext.print_exit_line.__name__,
     )
 
 
@@ -42,7 +42,7 @@ def test_print_exit_line(
     monkeypatch,
 ):
     assert_test_func_name_embeds_str(
-        EnvContext.print_exit_line.__name__,
+        _EnvContext.print_exit_line.__name__,
     )
 
     # given:
@@ -50,7 +50,7 @@ def test_print_exit_line(
         EnvVar.var_PROTOPRIMER_STDERR_LOG_LEVEL.value,
         str(stderr_log_level),
     )
-    env_ctx = EnvContext()
+    env_ctx = _EnvContext()
 
     # when:
 

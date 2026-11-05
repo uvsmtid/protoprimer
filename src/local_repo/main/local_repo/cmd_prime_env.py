@@ -7,16 +7,16 @@ from metaprimer.pre_commit import (
     _Node_state_pre_commit_configured,
 )
 from protoprimer.primer_kernel import (
-    ContextBuilder,
-    EntryFunc,
-    run_process,
+    _ContextBuilder,
+    _EntryFunc,
+    _run_process,
 )
 
 logger = logging.getLogger()
 
 
 def custom_main():
-    run_process(customize_env_context())
+    _run_process(customize_env_context())
 
 
 class CustomEnvState(enum.Enum):
@@ -30,8 +30,8 @@ def customize_env_context():
     """
 
     env_ctx = (
-        ContextBuilder()
-        .entry_func(EntryFunc.func_boot_env)
+        _ContextBuilder()
+        .entry_func(_EntryFunc.func_boot_env)
         .is_app(True)
         .forced_final_state(CustomEnvState.state_pre_commit_configured.name)
         #

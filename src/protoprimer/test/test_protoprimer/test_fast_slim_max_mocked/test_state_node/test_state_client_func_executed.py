@@ -9,14 +9,14 @@ from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     _Node_state_command_executed,
-    EnvContext,
+    _EnvContext,
     EnvState,
 )
 
 
 @pytest.fixture
 def env_ctx():
-    return EnvContext()
+    return _EnvContext()
 
 
 def test_relationship():
