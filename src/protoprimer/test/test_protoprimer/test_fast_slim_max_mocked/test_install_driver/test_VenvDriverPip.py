@@ -355,7 +355,7 @@ def test_pin_versions(mock_subprocess_check_call):
     )
 
 
-@patch("protoprimer.primer_kernel.get_venv_type")
+@patch("protoprimer.primer_kernel._get_venv_type")
 def test_is_mine_venv_when_pip_venv(mock_get_venv_type):
 
     # given:
@@ -381,7 +381,7 @@ def test_is_mine_venv_when_pip_venv(mock_get_venv_type):
     assert result is True
 
 
-@patch("protoprimer.primer_kernel.get_venv_type")
+@patch("protoprimer.primer_kernel._get_venv_type")
 def test_is_mine_venv_when_uv_venv(mock_get_venv_type):
 
     # given:

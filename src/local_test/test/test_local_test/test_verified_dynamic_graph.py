@@ -11,14 +11,14 @@ from local_test.verified_dynamic_graph import (
     max_deps_env_ctx,
 )
 from protoprimer.primer_kernel import (
-    EntryFunc,
-    EnvContext,
+    _EntryFunc,
+    _EnvContext,
     EnvState,
     ExecOperation,
 )
 
 
-def _count_reachable_states(env_ctx: EnvContext) -> int:
+def _count_reachable_states(env_ctx: _EnvContext) -> int:
     reachable_state_set = set()
     for env_state in EnvState:
         state_node = env_ctx._state_graph.get_state_node(env_state.name)
@@ -38,21 +38,21 @@ def _env_ctx_to_dict(env_ctx: VerifyingEnvContext) -> dict[str, Any]:
 
 def _find_max_deps_env_ctx() -> tuple[VerifyingEnvContext, int]:
     """
-    Find `EnvContext` with maximum unique parent states among all valid coordinate combinations
+    Find `_EnvContext` with maximum unique parent states among all valid coordinate combinations
     (those not rejected by `VerifyingStateGraph`).
     """
     best_env_ctx: VerifyingEnvContext | None = None
     max_count: int = -1
 
     for entry_func, exec_operation, prepare_venv, is_log_enabled in itertools.product(
-        list(EntryFunc),
+        list(_EntryFunc),
         list(ExecOperation),
         [True, False],
         [True, False],
     ):
         env_ctx = VerifyingEnvContext()
         env_ctx._entry_func = entry_func
-        env_ctx._is_app = entry_func in (EntryFunc.func_boot_env, EntryFunc.func_run_main)
+        env_ctx._is_app = entry_func in (_EntryFunc.func_boot_env, _EntryFunc.func_run_main)
         env_ctx._exec_operation = exec_operation
         env_ctx._prepare_venv = prepare_venv
         env_ctx._is_log_enabled = is_log_enabled
@@ -71,7 +71,7 @@ def _find_max_deps_env_ctx() -> tuple[VerifyingEnvContext, int]:
 
 def test_find_max_deps_env_ctx() -> None:
     """
-    Find and print `EnvContext` with maximum unique parent states.
+    Find and print `_EnvContext` with maximum unique parent states.
     Run with `-s` to see the stdout.
     """
     best_env_ctx, max_count = _find_max_deps_env_ctx()
@@ -87,7 +87,7 @@ def test_find_max_deps_env_ctx() -> None:
 
 def test_verify_max_deps_env_ctx_is_max() -> None:
     """
-    Verify `max_deps_env_ctx` yields more unique parent states than any other valid `EnvContext`.
+    Verify `max_deps_env_ctx` yields more unique parent states than any other valid `_EnvContext`.
     """
 
     # given: count for defined max_deps_env_ctx

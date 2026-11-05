@@ -12,7 +12,7 @@ from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     _Node_state_default_stderr_log_handler_configured,
     _Factory_state_input_stderr_log_level_eval_finalized,
-    EnvContext,
+    _EnvContext,
     EnvState,
     _PrimerStderrLogFormatter,
 )
@@ -20,7 +20,7 @@ from protoprimer.primer_kernel import (
 
 @pytest.fixture
 def env_ctx():
-    return EnvContext()
+    return _EnvContext()
 
 
 @pytest.fixture

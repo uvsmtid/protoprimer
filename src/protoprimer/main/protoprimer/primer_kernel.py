@@ -52,12 +52,12 @@ ValueType = typing.TypeVar("ValueType")
 DataValueType = typing.TypeVar("DataValueType")
 
 # FT_96_50_58_75.context_propagation.md:
-# It is only set on `EntryFunc.func_start_app` as default for `EntryFunc.func_call_lib`.
-# `EnvContext._forced_proto_kernel_abs_path` overrides it.
+# It is only set on `_EntryFunc.func_start_app` as default for `_EntryFunc.func_call_lib`.
+# `_EnvContext._forced_proto_kernel_abs_path` overrides it.
 _proto_kernel_abs_path: str | None = None
 
 
-def run_process(env_ctx: EnvContext) -> None:
+def _run_process(env_ctx: _EnvContext) -> None:
     import atexit
 
     # See UC_10_80_27_57.extend_DAG.md
@@ -236,7 +236,7 @@ class PrimerRuntime(enum.Enum):
     runtime_meta = "meta"
 
 
-class EntryFunc(enum.Enum):
+class _EntryFunc(enum.Enum):
     """
     Specifies how `proto_kernel` was started (which API was the entry point).
 
@@ -627,7 +627,7 @@ class VenvDriverBase:
         self,
         local_venv_dir_abs_path: str,
     ) -> bool:
-        return self.get_type() == get_venv_type(local_venv_dir_abs_path)
+        return self.get_type() == _get_venv_type(local_venv_dir_abs_path)
 
     def create_venv(
         self,
@@ -1337,7 +1337,7 @@ class ConfConstGeneral:
     module_func_separator = ":"
 
     # FT_21_75_54_18.instant_scenario.md:
-    # If `--main_func` is this (empty), run `proto_main`.
+    # If `--main_func` is this (empty), run `_proto_main`.
     default_proto_main = ""
 
     # TODO: TODO_16_35_39_74.simplify_input_based_default.md:
@@ -1543,7 +1543,7 @@ def parse_main_func(
     if main_func == ConfConstGeneral.default_proto_main:
         if allow_default_proto_main:
             # FT_21_75_54_18.instant_scenario.md
-            # Run `proto_main`:
+            # Run `_proto_main`:
             return None, None
         raise ValueError(f"`{SyntaxArg.arg_main_func}` must specify `module_name:function_name`.")
     if ConfConstGeneral.module_func_separator not in main_func:
@@ -1677,8 +1677,8 @@ def _create_child_argparser(parent_argparsers):
         entry_func_parsers.required = True
 
         for selected_entry_func in [
-            EntryFunc.func_boot_env,
-            EntryFunc.func_start_app,
+            _EntryFunc.func_boot_env,
+            _EntryFunc.func_start_app,
         ]:
             entry_func_desc = f"Generate an `entry_script` which calls `{selected_entry_func.value}`."
             parser_entry_func = entry_func_parsers.add_parser(
@@ -1696,7 +1696,7 @@ def _create_child_argparser(parent_argparsers):
                 metavar=ParsedArg.name_entry_script_path.value,
                 help="Path to the `entry_script` to generate.",
             )
-            main_func_required: bool = selected_entry_func is not EntryFunc.func_boot_env
+            main_func_required: bool = selected_entry_func is not _EntryFunc.func_boot_env
             parser_entry_func.add_argument(
                 SyntaxArg.arg_m,
                 SyntaxArg.arg_main_func,
@@ -1705,7 +1705,7 @@ def _create_child_argparser(parent_argparsers):
                 default=ConfConstGeneral.default_proto_main,
                 dest=ParsedArg.name_main_func.value,
                 metavar=ParsedArg.name_main_func.value,
-                help=f"The `module_name:function_name` to invoke inside `venv` (for `{EntryFunc.func_boot_env.value}`, empty runs the default bootstrap).",
+                help=f"The `module_name:function_name` to invoke inside `venv` (for `{_EntryFunc.func_boot_env.value}`, empty runs the default bootstrap).",
             )
 
     child_argparser = CustomArgumentParser(
@@ -1848,10 +1848,10 @@ class ExitCodeReporter(RunStrategy):
 
     def __init__(
         self,
-        env_ctx: EnvContext,
+        env_ctx: _EnvContext,
     ):
         super().__init__()
-        self.env_ctx: EnvContext = env_ctx
+        self.env_ctx: _EnvContext = env_ctx
 
     def execute_strategy(
         self,
@@ -1864,7 +1864,7 @@ class ExitCodeReporter(RunStrategy):
         But it may not reach all nodes because
         dependencies will be conditionally evaluated by the implementation of those nodes.
         """
-        # NOTE: The `EnvContext._forced_final_state` must return `int` with this strategy:
+        # NOTE: The `_EnvContext._forced_final_state` must return `int` with this strategy:
         exit_code: int = self.env_ctx.eval_state(state_node.state_name)
         if type(exit_code) is not int:
             raise AssertionError("`exit_code` must be an `int`")
@@ -1881,11 +1881,11 @@ class StateNode(typing.Generic[ValueType]):
 
     def __init__(
         self,
-        env_ctx: EnvContext,
+        env_ctx: _EnvContext,
         parent_states: list[str],
         state_name: str,
     ):
-        self.env_ctx: EnvContext = env_ctx
+        self.env_ctx: _EnvContext = env_ctx
         self.state_name: str = state_name
 
         # Ensure no duplicates:
@@ -1928,9 +1928,9 @@ class NodeFactory(typing.Generic[ValueType]):
 
     def __init__(
         self,
-        env_ctx: EnvContext,
+        env_ctx: _EnvContext,
     ):
-        self.env_ctx: EnvContext = env_ctx
+        self.env_ctx: _EnvContext = env_ctx
 
     def create_state_node(self) -> StateNode[ValueType]:
         raise NotImplementedError()
@@ -1967,7 +1967,7 @@ class AbstractCachingStateNode(StateNode[ValueType]):
 
     def __init__(
         self,
-        env_ctx: EnvContext,
+        env_ctx: _EnvContext,
     ):
         super().__init__(
             env_ctx=env_ctx,
@@ -2049,8 +2049,8 @@ class _Node_state_is_app_defined(AbstractCachingStateNode[bool]):
 
     def _eval_state_once(self) -> ValueType:
         self.env_ctx._is_app = self.env_ctx._entry_func in [
-            EntryFunc.func_boot_env,
-            EntryFunc.func_run_main,
+            _EntryFunc.func_boot_env,
+            _EntryFunc.func_run_main,
         ]
         return self.env_ctx._is_app
 
@@ -2120,7 +2120,7 @@ class _Node_state_input_stderr_log_level_var_loaded(AbstractCachingStateNode[int
 # noinspection PyPep8Naming
 @trivial_factory
 class _Node_state_default_stderr_log_handler_configured(AbstractCachingStateNode[logging.Handler]):
-    # TODO: UC_81_50_97_17.do_not_reuse_logger.md: Shell we disable configuring loggers for `EntryFunc.func_start_app`?
+    # TODO: UC_81_50_97_17.do_not_reuse_logger.md: Shell we disable configuring loggers for `_EntryFunc.func_start_app`?
 
     _parent_states = staticmethod(lambda: [EnvState.state_input_stderr_log_level_var_loaded.name])
     _state_name = staticmethod(lambda: EnvState.state_default_stderr_log_handler_configured.name)
@@ -2322,9 +2322,9 @@ class _Factory_state_input_exec_operation_loaded(NodeFactory[ExecOperation]):
     def create_state_node(self) -> StateNode[ValueType]:
         if self.env_ctx._is_app:
             return _Node_state_input_exec_operation_loaded_is_app(self.env_ctx)
-        elif self.env_ctx._entry_func == EntryFunc.func_start_app:
+        elif self.env_ctx._entry_func == _EntryFunc.func_start_app:
             return _Node_state_input_exec_operation_loaded_func_start_app(self.env_ctx)
-        elif self.env_ctx._entry_func == EntryFunc.func_call_lib:
+        elif self.env_ctx._entry_func == _EntryFunc.func_call_lib:
             return _Node_state_input_exec_operation_loaded_func_call_lib(self.env_ctx)
         else:
             raise AssertionError(self.env_ctx._entry_func)
@@ -2449,13 +2449,13 @@ class _Factory_state_input_final_state_eval_finalized(NodeFactory[StateStride]):
 
     def create_state_node(self) -> StateNode[ValueType]:
         if self.env_ctx._entry_func in [
-            EntryFunc.func_boot_env,
-            EntryFunc.func_run_main,
+            _EntryFunc.func_boot_env,
+            _EntryFunc.func_run_main,
         ]:
             return _Node_state_input_final_state_eval_finalized_is_app(self.env_ctx)
-        elif self.env_ctx._entry_func == EntryFunc.func_start_app:
+        elif self.env_ctx._entry_func == _EntryFunc.func_start_app:
             return _Node_state_input_final_state_eval_finalized_func_start_app(self.env_ctx)
-        elif self.env_ctx._entry_func == EntryFunc.func_call_lib:
+        elif self.env_ctx._entry_func == _EntryFunc.func_call_lib:
             return _Node_state_input_final_state_eval_finalized_func_call_lib(self.env_ctx)
         else:
             raise AssertionError(self.env_ctx._entry_func)
@@ -2465,7 +2465,7 @@ class _Factory_state_input_final_state_eval_finalized(NodeFactory[StateStride]):
 @trivial_factory
 class _Node_state_func_boot_env_executed(AbstractCachingStateNode[bool]):
     """
-    This is a special node - it traverses ALL nodes for `EntryFunc` cases with parsed args.
+    This is a special node - it traverses ALL nodes for `_EntryFunc` cases with parsed args.
 
     BUT: It does not depend on ALL nodes - instead, re-executes the graph with a new target.
     """
@@ -2492,7 +2492,7 @@ class _Node_state_func_boot_env_executed(AbstractCachingStateNode[bool]):
         elif state_input_exec_operation_loaded == ExecOperation.op_eval:
             selected_strategy = ExitCodeReporter(self.env_ctx)
             # TODO: FT_77_15_06_50.dynamic_DAG.md:
-            #       How does it comply with `EnvContext._forced_final_state`?
+            #       How does it comply with `_EnvContext._forced_final_state`?
             state_node = self.env_ctx._state_graph.get_state_node(EnvState.state_effective_conf_data_printed.name)
         elif state_input_exec_operation_loaded == ExecOperation.op_wrap:
             selected_strategy = ExitCodeReporter(self.env_ctx)
@@ -2660,13 +2660,13 @@ class _Factory_state_everything_executed(NodeFactory[StateStride]):
 
     def create_state_node(self) -> StateNode[ValueType]:
         if self.env_ctx._entry_func in [
-            EntryFunc.func_boot_env,
-            EntryFunc.func_run_main,
+            _EntryFunc.func_boot_env,
+            _EntryFunc.func_run_main,
         ]:
             return _Node_state_everything_executed_is_app(self.env_ctx)
-        elif self.env_ctx._entry_func == EntryFunc.func_start_app:
+        elif self.env_ctx._entry_func == _EntryFunc.func_start_app:
             return _Node_state_everything_executed_func_start_app(self.env_ctx)
-        elif self.env_ctx._entry_func == EntryFunc.func_call_lib:
+        elif self.env_ctx._entry_func == _EntryFunc.func_call_lib:
             return _Node_state_everything_executed_func_call_lib(self.env_ctx)
         else:
             raise AssertionError(self.env_ctx._entry_func)
@@ -2731,7 +2731,7 @@ class _Node_state_stride_py_arbitrary_reached_is_app(AbstractCachingStateNode[St
             (os.environ.get(EnvVar.var_PROTOPRIMER_PROTO_KERNEL.value, None) is not None)
             # TODO: TODO_21_72_88_59.use_factory_to_avoid_running_boot_env_related_states.md:
             # TODO: FT_77_15_06_50.dynamic_DAG.md:
-            #       Review and clarify `ExecOperation.op_start`, `EnvContext._is_app`, ...
+            #       Review and clarify `ExecOperation.op_start`, `_EnvContext._is_app`, ...
             and state_input_exec_operation_loaded == ExecOperation.op_start
             #
         ):
@@ -2861,9 +2861,9 @@ class _Node_state_proto_kernel_file_abs_path_inited_not_func_call_lib(AbstractCa
                             # NOTE: Even `StateStride.stride_py_required` may
                             #       have `py_exec` in `venv` (not the dedicated, just current):
                             if self.env_ctx.get_stride().value != StateStride.stride_py_required.value:
-                                assert not is_venv()
+                                assert not _is_venv()
                             else:
-                                if is_venv():
+                                if _is_venv():
                                     logger.warning(f"`sys.executable` [{sys.executable}] for [{StateStride.stride_py_required.name}] evaluated from config should ideally be outside `venv`")
                 else:
                     # Rely only on the `EnvVar.var_PROTOPRIMER_PROTO_KERNEL` env var:
@@ -2884,7 +2884,7 @@ class _Node_state_proto_kernel_file_abs_path_inited_not_func_call_lib(AbstractCa
 class _Factory_state_proto_kernel_file_abs_path_inited(NodeFactory[StateStride]):
 
     def create_state_node(self) -> StateNode[ValueType]:
-        if self.env_ctx._entry_func == EntryFunc.func_call_lib:
+        if self.env_ctx._entry_func == _EntryFunc.func_call_lib:
             return _Node_state_proto_kernel_file_abs_path_inited_func_call_lib(self.env_ctx)
         else:
             return _Node_state_proto_kernel_file_abs_path_inited_not_func_call_lib(self.env_ctx)
@@ -2918,7 +2918,7 @@ class _Node_state_wrap_executed(AbstractCachingStateNode[int]):
             func_name,
         ) = parse_main_func(
             main_func,
-            allow_default_proto_main=(entry_func == EntryFunc.func_boot_env.value),
+            allow_default_proto_main=(entry_func == _EntryFunc.func_boot_env.value),
         )
 
         proto_kernel_abs_path: str = self.eval_parent_state(EnvState.state_proto_kernel_file_abs_path_inited.name)
@@ -3890,7 +3890,7 @@ class _Node_state_derived_conf_data_loaded(AbstractCachingStateNode[dict]):
 
     def __init__(
         self,
-        env_ctx: EnvContext,
+        env_ctx: _EnvContext,
     ):
         self.derived_data_env_states: list[str] = [
             # ===
@@ -3983,7 +3983,7 @@ class _Node_state_effective_conf_data_printed(AbstractCachingStateNode[int]):
 # noinspection PyPep8Naming
 @trivial_factory
 class _Node_state_default_file_log_handler_configured(AbstractCachingStateNode[logging.Handler]):
-    # TODO: UC_81_50_97_17.do_not_reuse_logger.md: Shell we disable configuring loggers for `EntryFunc.func_start_app`?
+    # TODO: UC_81_50_97_17.do_not_reuse_logger.md: Shell we disable configuring loggers for `_EntryFunc.func_start_app`?
 
     _parent_states = staticmethod(
         lambda: [
@@ -4150,7 +4150,7 @@ class _Node_state_reset_triggered_is_app(AbstractCachingStateNode[bool]):
 
         # TODO: TODO_21_72_88_59.use_factory_to_avoid_running_boot_env_related_states.md:
         # TODO: FT_77_15_06_50.dynamic_DAG.md:
-        #       Review and clarify `ExecOperation.op_start`, `EnvContext._is_app`, ...
+        #       Review and clarify `ExecOperation.op_start`, `_EnvContext._is_app`, ...
         if state_input_exec_operation_loaded in (
             ExecOperation.op_start,
             ExecOperation.op_shell,
@@ -4355,7 +4355,7 @@ class _Node_state_stride_py_venv_reached_is_app(AbstractCachingStateNode[StateSt
 
         # TODO: TODO_21_72_88_59.use_factory_to_avoid_running_boot_env_related_states.md:
         # TODO: FT_77_15_06_50.dynamic_DAG.md:
-        #       Review and clarify `ExecOperation.op_start`, `EnvContext._is_app`, ...
+        #       Review and clarify `ExecOperation.op_start`, `_EnvContext._is_app`, ...
         if state_input_exec_operation_loaded in (
             ExecOperation.op_start,
             ExecOperation.op_shell,
@@ -4488,7 +4488,7 @@ class _Node_state_protoprimer_package_installed_is_app(AbstractCachingStateNode[
 
         # TODO: TODO_21_72_88_59.use_factory_to_avoid_running_boot_env_related_states.md:
         # TODO: FT_77_15_06_50.dynamic_DAG.md:
-        #       Review and clarify `ExecOperation.op_start`, `EnvContext._is_app`, ...
+        #       Review and clarify `ExecOperation.op_start`, `_EnvContext._is_app`, ...
         if state_input_exec_operation_loaded in (
             ExecOperation.op_start,
             ExecOperation.op_shell,
@@ -4645,7 +4645,7 @@ class _Node_state_version_constraints_generated_is_app(AbstractCachingStateNode[
 
         # TODO: TODO_21_72_88_59.use_factory_to_avoid_running_boot_env_related_states.md:
         # TODO: FT_77_15_06_50.dynamic_DAG.md:
-        #       Review and clarify `ExecOperation.op_start`, `EnvContext._is_app`, ...
+        #       Review and clarify `ExecOperation.op_start`, `_EnvContext._is_app`, ...
         if state_input_exec_operation_loaded in (
             ExecOperation.op_start,
             ExecOperation.op_shell,
@@ -4723,7 +4723,7 @@ class _Node_state_stride_deps_updated_reached_is_app(AbstractCachingStateNode[St
 
         # TODO: TODO_21_72_88_59.use_factory_to_avoid_running_boot_env_related_states.md:
         # TODO: FT_77_15_06_50.dynamic_DAG.md:
-        #       Review and clarify `ExecOperation.op_start`, `EnvContext._is_app`, ...
+        #       Review and clarify `ExecOperation.op_start`, `_EnvContext._is_app`, ...
         if state_input_exec_operation_loaded in (
             ExecOperation.op_start,
             ExecOperation.op_shell,
@@ -4803,7 +4803,7 @@ class _Node_state_proto_kernel_updated_is_app(AbstractCachingStateNode[bool]):
 
         # TODO: TODO_21_72_88_59.use_factory_to_avoid_running_boot_env_related_states.md:
         # TODO: FT_77_15_06_50.dynamic_DAG.md:
-        #       Review and clarify `ExecOperation.op_start`, `EnvContext._is_app`, ...
+        #       Review and clarify `ExecOperation.op_start`, `_EnvContext._is_app`, ...
         if state_input_exec_operation_loaded in (
             ExecOperation.op_start,
             ExecOperation.op_shell,
@@ -4818,7 +4818,7 @@ class _Node_state_proto_kernel_updated_is_app(AbstractCachingStateNode[bool]):
         assert not os.path.islink(state_proto_kernel_file_abs_path_inited)
         assert os.path.isfile(state_proto_kernel_file_abs_path_inited)
 
-        assert is_venv()
+        assert _is_venv()
         try:
             import protoprimer
         except ImportError:
@@ -5349,7 +5349,7 @@ class StateGraph:
         return state_node.eval_own_state()
 
 
-class EnvContext:
+class _EnvContext:
     """
     Transient state used by `NodeFactory`-ies during DAG evaluation.
 
@@ -5362,8 +5362,8 @@ class EnvContext:
         that affect what implementation is selected by `NodeFactory`.
         """
 
-        # Must be set on `EnvContext` creation before any `EnvState` evaluation:
-        self._entry_func: EntryFunc | None = None
+        # Must be set on `_EnvContext` creation before any `EnvState` evaluation:
+        self._entry_func: _EntryFunc | None = None
 
         # Set by `EnvState.state_input_py_exec_var_loaded`:
         self._state_stride: StateStride | None = None
@@ -5387,15 +5387,15 @@ class EnvContext:
         # Set by `EnvState.state_input_is_stderr_log_enabled`:
         self._is_log_enabled: bool | None = None
 
-        # This is an override for default (different value depending on `EntryFunc`).
+        # This is an override for default (different value depending on `_EntryFunc`).
         self._forced_final_state: str | None = None
 
-        # Set by `ContextBuilder.client_func()`:
+        # Set by `_ContextBuilder.client_func()`:
         # FT_85_17_35_21.boot_env.md
         self._client_func: typing.Callable[[], int | None] | None = None
 
         # This is an override for global `_proto_kernel_abs_path`.
-        # Same as `EnvVar.var_PROTOPRIMER_PROTO_KERNEL`, but for non-restart-able `EntryFunc.func_call_lib`.
+        # Same as `EnvVar.var_PROTOPRIMER_PROTO_KERNEL`, but for non-restart-able `_EntryFunc.func_call_lib`.
         self._forced_proto_kernel_abs_path: str | None = None
 
         self._state_graph: StateGraph = self._create_state_graph()
@@ -5492,47 +5492,47 @@ class EnvContext:
             )
 
 
-class ContextBuilder:
+class _ContextBuilder:
     """
-    Builder for `EnvContext`.
+    Builder for `_EnvContext`.
     """
 
     def __init__(self):
-        self._env_ctx = EnvContext()
+        self._env_ctx = _EnvContext()
 
-    def entry_func(self, value: EntryFunc | None) -> ContextBuilder:
+    def entry_func(self, value: _EntryFunc | None) -> _ContextBuilder:
         self._env_ctx._entry_func = value
         return self
 
-    def state_stride(self, value: StateStride | None) -> ContextBuilder:
+    def state_stride(self, value: StateStride | None) -> _ContextBuilder:
         self._env_ctx._state_stride = value
         return self
 
-    def is_app(self, value: bool | None) -> ContextBuilder:
+    def is_app(self, value: bool | None) -> _ContextBuilder:
         self._env_ctx._is_app = value
         return self
 
-    def prepare_venv(self, value: bool | None) -> ContextBuilder:
+    def prepare_venv(self, value: bool | None) -> _ContextBuilder:
         self._env_ctx._prepare_venv = value
         return self
 
-    def exec_operation(self, value: ExecOperation | None) -> ContextBuilder:
+    def exec_operation(self, value: ExecOperation | None) -> _ContextBuilder:
         self._env_ctx._exec_operation = value
         return self
 
-    def is_log_enabled(self, value: bool | None) -> ContextBuilder:
+    def is_log_enabled(self, value: bool | None) -> _ContextBuilder:
         self._env_ctx._is_log_enabled = value
         return self
 
-    def forced_final_state(self, value: str | None) -> ContextBuilder:
+    def forced_final_state(self, value: str | None) -> _ContextBuilder:
         self._env_ctx._forced_final_state = value
         return self
 
-    def forced_proto_kernel_abs_path(self, value: str | None) -> ContextBuilder:
+    def forced_proto_kernel_abs_path(self, value: str | None) -> _ContextBuilder:
         self._env_ctx._forced_proto_kernel_abs_path = value
         return self
 
-    def build_context(self) -> EnvContext:
+    def build_context(self) -> _EnvContext:
         assert self._env_ctx._entry_func is not None
         return self._env_ctx
 
@@ -6119,7 +6119,7 @@ def assert_proto_kernel_is_stand_alone(proto_kernel_abs_path: str) -> None:
             raise AssertionError(f"`proto_kernel_abs_path` [{proto_kernel_abs_path}] cannot be from site packages [{package_dir}]")
 
 
-def is_venv() -> bool:
+def _is_venv() -> bool:
     # NOTE: `VIRTUAL_ENV` is not asserted because it is only set for `shell` by `source`-ing `venv/bin/activate`.
     #       Most of the commands avoid using `shell` (that is the goal for `protoprimer`).
     # NOTE: Restriction on `field_selected_python_file_abs_path`: it should not lead to `venv/bin/python`.
@@ -6132,7 +6132,7 @@ def is_venv() -> bool:
         return False
 
 
-def is_uv_venv(venv_cfg_file_abs_path: str) -> bool:
+def _is_uv_venv(venv_cfg_file_abs_path: str) -> bool:
     with open(venv_cfg_file_abs_path, "r") as cfg_file:
         for file_line in cfg_file:
             if file_line.strip().startswith(f"{ConfConstGeneral.name_uv_package} ="):
@@ -6140,9 +6140,9 @@ def is_uv_venv(venv_cfg_file_abs_path: str) -> bool:
     return False
 
 
-def is_pip_venv(venv_cfg_file_abs_path: str) -> bool:
+def _is_pip_venv(venv_cfg_file_abs_path: str) -> bool:
     # Not sure how to check if it regular `venv` other than saying it is not by `uv`:
-    return not is_uv_venv(venv_cfg_file_abs_path)
+    return not _is_uv_venv(venv_cfg_file_abs_path)
 
 
 def is_test_run() -> bool:
@@ -6152,7 +6152,7 @@ def is_test_run() -> bool:
     return ConfConstGeneral.pytest_module in sys.modules
 
 
-def get_venv_type(local_venv_dir_abs_path: str) -> VenvDriverType:
+def _get_venv_type(local_venv_dir_abs_path: str) -> VenvDriverType:
     venv_cfg_file_abs_path = os.path.join(
         local_venv_dir_abs_path,
         ConfConstGeneral.venv_config_file_basename,
@@ -6160,9 +6160,9 @@ def get_venv_type(local_venv_dir_abs_path: str) -> VenvDriverType:
     if not os.path.exists(venv_cfg_file_abs_path):
         raise AssertionError(f"File [{venv_cfg_file_abs_path}] does not exist")
 
-    if is_uv_venv(venv_cfg_file_abs_path):
+    if _is_uv_venv(venv_cfg_file_abs_path):
         return VenvDriverType.venv_uv
-    elif is_pip_venv(venv_cfg_file_abs_path):
+    elif _is_pip_venv(venv_cfg_file_abs_path):
         return VenvDriverType.venv_pip
     else:
         raise AssertionError(f"Cannot determine `venv` type by file [{venv_cfg_file_abs_path}]")
@@ -6440,8 +6440,8 @@ def get_config(conf_leap: ConfLeap) -> dict:
         raise ValueError(f"Unsupported `ConfLeap` value: {conf_leap}")
 
     env_ctx = (
-        ContextBuilder()
-        .entry_func(EntryFunc.func_call_lib)
+        _ContextBuilder()
+        .entry_func(_EntryFunc.func_call_lib)
         .state_stride(StateStride.stride_py_arbitrary)
         .forced_final_state(_conf_leap_to_state[conf_leap])
         # TODO: TODO_47_08_90_90.propagate_exec_operation_for_func_call_lib.md:
@@ -6465,8 +6465,8 @@ def generate_entry_script_content(
     """
 
     if entry_func not in [
-        EntryFunc.func_boot_env.value,
-        EntryFunc.func_start_app.value,
+        _EntryFunc.func_boot_env.value,
+        _EntryFunc.func_start_app.value,
     ]:
         raise AssertionError(f"Unrecognized `entry_func` [{entry_func}]")
 
@@ -6527,7 +6527,7 @@ def generate_entry_script_content(
 
     if module_name is None:
         # FT_21_75_54_18.instant_scenario.md
-        # Run `proto_main`:
+        # Run `_proto_main`:
         main_func_arg = ConfConstGeneral.default_proto_main
     else:
         main_func_arg = f"{module_name}{ConfConstGeneral.module_func_separator}{func_name}"
@@ -6588,7 +6588,7 @@ def boot_env(venv_main_func: str):
     (which only starts the specified `venv_main_func` assuming `venv` has already been bootstrapped).
     """
     _start_main(
-        EntryFunc.func_boot_env,
+        _EntryFunc.func_boot_env,
         venv_main_func,
     )
 
@@ -6603,7 +6603,7 @@ def start_app(venv_main_func: str):
     (via a script which calls `boot_env` function).
     """
     _start_main(
-        EntryFunc.func_start_app,
+        _EntryFunc.func_start_app,
         venv_main_func,
     )
 
@@ -6616,18 +6616,18 @@ def run_boot_env_client_func(client_func: typing.Callable[[], int | None]) -> No
     UC_10_80_27_57.extend_DAG.md
     """
     env_ctx = (
-        ContextBuilder()
-        .entry_func(EntryFunc.func_boot_env)
+        _ContextBuilder()
+        .entry_func(_EntryFunc.func_boot_env)
         .forced_final_state(EnvState.state_client_func_executed.name)
         #
         .build_context()
     )
     env_ctx._client_func = client_func
-    run_process(env_ctx)
+    _run_process(env_ctx)
 
 
 def _start_main(
-    entry_func: EntryFunc,
+    entry_func: _EntryFunc,
     # Same format as in `EnvVar.var_PROTOPRIMER_MAIN_FUNC`:
     venv_main_func: str,
 ) -> None:
@@ -6643,7 +6643,7 @@ def _start_main(
         func_name,
     ) = parse_main_func(
         venv_main_func,
-        allow_default_proto_main=(entry_func is EntryFunc.func_boot_env),
+        allow_default_proto_main=(entry_func is _EntryFunc.func_boot_env),
     )
 
     curr_py_exec = StateStride[
@@ -6658,18 +6658,18 @@ def _start_main(
     try:
         if curr_py_exec.value >= StateStride.stride_src_updated.value:
             # FT_74_10_40_33.DAG_extension.md:
-            # Complete `EntryFunc.func_boot_env` with extension (if any).
+            # Complete `_EntryFunc.func_boot_env` with extension (if any).
             if module_name is None:
                 # FT_21_75_54_18.instant_scenario.md
-                # Run `proto_main`:
+                # Run `_proto_main`:
                 env_ctx = (
-                    ContextBuilder()
+                    _ContextBuilder()
                     .entry_func(entry_func)
                     .state_stride(curr_py_exec)
                     #
                     .build_context()
                 )
-                run_process(env_ctx)
+                _run_process(env_ctx)
             else:
                 assert func_name is not None
                 venv_module = importlib.import_module(module_name)
@@ -6686,12 +6686,12 @@ def _start_main(
                 imported_kernel = None
             if imported_kernel is not None:
                 # noinspection PyPep8Naming
-                imported_EnvContext = getattr(imported_kernel, EnvContext.__name__)
+                imported_EnvContext = getattr(imported_kernel, _EnvContext.__name__)
                 # noinspection PyPep8Naming
-                imported_EntryFunc = getattr(imported_kernel, EntryFunc.__name__)
-                imported_run_process = getattr(imported_kernel, run_process.__name__)
+                imported_EntryFunc = getattr(imported_kernel, _EntryFunc.__name__)
+                imported_run_process = getattr(imported_kernel, _run_process.__name__)
                 # noinspection PyPep8Naming
-                imported_ContextBuilder = getattr(imported_kernel, ContextBuilder.__name__)
+                imported_ContextBuilder = getattr(imported_kernel, _ContextBuilder.__name__)
                 env_ctx = (
                     imported_ContextBuilder()
                     .entry_func(imported_EntryFunc[entry_func.name])
@@ -6702,14 +6702,14 @@ def _start_main(
                 imported_run_process(env_ctx)
             else:
                 env_ctx = (
-                    ContextBuilder()
+                    _ContextBuilder()
                     .entry_func(entry_func)
                     .state_stride(curr_py_exec)
                     #
                     .build_context()
                 )
-                run_process(env_ctx)
-        elif curr_py_exec.value >= StateStride.stride_py_venv.value and entry_func is EntryFunc.func_start_app:
+                _run_process(env_ctx)
+        elif curr_py_exec.value >= StateStride.stride_py_venv.value and entry_func is _EntryFunc.func_start_app:
             assert module_name is not None
             assert func_name is not None
             venv_module = importlib.import_module(module_name)
@@ -6730,13 +6730,13 @@ def _start_main(
             # FT_14_52_73_23.primer_runtime.md:
             # Keep running `proto_code`:
             env_ctx = (
-                ContextBuilder()
+                _ContextBuilder()
                 .entry_func(entry_func)
                 .state_stride(curr_py_exec)
                 #
                 .build_context()
             )
-            run_process(env_ctx)
+            _run_process(env_ctx)
 
     except ImportError as import_error:
         if import_error.name == installed_kernel_name:
@@ -6745,7 +6745,7 @@ def _start_main(
                 f"{get_import_error_hint(installed_kernel_name)} "
                 #
             ) from import_error
-        if curr_py_exec.value >= StateStride.stride_py_venv.value and entry_func == EntryFunc.func_start_app:
+        if curr_py_exec.value >= StateStride.stride_py_venv.value and entry_func == _EntryFunc.func_start_app:
             raise AssertionError(
                 f"Failed to import `{import_error.name}` at [{curr_py_exec.name}]. "
                 f"Has `{TopDir.dir_venv.value}` been initialized via `{ExecOperation.op_boot.value}` exec operation? "
@@ -6754,16 +6754,16 @@ def _start_main(
         raise import_error
 
 
-def proto_main() -> None:
+def _proto_main() -> None:
     env_ctx = (
-        ContextBuilder()
+        _ContextBuilder()
         #
-        .entry_func(EntryFunc.func_run_main)
+        .entry_func(_EntryFunc.func_run_main)
         #
         .build_context()
     )
-    run_process(env_ctx)
+    _run_process(env_ctx)
 
 
 if __name__ == "__main__":
-    proto_main()
+    _proto_main()

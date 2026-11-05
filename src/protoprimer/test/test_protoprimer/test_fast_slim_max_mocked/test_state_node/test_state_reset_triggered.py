@@ -15,8 +15,8 @@ from protoprimer.primer_kernel import (
     _Node_state_local_tmp_dir_abs_path_inited,
     _Node_state_local_venv_dir_abs_path_inited,
     _Node_state_version_constraints_file_basename_inited,
-    ContextBuilder,
-    EntryFunc,
+    _ContextBuilder,
+    _EntryFunc,
     _Factory_state_prepare_venv_finalized,
     _Factory_state_proto_kernel_file_abs_path_inited,
     _Factory_state_stride_py_required_reached,
@@ -31,9 +31,9 @@ from protoprimer.primer_kernel import (
 @pytest.fixture
 def env_ctx():
     return (
-        ContextBuilder()
+        _ContextBuilder()
         #
-        .entry_func(EntryFunc.func_boot_env)
+        .entry_func(_EntryFunc.func_boot_env)
         #
         .is_app(True)
         #

@@ -279,7 +279,7 @@ def test_pin_versions(mock_subprocess_check_call, mock_exists, mock_isfile):
     assert mock_subprocess_check_call.call_count == 2
 
 
-@patch("protoprimer.primer_kernel.get_venv_type")
+@patch("protoprimer.primer_kernel._get_venv_type")
 def test_is_mine_venv_when_uv_venv(mock_get_venv_type):
     # given
     driver = VenvDriverUv(
@@ -299,7 +299,7 @@ def test_is_mine_venv_when_uv_venv(mock_get_venv_type):
     assert result is True
 
 
-@patch("protoprimer.primer_kernel.get_venv_type")
+@patch("protoprimer.primer_kernel._get_venv_type")
 def test_is_mine_venv_when_pip_venv(mock_get_venv_type):
     # given
     driver = VenvDriverUv(
@@ -319,7 +319,7 @@ def test_is_mine_venv_when_pip_venv(mock_get_venv_type):
     assert result is False
 
 
-@patch("protoprimer.primer_kernel.get_venv_type")
+@patch("protoprimer.primer_kernel._get_venv_type")
 def test_is_mine_venv_when_cfg_not_exists(mock_get_venv_type):
     # given
     driver = VenvDriverUv(

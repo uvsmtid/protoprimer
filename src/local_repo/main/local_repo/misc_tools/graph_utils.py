@@ -3,7 +3,7 @@ from __future__ import annotations
 import enum
 
 from protoprimer.primer_kernel import (
-    EnvContext,
+    _EnvContext,
     StateGraph,
     StateNode,
 )
@@ -11,7 +11,7 @@ from protoprimer.primer_kernel import (
 
 def topological_sort(
     state_graph: StateGraph,
-    env_ctx: EnvContext,
+    env_ctx: _EnvContext,
 ) -> list[str]:
     """
     Performs a topological sort on the given `StateGraph`.
@@ -63,7 +63,7 @@ def topological_sort(
 
 def topological_sort_of_verified_states(
     state_graph: StateGraph,
-    env_ctx: EnvContext,
+    env_ctx: _EnvContext,
     root_state_name: str,
 ) -> list[str]:
     """
@@ -102,7 +102,7 @@ def topological_sort_of_verified_states(
 def get_transitive_dependencies(
     state_graph: StateGraph,
     state_name: str,
-    env_ctx: EnvContext,
+    env_ctx: _EnvContext,
 ) -> list[str]:
     """
     Lists all transitive dependencies for a given state name.

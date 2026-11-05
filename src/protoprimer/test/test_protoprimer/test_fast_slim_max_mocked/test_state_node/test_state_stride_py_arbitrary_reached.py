@@ -12,8 +12,8 @@ from protoprimer.primer_kernel import (
     _Factory_state_input_exec_operation_loaded,
     _Node_state_input_start_id_var_loaded,
     ConfConstInput,
-    ContextBuilder,
-    EntryFunc,
+    _ContextBuilder,
+    _EntryFunc,
     EnvState,
     StateStride,
 )
@@ -22,9 +22,9 @@ from protoprimer.primer_kernel import (
 @pytest.fixture
 def env_ctx():
     return (
-        ContextBuilder()
+        _ContextBuilder()
         #
-        .entry_func(EntryFunc.func_boot_env)
+        .entry_func(_EntryFunc.func_boot_env)
         #
         .is_app(True)
         #
@@ -45,7 +45,7 @@ def test_relationship():
     clear=True,
 )
 @patch(
-    f"{primer_kernel.__name__}.EnvContext.set_max_stride",
+    f"{primer_kernel.__name__}._EnvContext.set_max_stride",
     return_value=StateStride.stride_py_arbitrary,
 )
 @patch(f"{primer_kernel.__name__}.get_path_to_curr_python")
@@ -106,7 +106,7 @@ def test_py_exec_stride_py_unknown_in_venv(
     clear=True,
 )
 @patch(
-    f"{primer_kernel.__name__}.EnvContext.set_max_stride",
+    f"{primer_kernel.__name__}._EnvContext.set_max_stride",
     return_value=StateStride.stride_py_arbitrary,
 )
 @patch(f"{primer_kernel.__name__}.get_path_to_curr_python")

@@ -9,7 +9,7 @@ from local_test.name_assertion import (
     assert_test_module_name_embeds_str,
 )
 from protoprimer.primer_kernel import (
-    EntryFunc,
+    _EntryFunc,
     ExecOperation,
     SyntaxArg,
     TopDir,
@@ -17,7 +17,7 @@ from protoprimer.primer_kernel import (
 
 
 def test_relationship():
-    assert_test_module_name_embeds_str(EntryFunc.func_boot_env.value)
+    assert_test_module_name_embeds_str(_EntryFunc.func_boot_env.value)
 
 
 def test_old_entry_script_boot_env(
@@ -33,7 +33,7 @@ def test_old_entry_script_boot_env(
     FT_78_72_23_04.backward_compatibility.md
     """
 
-    assert_test_func_name_embeds_str(EntryFunc.func_boot_env.value)
+    assert_test_func_name_embeds_str(_EntryFunc.func_boot_env.value)
 
     # given:
 
@@ -43,7 +43,7 @@ def test_old_entry_script_boot_env(
         project_dir_abs_path,
     ) = create_max_leaps_shape(tmp_path)
 
-    entry_script_abs_path = ref_root_abs_path / EntryFunc.func_boot_env.value
+    entry_script_abs_path = ref_root_abs_path / _EntryFunc.func_boot_env.value
 
     # Temporarily put the old `proto_kernel.py` in place, just to let its own `wrap` generate
     # the entry script (with its own, possibly older, boilerplate/template):
@@ -57,7 +57,7 @@ def test_old_entry_script_boot_env(
         [
             str(proto_kernel_abs_path),
             ExecOperation.op_wrap.value,
-            EntryFunc.func_boot_env.value,
+            _EntryFunc.func_boot_env.value,
             SyntaxArg.arg_entry_script_path,
             str(entry_script_abs_path),
         ]

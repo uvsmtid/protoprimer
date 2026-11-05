@@ -9,7 +9,7 @@ from local_test.mock_verifier import (
 )
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer.primer_kernel import (
-    EnvContext,
+    _EnvContext,
     EnvState,
     EnvVar,
 )
@@ -20,7 +20,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
     def setUp(self):
         self.setUpPyfakefs()
-        self.env_ctx = EnvContext()
+        self.env_ctx = _EnvContext()
 
     # noinspection PyMethodMayBeStatic
     def test_relationship(self):

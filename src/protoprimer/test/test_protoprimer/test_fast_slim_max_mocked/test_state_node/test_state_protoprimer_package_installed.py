@@ -17,9 +17,9 @@ from protoprimer.primer_kernel import (
     _Node_state_version_constraints_file_basename_inited,
     ConfConstClient,
     ConfField,
-    ContextBuilder,
-    EntryFunc,
-    EnvContext,
+    _ContextBuilder,
+    _EntryFunc,
+    _EnvContext,
     EnvState,
     EnvVar,
     ExecOperation,
@@ -34,9 +34,9 @@ class ThisTestClass(BasePyfakefsTestClass):
     def setUp(self):
         self.setUpPyfakefs()
         self.env_ctx = (
-            ContextBuilder()
+            _ContextBuilder()
             #
-            .entry_func(EntryFunc.func_boot_env)
+            .entry_func(_EntryFunc.func_boot_env)
             #
             .is_app(True)
             #
@@ -59,7 +59,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     )
     @patch(f"{primer_kernel.__name__}.{_Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_venv_driver_prepared.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{EnvContext.__name__}.{EnvContext.get_stride.__name__}")
+    @patch(f"{primer_kernel.__name__}.{_EnvContext.__name__}.{_EnvContext.get_stride.__name__}")
     def test_default_install(
         self,
         mock_get_stride,
@@ -143,7 +143,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     )
     @patch(f"{primer_kernel.__name__}.{_Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_venv_driver_prepared.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{EnvContext.__name__}.{EnvContext.get_stride.__name__}")
+    @patch(f"{primer_kernel.__name__}.{_EnvContext.__name__}.{_EnvContext.get_stride.__name__}")
     def test_reset(
         self,
         mock_get_stride,
@@ -227,7 +227,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     )
     @patch(f"{primer_kernel.__name__}.{_Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_venv_driver_prepared.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{EnvContext.__name__}.{EnvContext.get_stride.__name__}")
+    @patch(f"{primer_kernel.__name__}.{_EnvContext.__name__}.{_EnvContext.get_stride.__name__}")
     def test_grouped_install(
         self,
         mock_get_stride,
@@ -326,7 +326,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     )
     @patch(f"{primer_kernel.__name__}.{_Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_venv_driver_prepared.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{EnvContext.__name__}.{EnvContext.get_stride.__name__}")
+    @patch(f"{primer_kernel.__name__}.{_EnvContext.__name__}.{_EnvContext.get_stride.__name__}")
     def test_nothing_to_install(
         self,
         mock_get_stride,

@@ -15,8 +15,8 @@ from local_repo.graph_printer import (
 from local_repo.misc_tools.graph_utils import get_transitive_dependencies
 from metaprimer.script_lib import configure_script
 from protoprimer.primer_kernel import (
-    ContextBuilder,
-    EntryFunc,
+    _ContextBuilder,
+    _EntryFunc,
     EnvState,
     StateGraph,
     StateNode,
@@ -56,7 +56,7 @@ def custom_main():
         output_format=OutputFormat(parsed_args.format),
         output_layout=OutputLayout(parsed_args.layout),
         target_state=TargetState[parsed_args.target_state],
-        entry_func=EntryFunc[parsed_args.entry_func],
+        entry_func=_EntryFunc[parsed_args.entry_func],
         exec_operation=ExecOperation[parsed_args.exec_operation] if parsed_args.exec_operation else None,
     )
 
@@ -72,7 +72,7 @@ def run_print_graph(
     output_format: OutputFormat,
     output_layout: OutputLayout,
     target_state: TargetState,
-    entry_func: EntryFunc,
+    entry_func: _EntryFunc,
     exec_operation: ExecOperation | None,
 ) -> None:
 
@@ -83,10 +83,10 @@ def run_print_graph(
     logger.info(f"exec_operation: {exec_operation}")
 
     env_ctx = (
-        ContextBuilder()
+        _ContextBuilder()
         .exec_operation(exec_operation)
         .entry_func(entry_func)
-        .is_app(entry_func in [EntryFunc.func_boot_env, EntryFunc.func_run_main])
+        .is_app(entry_func in [_EntryFunc.func_boot_env, _EntryFunc.func_run_main])
         .forced_final_state(target_state.value.name)
         #
         .build_context()
@@ -158,8 +158,8 @@ def init_arg_parser():
     arg_parser.add_argument(
         "--entry_func",
         dest="entry_func",
-        choices=[enum_item.name for enum_item in EntryFunc],
-        default=EntryFunc.func_boot_env.name,
+        choices=[enum_item.name for enum_item in _EntryFunc],
+        default=_EntryFunc.func_boot_env.name,
         help="Entry function coordinate.",
     )
     arg_parser.add_argument(

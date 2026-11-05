@@ -16,12 +16,12 @@ import sys
 
 import protoprimer.primer_kernel
 from protoprimer.primer_kernel import (
-    EntryFunc,
+    _EntryFunc,
     ExecOperation,
     SyntaxArg,
 )
 
-_ENTRY_FUNC_CALL_REGEX = re.compile(r"proto_kernel\.(?P<entry_func>" rf"{EntryFunc.func_boot_env.value}|{EntryFunc.func_start_app.value}" r")\(\"(?P<main_func>[^\"]+)\"\)")
+_ENTRY_FUNC_CALL_REGEX = re.compile(r"proto_kernel\.(?P<entry_func>" rf"{_EntryFunc.func_boot_env.value}|{_EntryFunc.func_start_app.value}" r")\(\"(?P<main_func>[^\"]+)\"\)")
 
 
 def get_repo_root_abs_path() -> pathlib.Path:
@@ -56,7 +56,7 @@ def parse_entry_script(
     entry_script_content = entry_script_abs_path.read_text()
     regex_match = _ENTRY_FUNC_CALL_REGEX.search(entry_script_content)
     if regex_match is None:
-        raise AssertionError(f"Could not find a `{EntryFunc.func_boot_env.value}`/`{EntryFunc.func_start_app.value}` call in [{entry_script_abs_path}]")
+        raise AssertionError(f"Could not find a `{_EntryFunc.func_boot_env.value}`/`{_EntryFunc.func_start_app.value}` call in [{entry_script_abs_path}]")
     return ParsedEntryScript(
         entry_func=regex_match.group("entry_func"),
         main_func=regex_match.group("main_func"),

@@ -23,7 +23,7 @@ from local_test.integrated_helper import (
 from local_test.toml_handler import save_toml_data
 from protoprimer.primer_kernel import (
     ConfConstClient,
-    EntryFunc,
+    _EntryFunc,
     SyntaxArg,
     generate_entry_script_content,
 )
@@ -80,7 +80,7 @@ def _create_instant_scenario_without_protoprimer(
 
 def _generate_and_run_entry_script(
     proto_kernel_abs_path: pathlib.Path,
-    entry_func: EntryFunc,
+    entry_func: _EntryFunc,
     with_main_func: bool = True,
 ) -> subprocess.CompletedProcess:
 
@@ -129,7 +129,7 @@ def test_start_app_entry_script_without_protoprimer_dependency(tmp_path: pathlib
 
     entry_script_process = _generate_and_run_entry_script(
         proto_kernel_abs_path,
-        EntryFunc.func_start_app,
+        _EntryFunc.func_start_app,
     )
 
     assert entry_script_process.returncode == 0, entry_script_process.stdout + entry_script_process.stderr
@@ -150,7 +150,7 @@ def test_boot_env_entry_script_without_protoprimer_dependency(tmp_path: pathlib.
     # `boot_env` bootstraps the `venv` itself - no prior boot needed:
     entry_script_process = _generate_and_run_entry_script(
         proto_kernel_abs_path,
-        EntryFunc.func_boot_env,
+        _EntryFunc.func_boot_env,
     )
 
     assert entry_script_process.returncode == 0, entry_script_process.stdout + entry_script_process.stderr
@@ -171,7 +171,7 @@ def test_boot_env_entry_script_with_empty_main_func(tmp_path: pathlib.Path):
 
     entry_script_process = _generate_and_run_entry_script(
         proto_kernel_abs_path,
-        EntryFunc.func_boot_env,
+        _EntryFunc.func_boot_env,
         with_main_func=False,
     )
 

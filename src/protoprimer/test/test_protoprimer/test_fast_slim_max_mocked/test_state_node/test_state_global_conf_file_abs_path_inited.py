@@ -10,14 +10,14 @@ from protoprimer.primer_kernel import (
     _Node_state_global_conf_dir_abs_path_inited,
     _Node_state_primer_conf_file_abs_path_inited,
     ConfConstPrimer,
-    EnvContext,
+    _EnvContext,
     EnvState,
 )
 
 
 @pytest.fixture
 def env_ctx():
-    return EnvContext()
+    return _EnvContext()
 
 
 @pytest.fixture

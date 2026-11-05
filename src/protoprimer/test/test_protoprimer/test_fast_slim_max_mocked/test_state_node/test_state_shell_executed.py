@@ -13,7 +13,7 @@ from protoprimer.primer_kernel import (
     _Node_state_local_cache_dir_abs_path_inited,
     _Node_state_local_venv_dir_abs_path_inited,
     _Node_state_stride_src_updated_reached,
-    EnvContext,
+    _EnvContext,
     EnvState,
     StateStride,
 )
@@ -21,14 +21,14 @@ from protoprimer.primer_kernel import (
 
 @pytest.fixture
 def env_ctx():
-    return EnvContext()
+    return _EnvContext()
 
 
 def test_relationship():
     assert_test_module_name_embeds_str(EnvState.state_shell_executed.name)
 
 
-@patch(f"{primer_kernel.__name__}.{EnvContext.__name__}.{EnvContext.get_stride.__name__}")
+@patch(f"{primer_kernel.__name__}.{_EnvContext.__name__}.{_EnvContext.get_stride.__name__}")
 @patch(f"{primer_kernel.__name__}.os.execve")
 @patch(f"{primer_kernel.__name__}.{_Node_state_stride_src_updated_reached.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{_Node_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
@@ -83,7 +83,7 @@ def test_shell_executed_in_bash(
     )
 
 
-@patch(f"{primer_kernel.__name__}.{EnvContext.__name__}.{EnvContext.get_stride.__name__}")
+@patch(f"{primer_kernel.__name__}.{_EnvContext.__name__}.{_EnvContext.get_stride.__name__}")
 @patch(f"{primer_kernel.__name__}.os.execve")
 @patch(f"{primer_kernel.__name__}.{_Node_state_stride_src_updated_reached.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{_Node_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
@@ -138,7 +138,7 @@ def test_shell_executed_in_zsh(
     )
 
 
-@patch(f"{primer_kernel.__name__}.{EnvContext.__name__}.{EnvContext.get_stride.__name__}")
+@patch(f"{primer_kernel.__name__}.{_EnvContext.__name__}.{_EnvContext.get_stride.__name__}")
 @patch(f"{primer_kernel.__name__}.os.execve")
 @patch(f"{primer_kernel.__name__}.{_Node_state_stride_src_updated_reached.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{_Node_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
@@ -193,7 +193,7 @@ def test_shell_executed_in_sh(
     )
 
 
-@patch(f"{primer_kernel.__name__}.{EnvContext.__name__}.{EnvContext.get_stride.__name__}")
+@patch(f"{primer_kernel.__name__}.{_EnvContext.__name__}.{_EnvContext.get_stride.__name__}")
 @patch(f"{primer_kernel.__name__}.os.execve")
 @patch(f"{primer_kernel.__name__}.{_Node_state_stride_src_updated_reached.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{_Node_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")

@@ -86,3 +86,72 @@ def test_removals_and_changes_are_breaking(
     new_root_dir_abs_path = create_tree(tmp_path / "new", new_source)
     breaking_changes = find_breaking_api_changes("some_pkg", old_root_dir_abs_path, new_root_dir_abs_path)
     assert any(breaking_change.startswith(expected_path) for breaking_change in breaking_changes), breaking_changes
+
+
+required_source = """
+class _Req:
+    def method_a(self, x): ...
+    def _hidden(self): ...
+
+def _req_func(a): ...
+
+def _other(a): ...
+"""
+
+
+def find_required_breaking_changes(
+    tmp_path: pathlib.Path,
+    new_source: str,
+    required_obj_paths,
+):
+    old_root_dir_abs_path = create_tree(tmp_path / "old", required_source)
+    new_root_dir_abs_path = create_tree(tmp_path / "new", new_source)
+    return find_breaking_api_changes(
+        "some_pkg",
+        old_root_dir_abs_path,
+        new_root_dir_abs_path,
+        required_obj_paths,
+    )
+
+
+@requires_max_python
+def test_unlisted_private_removal_is_not_breaking(tmp_path: pathlib.Path):
+    assert find_required_breaking_changes(tmp_path, "", []) == []
+
+
+@requires_max_python
+@pytest.mark.parametrize(
+    "new_source, expected_path",
+    [
+        (required_source.replace("class _Req:", "class _Renamed:"), "some_pkg._Req"),
+        (required_source.replace("def _req_func(a): ...", ""), "some_pkg._req_func"),
+        (required_source.replace("def method_a(self, x): ...", ""), "some_pkg._Req.method_a"),
+        (required_source.replace("def method_a(self, x)", "def method_a(self, x, req)"), "some_pkg._Req.method_a"),
+    ],
+)
+def test_required_removals_and_changes_are_breaking(
+    tmp_path: pathlib.Path,
+    new_source: str,
+    expected_path: str,
+):
+    breaking_changes = find_required_breaking_changes(tmp_path, new_source, ["some_pkg._Req", "some_pkg._req_func"])
+    assert any(breaking_change.startswith(expected_path) for breaking_change in breaking_changes), breaking_changes
+
+
+@requires_max_python
+def test_unlisted_private_member_of_required_class_is_not_breaking(tmp_path: pathlib.Path):
+    new_source = required_source.replace("def _hidden(self): ...", "")
+    assert find_required_breaking_changes(tmp_path, new_source, ["some_pkg._Req"]) == []
+
+
+@requires_max_python
+def test_listed_private_member_is_breaking(tmp_path: pathlib.Path):
+    new_source = required_source.replace("def _hidden(self): ...", "")
+    breaking_changes = find_required_breaking_changes(tmp_path, new_source, ["some_pkg._Req", "some_pkg._Req._hidden"])
+    assert any(breaking_change.startswith("some_pkg._Req._hidden") for breaking_change in breaking_changes), breaking_changes
+
+
+@requires_max_python
+def test_missing_required_path_fails(tmp_path: pathlib.Path):
+    with pytest.raises(KeyError):
+        find_required_breaking_changes(tmp_path, required_source, ["some_pkg._Missing"])

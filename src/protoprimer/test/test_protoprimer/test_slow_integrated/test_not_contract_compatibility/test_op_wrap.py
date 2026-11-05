@@ -12,7 +12,7 @@ from local_test.name_assertion import (
     assert_test_module_name_embeds_str,
 )
 from protoprimer.primer_kernel import (
-    EntryFunc,
+    _EntryFunc,
     ExecOperation,
     SyntaxArg,
     generate_entry_script_content,
@@ -25,7 +25,7 @@ def test_relationship():
 
 def _wrap_and_assert(
     tmp_path: pathlib.Path,
-    entry_func: EntryFunc,
+    entry_func: _EntryFunc,
 ):
     # given:
 
@@ -70,21 +70,21 @@ def _wrap_and_assert(
 
 def test_wrap_boot_env(tmp_path: pathlib.Path):
 
-    assert_test_func_name_embeds_str(EntryFunc.func_boot_env.value)
+    assert_test_func_name_embeds_str(_EntryFunc.func_boot_env.value)
 
-    _wrap_and_assert(tmp_path, EntryFunc.func_boot_env)
+    _wrap_and_assert(tmp_path, _EntryFunc.func_boot_env)
 
 
 def test_wrap_start_app(tmp_path: pathlib.Path):
 
-    assert_test_func_name_embeds_str(EntryFunc.func_start_app.value)
+    assert_test_func_name_embeds_str(_EntryFunc.func_start_app.value)
 
-    _wrap_and_assert(tmp_path, EntryFunc.func_start_app)
+    _wrap_and_assert(tmp_path, _EntryFunc.func_start_app)
 
 
 def test_wrap_boot_env_without_main_func(tmp_path: pathlib.Path):
 
-    assert_test_func_name_embeds_str(EntryFunc.func_boot_env.value)
+    assert_test_func_name_embeds_str(_EntryFunc.func_boot_env.value)
 
     # given:
 
@@ -99,7 +99,7 @@ def test_wrap_boot_env_without_main_func(tmp_path: pathlib.Path):
         [
             str(proto_kernel_abs_path),
             ExecOperation.op_wrap.value,
-            EntryFunc.func_boot_env.value,
+            _EntryFunc.func_boot_env.value,
             SyntaxArg.arg_entry_script_path,
             str(entry_script_abs_path),
         ]
@@ -113,7 +113,7 @@ def test_wrap_boot_env_without_main_func(tmp_path: pathlib.Path):
     assert entry_script_stat.st_mode & stat.S_IXUSR
 
     expected_content = generate_entry_script_content(
-        EntryFunc.func_boot_env.value,
+        _EntryFunc.func_boot_env.value,
         str(proto_kernel_abs_path),
         str(entry_script_abs_path),
         None,

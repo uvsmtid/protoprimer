@@ -7,7 +7,7 @@ from local_test.verified_dynamic_graph import (
     max_deps_env_ctx,
 )
 from protoprimer.primer_kernel import (
-    EntryFunc,
+    _EntryFunc,
     EnvState,
     StateNode,
 )
@@ -38,7 +38,7 @@ class TestEnvStateOrdering:
         Verify that each `EnvState` enum member is defined AFTER all the states it depends on (its parents).
         """
         self.env_ctx = VerifyingEnvContext()
-        self.env_ctx._entry_func = EntryFunc.func_boot_env
+        self.env_ctx._entry_func = _EntryFunc.func_boot_env
         self.env_ctx._is_app = True
         self.env_ctx._exec_operation = max_deps_env_ctx._exec_operation
 
@@ -77,7 +77,7 @@ class TestEnvStateOrdering:
         Verify that each state's implementation class is defined AFTER the classes of its parent states.
         """
         self.env_ctx = VerifyingEnvContext()
-        self.env_ctx._entry_func = EntryFunc.func_boot_env
+        self.env_ctx._entry_func = _EntryFunc.func_boot_env
         self.env_ctx._is_app = True
         self.env_ctx._exec_operation = max_deps_env_ctx._exec_operation
 

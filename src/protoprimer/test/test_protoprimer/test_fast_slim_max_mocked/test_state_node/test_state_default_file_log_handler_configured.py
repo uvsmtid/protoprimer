@@ -11,7 +11,7 @@ from protoprimer.primer_kernel import (
     _Node_state_input_start_id_var_loaded,
     _Node_state_input_stderr_log_level_handler_configured,
     _Node_state_local_log_dir_abs_path_inited,
-    EnvContext,
+    _EnvContext,
     EnvState,
     _PrimerFileLogFormatter,
     StateStrideFilter,
@@ -23,7 +23,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
     def setUp(self):
         self.setUpPyfakefs()
-        self.env_ctx = EnvContext()
+        self.env_ctx = _EnvContext()
         self.mock_log_dir = "/mock_log_dir"
         self.mock_start_id = "mock_start_id"
 

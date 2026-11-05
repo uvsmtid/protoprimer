@@ -15,7 +15,7 @@ from local_test.integrated_helper import (
 )
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer.primer_kernel import (
-    EntryFunc,
+    _EntryFunc,
     EnvVar,
     StateStride,
     SyntaxArg,
@@ -116,7 +116,7 @@ def test_trace_mode_start_app(tmp_path: Path):
     # create `start_app` entry script
     start_app_script_abs_path = ref_root_abs_path / "start_app"
     start_app_script_content = generate_entry_script_content(
-        EntryFunc.func_start_app.value,
+        _EntryFunc.func_start_app.value,
         str(proto_kernel_abs_path),
         str(start_app_script_abs_path),
         f"{cmd_start_app_example.__name__}",

@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import Mock
 
 from protoprimer.primer_kernel import (
-    EnvContext,
+    _EnvContext,
     StateGraph,
     StateNode,
 )
@@ -12,7 +12,7 @@ class TestStateGraph(unittest.TestCase):
 
     def setUp(self):
         self.graph = StateGraph()
-        self.env_ctx = EnvContext()
+        self.env_ctx = _EnvContext()
 
     def test_register_factory(self):
         # given:

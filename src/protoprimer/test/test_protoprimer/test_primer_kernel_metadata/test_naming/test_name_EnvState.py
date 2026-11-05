@@ -8,7 +8,7 @@ from local_test.name_assertion import (
 from protoprimer.primer_kernel import (
     ConfConstGeneral,
     ConfLeap,
-    EntryFunc,
+    _EntryFunc,
     EnvState,
     ExecOperation,
     FilesystemObject,
@@ -224,7 +224,7 @@ class StateName(enum.Enum):
         name_components=[
             KeyWord.key_state.value,
             KeyWord.key_func.value,
-            EntryFunc.func_boot_env.value,
+            _EntryFunc.func_boot_env.value,
             KeyWord.key_executed.value,
         ],
     )
@@ -245,7 +245,7 @@ class StateName(enum.Enum):
         name_components=[
             KeyWord.key_state.value,
             KeyWord.key_func.value,
-            EntryFunc.func_start_app.value,
+            _EntryFunc.func_start_app.value,
             KeyWord.key_executed.value,
         ],
     )
@@ -256,7 +256,7 @@ class StateName(enum.Enum):
         name_components=[
             KeyWord.key_state.value,
             KeyWord.key_func.value,
-            EntryFunc.func_call_lib.value,
+            _EntryFunc.func_call_lib.value,
             KeyWord.key_executed.value,
         ],
     )

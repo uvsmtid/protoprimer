@@ -12,14 +12,14 @@ from protoprimer.primer_kernel import (
     _Node_state_local_conf_symlink_abs_path_inited,
     _Node_state_primer_conf_file_abs_path_inited,
     ConfConstClient,
-    EnvContext,
+    _EnvContext,
     EnvState,
 )
 
 
 @pytest.fixture
 def env_ctx():
-    return EnvContext()
+    return _EnvContext()
 
 
 def test_relationship():

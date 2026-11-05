@@ -13,6 +13,21 @@ import pathlib
 from local_test.case_condition import requires_max_python
 from local_test.griffe_helper import find_breaking_api_changes
 from local_test.name_assertion import assert_test_module_name_embeds_str
+from protoprimer.primer_kernel import (
+    _ContextBuilder,
+    _EntryFunc,
+    _EnvContext,
+    _run_process,
+)
+
+
+# Private (underscore) objects checked as public: "Required API" in FT_78_72_23_04.backward_compatibility.md
+required_obj_paths = [
+    f"protoprimer.primer_kernel.{_ContextBuilder.__name__}",
+    f"protoprimer.primer_kernel.{_EntryFunc.__name__}",
+    f"protoprimer.primer_kernel.{_EnvContext.__name__}",
+    f"protoprimer.primer_kernel.{_run_process.__name__}",
+]
 
 
 def test_relationship():
@@ -34,6 +49,7 @@ def test_public_api_is_not_broken():
         "protoprimer",
         own_main_dir_abs_path,
         installed_package_dir_abs_path.parent,
+        required_obj_paths,
     )
 
     # then:

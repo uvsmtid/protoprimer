@@ -16,8 +16,8 @@ from protoprimer.primer_kernel import (
     _Factory_state_args_parsed,
     _Node_state_input_stderr_log_level_var_loaded,
     ConfConstInput,
-    ContextBuilder,
-    EntryFunc,
+    _ContextBuilder,
+    _EntryFunc,
     EnvState,
     EnvVar,
     SyntaxArg,
@@ -27,8 +27,8 @@ from protoprimer.primer_kernel import (
 @pytest.fixture
 def env_ctx():
     return (
-        ContextBuilder()
-        .entry_func(EntryFunc.func_boot_env)
+        _ContextBuilder()
+        .entry_func(_EntryFunc.func_boot_env)
         .is_app(True)
         #
         .build_context()
