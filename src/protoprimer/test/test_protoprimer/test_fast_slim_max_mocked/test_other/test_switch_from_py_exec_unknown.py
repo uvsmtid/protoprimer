@@ -36,10 +36,10 @@ class ThisTestClass(BasePyfakefsTestClass):
 
     @patch.dict(f"{os.__name__}.environ", {}, clear=True)
     @patch(
-        f"{primer_kernel.__name__}.get_python_version",
+        f"{primer_kernel.__name__}._get_python_version",
         new=mock_get_python_version_by_current,
     )
-    @patch(f"{primer_kernel.__name__}.probe_python_file_abs_path")
+    @patch(f"{primer_kernel.__name__}._probe_python_file_abs_path")
     @patch(f"{primer_kernel.__name__}.get_default_start_id", return_value="mock_start_id")
     @patch(f"{primer_kernel.__name__}.{_Node_state_proto_kernel_file_abs_path_inited_not_func_call_lib.__name__}.eval_own_state")
     @patch(f"{primer_kernel.__name__}.os.execve")

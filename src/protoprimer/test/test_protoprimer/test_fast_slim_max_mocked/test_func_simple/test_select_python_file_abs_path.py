@@ -8,25 +8,25 @@ import pytest
 import protoprimer.primer_kernel
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer.primer_kernel import (
-    select_python_file_abs_path,
+    _select_python_file_abs_path,
     SelectorFunc,
 )
 
 
 def test_relationship():
     assert_test_module_name_embeds_str(
-        select_python_file_abs_path.__name__,
+        _select_python_file_abs_path.__name__,
     )
 
 
-@patch(f"{protoprimer.primer_kernel.__name__}.get_python_version")
+@patch(f"{protoprimer.primer_kernel.__name__}._get_python_version")
 @patch(f"{protoprimer.primer_kernel.__name__}.import_proto_module")
 def test_select_python_finds_executable_which_returns_its_version(
     mock_import_proto_module,
     mock_get_python_version,
 ):
     """
-    Tests that `select_python_file_abs_path` successfully finds a `python` executable that returns its version.
+    Tests that `_select_python_file_abs_path` successfully finds a `python` executable that returns its version.
     """
 
     # given:
@@ -45,7 +45,7 @@ def test_select_python_finds_executable_which_returns_its_version(
 
     # when:
 
-    result_path = select_python_file_abs_path(required_version, selector_script_path)
+    result_path = _select_python_file_abs_path(required_version, selector_script_path)
 
     # then:
 
@@ -55,7 +55,7 @@ def test_select_python_finds_executable_which_returns_its_version(
     mock_get_python_version.assert_called_once_with(expected_path)
 
 
-@patch(f"{protoprimer.primer_kernel.__name__}.get_python_version")
+@patch(f"{protoprimer.primer_kernel.__name__}._get_python_version")
 @patch(f"{protoprimer.primer_kernel.__name__}.import_proto_module")
 def test_select_python_cannot_find_executable_which_returns_its_version(
     mock_import_proto_module,
@@ -63,7 +63,7 @@ def test_select_python_cannot_find_executable_which_returns_its_version(
     caplog,
 ):
     """
-    Tests that `select_python_file_abs_path` returns `None`
+    Tests that `_select_python_file_abs_path` returns `None`
     if the `python` executable verification raises an exception.
     """
 
@@ -83,7 +83,7 @@ def test_select_python_cannot_find_executable_which_returns_its_version(
 
     # when:
 
-    result_path = select_python_file_abs_path(required_version, selector_script_path)
+    result_path = _select_python_file_abs_path(required_version, selector_script_path)
 
     # then:
 
@@ -102,7 +102,7 @@ def test_select_python_cannot_find_executable_which_returns_its_version(
 @patch(f"{protoprimer.primer_kernel.__name__}.import_proto_module")
 def test_select_python_finds_no_matching_version(mock_import_proto_module):
     """
-    Tests that `select_python_file_abs_path` returns `None` when the delegated selector returns `None`.
+    Tests that `_select_python_file_abs_path` returns `None` when the delegated selector returns `None`.
     """
 
     # given:
@@ -120,7 +120,7 @@ def test_select_python_finds_no_matching_version(mock_import_proto_module):
 
     # when:
 
-    result_path = select_python_file_abs_path(required_version, selector_script_path)
+    result_path = _select_python_file_abs_path(required_version, selector_script_path)
 
     # then:
 

@@ -41,7 +41,7 @@ class TestEnvContext(BasePyfakefsTestClass):
 
     @patch("sys.argv", ["script_name"])
     @patch(
-        f"{primer_kernel.__name__}.get_python_version",
+        f"{primer_kernel.__name__}._get_python_version",
         new=mock_get_python_version_by_current,
     )
     @patch(
@@ -109,7 +109,7 @@ class TestEnvContext(BasePyfakefsTestClass):
         },
     )
     @patch(
-        f"{primer_kernel.__name__}.get_python_version",
+        f"{primer_kernel.__name__}._get_python_version",
         new=mock_get_python_version_by_current,
     )
     @patch(
@@ -177,7 +177,7 @@ class TestEnvContext(BasePyfakefsTestClass):
         },
     )
     @patch(
-        f"{primer_kernel.__name__}.get_python_version",
+        f"{primer_kernel.__name__}._get_python_version",
         new=mock_get_python_version_by_current,
     )
     @patch(

@@ -77,14 +77,14 @@ def test_trace_mode_boot_env(tmp_path: Path):
     for stride in StateStride:
         assert any(stride.name in stderr_line for stderr_line in stderr_lines), f"expected stride {stride.name} in stderr log"
 
-    # restart count in `stderr` must equal `switch_python` trace count in `stdout`:
+    # restart count in `stderr` must equal `_switch_python` trace count in `stdout`:
     # *   each `os.execve` restart logs "<<< restart >>>" to `stderr`
-    # *   each call to `switch_python` is traced to `stdout`
+    # *   each call to `_switch_python` is traced to `stdout`
     restart_count = sum(1 for stderr_line in stderr_lines if "<<< restart >>>" in stderr_line)
     assert restart_count >= 1, "expected at least one python restart"
-    switch_python_count = sum(1 for stdout_line in stdout_lines if "funcname: switch_python" in stdout_line)
+    switch_python_count = sum(1 for stdout_line in stdout_lines if "funcname: _switch_python" in stdout_line)
     # equality verifies trace was re-injected via `exec_argv` on every restart
-    assert restart_count == switch_python_count, f"restart count [{restart_count}] != switch_python trace count [{switch_python_count}]: " f"trace was not propagated to all python restarts"
+    assert restart_count == switch_python_count, f"restart count [{restart_count}] != _switch_python trace count [{switch_python_count}]: " f"trace was not propagated to all python restarts"
 
     # boot completed successfully
     assert_editable_install(project_dir_abs_path, test_package_name)
@@ -160,6 +160,6 @@ def test_trace_mode_start_app(tmp_path: Path):
     assert any("Hello, world!" in stdout_line for stdout_line in stdout_lines)
 
     restart_count = sum(1 for stderr_line in stderr_lines if "<<< restart >>>" in stderr_line)
-    switch_python_count = sum(1 for stdout_line in stdout_lines if "funcname: switch_python" in stdout_line)
-    # restart count (stderr) == switch_python trace count (stdout) == 1:
-    assert restart_count == switch_python_count == 1, f"restart [{restart_count}] != switch_python [{switch_python_count}] != 1: " f"trace was not propagated to the single python restart"
+    switch_python_count = sum(1 for stdout_line in stdout_lines if "funcname: _switch_python" in stdout_line)
+    # restart count (stderr) == _switch_python trace count (stdout) == 1:
+    assert restart_count == switch_python_count == 1, f"restart [{restart_count}] != _switch_python [{switch_python_count}] != 1: " f"trace was not propagated to the single python restart"

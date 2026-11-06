@@ -9,13 +9,13 @@ from unittest.mock import (
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer.primer_kernel import (
     ConfConstInput,
-    log_python_context,
+    _log_python_context,
 )
 
 
 def test_relationship():
     assert_test_module_name_embeds_str(
-        log_python_context.__name__,
+        _log_python_context.__name__,
     )
 
 
@@ -36,7 +36,7 @@ def test_log_python_context(mock_logger):
         },
     ):
         with patch.object(sys, "prefix", sys_prefix):
-            log_python_context(log_level)
+            _log_python_context(log_level)
 
     # then:
     expected_calls = [

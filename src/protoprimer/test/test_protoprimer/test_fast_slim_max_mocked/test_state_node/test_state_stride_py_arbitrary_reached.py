@@ -48,9 +48,9 @@ def test_relationship():
     f"{primer_kernel.__name__}._EnvContext.set_max_stride",
     return_value=StateStride.stride_py_arbitrary,
 )
-@patch(f"{primer_kernel.__name__}.get_path_to_curr_python")
-@patch(f"{primer_kernel.__name__}.get_path_to_base_python")
-@patch(f"{primer_kernel.__name__}.switch_python")
+@patch(f"{primer_kernel.__name__}._get_path_to_curr_python")
+@patch(f"{primer_kernel.__name__}._get_path_to_base_python")
+@patch(f"{primer_kernel.__name__}._switch_python")
 @patch(f"{primer_kernel.__name__}.{_Node_state_input_start_id_var_loaded.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{_Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
 def test_py_exec_stride_py_unknown_in_venv(
@@ -109,9 +109,9 @@ def test_py_exec_stride_py_unknown_in_venv(
     f"{primer_kernel.__name__}._EnvContext.set_max_stride",
     return_value=StateStride.stride_py_arbitrary,
 )
-@patch(f"{primer_kernel.__name__}.get_path_to_curr_python")
-@patch(f"{primer_kernel.__name__}.get_path_to_base_python")
-@patch(f"{primer_kernel.__name__}.switch_python")
+@patch(f"{primer_kernel.__name__}._get_path_to_curr_python")
+@patch(f"{primer_kernel.__name__}._get_path_to_base_python")
+@patch(f"{primer_kernel.__name__}._switch_python")
 @patch(f"{primer_kernel.__name__}.{_Node_state_input_start_id_var_loaded.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{_Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
 def test_py_exec_stride_py_unknown_not_in_venv(

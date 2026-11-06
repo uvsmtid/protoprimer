@@ -94,12 +94,12 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(f"{primer_kernel.__name__}.{_Node_state_selected_python_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_venv_driver_prepared.__name__}.create_state_node")
     @patch(
-        f"{primer_kernel.__name__}.get_path_to_curr_python",
+        f"{primer_kernel.__name__}._get_path_to_curr_python",
         return_value=test_python_abs_path,
     )
     @patch(f"{primer_kernel.__name__}.os.execve")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.is_same_file", return_value=True)
+    @patch(f"{primer_kernel.__name__}._is_same_file", return_value=True)
     @patch(f"{primer_kernel.__name__}.{_Node_state_version_constraints_file_basename_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Node_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
     def test_success_on_path_to_curr_python_is_outside_of_path_to_venv_when_venv_is_created(
@@ -181,7 +181,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(f"{primer_kernel.__name__}.{_Node_state_selected_python_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_venv_driver_prepared.__name__}.create_state_node")
     @patch(
-        f"{primer_kernel.__name__}.get_path_to_curr_python",
+        f"{primer_kernel.__name__}._get_path_to_curr_python",
         return_value="/mock_client_dir/venv/wrong/path/to/python",
     )
     @patch(f"{primer_kernel.__name__}.os.execve")
@@ -245,7 +245,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(f"{primer_kernel.__name__}.{_Node_state_selected_python_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_venv_driver_prepared.__name__}.create_state_node")
     @patch(
-        f"{primer_kernel.__name__}.get_path_to_curr_python",
+        f"{primer_kernel.__name__}._get_path_to_curr_python",
         # expected path to `python`:
         return_value="/mock_client_dir/venv/bin/python",
     )
@@ -311,12 +311,12 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(f"{primer_kernel.__name__}.{_Node_state_selected_python_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_venv_driver_prepared.__name__}.create_state_node")
     @patch(
-        f"{primer_kernel.__name__}.get_path_to_curr_python",
+        f"{primer_kernel.__name__}._get_path_to_curr_python",
         return_value=test_python_abs_path,
     )
     @patch(f"{primer_kernel.__name__}.os.execve")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.is_same_file", return_value=False)
+    @patch(f"{primer_kernel.__name__}._is_same_file", return_value=False)
     @patch(f"{primer_kernel.__name__}.{_Node_state_version_constraints_file_basename_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Node_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
     def test_failure_when_path_to_python_differs_from_path_to_curr_python(
@@ -378,12 +378,12 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(f"{primer_kernel.__name__}.{_Node_state_selected_python_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_venv_driver_prepared.__name__}.create_state_node")
     @patch(
-        f"{primer_kernel.__name__}.get_path_to_curr_python",
+        f"{primer_kernel.__name__}._get_path_to_curr_python",
         return_value=test_python_abs_path,
     )
     @patch(f"{primer_kernel.__name__}.os.execve")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.is_same_file", return_value=True)
+    @patch(f"{primer_kernel.__name__}._is_same_file", return_value=True)
     @patch(f"{primer_kernel.__name__}.{_Node_state_version_constraints_file_basename_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Node_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
     def test_success_when_path_to_python_matches_path_to_curr_python_and_execv_is_called_for_venv_python(
@@ -467,12 +467,12 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(f"{primer_kernel.__name__}.{_Node_state_selected_python_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_venv_driver_prepared.__name__}.create_state_node")
     @patch(
-        f"{primer_kernel.__name__}.get_path_to_curr_python",
+        f"{primer_kernel.__name__}._get_path_to_curr_python",
         return_value=non_default_file_abs_path_python,
     )
     @patch(f"{primer_kernel.__name__}.os.execve")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.is_same_file", return_value=True)
+    @patch(f"{primer_kernel.__name__}._is_same_file", return_value=True)
     @patch(f"{primer_kernel.__name__}.{_Node_state_version_constraints_file_basename_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Node_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
     def test_success_when_path_to_python_is_not_inside_existing_venv(
@@ -554,12 +554,12 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(f"{primer_kernel.__name__}.{_Node_state_selected_python_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_venv_driver_prepared.__name__}.create_state_node")
     @patch(
-        f"{primer_kernel.__name__}.get_path_to_curr_python",
+        f"{primer_kernel.__name__}._get_path_to_curr_python",
         return_value="/a/different/python",
     )
     @patch(f"{primer_kernel.__name__}.os.execve")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.is_same_file", return_value=True)
+    @patch(f"{primer_kernel.__name__}._is_same_file", return_value=True)
     @patch(f"{primer_kernel.__name__}.{_Node_state_version_constraints_file_basename_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Node_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
     def test_success_on_arbitrary_py_exec_outside_venv(
@@ -599,7 +599,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         # Make sure `path_to_curr_python` != `configured python`:
         mock_state_selected_python_file_abs_path_inited.return_value.eval_own_state.return_value = "/a/different/python"
 
-        # Make sure `is_sub_path` is false:
+        # Make sure `_is_sub_path` is false:
         mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = "/not/the/parent/of/current/python"
 
         mock_state_local_conf_file_abs_path_inited.return_value.eval_own_state.return_value = "any/path"
@@ -645,7 +645,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(f"{primer_kernel.__name__}.{_Node_state_selected_python_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_venv_driver_prepared.__name__}.create_state_node")
     @patch(
-        f"{primer_kernel.__name__}.get_path_to_curr_python",
+        f"{primer_kernel.__name__}._get_path_to_curr_python",
     )
     @patch(f"{primer_kernel.__name__}.os.execve")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
@@ -702,12 +702,12 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(f"{primer_kernel.__name__}.{_Node_state_selected_python_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_venv_driver_prepared.__name__}.create_state_node")
     @patch(
-        f"{primer_kernel.__name__}.get_path_to_curr_python",
+        f"{primer_kernel.__name__}._get_path_to_curr_python",
         return_value=test_python_abs_path,
     )
     @patch(f"{primer_kernel.__name__}.os.execve")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.is_same_file", return_value=True)
+    @patch(f"{primer_kernel.__name__}._is_same_file", return_value=True)
     @patch(f"{primer_kernel.__name__}.{_Node_state_version_constraints_file_basename_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Node_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
     def test_success_when_reusing_existing_venv(
@@ -789,13 +789,13 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(f"{primer_kernel.__name__}.{_Node_state_selected_python_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_venv_driver_prepared.__name__}.create_state_node")
     @patch(
-        f"{primer_kernel.__name__}.get_path_to_curr_python",
+        f"{primer_kernel.__name__}._get_path_to_curr_python",
         return_value=test_python_abs_path,
     )
     @patch(f"{primer_kernel.__name__}.os.execve")
     @patch(f"{primer_kernel.__name__}.{VenvDriverPip.__name__}.create_venv")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.is_same_file", return_value=True)
+    @patch(f"{primer_kernel.__name__}._is_same_file", return_value=True)
     @patch(f"{primer_kernel.__name__}.{_Node_state_version_constraints_file_basename_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Node_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
     def test_failure_when_reusing_existing_venv_of_wrong_type(

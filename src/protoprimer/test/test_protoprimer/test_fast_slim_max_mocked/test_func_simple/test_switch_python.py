@@ -9,13 +9,13 @@ from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer.primer_kernel import (
     EnvVar,
     StateStride,
-    switch_python,
+    _switch_python,
 )
 
 
 def test_relationship():
     assert_test_module_name_embeds_str(
-        switch_python.__name__,
+        _switch_python.__name__,
     )
 
 
@@ -34,7 +34,7 @@ def test_switch_python(
     proto_kernel_abs_file_path = "/path/to/proto_kernel.py"
 
     # when:
-    switch_python(
+    _switch_python(
         curr_python_path,
         next_py_exec,
         next_python_path,
@@ -78,7 +78,7 @@ def test_switch_python_trace_execution(
     proto_kernel_abs_file_path = "/path/to/proto_kernel.py"
 
     # when:
-    switch_python(
+    _switch_python(
         curr_python_path,
         next_py_exec,
         next_python_path,
@@ -123,7 +123,7 @@ def test_switch_python_no_proto_kernel(
     proto_kernel_abs_file_path = None
 
     # when:
-    switch_python(
+    _switch_python(
         curr_python_path,
         next_py_exec,
         next_python_path,

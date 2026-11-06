@@ -122,7 +122,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_venv_driver_prepared.return_value.eval_own_state.return_value.install_dependencies.assert_called()
         mock_state_venv_driver_prepared.return_value.eval_own_state.return_value.install_dependencies.assert_any_call(
             mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value,
-            primer_kernel.get_path_to_curr_python(),
+            primer_kernel._get_path_to_curr_python(),
             os.path.join(
                 mock_state_local_conf_symlink_abs_path_inited.return_value.eval_own_state.return_value,
                 primer_kernel.ConfConstEnv.default_version_constraints_file_basename,
@@ -206,7 +206,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_venv_driver_prepared.return_value.eval_own_state.return_value.install_dependencies.assert_called()
         mock_state_venv_driver_prepared.return_value.eval_own_state.return_value.install_dependencies.assert_any_call(
             mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value,
-            primer_kernel.get_path_to_curr_python(),
+            primer_kernel._get_path_to_curr_python(),
             os.path.join(
                 mock_state_local_conf_symlink_abs_path_inited.return_value.eval_own_state.return_value,
                 primer_kernel.ConfConstEnv.default_version_constraints_file_basename,
@@ -291,21 +291,21 @@ class ThisTestClass(BasePyfakefsTestClass):
             [
                 call(
                     mock_client_ref_root_dir,
-                    primer_kernel.get_path_to_curr_python(),
+                    primer_kernel._get_path_to_curr_python(),
                     constraints_txt_path,
                     [project_descriptors[1]],
                     ["--group_1-arg"],
                 ),
                 call(
                     mock_client_ref_root_dir,
-                    primer_kernel.get_path_to_curr_python(),
+                    primer_kernel._get_path_to_curr_python(),
                     constraints_txt_path,
                     [project_descriptors[0]],
                     [],
                 ),
                 call(
                     mock_client_ref_root_dir,
-                    primer_kernel.get_path_to_curr_python(),
+                    primer_kernel._get_path_to_curr_python(),
                     constraints_txt_path,
                     [project_descriptors[2]],
                     [],

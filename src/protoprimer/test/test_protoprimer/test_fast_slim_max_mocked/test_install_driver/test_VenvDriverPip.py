@@ -35,7 +35,7 @@ def test_create_venv_when_constraints_file_does_not_exist(mock_check_call, mock_
     constraints_file_abs_path = "/tmp/constraints.txt"
     mock_exists.return_value = False
     mock_check_output.side_effect = [
-        # `assert_python_version_matches` probes `selected_python_file_abs_path` version first:
+        # `_assert_python_version_matches` probes `selected_python_file_abs_path` version first:
         "(3, 10, 5)",
         b"pip==25.0\nsetuptools==75.0\nwheel==0.47.0\n",
     ]
@@ -101,7 +101,7 @@ def test_create_venv_when_constraints_file_exists(mock_check_call, mock_check_ou
     constraints_file_abs_path = "/tmp/constraints.txt"
     mock_exists.return_value = True
     mock_check_output.side_effect = [
-        # `assert_python_version_matches` probes `selected_python_file_abs_path` version first:
+        # `_assert_python_version_matches` probes `selected_python_file_abs_path` version first:
         "(3, 10, 5)",
         b"pip==25.0\nsetuptools==75.0\nwheel==0.47.0\n",
     ]
@@ -231,7 +231,7 @@ def test_create_venv_upgrades_all_seeded_packages(mock_check_call, mock_check_ou
     constraints_file_abs_path = "/tmp/constraints.txt"
     mock_exists.return_value = False
     mock_check_output.side_effect = [
-        # `assert_python_version_matches` probes `selected_python_file_abs_path` version first:
+        # `_assert_python_version_matches` probes `selected_python_file_abs_path` version first:
         "(3, 10, 5)",
         b"pip==25.0\n",
     ]
