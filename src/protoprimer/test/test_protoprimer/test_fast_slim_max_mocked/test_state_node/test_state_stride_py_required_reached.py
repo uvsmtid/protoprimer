@@ -87,7 +87,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(f"{primer_kernel.__name__}.{_Node_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Node_state_selected_python_file_abs_path_inited.__name__}.create_state_node")
     @patch(
-        f"{primer_kernel.__name__}.get_path_to_curr_python",
+        f"{primer_kernel.__name__}._get_path_to_curr_python",
         return_value=test_python_abs_path,
     )
     @patch(f"{primer_kernel.__name__}.os.execve")
@@ -124,7 +124,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         # Make sure `path_to_curr_python` != `configured python`:
         mock_state_selected_python_file_abs_path_inited.return_value.eval_own_state.return_value = "/a/different/python"
 
-        # Make sure `is_sub_path` is false:
+        # Make sure `_is_sub_path` is false:
         mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = "/not/the/parent/of/current/python"
 
         mock_state_local_conf_file_abs_path_inited.return_value.eval_own_state.return_value = "any/path"
@@ -153,7 +153,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(f"{primer_kernel.__name__}.{_Node_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Node_state_selected_python_file_abs_path_inited.__name__}.create_state_node")
     @patch(
-        f"{primer_kernel.__name__}.get_path_to_curr_python",
+        f"{primer_kernel.__name__}._get_path_to_curr_python",
         return_value=test_python_abs_path,
     )
     @patch(f"{primer_kernel.__name__}.os.execve")
@@ -206,7 +206,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(f"{primer_kernel.__name__}.{_Node_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Node_state_selected_python_file_abs_path_inited.__name__}.create_state_node")
     @patch(
-        f"{primer_kernel.__name__}.get_path_to_curr_python",
+        f"{primer_kernel.__name__}._get_path_to_curr_python",
         return_value=non_default_file_abs_path_python,
     )
     @patch(f"{primer_kernel.__name__}.os.execve")

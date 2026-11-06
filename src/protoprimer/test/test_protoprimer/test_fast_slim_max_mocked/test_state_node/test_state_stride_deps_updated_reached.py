@@ -39,8 +39,8 @@ def test_relationship():
 
 
 @patch(f"{primer_kernel.__name__}.{_Node_state_input_start_id_var_loaded.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.get_path_to_curr_python")
-@patch(f"{primer_kernel.__name__}.switch_python")
+@patch(f"{primer_kernel.__name__}._get_path_to_curr_python")
+@patch(f"{primer_kernel.__name__}._switch_python")
 @patch(f"{primer_kernel.__name__}.{_Factory_state_proto_kernel_file_abs_path_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{_Node_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{_Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
@@ -98,7 +98,7 @@ def test_stride_py_required_to_next_stride_deps_updated(
 @patch(f"{primer_kernel.__name__}.{_Node_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{_Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{_Factory_state_version_constraints_generated.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.get_path_to_curr_python")
+@patch(f"{primer_kernel.__name__}._get_path_to_curr_python")
 def test_stride_deps_updated_to_same_stride_deps_updated(
     mock_switch_python,
     mock_state_version_constraints_generated,

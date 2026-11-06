@@ -27,6 +27,8 @@ required_obj_paths = [
     f"protoprimer.primer_kernel.{_EntryFunc.__name__}",
     f"protoprimer.primer_kernel.{_EnvContext.__name__}",
     f"protoprimer.primer_kernel.{_run_process.__name__}",
+    # A variable (no `__name__`): set via `setattr(imported_kernel, ...)` across kernel copies:
+    "protoprimer.primer_kernel._proto_kernel_abs_path",
 ]
 
 

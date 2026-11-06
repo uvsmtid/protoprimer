@@ -41,7 +41,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(f"{primer_kernel.__name__}.{_Factory_state_proto_kernel_updated.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_proto_kernel_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Node_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.switch_python")
+    @patch(f"{primer_kernel.__name__}._switch_python")
     def test_not_yet_at_required_python(
         self,
         mock_switch_python,
@@ -87,7 +87,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(f"{primer_kernel.__name__}.{_Factory_state_proto_kernel_updated.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_proto_kernel_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Node_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.switch_python")
+    @patch(f"{primer_kernel.__name__}._switch_python")
     def test_already_required_python(
         self,
         mock_switch_python,

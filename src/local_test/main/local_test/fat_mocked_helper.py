@@ -141,7 +141,7 @@ def fat_mock_wrapper(
         )
         exit_stack.enter_context(
             patch(
-                f"{protoprimer.primer_kernel.__name__}.get_python_version",
+                f"{protoprimer.primer_kernel.__name__}._get_python_version",
                 side_effect=mock_get_python_version_by_current,
             )
         )

@@ -3,20 +3,20 @@ import pytest
 
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer.primer_kernel import (
-    find_python_version_file,
+    _find_python_version_file,
     ConfConstGeneral,
 )
 
 
 def test_relationship():
     assert_test_module_name_embeds_str(
-        find_python_version_file.__name__,
+        _find_python_version_file.__name__,
     )
 
 
 def test_finds_version_file_in_current_dir(fs):
     """
-    Tests that `find_python_version_file` finds the `.python-version` file in the current directory.
+    Tests that `_find_python_version_file` finds the `.python-version` file in the current directory.
     """
 
     # given:
@@ -33,7 +33,7 @@ def test_finds_version_file_in_current_dir(fs):
 
     # The current working directory is where the file is.
     os.chdir(current_dir)
-    result_path = find_python_version_file(".")
+    result_path = _find_python_version_file(".")
 
     # then:
     assert result_path == version_file_path
@@ -41,7 +41,7 @@ def test_finds_version_file_in_current_dir(fs):
 
 def test_finds_version_file_in_parent_dir(fs):
     """
-    Tests that `find_python_version_file` walks up the tree to find the file.
+    Tests that `_find_python_version_file` walks up the tree to find the file.
     """
 
     # given:
@@ -58,7 +58,7 @@ def test_finds_version_file_in_parent_dir(fs):
     # when:
 
     # The search starts from a deep subdirectory:
-    result_path = find_python_version_file(child_dir)
+    result_path = _find_python_version_file(child_dir)
 
     # then:
     assert result_path == version_file_path
@@ -66,7 +66,7 @@ def test_finds_version_file_in_parent_dir(fs):
 
 def test_finds_version_file_at_root(fs):
     """
-    Tests that `find_python_version_file` can find the file at the filesystem root.
+    Tests that `_find_python_version_file` can find the file at the filesystem root.
     """
 
     # given:
@@ -80,7 +80,7 @@ def test_finds_version_file_at_root(fs):
 
     # when:
 
-    result_path = find_python_version_file(deep_dir)
+    result_path = _find_python_version_file(deep_dir)
 
     # then:
 
@@ -89,7 +89,7 @@ def test_finds_version_file_at_root(fs):
 
 def test_returns_none_when_no_file_exists(fs):
     """
-    Tests that `find_python_version_file` returns `None` if the file is not found.
+    Tests that `_find_python_version_file` returns `None` if the file is not found.
     """
 
     # given:
@@ -99,7 +99,7 @@ def test_returns_none_when_no_file_exists(fs):
     fs.create_dir(some_dir)
 
     # when:
-    result_path = find_python_version_file(some_dir)
+    result_path = _find_python_version_file(some_dir)
 
     # then:
     assert result_path is None
@@ -107,7 +107,7 @@ def test_returns_none_when_no_file_exists(fs):
 
 def test_finds_closest_version_file(fs):
     """
-    Tests that `find_python_version_file` returns the path to the nearest `.python-version` file.
+    Tests that `_find_python_version_file` returns the path to the nearest `.python-version` file.
     """
 
     # given:
@@ -127,7 +127,7 @@ def test_finds_closest_version_file(fs):
     # when:
 
     # The search starts from the directory containing the "child" version file:
-    result_path = find_python_version_file(current_dir)
+    result_path = _find_python_version_file(current_dir)
 
     # then:
     # It should find the one in the current directory, not the parent:

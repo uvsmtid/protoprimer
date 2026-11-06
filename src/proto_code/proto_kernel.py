@@ -62,7 +62,7 @@ def _run_process(env_ctx: _EnvContext) -> None:
 
     # See UC_10_80_27_57.extend_DAG.md
     try:
-        ensure_min_python_version()
+        _ensure_min_python_version()
 
         state_everything_executed: bool = env_ctx.eval_state(TargetState.target_everything_executed.value.name)
         assert state_everything_executed
@@ -94,7 +94,7 @@ def _run_process(env_ctx: _EnvContext) -> None:
         raise
 
 
-def ensure_min_python_version():
+def _ensure_min_python_version():
     """
     Ensure the running Python interpreter is >= (major, minor, patch).
     """
@@ -803,7 +803,7 @@ class VenvDriverPip(VenvDriverBase):
         constraints_file_abs_path: str,
     ) -> None:
         if self.enforce_version_match:
-            assert_python_version_matches(
+            _assert_python_version_matches(
                 self.selected_python_file_abs_path,
                 self.required_python_version,
             )
@@ -2267,7 +2267,7 @@ class _Node_state_input_stderr_log_level_handler_configured(AbstractCachingState
         # Remove stack trace for levels >= WARNING (it will only print the exception itself):
         if state_input_stderr_log_level_eval_finalized >= logging.WARNING:
             # Avoid changing that in tests - it changes the global state and causes many tests to fail unexpectedly:
-            if not is_test_run():
+            if not _is_test_run():
                 sys.tracebacklimit = 0
 
         return state_default_stderr_logger_configured
@@ -2742,7 +2742,7 @@ class _Node_state_stride_py_arbitrary_reached_is_app(AbstractCachingStateNode[St
 
         state_input_start_id_var_loaded: str = self.eval_parent_state(EnvState.state_input_start_id_var_loaded.name)
 
-        log_python_context(logging.DEBUG)
+        _log_python_context(logging.DEBUG)
 
         # UC_90_98_17_93.run_under_venv.md
         # Switch out of the current `venv` -
@@ -2768,9 +2768,9 @@ class _Node_state_stride_py_arbitrary_reached_is_app(AbstractCachingStateNode[St
             cleaned_path_parts = [p for p in PATH_parts if p != venv_bin_abs_path]
             cleaned_env[ConfConstInput.ext_env_var_PATH] = os.pathsep.join(cleaned_path_parts)
 
-        path_to_curr_python = get_path_to_curr_python()
-        path_to_next_python = get_path_to_base_python()
-        return switch_python(
+        path_to_curr_python = _get_path_to_curr_python()
+        path_to_next_python = _get_path_to_base_python()
+        return _switch_python(
             curr_python_path=path_to_curr_python,
             next_py_exec=self.env_ctx.set_max_stride(state_stride_py_arbitrary_reached),
             next_python_path=path_to_next_python,
@@ -2846,7 +2846,7 @@ class _Node_state_proto_kernel_file_abs_path_inited_not_func_call_lib(AbstractCa
             # rely on the path given in the `EnvVar.var_PROTOPRIMER_PROTO_KERNEL` env var:
             state_proto_kernel_file_abs_path_inited = state_input_proto_kernel_file_abs_path_var_loaded
         else:
-            log_python_context()
+            _log_python_context()
             if os.environ.get(EnvVar.var_PROTOPRIMER_MOCKED_RESTART.value, None) is None:
                 if self.env_ctx._is_app:
                     if self.env_ctx.get_stride().value == StateStride.stride_py_arbitrary.value:
@@ -3227,14 +3227,14 @@ class _BaseNode_state_selected_env_dir_rel_path(AbstractCachingStateNode[str]):
             raise AssertionError(f"`{PathName.path_selected_env.value}` [{client_local_env_dir_abs_path}] must be a dir.")
 
         state_ref_root_dir_abs_path_inited = self.eval_parent_state(EnvState.state_ref_root_dir_abs_path_inited.name)
-        if not is_sub_path(
+        if not _is_sub_path(
             client_local_env_dir_abs_path,
             state_ref_root_dir_abs_path_inited,
         ):
             raise AssertionError(f"`{PathName.path_selected_env.value}` [{client_local_env_dir_abs_path}] is not under `{EnvState.state_ref_root_dir_abs_path_inited.name}` [{state_ref_root_dir_abs_path_inited}].")
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
         state_selected_env_dir_rel_path_inited: str = os.path.normpath(
-            rel_path(
+            _rel_path(
                 client_local_env_dir_abs_path,
                 state_ref_root_dir_abs_path_inited,
             )
@@ -3527,7 +3527,7 @@ class _Node_state_required_python_version_inited(AbstractOverriddenFieldCachingS
         state_ref_root_dir_abs_path_inited: str = self.eval_parent_state(EnvState.state_ref_root_dir_abs_path_inited.name)
 
         if state_required_python_version_inited is None:
-            python_version_file_abs_path: str | None = find_python_version_file(state_ref_root_dir_abs_path_inited)
+            python_version_file_abs_path: str | None = _find_python_version_file(state_ref_root_dir_abs_path_inited)
             if python_version_file_abs_path is None:
                 raise AssertionError(f"Both field [{ConfField.field_required_python_version.name}] value is [{state_required_python_version_inited}] and no file [{ConfConstGeneral.python_version_file_basename}] found walking up from [{state_ref_root_dir_abs_path_inited}] dir.")
             logger.info(f"Using file [{python_version_file_abs_path}] as field [{ConfField.field_required_python_version.name}] value is [{state_required_python_version_inited}].")
@@ -3597,7 +3597,7 @@ class _Node_state_selected_python_file_abs_path_inited(AbstractCachingStateNode[
 
         required_python_version: tuple[int, int, int] = parse_python_version(state_required_python_version_inited)
 
-        state_selected_python_file_abs_path_inited: str | None = probe_python_file_abs_path(
+        state_selected_python_file_abs_path_inited: str | None = _probe_python_file_abs_path(
             state_python_selector_file_abs_path_inited,
             required_python_version,
         )
@@ -3785,7 +3785,7 @@ class _Node_state_venv_driver_inited(AbstractOverriddenFieldCachingStateNode[Ven
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
         # FT_84_11_73_28.supported_python_versions.md:
         uv_min_version: tuple[int, int, int] = (3, 8, 0)
-        selected_version: tuple[int, int, int] = get_python_version(state_selected_python_file_abs_path_inited)
+        selected_version: tuple[int, int, int] = _get_python_version(state_selected_python_file_abs_path_inited)
 
         default_venv_driver: str
         if selected_version < uv_min_version:
@@ -4052,22 +4052,22 @@ class _Node_state_stride_py_required_reached_prepare_venv(AbstractCachingStateNo
         state_selected_python_file_abs_path_inited: str = self.eval_parent_state(EnvState.state_selected_python_file_abs_path_inited.name)
         state_local_venv_dir_abs_path_inited: str = self.eval_parent_state(EnvState.state_local_venv_dir_abs_path_inited.name)
 
-        assert not is_sub_path(
+        assert not _is_sub_path(
             state_selected_python_file_abs_path_inited,
             state_local_venv_dir_abs_path_inited,
         ), f"Configured `python` [{state_selected_python_file_abs_path_inited}] must be outside of configured `venv` [{state_local_venv_dir_abs_path_inited}]"
 
-        path_to_curr_python = get_path_to_curr_python()
+        path_to_curr_python = _get_path_to_curr_python()
         logger.debug(f"path_to_curr_python: {path_to_curr_python}")
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-        assert not is_sub_path(
+        assert not _is_sub_path(
             path_to_curr_python,
             state_local_venv_dir_abs_path_inited,
         ), f"Current `python` [{path_to_curr_python}] must be outside of the `venv` [{state_local_venv_dir_abs_path_inited}]."
 
         if path_to_curr_python != state_selected_python_file_abs_path_inited:
             assert self.env_ctx.get_stride().value <= StateStride.stride_py_arbitrary.value
-            return switch_python(
+            return _switch_python(
                 curr_python_path=path_to_curr_python,
                 next_py_exec=self.env_ctx.set_max_stride(state_stride_py_required_reached),
                 next_python_path=state_selected_python_file_abs_path_inited,
@@ -4076,7 +4076,7 @@ class _Node_state_stride_py_required_reached_prepare_venv(AbstractCachingStateNo
             )
         else:
             assert self.env_ctx.get_stride().value <= StateStride.stride_py_required.value
-            return skip_python(
+            return _skip_python(
                 "already required `python` path",
                 curr_py_exec=self.env_ctx.get_stride(),
                 next_py_exec=self.env_ctx.set_max_stride(state_stride_py_required_reached),
@@ -4350,7 +4350,7 @@ class _Node_state_stride_py_venv_reached_is_app(AbstractCachingStateNode[StateSt
             state_local_venv_dir_abs_path_inited,
             ConfConstGeneral.file_rel_path_venv_python,
         )
-        path_to_curr_python: str = get_path_to_curr_python()
+        path_to_curr_python: str = _get_path_to_curr_python()
         logger.debug(f"path_to_curr_python: {path_to_curr_python}")
 
         # TODO: TODO_21_72_88_59.use_factory_to_avoid_running_boot_env_related_states.md:
@@ -4363,7 +4363,7 @@ class _Node_state_stride_py_venv_reached_is_app(AbstractCachingStateNode[StateSt
             # Skip `venv` validation before switch because `ExecOperation.op_start`/`ExecOperation.op_shell` does not switch outside of `venv`:
             pass
         else:
-            if is_sub_path(
+            if _is_sub_path(
                 path_to_curr_python,
                 state_local_venv_dir_abs_path_inited,
             ):
@@ -4377,7 +4377,7 @@ class _Node_state_stride_py_venv_reached_is_app(AbstractCachingStateNode[StateSt
                 # Skip required `python` validation because we do not need it to create `venv`:
                 pass
             else:
-                if not is_same_file(
+                if not _is_same_file(
                     path_to_curr_python,
                     state_selected_python_file_abs_path_inited,
                 ):
@@ -4405,7 +4405,7 @@ class _Node_state_stride_py_venv_reached_is_app(AbstractCachingStateNode[StateSt
                 if not state_venv_driver_prepared.is_mine_venv(state_local_venv_dir_abs_path_inited):
                     raise AssertionError(f"`venv` [{state_local_venv_dir_abs_path_inited}] was not created by this driver [{state_venv_driver_prepared.get_type().name}] retry with [{ExecOperation.op_reset.value}] exec operation.")
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-        return switch_python(
+        return _switch_python(
             curr_python_path=state_selected_python_file_abs_path_inited,
             next_py_exec=self.env_ctx.set_max_stride(state_stride_py_venv_reached),
             next_python_path=venv_path_to_python,
@@ -4445,8 +4445,8 @@ class _Node_state_stride_py_venv_reached_not_is_app(AbstractCachingStateNode[Sta
             state_local_venv_dir_abs_path_inited,
             ConfConstGeneral.file_rel_path_venv_python,
         )
-        return switch_python(
-            curr_python_path=get_path_to_curr_python(),
+        return _switch_python(
+            curr_python_path=_get_path_to_curr_python(),
             next_py_exec=self.env_ctx.set_max_stride(state_stride),
             next_python_path=venv_path_to_python,
             start_id=state_input_start_id_var_loaded,
@@ -4592,7 +4592,7 @@ class _Node_state_protoprimer_package_installed_is_app(AbstractCachingStateNode[
 
             state_venv_driver_prepared.install_dependencies(
                 state_ref_root_dir_abs_path_inited,
-                get_path_to_curr_python(),
+                _get_path_to_curr_python(),
                 constraints_txt_path,
                 group_descriptors,
                 group_to_extra_args[install_group],
@@ -4667,7 +4667,7 @@ class _Node_state_version_constraints_generated_is_app(AbstractCachingStateNode[
         state_version_constraints_file_basename_inited: str = self.eval_parent_state(EnvState.state_version_constraints_file_basename_inited.name)
 
         state_venv_driver_prepared.pin_versions(
-            get_path_to_curr_python(),
+            _get_path_to_curr_python(),
             os.path.join(
                 state_local_conf_symlink_abs_path_inited,
                 state_version_constraints_file_basename_inited,
@@ -4744,7 +4744,7 @@ class _Node_state_stride_deps_updated_reached_is_app(AbstractCachingStateNode[St
 
         state_input_start_id_var_loaded: str = self.eval_parent_state(EnvState.state_input_start_id_var_loaded.name)
 
-        return switch_python(
+        return _switch_python(
             curr_python_path=venv_path_to_python,
             next_py_exec=self.env_ctx.set_max_stride(state_stride_deps_updated_reached),
             next_python_path=venv_path_to_python,
@@ -4917,7 +4917,7 @@ class _Node_state_stride_src_updated_reached(AbstractCachingStateNode[StateStrid
 
         state_input_start_id_var_loaded: str = self.eval_parent_state(EnvState.state_input_start_id_var_loaded.name)
 
-        return switch_python(
+        return _switch_python(
             curr_python_path=venv_path_to_python,
             next_py_exec=self.env_ctx.set_max_stride(state_stride_src_updated_reached),
             next_python_path=venv_path_to_python,
@@ -5474,7 +5474,7 @@ class _EnvContext:
             status_name = "SUCCESS"
             is_reportable = state_default_stderr_log_handler_configured.level <= logging.INFO
         else:
-            if not test_failure and is_test_run():
+            if not test_failure and _is_test_run():
                 # Avoid confusing output with "FAILURE" in tests:
                 status_name = "TEST_EXIT"
                 color_status = f"{TermColor.back_dark_yellow.value}{TermColor.fore_dark_black.value}"
@@ -5486,7 +5486,7 @@ class _EnvContext:
 
         if is_reportable:
             print(
-                f"{color_status}{status_name}{TermColor.reset_style.value} [{exit_code}]: {get_path_to_curr_python()} {get_script_command_line()}",
+                f"{color_status}{status_name}{TermColor.reset_style.value} [{exit_code}]: {_get_path_to_curr_python()} {get_script_command_line()}",
                 file=sys.stderr,
                 flush=True,
             )
@@ -5846,7 +5846,7 @@ def _can_print_effective_config(state_node: StateNode, state_print_conf_finalize
     )
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
-def find_python_version_file(curr_dir_any_path=".") -> str | None:
+def _find_python_version_file(curr_dir_any_path=".") -> str | None:
     """
     Walks up the directory tree to find the path to a `.python-version` file.
     """
@@ -5875,7 +5875,7 @@ def find_python_version_file(curr_dir_any_path=".") -> str | None:
     return None
 
 
-def switch_python(
+def _switch_python(
     curr_python_path: str,
     next_py_exec: StateStride,
     next_python_path: str,
@@ -5940,7 +5940,7 @@ def switch_python(
     return next_py_exec
 
 
-def skip_python(
+def _skip_python(
     log_message: str,
     curr_py_exec: StateStride,
     next_py_exec: StateStride,
@@ -5949,7 +5949,7 @@ def skip_python(
     return next_py_exec
 
 
-def get_file_name_timestamp():
+def _get_file_name_timestamp():
     """
     Generate a timestamp acceptable to be embedded into a filename.
     """
@@ -5960,15 +5960,15 @@ def get_file_name_timestamp():
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
 def get_default_start_id():
-    return f"{get_file_name_timestamp()}.{os.getpid()}"
+    return f"{_get_file_name_timestamp()}.{os.getpid()}"
 
 
-def is_sub_path(
+def _is_sub_path(
     abs_sub_path: str,
     abs_base_base: str,
 ) -> bool:
     try:
-        rel_path(
+        _rel_path(
             abs_sub_path,
             abs_base_base,
         )
@@ -5977,7 +5977,7 @@ def is_sub_path(
         return False
 
 
-def rel_path(
+def _rel_path(
     target_any_path: str,
     source_any_path: str,
 ) -> str:
@@ -5987,18 +5987,18 @@ def rel_path(
     return str(pathlib.PurePath(target_any_path).relative_to(pathlib.PurePath(source_any_path)))
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
-def is_same_file(
+def _is_same_file(
     l_abs_path: str,
     r_abs_path: str,
 ) -> bool:
     return pathlib.Path(l_abs_path).samefile(pathlib.Path(r_abs_path))
 
 
-def get_path_to_curr_python() -> str:
+def _get_path_to_curr_python() -> str:
     return sys.executable
 
 
-def get_path_to_base_python() -> str:
+def _get_path_to_base_python() -> str:
 
     executable_basename: str = os.path.basename(sys.executable)
 
@@ -6123,7 +6123,7 @@ def _is_venv() -> bool:
     # NOTE: `VIRTUAL_ENV` is not asserted because it is only set for `shell` by `source`-ing `venv/bin/activate`.
     #       Most of the commands avoid using `shell` (that is the goal for `protoprimer`).
     # NOTE: Restriction on `field_selected_python_file_abs_path`: it should not lead to `venv/bin/python`.
-    #       It should use `sys.base_prefix` - see `get_path_to_base_python`.
+    #       It should use `sys.base_prefix` - see `_get_path_to_base_python`.
     # TODO: TODO_15_25_41_72.convert_selected_python_to_base_python.md:
     # TODO: Maybe it is possible to convert `field_selected_python_file_abs_path` to its base version automatically?
     if sys.prefix != sys.base_prefix:
@@ -6145,7 +6145,7 @@ def _is_pip_venv(venv_cfg_file_abs_path: str) -> bool:
     return not _is_uv_venv(venv_cfg_file_abs_path)
 
 
-def is_test_run() -> bool:
+def _is_test_run() -> bool:
     """
     See: FT_83_60_72_19.test_perimeter.md
     """
@@ -6168,7 +6168,7 @@ def _get_venv_type(local_venv_dir_abs_path: str) -> VenvDriverType:
         raise AssertionError(f"Cannot determine `venv` type by file [{venv_cfg_file_abs_path}]")
 
 
-def get_python_version(path_to_python: str) -> tuple[int, int, int]:
+def _get_python_version(path_to_python: str) -> tuple[int, int, int]:
     """
     Executes a `python` binary and retrieves its version as a numeric tuple.
     """
@@ -6211,7 +6211,7 @@ def parse_python_version(python_version: str) -> tuple[int, int, int]:
     return version_tuple
 
 
-def parse_python_version_prefix(python_version: str) -> tuple[int, ...]:
+def _parse_python_version_prefix(python_version: str) -> tuple[int, ...]:
     """
     Unlike `parse_python_version`, does NOT zero-pad missing components:
     *   "3" -> (3,)
@@ -6227,15 +6227,15 @@ def parse_python_version_prefix(python_version: str) -> tuple[int, ...]:
     return tuple(_parse_version_int(part) for part in python_version.split("."))[:3]
 
 
-def assert_python_version_matches(
+def _assert_python_version_matches(
     python_file_abs_path: str,
     required_python_version: str,
 ) -> None:
     """
     Verify `python_file_abs_path` satisfies `required_python_version`.
     """
-    required_version_prefix: tuple[int, ...] = parse_python_version_prefix(required_python_version)
-    actual_version: tuple[int, int, int] = get_python_version(python_file_abs_path)
+    required_version_prefix: tuple[int, ...] = _parse_python_version_prefix(required_python_version)
+    actual_version: tuple[int, int, int] = _get_python_version(python_file_abs_path)
     actual_version_prefix: tuple[int, ...] = actual_version[: len(required_version_prefix)]
     if actual_version_prefix != required_version_prefix:
         raise AssertionError(f"`python` [{python_file_abs_path}] version {actual_version} " f"does not satisfy required version [{required_python_version}].")
@@ -6262,7 +6262,7 @@ def import_proto_module(
     return loaded_proto_module
 
 
-def select_python_file_abs_path(
+def _select_python_file_abs_path(
     required_version: tuple[int, int, int],
     state_python_selector_file_abs_path_inited: str,
 ) -> str | None:
@@ -6293,7 +6293,7 @@ def select_python_file_abs_path(
         assert isinstance(selected_python_abs_path, str)
         try:
             logger.debug(f"trying `python` version of `selected_python_abs_path` [{selected_python_abs_path}]")
-            python_version: tuple[int, int, int] = get_python_version(selected_python_abs_path)
+            python_version: tuple[int, int, int] = _get_python_version(selected_python_abs_path)
             logger.debug(f"`python` version of `selected_python_abs_path` [{selected_python_abs_path}] is [{python_version}]")
         except (subprocess.CalledProcessError, FileNotFoundError):
             logger.warning(f"`python` in `selected_python_abs_path` [{selected_python_abs_path}] failed without returning its version")
@@ -6302,7 +6302,7 @@ def select_python_file_abs_path(
     return selected_python_abs_path
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
-def search_python_file_abs_path_by_basename(required_version: tuple[int, int, int]) -> str | None:
+def _search_python_file_abs_path_by_basename(required_version: tuple[int, int, int]) -> str | None:
     """
     Use `required_version` tuple formatted as (X, Y, Z) to try each basename (in that order):
     *   `pythonX.Y.Z`
@@ -6338,7 +6338,7 @@ def search_python_file_abs_path_by_basename(required_version: tuple[int, int, in
             python_abs_path = os.path.realpath(python_abs_path)
             try:
                 logger.debug(f"checking version of `python_abs_path` [{python_abs_path}]")
-                python_version: tuple[int, int, int] = get_python_version(python_abs_path)
+                python_version: tuple[int, int, int] = _get_python_version(python_abs_path)
                 logger.info(f"`python_abs_path` [{python_abs_path}] returned its version [{python_version}]")
                 return python_abs_path
             except (subprocess.CalledProcessError, FileNotFoundError):
@@ -6347,7 +6347,7 @@ def search_python_file_abs_path_by_basename(required_version: tuple[int, int, in
     return None
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-def probe_python_file_abs_path(
+def _probe_python_file_abs_path(
     state_python_selector_file_abs_path_inited: str | None,
     state_required_python_version_inited: tuple[int, int, int],
 ) -> str | None:
@@ -6357,7 +6357,7 @@ def probe_python_file_abs_path(
 
     selected_python_file_abs_path: str | None
     if state_python_selector_file_abs_path_inited is not None:
-        selected_python_file_abs_path = select_python_file_abs_path(
+        selected_python_file_abs_path = _select_python_file_abs_path(
             state_required_python_version_inited,
             state_python_selector_file_abs_path_inited,
         )
@@ -6365,11 +6365,11 @@ def probe_python_file_abs_path(
         selected_python_file_abs_path = None
 
     if selected_python_file_abs_path is None:
-        selected_python_file_abs_path = search_python_file_abs_path_by_basename(state_required_python_version_inited)
+        selected_python_file_abs_path = _search_python_file_abs_path_by_basename(state_required_python_version_inited)
     return selected_python_file_abs_path
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
-def log_python_context(log_level: int = logging.INFO):
+def _log_python_context(log_level: int = logging.INFO):
     """
     This function helps to ensure and verify:
     UC_88_09_19_74.no_installation_outside_venv.md

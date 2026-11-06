@@ -26,7 +26,7 @@ def test_relationship():
     assert_test_module_name_embeds_str(EnvState.state_selected_python_file_abs_path_inited.name)
 
 
-@patch(f"{primer_kernel.__name__}.probe_python_file_abs_path")
+@patch(f"{primer_kernel.__name__}._probe_python_file_abs_path")
 @patch(f"{primer_kernel.__name__}.{_Node_state_python_selector_file_abs_path_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{_Node_state_required_python_version_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{_Node_state_client_conf_file_data_loaded.__name__}.create_state_node")

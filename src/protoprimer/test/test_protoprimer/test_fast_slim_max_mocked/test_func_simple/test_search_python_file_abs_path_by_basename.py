@@ -9,17 +9,17 @@ import subprocess
 import protoprimer.primer_kernel
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer.primer_kernel import (
-    search_python_file_abs_path_by_basename,
+    _search_python_file_abs_path_by_basename,
 )
 
 
 def test_relationship():
     assert_test_module_name_embeds_str(
-        search_python_file_abs_path_by_basename.__name__,
+        _search_python_file_abs_path_by_basename.__name__,
     )
 
 
-@patch(f"{protoprimer.primer_kernel.__name__}.get_python_version")
+@patch(f"{protoprimer.primer_kernel.__name__}._get_python_version")
 @patch(f"{protoprimer.primer_kernel.__name__}.os.path.realpath", side_effect=lambda x: x)
 @patch(f"{protoprimer.primer_kernel.__name__}.shutil.which")
 def test_finds_python_on_first_try(
@@ -28,7 +28,7 @@ def test_finds_python_on_first_try(
     mock_get_python_version,
 ):
     """
-    Tests that `search_python_file_abs_path_by_basename` finds a `python` executable and returns its path.
+    Tests that `_search_python_file_abs_path_by_basename` finds a `python` executable and returns its path.
     """
 
     # given:
@@ -40,7 +40,7 @@ def test_finds_python_on_first_try(
 
     # when:
 
-    result_path = search_python_file_abs_path_by_basename(required_version)
+    result_path = _search_python_file_abs_path_by_basename(required_version)
 
     # then:
 
@@ -49,7 +49,7 @@ def test_finds_python_on_first_try(
     mock_get_python_version.assert_called_once_with(expected_path)
 
 
-@patch(f"{protoprimer.primer_kernel.__name__}.get_python_version")
+@patch(f"{protoprimer.primer_kernel.__name__}._get_python_version")
 @patch(f"{protoprimer.primer_kernel.__name__}.os.path.realpath", side_effect=lambda x: x)
 @patch(f"{protoprimer.primer_kernel.__name__}.shutil.which")
 def test_finds_python_on_fallback(
@@ -58,7 +58,7 @@ def test_finds_python_on_fallback(
     mock_get_python_version,
 ):
     """
-    Tests that `search_python_file_abs_path_by_basename` tries multiple basenames.
+    Tests that `_search_python_file_abs_path_by_basename` tries multiple basenames.
     """
 
     # given:
@@ -71,7 +71,7 @@ def test_finds_python_on_fallback(
 
     # when:
 
-    result_path = search_python_file_abs_path_by_basename(required_version)
+    result_path = _search_python_file_abs_path_by_basename(required_version)
 
     # then:
 
@@ -86,7 +86,7 @@ def test_finds_python_on_fallback(
     mock_get_python_version.assert_called_once_with(expected_path)
 
 
-@patch(f"{protoprimer.primer_kernel.__name__}.get_python_version")
+@patch(f"{protoprimer.primer_kernel.__name__}._get_python_version")
 @patch(f"{protoprimer.primer_kernel.__name__}.os.path.realpath", side_effect=lambda x: x)
 @patch(f"{protoprimer.primer_kernel.__name__}.shutil.which")
 def test_handles_verification_failure(
@@ -96,7 +96,7 @@ def test_handles_verification_failure(
     caplog,
 ):
     """
-    Tests that `search_python_file_abs_path_by_basename` continues if version check fails and succeeds eventually.
+    Tests that `_search_python_file_abs_path_by_basename` continues if version check fails and succeeds eventually.
     """
 
     # given:
@@ -110,7 +110,7 @@ def test_handles_verification_failure(
     # when:
 
     with caplog.at_level(logging.WARNING):
-        result_path = search_python_file_abs_path_by_basename(required_version)
+        result_path = _search_python_file_abs_path_by_basename(required_version)
 
     # then:
 
@@ -126,7 +126,7 @@ def test_handles_verification_failure(
     )
 
 
-@patch(f"{protoprimer.primer_kernel.__name__}.get_python_version")
+@patch(f"{protoprimer.primer_kernel.__name__}._get_python_version")
 @patch(f"{protoprimer.primer_kernel.__name__}.os.path.realpath", side_effect=lambda x: x)
 @patch(f"{protoprimer.primer_kernel.__name__}.shutil.which")
 def test_returns_none_if_no_python_found(
@@ -135,7 +135,7 @@ def test_returns_none_if_no_python_found(
     mock_get_python_version,
 ):
     """
-    Tests that `search_python_file_abs_path_by_basename` returns `None` if no executable is found.
+    Tests that `_search_python_file_abs_path_by_basename` returns `None` if no executable is found.
     """
 
     # given:
@@ -145,7 +145,7 @@ def test_returns_none_if_no_python_found(
 
     # when:
 
-    result_path = search_python_file_abs_path_by_basename(required_version)
+    result_path = _search_python_file_abs_path_by_basename(required_version)
 
     # then:
 
@@ -155,7 +155,7 @@ def test_returns_none_if_no_python_found(
     mock_get_python_version.assert_not_called()
 
 
-@patch(f"{protoprimer.primer_kernel.__name__}.get_python_version")
+@patch(f"{protoprimer.primer_kernel.__name__}._get_python_version")
 @patch(f"{protoprimer.primer_kernel.__name__}.os.path.realpath", side_effect=lambda x: x)
 @patch(f"{protoprimer.primer_kernel.__name__}.shutil.which")
 def test_returns_none_if_all_verifications_fail(
@@ -165,7 +165,7 @@ def test_returns_none_if_all_verifications_fail(
     caplog,
 ):
     """
-    Tests that `search_python_file_abs_path_by_basename` returns `None` if all found executables fail verification.
+    Tests that `_search_python_file_abs_path_by_basename` returns `None` if all found executables fail verification.
     """
 
     # given:
@@ -182,7 +182,7 @@ def test_returns_none_if_all_verifications_fail(
     # when:
 
     with caplog.at_level(logging.WARNING):
-        result_path = search_python_file_abs_path_by_basename(required_version)
+        result_path = _search_python_file_abs_path_by_basename(required_version)
 
     # then:
 
