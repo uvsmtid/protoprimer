@@ -15,7 +15,7 @@ from protoprimer.primer_kernel import (
     _Node_state_stride_src_updated_reached,
     _EnvContext,
     _EnvState,
-    StateStride,
+    _StateStride,
 )
 
 
@@ -58,8 +58,8 @@ def test_shell_executed_in_bash(
         _EnvState.state_shell_executed.name,
     )
     mock_state_input_command_line.return_value.eval_own_state.return_value = "echo hello"
-    mock_get_stride.return_value = StateStride.stride_src_updated
-    mock_state_stride_src_updated_reached.return_value.eval_own_state.return_value = StateStride.stride_src_updated
+    mock_get_stride.return_value = _StateStride.stride_src_updated
+    mock_state_stride_src_updated_reached.return_value.eval_own_state.return_value = _StateStride.stride_src_updated
     mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = "/fake/venv"
     mock_state_local_cache_dir_abs_path_inited.return_value.eval_own_state.return_value = "/fake/cache"
 
@@ -113,8 +113,8 @@ def test_shell_executed_in_zsh(
         _EnvState.state_shell_executed.name,
     )
     mock_state_input_command_line.return_value.eval_own_state.return_value = "echo hello"
-    mock_get_stride.return_value = StateStride.stride_src_updated
-    mock_state_stride_src_updated_reached.return_value.eval_own_state.return_value = StateStride.stride_src_updated
+    mock_get_stride.return_value = _StateStride.stride_src_updated
+    mock_state_stride_src_updated_reached.return_value.eval_own_state.return_value = _StateStride.stride_src_updated
     mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = "/fake/venv"
     mock_state_local_cache_dir_abs_path_inited.return_value.eval_own_state.return_value = "/fake/cache"
 
@@ -122,7 +122,7 @@ def test_shell_executed_in_zsh(
     env_ctx.eval_state(_EnvState.state_shell_executed.name)
 
     # then:
-    # In ShellDriverZsh, there are no extra shell_args, just an env var `ZDOTDIR`.
+    # In _ShellDriverZsh, there are no extra shell_args, just an env var `ZDOTDIR`.
     mock_os_execve.assert_called_once_with(
         "/bin/zsh",
         [
@@ -168,8 +168,8 @@ def test_shell_executed_in_sh(
         _EnvState.state_shell_executed.name,
     )
     mock_state_input_command_line.return_value.eval_own_state.return_value = "echo hello"
-    mock_get_stride.return_value = StateStride.stride_src_updated
-    mock_state_stride_src_updated_reached.return_value.eval_own_state.return_value = StateStride.stride_src_updated
+    mock_get_stride.return_value = _StateStride.stride_src_updated
+    mock_state_stride_src_updated_reached.return_value.eval_own_state.return_value = _StateStride.stride_src_updated
     mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = "/fake/venv"
     mock_state_local_cache_dir_abs_path_inited.return_value.eval_own_state.return_value = "/fake/cache"
 
@@ -177,7 +177,7 @@ def test_shell_executed_in_sh(
     env_ctx.eval_state(_EnvState.state_shell_executed.name)
 
     # then:
-    # In ShellDriverSh, there are no extra shell_args, just an env var `ENV`.
+    # In _ShellDriverSh, there are no extra shell_args, just an env var `ENV`.
     mock_os_execve.assert_called_once_with(
         "/bin/sh",
         [
@@ -218,7 +218,7 @@ def test_shell_executed_interactive_without_command(
 ):
     """
     Unlike `_EnvState.state_command_executed`, this state must start an interactive shell
-    even when no `ParsedArg.name_shell_command` is given.
+    even when no `_ParsedArg.name_shell_command` is given.
     """
     # given:
     fs.create_dir("/fake")
@@ -227,8 +227,8 @@ def test_shell_executed_interactive_without_command(
         _EnvState.state_shell_executed.name,
     )
     mock_state_input_command_line.return_value.eval_own_state.return_value = None
-    mock_get_stride.return_value = StateStride.stride_src_updated
-    mock_state_stride_src_updated_reached.return_value.eval_own_state.return_value = StateStride.stride_src_updated
+    mock_get_stride.return_value = _StateStride.stride_src_updated
+    mock_state_stride_src_updated_reached.return_value.eval_own_state.return_value = _StateStride.stride_src_updated
     mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = "/fake/venv"
     mock_state_local_cache_dir_abs_path_inited.return_value.eval_own_state.return_value = "/fake/cache"
 

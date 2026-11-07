@@ -9,7 +9,7 @@ from protoprimer.primer_kernel import (
     _Node_state_input_py_exec_var_loaded,
     _EnvState,
     EnvVar,
-    StateStride,
+    _StateStride,
 )
 
 
@@ -27,7 +27,7 @@ def test_stride_py_arbitrary():
     result = _Node_state_input_py_exec_var_loaded(mock_env_ctx)._eval_state_once()
 
     # then:
-    assert result == StateStride.stride_py_arbitrary
+    assert result == _StateStride.stride_py_arbitrary
 
 
 @patch.dict(os.environ, {}, clear=True)
@@ -40,4 +40,4 @@ def test_py_exec_stride_py_unknown():
     result = _Node_state_input_py_exec_var_loaded(mock_env_ctx)._eval_state_once()
 
     # then:
-    assert result == StateStride.stride_py_unknown
+    assert result == _StateStride.stride_py_unknown

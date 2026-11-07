@@ -14,7 +14,7 @@ from protoprimer.primer_kernel import (
     _EnvContext,
     _EnvState,
     _PrimerFileLogFormatter,
-    StateStrideFilter,
+    _StateStrideFilter,
 )
 
 
@@ -70,7 +70,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.assertEqual(file_handler.level, logging.INFO)
         self.assertIsInstance(file_handler.formatter, _PrimerFileLogFormatter)
 
-        self.assertTrue(any(isinstance(f, StateStrideFilter) for f in file_handler.filters))
+        self.assertTrue(any(isinstance(f, _StateStrideFilter) for f in file_handler.filters))
         self.assertIn(file_handler, logging.getLogger().handlers)
 
     @patch("sys.argv", ["/path/to/script.py"])

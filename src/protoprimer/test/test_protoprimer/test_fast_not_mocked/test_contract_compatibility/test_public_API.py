@@ -14,21 +14,31 @@ from local_test.case_condition import requires_max_python
 from local_test.griffe_helper import find_breaking_api_changes
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer.primer_kernel import (
+    _ConfDst,
     _ContextBuilder,
     _EntryFunc,
     _EnvContext,
     _generate_entry_script_content,
+    _parse_args,
+    _proto_main,
     _run_process,
+    _start_main,
+    _StateStride,
 )
 
 
 # Private (underscore) objects checked as public: "Required API" in FT_78_72_23_04.backward_compatibility.md
 required_obj_paths = [
+    f"protoprimer.primer_kernel.{_ConfDst.__name__}",
     f"protoprimer.primer_kernel.{_ContextBuilder.__name__}",
     f"protoprimer.primer_kernel.{_EntryFunc.__name__}",
     f"protoprimer.primer_kernel.{_EnvContext.__name__}",
     f"protoprimer.primer_kernel.{_generate_entry_script_content.__name__}",
+    f"protoprimer.primer_kernel.{_parse_args.__name__}",
+    f"protoprimer.primer_kernel.{_proto_main.__name__}",
     f"protoprimer.primer_kernel.{_run_process.__name__}",
+    f"protoprimer.primer_kernel.{_start_main.__name__}",
+    f"protoprimer.primer_kernel.{_StateStride.__name__}",
     # A variable (no `__name__`): set via `setattr(imported_kernel, ...)` across kernel copies:
     "protoprimer.primer_kernel._proto_kernel_abs_path",
 ]

@@ -7,13 +7,13 @@ from local_test.base_test_class import BaseTestClass
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
-    ExitCodeReporter,
+    _ExitCodeReporter,
 )
 
 
 def test_relationship():
     assert_test_module_name_embeds_str(
-        ExitCodeReporter.__name__,
+        _ExitCodeReporter.__name__,
     )
 
 
@@ -25,7 +25,7 @@ class ThisTestClass(BaseTestClass):
         mock_env_ctx = MagicMock()
         mock_env_ctx.eval_state.return_value = 42
         mock_state_node = MagicMock()
-        reporter = ExitCodeReporter(mock_env_ctx)
+        reporter = _ExitCodeReporter(mock_env_ctx)
 
         # when:
         reporter.execute_strategy(mock_state_node)

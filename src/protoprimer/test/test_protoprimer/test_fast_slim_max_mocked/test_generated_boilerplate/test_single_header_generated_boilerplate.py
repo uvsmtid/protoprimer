@@ -8,7 +8,7 @@ from protoprimer.primer_kernel import (
     _ConfConstGeneral,
     _read_text_file,
     _replace_single_header_in_empty_lines,
-    write_text_file,
+    _write_text_file,
 )
 
 
@@ -42,7 +42,7 @@ def test_replace_single_header_in_empty_lines(fs):
         input_text=_read_text_file(input_path),
         boilerplate_text=header_text,
     )
-    write_text_file(output_path, result)
+    _write_text_file(output_path, result)
 
     # then:
 

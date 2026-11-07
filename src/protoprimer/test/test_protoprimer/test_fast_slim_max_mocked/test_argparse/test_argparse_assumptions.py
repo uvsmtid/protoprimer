@@ -3,8 +3,8 @@ import argparse
 from local_test.base_test_class import BaseTestClass
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer.primer_kernel import (
-    parse_args,
-    ParsedArg,
+    _parse_args,
+    _ParsedArg,
     _SyntaxArg,
 )
 
@@ -31,13 +31,13 @@ class ThisTestClass(BaseTestClass):
         ]
 
         # when:
-        parsed_args = parse_args(test_args)
+        parsed_args = _parse_args(test_args)
 
         # then:
         self.assertEqual(
             "third",
             getattr(
                 parsed_args,
-                ParsedArg.name_selected_env_dir.value,
+                _ParsedArg.name_selected_env_dir.value,
             ),
         )

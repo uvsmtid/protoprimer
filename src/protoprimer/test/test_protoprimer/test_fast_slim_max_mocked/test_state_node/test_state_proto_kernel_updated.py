@@ -17,7 +17,7 @@ from protoprimer.primer_kernel import (
     _EnvContext,
     _EnvState,
     _ExecOperation,
-    StateStride,
+    _StateStride,
     _Factory_state_input_exec_operation_loaded,
 )
 
@@ -77,9 +77,9 @@ class ThisTestClass(BasePyfakefsTestClass):
             # Not real code, just 1000 empty lines:
             contents="\n" * 1000,
         )
-        mock_get_stride.return_value = StateStride.stride_deps_updated
+        mock_get_stride.return_value = _StateStride.stride_deps_updated
 
-        mock_state_stride_deps_updated_reached.return_value.eval_own_state.return_value = StateStride.stride_deps_updated
+        mock_state_stride_deps_updated_reached.return_value.eval_own_state.return_value = _StateStride.stride_deps_updated
 
         mock_state_proto_kernel_file_abs_path_inited.return_value.eval_own_state.return_value = proto_kernel_abs_file_path
         mock_state_input_exec_operation_loaded.return_value.eval_own_state.return_value = _ExecOperation.op_boot
@@ -121,7 +121,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             self.env_ctx,
             _EnvState.state_proto_kernel_updated.name,
         )
-        mock_get_stride.return_value = StateStride.stride_deps_updated
+        mock_get_stride.return_value = _StateStride.stride_deps_updated
 
         fake_path = "/fake/path"
         self.fs.create_file(fake_path)
@@ -130,7 +130,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # when:
         with patch.dict("sys.modules", {"protoprimer": None}):
-            with self.assertLogs(primer_kernel.logger, level="WARNING") as cm:
+            with self.assertLogs(primer_kernel._logger, level="WARNING") as cm:
                 result = self.env_ctx.eval_state(_EnvState.state_proto_kernel_updated.name)
 
         # then:

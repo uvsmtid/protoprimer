@@ -9,10 +9,10 @@ import typing
 
 from protoprimer.primer_kernel import (
     _ConfLeap,
-    FilesystemObject,
+    _FilesystemObject,
     _PathName,
-    PathType,
-    ValueName,
+    _PathType,
+    _ValueName,
 )
 
 
@@ -97,7 +97,7 @@ class NameCategory(enum.Enum):
     category_named_value = CategoryMeta(
         name_enums=[
             _ConfLeap,
-            ValueName,
+            _ValueName,
             ValueSource,
             #
             CompletedAction,
@@ -111,8 +111,8 @@ class NameCategory(enum.Enum):
             # The first sub-list is synced with `category_path_action`:
             _ConfLeap,
             _PathName,
-            FilesystemObject,
-            PathType,
+            _FilesystemObject,
+            _PathType,
             ValueSource,
             #
             CompletedAction,
@@ -122,8 +122,8 @@ class NameCategory(enum.Enum):
     category_path_value = CategoryMeta(
         name_enums=[
             _PathName,
-            FilesystemObject,
-            PathType,
+            _FilesystemObject,
+            _PathType,
             CompletedAction,
         ],
     )
@@ -131,7 +131,7 @@ class NameCategory(enum.Enum):
     # Similar to `category_named_value` but for arg names:
     category_named_arg_value = CategoryMeta(
         name_enums=[
-            ValueName,
+            _ValueName,
         ],
     )
 
@@ -145,13 +145,13 @@ class NameCategory(enum.Enum):
     category_path_arg_value = CategoryMeta(
         name_enums=[
             _PathName,
-            FilesystemObject,
+            _FilesystemObject,
         ],
     )
 
     category_value_field_action = CategoryMeta(
         name_enums=[
-            ValueName,
+            _ValueName,
             CompletedAction,
         ],
     )
@@ -161,16 +161,16 @@ class NameCategory(enum.Enum):
         name_enums=[
             _ConfLeap,
             _PathName,
-            FilesystemObject,
-            PathType,
+            _FilesystemObject,
+            _PathType,
         ],
     )
 
     category_path_field = CategoryMeta(
         name_enums=[
             _PathName,
-            FilesystemObject,
-            PathType,
+            _FilesystemObject,
+            _PathType,
         ],
     )
 
@@ -179,8 +179,8 @@ class NameCategory(enum.Enum):
     category_derived_path_field = CategoryMeta(
         name_enums=[
             _PathName,
-            FilesystemObject,
-            PathType,
+            _FilesystemObject,
+            _PathType,
         ],
     )
 
@@ -188,7 +188,7 @@ class NameCategory(enum.Enum):
     # similar to `category_value_field_action` but without `CompletedAction`:
     category_value_field = CategoryMeta(
         name_enums=[
-            ValueName,
+            _ValueName,
         ],
     )
 
@@ -200,7 +200,7 @@ class NameCategory(enum.Enum):
         name_enums=[],
     )
 
-    # Every time `StateStride` is switched:
+    # Every time `_StateStride` is switched:
     category_python_exec = CategoryMeta(
         name_enums=[],
     )

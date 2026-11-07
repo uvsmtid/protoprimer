@@ -19,7 +19,7 @@ from protoprimer.primer_kernel import (
     ConfField,
     _EnvState,
     _ExecOperation,
-    write_json_file,
+    _write_json_file,
 )
 
 
@@ -59,7 +59,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             ConfField.field_ref_root_dir_rel_path.value: ".",
             ConfField.field_global_conf_dir_rel_path.value: _ConfConstPrimer.default_client_conf_dir_rel_path,
         }
-        write_json_file(
+        _write_json_file(
             os.path.join(mock_client_dir, _ConfConstInput.default_file_basename_conf_primer),
             primer_conf_data,
         )
@@ -120,7 +120,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             ConfField.field_ref_root_dir_rel_path.value: ".",
             ConfField.field_global_conf_dir_rel_path.value: _ConfConstPrimer.default_client_conf_dir_rel_path,
         }
-        write_json_file(
+        _write_json_file(
             os.path.join(mock_client_dir, _ConfConstInput.default_file_basename_conf_primer),
             primer_conf_data,
         )
@@ -174,7 +174,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             ConfField.field_ref_root_dir_rel_path.value: ".",
             ConfField.field_global_conf_dir_rel_path.value: _ConfConstPrimer.default_client_conf_dir_rel_path,
         }
-        write_json_file(
+        _write_json_file(
             os.path.join(mock_client_dir, _ConfConstInput.default_file_basename_conf_primer),
             primer_conf_data,
         )
@@ -230,7 +230,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             ConfField.field_ref_root_dir_rel_path.value: ".",
             ConfField.field_global_conf_dir_rel_path.value: _ConfConstPrimer.default_client_conf_dir_rel_path,
         }
-        write_json_file(
+        _write_json_file(
             os.path.join(mock_client_dir, _ConfConstInput.default_file_basename_conf_primer),
             primer_conf_data,
         )
@@ -285,7 +285,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             ConfField.field_ref_root_dir_rel_path.value: ".",
             ConfField.field_global_conf_dir_rel_path.value: _ConfConstPrimer.default_client_conf_dir_rel_path,
         }
-        write_json_file(
+        _write_json_file(
             os.path.join(mock_client_dir, _ConfConstInput.default_file_basename_conf_primer),
             primer_conf_data,
         )
@@ -340,7 +340,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             ConfField.field_ref_root_dir_rel_path.value: ".",
             ConfField.field_global_conf_dir_rel_path.value: _ConfConstPrimer.default_client_conf_dir_rel_path,
         }
-        write_json_file(
+        _write_json_file(
             os.path.join(mock_client_dir, _ConfConstInput.default_file_basename_conf_primer),
             primer_conf_data,
         )
@@ -395,7 +395,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             ConfField.field_ref_root_dir_rel_path.value: ".",
             ConfField.field_global_conf_dir_rel_path.value: _ConfConstPrimer.default_client_conf_dir_rel_path,
         }
-        write_json_file(
+        _write_json_file(
             os.path.join(mock_client_dir, _ConfConstInput.default_file_basename_conf_primer),
             primer_conf_data,
         )
@@ -482,7 +482,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             ConfField.field_ref_root_dir_rel_path.value: ".",
             ConfField.field_global_conf_dir_rel_path.value: _ConfConstPrimer.default_client_conf_dir_rel_path,
         }
-        write_json_file(
+        _write_json_file(
             os.path.join(mock_client_dir, _ConfConstInput.default_file_basename_conf_primer),
             primer_conf_data,
         )
@@ -541,7 +541,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             ConfField.field_ref_root_dir_rel_path.value: ".",
             ConfField.field_global_conf_dir_rel_path.value: _ConfConstPrimer.default_client_conf_dir_rel_path,
         }
-        write_json_file(
+        _write_json_file(
             os.path.join(mock_client_dir, _ConfConstInput.default_file_basename_conf_primer),
             primer_conf_data,
         )
@@ -604,7 +604,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             ConfField.field_ref_root_dir_rel_path.value: ".",
             ConfField.field_global_conf_dir_rel_path.value: _ConfConstPrimer.default_client_conf_dir_rel_path,
         }
-        write_json_file(
+        _write_json_file(
             os.path.join(mock_client_dir, _ConfConstInput.default_file_basename_conf_primer),
             primer_conf_data,
         )

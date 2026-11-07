@@ -23,7 +23,7 @@ from protoprimer.primer_kernel import (
     _EnvState,
     EnvVar,
     _ExecOperation,
-    StateStride,
+    _StateStride,
     _Factory_state_input_exec_operation_loaded,
 )
 
@@ -55,7 +55,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(f"{primer_kernel.__name__}.{_Node_state_version_constraints_file_basename_inited.__name__}.create_state_node")
     @patch.dict(
         os.environ,
-        {EnvVar.var_PROTOPRIMER_PY_EXEC.value: StateStride.stride_py_venv.name},
+        {EnvVar.var_PROTOPRIMER_PY_EXEC.value: _StateStride.stride_py_venv.name},
     )
     @patch(f"{primer_kernel.__name__}.{_Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_venv_driver_prepared.__name__}.create_state_node")
@@ -77,11 +77,11 @@ class ThisTestClass(BasePyfakefsTestClass):
             self.env_ctx,
             _EnvState.state_protoprimer_package_installed.name,
         )
-        mock_get_stride.return_value = StateStride.stride_py_venv
+        mock_get_stride.return_value = _StateStride.stride_py_venv
         mock_client_ref_root_dir = "/mock_client_ref_root_dir"
         self.fs.create_dir(mock_client_ref_root_dir)
         os.chdir(mock_client_ref_root_dir)
-        mock_state_stride_py_venv_reached.return_value.eval_own_state.return_value = StateStride.stride_py_venv
+        mock_state_stride_py_venv_reached.return_value.eval_own_state.return_value = _StateStride.stride_py_venv
         mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = mock_client_ref_root_dir
         mock_client_conf_env_dir = "/mock_client_conf_env_dir"
         self.fs.create_dir(mock_client_conf_env_dir)
@@ -139,7 +139,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(f"{primer_kernel.__name__}.{_Node_state_version_constraints_file_basename_inited.__name__}.create_state_node")
     @patch.dict(
         os.environ,
-        {EnvVar.var_PROTOPRIMER_PY_EXEC.value: StateStride.stride_py_venv.name},
+        {EnvVar.var_PROTOPRIMER_PY_EXEC.value: _StateStride.stride_py_venv.name},
     )
     @patch(f"{primer_kernel.__name__}.{_Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_venv_driver_prepared.__name__}.create_state_node")
@@ -161,11 +161,11 @@ class ThisTestClass(BasePyfakefsTestClass):
             self.env_ctx,
             _EnvState.state_protoprimer_package_installed.name,
         )
-        mock_get_stride.return_value = StateStride.stride_py_venv
+        mock_get_stride.return_value = _StateStride.stride_py_venv
         mock_client_ref_root_dir = "/mock_client_ref_root_dir"
         self.fs.create_dir(mock_client_ref_root_dir)
         os.chdir(mock_client_ref_root_dir)
-        mock_state_stride_py_venv_reached.return_value.eval_own_state.return_value = StateStride.stride_py_venv
+        mock_state_stride_py_venv_reached.return_value.eval_own_state.return_value = _StateStride.stride_py_venv
         mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = mock_client_ref_root_dir
         mock_client_conf_env_dir = "/mock_client_conf_env_dir"
         self.fs.create_dir(mock_client_conf_env_dir)
@@ -223,7 +223,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(f"{primer_kernel.__name__}.{_Node_state_version_constraints_file_basename_inited.__name__}.create_state_node")
     @patch.dict(
         os.environ,
-        {EnvVar.var_PROTOPRIMER_PY_EXEC.value: StateStride.stride_py_venv.name},
+        {EnvVar.var_PROTOPRIMER_PY_EXEC.value: _StateStride.stride_py_venv.name},
     )
     @patch(f"{primer_kernel.__name__}.{_Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_venv_driver_prepared.__name__}.create_state_node")
@@ -245,11 +245,11 @@ class ThisTestClass(BasePyfakefsTestClass):
             self.env_ctx,
             _EnvState.state_protoprimer_package_installed.name,
         )
-        mock_get_stride.return_value = StateStride.stride_py_venv
+        mock_get_stride.return_value = _StateStride.stride_py_venv
         mock_client_ref_root_dir = "/mock_client_ref_root_dir"
         self.fs.create_dir(mock_client_ref_root_dir)
         os.chdir(mock_client_ref_root_dir)
-        mock_state_stride_py_venv_reached.return_value.eval_own_state.return_value = StateStride.stride_py_venv
+        mock_state_stride_py_venv_reached.return_value.eval_own_state.return_value = _StateStride.stride_py_venv
         mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = mock_client_ref_root_dir
         mock_client_conf_env_dir = "/mock_client_conf_env_dir"
         self.fs.create_dir(mock_client_conf_env_dir)
@@ -322,7 +322,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(f"{primer_kernel.__name__}.{_Node_state_version_constraints_file_basename_inited.__name__}.create_state_node")
     @patch.dict(
         os.environ,
-        {EnvVar.var_PROTOPRIMER_PY_EXEC.value: StateStride.stride_py_venv.name},
+        {EnvVar.var_PROTOPRIMER_PY_EXEC.value: _StateStride.stride_py_venv.name},
     )
     @patch(f"{primer_kernel.__name__}.{_Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_venv_driver_prepared.__name__}.create_state_node")
@@ -346,12 +346,12 @@ class ThisTestClass(BasePyfakefsTestClass):
             self.env_ctx,
             _EnvState.state_protoprimer_package_installed.name,
         )
-        mock_get_stride.return_value = StateStride.stride_py_venv
+        mock_get_stride.return_value = _StateStride.stride_py_venv
         mock_client_dir = "/mock_client_dir"
         self.fs.create_dir(mock_client_dir)
         os.chdir(mock_client_dir)
 
-        mock_state_stride_py_venv_reached.return_value.eval_own_state.return_value = StateStride.stride_py_venv
+        mock_state_stride_py_venv_reached.return_value.eval_own_state.return_value = _StateStride.stride_py_venv
 
         mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = mock_client_dir
 

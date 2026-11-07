@@ -19,7 +19,7 @@ def test_relationship():
     )
 
 
-@patch("protoprimer.primer_kernel.logger")
+@patch("protoprimer.primer_kernel._logger")
 def test_log_python_context(mock_logger):
     # given:
     log_level = logging.DEBUG

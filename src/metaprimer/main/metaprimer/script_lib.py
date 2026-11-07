@@ -6,11 +6,11 @@ import sys
 
 from protoprimer.primer_kernel import (
     _ConfLeap,
-    DefaultFileLogFormatter,
-    DefaultStderrLogFormatter,
+    _DefaultFileLogFormatter,
+    _DefaultStderrLogFormatter,
     _EnvState,
     get_config,
-    get_default_start_id,
+    _get_default_start_id,
 )
 
 logger: logging.Logger = logging.getLogger()
@@ -24,7 +24,7 @@ def configure_stderr_log_handler(
     """
     logger.setLevel(logging.NOTSET)
     log_handler = logging.StreamHandler(sys.stderr)
-    log_handler.setFormatter(DefaultStderrLogFormatter(log_level))
+    log_handler.setFormatter(_DefaultStderrLogFormatter(log_level))
     log_handler.setLevel(log_level)
     logger.addHandler(log_handler)
     return log_handler
@@ -42,7 +42,7 @@ def configure_file_log_handler(
         exist_ok=True,
     )
     log_handler = logging.FileHandler(file_path)
-    log_handler.setFormatter(DefaultFileLogFormatter())
+    log_handler.setFormatter(_DefaultFileLogFormatter())
     log_handler.setLevel(log_level)
     logger.addHandler(log_handler)
     return log_handler
@@ -57,7 +57,7 @@ def configure_script(
 
     log_dir_abs_path: str = derived_data[_EnvState.state_local_log_dir_abs_path_inited.name]
 
-    start_id: str = get_default_start_id()
+    start_id: str = _get_default_start_id()
     log_file_abs_path = os.path.join(
         log_dir_abs_path,
         f"{script_basename}.{start_id}.log",

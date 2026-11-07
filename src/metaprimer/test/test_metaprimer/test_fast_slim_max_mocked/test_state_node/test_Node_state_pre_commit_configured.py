@@ -17,7 +17,7 @@ from protoprimer.primer_kernel import (
     _Node_state_command_executed,
     _Node_state_global_conf_file_abs_path_inited,
     _Node_state_ref_root_dir_abs_path_inited,
-    write_json_file,
+    _write_json_file,
 )
 
 
@@ -61,7 +61,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         mock_client_conf_path = "/gconf/proto_kernel.json"
         self.fs.create_dir("/gconf")
-        write_json_file(mock_client_conf_path, {})
+        _write_json_file(mock_client_conf_path, {})
         mock_create_state_global_conf_file_abs_path_inited.return_value.eval_own_state.return_value = mock_client_conf_path
         mock_ref_root_dir = "/test/project"
         mock_create_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = mock_ref_root_dir

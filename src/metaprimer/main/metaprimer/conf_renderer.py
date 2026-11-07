@@ -21,9 +21,9 @@ from protoprimer.primer_kernel import (
     _ContextBuilder,
     _EnvContext,
     _EnvState,
-    missing_conf_file_message,
+    _missing_conf_file_message,
     _PathName,
-    read_json_file,
+    _read_json_file,
     _SelectorFunc,
     _ExecOperation,
     _SyntaxArg,
@@ -31,7 +31,7 @@ from protoprimer.primer_kernel import (
     _trivial_factory,
     _ValueType,
     VenvDriverType,
-    warn_once_at_state_stride,
+    _warn_once_at_state_stride,
 )
 
 
@@ -1620,8 +1620,8 @@ def can_render_effective_config(
     state_node,
 ) -> bool:
     """
-    Like `can_print_effective_config` but for `_ExecOperation.op_boot` and without the `StateStride` restriction.
-    The rendered `_Node_*` only run when the venv module is imported (later `StateStride`).
+    Like `can_print_effective_config` but for `_ExecOperation.op_boot` and without the `_StateStride` restriction.
+    The rendered `_Node_*` only run when the venv module is imported (later `_StateStride`).
     """
     # TODO: TODO_28_48_19_20.api_to_traverse_config_when_primed.md:
     #       With access to config, this will change from DAG to simple access of config via `custom_main`.
@@ -1654,11 +1654,11 @@ class _Node_state_primer_conf_file_data_loaded_rendered(_AbstractCachingStateNod
 
         file_data: dict
         if os.path.exists(state_primer_conf_file_abs_path_inited):
-            file_data = read_json_file(state_primer_conf_file_abs_path_inited)
+            file_data = _read_json_file(state_primer_conf_file_abs_path_inited)
         else:
             # TODO: Be able to detect min scenario and avoid warning:
-            warn_once_at_state_stride(
-                missing_conf_file_message(state_primer_conf_file_abs_path_inited),
+            _warn_once_at_state_stride(
+                _missing_conf_file_message(state_primer_conf_file_abs_path_inited),
                 self.env_ctx.get_stride(),
             )
             file_data = {}
@@ -1715,11 +1715,11 @@ class _Node_state_client_conf_file_data_loaded_rendered(_AbstractCachingStateNod
 
         file_data: dict
         if os.path.exists(state_global_conf_file_abs_path_inited):
-            file_data = read_json_file(state_global_conf_file_abs_path_inited)
+            file_data = _read_json_file(state_global_conf_file_abs_path_inited)
         else:
             # TODO: Be able to detect min scenario and avoid warning:
-            warn_once_at_state_stride(
-                missing_conf_file_message(state_global_conf_file_abs_path_inited),
+            _warn_once_at_state_stride(
+                _missing_conf_file_message(state_global_conf_file_abs_path_inited),
                 self.env_ctx.get_stride(),
             )
             file_data = {}
@@ -1760,14 +1760,14 @@ class _Node_state_env_conf_file_data_loaded_rendered(_AbstractCachingStateNode[d
 
         file_data: dict
         if os.path.exists(state_local_conf_file_abs_path_inited):
-            file_data = read_json_file(state_local_conf_file_abs_path_inited)
+            file_data = _read_json_file(state_local_conf_file_abs_path_inited)
         else:
             # TODO: Be able to detect min scenario and avoid warning:
             # TODO: Still warn when required for some fields:
             if False:
                 # noinspection PyUnreachableCode
-                warn_once_at_state_stride(
-                    missing_conf_file_message(state_local_conf_file_abs_path_inited),
+                _warn_once_at_state_stride(
+                    _missing_conf_file_message(state_local_conf_file_abs_path_inited),
                     self.env_ctx.get_stride(),
                 )
             file_data = {}

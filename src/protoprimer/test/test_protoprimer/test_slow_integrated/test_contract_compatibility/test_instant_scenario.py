@@ -16,7 +16,7 @@ from local_test.integrated_helper import (
     test_package_name,
 )
 from protoprimer.primer_kernel import (
-    ConfDst,
+    _ConfDst,
     _ExecOperation,
     _SyntaxArg,
     _TopDir,
@@ -62,8 +62,8 @@ def test_instant_scenario(tmp_path: Path):
 
     assert_editable_install(project_dir_abs_path, test_package_name)
 
-    gconf_dir = ref_root_abs_path / ConfDst.dst_global.value
-    lconf_dir = ref_root_abs_path / ConfDst.dst_local.value
+    gconf_dir = ref_root_abs_path / _ConfDst.dst_global.value
+    lconf_dir = ref_root_abs_path / _ConfDst.dst_local.value
 
     assert not os.path.exists(gconf_dir)
     assert not os.path.exists(lconf_dir)

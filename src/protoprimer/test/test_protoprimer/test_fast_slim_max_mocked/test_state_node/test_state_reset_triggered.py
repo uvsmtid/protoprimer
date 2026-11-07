@@ -23,7 +23,7 @@ from protoprimer.primer_kernel import (
     _ConfConstEnv,
     _EnvState,
     _ExecOperation,
-    StateStride,
+    _StateStride,
     _Factory_state_input_exec_operation_loaded,
 )
 
@@ -82,7 +82,7 @@ def test_reset_true(
     mock_state_input_exec_operation_loaded.return_value.eval_own_state.return_value = _ExecOperation.op_reset
     mock_state_input_start_id_var_loaded.return_value.eval_own_state.return_value = "mock_start_id"
 
-    py_exec = StateStride.stride_py_required
+    py_exec = _StateStride.stride_py_required
     mock_state_stride_py_required_reached.return_value.eval_own_state.return_value = py_exec
     env_ctx._state_stride = py_exec
 
@@ -135,7 +135,7 @@ def test_reset_false(
     )
     mock_state_input_exec_operation_loaded.return_value.eval_own_state.return_value = _ExecOperation.op_boot
 
-    py_exec = StateStride.stride_py_required
+    py_exec = _StateStride.stride_py_required
     mock_state_stride_py_required_reached.return_value.eval_own_state.return_value = py_exec
     env_ctx._state_stride = py_exec
 
@@ -183,7 +183,7 @@ def test_reset_true_but_py_exec_not_required(
     mock_state_input_exec_operation_loaded.return_value.eval_own_state.return_value = _ExecOperation.op_reset
     mock_state_input_start_id_var_loaded.return_value.eval_own_state.return_value = "mock_start_id"
 
-    py_exec = StateStride.stride_py_venv
+    py_exec = _StateStride.stride_py_venv
     mock_state_stride_py_required_reached.return_value.eval_own_state.return_value = py_exec
     env_ctx._state_stride = py_exec
 

@@ -16,7 +16,7 @@ from protoprimer.primer_kernel import (
     _Factory_state_proto_kernel_file_abs_path_inited,
     _Node_state_stride_src_updated_reached,
     _EnvState,
-    StateStride,
+    _StateStride,
 )
 
 
@@ -94,7 +94,7 @@ def test_conf_file_missing(
     mock_file_path = "/mock/path/to/primer.json"
     fs.create_dir("/mock/path/to")
     mock_factory_primer_conf_file_abs_path_inited.return_value.eval_own_state.return_value = mock_file_path
-    mock_get_stride.return_value = StateStride.stride_py_arbitrary
+    mock_get_stride.return_value = _StateStride.stride_py_arbitrary
 
     # when:
 

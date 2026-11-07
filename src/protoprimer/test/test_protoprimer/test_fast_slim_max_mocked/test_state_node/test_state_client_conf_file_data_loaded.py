@@ -17,7 +17,7 @@ from protoprimer.primer_kernel import (
     _EnvContext,
     _EnvState,
     _Factory_state_print_conf_finalized,
-    StateStride,
+    _StateStride,
 )
 
 
@@ -33,7 +33,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             #
             .is_app(True)
             #
-            .state_stride(StateStride.stride_py_unknown)
+            .state_stride(_StateStride.stride_py_unknown)
             #
             .build_context()
         )
@@ -96,7 +96,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             #
             .is_app(True)
             #
-            .state_stride(StateStride.stride_py_arbitrary)
+            .state_stride(_StateStride.stride_py_arbitrary)
             #
             .build_context()
         )
@@ -119,7 +119,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # when:
 
-        with self.assertLogs(primer_kernel.logger, level=WARNING) as log_dst:
+        with self.assertLogs(primer_kernel._logger, level=WARNING) as log_dst:
             self.env_ctx.eval_state(_EnvState.state_client_conf_file_data_loaded.name)
 
         # then:

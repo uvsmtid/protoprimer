@@ -3,12 +3,12 @@ from __future__ import annotations
 import pytest
 
 from local_test.name_assertion import assert_test_module_name_embeds_str
-from protoprimer.primer_kernel import parse_python_version
+from protoprimer.primer_kernel import _parse_python_version
 
 
 def test_relationship():
     assert_test_module_name_embeds_str(
-        parse_python_version.__name__,
+        _parse_python_version.__name__,
     )
 
 
@@ -28,6 +28,6 @@ def test_relationship():
 )
 def test_parse_python_version(version_str, expected_tuple):
     # when:
-    parsed_version = parse_python_version(version_str)
+    parsed_version = _parse_python_version(version_str)
     # then:
     assert parsed_version == expected_tuple

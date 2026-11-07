@@ -20,8 +20,8 @@ from protoprimer.primer_kernel import (
     _ConfConstPrimer,
     ConfField,
     EnvVar,
-    StateStride,
-    write_json_file,
+    _StateStride,
+    _write_json_file,
 )
 
 
@@ -40,7 +40,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         new=mock_get_python_version_by_current,
     )
     @patch(f"{primer_kernel.__name__}._probe_python_file_abs_path")
-    @patch(f"{primer_kernel.__name__}.get_default_start_id", return_value="mock_start_id")
+    @patch(f"{primer_kernel.__name__}._get_default_start_id", return_value="mock_start_id")
     @patch(f"{primer_kernel.__name__}.{_Node_state_proto_kernel_file_abs_path_inited_not_func_call_lib.__name__}.eval_own_state")
     @patch(f"{primer_kernel.__name__}.os.execve")
     def test_boot_switches_from_py_exec_stride_py_unknown(
@@ -52,7 +52,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     ):
         expected_python_path = "/mock/python"
         mock_probe_python_file_abs_path.return_value = expected_python_path
-        assert_test_func_name_embeds_str(StateStride.stride_py_unknown.name)
+        assert_test_func_name_embeds_str(_StateStride.stride_py_unknown.name)
 
         # given:
 
@@ -71,7 +71,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             ConfField.field_ref_root_dir_rel_path.value: ".",
             ConfField.field_global_conf_dir_rel_path.value: _ConfConstPrimer.default_client_conf_dir_rel_path,
         }
-        write_json_file(
+        _write_json_file(
             os.path.join(
                 mock_client_dir,
                 _ConfConstInput.default_file_basename_conf_primer,
@@ -83,7 +83,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             ConfField.field_local_conf_symlink_rel_path.value: _ConfConstClient.default_dir_rel_path_leap_env_link_name,
             ConfField.field_default_env_dir_rel_path.value: default_env_dir_rel_path,
         }
-        write_json_file(
+        _write_json_file(
             os.path.join(
                 mock_client_dir,
                 _ConfConstPrimer.default_client_conf_file_rel_path,
@@ -97,7 +97,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             ConfField.field_local_venv_dir_rel_path.value: _ConfConstEnv.default_dir_rel_path_venv,
             ConfField.field_project_descriptors.value: _ConfConstEnv.default_project_descriptors,
         }
-        write_json_file(
+        _write_json_file(
             os.path.join(
                 mock_client_dir,
                 default_env_dir_rel_path,
@@ -148,7 +148,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             path=expected_python_path,
             argv=execv_args,
             env={
-                EnvVar.var_PROTOPRIMER_PY_EXEC.value: StateStride.stride_py_required.name,
+                EnvVar.var_PROTOPRIMER_PY_EXEC.value: _StateStride.stride_py_required.name,
                 EnvVar.var_PROTOPRIMER_START_ID.value: "mock_start_id",
                 EnvVar.var_PROTOPRIMER_PROTO_KERNEL.value: state_proto_kernel_file_abs_path_inited,
             },

@@ -1,19 +1,19 @@
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer.primer_kernel import (
-    ShellDriverBash,
-    ShellType,
+    _ShellDriverBash,
+    _ShellType,
 )
 
 
 def test_relationship():
     assert_test_module_name_embeds_str(
-        ShellDriverBash.__name__,
+        _ShellDriverBash.__name__,
     )
 
 
 def test_get_type():
     # given:
-    driver = ShellDriverBash(
+    driver = _ShellDriverBash(
         shell_abs_path="/bin/bash",
         shell_env_vars={},
         cache_dir_abs_path="/fake/cache",
@@ -21,12 +21,12 @@ def test_get_type():
     # when:
     shell_type = driver.get_type()
     # then:
-    assert shell_type == ShellType.shell_bash
+    assert shell_type == _ShellType.shell_bash
 
 
 def test_get_init_file_basename():
     # given:
-    driver = ShellDriverBash(
+    driver = _ShellDriverBash(
         shell_abs_path="/bin/bash",
         shell_env_vars={},
         cache_dir_abs_path="/fake/cache",
@@ -40,7 +40,7 @@ def test_get_init_file_basename():
 def test_configure_interactive_shell(fs):
     # given:
     fs.create_dir("/fake/cache/bash")
-    driver = ShellDriverBash(
+    driver = _ShellDriverBash(
         shell_abs_path="/bin/bash",
         shell_env_vars={},
         cache_dir_abs_path="/fake/cache",

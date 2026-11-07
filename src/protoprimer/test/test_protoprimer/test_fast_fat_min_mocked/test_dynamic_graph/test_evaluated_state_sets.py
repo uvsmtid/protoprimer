@@ -20,7 +20,7 @@ from protoprimer.primer_kernel import (
     _EntryFunc,
     _EnvState,
     EnvVar,
-    StateStride,
+    _StateStride,
 )
 
 
@@ -30,7 +30,7 @@ def _make_tracking_env_ctx(
     env_ctx = TrackingEnvContext()
     env_ctx._entry_func = entry_func
     env_ctx._is_app = entry_func in (_EntryFunc.func_boot_env, _EntryFunc.func_run_main)
-    env_ctx._state_stride = StateStride.stride_src_updated
+    env_ctx._state_stride = _StateStride.stride_src_updated
     return env_ctx
 
 
@@ -71,7 +71,7 @@ class TestEvaluatedStateSets:
 
     Each test method:
     *   Use fake filesystem with `create_max_leaps_shape` (inside `fat_mock_wrapper`).
-    *   Use `StateStride.stride_src_updated` to skip process-restart transitions.
+    *   Use `_StateStride.stride_src_updated` to skip process-restart transitions.
     *   Runs the graph inside `fat_mock_wrapper` (which mocks execution side effects).
     *   Asserts the collected state names match the expected list.
 

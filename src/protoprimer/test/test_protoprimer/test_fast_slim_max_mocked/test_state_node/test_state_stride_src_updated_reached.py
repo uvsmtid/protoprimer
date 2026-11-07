@@ -13,7 +13,7 @@ from protoprimer.primer_kernel import (
     _ContextBuilder,
     _EntryFunc,
     _EnvState,
-    StateStride,
+    _StateStride,
     _Node_state_local_venv_dir_abs_path_inited,
 )
 
@@ -64,7 +64,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         mock_state_proto_kernel_updated.return_value.eval_own_state.return_value = True
 
-        self.env_ctx._state_stride = StateStride.stride_py_unknown
+        self.env_ctx._state_stride = _StateStride.stride_py_unknown
 
         mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = "/path/to/venv"
         self.fs.create_file("/path/to/venv/bin/python")
@@ -77,7 +77,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         mock_switch_python.assert_called_once_with(
             curr_python_path="/path/to/venv/bin/python",
-            next_py_exec=StateStride.stride_src_updated,
+            next_py_exec=_StateStride.stride_src_updated,
             next_python_path="/path/to/venv/bin/python",
             start_id="mock_start_id",
             proto_kernel_abs_file_path=mock_state_proto_kernel_file_abs_path_inited.return_value.eval_own_state.return_value,
@@ -113,7 +113,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         mock_state_proto_kernel_updated.return_value.eval_own_state.return_value = False
 
-        self.env_ctx._state_stride = StateStride.stride_src_updated
+        self.env_ctx._state_stride = _StateStride.stride_src_updated
 
         mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = "/path/to/venv"
 

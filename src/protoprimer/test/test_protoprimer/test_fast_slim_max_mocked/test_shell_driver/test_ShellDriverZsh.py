@@ -6,21 +6,21 @@ import pytest
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer.primer_kernel import (
     _get_shell_driver,
-    ShellDriverSh,
-    ShellDriverZsh,
-    ShellType,
+    _ShellDriverSh,
+    _ShellDriverZsh,
+    _ShellType,
 )
 
 
 def test_relationship():
     assert_test_module_name_embeds_str(
-        ShellDriverZsh.__name__,
+        _ShellDriverZsh.__name__,
     )
 
 
 def test_get_type():
     # given:
-    driver = ShellDriverZsh(
+    driver = _ShellDriverZsh(
         shell_abs_path="/bin/zsh",
         shell_env_vars={},
         cache_dir_abs_path="/fake/cache",
@@ -28,12 +28,12 @@ def test_get_type():
     # when:
     shell_type = driver.get_type()
     # then:
-    assert shell_type == ShellType.shell_zsh
+    assert shell_type == _ShellType.shell_zsh
 
 
 def test_get_init_file_basename():
     # given:
-    driver = ShellDriverZsh(
+    driver = _ShellDriverZsh(
         shell_abs_path="/bin/zsh",
         shell_env_vars={},
         cache_dir_abs_path="/fake/cache",
@@ -49,7 +49,7 @@ def test_configure_interactive_shell_tty(mock_stdin, fs):
     # given:
     mock_stdin.isatty.return_value = True
     fs.create_dir("/fake/cache/zsh")
-    driver = ShellDriverZsh(
+    driver = _ShellDriverZsh(
         shell_abs_path="/bin/zsh",
         shell_env_vars={},
         cache_dir_abs_path="/fake/cache",
@@ -67,7 +67,7 @@ def test_configure_interactive_shell_pipe(mock_stdin, fs):
     mock_stdin.isatty.return_value = False
     mock_stdin.closed = False
     fs.create_dir("/fake/cache/zsh")
-    driver = ShellDriverZsh(
+    driver = _ShellDriverZsh(
         shell_abs_path="/bin/zsh",
         shell_env_vars={},
         cache_dir_abs_path="/fake/cache",
@@ -82,7 +82,7 @@ def test_configure_interactive_shell_pipe(mock_stdin, fs):
 def test_configure_interactive_shell_with_command(fs):
     # given:
     fs.create_dir("/fake/cache/zsh")
-    driver = ShellDriverZsh(
+    driver = _ShellDriverZsh(
         shell_abs_path="/bin/zsh",
         shell_env_vars={},
         cache_dir_abs_path="/fake/cache",
@@ -96,7 +96,7 @@ def test_configure_interactive_shell_with_command(fs):
 
 @patch.dict(os.environ, {}, clear=True)
 @patch("shutil.which")
-@patch("protoprimer.primer_kernel.logger.warning")
+@patch("protoprimer.primer_kernel._logger.warning")
 def test_get_shell_driver_no_shell_env(mock_warning, mock_which):
     # given:
     # `bash` is in `PATH`, but it must not be preferred when `SHELL` is not set:
@@ -107,7 +107,7 @@ def test_get_shell_driver_no_shell_env(mock_warning, mock_which):
 
     # then:
     mock_warning.assert_called_once_with("env var `SHELL` is not set - assuming [/bin/sh] as default")
-    assert isinstance(driver, ShellDriverSh)
+    assert isinstance(driver, _ShellDriverSh)
     assert driver.shell_abs_path == "/bin/sh"
     mock_which.assert_not_called()
 
@@ -123,11 +123,11 @@ def test_get_shell_driver_unknown_shell():
 
 def test_get_shell_driver_zsh():
     # given:
-    shell_path = f"/bin/{ShellType.shell_zsh.value}"
+    shell_path = f"/bin/{_ShellType.shell_zsh.value}"
     with patch.dict(os.environ, {"SHELL": shell_path}, clear=True):
         # when:
         driver = _get_shell_driver("/fake/cache")
 
         # then:
-        assert isinstance(driver, ShellDriverZsh)
+        assert isinstance(driver, _ShellDriverZsh)
         assert driver.shell_abs_path == shell_path

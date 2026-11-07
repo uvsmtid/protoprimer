@@ -20,7 +20,7 @@ from protoprimer.primer_kernel import (
     _Factory_state_input_stderr_log_level_eval_finalized,
     _ConfConstPrimer,
     _EnvState,
-    StateStride,
+    _StateStride,
 )
 
 
@@ -105,7 +105,7 @@ def test_conf_file_missing(
         _ConfConstPrimer.default_client_conf_file_rel_path,
     )
     mock_factory_global_conf_file_abs_path_inited.return_value.eval_own_state.return_value = state_global_conf_file_abs_path_inited
-    mock_get_stride.return_value = StateStride.stride_py_arbitrary
+    mock_get_stride.return_value = _StateStride.stride_py_arbitrary
 
     # when:
 

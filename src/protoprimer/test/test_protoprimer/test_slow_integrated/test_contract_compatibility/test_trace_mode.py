@@ -17,7 +17,7 @@ from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer.primer_kernel import (
     _EntryFunc,
     EnvVar,
-    StateStride,
+    _StateStride,
     _SyntaxArg,
     _generate_entry_script_content,
 )
@@ -72,9 +72,9 @@ def test_trace_mode_boot_env(tmp_path: Path):
     stdout_lines = stdout_log_path.read_text().splitlines()
 
     # then:
-    # every `StateStride` name appears in `stderr` log context
+    # every `_StateStride` name appears in `stderr` log context
 
-    for stride in StateStride:
+    for stride in _StateStride:
         assert any(stride.name in stderr_line for stderr_line in stderr_lines), f"expected stride {stride.name} in stderr log"
 
     # restart count in `stderr` must equal `_switch_python` trace count in `stdout`:

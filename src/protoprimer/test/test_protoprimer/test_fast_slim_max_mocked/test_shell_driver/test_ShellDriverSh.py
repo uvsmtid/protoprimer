@@ -4,20 +4,20 @@ from unittest.mock import patch
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer.primer_kernel import (
     _get_shell_driver,
-    ShellDriverSh,
-    ShellType,
+    _ShellDriverSh,
+    _ShellType,
 )
 
 
 def test_relationship():
     assert_test_module_name_embeds_str(
-        ShellDriverSh.__name__,
+        _ShellDriverSh.__name__,
     )
 
 
 def test_get_type():
     # given:
-    driver = ShellDriverSh(
+    driver = _ShellDriverSh(
         shell_abs_path="/bin/sh",
         shell_env_vars={},
         cache_dir_abs_path="/fake/cache",
@@ -25,12 +25,12 @@ def test_get_type():
     # when:
     shell_type = driver.get_type()
     # then:
-    assert shell_type == ShellType.shell_sh
+    assert shell_type == _ShellType.shell_sh
 
 
 def test_get_init_file_basename():
     # given:
-    driver = ShellDriverSh(
+    driver = _ShellDriverSh(
         shell_abs_path="/bin/sh",
         shell_env_vars={},
         cache_dir_abs_path="/fake/cache",
@@ -43,7 +43,7 @@ def test_get_init_file_basename():
 
 def test_get_source_builtin():
     # given:
-    driver = ShellDriverSh(
+    driver = _ShellDriverSh(
         shell_abs_path="/bin/sh",
         shell_env_vars={},
         cache_dir_abs_path="/fake/cache",
@@ -58,7 +58,7 @@ def test_get_source_builtin():
 def test_configure_interactive_shell(fs):
     # given:
     fs.create_dir("/fake/cache/sh")
-    driver = ShellDriverSh(
+    driver = _ShellDriverSh(
         shell_abs_path="/bin/sh",
         shell_env_vars={},
         cache_dir_abs_path="/fake/cache",
@@ -75,7 +75,7 @@ def test_configure_interactive_shell(fs):
 def test_configure_interactive_shell_with_command(fs):
     # given:
     fs.create_dir("/fake/cache/sh")
-    driver = ShellDriverSh(
+    driver = _ShellDriverSh(
         shell_abs_path="/bin/sh",
         shell_env_vars={},
         cache_dir_abs_path="/fake/cache",
@@ -87,11 +87,11 @@ def test_configure_interactive_shell_with_command(fs):
     assert driver.shell_args == ["/bin/sh"]
 
 
-@patch("protoprimer.primer_kernel.write_text_file")
+@patch("protoprimer.primer_kernel._write_text_file")
 def test_write_init_file_posix(mock_write_text_file, fs):
     # given:
     fs.create_dir("/fake/cache")
-    driver = ShellDriverSh(
+    driver = _ShellDriverSh(
         shell_abs_path="/bin/sh",
         shell_env_vars={},
         cache_dir_abs_path="/fake/cache",
@@ -116,22 +116,22 @@ fi
 
 def test_get_shell_driver_shell_env_sh():
     # given:
-    shell_path = f"/bin/{ShellType.shell_sh.value}"
+    shell_path = f"/bin/{_ShellType.shell_sh.value}"
     with patch.dict(os.environ, {"SHELL": shell_path}, clear=True):
         # when:
         driver = _get_shell_driver("/fake/cache")
 
         # then:
-        assert isinstance(driver, ShellDriverSh)
+        assert isinstance(driver, _ShellDriverSh)
         assert driver.shell_abs_path == shell_path
 
 
 @patch("os.execve")
-@patch.object(ShellDriverSh, "write_init_file")
+@patch.object(_ShellDriverSh, "write_init_file")
 def test_run_shell_passes_init_file_via_ENV(mock_write, mock_execve, fs):
     # given:
     fs.create_dir("/fake/cache/sh")
-    driver = ShellDriverSh(
+    driver = _ShellDriverSh(
         shell_abs_path="/bin/sh",
         shell_env_vars={"VAR": "value"},
         cache_dir_abs_path="/fake/cache",

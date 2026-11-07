@@ -11,11 +11,11 @@ from protoprimer.primer_kernel import (
     _EntryFunc,
     _EnvState,
     _ExecOperation,
-    FilesystemObject,
+    _FilesystemObject,
     _PathName,
-    PathType,
-    StateStride,
-    ValueName,
+    _PathType,
+    _StateStride,
+    _ValueName,
 )
 from test_protoprimer.test_primer_kernel_metadata.test_metadata.test_key_word import (
     KeyWord,
@@ -71,7 +71,7 @@ class StateName(enum.Enum):
         name_components=[
             KeyWord.key_state.value,
             _ConfLeap.leap_input.value,
-            ValueName.value_py_exec.value,
+            _ValueName.value_py_exec.value,
             ValueSource.value_var.value,
             CompletedAction.action_loaded.value,
         ],
@@ -107,7 +107,7 @@ class StateName(enum.Enum):
         name_components=[
             KeyWord.key_state.value,
             _ConfLeap.leap_input.value,
-            ValueName.value_stderr_log_level.value,
+            _ValueName.value_stderr_log_level.value,
             ValueSource.value_var.value,
             CompletedAction.action_loaded.value,
         ],
@@ -132,7 +132,7 @@ class StateName(enum.Enum):
         name_components=[
             KeyWord.key_state.value,
             KeyWord.key_default.value,
-            FilesystemObject.fs_object_file.value,
+            _FilesystemObject.fs_object_file.value,
             KeyWord.key_log.value,
             KeyWord.key_handler.value,
             KeyWord.key_configured.value,
@@ -155,7 +155,7 @@ class StateName(enum.Enum):
         name_components=[
             KeyWord.key_state.value,
             _ConfLeap.leap_input.value,
-            ValueName.value_stderr_log_level.value,
+            _ValueName.value_stderr_log_level.value,
             ValueSource.value_eval.value,
             CompletedAction.action_finalized.value,
         ],
@@ -167,7 +167,7 @@ class StateName(enum.Enum):
         name_components=[
             KeyWord.key_state.value,
             _ConfLeap.leap_input.value,
-            ValueName.value_stderr_log_level.value,
+            _ValueName.value_stderr_log_level.value,
             KeyWord.key_handler.value,
             KeyWord.key_configured.value,
         ],
@@ -179,7 +179,7 @@ class StateName(enum.Enum):
         name_components=[
             KeyWord.key_state.value,
             _ConfLeap.leap_input.value,
-            ValueName.value_exec_operation.value,
+            _ValueName.value_exec_operation.value,
             CompletedAction.action_loaded.value,
         ],
     )
@@ -212,7 +212,7 @@ class StateName(enum.Enum):
         name_components=[
             KeyWord.key_state.value,
             _ConfLeap.leap_input.value,
-            ValueName.value_final_state.value,
+            _ValueName.value_final_state.value,
             ValueSource.value_eval.value,
             CompletedAction.action_finalized.value,
         ],
@@ -267,7 +267,7 @@ class StateName(enum.Enum):
         name_components=[
             KeyWord.key_state.value,
             _ConfLeap.leap_input.value,
-            ValueName.value_start_id.value,
+            _ValueName.value_start_id.value,
             ValueSource.value_var.value,
             CompletedAction.action_loaded.value,
         ],
@@ -280,8 +280,8 @@ class StateName(enum.Enum):
             KeyWord.key_state.value,
             _ConfLeap.leap_input.value,
             _PathName.path_proto_kernel.value,
-            FilesystemObject.fs_object_file.value,
-            PathType.path_abs.value,
+            _FilesystemObject.fs_object_file.value,
+            _PathType.path_abs.value,
             ValueSource.value_var.value,
             CompletedAction.action_loaded.value,
         ],
@@ -292,7 +292,7 @@ class StateName(enum.Enum):
         name_category=NameCategory.category_python_exec,
         name_components=[
             KeyWord.key_state.value,
-            StateStride.stride_py_arbitrary.name,
+            _StateStride.stride_py_arbitrary.name,
             KeyWord.key_reached.value,
         ],
     )
@@ -303,8 +303,8 @@ class StateName(enum.Enum):
         name_components=[
             KeyWord.key_state.value,
             _PathName.path_proto_kernel.value,
-            FilesystemObject.fs_object_file.value,
-            PathType.path_abs.value,
+            _FilesystemObject.fs_object_file.value,
+            _PathType.path_abs.value,
             CompletedAction.action_inited.value,
         ],
     )
@@ -315,8 +315,8 @@ class StateName(enum.Enum):
         name_components=[
             KeyWord.key_state.value,
             _PathName.path_primer_conf.value,
-            FilesystemObject.fs_object_file.value,
-            PathType.path_abs.value,
+            _FilesystemObject.fs_object_file.value,
+            _PathType.path_abs.value,
             CompletedAction.action_inited.value,
         ],
     )
@@ -328,7 +328,7 @@ class StateName(enum.Enum):
             KeyWord.key_state.value,
             _ConfLeap.leap_primer.value,
             KeyWord.key_conf.value,
-            FilesystemObject.fs_object_file.value,
+            _FilesystemObject.fs_object_file.value,
             KeyWord.key_data.value,
             CompletedAction.action_loaded.value,
         ],
@@ -340,8 +340,8 @@ class StateName(enum.Enum):
         name_components=[
             KeyWord.key_state.value,
             _PathName.path_ref_root.value,
-            FilesystemObject.fs_object_dir.value,
-            PathType.path_abs.value,
+            _FilesystemObject.fs_object_dir.value,
+            _PathType.path_abs.value,
             CompletedAction.action_inited.value,
         ],
     )
@@ -352,8 +352,8 @@ class StateName(enum.Enum):
         name_components=[
             KeyWord.key_state.value,
             _PathName.path_global_conf.value,
-            FilesystemObject.fs_object_dir.value,
-            PathType.path_abs.value,
+            _FilesystemObject.fs_object_dir.value,
+            _PathType.path_abs.value,
             CompletedAction.action_inited.value,
         ],
     )
@@ -364,8 +364,8 @@ class StateName(enum.Enum):
         name_components=[
             KeyWord.key_state.value,
             _PathName.path_global_conf.value,
-            FilesystemObject.fs_object_file.value,
-            PathType.path_abs.value,
+            _FilesystemObject.fs_object_file.value,
+            _PathType.path_abs.value,
             CompletedAction.action_inited.value,
         ],
     )
@@ -377,7 +377,7 @@ class StateName(enum.Enum):
             KeyWord.key_state.value,
             _ConfLeap.leap_client.value,
             KeyWord.key_conf.value,
-            FilesystemObject.fs_object_file.value,
+            _FilesystemObject.fs_object_file.value,
             KeyWord.key_data.value,
             CompletedAction.action_loaded.value,
         ],
@@ -389,8 +389,8 @@ class StateName(enum.Enum):
         name_components=[
             KeyWord.key_state.value,
             _PathName.path_local_conf.value,
-            FilesystemObject.fs_object_symlink.value,
-            PathType.path_abs.value,
+            _FilesystemObject.fs_object_symlink.value,
+            _PathType.path_abs.value,
             CompletedAction.action_inited.value,
         ],
     )
@@ -401,8 +401,8 @@ class StateName(enum.Enum):
         name_components=[
             KeyWord.key_state.value,
             _PathName.path_selected_env.value,
-            FilesystemObject.fs_object_dir.value,
-            PathType.path_rel.value,
+            _FilesystemObject.fs_object_dir.value,
+            _PathType.path_rel.value,
             CompletedAction.action_inited.value,
         ],
     )
@@ -413,8 +413,8 @@ class StateName(enum.Enum):
         name_components=[
             KeyWord.key_state.value,
             _PathName.path_local_conf.value,
-            FilesystemObject.fs_object_file.value,
-            PathType.path_abs.value,
+            _FilesystemObject.fs_object_file.value,
+            _PathType.path_abs.value,
             CompletedAction.action_inited.value,
         ],
     )
@@ -426,7 +426,7 @@ class StateName(enum.Enum):
             KeyWord.key_state.value,
             _ConfLeap.leap_env.value,
             KeyWord.key_conf.value,
-            FilesystemObject.fs_object_file.value,
+            _FilesystemObject.fs_object_file.value,
             KeyWord.key_data.value,
             CompletedAction.action_loaded.value,
         ],
@@ -438,7 +438,7 @@ class StateName(enum.Enum):
         name_components=[
             KeyWord.key_state.value,
             _PathName.path_required_python.value,
-            ValueName.value_version.value,
+            _ValueName.value_version.value,
             CompletedAction.action_inited.value,
         ],
     )
@@ -449,8 +449,8 @@ class StateName(enum.Enum):
         name_components=[
             KeyWord.key_state.value,
             _PathName.path_python_selector.value,
-            FilesystemObject.fs_object_file.value,
-            PathType.path_abs.value,
+            _FilesystemObject.fs_object_file.value,
+            _PathType.path_abs.value,
             CompletedAction.action_inited.value,
         ],
     )
@@ -461,8 +461,8 @@ class StateName(enum.Enum):
         name_components=[
             KeyWord.key_state.value,
             _PathName.path_selected_python.value,
-            FilesystemObject.fs_object_file.value,
-            PathType.path_abs.value,
+            _FilesystemObject.fs_object_file.value,
+            _PathType.path_abs.value,
             CompletedAction.action_inited.value,
         ],
     )
@@ -473,8 +473,8 @@ class StateName(enum.Enum):
         name_components=[
             KeyWord.key_state.value,
             _PathName.path_local_venv.value,
-            FilesystemObject.fs_object_dir.value,
-            PathType.path_abs.value,
+            _FilesystemObject.fs_object_dir.value,
+            _PathType.path_abs.value,
             CompletedAction.action_inited.value,
         ],
     )
@@ -485,8 +485,8 @@ class StateName(enum.Enum):
         name_components=[
             KeyWord.key_state.value,
             _PathName.path_local_log.value,
-            FilesystemObject.fs_object_dir.value,
-            PathType.path_abs.value,
+            _FilesystemObject.fs_object_dir.value,
+            _PathType.path_abs.value,
             CompletedAction.action_inited.value,
         ],
     )
@@ -497,8 +497,8 @@ class StateName(enum.Enum):
         name_components=[
             KeyWord.key_state.value,
             _PathName.path_local_run.value,
-            FilesystemObject.fs_object_dir.value,
-            PathType.path_abs.value,
+            _FilesystemObject.fs_object_dir.value,
+            _PathType.path_abs.value,
             CompletedAction.action_inited.value,
         ],
     )
@@ -509,8 +509,8 @@ class StateName(enum.Enum):
         name_components=[
             KeyWord.key_state.value,
             _PathName.path_local_tmp.value,
-            FilesystemObject.fs_object_dir.value,
-            PathType.path_abs.value,
+            _FilesystemObject.fs_object_dir.value,
+            _PathType.path_abs.value,
             CompletedAction.action_inited.value,
         ],
     )
@@ -521,8 +521,8 @@ class StateName(enum.Enum):
         name_components=[
             KeyWord.key_state.value,
             _PathName.path_local_cache.value,
-            FilesystemObject.fs_object_dir.value,
-            PathType.path_abs.value,
+            _FilesystemObject.fs_object_dir.value,
+            _PathType.path_abs.value,
             CompletedAction.action_inited.value,
         ],
     )
@@ -532,7 +532,7 @@ class StateName(enum.Enum):
         name_category=NameCategory.category_value_field_action,
         name_components=[
             KeyWord.key_state.value,
-            ValueName.value_project_descriptors.value,
+            _ValueName.value_project_descriptors.value,
             CompletedAction.action_inited.value,
         ],
     )
@@ -542,7 +542,7 @@ class StateName(enum.Enum):
         name_category=NameCategory.category_value_field_action,
         name_components=[
             KeyWord.key_state.value,
-            ValueName.value_install_specs.value,
+            _ValueName.value_install_specs.value,
             CompletedAction.action_inited.value,
         ],
     )
@@ -552,8 +552,8 @@ class StateName(enum.Enum):
         name_category=NameCategory.category_value_field_action,
         name_components=[
             KeyWord.key_state.value,
-            ValueName.value_version_constraints.value,
-            ValueName.value_file_basename.value,
+            _ValueName.value_version_constraints.value,
+            _ValueName.value_file_basename.value,
             CompletedAction.action_inited.value,
         ],
     )
@@ -563,7 +563,7 @@ class StateName(enum.Enum):
         name_category=NameCategory.category_value_field_action,
         name_components=[
             KeyWord.key_state.value,
-            ValueName.value_venv_driver.value,
+            _ValueName.value_venv_driver.value,
             CompletedAction.action_inited.value,
         ],
     )
@@ -597,7 +597,7 @@ class StateName(enum.Enum):
         name_category=NameCategory.category_python_exec,
         name_components=[
             KeyWord.key_state.value,
-            StateStride.stride_py_required.name,
+            _StateStride.stride_py_required.name,
             KeyWord.key_reached.value,
         ],
     )
@@ -617,7 +617,7 @@ class StateName(enum.Enum):
         name_category=NameCategory.category_python_exec,
         name_components=[
             KeyWord.key_state.value,
-            StateStride.stride_py_venv.name,
+            _StateStride.stride_py_venv.name,
             KeyWord.key_reached.value,
         ],
     )
@@ -638,7 +638,7 @@ class StateName(enum.Enum):
         name_category=NameCategory.category_state_mutation,
         name_components=[
             KeyWord.key_state.value,
-            ValueName.value_version.value,
+            _ValueName.value_version.value,
             KeyWord.key_constraints.value,
             KeyWord.key_generated.value,
         ],
@@ -649,7 +649,7 @@ class StateName(enum.Enum):
         name_category=NameCategory.category_python_exec,
         name_components=[
             KeyWord.key_state.value,
-            StateStride.stride_deps_updated.name,
+            _StateStride.stride_deps_updated.name,
             KeyWord.key_reached.value,
         ],
     )
@@ -669,7 +669,7 @@ class StateName(enum.Enum):
         name_category=NameCategory.category_python_exec,
         name_components=[
             KeyWord.key_state.value,
-            StateStride.stride_src_updated.name,
+            _StateStride.stride_src_updated.name,
             KeyWord.key_reached.value,
         ],
     )
@@ -741,7 +741,7 @@ class StateName(enum.Enum):
         name_category=NameCategory.category_state_mutation,
         name_components=[
             KeyWord.key_state.value,
-            ValueName.value_venv_driver.value,
+            _ValueName.value_venv_driver.value,
             KeyWord.key_prepared.value,
         ],
     )

@@ -12,7 +12,7 @@ from protoprimer.primer_kernel import (
     _Factory_state_stride_py_arbitrary_reached,
     _EnvContext,
     _EnvState,
-    StateStride,
+    _StateStride,
 )
 
 
@@ -43,9 +43,9 @@ def test_stride_py_arbitrary_not_in_venv(
         _EnvState.state_proto_kernel_file_abs_path_inited.name,
     )
 
-    mock_state_stride_py_arbitrary_reached.return_value.eval_own_state.return_value = StateStride.stride_py_arbitrary
+    mock_state_stride_py_arbitrary_reached.return_value.eval_own_state.return_value = _StateStride.stride_py_arbitrary
 
-    mock_get_stride.return_value = StateStride.stride_py_arbitrary
+    mock_get_stride.return_value = _StateStride.stride_py_arbitrary
 
     mock_is_venv.return_value = False
 
@@ -79,7 +79,7 @@ def test_stride_py_venv(
     proto_kernel_abs_file_path = "/path/to/proto_kernel.py"
 
     mock_state_input_proto_kernel_file_abs_path_var_loaded.return_value.eval_own_state.return_value = proto_kernel_abs_file_path
-    mock_get_stride.return_value = StateStride.stride_py_venv
+    mock_get_stride.return_value = _StateStride.stride_py_venv
 
     # when:
 
@@ -107,7 +107,7 @@ def test_stride_py_venv_no_arg(
     )
 
     mock_state_input_proto_kernel_file_abs_path_var_loaded.return_value.eval_own_state.return_value = None
-    mock_get_stride.return_value = StateStride.stride_py_venv
+    mock_get_stride.return_value = _StateStride.stride_py_venv
 
     # when/then:
 

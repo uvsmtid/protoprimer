@@ -7,7 +7,7 @@ from protoprimer.primer_kernel import (
     _ConfConstGeneral,
     EnvVar,
     _PathName,
-    ValueName,
+    _ValueName,
 )
 from test_protoprimer.test_primer_kernel_metadata.test_metadata.test_key_word import (
     KeyWord,
@@ -74,7 +74,7 @@ class EnvVarName(enum.Enum):
         name_category=NameCategory.category_name_only,
         name_components=[
             _ConfConstGeneral.name_protoprimer_package.upper(),
-            ValueName.value_py_exec.value.upper(),
+            _ValueName.value_py_exec.value.upper(),
         ],
     )
     var_PROTOPRIMER_PROTO_KERNEL = EnvVarMeta(
@@ -108,7 +108,7 @@ class EnvVarName(enum.Enum):
         name_category=NameCategory.category_name_only,
         name_components=[
             _ConfConstGeneral.name_protoprimer_package.upper(),
-            ValueName.value_venv_driver.value.upper(),
+            _ValueName.value_venv_driver.value.upper(),
         ],
     )
     var_PROTOPRIMER_MOCKED_RESTART = EnvVarMeta(

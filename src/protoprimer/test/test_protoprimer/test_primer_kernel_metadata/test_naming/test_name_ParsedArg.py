@@ -4,10 +4,10 @@ import enum
 
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer.primer_kernel import (
-    FilesystemObject,
-    ParsedArg,
+    _FilesystemObject,
+    _ParsedArg,
     _PathName,
-    ValueName,
+    _ValueName,
 )
 from test_protoprimer.test_primer_kernel_metadata.test_metadata.test_key_word import (
     KeyWord,
@@ -25,11 +25,11 @@ class ArgMeta(AbstractMeta):
 
     def __init__(
         self,
-        command_arg: ParsedArg,
+        command_arg: _ParsedArg,
         name_category: NameCategory,
         name_components: list[str],
     ):
-        self.command_arg: ParsedArg = command_arg
+        self.command_arg: _ParsedArg = command_arg
         self.name_category: NameCategory = name_category
         self.name_components: list[str] = name_components
 
@@ -52,16 +52,16 @@ class ArgMeta(AbstractMeta):
 class ArgName(enum.Enum):
 
     name_selected_env_dir = ArgMeta(
-        command_arg=ParsedArg.name_selected_env_dir,
+        command_arg=_ParsedArg.name_selected_env_dir,
         name_category=NameCategory.category_path_arg_value,
         name_components=[
             _PathName.path_selected_env.value,
-            FilesystemObject.fs_object_dir.value,
+            _FilesystemObject.fs_object_dir.value,
         ],
     )
 
     name_shell_command = ArgMeta(
-        command_arg=ParsedArg.name_shell_command,
+        command_arg=_ParsedArg.name_shell_command,
         name_category=NameCategory.category_named_arg_action,
         name_components=[
             KeyWord.key_shell.value,
@@ -70,16 +70,16 @@ class ArgName(enum.Enum):
     )
 
     name_exec_operation = ArgMeta(
-        command_arg=ParsedArg.name_exec_operation,
+        command_arg=_ParsedArg.name_exec_operation,
         name_category=NameCategory.category_named_arg_value,
         name_components=[
-            ValueName.value_exec_operation.value,
+            _ValueName.value_exec_operation.value,
         ],
     )
 
     # UC_71_59_90_97.generated_entry_script.md
     name_entry_func = ArgMeta(
-        command_arg=ParsedArg.name_entry_func,
+        command_arg=_ParsedArg.name_entry_func,
         name_category=NameCategory.category_named_arg_value,
         name_components=[
             KeyWord.key_entry.value,
@@ -88,7 +88,7 @@ class ArgName(enum.Enum):
     )
 
     name_entry_script_path = ArgMeta(
-        command_arg=ParsedArg.name_entry_script_path,
+        command_arg=_ParsedArg.name_entry_script_path,
         name_category=NameCategory.category_path_arg_value,
         name_components=[
             KeyWord.key_entry.value,
@@ -98,7 +98,7 @@ class ArgName(enum.Enum):
     )
 
     name_main_func = ArgMeta(
-        command_arg=ParsedArg.name_main_func,
+        command_arg=_ParsedArg.name_main_func,
         name_category=NameCategory.category_named_arg_value,
         name_components=[
             KeyWord.key_main.value,
@@ -108,7 +108,7 @@ class ArgName(enum.Enum):
 
     # TODO: TODO_19_13_09_01.propagate_start_sub_command_cli_args.md
     name_target_args = ArgMeta(
-        command_arg=ParsedArg.name_target_args,
+        command_arg=_ParsedArg.name_target_args,
         name_category=NameCategory.category_named_arg_value,
         name_components=[
             KeyWord.key_target.value,
@@ -118,7 +118,7 @@ class ArgName(enum.Enum):
 
 
 class TestParsedArgName(NamingTestBase):
-    prod_enum = ParsedArg
+    prod_enum = _ParsedArg
     test_enum = ArgName
     enum_prefix: str = "name_"
 

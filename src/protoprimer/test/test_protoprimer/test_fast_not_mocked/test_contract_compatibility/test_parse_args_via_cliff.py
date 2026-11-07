@@ -4,8 +4,8 @@ See: FT_78_72_23_04.backward_compatibility.md
 Ensuring the stable CLI with `cliff`.
 
 The spec below is frozen (literals only, nothing is taken from `protoprimer`: a rename must be detected).
-The actual CLI is exercised via the public `parse_args` only: for every `argv` row, the spec parsers
-work out the expected values, and `parse_args` must give the same ones.
+The actual CLI is exercised via the public `_parse_args` only: for every `argv` row, the spec parsers
+work out the expected values, and `_parse_args` must give the same ones.
 The comparison goes from the spec to the actual args only: new args/options never fail it.
 
 See also `TODO_01_84_56_96.cover_CLI_compatibility.md`.
@@ -20,7 +20,7 @@ from cliff.commandmanager import CommandManager
 
 from local_test.cli_spec_helper import find_spec_mismatches
 from local_test.name_assertion import assert_test_module_name_embeds_str
-from protoprimer.primer_kernel import parse_args
+from protoprimer.primer_kernel import _parse_args
 
 
 class Boot(Command):
@@ -239,7 +239,7 @@ def parse_via_spec(expected_argv) -> dict:
 
 
 def test_relationship():
-    assert_test_module_name_embeds_str(parse_args.__name__)
+    assert_test_module_name_embeds_str(_parse_args.__name__)
 
 
 @pytest.mark.parametrize(
@@ -277,7 +277,7 @@ def test_relationship():
 def test_parse_args_matches_spec(given_argv):
     """
     Every value the spec expects for `given_argv` (defaults, short and long forms, positions, ...)
-    must be given by `parse_args` too.
+    must be given by `_parse_args` too.
     """
 
     # given:
@@ -286,7 +286,7 @@ def test_parse_args_matches_spec(given_argv):
 
     # when:
 
-    actual_args = parse_args(given_argv)
+    actual_args = _parse_args(given_argv)
 
     # then:
 
@@ -306,7 +306,7 @@ def test_parse_args_matches_spec(given_argv):
 )
 def test_parse_args_rejects_incomplete_or_invalid_argv(given_argv):
     with pytest.raises(SystemExit):
-        parse_args(given_argv)
+        _parse_args(given_argv)
 
 
 @pytest.mark.parametrize(
@@ -324,7 +324,7 @@ def test_parse_args_target_args_after_double_dash(given_argv, expected_target_ar
 
     # when:
 
-    actual_args = parse_args(given_argv)
+    actual_args = _parse_args(given_argv)
 
     # then:
 
@@ -346,8 +346,8 @@ def test_parse_args_target_args_after_double_dash(given_argv, expected_target_ar
 )
 def test_parse_args_double_dash_is_rejected(given_argv):
     with pytest.raises(ValueError):
-        parse_args(given_argv)
+        _parse_args(given_argv)
 
 
 def test_parse_args_default_exec_operation_is_boot():
-    assert parse_args(["-q"]).exec_operation == "boot"
+    assert _parse_args(["-q"]).exec_operation == "boot"
