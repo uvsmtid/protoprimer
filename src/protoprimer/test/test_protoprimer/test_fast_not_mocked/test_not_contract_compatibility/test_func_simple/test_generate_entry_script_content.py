@@ -2,12 +2,12 @@ from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer.primer_kernel import (
     ConfConstGeneral,
     _EntryFunc,
-    generate_entry_script_content,
+    _generate_entry_script_content,
 )
 
 
 def test_relationship():
-    assert_test_module_name_embeds_str(generate_entry_script_content.__name__)
+    assert_test_module_name_embeds_str(_generate_entry_script_content.__name__)
 
 
 def test_generate_entry_script_content_no_env_vars():
@@ -19,7 +19,7 @@ def test_generate_entry_script_content_no_env_vars():
 
     # when:
 
-    generated_content = generate_entry_script_content(
+    generated_content = _generate_entry_script_content(
         _EntryFunc.func_boot_env.value,
         "/dummy/path/proto_kernel.py",
         "/dummy/path/entry.py",
@@ -42,7 +42,7 @@ def test_generate_entry_script_content_with_env_vars():
 
     # when:
 
-    generated_content = generate_entry_script_content(
+    generated_content = _generate_entry_script_content(
         _EntryFunc.func_boot_env.value,
         "/dummy/path/proto_kernel.py",
         "/dummy/path/entry.py",
@@ -67,7 +67,7 @@ def test_generate_entry_script_content_empty_main_func():
 
     # when:
 
-    generated_content = generate_entry_script_content(
+    generated_content = _generate_entry_script_content(
         _EntryFunc.func_boot_env.value,
         "/dummy/path/proto_kernel.py",
         "/dummy/path/entry.py",

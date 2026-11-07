@@ -22,7 +22,7 @@ from protoprimer.primer_kernel import (
     _EntryFunc,
     SyntaxArg,
     VenvDriverPip,
-    generate_entry_script_content,
+    _generate_entry_script_content,
 )
 
 from local_test.fat_mocked_helper import run_primer_main
@@ -75,7 +75,7 @@ def test_start_app_cleans_protoprimer_env_vars(tmp_path: pathlib.Path):
     )
 
     start_app_script_abs_path = ref_root_abs_path / "start_app"
-    start_app_script_content = generate_entry_script_content(
+    start_app_script_content = _generate_entry_script_content(
         _EntryFunc.func_start_app.value,
         str(proto_kernel_abs_path),
         str(start_app_script_abs_path),

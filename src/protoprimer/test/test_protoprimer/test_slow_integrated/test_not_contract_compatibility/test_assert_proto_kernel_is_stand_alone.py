@@ -13,7 +13,7 @@ import pytest
 import protoprimer
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer.primer_kernel import (
-    assert_proto_kernel_is_stand_alone,
+    _assert_proto_kernel_is_stand_alone,
     ConfConstGeneral,
     ConfConstInput,
     VenvDriverPip,
@@ -21,7 +21,7 @@ from protoprimer.primer_kernel import (
 
 
 def test_relationship():
-    assert_test_module_name_embeds_str(assert_proto_kernel_is_stand_alone.__name__)
+    assert_test_module_name_embeds_str(_assert_proto_kernel_is_stand_alone.__name__)
 
 
 @pytest.fixture(scope="module")
@@ -88,8 +88,8 @@ def _run_stand_alone_check(
 ) -> subprocess.CompletedProcess:
     script_body = textwrap.dedent(
         f"""
-        from protoprimer.primer_kernel import assert_proto_kernel_is_stand_alone
-        assert_proto_kernel_is_stand_alone({repr(path_to_check)})
+        from protoprimer.primer_kernel import _assert_proto_kernel_is_stand_alone
+        _assert_proto_kernel_is_stand_alone({repr(path_to_check)})
         """,
     )
     return subprocess.run(

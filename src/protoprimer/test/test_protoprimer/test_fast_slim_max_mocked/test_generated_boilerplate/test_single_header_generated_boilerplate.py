@@ -6,7 +6,7 @@ import protoprimer.primer_kernel as pk_mod
 
 from protoprimer.primer_kernel import (
     ConfConstGeneral,
-    read_text_file,
+    _read_text_file,
     _replace_single_header_in_empty_lines,
     write_text_file,
 )
@@ -39,7 +39,7 @@ def test_replace_single_header_in_empty_lines(fs):
 
     header_text = ConfConstGeneral.func_get_proto_kernel_generated_boilerplate_single_header(pk_mod)
     result = _replace_single_header_in_empty_lines(
-        input_text=read_text_file(input_path),
+        input_text=_read_text_file(input_path),
         boilerplate_text=header_text,
     )
     write_text_file(output_path, result)
@@ -61,4 +61,4 @@ def test_replace_single_header_in_empty_lines(fs):
         "\n"
         "import os\n"
     )
-    assert read_text_file(output_path) == expected_content
+    assert _read_text_file(output_path) == expected_content
