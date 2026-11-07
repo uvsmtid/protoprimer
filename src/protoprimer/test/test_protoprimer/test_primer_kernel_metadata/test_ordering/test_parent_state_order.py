@@ -8,8 +8,8 @@ from local_test.verified_dynamic_graph import (
 )
 from protoprimer.primer_kernel import (
     _EntryFunc,
-    EnvState,
-    StateNode,
+    _EnvState,
+    _StateNode,
 )
 
 
@@ -34,16 +34,16 @@ def test_EnvState_parent_order() -> None:
 
     state_graph_instance = env_ctx._state_graph
 
-    env_state_name_to_ordinal = {env_state.name: index for index, env_state in enumerate(EnvState)}
+    env_state_name_to_ordinal = {env_state.name: index for index, env_state in enumerate(_EnvState)}
 
     order_violations = []
 
     # when:
 
-    for env_state in EnvState:
+    for env_state in _EnvState:
         state_node = state_graph_instance.get_state_node(env_state.name)
         if state_node is None:
-            raise AssertionError(f"`{StateNode.__name__}` for [{env_state.name}] not found")
+            raise AssertionError(f"`{_StateNode.__name__}` for [{env_state.name}] not found")
 
         parent_states = state_node.get_parent_states()
 

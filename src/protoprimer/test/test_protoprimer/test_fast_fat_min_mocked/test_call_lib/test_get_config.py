@@ -8,7 +8,7 @@ from local_test.repo_tree import change_to_known_repo_path
 from protoprimer.primer_kernel import (
     ConfField,
     ConfLeap,
-    EnvState,
+    _EnvState,
     VenvDriverType,
     get_config,
 )
@@ -153,33 +153,33 @@ def test_get_config_with_leap_derived(proto_kernel_abs_path):
     # then:
 
     assert conf_data.keys() == {
-        EnvState.state_proto_kernel_file_abs_path_inited.name,
-        EnvState.state_primer_conf_file_abs_path_inited.name,
-        EnvState.state_ref_root_dir_abs_path_inited.name,
-        EnvState.state_global_conf_dir_abs_path_inited.name,
-        EnvState.state_global_conf_file_abs_path_inited.name,
-        EnvState.state_selected_env_dir_rel_path_inited.name,
-        EnvState.state_local_conf_symlink_abs_path_inited.name,
-        EnvState.state_local_conf_file_abs_path_inited.name,
-        EnvState.state_required_python_version_inited.name,
-        EnvState.state_selected_python_file_abs_path_inited.name,
-        EnvState.state_local_venv_dir_abs_path_inited.name,
-        EnvState.state_local_log_dir_abs_path_inited.name,
-        EnvState.state_local_run_dir_abs_path_inited.name,
-        EnvState.state_local_tmp_dir_abs_path_inited.name,
-        EnvState.state_local_cache_dir_abs_path_inited.name,
-        EnvState.state_venv_driver_inited.name,
-        EnvState.state_project_descriptors_inited.name,
-        EnvState.state_version_constraints_file_basename_inited.name,
+        _EnvState.state_proto_kernel_file_abs_path_inited.name,
+        _EnvState.state_primer_conf_file_abs_path_inited.name,
+        _EnvState.state_ref_root_dir_abs_path_inited.name,
+        _EnvState.state_global_conf_dir_abs_path_inited.name,
+        _EnvState.state_global_conf_file_abs_path_inited.name,
+        _EnvState.state_selected_env_dir_rel_path_inited.name,
+        _EnvState.state_local_conf_symlink_abs_path_inited.name,
+        _EnvState.state_local_conf_file_abs_path_inited.name,
+        _EnvState.state_required_python_version_inited.name,
+        _EnvState.state_selected_python_file_abs_path_inited.name,
+        _EnvState.state_local_venv_dir_abs_path_inited.name,
+        _EnvState.state_local_log_dir_abs_path_inited.name,
+        _EnvState.state_local_run_dir_abs_path_inited.name,
+        _EnvState.state_local_tmp_dir_abs_path_inited.name,
+        _EnvState.state_local_cache_dir_abs_path_inited.name,
+        _EnvState.state_venv_driver_inited.name,
+        _EnvState.state_project_descriptors_inited.name,
+        _EnvState.state_version_constraints_file_basename_inited.name,
     }
 
-    assert conf_data[EnvState.state_selected_env_dir_rel_path_inited.name] == "dst/default_env"
+    assert conf_data[_EnvState.state_selected_env_dir_rel_path_inited.name] == "dst/default_env"
 
-    assert conf_data[EnvState.state_required_python_version_inited.name] == "3.14.0"
+    assert conf_data[_EnvState.state_required_python_version_inited.name] == "3.14.0"
 
-    assert conf_data[EnvState.state_venv_driver_inited.name] == VenvDriverType.venv_uv.name
+    assert conf_data[_EnvState.state_venv_driver_inited.name] == VenvDriverType.venv_uv.name
 
-    assert conf_data[EnvState.state_project_descriptors_inited.name] == [
+    assert conf_data[_EnvState.state_project_descriptors_inited.name] == [
         {
             ConfField.field_build_root_dir_rel_path.value: "src/local_auth",
             ConfField.field_install_extras.value: [],

@@ -9,8 +9,8 @@ from protoprimer.primer_kernel import (
     ConfConstGeneral,
     ConfLeap,
     _EntryFunc,
-    EnvState,
-    ExecOperation,
+    _EnvState,
+    _ExecOperation,
     FilesystemObject,
     PathName,
     PathType,
@@ -35,12 +35,12 @@ class StateMeta(AbstractMeta):
 
     def __init__(
         self,
-        env_state: EnvState,
+        env_state: _EnvState,
         name_category: NameCategory,
         name_components: list[str],
     ):
         # Specified at ctor call site (primarily, for quick navigation in the IDE):
-        self.env_state: EnvState = env_state
+        self.env_state: _EnvState = env_state
         self.name_category: NameCategory = name_category
         self.name_components: list[str] = name_components
 
@@ -62,11 +62,11 @@ class StateMeta(AbstractMeta):
 
 class StateName(enum.Enum):
     """
-    This enum re-lists all items from the `EnvState` enum with metadata to verify their naming.
+    This enum re-lists all items from the `_EnvState` enum with metadata to verify their naming.
     """
 
     state_input_py_exec_var_loaded = StateMeta(
-        env_state=EnvState.state_input_py_exec_var_loaded,
+        env_state=_EnvState.state_input_py_exec_var_loaded,
         name_category=NameCategory.category_named_value,
         name_components=[
             KeyWord.key_state.value,
@@ -78,7 +78,7 @@ class StateName(enum.Enum):
     )
 
     state_is_app_defined = StateMeta(
-        env_state=EnvState.state_is_app_defined,
+        env_state=_EnvState.state_is_app_defined,
         name_category=NameCategory.category_name_only,
         name_components=[
             KeyWord.key_state.value,
@@ -89,7 +89,7 @@ class StateName(enum.Enum):
     )
 
     state_input_is_stderr_log_enabled = StateMeta(
-        env_state=EnvState.state_input_is_stderr_log_enabled,
+        env_state=_EnvState.state_input_is_stderr_log_enabled,
         name_category=NameCategory.category_name_only,
         name_components=[
             KeyWord.key_state.value,
@@ -102,7 +102,7 @@ class StateName(enum.Enum):
     )
 
     state_input_stderr_log_level_var_loaded = StateMeta(
-        env_state=EnvState.state_input_stderr_log_level_var_loaded,
+        env_state=_EnvState.state_input_stderr_log_level_var_loaded,
         name_category=NameCategory.category_named_value,
         name_components=[
             KeyWord.key_state.value,
@@ -114,7 +114,7 @@ class StateName(enum.Enum):
     )
 
     state_default_stderr_log_handler_configured = StateMeta(
-        env_state=EnvState.state_default_stderr_log_handler_configured,
+        env_state=_EnvState.state_default_stderr_log_handler_configured,
         name_category=NameCategory.category_state_mutation,
         name_components=[
             KeyWord.key_state.value,
@@ -127,7 +127,7 @@ class StateName(enum.Enum):
     )
 
     state_default_file_log_handler_configured = StateMeta(
-        env_state=EnvState.state_default_file_log_handler_configured,
+        env_state=_EnvState.state_default_file_log_handler_configured,
         name_category=NameCategory.category_state_mutation,
         name_components=[
             KeyWord.key_state.value,
@@ -140,7 +140,7 @@ class StateName(enum.Enum):
     )
 
     state_args_parsed = StateMeta(
-        env_state=EnvState.state_args_parsed,
+        env_state=_EnvState.state_args_parsed,
         name_category=NameCategory.category_name_only,
         name_components=[
             KeyWord.key_state.value,
@@ -150,7 +150,7 @@ class StateName(enum.Enum):
     )
 
     state_input_stderr_log_level_eval_finalized = StateMeta(
-        env_state=EnvState.state_input_stderr_log_level_eval_finalized,
+        env_state=_EnvState.state_input_stderr_log_level_eval_finalized,
         name_category=NameCategory.category_named_value,
         name_components=[
             KeyWord.key_state.value,
@@ -162,7 +162,7 @@ class StateName(enum.Enum):
     )
 
     state_input_stderr_log_level_handler_configured = StateMeta(
-        env_state=EnvState.state_input_stderr_log_level_handler_configured,
+        env_state=_EnvState.state_input_stderr_log_level_handler_configured,
         name_category=NameCategory.category_state_mutation,
         name_components=[
             KeyWord.key_state.value,
@@ -174,7 +174,7 @@ class StateName(enum.Enum):
     )
 
     state_input_exec_operation_loaded = StateMeta(
-        env_state=EnvState.state_input_exec_operation_loaded,
+        env_state=_EnvState.state_input_exec_operation_loaded,
         name_category=NameCategory.category_named_value,
         name_components=[
             KeyWord.key_state.value,
@@ -185,7 +185,7 @@ class StateName(enum.Enum):
     )
 
     state_print_conf_finalized = StateMeta(
-        env_state=EnvState.state_print_conf_finalized,
+        env_state=_EnvState.state_print_conf_finalized,
         name_category=NameCategory.category_name_only,
         name_components=[
             KeyWord.key_state.value,
@@ -196,7 +196,7 @@ class StateName(enum.Enum):
     )
 
     state_prepare_venv_finalized = StateMeta(
-        env_state=EnvState.state_prepare_venv_finalized,
+        env_state=_EnvState.state_prepare_venv_finalized,
         name_category=NameCategory.category_name_only,
         name_components=[
             KeyWord.key_state.value,
@@ -207,7 +207,7 @@ class StateName(enum.Enum):
     )
 
     state_input_final_state_eval_finalized = StateMeta(
-        env_state=EnvState.state_input_final_state_eval_finalized,
+        env_state=_EnvState.state_input_final_state_eval_finalized,
         name_category=NameCategory.category_named_value,
         name_components=[
             KeyWord.key_state.value,
@@ -219,7 +219,7 @@ class StateName(enum.Enum):
     )
 
     state_func_boot_env_executed = StateMeta(
-        env_state=EnvState.state_func_boot_env_executed,
+        env_state=_EnvState.state_func_boot_env_executed,
         name_category=NameCategory.category_state_mutation,
         name_components=[
             KeyWord.key_state.value,
@@ -230,17 +230,17 @@ class StateName(enum.Enum):
     )
 
     state_wrap_executed = StateMeta(
-        env_state=EnvState.state_wrap_executed,
+        env_state=_EnvState.state_wrap_executed,
         name_category=NameCategory.category_state_mutation,
         name_components=[
             KeyWord.key_state.value,
-            ExecOperation.op_wrap.value,
+            _ExecOperation.op_wrap.value,
             KeyWord.key_executed.value,
         ],
     )
 
     state_func_start_app_executed = StateMeta(
-        env_state=EnvState.state_func_start_app_executed,
+        env_state=_EnvState.state_func_start_app_executed,
         name_category=NameCategory.category_state_mutation,
         name_components=[
             KeyWord.key_state.value,
@@ -251,7 +251,7 @@ class StateName(enum.Enum):
     )
 
     state_func_call_lib_executed = StateMeta(
-        env_state=EnvState.state_func_call_lib_executed,
+        env_state=_EnvState.state_func_call_lib_executed,
         name_category=NameCategory.category_state_mutation,
         name_components=[
             KeyWord.key_state.value,
@@ -262,7 +262,7 @@ class StateName(enum.Enum):
     )
 
     state_input_start_id_var_loaded = StateMeta(
-        env_state=EnvState.state_input_start_id_var_loaded,
+        env_state=_EnvState.state_input_start_id_var_loaded,
         name_category=NameCategory.category_named_value,
         name_components=[
             KeyWord.key_state.value,
@@ -274,7 +274,7 @@ class StateName(enum.Enum):
     )
 
     state_input_proto_kernel_file_abs_path_var_loaded = StateMeta(
-        env_state=EnvState.state_input_proto_kernel_file_abs_path_var_loaded,
+        env_state=_EnvState.state_input_proto_kernel_file_abs_path_var_loaded,
         name_category=NameCategory.category_path_value_deprecated,
         name_components=[
             KeyWord.key_state.value,
@@ -288,7 +288,7 @@ class StateName(enum.Enum):
     )
 
     state_stride_py_arbitrary_reached = StateMeta(
-        env_state=EnvState.state_stride_py_arbitrary_reached,
+        env_state=_EnvState.state_stride_py_arbitrary_reached,
         name_category=NameCategory.category_python_exec,
         name_components=[
             KeyWord.key_state.value,
@@ -298,7 +298,7 @@ class StateName(enum.Enum):
     )
 
     state_proto_kernel_file_abs_path_inited = StateMeta(
-        env_state=EnvState.state_proto_kernel_file_abs_path_inited,
+        env_state=_EnvState.state_proto_kernel_file_abs_path_inited,
         name_category=NameCategory.category_path_value,
         name_components=[
             KeyWord.key_state.value,
@@ -310,7 +310,7 @@ class StateName(enum.Enum):
     )
 
     state_primer_conf_file_abs_path_inited = StateMeta(
-        env_state=EnvState.state_primer_conf_file_abs_path_inited,
+        env_state=_EnvState.state_primer_conf_file_abs_path_inited,
         name_category=NameCategory.category_path_value,
         name_components=[
             KeyWord.key_state.value,
@@ -322,7 +322,7 @@ class StateName(enum.Enum):
     )
 
     state_primer_conf_file_data_loaded = StateMeta(
-        env_state=EnvState.state_primer_conf_file_data_loaded,
+        env_state=_EnvState.state_primer_conf_file_data_loaded,
         name_category=NameCategory.category_loaded_data,
         name_components=[
             KeyWord.key_state.value,
@@ -335,7 +335,7 @@ class StateName(enum.Enum):
     )
 
     state_ref_root_dir_abs_path_inited = StateMeta(
-        env_state=EnvState.state_ref_root_dir_abs_path_inited,
+        env_state=_EnvState.state_ref_root_dir_abs_path_inited,
         name_category=NameCategory.category_path_value,
         name_components=[
             KeyWord.key_state.value,
@@ -347,7 +347,7 @@ class StateName(enum.Enum):
     )
 
     state_global_conf_dir_abs_path_inited = StateMeta(
-        env_state=EnvState.state_global_conf_dir_abs_path_inited,
+        env_state=_EnvState.state_global_conf_dir_abs_path_inited,
         name_category=NameCategory.category_path_value,
         name_components=[
             KeyWord.key_state.value,
@@ -359,7 +359,7 @@ class StateName(enum.Enum):
     )
 
     state_global_conf_file_abs_path_inited = StateMeta(
-        env_state=EnvState.state_global_conf_file_abs_path_inited,
+        env_state=_EnvState.state_global_conf_file_abs_path_inited,
         name_category=NameCategory.category_path_value,
         name_components=[
             KeyWord.key_state.value,
@@ -371,7 +371,7 @@ class StateName(enum.Enum):
     )
 
     state_client_conf_file_data_loaded = StateMeta(
-        env_state=EnvState.state_client_conf_file_data_loaded,
+        env_state=_EnvState.state_client_conf_file_data_loaded,
         name_category=NameCategory.category_loaded_data,
         name_components=[
             KeyWord.key_state.value,
@@ -384,7 +384,7 @@ class StateName(enum.Enum):
     )
 
     state_local_conf_symlink_abs_path_inited = StateMeta(
-        env_state=EnvState.state_local_conf_symlink_abs_path_inited,
+        env_state=_EnvState.state_local_conf_symlink_abs_path_inited,
         name_category=NameCategory.category_path_value,
         name_components=[
             KeyWord.key_state.value,
@@ -396,7 +396,7 @@ class StateName(enum.Enum):
     )
 
     state_selected_env_dir_rel_path_inited = StateMeta(
-        env_state=EnvState.state_selected_env_dir_rel_path_inited,
+        env_state=_EnvState.state_selected_env_dir_rel_path_inited,
         name_category=NameCategory.category_path_value,
         name_components=[
             KeyWord.key_state.value,
@@ -408,7 +408,7 @@ class StateName(enum.Enum):
     )
 
     state_local_conf_file_abs_path_inited = StateMeta(
-        env_state=EnvState.state_local_conf_file_abs_path_inited,
+        env_state=_EnvState.state_local_conf_file_abs_path_inited,
         name_category=NameCategory.category_path_value,
         name_components=[
             KeyWord.key_state.value,
@@ -420,7 +420,7 @@ class StateName(enum.Enum):
     )
 
     state_env_conf_file_data_loaded = StateMeta(
-        env_state=EnvState.state_env_conf_file_data_loaded,
+        env_state=_EnvState.state_env_conf_file_data_loaded,
         name_category=NameCategory.category_loaded_data,
         name_components=[
             KeyWord.key_state.value,
@@ -433,7 +433,7 @@ class StateName(enum.Enum):
     )
 
     state_required_python_version_inited = StateMeta(
-        env_state=EnvState.state_required_python_version_inited,
+        env_state=_EnvState.state_required_python_version_inited,
         name_category=NameCategory.category_value_field_action,
         name_components=[
             KeyWord.key_state.value,
@@ -444,7 +444,7 @@ class StateName(enum.Enum):
     )
 
     state_python_selector_file_abs_path_inited = StateMeta(
-        env_state=EnvState.state_python_selector_file_abs_path_inited,
+        env_state=_EnvState.state_python_selector_file_abs_path_inited,
         name_category=NameCategory.category_path_value,
         name_components=[
             KeyWord.key_state.value,
@@ -456,7 +456,7 @@ class StateName(enum.Enum):
     )
 
     state_selected_python_file_abs_path_inited = StateMeta(
-        env_state=EnvState.state_selected_python_file_abs_path_inited,
+        env_state=_EnvState.state_selected_python_file_abs_path_inited,
         name_category=NameCategory.category_path_value,
         name_components=[
             KeyWord.key_state.value,
@@ -468,7 +468,7 @@ class StateName(enum.Enum):
     )
 
     state_local_venv_dir_abs_path_inited = StateMeta(
-        env_state=EnvState.state_local_venv_dir_abs_path_inited,
+        env_state=_EnvState.state_local_venv_dir_abs_path_inited,
         name_category=NameCategory.category_path_value,
         name_components=[
             KeyWord.key_state.value,
@@ -480,7 +480,7 @@ class StateName(enum.Enum):
     )
 
     state_local_log_dir_abs_path_inited = StateMeta(
-        env_state=EnvState.state_local_log_dir_abs_path_inited,
+        env_state=_EnvState.state_local_log_dir_abs_path_inited,
         name_category=NameCategory.category_path_value,
         name_components=[
             KeyWord.key_state.value,
@@ -492,7 +492,7 @@ class StateName(enum.Enum):
     )
 
     state_local_run_dir_abs_path_inited = StateMeta(
-        env_state=EnvState.state_local_run_dir_abs_path_inited,
+        env_state=_EnvState.state_local_run_dir_abs_path_inited,
         name_category=NameCategory.category_path_value,
         name_components=[
             KeyWord.key_state.value,
@@ -504,7 +504,7 @@ class StateName(enum.Enum):
     )
 
     state_local_tmp_dir_abs_path_inited = StateMeta(
-        env_state=EnvState.state_local_tmp_dir_abs_path_inited,
+        env_state=_EnvState.state_local_tmp_dir_abs_path_inited,
         name_category=NameCategory.category_path_value,
         name_components=[
             KeyWord.key_state.value,
@@ -516,7 +516,7 @@ class StateName(enum.Enum):
     )
 
     state_local_cache_dir_abs_path_inited = StateMeta(
-        env_state=EnvState.state_local_cache_dir_abs_path_inited,
+        env_state=_EnvState.state_local_cache_dir_abs_path_inited,
         name_category=NameCategory.category_path_value,
         name_components=[
             KeyWord.key_state.value,
@@ -528,7 +528,7 @@ class StateName(enum.Enum):
     )
 
     state_project_descriptors_inited = StateMeta(
-        env_state=EnvState.state_project_descriptors_inited,
+        env_state=_EnvState.state_project_descriptors_inited,
         name_category=NameCategory.category_value_field_action,
         name_components=[
             KeyWord.key_state.value,
@@ -538,7 +538,7 @@ class StateName(enum.Enum):
     )
 
     state_install_specs_inited = StateMeta(
-        env_state=EnvState.state_install_specs_inited,
+        env_state=_EnvState.state_install_specs_inited,
         name_category=NameCategory.category_value_field_action,
         name_components=[
             KeyWord.key_state.value,
@@ -548,7 +548,7 @@ class StateName(enum.Enum):
     )
 
     state_version_constraints_file_basename_inited = StateMeta(
-        env_state=EnvState.state_version_constraints_file_basename_inited,
+        env_state=_EnvState.state_version_constraints_file_basename_inited,
         name_category=NameCategory.category_value_field_action,
         name_components=[
             KeyWord.key_state.value,
@@ -559,7 +559,7 @@ class StateName(enum.Enum):
     )
 
     state_venv_driver_inited = StateMeta(
-        env_state=EnvState.state_venv_driver_inited,
+        env_state=_EnvState.state_venv_driver_inited,
         name_category=NameCategory.category_value_field_action,
         name_components=[
             KeyWord.key_state.value,
@@ -569,7 +569,7 @@ class StateName(enum.Enum):
     )
 
     state_derived_conf_data_loaded = StateMeta(
-        env_state=EnvState.state_derived_conf_data_loaded,
+        env_state=_EnvState.state_derived_conf_data_loaded,
         name_category=NameCategory.category_state_mutation,
         name_components=[
             KeyWord.key_state.value,
@@ -581,7 +581,7 @@ class StateName(enum.Enum):
     )
 
     state_effective_conf_data_printed = StateMeta(
-        env_state=EnvState.state_effective_conf_data_printed,
+        env_state=_EnvState.state_effective_conf_data_printed,
         name_category=NameCategory.category_state_mutation,
         name_components=[
             KeyWord.key_state.value,
@@ -593,7 +593,7 @@ class StateName(enum.Enum):
     )
 
     state_stride_py_required_reached = StateMeta(
-        env_state=EnvState.state_stride_py_required_reached,
+        env_state=_EnvState.state_stride_py_required_reached,
         name_category=NameCategory.category_python_exec,
         name_components=[
             KeyWord.key_state.value,
@@ -603,17 +603,17 @@ class StateName(enum.Enum):
     )
 
     state_reset_triggered = StateMeta(
-        env_state=EnvState.state_reset_triggered,
+        env_state=_EnvState.state_reset_triggered,
         name_category=NameCategory.category_state_mutation,
         name_components=[
             KeyWord.key_state.value,
-            ExecOperation.op_reset.value,
+            _ExecOperation.op_reset.value,
             KeyWord.key_triggered.value,
         ],
     )
 
     state_stride_py_venv_reached = StateMeta(
-        env_state=EnvState.state_stride_py_venv_reached,
+        env_state=_EnvState.state_stride_py_venv_reached,
         name_category=NameCategory.category_python_exec,
         name_components=[
             KeyWord.key_state.value,
@@ -623,7 +623,7 @@ class StateName(enum.Enum):
     )
 
     state_protoprimer_package_installed = StateMeta(
-        env_state=EnvState.state_protoprimer_package_installed,
+        env_state=_EnvState.state_protoprimer_package_installed,
         name_category=NameCategory.category_state_mutation,
         name_components=[
             KeyWord.key_state.value,
@@ -634,7 +634,7 @@ class StateName(enum.Enum):
     )
 
     state_version_constraints_generated = StateMeta(
-        env_state=EnvState.state_version_constraints_generated,
+        env_state=_EnvState.state_version_constraints_generated,
         name_category=NameCategory.category_state_mutation,
         name_components=[
             KeyWord.key_state.value,
@@ -645,7 +645,7 @@ class StateName(enum.Enum):
     )
 
     state_stride_deps_updated_reached = StateMeta(
-        env_state=EnvState.state_stride_deps_updated_reached,
+        env_state=_EnvState.state_stride_deps_updated_reached,
         name_category=NameCategory.category_python_exec,
         name_components=[
             KeyWord.key_state.value,
@@ -655,7 +655,7 @@ class StateName(enum.Enum):
     )
 
     state_proto_kernel_updated = StateMeta(
-        env_state=EnvState.state_proto_kernel_updated,
+        env_state=_EnvState.state_proto_kernel_updated,
         name_category=NameCategory.category_state_mutation,
         name_components=[
             KeyWord.key_state.value,
@@ -665,7 +665,7 @@ class StateName(enum.Enum):
     )
 
     state_stride_src_updated_reached = StateMeta(
-        env_state=EnvState.state_stride_src_updated_reached,
+        env_state=_EnvState.state_stride_src_updated_reached,
         name_category=NameCategory.category_python_exec,
         name_components=[
             KeyWord.key_state.value,
@@ -675,7 +675,7 @@ class StateName(enum.Enum):
     )
 
     state_input_command_line = StateMeta(
-        env_state=EnvState.state_input_command_line,
+        env_state=_EnvState.state_input_command_line,
         name_category=NameCategory.category_name_only,
         name_components=[
             KeyWord.key_state.value,
@@ -686,7 +686,7 @@ class StateName(enum.Enum):
     )
 
     state_command_executed = StateMeta(
-        env_state=EnvState.state_command_executed,
+        env_state=_EnvState.state_command_executed,
         name_category=NameCategory.category_state_mutation,
         name_components=[
             KeyWord.key_state.value,
@@ -696,7 +696,7 @@ class StateName(enum.Enum):
     )
 
     state_client_func_executed = StateMeta(
-        env_state=EnvState.state_client_func_executed,
+        env_state=_EnvState.state_client_func_executed,
         name_category=NameCategory.category_state_mutation,
         name_components=[
             KeyWord.key_state.value,
@@ -707,27 +707,27 @@ class StateName(enum.Enum):
     )
 
     state_shell_executed = StateMeta(
-        env_state=EnvState.state_shell_executed,
+        env_state=_EnvState.state_shell_executed,
         name_category=NameCategory.category_state_mutation,
         name_components=[
             KeyWord.key_state.value,
-            ExecOperation.op_shell.value,
+            _ExecOperation.op_shell.value,
             KeyWord.key_executed.value,
         ],
     )
 
     state_start_executed = StateMeta(
-        env_state=EnvState.state_start_executed,
+        env_state=_EnvState.state_start_executed,
         name_category=NameCategory.category_state_mutation,
         name_components=[
             KeyWord.key_state.value,
-            ExecOperation.op_start.value,
+            _ExecOperation.op_start.value,
             KeyWord.key_executed.value,
         ],
     )
 
     state_everything_executed = StateMeta(
-        env_state=EnvState.state_everything_executed,
+        env_state=_EnvState.state_everything_executed,
         name_category=NameCategory.category_state_mutation,
         name_components=[
             KeyWord.key_state.value,
@@ -737,7 +737,7 @@ class StateName(enum.Enum):
     )
 
     state_venv_driver_prepared = StateMeta(
-        env_state=EnvState.state_venv_driver_prepared,
+        env_state=_EnvState.state_venv_driver_prepared,
         name_category=NameCategory.category_state_mutation,
         name_components=[
             KeyWord.key_state.value,
@@ -748,7 +748,7 @@ class StateName(enum.Enum):
 
 
 class TestStateName(NamingTestBase):
-    prod_enum = EnvState
+    prod_enum = _EnvState
     test_enum = StateName
     enum_prefix: str = "state_"
 

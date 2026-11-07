@@ -21,9 +21,9 @@ from protoprimer.primer_kernel import (
     _Node_state_selected_python_file_abs_path_inited,
     _ContextBuilder,
     _EntryFunc,
-    EnvState,
+    _EnvState,
     EnvVar,
-    StateNode,
+    _StateNode,
     VenvDriverPip,
     VenvDriverType,
     VenvDriverUv,
@@ -37,7 +37,7 @@ class TestEnvContext(BasePyfakefsTestClass):
         self.fs.create_file("/usr/bin/python", contents="foo")
 
     def test_relationship(self):
-        assert_test_module_name_embeds_str(EnvState.state_venv_driver_prepared.name)
+        assert_test_module_name_embeds_str(_EnvState.state_venv_driver_prepared.name)
 
     @patch("sys.argv", ["script_name"])
     @patch(
@@ -45,31 +45,31 @@ class TestEnvContext(BasePyfakefsTestClass):
         new=mock_get_python_version_by_current,
     )
     @patch(
-        f"{primer_kernel.__name__}.{_Node_state_required_python_version_inited.__name__}.{StateNode.eval_own_state.__name__}",
+        f"{primer_kernel.__name__}.{_Node_state_required_python_version_inited.__name__}.{_StateNode.eval_own_state.__name__}",
         return_value=test_python_version,
     )
     @patch(
-        f"{primer_kernel.__name__}.{_Node_state_selected_python_file_abs_path_inited.__name__}.{StateNode.eval_own_state.__name__}",
+        f"{primer_kernel.__name__}.{_Node_state_selected_python_file_abs_path_inited.__name__}.{_StateNode.eval_own_state.__name__}",
         return_value="/usr/bin/python",
     )
     @patch(
-        f"{primer_kernel.__name__}.{_Node_state_reset_triggered_is_app.__name__}.{StateNode.eval_own_state.__name__}",
+        f"{primer_kernel.__name__}.{_Node_state_reset_triggered_is_app.__name__}.{_StateNode.eval_own_state.__name__}",
         return_value=False,
     )
     @patch(
-        f"{primer_kernel.__name__}.{_Node_state_client_conf_file_data_loaded.__name__}.{StateNode.eval_own_state.__name__}",
+        f"{primer_kernel.__name__}.{_Node_state_client_conf_file_data_loaded.__name__}.{_StateNode.eval_own_state.__name__}",
         return_value={},
     )
     @patch(
-        f"{primer_kernel.__name__}.{_Node_state_env_conf_file_data_loaded.__name__}.{StateNode.eval_own_state.__name__}",
+        f"{primer_kernel.__name__}.{_Node_state_env_conf_file_data_loaded.__name__}.{_StateNode.eval_own_state.__name__}",
         return_value={},
     )
     @patch(
-        f"{primer_kernel.__name__}.{_Node_state_local_cache_dir_abs_path_inited.__name__}.{StateNode.eval_own_state.__name__}",
+        f"{primer_kernel.__name__}.{_Node_state_local_cache_dir_abs_path_inited.__name__}.{_StateNode.eval_own_state.__name__}",
         return_value="/tmp",
     )
     @patch(
-        f"{primer_kernel.__name__}.{_Node_state_local_venv_dir_abs_path_inited.__name__}.{StateNode.eval_own_state.__name__}",
+        f"{primer_kernel.__name__}.{_Node_state_local_venv_dir_abs_path_inited.__name__}.{_StateNode.eval_own_state.__name__}",
         return_value="/tmp/venv",
     )
     @patch("subprocess.check_call")
@@ -94,7 +94,7 @@ class TestEnvContext(BasePyfakefsTestClass):
             #
             .build_context()
         )
-        venv_driver = env_ctx.eval_state(EnvState.state_venv_driver_prepared.name)
+        venv_driver = env_ctx.eval_state(_EnvState.state_venv_driver_prepared.name)
         # then:
         if is_min_python():
             assert isinstance(venv_driver, VenvDriverPip)
@@ -113,31 +113,31 @@ class TestEnvContext(BasePyfakefsTestClass):
         new=mock_get_python_version_by_current,
     )
     @patch(
-        f"{primer_kernel.__name__}.{_Node_state_required_python_version_inited.__name__}.{StateNode.eval_own_state.__name__}",
+        f"{primer_kernel.__name__}.{_Node_state_required_python_version_inited.__name__}.{_StateNode.eval_own_state.__name__}",
         return_value=test_python_version,
     )
     @patch(
-        f"{primer_kernel.__name__}.{_Node_state_selected_python_file_abs_path_inited.__name__}.{StateNode.eval_own_state.__name__}",
+        f"{primer_kernel.__name__}.{_Node_state_selected_python_file_abs_path_inited.__name__}.{_StateNode.eval_own_state.__name__}",
         return_value="/usr/bin/python",
     )
     @patch(
-        f"{primer_kernel.__name__}.{_Node_state_reset_triggered_is_app.__name__}.{StateNode.eval_own_state.__name__}",
+        f"{primer_kernel.__name__}.{_Node_state_reset_triggered_is_app.__name__}.{_StateNode.eval_own_state.__name__}",
         return_value=False,
     )
     @patch(
-        f"{primer_kernel.__name__}.{_Node_state_client_conf_file_data_loaded.__name__}.{StateNode.eval_own_state.__name__}",
+        f"{primer_kernel.__name__}.{_Node_state_client_conf_file_data_loaded.__name__}.{_StateNode.eval_own_state.__name__}",
         return_value={},
     )
     @patch(
-        f"{primer_kernel.__name__}.{_Node_state_env_conf_file_data_loaded.__name__}.{StateNode.eval_own_state.__name__}",
+        f"{primer_kernel.__name__}.{_Node_state_env_conf_file_data_loaded.__name__}.{_StateNode.eval_own_state.__name__}",
         return_value={},
     )
     @patch(
-        f"{primer_kernel.__name__}.{_Node_state_local_cache_dir_abs_path_inited.__name__}.{StateNode.eval_own_state.__name__}",
+        f"{primer_kernel.__name__}.{_Node_state_local_cache_dir_abs_path_inited.__name__}.{_StateNode.eval_own_state.__name__}",
         return_value="/tmp",
     )
     @patch(
-        f"{primer_kernel.__name__}.{_Node_state_local_venv_dir_abs_path_inited.__name__}.{StateNode.eval_own_state.__name__}",
+        f"{primer_kernel.__name__}.{_Node_state_local_venv_dir_abs_path_inited.__name__}.{_StateNode.eval_own_state.__name__}",
         return_value="/tmp/venv",
     )
     @patch("subprocess.check_call")
@@ -162,7 +162,7 @@ class TestEnvContext(BasePyfakefsTestClass):
             #
             .build_context()
         )
-        venv_driver = env_ctx.eval_state(EnvState.state_venv_driver_prepared.name)
+        venv_driver = env_ctx.eval_state(_EnvState.state_venv_driver_prepared.name)
         # then:
         if is_min_python():
             assert isinstance(venv_driver, VenvDriverPip)
@@ -181,31 +181,31 @@ class TestEnvContext(BasePyfakefsTestClass):
         new=mock_get_python_version_by_current,
     )
     @patch(
-        f"{primer_kernel.__name__}.{_Node_state_required_python_version_inited.__name__}.{StateNode.eval_own_state.__name__}",
+        f"{primer_kernel.__name__}.{_Node_state_required_python_version_inited.__name__}.{_StateNode.eval_own_state.__name__}",
         return_value=test_python_version,
     )
     @patch(
-        f"{primer_kernel.__name__}.{_Node_state_selected_python_file_abs_path_inited.__name__}.{StateNode.eval_own_state.__name__}",
+        f"{primer_kernel.__name__}.{_Node_state_selected_python_file_abs_path_inited.__name__}.{_StateNode.eval_own_state.__name__}",
         return_value="/usr/bin/python",
     )
     @patch(
-        f"{primer_kernel.__name__}.{_Node_state_reset_triggered_is_app.__name__}.{StateNode.eval_own_state.__name__}",
+        f"{primer_kernel.__name__}.{_Node_state_reset_triggered_is_app.__name__}.{_StateNode.eval_own_state.__name__}",
         return_value=False,
     )
     @patch(
-        f"{primer_kernel.__name__}.{_Node_state_client_conf_file_data_loaded.__name__}.{StateNode.eval_own_state.__name__}",
+        f"{primer_kernel.__name__}.{_Node_state_client_conf_file_data_loaded.__name__}.{_StateNode.eval_own_state.__name__}",
         return_value={},
     )
     @patch(
-        f"{primer_kernel.__name__}.{_Node_state_env_conf_file_data_loaded.__name__}.{StateNode.eval_own_state.__name__}",
+        f"{primer_kernel.__name__}.{_Node_state_env_conf_file_data_loaded.__name__}.{_StateNode.eval_own_state.__name__}",
         return_value={},
     )
     @patch(
-        f"{primer_kernel.__name__}.{_Node_state_local_cache_dir_abs_path_inited.__name__}.{StateNode.eval_own_state.__name__}",
+        f"{primer_kernel.__name__}.{_Node_state_local_cache_dir_abs_path_inited.__name__}.{_StateNode.eval_own_state.__name__}",
         return_value="/tmp",
     )
     @patch(
-        f"{primer_kernel.__name__}.{_Node_state_local_venv_dir_abs_path_inited.__name__}.{StateNode.eval_own_state.__name__}",
+        f"{primer_kernel.__name__}.{_Node_state_local_venv_dir_abs_path_inited.__name__}.{_StateNode.eval_own_state.__name__}",
         return_value="/tmp/venv",
     )
     def test_init_without_uv(
@@ -227,6 +227,6 @@ class TestEnvContext(BasePyfakefsTestClass):
             #
             .build_context()
         )
-        venv_driver = env_ctx.eval_state(EnvState.state_venv_driver_prepared.name)
+        venv_driver = env_ctx.eval_state(_EnvState.state_venv_driver_prepared.name)
         # then:
         assert isinstance(venv_driver, VenvDriverPip)

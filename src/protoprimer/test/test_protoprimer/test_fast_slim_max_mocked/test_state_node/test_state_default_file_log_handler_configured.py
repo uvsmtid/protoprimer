@@ -12,7 +12,7 @@ from protoprimer.primer_kernel import (
     _Node_state_input_stderr_log_level_handler_configured,
     _Node_state_local_log_dir_abs_path_inited,
     _EnvContext,
-    EnvState,
+    _EnvState,
     _PrimerFileLogFormatter,
     StateStrideFilter,
 )
@@ -33,7 +33,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
     # noinspection PyMethodMayBeStatic
     def test_relationship(self):
-        assert_test_module_name_embeds_str(EnvState.state_default_file_log_handler_configured.name)
+        assert_test_module_name_embeds_str(_EnvState.state_default_file_log_handler_configured.name)
 
     @patch("sys.argv", ["/path/to/script.py"])
     @patch(f"{primer_kernel.__name__}.{_Node_state_input_start_id_var_loaded.__name__}.create_state_node")
@@ -48,7 +48,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         # given:
         assert_parent_factories_mocked(
             self.env_ctx,
-            EnvState.state_default_file_log_handler_configured.name,
+            _EnvState.state_default_file_log_handler_configured.name,
         )
         mock_state_input_start_id_var_loaded.return_value.eval_own_state.return_value = self.mock_start_id
         mock_state_local_log_dir_abs_path_inited.return_value.eval_own_state.return_value = self.mock_log_dir
@@ -58,7 +58,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.fs.create_dir(self.mock_log_dir)
 
         # when:
-        file_handler = self.env_ctx.eval_state(EnvState.state_default_file_log_handler_configured.name)
+        file_handler = self.env_ctx.eval_state(_EnvState.state_default_file_log_handler_configured.name)
 
         # then:
         self.assertIsInstance(file_handler, logging.FileHandler)
@@ -86,7 +86,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         # given:
         assert_parent_factories_mocked(
             self.env_ctx,
-            EnvState.state_default_file_log_handler_configured.name,
+            _EnvState.state_default_file_log_handler_configured.name,
         )
         mock_state_input_start_id_var_loaded.return_value.eval_own_state.return_value = self.mock_start_id
         mock_state_local_log_dir_abs_path_inited.return_value.eval_own_state.return_value = self.mock_log_dir
@@ -97,7 +97,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.fs.create_dir(self.mock_log_dir)
 
         # when:
-        file_handler = self.env_ctx.eval_state(EnvState.state_default_file_log_handler_configured.name)
+        file_handler = self.env_ctx.eval_state(_EnvState.state_default_file_log_handler_configured.name)
 
         # then:
         # File log level should be set to the more verbose level
@@ -116,7 +116,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         # given:
         assert_parent_factories_mocked(
             self.env_ctx,
-            EnvState.state_default_file_log_handler_configured.name,
+            _EnvState.state_default_file_log_handler_configured.name,
         )
         mock_state_input_start_id_var_loaded.return_value.eval_own_state.return_value = self.mock_start_id
         mock_state_local_log_dir_abs_path_inited.return_value.eval_own_state.return_value = self.mock_log_dir
@@ -127,7 +127,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.fs.create_dir(self.mock_log_dir)
 
         # when:
-        file_handler = self.env_ctx.eval_state(EnvState.state_default_file_log_handler_configured.name)
+        file_handler = self.env_ctx.eval_state(_EnvState.state_default_file_log_handler_configured.name)
 
         # then:
         # File log level should remain at the default (INFO)

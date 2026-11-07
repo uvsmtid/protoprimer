@@ -19,13 +19,13 @@ from protoprimer.primer_kernel import (
     ConfConstInput,
     ConfConstPrimer,
     ConfDst,
-    ExecOperation,
+    _ExecOperation,
     SyntaxArg,
 )
 
 
 def test_relationship():
-    assert_test_module_name_embeds_str(ExecOperation.op_boot.value)
+    assert_test_module_name_embeds_str(_ExecOperation.op_boot.value)
 
 
 def test_op_boot(tmp_path: Path):
@@ -35,7 +35,7 @@ def test_op_boot(tmp_path: Path):
     It uses `create_max_leaps_shape` (see FT_59_95_81_63.tree_shape.md).
     """
 
-    assert_test_func_name_embeds_str(ExecOperation.op_boot.value)
+    assert_test_func_name_embeds_str(_ExecOperation.op_boot.value)
 
     # given:
 
@@ -81,6 +81,6 @@ def test_op_boot(tmp_path: Path):
     run_primer_main(
         [
             str(proto_kernel_abs_path),
-            ExecOperation.op_eval.value,
+            _ExecOperation.op_eval.value,
         ]
     )

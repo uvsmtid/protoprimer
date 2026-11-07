@@ -15,7 +15,7 @@ from protoprimer.primer_kernel import (
     _ContextBuilder,
     _EntryFunc,
     _EnvContext,
-    EnvState,
+    _EnvState,
     _Factory_state_print_conf_finalized,
     StateStride,
 )
@@ -40,7 +40,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
     # noinspection PyMethodMayBeStatic
     def test_relationship(self):
-        assert_test_module_name_embeds_str(EnvState.state_client_conf_file_data_loaded.name)
+        assert_test_module_name_embeds_str(_EnvState.state_client_conf_file_data_loaded.name)
 
     @patch(f"{primer_kernel.__name__}.{_Factory_state_print_conf_finalized.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Node_state_global_conf_file_abs_path_inited.__name__}.create_state_node")
@@ -54,7 +54,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         assert_parent_factories_mocked(
             self.env_ctx,
-            EnvState.state_client_conf_file_data_loaded.name,
+            _EnvState.state_client_conf_file_data_loaded.name,
         )
 
         mock_client_dir = "/mock_client_dir"
@@ -73,7 +73,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         # when:
 
         self.assertTrue(os.path.isfile(state_global_conf_file_abs_path_inited))
-        self.env_ctx.eval_state(EnvState.state_client_conf_file_data_loaded.name)
+        self.env_ctx.eval_state(_EnvState.state_client_conf_file_data_loaded.name)
 
         # then:
 
@@ -103,7 +103,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         assert_parent_factories_mocked(
             self.env_ctx,
-            EnvState.state_client_conf_file_data_loaded.name,
+            _EnvState.state_client_conf_file_data_loaded.name,
         )
 
         mock_client_dir = "/mock_client_dir"
@@ -120,7 +120,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         # when:
 
         with self.assertLogs(primer_kernel.logger, level=WARNING) as log_dst:
-            self.env_ctx.eval_state(EnvState.state_client_conf_file_data_loaded.name)
+            self.env_ctx.eval_state(_EnvState.state_client_conf_file_data_loaded.name)
 
         # then:
 

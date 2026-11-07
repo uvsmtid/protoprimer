@@ -7,7 +7,7 @@ from metaprimer.conf_renderer import (
 )
 from protoprimer.primer_kernel import (
     ConfField,
-    EnvState,
+    _EnvState,
     TermColor,
 )
 
@@ -19,7 +19,7 @@ def test_relationship():
 def test_render_derived_config_data_with_unused_fields():
 
     config_data = {
-        EnvState.state_project_descriptors_inited.name: [
+        _EnvState.state_project_descriptors_inited.name: [
             {
                 ConfField.field_build_root_dir_rel_path.value: "src/test_project",
                 ConfField.field_install_extras.value: [
@@ -27,7 +27,7 @@ def test_render_derived_config_data_with_unused_fields():
                 ],
             },
         ],
-        EnvState.state_proto_kernel_file_abs_path_inited.name: "/abs/path/to/proto.py",
+        _EnvState.state_proto_kernel_file_abs_path_inited.name: "/abs/path/to/proto.py",
         "whatever_test": 5,
     }
 
@@ -46,7 +46,7 @@ leap_derived = (
     {{
         \n\
         {TermColor.config_comment.value}# This value is derived from `state_proto_kernel_file_abs_path_inited` - see description in `leap_input`.{TermColor.reset_style.value}
-        "{EnvState.state_proto_kernel_file_abs_path_inited.name}": "/abs/path/to/proto.py",
+        "{_EnvState.state_proto_kernel_file_abs_path_inited.name}": "/abs/path/to/proto.py",
         \n\
         {TermColor.config_missing.value}# This value is derived from `state_primer_conf_file_abs_path_inited` - see description in `leap_input`.{TermColor.reset_style.value}
         {TermColor.config_missing.value}# "state_primer_conf_file_abs_path_inited": None,{TermColor.reset_style.value}
@@ -91,7 +91,7 @@ leap_derived = (
         {TermColor.config_missing.value}# "state_venv_driver_inited": None,{TermColor.reset_style.value}
         \n\
         {TermColor.config_comment.value}# This value is derived from `project_descriptors` in `leap_client` (override-able in `leap_env`) - see description there.{TermColor.reset_style.value}
-        "{EnvState.state_project_descriptors_inited.name}": [
+        "{_EnvState.state_project_descriptors_inited.name}": [
             \n\
             {{
                 \n\
@@ -119,7 +119,7 @@ leap_derived = (
 
 def test_render_derived_config_data_with_unused_fields_quiet():
     config_data = {
-        EnvState.state_project_descriptors_inited.name: [
+        _EnvState.state_project_descriptors_inited.name: [
             {
                 ConfField.field_build_root_dir_rel_path.value: "src/test_project",
                 ConfField.field_install_extras.value: [
@@ -127,7 +127,7 @@ def test_render_derived_config_data_with_unused_fields_quiet():
                 ],
             },
         ],
-        EnvState.state_proto_kernel_file_abs_path_inited.name: "/abs/path/to/proto.py",
+        _EnvState.state_proto_kernel_file_abs_path_inited.name: "/abs/path/to/proto.py",
         "whatever_test": 5,
     }
 

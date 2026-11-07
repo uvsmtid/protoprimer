@@ -19,7 +19,7 @@ from protoprimer.primer_kernel import (
     _Factory_state_input_exec_operation_loaded,
     _Factory_state_input_stderr_log_level_eval_finalized,
     ConfConstPrimer,
-    EnvState,
+    _EnvState,
     StateStride,
 )
 

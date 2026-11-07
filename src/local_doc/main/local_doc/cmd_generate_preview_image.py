@@ -14,7 +14,7 @@ import sys
 import tempfile
 
 from metaprimer.script_lib import configure_script
-from protoprimer.primer_kernel import EnvState
+from protoprimer.primer_kernel import _EnvState
 
 logger = logging.getLogger(__name__)
 
@@ -53,7 +53,7 @@ def generate_preview_image() -> None:
     parsed_arguments = init_arg_parser().parse_args()
 
     derived_data = configure_script(script_basename=os.path.basename(sys.argv[0]))
-    ref_root_abs_path: str = derived_data[EnvState.state_ref_root_dir_abs_path_inited.name]
+    ref_root_abs_path: str = derived_data[_EnvState.state_ref_root_dir_abs_path_inited.name]
 
     generate_preview_image_file(
         ref_root_abs_path=ref_root_abs_path,

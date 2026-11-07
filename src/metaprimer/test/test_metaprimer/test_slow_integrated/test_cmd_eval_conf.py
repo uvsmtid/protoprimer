@@ -22,7 +22,7 @@ from protoprimer.primer_kernel import (
     ConfConstInput,
     ConfConstPrimer,
     _EntryFunc,
-    EnvState,
+    _EnvState,
     _import_proto_module,
     _generate_entry_script_content,
 )
@@ -114,9 +114,9 @@ def test_eval_conf_returns_derived_config(tmp_path: pathlib.Path):
     assert isinstance(derived_config, dict)
 
     # Compare the values to the config files created during that test:
-    assert derived_config[EnvState.state_local_venv_dir_abs_path_inited.name] == str(ref_root_abs_path / "venv")
-    assert derived_config[EnvState.state_local_cache_dir_abs_path_inited.name] == str(ref_root_abs_path / "cache")
-    assert derived_config[EnvState.state_project_descriptors_inited.name] == [
+    assert derived_config[_EnvState.state_local_venv_dir_abs_path_inited.name] == str(ref_root_abs_path / "venv")
+    assert derived_config[_EnvState.state_local_cache_dir_abs_path_inited.name] == str(ref_root_abs_path / "cache")
+    assert derived_config[_EnvState.state_project_descriptors_inited.name] == [
         {
             "build_root_dir_rel_path": "pyproject_src",
             "install_extras": [],

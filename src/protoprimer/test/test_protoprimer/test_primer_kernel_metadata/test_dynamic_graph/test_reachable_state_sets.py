@@ -4,8 +4,8 @@ from local_test.verified_dynamic_graph import VerifyingEnvContext
 from protoprimer.primer_kernel import (
     _EntryFunc,
     _EnvContext,
-    EnvState,
-    ExecOperation,
+    _EnvState,
+    _ExecOperation,
 )
 from local_repo.misc_tools.graph_utils import (
     topological_sort_of_verified_states,
@@ -15,7 +15,7 @@ from local_repo.misc_tools.graph_utils import (
 def _make_env_ctx(
     entry_func: _EntryFunc,
     prepare_venv: bool,
-    exec_operation: ExecOperation | None,
+    exec_operation: _ExecOperation | None,
     is_log_enabled: bool,
 ) -> _EnvContext:
     env_ctx = VerifyingEnvContext()
@@ -29,7 +29,7 @@ def _make_env_ctx(
 
 class TestTopologicalSort:
     """
-    Verifies the topologically sorted list of `EnvState.name`-s for each meaningful `_EnvContext` coordinate combination.
+    Verifies the topologically sorted list of `_EnvState.name`-s for each meaningful `_EnvContext` coordinate combination.
 
     Each test method:
     *   Constructs an `_EnvContext` with specific graph coordinates.
@@ -51,7 +51,7 @@ class TestTopologicalSort:
         env_ctx = _make_env_ctx(
             entry_func=_EntryFunc.func_boot_env,
             prepare_venv=True,
-            exec_operation=ExecOperation.op_boot,
+            exec_operation=_ExecOperation.op_boot,
             is_log_enabled=False,
         )
 
@@ -59,23 +59,23 @@ class TestTopologicalSort:
         sorted_names = topological_sort_of_verified_states(
             env_ctx._state_graph,
             env_ctx,
-            EnvState.state_everything_executed.name,
+            _EnvState.state_everything_executed.name,
         )
 
         # then:
         assert sorted_names == [
-            EnvState.state_is_app_defined.name,
-            EnvState.state_input_py_exec_var_loaded.name,
-            EnvState.state_input_is_stderr_log_enabled.name,
-            EnvState.state_input_stderr_log_level_var_loaded.name,
-            EnvState.state_default_stderr_log_handler_configured.name,
-            EnvState.state_args_parsed.name,
-            EnvState.state_input_stderr_log_level_eval_finalized.name,
-            EnvState.state_input_stderr_log_level_handler_configured.name,
-            EnvState.state_input_exec_operation_loaded.name,
-            EnvState.state_input_final_state_eval_finalized.name,
-            EnvState.state_func_boot_env_executed.name,
-            EnvState.state_everything_executed.name,
+            _EnvState.state_is_app_defined.name,
+            _EnvState.state_input_py_exec_var_loaded.name,
+            _EnvState.state_input_is_stderr_log_enabled.name,
+            _EnvState.state_input_stderr_log_level_var_loaded.name,
+            _EnvState.state_default_stderr_log_handler_configured.name,
+            _EnvState.state_args_parsed.name,
+            _EnvState.state_input_stderr_log_level_eval_finalized.name,
+            _EnvState.state_input_stderr_log_level_handler_configured.name,
+            _EnvState.state_input_exec_operation_loaded.name,
+            _EnvState.state_input_final_state_eval_finalized.name,
+            _EnvState.state_func_boot_env_executed.name,
+            _EnvState.state_everything_executed.name,
         ]
 
     def test_func_start_app_and_prepare_venv_false(self):
@@ -94,16 +94,16 @@ class TestTopologicalSort:
         sorted_names = topological_sort_of_verified_states(
             env_ctx._state_graph,
             env_ctx,
-            EnvState.state_everything_executed.name,
+            _EnvState.state_everything_executed.name,
         )
 
         # then:
         assert sorted_names == [
-            EnvState.state_is_app_defined.name,
-            EnvState.state_input_is_stderr_log_enabled.name,
-            EnvState.state_input_final_state_eval_finalized.name,
-            EnvState.state_func_start_app_executed.name,
-            EnvState.state_everything_executed.name,
+            _EnvState.state_is_app_defined.name,
+            _EnvState.state_input_is_stderr_log_enabled.name,
+            _EnvState.state_input_final_state_eval_finalized.name,
+            _EnvState.state_func_start_app_executed.name,
+            _EnvState.state_everything_executed.name,
         ]
 
     def test_func_call_lib(self):
@@ -122,16 +122,16 @@ class TestTopologicalSort:
         sorted_names = topological_sort_of_verified_states(
             env_ctx._state_graph,
             env_ctx,
-            EnvState.state_everything_executed.name,
+            _EnvState.state_everything_executed.name,
         )
 
         # then:
         assert sorted_names == [
-            EnvState.state_is_app_defined.name,
-            EnvState.state_input_is_stderr_log_enabled.name,
-            EnvState.state_input_final_state_eval_finalized.name,
-            EnvState.state_func_call_lib_executed.name,
-            EnvState.state_everything_executed.name,
+            _EnvState.state_is_app_defined.name,
+            _EnvState.state_input_is_stderr_log_enabled.name,
+            _EnvState.state_input_final_state_eval_finalized.name,
+            _EnvState.state_func_call_lib_executed.name,
+            _EnvState.state_everything_executed.name,
         ]
 
     def test_func_boot_env_and_prepare_venv_false(self):
@@ -142,7 +142,7 @@ class TestTopologicalSort:
         env_ctx = _make_env_ctx(
             entry_func=_EntryFunc.func_boot_env,
             prepare_venv=False,
-            exec_operation=ExecOperation.op_boot,
+            exec_operation=_ExecOperation.op_boot,
             is_log_enabled=False,
         )
 
@@ -150,21 +150,21 @@ class TestTopologicalSort:
         sorted_names = topological_sort_of_verified_states(
             env_ctx._state_graph,
             env_ctx,
-            EnvState.state_everything_executed.name,
+            _EnvState.state_everything_executed.name,
         )
 
         # then:
         assert sorted_names == [
-            EnvState.state_is_app_defined.name,
-            EnvState.state_input_py_exec_var_loaded.name,
-            EnvState.state_input_is_stderr_log_enabled.name,
-            EnvState.state_input_stderr_log_level_var_loaded.name,
-            EnvState.state_default_stderr_log_handler_configured.name,
-            EnvState.state_args_parsed.name,
-            EnvState.state_input_stderr_log_level_eval_finalized.name,
-            EnvState.state_input_stderr_log_level_handler_configured.name,
-            EnvState.state_input_exec_operation_loaded.name,
-            EnvState.state_input_final_state_eval_finalized.name,
-            EnvState.state_func_boot_env_executed.name,
-            EnvState.state_everything_executed.name,
+            _EnvState.state_is_app_defined.name,
+            _EnvState.state_input_py_exec_var_loaded.name,
+            _EnvState.state_input_is_stderr_log_enabled.name,
+            _EnvState.state_input_stderr_log_level_var_loaded.name,
+            _EnvState.state_default_stderr_log_handler_configured.name,
+            _EnvState.state_args_parsed.name,
+            _EnvState.state_input_stderr_log_level_eval_finalized.name,
+            _EnvState.state_input_stderr_log_level_handler_configured.name,
+            _EnvState.state_input_exec_operation_loaded.name,
+            _EnvState.state_input_final_state_eval_finalized.name,
+            _EnvState.state_func_boot_env_executed.name,
+            _EnvState.state_everything_executed.name,
         ]

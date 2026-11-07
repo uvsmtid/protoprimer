@@ -7,14 +7,14 @@ from unittest.mock import (
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer.primer_kernel import (
     _Node_state_input_py_exec_var_loaded,
-    EnvState,
+    _EnvState,
     EnvVar,
     StateStride,
 )
 
 
 def test_relationship():
-    assert_test_module_name_embeds_str(EnvState.state_input_py_exec_var_loaded.name)
+    assert_test_module_name_embeds_str(_EnvState.state_input_py_exec_var_loaded.name)
 
 
 @patch.dict(os.environ, {EnvVar.var_PROTOPRIMER_PY_EXEC.value: "stride_py_arbitrary"})

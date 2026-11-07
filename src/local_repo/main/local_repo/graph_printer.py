@@ -4,10 +4,10 @@ import dataclasses
 import enum
 
 from protoprimer.primer_kernel import (
-    EnvState,
-    RunStrategy,
-    StateGraph,
-    StateNode,
+    _EnvState,
+    _RunStrategy,
+    _StateGraph,
+    _StateNode,
 )
 
 
@@ -19,258 +19,258 @@ class SubGraph(enum.Enum):
 
 @dataclasses.dataclass
 class StateNodeMeta:
-    env_state: EnvState
+    env_state: _EnvState
     sub_graph: SubGraph | None
 
 
 class StateMeta(enum.Enum):
     state_input_py_exec_var_loaded = StateNodeMeta(
-        env_state=EnvState.state_input_py_exec_var_loaded,
+        env_state=_EnvState.state_input_py_exec_var_loaded,
         sub_graph=SubGraph.graph_input,
     )
     state_is_app_defined = StateNodeMeta(
-        env_state=EnvState.state_is_app_defined,
+        env_state=_EnvState.state_is_app_defined,
         sub_graph=SubGraph.graph_input,
     )
     state_input_is_stderr_log_enabled = StateNodeMeta(
-        env_state=EnvState.state_input_is_stderr_log_enabled,
+        env_state=_EnvState.state_input_is_stderr_log_enabled,
         sub_graph=SubGraph.graph_input,
     )
     state_input_stderr_log_level_var_loaded = StateNodeMeta(
-        env_state=EnvState.state_input_stderr_log_level_var_loaded,
+        env_state=_EnvState.state_input_stderr_log_level_var_loaded,
         sub_graph=SubGraph.graph_input,
     )
     state_default_stderr_log_handler_configured = StateNodeMeta(
-        env_state=EnvState.state_default_stderr_log_handler_configured,
+        env_state=_EnvState.state_default_stderr_log_handler_configured,
         sub_graph=SubGraph.graph_input,
     )
     state_args_parsed = StateNodeMeta(
-        env_state=EnvState.state_args_parsed,
+        env_state=_EnvState.state_args_parsed,
         sub_graph=SubGraph.graph_input,
     )
     state_input_stderr_log_level_eval_finalized = StateNodeMeta(
-        env_state=EnvState.state_input_stderr_log_level_eval_finalized,
+        env_state=_EnvState.state_input_stderr_log_level_eval_finalized,
         sub_graph=SubGraph.graph_input,
     )
     state_input_stderr_log_level_handler_configured = StateNodeMeta(
-        env_state=EnvState.state_input_stderr_log_level_handler_configured,
+        env_state=_EnvState.state_input_stderr_log_level_handler_configured,
         sub_graph=SubGraph.graph_input,
     )
     state_input_exec_operation_loaded = StateNodeMeta(
-        env_state=EnvState.state_input_exec_operation_loaded,
+        env_state=_EnvState.state_input_exec_operation_loaded,
         sub_graph=SubGraph.graph_input,
     )
     state_print_conf_finalized = StateNodeMeta(
-        env_state=EnvState.state_print_conf_finalized,
+        env_state=_EnvState.state_print_conf_finalized,
         sub_graph=SubGraph.graph_input,
     )
     state_prepare_venv_finalized = StateNodeMeta(
-        env_state=EnvState.state_prepare_venv_finalized,
+        env_state=_EnvState.state_prepare_venv_finalized,
         sub_graph=SubGraph.graph_input,
     )
     state_input_final_state_eval_finalized = StateNodeMeta(
-        env_state=EnvState.state_input_final_state_eval_finalized,
+        env_state=_EnvState.state_input_final_state_eval_finalized,
         sub_graph=SubGraph.graph_input,
     )
     state_func_boot_env_executed = StateNodeMeta(
-        env_state=EnvState.state_func_boot_env_executed,
+        env_state=_EnvState.state_func_boot_env_executed,
         sub_graph=None,
     )
     state_func_start_app_executed = StateNodeMeta(
-        env_state=EnvState.state_func_start_app_executed,
+        env_state=_EnvState.state_func_start_app_executed,
         sub_graph=None,
     )
     state_func_call_lib_executed = StateNodeMeta(
-        env_state=EnvState.state_func_call_lib_executed,
+        env_state=_EnvState.state_func_call_lib_executed,
         sub_graph=None,
     )
     state_everything_executed = StateNodeMeta(
-        env_state=EnvState.state_everything_executed,
+        env_state=_EnvState.state_everything_executed,
         sub_graph=None,
     )
     state_input_start_id_var_loaded = StateNodeMeta(
-        env_state=EnvState.state_input_start_id_var_loaded,
+        env_state=_EnvState.state_input_start_id_var_loaded,
         sub_graph=SubGraph.graph_input,
     )
     state_input_proto_kernel_file_abs_path_var_loaded = StateNodeMeta(
-        env_state=EnvState.state_input_proto_kernel_file_abs_path_var_loaded,
+        env_state=_EnvState.state_input_proto_kernel_file_abs_path_var_loaded,
         sub_graph=SubGraph.graph_input,
     )
     state_stride_py_arbitrary_reached = StateNodeMeta(
-        env_state=EnvState.state_stride_py_arbitrary_reached,
+        env_state=_EnvState.state_stride_py_arbitrary_reached,
         sub_graph=SubGraph.graph_input,
     )
     state_proto_kernel_file_abs_path_inited = StateNodeMeta(
-        env_state=EnvState.state_proto_kernel_file_abs_path_inited,
+        env_state=_EnvState.state_proto_kernel_file_abs_path_inited,
         sub_graph=SubGraph.graph_config,
     )
     state_wrap_executed = StateNodeMeta(
-        env_state=EnvState.state_wrap_executed,
+        env_state=_EnvState.state_wrap_executed,
         sub_graph=SubGraph.graph_config,
     )
     state_primer_conf_file_abs_path_inited = StateNodeMeta(
-        env_state=EnvState.state_primer_conf_file_abs_path_inited,
+        env_state=_EnvState.state_primer_conf_file_abs_path_inited,
         sub_graph=SubGraph.graph_config,
     )
     state_primer_conf_file_data_loaded = StateNodeMeta(
-        env_state=EnvState.state_primer_conf_file_data_loaded,
+        env_state=_EnvState.state_primer_conf_file_data_loaded,
         sub_graph=SubGraph.graph_config,
     )
     state_ref_root_dir_abs_path_inited = StateNodeMeta(
-        env_state=EnvState.state_ref_root_dir_abs_path_inited,
+        env_state=_EnvState.state_ref_root_dir_abs_path_inited,
         sub_graph=SubGraph.graph_config,
     )
     state_global_conf_dir_abs_path_inited = StateNodeMeta(
-        env_state=EnvState.state_global_conf_dir_abs_path_inited,
+        env_state=_EnvState.state_global_conf_dir_abs_path_inited,
         sub_graph=SubGraph.graph_config,
     )
     state_global_conf_file_abs_path_inited = StateNodeMeta(
-        env_state=EnvState.state_global_conf_file_abs_path_inited,
+        env_state=_EnvState.state_global_conf_file_abs_path_inited,
         sub_graph=SubGraph.graph_config,
     )
     state_client_conf_file_data_loaded = StateNodeMeta(
-        env_state=EnvState.state_client_conf_file_data_loaded,
+        env_state=_EnvState.state_client_conf_file_data_loaded,
         sub_graph=SubGraph.graph_config,
     )
     state_selected_env_dir_rel_path_inited = StateNodeMeta(
-        env_state=EnvState.state_selected_env_dir_rel_path_inited,
+        env_state=_EnvState.state_selected_env_dir_rel_path_inited,
         sub_graph=SubGraph.graph_config,
     )
     state_local_conf_symlink_abs_path_inited = StateNodeMeta(
-        env_state=EnvState.state_local_conf_symlink_abs_path_inited,
+        env_state=_EnvState.state_local_conf_symlink_abs_path_inited,
         sub_graph=SubGraph.graph_config,
     )
     state_local_conf_file_abs_path_inited = StateNodeMeta(
-        env_state=EnvState.state_local_conf_file_abs_path_inited,
+        env_state=_EnvState.state_local_conf_file_abs_path_inited,
         sub_graph=SubGraph.graph_config,
     )
     state_env_conf_file_data_loaded = StateNodeMeta(
-        env_state=EnvState.state_env_conf_file_data_loaded,
+        env_state=_EnvState.state_env_conf_file_data_loaded,
         sub_graph=SubGraph.graph_config,
     )
     state_required_python_version_inited = StateNodeMeta(
-        env_state=EnvState.state_required_python_version_inited,
+        env_state=_EnvState.state_required_python_version_inited,
         sub_graph=SubGraph.graph_config,
     )
     state_python_selector_file_abs_path_inited = StateNodeMeta(
-        env_state=EnvState.state_python_selector_file_abs_path_inited,
+        env_state=_EnvState.state_python_selector_file_abs_path_inited,
         sub_graph=SubGraph.graph_config,
     )
     state_selected_python_file_abs_path_inited = StateNodeMeta(
-        env_state=EnvState.state_selected_python_file_abs_path_inited,
+        env_state=_EnvState.state_selected_python_file_abs_path_inited,
         sub_graph=SubGraph.graph_config,
     )
     state_local_venv_dir_abs_path_inited = StateNodeMeta(
-        env_state=EnvState.state_local_venv_dir_abs_path_inited,
+        env_state=_EnvState.state_local_venv_dir_abs_path_inited,
         sub_graph=SubGraph.graph_config,
     )
     state_local_log_dir_abs_path_inited = StateNodeMeta(
-        env_state=EnvState.state_local_log_dir_abs_path_inited,
+        env_state=_EnvState.state_local_log_dir_abs_path_inited,
         sub_graph=SubGraph.graph_config,
     )
     state_local_run_dir_abs_path_inited = StateNodeMeta(
-        env_state=EnvState.state_local_run_dir_abs_path_inited,
+        env_state=_EnvState.state_local_run_dir_abs_path_inited,
         sub_graph=SubGraph.graph_config,
     )
     state_local_tmp_dir_abs_path_inited = StateNodeMeta(
-        env_state=EnvState.state_local_tmp_dir_abs_path_inited,
+        env_state=_EnvState.state_local_tmp_dir_abs_path_inited,
         sub_graph=SubGraph.graph_config,
     )
     state_local_cache_dir_abs_path_inited = StateNodeMeta(
-        env_state=EnvState.state_local_cache_dir_abs_path_inited,
+        env_state=_EnvState.state_local_cache_dir_abs_path_inited,
         sub_graph=SubGraph.graph_config,
     )
     state_venv_driver_inited = StateNodeMeta(
-        env_state=EnvState.state_venv_driver_inited,
+        env_state=_EnvState.state_venv_driver_inited,
         sub_graph=SubGraph.graph_config,
     )
     state_version_constraints_file_basename_inited = StateNodeMeta(
-        env_state=EnvState.state_version_constraints_file_basename_inited,
+        env_state=_EnvState.state_version_constraints_file_basename_inited,
         sub_graph=SubGraph.graph_config,
     )
     state_project_descriptors_inited = StateNodeMeta(
-        env_state=EnvState.state_project_descriptors_inited,
+        env_state=_EnvState.state_project_descriptors_inited,
         sub_graph=SubGraph.graph_config,
     )
     state_install_specs_inited = StateNodeMeta(
-        env_state=EnvState.state_install_specs_inited,
+        env_state=_EnvState.state_install_specs_inited,
         sub_graph=SubGraph.graph_config,
     )
     state_derived_conf_data_loaded = StateNodeMeta(
-        env_state=EnvState.state_derived_conf_data_loaded,
+        env_state=_EnvState.state_derived_conf_data_loaded,
         sub_graph=None,
     )
     state_effective_conf_data_printed = StateNodeMeta(
-        env_state=EnvState.state_effective_conf_data_printed,
+        env_state=_EnvState.state_effective_conf_data_printed,
         sub_graph=SubGraph.graph_config,
     )
     state_default_file_log_handler_configured = StateNodeMeta(
-        env_state=EnvState.state_default_file_log_handler_configured,
+        env_state=_EnvState.state_default_file_log_handler_configured,
         sub_graph=SubGraph.graph_runtime,
     )
     state_stride_py_required_reached = StateNodeMeta(
-        env_state=EnvState.state_stride_py_required_reached,
+        env_state=_EnvState.state_stride_py_required_reached,
         sub_graph=SubGraph.graph_runtime,
     )
     state_reset_triggered = StateNodeMeta(
-        env_state=EnvState.state_reset_triggered,
+        env_state=_EnvState.state_reset_triggered,
         sub_graph=SubGraph.graph_runtime,
     )
     state_venv_driver_prepared = StateNodeMeta(
-        env_state=EnvState.state_venv_driver_prepared,
+        env_state=_EnvState.state_venv_driver_prepared,
         sub_graph=SubGraph.graph_runtime,
     )
     state_stride_py_venv_reached = StateNodeMeta(
-        env_state=EnvState.state_stride_py_venv_reached,
+        env_state=_EnvState.state_stride_py_venv_reached,
         sub_graph=SubGraph.graph_runtime,
     )
     state_protoprimer_package_installed = StateNodeMeta(
-        env_state=EnvState.state_protoprimer_package_installed,
+        env_state=_EnvState.state_protoprimer_package_installed,
         sub_graph=SubGraph.graph_runtime,
     )
     state_version_constraints_generated = StateNodeMeta(
-        env_state=EnvState.state_version_constraints_generated,
+        env_state=_EnvState.state_version_constraints_generated,
         sub_graph=SubGraph.graph_runtime,
     )
     state_stride_deps_updated_reached = StateNodeMeta(
-        env_state=EnvState.state_stride_deps_updated_reached,
+        env_state=_EnvState.state_stride_deps_updated_reached,
         sub_graph=SubGraph.graph_runtime,
     )
     state_proto_kernel_updated = StateNodeMeta(
-        env_state=EnvState.state_proto_kernel_updated,
+        env_state=_EnvState.state_proto_kernel_updated,
         sub_graph=SubGraph.graph_runtime,
     )
     state_stride_src_updated_reached = StateNodeMeta(
-        env_state=EnvState.state_stride_src_updated_reached,
+        env_state=_EnvState.state_stride_src_updated_reached,
         sub_graph=SubGraph.graph_runtime,
     )
     state_input_command_line = StateNodeMeta(
-        env_state=EnvState.state_input_command_line,
+        env_state=_EnvState.state_input_command_line,
         sub_graph=None,
     )
     state_command_executed = StateNodeMeta(
-        env_state=EnvState.state_command_executed,
+        env_state=_EnvState.state_command_executed,
         sub_graph=None,
     )
     state_client_func_executed = StateNodeMeta(
-        env_state=EnvState.state_client_func_executed,
+        env_state=_EnvState.state_client_func_executed,
         sub_graph=None,
     )
     state_shell_executed = StateNodeMeta(
-        env_state=EnvState.state_shell_executed,
+        env_state=_EnvState.state_shell_executed,
         sub_graph=None,
     )
     state_start_executed = StateNodeMeta(
-        env_state=EnvState.state_start_executed,
+        env_state=_EnvState.state_start_executed,
         sub_graph=None,
     )
 
 
 def compose_python_output(sorted_state_names: list[str]) -> str:
-    items = "\n".join(f"        EnvState.{name}," for name in sorted_state_names)
+    items = "\n".join(f"        _EnvState.{name}," for name in sorted_state_names)
     return f"""\
 def get_env_states() -> list:
-    from protoprimer.primer_kernel import EnvState
+    from protoprimer.primer_kernel import _EnvState
     return [
 {items}
     ]
@@ -284,7 +284,7 @@ class GraphPrinterTextFlat:
 
     def execute_strategy(
         self,
-        ignored_node: StateNode,
+        ignored_node: _StateNode,
     ) -> None:
         for state_name in self.sorted_state_names:
             print(state_name)
@@ -297,14 +297,14 @@ class GraphPrinterPython:
 
     def execute_strategy(
         self,
-        ignored_node: StateNode,
+        ignored_node: _StateNode,
     ) -> None:
         print(compose_python_output(self.sorted_state_names))
 
 
-class GraphPrinterTextNested(RunStrategy):
+class GraphPrinterTextNested(_RunStrategy):
     """
-    This class prints reduced DAG of `EnvState`-s.
+    This class prints reduced DAG of `_EnvState`-s.
 
     Full DAG for a target may involve the same dependency/parent multiple times.
     Printing each dependency multiple times (with all its transient dependencies) looks excessive.
@@ -316,15 +316,15 @@ class GraphPrinterTextNested(RunStrategy):
 
     def __init__(
         self,
-        state_graph: StateGraph,
+        state_graph: _StateGraph,
     ):
         super().__init__()
-        self.state_graph: StateGraph = state_graph
+        self.state_graph: _StateGraph = state_graph
         self.already_printed: set[str] = set()
 
     def execute_strategy(
         self,
-        state_node: StateNode,
+        state_node: _StateNode,
     ) -> None:
         self.print_node_parents(
             state_node,
@@ -379,23 +379,23 @@ class GraphPrinterTextNested(RunStrategy):
                 )
 
 
-class GraphPrinterMermaid(RunStrategy):
+class GraphPrinterMermaid(_RunStrategy):
     """
-    This class prints the full DAG of `EnvState`-s in `mermaid` format.
+    This class prints the full DAG of `_EnvState`-s in `mermaid` format.
     Paste the output in the web editor like:
     https://mermaid.live/
     """
 
     def __init__(
         self,
-        state_graph: StateGraph,
+        state_graph: _StateGraph,
     ):
         super().__init__()
-        self.state_graph: StateGraph = state_graph
+        self.state_graph: _StateGraph = state_graph
 
     def execute_strategy(
         self,
-        ignored_node: StateNode,
+        ignored_node: _StateNode,
     ) -> None:
         print("graph TD")
 

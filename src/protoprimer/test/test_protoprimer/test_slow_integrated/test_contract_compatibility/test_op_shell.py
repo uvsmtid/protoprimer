@@ -29,22 +29,22 @@ from protoprimer.primer_kernel import (
     ConfConstGeneral,
     ConfConstInput,
     ConfConstPrimer,
-    ExecOperation,
+    _ExecOperation,
     SyntaxArg,
 )
 
 
 def test_relationship():
-    assert_test_module_name_embeds_str(ExecOperation.op_shell.value)
+    assert_test_module_name_embeds_str(_ExecOperation.op_shell.value)
 
 
 def test_shell_requires_boot_first(tmp_path: Path):
     """
-    `ExecOperation.op_shell` is a fast path (like `ExecOperation.op_start`):
+    `_ExecOperation.op_shell` is a fast path (like `_ExecOperation.op_start`):
     unlike `boot`, it must not create `venv` itself.
     """
 
-    assert_test_func_name_embeds_str(ExecOperation.op_shell.value)
+    assert_test_func_name_embeds_str(_ExecOperation.op_shell.value)
 
     # given:
 
@@ -60,7 +60,7 @@ def test_shell_requires_boot_first(tmp_path: Path):
     sub_proc = subprocess.run(
         [
             str(proto_kernel_abs_path),
-            ExecOperation.op_shell.value,
+            _ExecOperation.op_shell.value,
             SyntaxArg.arg_c,
             "echo should_not_run",
         ],
@@ -71,12 +71,12 @@ def test_shell_requires_boot_first(tmp_path: Path):
     # then:
 
     assert sub_proc.returncode != 0
-    assert ExecOperation.op_boot.value in sub_proc.stderr
+    assert _ExecOperation.op_boot.value in sub_proc.stderr
 
 
 def test_shell_command_execution(tmp_path: Path):
 
-    assert_test_func_name_embeds_str(ExecOperation.op_shell.value)
+    assert_test_func_name_embeds_str(_ExecOperation.op_shell.value)
 
     # given:
 
@@ -97,7 +97,7 @@ def test_shell_command_execution(tmp_path: Path):
     subprocess.run(
         [
             str(proto_kernel_abs_path),
-            ExecOperation.op_shell.value,
+            _ExecOperation.op_shell.value,
             SyntaxArg.arg_c,
             f"touch {output_file}",
         ],
@@ -111,11 +111,11 @@ def test_shell_command_execution(tmp_path: Path):
 
 def test_shell_does_not_reinstall_dependencies(tmp_path: Path):
     """
-    `ExecOperation.op_shell` is a fast path (like `ExecOperation.op_start`):
+    `_ExecOperation.op_shell` is a fast path (like `_ExecOperation.op_start`):
     unlike `boot`, it must not re-install/re-pin dependencies into the existing `venv`.
     """
 
-    assert_test_func_name_embeds_str(ExecOperation.op_shell.value)
+    assert_test_func_name_embeds_str(_ExecOperation.op_shell.value)
 
     # given:
 
@@ -171,7 +171,7 @@ def test_shell_does_not_reinstall_dependencies(tmp_path: Path):
     sub_proc = subprocess.run(
         [
             str(proto_kernel_abs_path),
-            ExecOperation.op_shell.value,
+            _ExecOperation.op_shell.value,
         ],
         input="exit 42\n",
         text=True,
@@ -194,7 +194,7 @@ def test_shell_interactive(tmp_path: Path):
     `shell` with no command must start an interactive shell
     """
 
-    assert_test_func_name_embeds_str(ExecOperation.op_shell.value)
+    assert_test_func_name_embeds_str(_ExecOperation.op_shell.value)
 
     # given:
 
@@ -212,7 +212,7 @@ def test_shell_interactive(tmp_path: Path):
     sub_proc = subprocess.run(
         [
             str(proto_kernel_abs_path),
-            ExecOperation.op_shell.value,
+            _ExecOperation.op_shell.value,
         ],
         input="exit 42\n",
         text=True,
@@ -225,12 +225,12 @@ def test_shell_interactive(tmp_path: Path):
 
 def test_shell_sh_interactive_applies_init_file(tmp_path: Path):
     """
-    `ExecOperation.op_shell` with POSIX `sh`
+    `_ExecOperation.op_shell` with POSIX `sh`
     applies the init file via the `ENV` env var (activating the `venv`)
     isolated from the parent process environment.
     """
 
-    assert_test_func_name_embeds_str(ExecOperation.op_shell.value)
+    assert_test_func_name_embeds_str(_ExecOperation.op_shell.value)
 
     # given:
 
@@ -258,7 +258,7 @@ def test_shell_sh_interactive_applies_init_file(tmp_path: Path):
     sub_proc = subprocess.run(
         [
             str(proto_kernel_abs_path),
-            ExecOperation.op_shell.value,
+            _ExecOperation.op_shell.value,
         ],
         input=f'test "$VIRTUAL_ENV" = "{expected_venv}" && exit 42 || exit 1\n',
         text=True,
@@ -272,12 +272,12 @@ def test_shell_sh_interactive_applies_init_file(tmp_path: Path):
 
 def test_shell_sh_command_execution_applies_init_file(tmp_path: Path):
     """
-    `ExecOperation.op_shell` with POSIX `sh` and a command line
+    `_ExecOperation.op_shell` with POSIX `sh` and a command line
     (`sh -i -c "<command>"`) still applies the init file via the `ENV` env var
     (whether `ENV` is read for `-i` together with `-c` is shell-specific behavior).
     """
 
-    assert_test_func_name_embeds_str(ExecOperation.op_shell.value)
+    assert_test_func_name_embeds_str(_ExecOperation.op_shell.value)
 
     # given:
 
@@ -305,7 +305,7 @@ def test_shell_sh_command_execution_applies_init_file(tmp_path: Path):
     subprocess.run(
         [
             str(proto_kernel_abs_path),
-            ExecOperation.op_shell.value,
+            _ExecOperation.op_shell.value,
             SyntaxArg.arg_c,
             f'test "$VIRTUAL_ENV" = "{expected_venv}" && touch {output_file}',
         ],

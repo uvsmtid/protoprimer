@@ -15,7 +15,7 @@ from protoprimer import primer_kernel as try_main
 from protoprimer.primer_kernel import (
     parse_args,
     ParsedArg,
-    ExecOperation,
+    _ExecOperation,
     SyntaxArg,
 )
 
@@ -25,30 +25,30 @@ def test_parse_args_defaults():
     args = parse_args([])
 
     # then:
-    assert getattr(args, ParsedArg.name_exec_operation.value) == ExecOperation.op_boot.value
+    assert getattr(args, ParsedArg.name_exec_operation.value) == _ExecOperation.op_boot.value
     assert getattr(args, SyntaxArg.dest_quiet) == 0
     assert getattr(args, SyntaxArg.dest_verbose) == 0
 
 
 def test_parse_args_reset():
     # when:
-    args = parse_args([ExecOperation.op_reset.value])
+    args = parse_args([_ExecOperation.op_reset.value])
 
     # then:
-    assert getattr(args, ParsedArg.name_exec_operation.value) == ExecOperation.op_reset.value
+    assert getattr(args, ParsedArg.name_exec_operation.value) == _ExecOperation.op_reset.value
 
 
 def test_parse_args_command():
     cmd = "ls -l"
 
     # when:
-    args = parse_args([ExecOperation.op_shell.value, SyntaxArg.arg_command, cmd])
+    args = parse_args([_ExecOperation.op_shell.value, SyntaxArg.arg_command, cmd])
 
     # then:
     assert getattr(args, ParsedArg.name_shell_command.value) == cmd
 
     # when: short arg
-    args_c = parse_args([ExecOperation.op_shell.value, SyntaxArg.arg_c, cmd])
+    args_c = parse_args([_ExecOperation.op_shell.value, SyntaxArg.arg_c, cmd])
 
     # then: short arg
     assert getattr(args_c, ParsedArg.name_shell_command.value) == cmd
@@ -58,10 +58,10 @@ def test_parse_args_start():
     main_func = "my_module:my_func"
 
     # when:
-    args = parse_args([ExecOperation.op_start.value, main_func])
+    args = parse_args([_ExecOperation.op_start.value, main_func])
 
     # then:
-    assert getattr(args, ParsedArg.name_exec_operation.value) == ExecOperation.op_start.value
+    assert getattr(args, ParsedArg.name_exec_operation.value) == _ExecOperation.op_start.value
     assert getattr(args, ParsedArg.name_main_func.value) == main_func
 
 
@@ -69,13 +69,13 @@ def test_parse_args_env():
     env_dir = "/path/to/env"
 
     # when: long arg
-    args = parse_args([ExecOperation.op_boot.value, SyntaxArg.arg_env, env_dir])
+    args = parse_args([_ExecOperation.op_boot.value, SyntaxArg.arg_env, env_dir])
 
     # then: long arg
     assert getattr(args, ParsedArg.name_selected_env_dir.value) == env_dir
 
     # when: short arg
-    args_e = parse_args([ExecOperation.op_boot.value, SyntaxArg.arg_e, env_dir])
+    args_e = parse_args([_ExecOperation.op_boot.value, SyntaxArg.arg_e, env_dir])
 
     # then: short arg
     assert getattr(args_e, ParsedArg.name_selected_env_dir.value) == env_dir
@@ -83,16 +83,16 @@ def test_parse_args_env():
 
 def test_parse_args_exec_operation():
     # when: boot command
-    args_prime = parse_args([ExecOperation.op_boot.value])
+    args_prime = parse_args([_ExecOperation.op_boot.value])
 
     # then: boot command
-    assert getattr(args_prime, ParsedArg.name_exec_operation.value) == ExecOperation.op_boot.value
+    assert getattr(args_prime, ParsedArg.name_exec_operation.value) == _ExecOperation.op_boot.value
 
     # when: eval command
-    args_config = parse_args([ExecOperation.op_eval.value])
+    args_config = parse_args([_ExecOperation.op_eval.value])
 
     # then: eval command
-    assert getattr(args_config, ParsedArg.name_exec_operation.value) == ExecOperation.op_eval.value
+    assert getattr(args_config, ParsedArg.name_exec_operation.value) == _ExecOperation.op_eval.value
 
 
 def test_parse_args_log_level():
@@ -133,7 +133,7 @@ def test_parse_args_log_level():
         (
             [],
             {
-                ParsedArg.name_exec_operation.value: ExecOperation.op_boot.value,
+                ParsedArg.name_exec_operation.value: _ExecOperation.op_boot.value,
                 ParsedArg.name_selected_env_dir.value: None,
                 SyntaxArg.dest_quiet: 0,
                 SyntaxArg.dest_verbose: 0,
@@ -143,7 +143,7 @@ def test_parse_args_log_level():
         (
             ["boot"],
             {
-                ParsedArg.name_exec_operation.value: ExecOperation.op_boot.value,
+                ParsedArg.name_exec_operation.value: _ExecOperation.op_boot.value,
                 ParsedArg.name_selected_env_dir.value: None,
                 SyntaxArg.dest_quiet: 0,
                 SyntaxArg.dest_verbose: 0,
@@ -173,7 +173,7 @@ def test_parse_args_log_level():
         (
             ["-q", "boot"],
             {
-                ParsedArg.name_exec_operation.value: ExecOperation.op_boot.value,
+                ParsedArg.name_exec_operation.value: _ExecOperation.op_boot.value,
                 ParsedArg.name_selected_env_dir.value: None,
                 SyntaxArg.dest_quiet: 1,
                 SyntaxArg.dest_verbose: 0,
@@ -183,7 +183,7 @@ def test_parse_args_log_level():
         (
             ["boot", "-v"],
             {
-                ParsedArg.name_exec_operation.value: ExecOperation.op_boot.value,
+                ParsedArg.name_exec_operation.value: _ExecOperation.op_boot.value,
                 ParsedArg.name_selected_env_dir.value: None,
                 SyntaxArg.dest_quiet: 0,
                 SyntaxArg.dest_verbose: 1,
@@ -193,7 +193,7 @@ def test_parse_args_log_level():
         (
             ["boot", "-q"],
             {
-                ParsedArg.name_exec_operation.value: ExecOperation.op_boot.value,
+                ParsedArg.name_exec_operation.value: _ExecOperation.op_boot.value,
                 ParsedArg.name_selected_env_dir.value: None,
                 SyntaxArg.dest_quiet: 1,
                 SyntaxArg.dest_verbose: 0,
@@ -203,7 +203,7 @@ def test_parse_args_log_level():
         (
             ["-vvv", "boot"],
             {
-                ParsedArg.name_exec_operation.value: ExecOperation.op_boot.value,
+                ParsedArg.name_exec_operation.value: _ExecOperation.op_boot.value,
                 ParsedArg.name_selected_env_dir.value: None,
                 SyntaxArg.dest_quiet: 0,
                 SyntaxArg.dest_verbose: 3,
@@ -213,7 +213,7 @@ def test_parse_args_log_level():
         (
             ["boot", "--env", "some/path"],
             {
-                ParsedArg.name_exec_operation.value: ExecOperation.op_boot.value,
+                ParsedArg.name_exec_operation.value: _ExecOperation.op_boot.value,
                 ParsedArg.name_selected_env_dir.value: "some/path",
                 SyntaxArg.dest_quiet: 0,
                 SyntaxArg.dest_verbose: 0,
@@ -223,7 +223,7 @@ def test_parse_args_log_level():
         (
             ["--env", "some/path"],
             {
-                ParsedArg.name_exec_operation.value: ExecOperation.op_boot.value,
+                ParsedArg.name_exec_operation.value: _ExecOperation.op_boot.value,
                 ParsedArg.name_selected_env_dir.value: "some/path",
                 SyntaxArg.dest_quiet: 0,
                 SyntaxArg.dest_verbose: 0,
@@ -233,7 +233,7 @@ def test_parse_args_log_level():
         (
             ["--env", "default_env"],
             {
-                ParsedArg.name_exec_operation.value: ExecOperation.op_boot.value,
+                ParsedArg.name_exec_operation.value: _ExecOperation.op_boot.value,
                 ParsedArg.name_selected_env_dir.value: "default_env",
                 SyntaxArg.dest_quiet: 0,
                 SyntaxArg.dest_verbose: 0,

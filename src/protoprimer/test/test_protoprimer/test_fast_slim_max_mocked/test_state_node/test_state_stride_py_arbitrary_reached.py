@@ -14,7 +14,7 @@ from protoprimer.primer_kernel import (
     ConfConstInput,
     _ContextBuilder,
     _EntryFunc,
-    EnvState,
+    _EnvState,
     StateStride,
 )
 
@@ -33,7 +33,7 @@ def env_ctx():
 
 
 def test_relationship():
-    assert_test_module_name_embeds_str(EnvState.state_stride_py_arbitrary_reached.name)
+    assert_test_module_name_embeds_str(_EnvState.state_stride_py_arbitrary_reached.name)
 
 
 @patch.dict(
@@ -66,7 +66,7 @@ def test_py_exec_stride_py_unknown_in_venv(
 
     assert_parent_factories_mocked(
         env_ctx,
-        EnvState.state_stride_py_arbitrary_reached.name,
+        _EnvState.state_stride_py_arbitrary_reached.name,
     )
 
     mock_state_input_start_id_var_loaded.return_value.eval_own_state.return_value = "mock_start_id"
@@ -78,7 +78,7 @@ def test_py_exec_stride_py_unknown_in_venv(
 
     # when:
 
-    state_value = env_ctx.eval_state(EnvState.state_stride_py_arbitrary_reached.name)
+    state_value = env_ctx.eval_state(_EnvState.state_stride_py_arbitrary_reached.name)
 
     # then:
 
@@ -127,7 +127,7 @@ def test_py_exec_stride_py_unknown_not_in_venv(
 
     assert_parent_factories_mocked(
         env_ctx,
-        EnvState.state_stride_py_arbitrary_reached.name,
+        _EnvState.state_stride_py_arbitrary_reached.name,
     )
 
     mock_state_input_start_id_var_loaded.return_value.eval_own_state.return_value = "mock_start_id"
@@ -139,7 +139,7 @@ def test_py_exec_stride_py_unknown_not_in_venv(
 
     # when:
 
-    state_value = env_ctx.eval_state(EnvState.state_stride_py_arbitrary_reached.name)
+    state_value = env_ctx.eval_state(_EnvState.state_stride_py_arbitrary_reached.name)
 
     # then:
 

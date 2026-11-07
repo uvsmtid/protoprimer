@@ -6,11 +6,11 @@ from typing import Any
 from protoprimer.primer_kernel import (
     _EntryFunc,
     _EnvContext,
-    EnvState,
-    NodeFactory,
-    StateGraph,
-    StateNode,
-    ExecOperation,
+    _EnvState,
+    _NodeFactory,
+    _StateGraph,
+    _StateNode,
+    _ExecOperation,
 )
 
 
@@ -20,15 +20,15 @@ class GraphAssertionError(AssertionError):
     """
 
 
-class VerifyingStateGraph(StateGraph):
+class VerifyingStateGraph(_StateGraph):
     """
-    Extended `StateGraph` that verifies `_EnvContext` before instantiating any `StateNode`.
+    Extended `_StateGraph` that verifies `_EnvContext` before instantiating any `_StateNode`.
     See: FT_77_15_06_50.dynamic_DAG.md
     """
 
     def __init__(self):
         super().__init__()
-        self.context_verifiers: list[Callable[[str, NodeFactory], None]] = [
+        self.context_verifiers: list[Callable[[str, _NodeFactory], None]] = [
             _verify_entry_func_is_defined,
             _verify_is_app_is_defined,
             _verify_start_app_exec_operation_is_not_boot,
@@ -39,23 +39,23 @@ class VerifyingStateGraph(StateGraph):
     def get_state_node(
         self,
         state_name: str,
-    ) -> StateNode:
+    ) -> _StateNode:
         if state_name not in self.state_nodes:
-            node_factory: NodeFactory = self.state_factories[state_name]
+            node_factory: _NodeFactory = self.state_factories[state_name]
             self.verify_context(state_name, node_factory)
         return super().get_state_node(state_name)
 
     def verify_context(
         self,
         state_name: str,
-        node_factory: NodeFactory,
+        node_factory: _NodeFactory,
     ) -> None:
         for verify_func in self.context_verifiers:
             verify_func(state_name, node_factory)
 
 
 class VerifyingEnvContext(_EnvContext):
-    def _create_state_graph(self) -> StateGraph:
+    def _create_state_graph(self) -> _StateGraph:
         return VerifyingStateGraph()
 
 
@@ -96,10 +96,10 @@ class TrackingEnvContext(VerifyingEnvContext):
 
 def _verify_entry_func_is_defined(
     state_name: str,
-    node_factory: NodeFactory,
+    node_factory: _NodeFactory,
 ) -> None:
     """
-    `_EntryFunc` must be set before any `StateNode` is instantiated.
+    `_EntryFunc` must be set before any `_StateNode` is instantiated.
     """
     if node_factory.env_ctx._entry_func is None:
         raise GraphAssertionError(f"`{_EntryFunc.__name__}` is not set when instantiating state [{state_name}]")
@@ -107,7 +107,7 @@ def _verify_entry_func_is_defined(
 
 def _verify_is_app_is_defined(
     state_name: str,
-    node_factory: NodeFactory,
+    node_factory: _NodeFactory,
 ) -> None:
     """
     `_EnvContext._is_app` must be set before it can be used.
@@ -115,8 +115,8 @@ def _verify_is_app_is_defined(
     if (
         state_name
         not in [
-            EnvState.state_input_py_exec_var_loaded.name,
-            EnvState.state_is_app_defined.name,
+            _EnvState.state_input_py_exec_var_loaded.name,
+            _EnvState.state_is_app_defined.name,
         ]
         and node_factory.env_ctx._is_app is None
     ):
@@ -125,7 +125,7 @@ def _verify_is_app_is_defined(
 
 def _verify_start_app_exec_operation_is_not_boot(
     state_name: str,
-    node_factory: NodeFactory,
+    node_factory: _NodeFactory,
 ) -> None:
     """
     `_Node_state_input_exec_operation_loaded_func_start_app` always sets `op_start` for `func_start_app`.
@@ -133,18 +133,18 @@ def _verify_start_app_exec_operation_is_not_boot(
     if (
         #
         node_factory.env_ctx._entry_func == _EntryFunc.func_start_app
-        and node_factory.env_ctx._exec_operation == ExecOperation.op_boot
+        and node_factory.env_ctx._exec_operation == _ExecOperation.op_boot
     ):
         raise GraphAssertionError(
             #
-            f"`{_EntryFunc.func_start_app}` with `{ExecOperation.op_boot}` is not a valid combination "
+            f"`{_EntryFunc.func_start_app}` with `{_ExecOperation.op_boot}` is not a valid combination "
             f"when instantiating state [{state_name}]"
         )
 
 
 def _verify_start_app_does_not_prepare_venv(
     state_name: str,
-    node_factory: NodeFactory,
+    node_factory: _NodeFactory,
 ) -> None:
     """
     `func_start_app` assumes `venv` is already created - `prepare_venv` must be `False`.
@@ -164,7 +164,7 @@ def _verify_start_app_does_not_prepare_venv(
 
 def _verify_call_lib_does_not_prepare_venv(
     state_name: str,
-    node_factory: NodeFactory,
+    node_factory: _NodeFactory,
 ) -> None:
     """
     `func_call_lib` assumes `venv` is already created - `prepare_venv` must be `False`.
@@ -188,5 +188,5 @@ max_deps_env_ctx = VerifyingEnvContext()
 max_deps_env_ctx._entry_func = _EntryFunc.func_boot_env
 max_deps_env_ctx._is_app = True
 max_deps_env_ctx._prepare_venv = True
-max_deps_env_ctx._exec_operation = ExecOperation.op_boot
+max_deps_env_ctx._exec_operation = _ExecOperation.op_boot
 max_deps_env_ctx._is_log_enabled = True

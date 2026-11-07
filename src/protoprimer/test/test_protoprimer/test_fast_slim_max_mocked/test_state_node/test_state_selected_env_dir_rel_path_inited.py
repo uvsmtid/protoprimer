@@ -15,7 +15,7 @@ from protoprimer.primer_kernel import (
     _Node_state_ref_root_dir_abs_path_inited,
     ConfField,
     _ContextBuilder,
-    EnvState,
+    _EnvState,
     StateStride,
 )
 
@@ -37,7 +37,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
     # noinspection PyMethodMayBeStatic
     def test_relationship(self):
-        assert_test_module_name_embeds_str(EnvState.state_selected_env_dir_rel_path_inited.name)
+        assert_test_module_name_embeds_str(_EnvState.state_selected_env_dir_rel_path_inited.name)
 
     @patch(f"{primer_kernel.__name__}.{_Node_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_args_parsed.__name__}.create_state_node")
@@ -51,7 +51,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         # given:
         assert_parent_factories_mocked(
             self.env_ctx,
-            EnvState.state_selected_env_dir_rel_path_inited.name,
+            _EnvState.state_selected_env_dir_rel_path_inited.name,
         )
         mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = self.mock_ref_root
 
@@ -70,7 +70,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(**{primer_kernel.ParsedArg.name_selected_env_dir.value: arg_value})
 
         # when:
-        state_selected_env_dir_rel_path_inited = self.env_ctx.eval_state(EnvState.state_selected_env_dir_rel_path_inited.name)
+        state_selected_env_dir_rel_path_inited = self.env_ctx.eval_state(_EnvState.state_selected_env_dir_rel_path_inited.name)
 
         # then:
         self.assertEqual(state_selected_env_dir_rel_path_inited, arg_value)
@@ -87,7 +87,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         # given:
         assert_parent_factories_mocked(
             self.env_ctx,
-            EnvState.state_selected_env_dir_rel_path_inited.name,
+            _EnvState.state_selected_env_dir_rel_path_inited.name,
         )
         mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = self.mock_ref_root
         os.chdir("/")  # change cwd to something else
@@ -105,7 +105,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(**{primer_kernel.ParsedArg.name_selected_env_dir.value: arg_value})
 
         # when:
-        state_selected_env_dir_rel_path_inited = self.env_ctx.eval_state(EnvState.state_selected_env_dir_rel_path_inited.name)
+        state_selected_env_dir_rel_path_inited = self.env_ctx.eval_state(_EnvState.state_selected_env_dir_rel_path_inited.name)
 
         # then:
         self.assertEqual(state_selected_env_dir_rel_path_inited, arg_value)
@@ -122,7 +122,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         # given:
         assert_parent_factories_mocked(
             self.env_ctx,
-            EnvState.state_selected_env_dir_rel_path_inited.name,
+            _EnvState.state_selected_env_dir_rel_path_inited.name,
         )
         mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = self.mock_ref_root
         os.chdir(self.mock_ref_root)
@@ -136,7 +136,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_client_conf_file_data_loaded.return_value.eval_own_state.return_value = client_conf_file_data
 
         # when:
-        state_selected_env_dir_rel_path_inited = self.env_ctx.eval_state(EnvState.state_selected_env_dir_rel_path_inited.name)
+        state_selected_env_dir_rel_path_inited = self.env_ctx.eval_state(_EnvState.state_selected_env_dir_rel_path_inited.name)
 
         # then:
         self.assertEqual(state_selected_env_dir_rel_path_inited, "my_env_dir")
@@ -156,7 +156,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         assert_parent_factories_mocked(
             self.env_ctx,
-            EnvState.state_selected_env_dir_rel_path_inited.name,
+            _EnvState.state_selected_env_dir_rel_path_inited.name,
         )
         mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = self.mock_ref_root
         os.chdir(self.mock_ref_root)
@@ -170,7 +170,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         # when:
 
         with self.assertLogs(primer_kernel.logger, level=WARNING) as log_dst:
-            self.env_ctx.eval_state(EnvState.state_selected_env_dir_rel_path_inited.name)
+            self.env_ctx.eval_state(_EnvState.state_selected_env_dir_rel_path_inited.name)
 
         # then:
 
@@ -191,7 +191,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         # given:
         assert_parent_factories_mocked(
             self.env_ctx,
-            EnvState.state_selected_env_dir_rel_path_inited.name,
+            _EnvState.state_selected_env_dir_rel_path_inited.name,
         )
         mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = self.mock_ref_root
         os.chdir(self.mock_ref_root)
@@ -206,7 +206,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # when:
         with self.assertRaises(AssertionError) as ctx:
-            self.env_ctx.eval_state(EnvState.state_selected_env_dir_rel_path_inited.name)
+            self.env_ctx.eval_state(_EnvState.state_selected_env_dir_rel_path_inited.name)
 
         # then:
         self.assertIn("is relative to neither", str(ctx.exception))
@@ -223,7 +223,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         # given:
         assert_parent_factories_mocked(
             self.env_ctx,
-            EnvState.state_selected_env_dir_rel_path_inited.name,
+            _EnvState.state_selected_env_dir_rel_path_inited.name,
         )
         mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = self.mock_ref_root
         os.chdir(self.mock_ref_root)
@@ -237,7 +237,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # when:
         with self.assertRaises(AssertionError) as ctx:
-            self.env_ctx.eval_state(EnvState.state_selected_env_dir_rel_path_inited.name)
+            self.env_ctx.eval_state(_EnvState.state_selected_env_dir_rel_path_inited.name)
 
         # then:
         self.assertIn("must be a relative path", str(ctx.exception))
@@ -254,7 +254,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         # given:
         assert_parent_factories_mocked(
             self.env_ctx,
-            EnvState.state_selected_env_dir_rel_path_inited.name,
+            _EnvState.state_selected_env_dir_rel_path_inited.name,
         )
         mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = self.mock_ref_root
         os.chdir(self.mock_ref_root)
@@ -267,7 +267,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # when:
         with self.assertRaises(AssertionError) as ctx:
-            self.env_ctx.eval_state(EnvState.state_selected_env_dir_rel_path_inited.name)
+            self.env_ctx.eval_state(_EnvState.state_selected_env_dir_rel_path_inited.name)
 
         # then:
         self.assertIn("is not under", str(ctx.exception))
@@ -284,7 +284,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         # given:
         assert_parent_factories_mocked(
             self.env_ctx,
-            EnvState.state_selected_env_dir_rel_path_inited.name,
+            _EnvState.state_selected_env_dir_rel_path_inited.name,
         )
         mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = self.mock_ref_root
         os.chdir(self.mock_ref_root)
@@ -297,7 +297,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(**{primer_kernel.ParsedArg.name_selected_env_dir.value: arg_value_abs})
 
         # when:
-        result = self.env_ctx.eval_state(EnvState.state_selected_env_dir_rel_path_inited.name)
+        result = self.env_ctx.eval_state(_EnvState.state_selected_env_dir_rel_path_inited.name)
 
         # then:
         self.assertEqual(result, arg_value_rel)
@@ -314,7 +314,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         # given:
         assert_parent_factories_mocked(
             self.env_ctx,
-            EnvState.state_selected_env_dir_rel_path_inited.name,
+            _EnvState.state_selected_env_dir_rel_path_inited.name,
         )
         mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = self.mock_ref_root
         os.chdir(self.mock_ref_root)
@@ -328,7 +328,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # when:
         with self.assertRaises(AssertionError) as ctx:
-            self.env_ctx.eval_state(EnvState.state_selected_env_dir_rel_path_inited.name)
+            self.env_ctx.eval_state(_EnvState.state_selected_env_dir_rel_path_inited.name)
 
         # then:
         self.assertIn("is relative to neither", str(ctx.exception))
@@ -345,7 +345,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         # given:
         assert_parent_factories_mocked(
             self.env_ctx,
-            EnvState.state_selected_env_dir_rel_path_inited.name,
+            _EnvState.state_selected_env_dir_rel_path_inited.name,
         )
         mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = self.mock_ref_root
         os.chdir(self.mock_ref_root)
@@ -360,7 +360,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_client_conf_file_data_loaded.return_value.eval_own_state.return_value = client_conf_file_data
 
         # when:
-        result = self.env_ctx.eval_state(EnvState.state_selected_env_dir_rel_path_inited.name)
+        result = self.env_ctx.eval_state(_EnvState.state_selected_env_dir_rel_path_inited.name)
 
         # then:
         self.assertEqual(result, "symlink_to_dir")
@@ -377,7 +377,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         # given:
         assert_parent_factories_mocked(
             self.env_ctx,
-            EnvState.state_selected_env_dir_rel_path_inited.name,
+            _EnvState.state_selected_env_dir_rel_path_inited.name,
         )
         mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = self.mock_ref_root
         os.chdir(self.mock_ref_root)
@@ -390,7 +390,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # when:
         with self.assertRaises(AssertionError) as ctx:
-            self.env_ctx.eval_state(EnvState.state_selected_env_dir_rel_path_inited.name)
+            self.env_ctx.eval_state(_EnvState.state_selected_env_dir_rel_path_inited.name)
 
         # then:
         self.assertIn(
@@ -410,7 +410,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         # given:
         assert_parent_factories_mocked(
             self.env_ctx,
-            EnvState.state_selected_env_dir_rel_path_inited.name,
+            _EnvState.state_selected_env_dir_rel_path_inited.name,
         )
         mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = self.mock_ref_root
 
@@ -433,7 +433,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(**{primer_kernel.ParsedArg.name_selected_env_dir.value: arg_value})
 
         # when:
-        result = self.env_ctx.eval_state(EnvState.state_selected_env_dir_rel_path_inited.name)
+        result = self.env_ctx.eval_state(_EnvState.state_selected_env_dir_rel_path_inited.name)
 
         # then:
         self.assertEqual(result, os.path.join("subdir", arg_value))

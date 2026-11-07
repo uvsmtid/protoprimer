@@ -12,7 +12,7 @@ from protoprimer.primer_kernel import (
     _Node_state_env_conf_file_data_loaded,
     ConfField,
     _EnvContext,
-    EnvState,
+    _EnvState,
 )
 
 
@@ -22,7 +22,7 @@ def env_ctx():
 
 
 def test_relationship():
-    assert_test_module_name_embeds_str(EnvState.state_project_descriptors_inited.name)
+    assert_test_module_name_embeds_str(_EnvState.state_project_descriptors_inited.name)
 
 
 @patch(f"{primer_kernel.__name__}.{_Node_state_client_conf_file_data_loaded.__name__}.create_state_node")
@@ -36,7 +36,7 @@ def test_stride_py_venv(
 
     assert_parent_factories_mocked(
         env_ctx,
-        EnvState.state_project_descriptors_inited.name,
+        _EnvState.state_project_descriptors_inited.name,
     )
 
     project_descriptors: list[dict] = [
@@ -58,7 +58,7 @@ def test_stride_py_venv(
 
     # when:
 
-    state_value: str = env_ctx.eval_state(EnvState.state_project_descriptors_inited.name)
+    state_value: str = env_ctx.eval_state(_EnvState.state_project_descriptors_inited.name)
 
     # then:
 

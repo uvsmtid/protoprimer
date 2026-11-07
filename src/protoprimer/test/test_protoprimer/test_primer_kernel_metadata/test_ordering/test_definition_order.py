@@ -8,8 +8,8 @@ from local_test.verified_dynamic_graph import (
 )
 from protoprimer.primer_kernel import (
     _EntryFunc,
-    EnvState,
-    StateNode,
+    _EnvState,
+    _StateNode,
 )
 from local_repo.misc_tools.code_utils import (
     get_class_line_number,
@@ -28,14 +28,14 @@ def _report_order_violations(
 
 class TestEnvStateOrdering:
     """
-    Verify that `EnvState` members and their implementation classes follow a valid topological sort order.
+    Verify that `_EnvState` members and their implementation classes follow a valid topological sort order.
     """
 
     def test_env_state_topological_sort(
         self,
     ) -> None:
         """
-        Verify that each `EnvState` enum member is defined AFTER all the states it depends on (its parents).
+        Verify that each `_EnvState` enum member is defined AFTER all the states it depends on (its parents).
         """
         self.env_ctx = VerifyingEnvContext()
         self.env_ctx._entry_func = _EntryFunc.func_boot_env
@@ -45,14 +45,14 @@ class TestEnvStateOrdering:
         state_graph_instance = self.env_ctx._state_graph
 
         # Create a mapping from the state name to its ordinal position in the enum:
-        env_state_name_to_ordinal = {env_state.name: index for index, env_state in enumerate(EnvState)}
+        env_state_name_to_ordinal = {env_state.name: index for index, env_state in enumerate(_EnvState)}
 
         order_violations = []
         # Verify that for each state, its parents appear before it in the enum definition:
-        for env_state in EnvState:
+        for env_state in _EnvState:
             state_node = state_graph_instance.get_state_node(env_state.name)
             if state_node is None:
-                raise AssertionError(f"`{StateNode.__name__}` for [{env_state.name}] not found")
+                raise AssertionError(f"`{_StateNode.__name__}` for [{env_state.name}] not found")
 
             for parent_state_name in state_node.get_parent_states():
                 if not (
@@ -86,17 +86,17 @@ class TestEnvStateOrdering:
         # Create a mapping from the state name to the line number of its implementation class:
         state_name_to_line_number = {
             env_state.name: get_class_line_number(env_state.value)
-            for env_state in EnvState
+            for env_state in _EnvState
             #
         }
 
         # then:
         order_violations = []
         # Verify that for each state, its implementation class is defined after its parents:
-        for env_state in EnvState:
+        for env_state in _EnvState:
             state_node = state_graph_instance.get_state_node(env_state.name)
             if state_node is None:
-                raise AssertionError(f"`{StateNode.__name__}` for [{env_state.name}] not found")
+                raise AssertionError(f"`{_StateNode.__name__}` for [{env_state.name}] not found")
 
             for parent_state_name in state_node.get_parent_states():
                 parent_line_number = state_name_to_line_number[parent_state_name]
@@ -114,16 +114,16 @@ class TestEnvStateOrdering:
 
     def test_node_class_definition_matches_env_state_order(self) -> None:
         """
-        Verify that implementation classes appear in the file in the exact same order as their `EnvState` enum members.
+        Verify that implementation classes appear in the file in the exact same order as their `_EnvState` enum members.
         """
         order_violations = []
         prev_line_number = -1
-        prev_env_state: EnvState | None = None
+        prev_env_state: _EnvState | None = None
 
-        for curr_env_state in EnvState:
+        for curr_env_state in _EnvState:
             curr_line_number = get_class_line_number(curr_env_state.value)
 
-            # `EnvState`-s are already defined in the right order:
+            # `_EnvState`-s are already defined in the right order:
             if curr_line_number < prev_line_number:
                 assert prev_env_state is not None
                 order_violations.append(

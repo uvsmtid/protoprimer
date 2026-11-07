@@ -2,13 +2,13 @@ from unittest.mock import MagicMock
 
 from protoprimer.primer_kernel import (
     _EnvContext,
-    EnvState,
-    StateNode,
+    _EnvState,
+    _StateNode,
 )
 
 
 def assert_parent_factories_mocked(
-    # TODO: pass `StateGraph`.
+    # TODO: pass `_StateGraph`.
     env_ctx: _EnvContext,
     state_name: str,
     # UC_27_40_17_59.replace_by_new_and_use_old.md:
@@ -24,7 +24,7 @@ def assert_parent_factories_mocked(
     if is_replaced_impl:
         expected_mocked_state_names.add(state_name)
 
-    for env_state_item in EnvState:
+    for env_state_item in _EnvState:
         state_factory = env_ctx._state_graph.get_state_factory(env_state_item.name)
         factory_class = state_factory.__class__
         create_method = getattr(factory_class, "create_state_node", None)

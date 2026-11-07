@@ -13,14 +13,14 @@ from local_test.name_assertion import (
 )
 from protoprimer.primer_kernel import (
     _EntryFunc,
-    ExecOperation,
+    _ExecOperation,
     SyntaxArg,
     _generate_entry_script_content,
 )
 
 
 def test_relationship():
-    assert_test_module_name_embeds_str(ExecOperation.op_wrap.value)
+    assert_test_module_name_embeds_str(_ExecOperation.op_wrap.value)
 
 
 def _wrap_and_assert(
@@ -42,7 +42,7 @@ def _wrap_and_assert(
     run_primer_main(
         [
             str(proto_kernel_abs_path),
-            ExecOperation.op_wrap.value,
+            _ExecOperation.op_wrap.value,
             entry_func.value,
             SyntaxArg.arg_entry_script_path,
             str(entry_script_abs_path),
@@ -98,7 +98,7 @@ def test_wrap_boot_env_without_main_func(tmp_path: pathlib.Path):
     run_primer_main(
         [
             str(proto_kernel_abs_path),
-            ExecOperation.op_wrap.value,
+            _ExecOperation.op_wrap.value,
             _EntryFunc.func_boot_env.value,
             SyntaxArg.arg_entry_script_path,
             str(entry_script_abs_path),

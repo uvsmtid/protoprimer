@@ -15,7 +15,7 @@ from metaprimer.conf_renderer import (
 from metaprimer.script_lib import configure_script
 from protoprimer.primer_kernel import (
     ConfLeap,
-    EnvState,
+    _EnvState,
     get_config,
 )
 
@@ -26,16 +26,16 @@ def custom_main():
 
     derived_data: dict = configure_script(script_basename=os.path.basename(sys.argv[0]))
 
-    state_proto_kernel_file_abs_path_inited = derived_data[EnvState.state_proto_kernel_file_abs_path_inited.name]
-    state_primer_conf_file_abs_path_inited = derived_data[EnvState.state_primer_conf_file_abs_path_inited.name]
-    state_global_conf_file_abs_path_inited = derived_data[EnvState.state_global_conf_file_abs_path_inited.name]
-    state_local_conf_file_abs_path_inited = derived_data[EnvState.state_local_conf_file_abs_path_inited.name]
+    state_proto_kernel_file_abs_path_inited = derived_data[_EnvState.state_proto_kernel_file_abs_path_inited.name]
+    state_primer_conf_file_abs_path_inited = derived_data[_EnvState.state_primer_conf_file_abs_path_inited.name]
+    state_global_conf_file_abs_path_inited = derived_data[_EnvState.state_global_conf_file_abs_path_inited.name]
+    state_local_conf_file_abs_path_inited = derived_data[_EnvState.state_local_conf_file_abs_path_inited.name]
 
     conf_input = RootNode_input(
         node_indent=0,
         orig_data={
-            EnvState.state_proto_kernel_file_abs_path_inited.name: state_proto_kernel_file_abs_path_inited,
-            EnvState.state_primer_conf_file_abs_path_inited.name: state_primer_conf_file_abs_path_inited,
+            _EnvState.state_proto_kernel_file_abs_path_inited.name: state_proto_kernel_file_abs_path_inited,
+            _EnvState.state_primer_conf_file_abs_path_inited.name: state_primer_conf_file_abs_path_inited,
         },
     )
     print(RenderConfigVisitor().render_node(conf_input))

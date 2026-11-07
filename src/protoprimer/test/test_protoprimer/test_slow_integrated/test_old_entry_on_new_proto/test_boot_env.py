@@ -10,7 +10,7 @@ from local_test.name_assertion import (
 )
 from protoprimer.primer_kernel import (
     _EntryFunc,
-    ExecOperation,
+    _ExecOperation,
     SyntaxArg,
     TopDir,
 )
@@ -56,7 +56,7 @@ def test_old_entry_script_boot_env(
     run_primer_main(
         [
             str(proto_kernel_abs_path),
-            ExecOperation.op_wrap.value,
+            _ExecOperation.op_wrap.value,
             _EntryFunc.func_boot_env.value,
             SyntaxArg.arg_entry_script_path,
             str(entry_script_abs_path),

@@ -22,13 +22,13 @@ from local_test.name_assertion import (
 )
 from protoprimer.primer_kernel import (
     _EntryFunc,
-    ExecOperation,
+    _ExecOperation,
     SyntaxArg,
 )
 
 
 def test_relationship():
-    assert_test_module_name_embeds_str(ExecOperation.op_wrap.value)
+    assert_test_module_name_embeds_str(_ExecOperation.op_wrap.value)
 
 
 def wrap(
@@ -40,7 +40,7 @@ def wrap(
     run_primer_main(
         [
             str(proto_kernel_abs_path),
-            ExecOperation.op_wrap.value,
+            _ExecOperation.op_wrap.value,
             entry_func.value,
             SyntaxArg.arg_entry_script_path,
             str(entry_script_abs_path),

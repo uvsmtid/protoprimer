@@ -25,23 +25,23 @@ from protoprimer.primer_kernel import (
     ConfConstGeneral,
     ConfConstInput,
     ConfConstPrimer,
-    ExecOperation,
+    _ExecOperation,
 )
 
 start_app_example_main_func = f"{cmd_start_app_example.__name__}:{cmd_start_app_example.custom_start_app_main.__name__}"
 
 
 def test_relationship():
-    assert_test_module_name_embeds_str(ExecOperation.op_start.value)
+    assert_test_module_name_embeds_str(_ExecOperation.op_start.value)
 
 
 def test_start_requires_boot_first(tmp_path: Path):
     """
-    `ExecOperation.op_start` is a fast path (like `ExecOperation.op_shell`):
+    `_ExecOperation.op_start` is a fast path (like `_ExecOperation.op_shell`):
     unlike `boot`, it must not create `venv` itself.
     """
 
-    assert_test_func_name_embeds_str(ExecOperation.op_start.value)
+    assert_test_func_name_embeds_str(_ExecOperation.op_start.value)
 
     # given:
 
@@ -57,7 +57,7 @@ def test_start_requires_boot_first(tmp_path: Path):
     sub_proc = subprocess.run(
         [
             str(proto_kernel_abs_path),
-            ExecOperation.op_start.value,
+            _ExecOperation.op_start.value,
             start_app_example_main_func,
         ],
         capture_output=True,
@@ -67,12 +67,12 @@ def test_start_requires_boot_first(tmp_path: Path):
     # then:
 
     assert sub_proc.returncode != 0
-    assert ExecOperation.op_boot.value in sub_proc.stderr
+    assert _ExecOperation.op_boot.value in sub_proc.stderr
 
 
 def test_start_command_execution(tmp_path: Path):
 
-    assert_test_func_name_embeds_str(ExecOperation.op_start.value)
+    assert_test_func_name_embeds_str(_ExecOperation.op_start.value)
 
     # given:
 
@@ -90,7 +90,7 @@ def test_start_command_execution(tmp_path: Path):
     sub_proc = subprocess.run(
         [
             str(proto_kernel_abs_path),
-            ExecOperation.op_start.value,
+            _ExecOperation.op_start.value,
             start_app_example_main_func,
         ],
         capture_output=True,
@@ -105,7 +105,7 @@ def test_start_command_execution(tmp_path: Path):
 
 def test_start_does_not_reinstall_dependencies(tmp_path: Path):
 
-    assert_test_func_name_embeds_str(ExecOperation.op_start.value)
+    assert_test_func_name_embeds_str(_ExecOperation.op_start.value)
 
     # given:
 
@@ -160,7 +160,7 @@ def test_start_does_not_reinstall_dependencies(tmp_path: Path):
     subprocess.run(
         [
             str(proto_kernel_abs_path),
-            ExecOperation.op_start.value,
+            _ExecOperation.op_start.value,
             start_app_example_main_func,
         ],
         check=True,

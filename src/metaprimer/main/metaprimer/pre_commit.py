@@ -6,35 +6,35 @@ import subprocess
 import sys
 
 from protoprimer.primer_kernel import (
-    AbstractCachingStateNode,
-    EnvState,
-    TargetState,
-    trivial_factory,
-    ValueType,
+    _AbstractCachingStateNode,
+    _EnvState,
+    _TargetState,
+    _trivial_factory,
+    _ValueType,
 )
 
 logger = logging.getLogger()
 
 
 # noinspection PyPep8Naming
-@trivial_factory
-class _Node_state_pre_commit_configured(AbstractCachingStateNode[int]):
+@_trivial_factory
+class _Node_state_pre_commit_configured(_AbstractCachingStateNode[int]):
 
     _state_name = staticmethod(lambda: "state_pre_commit_configured")
 
     _parent_states = staticmethod(
         lambda: [
-            TargetState.target_proto_bootstrap_completed.value.name,
-            EnvState.state_global_conf_file_abs_path_inited.name,
-            EnvState.state_ref_root_dir_abs_path_inited.name,
+            _TargetState.target_proto_bootstrap_completed.value.name,
+            _EnvState.state_global_conf_file_abs_path_inited.name,
+            _EnvState.state_ref_root_dir_abs_path_inited.name,
         ]
     )
 
     def _eval_state_once(
         self,
-    ) -> ValueType:
+    ) -> _ValueType:
 
-        state_ref_root_dir_abs_path_inited: str = self.eval_parent_state(EnvState.state_ref_root_dir_abs_path_inited.name)
+        state_ref_root_dir_abs_path_inited: str = self.eval_parent_state(_EnvState.state_ref_root_dir_abs_path_inited.name)
 
         is_git_repo: bool = False
         try:
@@ -54,7 +54,7 @@ class _Node_state_pre_commit_configured(AbstractCachingStateNode[int]):
         if not is_git_repo:
             return 0
 
-        state_global_conf_file_abs_path_inited: str = self.eval_parent_state(EnvState.state_global_conf_file_abs_path_inited.name)
+        state_global_conf_file_abs_path_inited: str = self.eval_parent_state(_EnvState.state_global_conf_file_abs_path_inited.name)
         client_conf_dir_path = os.path.dirname(state_global_conf_file_abs_path_inited)
         pre_commit_conf_file_path = os.path.join(
             client_conf_dir_path,

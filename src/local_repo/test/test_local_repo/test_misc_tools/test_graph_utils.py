@@ -4,8 +4,8 @@ import pytest
 
 from protoprimer.primer_kernel import (
     _EnvContext,
-    StateNode,
-    trivial_factory,
+    _StateNode,
+    _trivial_factory,
 )
 from local_repo.misc_tools.graph_utils import (
     get_transitive_dependencies,
@@ -31,8 +31,8 @@ class TestTopologicalSort:
         state_graph_instance.state_nodes = {}
         state_graph_instance.state_factories = {}
 
-        @trivial_factory
-        class DummyStateNode(StateNode):
+        @_trivial_factory
+        class DummyStateNode(_StateNode):
             def __init__(self, env_context_param, state_name_param):
                 super().__init__(env_context_param, [], state_name_param)
 
@@ -55,8 +55,8 @@ class TestTopologicalSort:
         state_graph_instance.state_nodes = {}
         state_graph_instance.state_factories = {}
 
-        @trivial_factory
-        class DummyStateNode(StateNode):
+        @_trivial_factory
+        class DummyStateNode(_StateNode):
             def __init__(self, env_context_param, parent_states_param, state_name_param):
                 super().__init__(env_context_param, parent_states_param, state_name_param)
 
@@ -91,8 +91,8 @@ class TestTopologicalSort:
         state_graph_instance.state_nodes = {}
         state_graph_instance.state_factories = {}
 
-        @trivial_factory
-        class DummyStateNode(StateNode):
+        @_trivial_factory
+        class DummyStateNode(_StateNode):
             def __init__(self, env_context_param, parent_states_param, state_name_param):
                 super().__init__(env_context_param, parent_states_param, state_name_param)
 
@@ -135,8 +135,8 @@ class TestTopologicalSort:
         state_graph_instance.state_nodes = {}
         state_graph_instance.state_factories = {}
 
-        @trivial_factory
-        class DummyStateNode(StateNode):
+        @_trivial_factory
+        class DummyStateNode(_StateNode):
             def __init__(self, env_context_param, parent_states_param, state_name_param):
                 super().__init__(env_context_param, parent_states_param, state_name_param)
 
@@ -161,8 +161,8 @@ class TestTopologicalSort:
         state_graph_instance.state_nodes = {}
         state_graph_instance.state_factories = {}
 
-        @trivial_factory
-        class DummyStateNode(StateNode):
+        @_trivial_factory
+        class DummyStateNode(_StateNode):
             def __init__(self, env_context_param, parent_states_param, state_name_param):
                 super().__init__(env_context_param, parent_states_param, state_name_param)
 
@@ -185,8 +185,8 @@ class TestTopologicalSort:
         state_graph_instance.state_nodes = {}
         state_graph_instance.state_factories = {}
 
-        @trivial_factory
-        class DummyStateNode(StateNode):
+        @_trivial_factory
+        class DummyStateNode(_StateNode):
             def __init__(self, env_context_param, parent_states_param, state_name_param):
                 super().__init__(env_context_param, parent_states_param, state_name_param)
 
@@ -198,7 +198,7 @@ class TestTopologicalSort:
 
         # when:
         # then:
-        with pytest.raises(ValueError, match=r"`StateNode` \[B\] not found in graph"):
+        with pytest.raises(ValueError, match=r"`_StateNode` \[B\] not found in graph"):
             topological_sort(state_graph_instance, env_context_instance)
 
 
@@ -213,8 +213,8 @@ class TestGetTransitiveDependencies:
         state_graph_instance.state_nodes = {}
         state_graph_instance.state_factories = {}
 
-        @trivial_factory
-        class DummyStateNode(StateNode):
+        @_trivial_factory
+        class DummyStateNode(_StateNode):
             def __init__(self, env_context_param, parent_states_param, state_name_param):
                 super().__init__(env_context_param, parent_states_param, state_name_param)
 
@@ -248,8 +248,8 @@ class TestGetTransitiveDependencies:
         state_graph_instance.state_nodes = {}
         state_graph_instance.state_factories = {}
 
-        @trivial_factory
-        class DummyStateNode(StateNode):
+        @_trivial_factory
+        class DummyStateNode(_StateNode):
             def __init__(self, env_context_param, parent_states_param, state_name_param):
                 super().__init__(env_context_param, parent_states_param, state_name_param)
 
@@ -287,8 +287,8 @@ class TestGetTransitiveDependencies:
         state_graph_instance.state_nodes = {}
         state_graph_instance.state_factories = {}
 
-        @trivial_factory
-        class DummyStateNode(StateNode):
+        @_trivial_factory
+        class DummyStateNode(_StateNode):
             def __init__(self, env_context_param, parent_states_param, state_name_param):
                 super().__init__(env_context_param, parent_states_param, state_name_param)
 

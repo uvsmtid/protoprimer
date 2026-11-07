@@ -8,7 +8,7 @@ from metaprimer.conf_renderer import (
 from protoprimer.primer_kernel import (
     ConfConstGeneral,
     ConfConstInput,
-    EnvState,
+    _EnvState,
     TermColor,
 )
 
@@ -19,8 +19,8 @@ def test_relationship():
 
 def test_render_input_config_data_with_unused_fields():
     config_data = {
-        EnvState.state_proto_kernel_file_abs_path_inited.name: f"/{ConfConstGeneral.default_proto_kernel_basename}",
-        EnvState.state_primer_conf_file_abs_path_inited.name: f"/{ConfConstGeneral.name_protoprimer_package}.{ConfConstInput.conf_file_ext}",
+        _EnvState.state_proto_kernel_file_abs_path_inited.name: f"/{ConfConstGeneral.default_proto_kernel_basename}",
+        _EnvState.state_primer_conf_file_abs_path_inited.name: f"/{ConfConstGeneral.name_protoprimer_package}.{ConfConstInput.conf_file_ext}",
         "some_string": "some_value",
         "some_int": 123,
     }
@@ -100,8 +100,8 @@ leap_input = (
 
 def test_render_input_config_data_with_unused_fields_quiet():
     config_data = {
-        EnvState.state_proto_kernel_file_abs_path_inited.name: f"/{ConfConstGeneral.default_proto_kernel_basename}",
-        EnvState.state_primer_conf_file_abs_path_inited.name: f"/{ConfConstGeneral.name_protoprimer_package}.{ConfConstInput.conf_file_ext}",
+        _EnvState.state_proto_kernel_file_abs_path_inited.name: f"/{ConfConstGeneral.default_proto_kernel_basename}",
+        _EnvState.state_primer_conf_file_abs_path_inited.name: f"/{ConfConstGeneral.name_protoprimer_package}.{ConfConstInput.conf_file_ext}",
         "some_string": "some_value",
         "some_int": 123,
     }

@@ -21,8 +21,8 @@ from protoprimer.primer_kernel import (
     _Factory_state_proto_kernel_file_abs_path_inited,
     _Factory_state_stride_py_required_reached,
     ConfConstEnv,
-    EnvState,
-    ExecOperation,
+    _EnvState,
+    _ExecOperation,
     StateStride,
     _Factory_state_input_exec_operation_loaded,
 )
@@ -42,7 +42,7 @@ def env_ctx():
 
 
 def test_relationship():
-    assert_test_module_name_embeds_str(EnvState.state_reset_triggered.name)
+    assert_test_module_name_embeds_str(_EnvState.state_reset_triggered.name)
 
 
 @patch(f"{primer_kernel.__name__}.{_Node_state_input_start_id_var_loaded.__name__}.create_state_node")
@@ -77,9 +77,9 @@ def test_reset_true(
 
     assert_parent_factories_mocked(
         env_ctx,
-        EnvState.state_reset_triggered.name,
+        _EnvState.state_reset_triggered.name,
     )
-    mock_state_input_exec_operation_loaded.return_value.eval_own_state.return_value = ExecOperation.op_reset
+    mock_state_input_exec_operation_loaded.return_value.eval_own_state.return_value = _ExecOperation.op_reset
     mock_state_input_start_id_var_loaded.return_value.eval_own_state.return_value = "mock_start_id"
 
     py_exec = StateStride.stride_py_required
@@ -93,7 +93,7 @@ def test_reset_true(
     mock_os_path_exists.return_value = True
 
     # when:
-    state_value = env_ctx.eval_state(EnvState.state_reset_triggered.name)
+    state_value = env_ctx.eval_state(_EnvState.state_reset_triggered.name)
 
     # then:
     assert state_value is True
@@ -131,16 +131,16 @@ def test_reset_false(
     # given:
     assert_parent_factories_mocked(
         env_ctx,
-        EnvState.state_reset_triggered.name,
+        _EnvState.state_reset_triggered.name,
     )
-    mock_state_input_exec_operation_loaded.return_value.eval_own_state.return_value = ExecOperation.op_boot
+    mock_state_input_exec_operation_loaded.return_value.eval_own_state.return_value = _ExecOperation.op_boot
 
     py_exec = StateStride.stride_py_required
     mock_state_stride_py_required_reached.return_value.eval_own_state.return_value = py_exec
     env_ctx._state_stride = py_exec
 
     # when:
-    state_value = env_ctx.eval_state(EnvState.state_reset_triggered.name)
+    state_value = env_ctx.eval_state(_EnvState.state_reset_triggered.name)
 
     # then:
     assert state_value is False
@@ -178,9 +178,9 @@ def test_reset_true_but_py_exec_not_required(
     # given:
     assert_parent_factories_mocked(
         env_ctx,
-        EnvState.state_reset_triggered.name,
+        _EnvState.state_reset_triggered.name,
     )
-    mock_state_input_exec_operation_loaded.return_value.eval_own_state.return_value = ExecOperation.op_reset
+    mock_state_input_exec_operation_loaded.return_value.eval_own_state.return_value = _ExecOperation.op_reset
     mock_state_input_start_id_var_loaded.return_value.eval_own_state.return_value = "mock_start_id"
 
     py_exec = StateStride.stride_py_venv
@@ -188,7 +188,7 @@ def test_reset_true_but_py_exec_not_required(
     env_ctx._state_stride = py_exec
 
     # when:
-    state_value = env_ctx.eval_state(EnvState.state_reset_triggered.name)
+    state_value = env_ctx.eval_state(_EnvState.state_reset_triggered.name)
 
     # then:
     assert state_value is False

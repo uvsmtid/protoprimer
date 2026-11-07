@@ -17,8 +17,8 @@ from protoprimer.primer_kernel import (
     ConfConstInput,
     ConfConstPrimer,
     ConfField,
-    EnvState,
-    ExecOperation,
+    _EnvState,
+    _ExecOperation,
     write_json_file,
 )
 
@@ -32,7 +32,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
     # noinspection PyMethodMayBeStatic
     def test_relationship(self):
-        assert_test_module_name_embeds_str(EnvState.state_local_conf_symlink_abs_path_inited.name)
+        assert_test_module_name_embeds_str(_EnvState.state_local_conf_symlink_abs_path_inited.name)
 
     @patch(f"{primer_kernel.__name__}.{_Node_state_client_conf_file_data_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Node_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
@@ -48,7 +48,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         assert_parent_factories_mocked(
             self.env_ctx,
-            EnvState.state_local_conf_symlink_abs_path_inited.name,
+            _EnvState.state_local_conf_symlink_abs_path_inited.name,
         )
 
         mock_client_dir = "/mock_client_dir"
@@ -89,7 +89,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         # when:
 
         with patch.object(sys, "argv", test_args):
-            self.env_ctx.eval_state(EnvState.state_local_conf_symlink_abs_path_inited.name)
+            self.env_ctx.eval_state(_EnvState.state_local_conf_symlink_abs_path_inited.name)
 
         # then:
 
@@ -109,7 +109,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         assert_parent_factories_mocked(
             self.env_ctx,
-            EnvState.state_local_conf_symlink_abs_path_inited.name,
+            _EnvState.state_local_conf_symlink_abs_path_inited.name,
         )
 
         mock_client_dir = "/mock_client_dir"
@@ -143,7 +143,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # when:
 
-        self.env_ctx.eval_state(EnvState.state_local_conf_symlink_abs_path_inited.name)
+        self.env_ctx.eval_state(_EnvState.state_local_conf_symlink_abs_path_inited.name)
 
         # then:
 
@@ -163,7 +163,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         assert_parent_factories_mocked(
             self.env_ctx,
-            EnvState.state_local_conf_symlink_abs_path_inited.name,
+            _EnvState.state_local_conf_symlink_abs_path_inited.name,
         )
 
         mock_client_dir = "/mock_client_dir"
@@ -199,7 +199,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         # when:
 
         with self.assertRaises(AssertionError) as ctx:
-            self.env_ctx.eval_state(EnvState.state_local_conf_symlink_abs_path_inited.name)
+            self.env_ctx.eval_state(_EnvState.state_local_conf_symlink_abs_path_inited.name)
 
         # then:
 
@@ -219,7 +219,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         assert_parent_factories_mocked(
             self.env_ctx,
-            EnvState.state_local_conf_symlink_abs_path_inited.name,
+            _EnvState.state_local_conf_symlink_abs_path_inited.name,
         )
 
         mock_client_dir = "/mock_client_dir"
@@ -254,7 +254,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         # when:
 
         with self.assertRaises(AssertionError) as ctx:
-            self.env_ctx.eval_state(EnvState.state_local_conf_symlink_abs_path_inited.name)
+            self.env_ctx.eval_state(_EnvState.state_local_conf_symlink_abs_path_inited.name)
 
         # then:
 
@@ -274,7 +274,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         assert_parent_factories_mocked(
             self.env_ctx,
-            EnvState.state_local_conf_symlink_abs_path_inited.name,
+            _EnvState.state_local_conf_symlink_abs_path_inited.name,
         )
 
         mock_client_dir = "/mock_client_dir"
@@ -309,7 +309,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         with patch.object(sys, "argv", test_args):
             with self.assertRaises(AssertionError) as ctx:
-                self.env_ctx.eval_state(EnvState.state_local_conf_symlink_abs_path_inited.name)
+                self.env_ctx.eval_state(_EnvState.state_local_conf_symlink_abs_path_inited.name)
 
         # then:
 
@@ -329,7 +329,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         assert_parent_factories_mocked(
             self.env_ctx,
-            EnvState.state_local_conf_symlink_abs_path_inited.name,
+            _EnvState.state_local_conf_symlink_abs_path_inited.name,
         )
 
         mock_client_dir = "/mock_client_dir"
@@ -360,7 +360,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # when:
 
-        self.env_ctx.eval_state(EnvState.state_local_conf_symlink_abs_path_inited.name)
+        self.env_ctx.eval_state(_EnvState.state_local_conf_symlink_abs_path_inited.name)
 
         # then:
 
@@ -384,7 +384,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         assert_parent_factories_mocked(
             self.env_ctx,
-            EnvState.state_local_conf_symlink_abs_path_inited.name,
+            _EnvState.state_local_conf_symlink_abs_path_inited.name,
         )
 
         mock_client_dir = "/mock_client_dir"
@@ -415,7 +415,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # when:
 
-        self.env_ctx.eval_state(EnvState.state_local_conf_symlink_abs_path_inited.name)
+        self.env_ctx.eval_state(_EnvState.state_local_conf_symlink_abs_path_inited.name)
 
         # then:
 
@@ -437,7 +437,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         # given:
         assert_parent_factories_mocked(
             self.env_ctx,
-            EnvState.state_local_conf_symlink_abs_path_inited.name,
+            _EnvState.state_local_conf_symlink_abs_path_inited.name,
         )
 
         mock_ref_root = "/mock_ref_root"
@@ -446,7 +446,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_client_conf_file_data_loaded.return_value.eval_own_state.return_value = {}  # Not used in this branch
 
         # when:
-        result = self.env_ctx.eval_state(EnvState.state_local_conf_symlink_abs_path_inited.name)
+        result = self.env_ctx.eval_state(_EnvState.state_local_conf_symlink_abs_path_inited.name)
 
         # then:
         self.assertEqual(result, mock_ref_root)
@@ -471,7 +471,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         assert_parent_factories_mocked(
             self.env_ctx,
-            EnvState.state_local_conf_symlink_abs_path_inited.name,
+            _EnvState.state_local_conf_symlink_abs_path_inited.name,
         )
 
         mock_client_dir = "/mock_client_dir"
@@ -510,7 +510,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # when:
 
-        self.env_ctx.eval_state(EnvState.state_local_conf_symlink_abs_path_inited.name)
+        self.env_ctx.eval_state(_EnvState.state_local_conf_symlink_abs_path_inited.name)
 
         # then:
 
@@ -530,7 +530,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         assert_parent_factories_mocked(
             self.env_ctx,
-            EnvState.state_local_conf_symlink_abs_path_inited.name,
+            _EnvState.state_local_conf_symlink_abs_path_inited.name,
         )
 
         mock_client_dir = "/mock_client_dir"
@@ -569,7 +569,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         # when:
 
         with self.assertRaises(AssertionError) as ctx:
-            self.env_ctx.eval_state(EnvState.state_local_conf_symlink_abs_path_inited.name)
+            self.env_ctx.eval_state(_EnvState.state_local_conf_symlink_abs_path_inited.name)
 
         # then:
 
@@ -593,7 +593,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         assert_parent_factories_mocked(
             self.env_ctx,
-            EnvState.state_local_conf_symlink_abs_path_inited.name,
+            _EnvState.state_local_conf_symlink_abs_path_inited.name,
         )
 
         mock_client_dir = "/mock_client_dir"
@@ -626,7 +626,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # when:
 
-        self.env_ctx.eval_state(EnvState.state_local_conf_symlink_abs_path_inited.name)
+        self.env_ctx.eval_state(_EnvState.state_local_conf_symlink_abs_path_inited.name)
 
         # then:
 

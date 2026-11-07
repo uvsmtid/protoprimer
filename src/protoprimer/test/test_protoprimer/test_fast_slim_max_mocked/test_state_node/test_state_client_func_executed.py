@@ -10,7 +10,7 @@ from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     _Node_state_command_executed,
     _EnvContext,
-    EnvState,
+    _EnvState,
 )
 
 
@@ -20,7 +20,7 @@ def env_ctx():
 
 
 def test_relationship():
-    assert_test_module_name_embeds_str(EnvState.state_client_func_executed.name)
+    assert_test_module_name_embeds_str(_EnvState.state_client_func_executed.name)
 
 
 @patch(f"{primer_kernel.__name__}.{_Node_state_command_executed.__name__}.create_state_node")
@@ -31,13 +31,13 @@ def test_client_func_return_value_flows_through(
     # given:
     assert_parent_factories_mocked(
         env_ctx,
-        EnvState.state_client_func_executed.name,
+        _EnvState.state_client_func_executed.name,
     )
     mock_state_command_executed.return_value.eval_own_state.return_value = 0
     env_ctx._client_func = lambda: 7
 
     # when:
-    state_value = env_ctx.eval_state(EnvState.state_client_func_executed.name)
+    state_value = env_ctx.eval_state(_EnvState.state_client_func_executed.name)
 
     # then:
     assert state_value == 7
@@ -51,13 +51,13 @@ def test_client_func_none_is_coerced_to_zero(
     # given:
     assert_parent_factories_mocked(
         env_ctx,
-        EnvState.state_client_func_executed.name,
+        _EnvState.state_client_func_executed.name,
     )
     mock_state_command_executed.return_value.eval_own_state.return_value = 0
     env_ctx._client_func = lambda: None
 
     # when:
-    state_value = env_ctx.eval_state(EnvState.state_client_func_executed.name)
+    state_value = env_ctx.eval_state(_EnvState.state_client_func_executed.name)
 
     # then:
     assert state_value == 0
@@ -71,10 +71,10 @@ def test_client_func_not_set_raises(
     # given:
     assert_parent_factories_mocked(
         env_ctx,
-        EnvState.state_client_func_executed.name,
+        _EnvState.state_client_func_executed.name,
     )
     mock_state_command_executed.return_value.eval_own_state.return_value = 0
 
     # when/then:
     with pytest.raises(AssertionError):
-        env_ctx.eval_state(EnvState.state_client_func_executed.name)
+        env_ctx.eval_state(_EnvState.state_client_func_executed.name)

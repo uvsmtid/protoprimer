@@ -13,14 +13,14 @@ from local_test.verified_dynamic_graph import (
 from protoprimer.primer_kernel import (
     _EntryFunc,
     _EnvContext,
-    EnvState,
-    ExecOperation,
+    _EnvState,
+    _ExecOperation,
 )
 
 
 def _count_reachable_states(env_ctx: _EnvContext) -> int:
     reachable_state_set = set()
-    for env_state in EnvState:
+    for env_state in _EnvState:
         state_node = env_ctx._state_graph.get_state_node(env_state.name)
         for parent_state in state_node.get_parent_states():
             reachable_state_set.add(parent_state)
@@ -46,7 +46,7 @@ def _find_max_deps_env_ctx() -> tuple[VerifyingEnvContext, int]:
 
     for entry_func, exec_operation, prepare_venv, is_log_enabled in itertools.product(
         list(_EntryFunc),
-        list(ExecOperation),
+        list(_ExecOperation),
         [True, False],
         [True, False],
     ):

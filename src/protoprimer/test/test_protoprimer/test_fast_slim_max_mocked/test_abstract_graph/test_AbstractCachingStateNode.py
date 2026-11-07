@@ -4,16 +4,16 @@ import pytest
 
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer.primer_kernel import (
-    AbstractCachingStateNode,
+    _AbstractCachingStateNode,
 )
 
 
 def test_relationship():
-    assert_test_module_name_embeds_str(AbstractCachingStateNode.__name__)
+    assert_test_module_name_embeds_str(_AbstractCachingStateNode.__name__)
 
 
 def _make_state_node(mock_env_ctx, parent_states, state_name):
-    class ConcreteStateNode(AbstractCachingStateNode):
+    class ConcreteStateNode(_AbstractCachingStateNode):
         _state_name = staticmethod(lambda: state_name)
         _parent_states = staticmethod(lambda: parent_states)
 

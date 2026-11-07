@@ -1,5 +1,5 @@
 """
-Shared helpers to verify that `ExecOperation.op_wrap` regenerates
+Shared helpers to verify that `_ExecOperation.op_wrap` regenerates
 already-committed `entry_script`-s byte-for-byte (no `git diff`).
 
 Used by both the `./cmd/*` and `./prime` slow_integrated tests -
@@ -17,7 +17,7 @@ import sys
 import protoprimer.primer_kernel
 from protoprimer.primer_kernel import (
     _EntryFunc,
-    ExecOperation,
+    _ExecOperation,
     SyntaxArg,
 )
 
@@ -69,7 +69,7 @@ def assert_wrap_regenerates_with_no_git_diff(
     entry_script_abs_path: pathlib.Path,
 ) -> None:
     """
-    Runs `ExecOperation.op_wrap` for real against `entry_script_abs_path`
+    Runs `_ExecOperation.op_wrap` for real against `entry_script_abs_path`
     (an already `git`-tracked, previously generated `entry_script`)
     and asserts `git` reports no changes - i.e., regeneration is idempotent.
     """
@@ -80,7 +80,7 @@ def assert_wrap_regenerates_with_no_git_diff(
         [
             sys.executable,
             str(proto_kernel_abs_path),
-            ExecOperation.op_wrap.value,
+            _ExecOperation.op_wrap.value,
             parsed_entry_script.entry_func,
             SyntaxArg.arg_entry_script_path,
             str(entry_script_abs_path),
@@ -104,6 +104,6 @@ def assert_wrap_regenerates_with_no_git_diff(
         text=True,
     )
     assert git_diff_process.returncode == 0, (
-        f"`{ExecOperation.op_wrap.value}` regenerated [{entry_script_abs_path}] with changes:\n{git_diff_process.stdout}"
+        f"`{_ExecOperation.op_wrap.value}` regenerated [{entry_script_abs_path}] with changes:\n{git_diff_process.stdout}"
         #
     )

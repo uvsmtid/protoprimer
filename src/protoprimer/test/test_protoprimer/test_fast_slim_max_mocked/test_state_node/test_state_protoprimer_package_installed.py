@@ -20,9 +20,9 @@ from protoprimer.primer_kernel import (
     _ContextBuilder,
     _EntryFunc,
     _EnvContext,
-    EnvState,
+    _EnvState,
     EnvVar,
-    ExecOperation,
+    _ExecOperation,
     StateStride,
     _Factory_state_input_exec_operation_loaded,
 )
@@ -45,7 +45,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
     # noinspection PyMethodMayBeStatic
     def test_relationship(self):
-        assert_test_module_name_embeds_str(EnvState.state_protoprimer_package_installed.name)
+        assert_test_module_name_embeds_str(_EnvState.state_protoprimer_package_installed.name)
 
     @patch(f"{primer_kernel.__name__}.{_Node_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Node_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
@@ -75,7 +75,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         # given:
         assert_parent_factories_mocked(
             self.env_ctx,
-            EnvState.state_protoprimer_package_installed.name,
+            _EnvState.state_protoprimer_package_installed.name,
         )
         mock_get_stride.return_value = StateStride.stride_py_venv
         mock_client_ref_root_dir = "/mock_client_ref_root_dir"
@@ -115,9 +115,9 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_project_descriptors_inited.return_value.eval_own_state.return_value = project_descriptors
         mock_state_install_specs_inited.return_value.eval_own_state.return_value = []
         mock_state_version_constraints_file_basename_inited.return_value.eval_own_state.return_value = primer_kernel.ConfConstEnv.default_version_constraints_file_basename
-        mock_state_input_exec_operation_loaded.return_value.eval_own_state.return_value = ExecOperation.op_boot
+        mock_state_input_exec_operation_loaded.return_value.eval_own_state.return_value = _ExecOperation.op_boot
         # when:
-        self.env_ctx.eval_state(EnvState.state_protoprimer_package_installed.name)
+        self.env_ctx.eval_state(_EnvState.state_protoprimer_package_installed.name)
         # then:
         mock_state_venv_driver_prepared.return_value.eval_own_state.return_value.install_dependencies.assert_called()
         mock_state_venv_driver_prepared.return_value.eval_own_state.return_value.install_dependencies.assert_any_call(
@@ -159,7 +159,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         # given:
         assert_parent_factories_mocked(
             self.env_ctx,
-            EnvState.state_protoprimer_package_installed.name,
+            _EnvState.state_protoprimer_package_installed.name,
         )
         mock_get_stride.return_value = StateStride.stride_py_venv
         mock_client_ref_root_dir = "/mock_client_ref_root_dir"
@@ -199,9 +199,9 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_project_descriptors_inited.return_value.eval_own_state.return_value = project_descriptors
         mock_state_install_specs_inited.return_value.eval_own_state.return_value = []
         mock_state_version_constraints_file_basename_inited.return_value.eval_own_state.return_value = primer_kernel.ConfConstEnv.default_version_constraints_file_basename
-        mock_state_input_exec_operation_loaded.return_value.eval_own_state.return_value = ExecOperation.op_reset
+        mock_state_input_exec_operation_loaded.return_value.eval_own_state.return_value = _ExecOperation.op_reset
         # when:
-        self.env_ctx.eval_state(EnvState.state_protoprimer_package_installed.name)
+        self.env_ctx.eval_state(_EnvState.state_protoprimer_package_installed.name)
         # then:
         mock_state_venv_driver_prepared.return_value.eval_own_state.return_value.install_dependencies.assert_called()
         mock_state_venv_driver_prepared.return_value.eval_own_state.return_value.install_dependencies.assert_any_call(
@@ -243,7 +243,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         # given:
         assert_parent_factories_mocked(
             self.env_ctx,
-            EnvState.state_protoprimer_package_installed.name,
+            _EnvState.state_protoprimer_package_installed.name,
         )
         mock_get_stride.return_value = StateStride.stride_py_venv
         mock_client_ref_root_dir = "/mock_client_ref_root_dir"
@@ -275,10 +275,10 @@ class ThisTestClass(BasePyfakefsTestClass):
             {"group2": {}},
         ]
         mock_state_version_constraints_file_basename_inited.return_value.eval_own_state.return_value = primer_kernel.ConfConstEnv.default_version_constraints_file_basename
-        mock_state_input_exec_operation_loaded.return_value.eval_own_state.return_value = ExecOperation.op_boot
+        mock_state_input_exec_operation_loaded.return_value.eval_own_state.return_value = _ExecOperation.op_boot
 
         # when:
-        self.env_ctx.eval_state(EnvState.state_protoprimer_package_installed.name)
+        self.env_ctx.eval_state(_EnvState.state_protoprimer_package_installed.name)
 
         # then:
         from unittest.mock import call
@@ -344,7 +344,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         assert_parent_factories_mocked(
             self.env_ctx,
-            EnvState.state_protoprimer_package_installed.name,
+            _EnvState.state_protoprimer_package_installed.name,
         )
         mock_get_stride.return_value = StateStride.stride_py_venv
         mock_client_dir = "/mock_client_dir"
@@ -365,11 +365,11 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_install_specs_inited.return_value.eval_own_state.return_value = []
         mock_state_version_constraints_file_basename_inited.return_value.eval_own_state.return_value = primer_kernel.ConfConstEnv.default_version_constraints_file_basename
 
-        mock_state_input_exec_operation_loaded.return_value.eval_own_state.return_value = ExecOperation.op_boot
+        mock_state_input_exec_operation_loaded.return_value.eval_own_state.return_value = _ExecOperation.op_boot
 
         # when:
 
-        self.env_ctx.eval_state(EnvState.state_protoprimer_package_installed.name)
+        self.env_ctx.eval_state(_EnvState.state_protoprimer_package_installed.name)
 
         # then:
 

@@ -16,8 +16,8 @@ from protoprimer.primer_kernel import (
     _Node_state_input_stderr_log_level_handler_configured,
     _ContextBuilder,
     _EntryFunc,
-    EnvState,
-    ExecOperation,
+    _EnvState,
+    _ExecOperation,
 )
 
 
@@ -35,7 +35,7 @@ def env_ctx():
 
 
 def test_relationship():
-    assert_test_module_name_embeds_str(EnvState.state_func_boot_env_executed.name)
+    assert_test_module_name_embeds_str(_EnvState.state_func_boot_env_executed.name)
 
 
 @patch(f"{primer_kernel.__name__}.{_Factory_state_input_final_state_eval_finalized.__name__}.create_state_node")
@@ -51,10 +51,10 @@ def test_exec_operation_boot(
 
     assert_parent_factories_mocked(
         env_ctx,
-        EnvState.state_func_boot_env_executed.name,
+        _EnvState.state_func_boot_env_executed.name,
     )
 
-    mock_state_input_exec_operation_loaded.return_value.eval_own_state.return_value = ExecOperation.op_boot
+    mock_state_input_exec_operation_loaded.return_value.eval_own_state.return_value = _ExecOperation.op_boot
     mock_state_input_final_state_eval_finalized.return_value.eval_own_state.return_value = "mock_final_state"
 
     mock_state_node = MagicMock()
@@ -65,7 +65,7 @@ def test_exec_operation_boot(
     # when/then:
 
     with pytest.raises(SystemExit) as exc_info:
-        env_ctx.eval_state(EnvState.state_func_boot_env_executed.name)
+        env_ctx.eval_state(_EnvState.state_func_boot_env_executed.name)
 
     assert exc_info.value.code == 0
 
@@ -83,7 +83,7 @@ def test_exec_operation_none(
 
     assert_parent_factories_mocked(
         env_ctx,
-        EnvState.state_func_boot_env_executed.name,
+        _EnvState.state_func_boot_env_executed.name,
     )
 
     mock_state_input_exec_operation_loaded.return_value.eval_own_state.return_value = None
@@ -94,7 +94,7 @@ def test_exec_operation_none(
 
     # when/then:
     with pytest.raises(ValueError, match="exec operation is not defined"):
-        env_ctx.eval_state(EnvState.state_func_boot_env_executed.name)
+        env_ctx.eval_state(_EnvState.state_func_boot_env_executed.name)
 
 
 @patch(f"{primer_kernel.__name__}.{_Factory_state_input_final_state_eval_finalized.__name__}.create_state_node")
@@ -110,7 +110,7 @@ def test_exec_operation_invalid(
 
     assert_parent_factories_mocked(
         env_ctx,
-        EnvState.state_func_boot_env_executed.name,
+        _EnvState.state_func_boot_env_executed.name,
     )
 
     mock_state_input_exec_operation_loaded.return_value.eval_own_state.return_value = "invalid_exec_operation"
@@ -121,4 +121,4 @@ def test_exec_operation_invalid(
 
     # when/then:
     with pytest.raises(ValueError, match="cannot handle exec operation"):
-        env_ctx.eval_state(EnvState.state_func_boot_env_executed.name)
+        env_ctx.eval_state(_EnvState.state_func_boot_env_executed.name)

@@ -15,7 +15,7 @@ from protoprimer.primer_kernel import (
     _Node_state_primer_conf_file_abs_path_inited,
     _Factory_state_proto_kernel_file_abs_path_inited,
     _Node_state_stride_src_updated_reached,
-    EnvState,
+    _EnvState,
     StateStride,
 )
 
