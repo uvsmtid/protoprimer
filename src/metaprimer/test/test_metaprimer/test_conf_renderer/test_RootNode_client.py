@@ -7,9 +7,9 @@ from metaprimer.conf_renderer import (
     RootNode_client,
 )
 from protoprimer.primer_kernel import (
-    ConfConstEnv,
+    _ConfConstEnv,
     ConfField,
-    TermColor,
+    _TermColor,
 )
 
 
@@ -39,72 +39,72 @@ def test_render_client_config_data_with_unused_fields():
     )
 
     expected_output = f"""
-{TermColor.config_comment.value}# The `leap_client` data is loaded from the [/abs/path/to/file.json] file.{TermColor.reset_style.value}
+{_TermColor.config_comment.value}# The `leap_client` data is loaded from the [/abs/path/to/file.json] file.{_TermColor.reset_style.value}
 leap_client = (
     \n\
     {{
         \n\
-        {TermColor.config_comment.value}# Field `local_conf_symlink_rel_path` points to local config dir (as opposed to the global config dir `global_conf_dir_rel_path`).{TermColor.reset_style.value}
-        {TermColor.config_comment.value}# The path is relative to the `ref_root` dir specified in the `ref_root_dir_rel_path` field.{TermColor.reset_style.value}
-        {TermColor.config_comment.value}# The basename of this path is a symlink set to the actual dir with environment-specific config.{TermColor.reset_style.value}
-        {TermColor.config_comment.value}# If the symlink does not exist yet, its target is set from:{TermColor.reset_style.value}
-        {TermColor.config_comment.value}# *   either field `default_env_dir_rel_path`,{TermColor.reset_style.value}
-        {TermColor.config_comment.value}# *   or arg `--env` which can also be used to re-set the symlink target to a new path.{TermColor.reset_style.value}
-        {TermColor.config_comment.value}# See `state_global_conf_dir_abs_path_inited` in `leap_derived` -{TermColor.reset_style.value}
-        {TermColor.config_comment.value}# normally, the resolved local config dir contains all local environment-specific config files.{TermColor.reset_style.value}
+        {_TermColor.config_comment.value}# Field `local_conf_symlink_rel_path` points to local config dir (as opposed to the global config dir `global_conf_dir_rel_path`).{_TermColor.reset_style.value}
+        {_TermColor.config_comment.value}# The path is relative to the `ref_root` dir specified in the `ref_root_dir_rel_path` field.{_TermColor.reset_style.value}
+        {_TermColor.config_comment.value}# The basename of this path is a symlink set to the actual dir with environment-specific config.{_TermColor.reset_style.value}
+        {_TermColor.config_comment.value}# If the symlink does not exist yet, its target is set from:{_TermColor.reset_style.value}
+        {_TermColor.config_comment.value}# *   either field `default_env_dir_rel_path`,{_TermColor.reset_style.value}
+        {_TermColor.config_comment.value}# *   or arg `--env` which can also be used to re-set the symlink target to a new path.{_TermColor.reset_style.value}
+        {_TermColor.config_comment.value}# See `state_global_conf_dir_abs_path_inited` in `leap_derived` -{_TermColor.reset_style.value}
+        {_TermColor.config_comment.value}# normally, the resolved local config dir contains all local environment-specific config files.{_TermColor.reset_style.value}
         "local_conf_symlink_rel_path": "lconf",
         \n\
-        {TermColor.config_comment.value}# Field `default_env_dir_rel_path` is the default path where `local_conf_symlink_rel_path` symlink can point to.{TermColor.reset_style.value}
-        {TermColor.config_comment.value}# The path is relative to the `ref_root` dir specified in the `ref_root_dir_rel_path` field.{TermColor.reset_style.value}
-        {TermColor.config_comment.value}# The path is ignored when the `local_conf_symlink_rel_path` symlink already exists.{TermColor.reset_style.value}
-        {TermColor.config_comment.value}# Arg `--env` overrides this `default_env_dir_rel_path` field.{TermColor.reset_style.value}
+        {_TermColor.config_comment.value}# Field `default_env_dir_rel_path` is the default path where `local_conf_symlink_rel_path` symlink can point to.{_TermColor.reset_style.value}
+        {_TermColor.config_comment.value}# The path is relative to the `ref_root` dir specified in the `ref_root_dir_rel_path` field.{_TermColor.reset_style.value}
+        {_TermColor.config_comment.value}# The path is ignored when the `local_conf_symlink_rel_path` symlink already exists.{_TermColor.reset_style.value}
+        {_TermColor.config_comment.value}# Arg `--env` overrides this `default_env_dir_rel_path` field.{_TermColor.reset_style.value}
         "default_env_dir_rel_path": "dst/default_env",
         \n\
-        {TermColor.config_comment.value}# Field `required_python_version` selects `python` version.{TermColor.reset_style.value}
-        {TermColor.config_comment.value}# The value specifies the version of `python` interpreter which is used to create `venv` (e.g. "{ConfConstEnv.latest_known_python_version}").{TermColor.reset_style.value}
-        {TermColor.config_comment.value}# This field can be specified in global config (see `leap_client`) but it is override-able by local environment-specific config (see `leap_env`).{TermColor.reset_style.value}
+        {_TermColor.config_comment.value}# Field `required_python_version` selects `python` version.{_TermColor.reset_style.value}
+        {_TermColor.config_comment.value}# The value specifies the version of `python` interpreter which is used to create `venv` (e.g. "{_ConfConstEnv.latest_known_python_version}").{_TermColor.reset_style.value}
+        {_TermColor.config_comment.value}# This field can be specified in global config (see `leap_client`) but it is override-able by local environment-specific config (see `leap_env`).{_TermColor.reset_style.value}
         "required_python_version": "{test_python_version}",
         \n\
-        {TermColor.config_comment.value}# Field `python_selector_file_rel_path` specifies rel path to `python` selector.{TermColor.reset_style.value}
-        {TermColor.config_comment.value}# The selector is a standalone script written in `python` which must implement `select_python_file_abs_path` function.{TermColor.reset_style.value}
-        {TermColor.config_comment.value}# This field can be specified in global config (see `leap_client`) but it is override-able by local environment-specific config (see `leap_env`).{TermColor.reset_style.value}
+        {_TermColor.config_comment.value}# Field `python_selector_file_rel_path` specifies rel path to `python` selector.{_TermColor.reset_style.value}
+        {_TermColor.config_comment.value}# The selector is a standalone script written in `python` which must implement `select_python_file_abs_path` function.{_TermColor.reset_style.value}
+        {_TermColor.config_comment.value}# This field can be specified in global config (see `leap_client`) but it is override-able by local environment-specific config (see `leap_env`).{_TermColor.reset_style.value}
         "python_selector_file_rel_path": "path/to/test_python_selector.py",
         \n\
-        {TermColor.config_comment.value}# Field `local_venv_dir_rel_path` points to the dir where `venv` (`python` virtual environment) is created.{TermColor.reset_style.value}
-        {TermColor.config_comment.value}# The path is relative to the `ref_root` dir specified in the `ref_root_dir_rel_path` field.{TermColor.reset_style.value}
-        {TermColor.config_comment.value}# This field can be specified in global config (see `leap_client`) but it is override-able by local environment-specific config (see `leap_env`).{TermColor.reset_style.value}
+        {_TermColor.config_comment.value}# Field `local_venv_dir_rel_path` points to the dir where `venv` (`python` virtual environment) is created.{_TermColor.reset_style.value}
+        {_TermColor.config_comment.value}# The path is relative to the `ref_root` dir specified in the `ref_root_dir_rel_path` field.{_TermColor.reset_style.value}
+        {_TermColor.config_comment.value}# This field can be specified in global config (see `leap_client`) but it is override-able by local environment-specific config (see `leap_env`).{_TermColor.reset_style.value}
         "local_venv_dir_rel_path": "venv",
         \n\
-        {TermColor.config_comment.value}# Field `local_log_dir_rel_path` points to the dir with log files created for each script execution.{TermColor.reset_style.value}
-        {TermColor.config_comment.value}# The path is relative to the `ref_root` dir specified in the `ref_root_dir_rel_path` field.{TermColor.reset_style.value}
-        {TermColor.config_comment.value}# This field can be specified in global config (see `leap_client`) but it is override-able by local environment-specific config (see `leap_env`).{TermColor.reset_style.value}
+        {_TermColor.config_comment.value}# Field `local_log_dir_rel_path` points to the dir with log files created for each script execution.{_TermColor.reset_style.value}
+        {_TermColor.config_comment.value}# The path is relative to the `ref_root` dir specified in the `ref_root_dir_rel_path` field.{_TermColor.reset_style.value}
+        {_TermColor.config_comment.value}# This field can be specified in global config (see `leap_client`) but it is override-able by local environment-specific config (see `leap_env`).{_TermColor.reset_style.value}
         "local_log_dir_rel_path": "log",
         \n\
-        {TermColor.config_comment.value}# Field `local_tmp_dir_rel_path` points to the dir with temporary files created for some commands.{TermColor.reset_style.value}
-        {TermColor.config_comment.value}# The path is relative to the `ref_root` dir specified in the `ref_root_dir_rel_path` field.{TermColor.reset_style.value}
-        {TermColor.config_comment.value}# This field can be specified in global config (see `leap_client`) but it is override-able by local environment-specific config (see `leap_env`).{TermColor.reset_style.value}
+        {_TermColor.config_comment.value}# Field `local_tmp_dir_rel_path` points to the dir with temporary files created for some commands.{_TermColor.reset_style.value}
+        {_TermColor.config_comment.value}# The path is relative to the `ref_root` dir specified in the `ref_root_dir_rel_path` field.{_TermColor.reset_style.value}
+        {_TermColor.config_comment.value}# This field can be specified in global config (see `leap_client`) but it is override-able by local environment-specific config (see `leap_env`).{_TermColor.reset_style.value}
         "local_tmp_dir_rel_path": "tmp",
         \n\
-        {TermColor.config_missing.value}# Field `local_cache_dir_rel_path` points to the dir with cached files created for some commands.{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# The path is relative to the `ref_root` dir specified in the `ref_root_dir_rel_path` field.{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# This field can be specified in global config (see `leap_client`) but it is override-able by local environment-specific config (see `leap_env`).{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# "local_cache_dir_rel_path": None,{TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# Field `local_cache_dir_rel_path` points to the dir with cached files created for some commands.{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# The path is relative to the `ref_root` dir specified in the `ref_root_dir_rel_path` field.{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# This field can be specified in global config (see `leap_client`) but it is override-able by local environment-specific config (see `leap_env`).{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# "local_cache_dir_rel_path": None,{_TermColor.reset_style.value}
         \n\
-        {TermColor.config_missing.value}# Field `venv_driver` selects a tool to manage packages:{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# *   specify "venv_pip" to use native `pip`,{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# *   specify "venv_uv" to use fast `uv`.{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# This field can be specified in global config (see `leap_client`) but it is override-able by local environment-specific config (see `leap_env`).{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# "venv_driver": None,{TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# Field `venv_driver` selects a tool to manage packages:{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# *   specify "venv_pip" to use native `pip`,{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# *   specify "venv_uv" to use fast `uv`.{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# This field can be specified in global config (see `leap_client`) but it is override-able by local environment-specific config (see `leap_env`).{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# "venv_driver": None,{_TermColor.reset_style.value}
         \n\
-        {TermColor.config_missing.value}# Field `project_descriptors` lists `python` projects and their installation details.{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# This field can be specified in global config (see `leap_client`) but it is override-able by local environment-specific config (see `leap_env`).{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# Note that the `protoprimer` does not manage package dependencies itself.{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# Instead, the `protoprimer` relies on `pyproject.toml` file per `python` project to specify these dependencies.{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# See `state_project_descriptors_inited` in `leap_derived`.{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# "project_descriptors": [{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# ],{TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# Field `project_descriptors` lists `python` projects and their installation details.{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# This field can be specified in global config (see `leap_client`) but it is override-able by local environment-specific config (see `leap_env`).{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# Note that the `protoprimer` does not manage package dependencies itself.{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# Instead, the `protoprimer` relies on `pyproject.toml` file per `python` project to specify these dependencies.{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# See `state_project_descriptors_inited` in `leap_derived`.{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# "project_descriptors": [{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# ],{_TermColor.reset_style.value}
         \n\
-        {TermColor.config_unused.value}# This value is not used by the `protoprimer`.{TermColor.reset_style.value}
+        {_TermColor.config_unused.value}# This value is not used by the `protoprimer`.{_TermColor.reset_style.value}
         "whatever_test": 5,
     }}
 )\
@@ -124,70 +124,70 @@ def test_render_empty_client_config_data():
     )
 
     expected_output = f"""
-{TermColor.config_comment.value}# The `leap_client` data is loaded from the [/abs/path/to/empty_file.json] file.{TermColor.reset_style.value}
+{_TermColor.config_comment.value}# The `leap_client` data is loaded from the [/abs/path/to/empty_file.json] file.{_TermColor.reset_style.value}
 leap_client = (
     \n\
     {{
         \n\
-        {TermColor.config_missing.value}# Field `local_conf_symlink_rel_path` points to local config dir (as opposed to the global config dir `global_conf_dir_rel_path`).{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# The path is relative to the `ref_root` dir specified in the `ref_root_dir_rel_path` field.{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# The basename of this path is a symlink set to the actual dir with environment-specific config.{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# If the symlink does not exist yet, its target is set from:{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# *   either field `default_env_dir_rel_path`,{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# *   or arg `--env` which can also be used to re-set the symlink target to a new path.{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# See `state_global_conf_dir_abs_path_inited` in `leap_derived` -{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# normally, the resolved local config dir contains all local environment-specific config files.{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# "local_conf_symlink_rel_path": None,{TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# Field `local_conf_symlink_rel_path` points to local config dir (as opposed to the global config dir `global_conf_dir_rel_path`).{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# The path is relative to the `ref_root` dir specified in the `ref_root_dir_rel_path` field.{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# The basename of this path is a symlink set to the actual dir with environment-specific config.{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# If the symlink does not exist yet, its target is set from:{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# *   either field `default_env_dir_rel_path`,{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# *   or arg `--env` which can also be used to re-set the symlink target to a new path.{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# See `state_global_conf_dir_abs_path_inited` in `leap_derived` -{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# normally, the resolved local config dir contains all local environment-specific config files.{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# "local_conf_symlink_rel_path": None,{_TermColor.reset_style.value}
         \n\
-        {TermColor.config_missing.value}# Field `default_env_dir_rel_path` is the default path where `local_conf_symlink_rel_path` symlink can point to.{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# The path is relative to the `ref_root` dir specified in the `ref_root_dir_rel_path` field.{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# The path is ignored when the `local_conf_symlink_rel_path` symlink already exists.{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# Arg `--env` overrides this `default_env_dir_rel_path` field.{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# "default_env_dir_rel_path": None,{TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# Field `default_env_dir_rel_path` is the default path where `local_conf_symlink_rel_path` symlink can point to.{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# The path is relative to the `ref_root` dir specified in the `ref_root_dir_rel_path` field.{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# The path is ignored when the `local_conf_symlink_rel_path` symlink already exists.{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# Arg `--env` overrides this `default_env_dir_rel_path` field.{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# "default_env_dir_rel_path": None,{_TermColor.reset_style.value}
         \n\
-        {TermColor.config_missing.value}# Field `required_python_version` selects `python` version.{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# The value specifies the version of `python` interpreter which is used to create `venv` (e.g. "{ConfConstEnv.latest_known_python_version}").{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# This field can be specified in global config (see `leap_client`) but it is override-able by local environment-specific config (see `leap_env`).{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# "required_python_version": None,{TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# Field `required_python_version` selects `python` version.{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# The value specifies the version of `python` interpreter which is used to create `venv` (e.g. "{_ConfConstEnv.latest_known_python_version}").{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# This field can be specified in global config (see `leap_client`) but it is override-able by local environment-specific config (see `leap_env`).{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# "required_python_version": None,{_TermColor.reset_style.value}
         \n\
-        {TermColor.config_missing.value}# Field `python_selector_file_rel_path` specifies rel path to `python` selector.{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# The selector is a standalone script written in `python` which must implement `select_python_file_abs_path` function.{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# This field can be specified in global config (see `leap_client`) but it is override-able by local environment-specific config (see `leap_env`).{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# "python_selector_file_rel_path": None,{TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# Field `python_selector_file_rel_path` specifies rel path to `python` selector.{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# The selector is a standalone script written in `python` which must implement `select_python_file_abs_path` function.{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# This field can be specified in global config (see `leap_client`) but it is override-able by local environment-specific config (see `leap_env`).{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# "python_selector_file_rel_path": None,{_TermColor.reset_style.value}
         \n\
-        {TermColor.config_missing.value}# Field `local_venv_dir_rel_path` points to the dir where `venv` (`python` virtual environment) is created.{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# The path is relative to the `ref_root` dir specified in the `ref_root_dir_rel_path` field.{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# This field can be specified in global config (see `leap_client`) but it is override-able by local environment-specific config (see `leap_env`).{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# "local_venv_dir_rel_path": None,{TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# Field `local_venv_dir_rel_path` points to the dir where `venv` (`python` virtual environment) is created.{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# The path is relative to the `ref_root` dir specified in the `ref_root_dir_rel_path` field.{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# This field can be specified in global config (see `leap_client`) but it is override-able by local environment-specific config (see `leap_env`).{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# "local_venv_dir_rel_path": None,{_TermColor.reset_style.value}
         \n\
-        {TermColor.config_missing.value}# Field `local_log_dir_rel_path` points to the dir with log files created for each script execution.{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# The path is relative to the `ref_root` dir specified in the `ref_root_dir_rel_path` field.{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# This field can be specified in global config (see `leap_client`) but it is override-able by local environment-specific config (see `leap_env`).{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# "local_log_dir_rel_path": None,{TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# Field `local_log_dir_rel_path` points to the dir with log files created for each script execution.{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# The path is relative to the `ref_root` dir specified in the `ref_root_dir_rel_path` field.{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# This field can be specified in global config (see `leap_client`) but it is override-able by local environment-specific config (see `leap_env`).{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# "local_log_dir_rel_path": None,{_TermColor.reset_style.value}
         \n\
-        {TermColor.config_missing.value}# Field `local_tmp_dir_rel_path` points to the dir with temporary files created for some commands.{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# The path is relative to the `ref_root` dir specified in the `ref_root_dir_rel_path` field.{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# This field can be specified in global config (see `leap_client`) but it is override-able by local environment-specific config (see `leap_env`).{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# "local_tmp_dir_rel_path": None,{TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# Field `local_tmp_dir_rel_path` points to the dir with temporary files created for some commands.{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# The path is relative to the `ref_root` dir specified in the `ref_root_dir_rel_path` field.{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# This field can be specified in global config (see `leap_client`) but it is override-able by local environment-specific config (see `leap_env`).{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# "local_tmp_dir_rel_path": None,{_TermColor.reset_style.value}
         \n\
-        {TermColor.config_missing.value}# Field `local_cache_dir_rel_path` points to the dir with cached files created for some commands.{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# The path is relative to the `ref_root` dir specified in the `ref_root_dir_rel_path` field.{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# This field can be specified in global config (see `leap_client`) but it is override-able by local environment-specific config (see `leap_env`).{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# "local_cache_dir_rel_path": None,{TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# Field `local_cache_dir_rel_path` points to the dir with cached files created for some commands.{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# The path is relative to the `ref_root` dir specified in the `ref_root_dir_rel_path` field.{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# This field can be specified in global config (see `leap_client`) but it is override-able by local environment-specific config (see `leap_env`).{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# "local_cache_dir_rel_path": None,{_TermColor.reset_style.value}
         \n\
-        {TermColor.config_missing.value}# Field `venv_driver` selects a tool to manage packages:{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# *   specify "venv_pip" to use native `pip`,{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# *   specify "venv_uv" to use fast `uv`.{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# This field can be specified in global config (see `leap_client`) but it is override-able by local environment-specific config (see `leap_env`).{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# "venv_driver": None,{TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# Field `venv_driver` selects a tool to manage packages:{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# *   specify "venv_pip" to use native `pip`,{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# *   specify "venv_uv" to use fast `uv`.{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# This field can be specified in global config (see `leap_client`) but it is override-able by local environment-specific config (see `leap_env`).{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# "venv_driver": None,{_TermColor.reset_style.value}
         \n\
-        {TermColor.config_missing.value}# Field `project_descriptors` lists `python` projects and their installation details.{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# This field can be specified in global config (see `leap_client`) but it is override-able by local environment-specific config (see `leap_env`).{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# Note that the `protoprimer` does not manage package dependencies itself.{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# Instead, the `protoprimer` relies on `pyproject.toml` file per `python` project to specify these dependencies.{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# See `state_project_descriptors_inited` in `leap_derived`.{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# "project_descriptors": [{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# ],{TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# Field `project_descriptors` lists `python` projects and their installation details.{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# This field can be specified in global config (see `leap_client`) but it is override-able by local environment-specific config (see `leap_env`).{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# Note that the `protoprimer` does not manage package dependencies itself.{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# Instead, the `protoprimer` relies on `pyproject.toml` file per `python` project to specify these dependencies.{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# See `state_project_descriptors_inited` in `leap_derived`.{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# "project_descriptors": [{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# ],{_TermColor.reset_style.value}
     }}
 )\
 """

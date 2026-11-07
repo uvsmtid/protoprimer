@@ -11,23 +11,23 @@ from typing import (
 
 from protoprimer.primer_kernel import (
     _AbstractCachingStateNode,
-    ConfConstClient,
-    ConfConstEnv,
-    ConfConstGeneral,
-    ConfConstInput,
+    _ConfConstClient,
+    _ConfConstEnv,
+    _ConfConstGeneral,
+    _ConfConstInput,
     ConfField,
-    ConfLeap,
+    _ConfLeap,
     _EntryFunc,
     _ContextBuilder,
     _EnvContext,
     _EnvState,
     missing_conf_file_message,
-    PathName,
+    _PathName,
     read_json_file,
-    SelectorFunc,
+    _SelectorFunc,
     _ExecOperation,
-    SyntaxArg,
-    TermColor,
+    _SyntaxArg,
+    _TermColor,
     _trivial_factory,
     _ValueType,
     VenvDriverType,
@@ -121,7 +121,7 @@ class RenderConfigVisitor(AbstractConfigVisitor):
         for annotation_line in annotation_lines:
             s += (
                 " " * config_node.node_indent
-                + f"{config_node.note_color.value}# {annotation_line}{TermColor.reset_style.value}"
+                + f"{config_node.note_color.value}# {annotation_line}{_TermColor.reset_style.value}"
                 + os.linesep
                 #
             )
@@ -156,7 +156,7 @@ class RenderConfigVisitor(AbstractConfigVisitor):
                 rendered_line[: config_node.node_indent]
                 + f"{config_node.note_color.value}# "
                 + rendered_line[config_node.node_indent :]
-                + f"{TermColor.reset_style.value}"
+                + f"{_TermColor.reset_style.value}"
                 #
             )
         return os.linesep.join(deactivated_lines)
@@ -385,32 +385,32 @@ class AnnotateUnusedVisitor(AbstractConfigVisitor):
         dict_node: "AbstractDictNode",
         **kwargs,
     ) -> None:
-        dict_node.note_text = f"This `dict` is not used by the `{ConfConstGeneral.name_protoprimer_package}`."
-        dict_node.note_color = TermColor.config_unused
+        dict_node.note_text = f"This `dict` is not used by the `{_ConfConstGeneral.name_protoprimer_package}`."
+        dict_node.note_color = _TermColor.config_unused
 
     def visit_list(
         self,
         list_node: "AbstractListNode",
         **kwargs,
     ) -> None:
-        list_node.note_text = f"This `list` is not used by the `{ConfConstGeneral.name_protoprimer_package}`."
-        list_node.note_color = TermColor.config_unused
+        list_node.note_text = f"This `list` is not used by the `{_ConfConstGeneral.name_protoprimer_package}`."
+        list_node.note_color = _TermColor.config_unused
 
     def visit_value(
         self,
         value_node: "AbstractValueNode",
         **kwargs,
     ) -> None:
-        value_node.note_text = f"This value is not used by the `{ConfConstGeneral.name_protoprimer_package}`."
-        value_node.note_color = TermColor.config_unused
+        value_node.note_text = f"This value is not used by the `{_ConfConstGeneral.name_protoprimer_package}`."
+        value_node.note_color = _TermColor.config_unused
 
     def visit_root(
         self,
         root_node: "AbstractRootNode",
         **kwargs,
     ) -> None:
-        root_node.note_text = f"This config is not used by the `{ConfConstGeneral.name_protoprimer_package}`."
-        root_node.note_color = TermColor.config_unused
+        root_node.note_text = f"This config is not used by the `{_ConfConstGeneral.name_protoprimer_package}`."
+        root_node.note_color = _TermColor.config_unused
 
 
 class UnusedConfigBuilderVisitor(ConfigBuilderVisitor):
@@ -472,7 +472,7 @@ class AbstractConfigNode(Generic[_ValueType]):
         self.orig_data: _ValueType | None = orig_data
 
         self.note_text: str = ""
-        self.note_color: TermColor = TermColor.config_comment if is_present else TermColor.config_missing
+        self.note_color: _TermColor = _TermColor.config_comment if is_present else _TermColor.config_missing
 
     def accept_visitor(
         self,
@@ -624,10 +624,10 @@ class AbstractRootNode(AbstractConfigNode[_ValueType]):
         generated_code: str,
     ):
         for term_color in [
-            TermColor.config_comment,
-            TermColor.config_missing,
-            TermColor.config_unused,
-            TermColor.reset_style,
+            _TermColor.config_comment,
+            _TermColor.config_missing,
+            _TermColor.config_unused,
+            _TermColor.reset_style,
         ]:
             generated_code = generated_code.replace(term_color.value, "")
         return generated_code
@@ -635,12 +635,12 @@ class AbstractRootNode(AbstractConfigNode[_ValueType]):
 
 class AbstractConfLeapRootNode(AbstractRootNode):
     """
-    Base implementation for all `ConfLeap.*`.
+    Base implementation for all `_ConfLeap.*`.
     """
 
     def __init__(
         self,
-        conf_leap: ConfLeap,
+        conf_leap: _ConfLeap,
         child_builder: ConfigBuilderVisitor,
         **kwargs,
     ):
@@ -659,7 +659,7 @@ class AbstractConfLeapNodeBuilder(ConfigBuilderVisitor):
         dict_node: AbstractDictNode,
         field_name: str,
         node_class: type,
-        conf_leap: ConfLeap,
+        conf_leap: _ConfLeap,
         **kwargs,
     ) -> AbstractDictNode:
         field_name = field_name
@@ -681,7 +681,7 @@ class AbstractConfLeapNodeBuilder(ConfigBuilderVisitor):
     def _create_common_fields(
         self,
         dict_node: AbstractDictNode,
-        conf_leap: ConfLeap,
+        conf_leap: _ConfLeap,
     ):
         # Common overridable `global` and `local` fields: FT_23_37_64_44.global_vs_local.md
 
@@ -756,7 +756,7 @@ class AbstractConfLeapNodeBuilder(ConfigBuilderVisitor):
 
 
 ########################################################################################################################
-# `ConfLeap.leap_input` node types.
+# `_ConfLeap.leap_input` node types.
 # See: FT_19_44_42_19.effective_config.md
 
 
@@ -769,7 +769,7 @@ class Builder_RootNode_input(AbstractConfLeapNodeBuilder):
         **kwargs,
     ) -> None:
 
-        conf_leap = ConfLeap.leap_input
+        conf_leap = _ConfLeap.leap_input
 
         field_node: AbstractConfigNode
 
@@ -781,8 +781,8 @@ class Builder_RootNode_input(AbstractConfLeapNodeBuilder):
             **kwargs,
         )
         field_node.note_text = (
-            f"Value `{_EnvState.state_proto_kernel_file_abs_path_inited.name}` is an absolute path to `{ConfConstGeneral.default_proto_kernel_module}`.\n"
-            f"It allows resolving all other relative paths (via `{PathName.path_ref_root.value}` - see field `{ConfField.field_ref_root_dir_rel_path.value}`).\n"
+            f"Value `{_EnvState.state_proto_kernel_file_abs_path_inited.name}` is an absolute path to `{_ConfConstGeneral.default_proto_kernel_module}`.\n"
+            f"It allows resolving all other relative paths (via `{_PathName.path_ref_root.value}` - see field `{ConfField.field_ref_root_dir_rel_path.value}`).\n"
             #
         )
 
@@ -793,16 +793,16 @@ class Builder_RootNode_input(AbstractConfLeapNodeBuilder):
             conf_leap=conf_leap,
             **kwargs,
         )
-        # TODO: Link to `ConfLeap.leap_derived` fields.
+        # TODO: Link to `_ConfLeap.leap_derived` fields.
         field_node.note_text = (
-            f"Value `{_EnvState.state_primer_conf_file_abs_path_inited.name}` is an absolute path to `{ConfLeap.leap_primer}` config file.\n"
-            f"The config file is selected from the list of possible candidates (whichever is found first, replacing extension to `.{ConfConstInput.conf_file_ext}`):\n"
+            f"Value `{_EnvState.state_primer_conf_file_abs_path_inited.name}` is an absolute path to `{_ConfLeap.leap_primer}` config file.\n"
+            f"The config file is selected from the list of possible candidates (whichever is found first, replacing extension to `.{_ConfConstInput.conf_file_ext}`):\n"
             f"*   basename of the entry script,\n"
-            f"*   basename of the `{ConfConstGeneral.default_proto_kernel_module}` file,\n"
-            f"*   default `{ConfConstInput.default_file_basename_conf_primer}`.\n"
+            f"*   basename of the `{_ConfConstGeneral.default_proto_kernel_module}` file,\n"
+            f"*   default `{_ConfConstInput.default_file_basename_conf_primer}`.\n"
             f"Note that the selected config file basename is subsequently re-used for others:\n"
-            f"*   see `{_EnvState.state_global_conf_file_abs_path_inited.name}` for `{ConfLeap.leap_client.name}`,\n"
-            f"*   see `{_EnvState.state_local_conf_file_abs_path_inited.name}` for `{ConfLeap.leap_env.name}`.\n"
+            f"*   see `{_EnvState.state_global_conf_file_abs_path_inited.name}` for `{_ConfLeap.leap_client.name}`,\n"
+            f"*   see `{_EnvState.state_local_conf_file_abs_path_inited.name}` for `{_ConfLeap.leap_env.name}`.\n"
             #
         )
 
@@ -812,7 +812,7 @@ class Builder_RootNode_input(AbstractConfLeapNodeBuilder):
 # noinspection PyPep8Naming
 class RootNode_input(AbstractConfLeapRootNode):
     """
-    Root node for `ConfLeap.leap_input`.
+    Root node for `_ConfLeap.leap_input`.
     """
 
     def __init__(
@@ -820,12 +820,12 @@ class RootNode_input(AbstractConfLeapRootNode):
         **kwargs,
     ):
         super().__init__(
-            conf_leap=ConfLeap.leap_input,
+            conf_leap=_ConfLeap.leap_input,
             child_builder=Builder_RootNode_input(),
             **kwargs,
         )
         self.note_text = (
-            f"The `{ConfLeap.leap_input.name}` data is taken from the `{ConfConstGeneral.name_proto_code}` process input (not configured in files):\n"
+            f"The `{_ConfLeap.leap_input.name}` data is taken from the `{_ConfConstGeneral.name_proto_code}` process input (not configured in files):\n"
             f"*   CLI args, environment variables, current directory, ...\n"
             f"*   combination of the above with applied defaults.\n"
             #
@@ -833,7 +833,7 @@ class RootNode_input(AbstractConfLeapRootNode):
 
 
 ########################################################################################################################
-# `ConfLeap.leap_primer` node types.
+# `_ConfLeap.leap_primer` node types.
 # See: FT_19_44_42_19.effective_config.md
 
 
@@ -856,7 +856,7 @@ class Builder_RootNode_primer(AbstractConfLeapNodeBuilder):
             field_name=ConfField.field_ref_root_dir_rel_path.value,
             node_class=Node_field_ref_root_dir_rel_path,
             state_primer_conf_file_abs_path_inited=self.state_primer_conf_file_abs_path_inited,
-            conf_leap=ConfLeap.leap_primer,
+            conf_leap=_ConfLeap.leap_primer,
         )
 
         self._create_used_dict_field(
@@ -864,7 +864,7 @@ class Builder_RootNode_primer(AbstractConfLeapNodeBuilder):
             field_name=ConfField.field_global_conf_dir_rel_path.value,
             node_class=Node_field_global_conf_dir_rel_path,
             state_primer_conf_file_abs_path_inited=self.state_primer_conf_file_abs_path_inited,
-            conf_leap=ConfLeap.leap_primer,
+            conf_leap=_ConfLeap.leap_primer,
         )
 
         self._create_unused_dict_fields(dict_node)
@@ -873,7 +873,7 @@ class Builder_RootNode_primer(AbstractConfLeapNodeBuilder):
 # noinspection PyPep8Naming
 class RootNode_primer(AbstractConfLeapRootNode):
     """
-    Root node for `ConfLeap.leap_primer`.
+    Root node for `_ConfLeap.leap_primer`.
     """
 
     def __init__(
@@ -882,14 +882,14 @@ class RootNode_primer(AbstractConfLeapRootNode):
         **kwargs,
     ):
         super().__init__(
-            conf_leap=ConfLeap.leap_primer,
+            conf_leap=_ConfLeap.leap_primer,
             child_builder=Builder_RootNode_primer(
                 state_primer_conf_file_abs_path_inited=state_primer_conf_file_abs_path_inited,
             ),
             **kwargs,
         )
         self.state_primer_conf_file_abs_path_inited: str = state_primer_conf_file_abs_path_inited
-        self.note_text = f"The `{ConfLeap.leap_primer.name}` data is loaded from the [{self.state_primer_conf_file_abs_path_inited}] file."
+        self.note_text = f"The `{_ConfLeap.leap_primer.name}` data is loaded from the [{self.state_primer_conf_file_abs_path_inited}] file."
 
 
 # noinspection PyPep8Naming
@@ -905,10 +905,10 @@ class Node_field_ref_root_dir_rel_path(AbstractValueNode[str]):
         )
         self.state_primer_conf_file_abs_path_inited: str = state_primer_conf_file_abs_path_inited
         self.note_text = (
-            f"Field `{ConfField.field_ref_root_dir_rel_path.value}` points to the dir called `{PathName.path_ref_root.value}`.\n"
-            f"The path is relative to the `{ConfConstGeneral.default_proto_kernel_module}` file [{self.state_primer_conf_file_abs_path_inited}].\n"
-            f"Normally, the `{PathName.path_ref_root.value}` dir is the client repo root, but it can be anything.\n"
-            f"See `{_EnvState.state_ref_root_dir_abs_path_inited.name}` in `{ConfLeap.leap_derived.name}` -\n"
+            f"Field `{ConfField.field_ref_root_dir_rel_path.value}` points to the dir called `{_PathName.path_ref_root.value}`.\n"
+            f"The path is relative to the `{_ConfConstGeneral.default_proto_kernel_module}` file [{self.state_primer_conf_file_abs_path_inited}].\n"
+            f"Normally, the `{_PathName.path_ref_root.value}` dir is the client repo root, but it can be anything.\n"
+            f"See `{_EnvState.state_ref_root_dir_abs_path_inited.name}` in `{_ConfLeap.leap_derived.name}` -\n"
             f"the derived abs path is the base path for all the configured relative paths (except for this field itself, obviously).\n"
             #
         )
@@ -928,15 +928,15 @@ class Node_field_global_conf_dir_rel_path(AbstractValueNode[str]):
         self.state_primer_conf_file_abs_path_inited: str = state_primer_conf_file_abs_path_inited
         self.note_text = (
             f"Field `{ConfField.field_global_conf_dir_rel_path.value}` points to the global config dir (as opposed to local config dir `{ConfField.field_local_conf_symlink_rel_path.value}`).\n"
-            f"{ConfConstGeneral.relative_path_field_note}\n"
-            f"See `{_EnvState.state_global_conf_dir_abs_path_inited.name}` in `{ConfLeap.leap_derived.name}` -\n"
+            f"{_ConfConstGeneral.relative_path_field_note}\n"
+            f"See `{_EnvState.state_global_conf_dir_abs_path_inited.name}` in `{_ConfLeap.leap_derived.name}` -\n"
             f"normally, the resolved global config dir contains all other global client config files.\n"
             #
         )
 
 
 ########################################################################################################################
-# `ConfLeap.leap_client` node types.
+# `_ConfLeap.leap_client` node types.
 # See: FT_19_44_42_19.effective_config.md
 
 
@@ -949,7 +949,7 @@ class Builder_RootNode_client(AbstractConfLeapNodeBuilder):
         **kwargs,
     ) -> None:
 
-        conf_leap = ConfLeap.leap_client
+        conf_leap = _ConfLeap.leap_client
 
         self._create_used_dict_field(
             dict_node=dict_node,
@@ -978,7 +978,7 @@ class Builder_RootNode_client(AbstractConfLeapNodeBuilder):
 # noinspection PyPep8Naming
 class RootNode_client(AbstractConfLeapRootNode):
     """
-    Root node for `ConfLeap.leap_client`.
+    Root node for `_ConfLeap.leap_client`.
     """
 
     def __init__(
@@ -987,12 +987,12 @@ class RootNode_client(AbstractConfLeapRootNode):
         **kwargs,
     ):
         super().__init__(
-            conf_leap=ConfLeap.leap_client,
+            conf_leap=_ConfLeap.leap_client,
             child_builder=Builder_RootNode_client(),
             **kwargs,
         )
         self.state_global_conf_file_abs_path_inited: str = state_global_conf_file_abs_path_inited
-        self.note_text = f"The `{ConfLeap.leap_client.name}` data is loaded from the [{self.state_global_conf_file_abs_path_inited}] file."
+        self.note_text = f"The `{_ConfLeap.leap_client.name}` data is loaded from the [{self.state_global_conf_file_abs_path_inited}] file."
 
 
 # noinspection PyPep8Naming
@@ -1007,12 +1007,12 @@ class Node_field_local_conf_symlink_rel_path(AbstractValueNode[str]):
         )
         self.note_text = (
             f"Field `{ConfField.field_local_conf_symlink_rel_path.value}` points to local config dir (as opposed to the global config dir `{ConfField.field_global_conf_dir_rel_path.value}`).\n"
-            f"{ConfConstGeneral.relative_path_field_note}\n"
+            f"{_ConfConstGeneral.relative_path_field_note}\n"
             f"The basename of this path is a symlink set to the actual dir with environment-specific config.\n"
             f"If the symlink does not exist yet, its target is set from:\n"
             f"*   either field `{ConfField.field_default_env_dir_rel_path.value}`,\n"
-            f"*   or arg `{SyntaxArg.arg_env}` which can also be used to re-set the symlink target to a new path.\n"
-            f"See `{_EnvState.state_global_conf_dir_abs_path_inited.name}` in `{ConfLeap.leap_derived.name}` -\n"
+            f"*   or arg `{_SyntaxArg.arg_env}` which can also be used to re-set the symlink target to a new path.\n"
+            f"See `{_EnvState.state_global_conf_dir_abs_path_inited.name}` in `{_ConfLeap.leap_derived.name}` -\n"
             f"normally, the resolved local config dir contains all local environment-specific config files.\n"
             #
         )
@@ -1030,9 +1030,9 @@ class Node_field_default_env_dir_rel_path(AbstractValueNode[str]):
         )
         self.note_text = (
             f"Field `{ConfField.field_default_env_dir_rel_path.value}` is the default path where `{ConfField.field_local_conf_symlink_rel_path.value}` symlink can point to.\n"
-            f"{ConfConstGeneral.relative_path_field_note}\n"
+            f"{_ConfConstGeneral.relative_path_field_note}\n"
             f"The path is ignored when the `{ConfField.field_local_conf_symlink_rel_path.value}` symlink already exists.\n"
-            f"Arg `{SyntaxArg.arg_env}` overrides this `{ConfField.field_default_env_dir_rel_path.value}` field.\n"
+            f"Arg `{_SyntaxArg.arg_env}` overrides this `{ConfField.field_default_env_dir_rel_path.value}` field.\n"
             #
         )
 
@@ -1042,21 +1042,21 @@ class Node_field_required_python_version(AbstractValueNode[str]):
 
     def __init__(
         self,
-        conf_leap: ConfLeap,
+        conf_leap: _ConfLeap,
         **kwargs,
     ):
         super().__init__(
             **kwargs,
         )
-        if conf_leap == ConfLeap.leap_client:
+        if conf_leap == _ConfLeap.leap_client:
             self.note_text = (
                 f"Field `{ConfField.field_required_python_version.value}` selects `python` version.\n"
-                f'The value specifies the version of `python` interpreter which is used to create `venv` (e.g. "{ConfConstEnv.latest_known_python_version}").\n'
-                f"{ConfConstGeneral.common_field_global_note}\n"
+                f'The value specifies the version of `python` interpreter which is used to create `venv` (e.g. "{_ConfConstEnv.latest_known_python_version}").\n'
+                f"{_ConfConstGeneral.common_field_global_note}\n"
                 #
             )
-        elif conf_leap == ConfLeap.leap_env:
-            self.note_text = f"{ConfConstGeneral.common_field_local_note}\n"
+        elif conf_leap == _ConfLeap.leap_env:
+            self.note_text = f"{_ConfConstGeneral.common_field_local_note}\n"
 
 
 # noinspection PyPep8Naming
@@ -1064,21 +1064,21 @@ class Node_field_python_selector_file_rel_path(AbstractValueNode[str]):
 
     def __init__(
         self,
-        conf_leap: ConfLeap,
+        conf_leap: _ConfLeap,
         **kwargs,
     ):
         super().__init__(
             **kwargs,
         )
-        if conf_leap == ConfLeap.leap_client:
+        if conf_leap == _ConfLeap.leap_client:
             self.note_text = (
                 f"Field `{ConfField.field_python_selector_file_rel_path.value}` specifies rel path to `python` selector.\n"
-                f"The selector is a standalone script written in `python` which must implement `{SelectorFunc.select_python_file_abs_path.value}` function.\n"
-                f"{ConfConstGeneral.common_field_global_note}\n"
+                f"The selector is a standalone script written in `python` which must implement `{_SelectorFunc.select_python_file_abs_path.value}` function.\n"
+                f"{_ConfConstGeneral.common_field_global_note}\n"
                 #
             )
-        elif conf_leap == ConfLeap.leap_env:
-            self.note_text = f"{ConfConstGeneral.common_field_local_note}\n"
+        elif conf_leap == _ConfLeap.leap_env:
+            self.note_text = f"{_ConfConstGeneral.common_field_local_note}\n"
 
 
 # noinspection PyPep8Naming
@@ -1086,21 +1086,21 @@ class Node_field_local_venv_dir_rel_path(AbstractValueNode[str]):
 
     def __init__(
         self,
-        conf_leap: ConfLeap,
+        conf_leap: _ConfLeap,
         **kwargs,
     ):
         super().__init__(
             **kwargs,
         )
-        if conf_leap == ConfLeap.leap_client:
+        if conf_leap == _ConfLeap.leap_client:
             self.note_text = (
                 f"Field `{ConfField.field_local_venv_dir_rel_path.value}` points to the dir where `venv` (`python` virtual environment) is created.\n"
-                f"{ConfConstGeneral.relative_path_field_note}\n"
-                f"{ConfConstGeneral.common_field_global_note}\n"
+                f"{_ConfConstGeneral.relative_path_field_note}\n"
+                f"{_ConfConstGeneral.common_field_global_note}\n"
                 #
             )
-        elif conf_leap == ConfLeap.leap_env:
-            self.note_text = f"{ConfConstGeneral.common_field_local_note}\n"
+        elif conf_leap == _ConfLeap.leap_env:
+            self.note_text = f"{_ConfConstGeneral.common_field_local_note}\n"
 
 
 # noinspection PyPep8Naming
@@ -1108,21 +1108,21 @@ class Node_field_local_log_dir_rel_path(AbstractValueNode[str]):
 
     def __init__(
         self,
-        conf_leap: ConfLeap,
+        conf_leap: _ConfLeap,
         **kwargs,
     ):
         super().__init__(
             **kwargs,
         )
-        if conf_leap == ConfLeap.leap_client:
+        if conf_leap == _ConfLeap.leap_client:
             self.note_text = (
                 f"Field `{ConfField.field_local_log_dir_rel_path.value}` points to the dir with log files created for each script execution.\n"
-                f"{ConfConstGeneral.relative_path_field_note}\n"
-                f"{ConfConstGeneral.common_field_global_note}\n"
+                f"{_ConfConstGeneral.relative_path_field_note}\n"
+                f"{_ConfConstGeneral.common_field_global_note}\n"
                 #
             )
-        elif conf_leap == ConfLeap.leap_env:
-            self.note_text = f"{ConfConstGeneral.common_field_local_note}\n"
+        elif conf_leap == _ConfLeap.leap_env:
+            self.note_text = f"{_ConfConstGeneral.common_field_local_note}\n"
 
 
 # noinspection PyPep8Naming
@@ -1130,21 +1130,21 @@ class Node_field_local_tmp_dir_rel_path(AbstractValueNode[str]):
 
     def __init__(
         self,
-        conf_leap: ConfLeap,
+        conf_leap: _ConfLeap,
         **kwargs,
     ):
         super().__init__(
             **kwargs,
         )
-        if conf_leap == ConfLeap.leap_client:
+        if conf_leap == _ConfLeap.leap_client:
             self.note_text = (
                 f"Field `{ConfField.field_local_tmp_dir_rel_path.value}` points to the dir with temporary files created for some commands.\n"
-                f"{ConfConstGeneral.relative_path_field_note}\n"
-                f"{ConfConstGeneral.common_field_global_note}\n"
+                f"{_ConfConstGeneral.relative_path_field_note}\n"
+                f"{_ConfConstGeneral.common_field_global_note}\n"
                 #
             )
-        elif conf_leap == ConfLeap.leap_env:
-            self.note_text = f"{ConfConstGeneral.common_field_local_note}\n"
+        elif conf_leap == _ConfLeap.leap_env:
+            self.note_text = f"{_ConfConstGeneral.common_field_local_note}\n"
 
 
 # noinspection PyPep8Naming
@@ -1152,21 +1152,21 @@ class Node_field_local_cache_dir_rel_path(AbstractValueNode[str]):
 
     def __init__(
         self,
-        conf_leap: ConfLeap,
+        conf_leap: _ConfLeap,
         **kwargs,
     ):
         super().__init__(
             **kwargs,
         )
-        if conf_leap == ConfLeap.leap_client:
+        if conf_leap == _ConfLeap.leap_client:
             self.note_text = (
                 f"Field `{ConfField.field_local_cache_dir_rel_path.value}` points to the dir with cached files created for some commands.\n"
-                f"{ConfConstGeneral.relative_path_field_note}\n"
-                f"{ConfConstGeneral.common_field_global_note}\n"
+                f"{_ConfConstGeneral.relative_path_field_note}\n"
+                f"{_ConfConstGeneral.common_field_global_note}\n"
                 #
             )
-        elif conf_leap == ConfLeap.leap_env:
-            self.note_text = f"{ConfConstGeneral.common_field_local_note}\n"
+        elif conf_leap == _ConfLeap.leap_env:
+            self.note_text = f"{_ConfConstGeneral.common_field_local_note}\n"
 
 
 # noinspection PyPep8Naming
@@ -1174,22 +1174,22 @@ class Node_field_venv_driver(AbstractValueNode[str]):
 
     def __init__(
         self,
-        conf_leap: ConfLeap,
+        conf_leap: _ConfLeap,
         **kwargs,
     ):
         super().__init__(
             **kwargs,
         )
-        if conf_leap == ConfLeap.leap_client:
+        if conf_leap == _ConfLeap.leap_client:
             self.note_text = (
                 f"Field `{ConfField.field_venv_driver.value}` selects a tool to manage packages:\n"
                 f'*   specify "{VenvDriverType.venv_pip.name}" to use native `pip`,\n'
                 f'*   specify "{VenvDriverType.venv_uv.name}" to use fast `uv`.\n'
-                f"{ConfConstGeneral.common_field_global_note}\n"
+                f"{_ConfConstGeneral.common_field_global_note}\n"
                 #
             )
-        elif conf_leap == ConfLeap.leap_env:
-            self.note_text = f"{ConfConstGeneral.common_field_local_note}\n"
+        elif conf_leap == _ConfLeap.leap_env:
+            self.note_text = f"{_ConfConstGeneral.common_field_local_note}\n"
 
 
 # noinspection PyPep8Naming
@@ -1200,7 +1200,7 @@ class Builder_Node_field_project_descriptors(AbstractConfLeapNodeBuilder):
         node_name: str | None,
         node_indent: int,
         orig_data: dict,
-        conf_leap: ConfLeap,
+        conf_leap: _ConfLeap,
         **kwargs,
     ) -> "AbstractDictNode":
         return Node_project_descriptor(
@@ -1216,7 +1216,7 @@ class Node_field_project_descriptors(AbstractListNode):
 
     def __init__(
         self,
-        conf_leap: ConfLeap,
+        conf_leap: _ConfLeap,
         **kwargs,
     ):
         super().__init__(
@@ -1224,19 +1224,19 @@ class Node_field_project_descriptors(AbstractListNode):
             child_builder=Builder_Node_field_project_descriptors(),
             **kwargs,
         )
-        if conf_leap == ConfLeap.leap_client:
+        if conf_leap == _ConfLeap.leap_client:
             self.note_text = (
                 f"Field `{ConfField.field_project_descriptors.value}` lists `python` projects and their installation details.\n"
-                f"{ConfConstGeneral.common_field_global_note}\n"
+                f"{_ConfConstGeneral.common_field_global_note}\n"
                 # See: UC_78_58_06_54.no_stray_packages.md:
-                f"Note that the `{ConfConstGeneral.name_protoprimer_package}` does not manage package dependencies itself.\n"
-                f"Instead, the `{ConfConstGeneral.name_protoprimer_package}` relies on `{ConfConstClient.default_pyproject_toml_basename}` file per `python` project to specify these dependencies.\n"
-                f"See `{_EnvState.state_project_descriptors_inited.name}` in `{ConfLeap.leap_derived.name}`.\n"
+                f"Note that the `{_ConfConstGeneral.name_protoprimer_package}` does not manage package dependencies itself.\n"
+                f"Instead, the `{_ConfConstGeneral.name_protoprimer_package}` relies on `{_ConfConstClient.default_pyproject_toml_basename}` file per `python` project to specify these dependencies.\n"
+                f"See `{_EnvState.state_project_descriptors_inited.name}` in `{_ConfLeap.leap_derived.name}`.\n"
             )
-        elif conf_leap == ConfLeap.leap_env:
-            self.note_text = f"{ConfConstGeneral.common_field_local_note}\n"
-        elif conf_leap == ConfLeap.leap_derived:
-            self.note_text = f"{ConfConstGeneral.func_note_derived_based_on_common(ConfField.field_project_descriptors.value)}\n"
+        elif conf_leap == _ConfLeap.leap_env:
+            self.note_text = f"{_ConfConstGeneral.common_field_local_note}\n"
+        elif conf_leap == _ConfLeap.leap_derived:
+            self.note_text = f"{_ConfConstGeneral.func_note_derived_based_on_common(ConfField.field_project_descriptors.value)}\n"
 
 
 # noinspection PyPep8Naming
@@ -1244,13 +1244,13 @@ class Builder_Node_project_descriptor(AbstractConfLeapNodeBuilder):
 
     def __init__(
         self,
-        conf_leap: ConfLeap,
+        conf_leap: _ConfLeap,
         **kwargs,
     ):
         super().__init__(
             **kwargs,
         )
-        self.conf_leap: ConfLeap = conf_leap
+        self.conf_leap: _ConfLeap = conf_leap
 
     def visit_dict(
         self,
@@ -1281,7 +1281,7 @@ class Node_project_descriptor(AbstractDictNode):
 
     def __init__(
         self,
-        conf_leap: ConfLeap,
+        conf_leap: _ConfLeap,
         **kwargs,
     ):
         kwargs.pop("node_name", None)
@@ -1301,20 +1301,20 @@ class Node_field_build_root_dir_rel_path(AbstractValueNode[str]):
 
     def __init__(
         self,
-        conf_leap: ConfLeap,
+        conf_leap: _ConfLeap,
         **kwargs,
     ):
         super().__init__(
             **kwargs,
         )
         if conf_leap in [
-            ConfLeap.leap_client,
-            ConfLeap.leap_derived,
+            _ConfLeap.leap_client,
+            _ConfLeap.leap_derived,
         ]:
             self.note_text = (
-                f"This is similar to specifying the dir of `{ConfConstClient.default_pyproject_toml_basename}` for `pip`:\n"
+                f"This is similar to specifying the dir of `{_ConfConstClient.default_pyproject_toml_basename}` for `pip`:\n"
                 f"pip install path/to/project\n"
-                f"{ConfConstGeneral.relative_path_field_note}\n"
+                f"{_ConfConstGeneral.relative_path_field_note}\n"
                 #
             )
 
@@ -1324,7 +1324,7 @@ class Node_field_install_extras(AbstractListNode):
 
     def __init__(
         self,
-        conf_leap: ConfLeap,
+        conf_leap: _ConfLeap,
         **kwargs,
     ):
         super().__init__(
@@ -1332,8 +1332,8 @@ class Node_field_install_extras(AbstractListNode):
             **kwargs,
         )
         if conf_leap in [
-            ConfLeap.leap_client,
-            ConfLeap.leap_derived,
+            _ConfLeap.leap_client,
+            _ConfLeap.leap_derived,
         ]:
             self.note_text = (
                 f"This is similar to specifying a list of `extra_item`-s per `path/to/project` for `pip`:\n"
@@ -1343,7 +1343,7 @@ class Node_field_install_extras(AbstractListNode):
 
 
 ########################################################################################################################
-# `ConfLeap.leap_env` node types.
+# `_ConfLeap.leap_env` node types.
 # See: FT_19_44_42_19.effective_config.md
 
 
@@ -1358,7 +1358,7 @@ class Builder_RootNode_env(AbstractConfLeapNodeBuilder):
 
         self._create_common_fields(
             dict_node=dict_node,
-            conf_leap=ConfLeap.leap_env,
+            conf_leap=_ConfLeap.leap_env,
         )
 
         self._create_unused_dict_fields(dict_node)
@@ -1367,7 +1367,7 @@ class Builder_RootNode_env(AbstractConfLeapNodeBuilder):
 # noinspection PyPep8Naming
 class RootNode_env(AbstractConfLeapRootNode):
     """
-    Root node for `ConfLeap.leap_env`.
+    Root node for `_ConfLeap.leap_env`.
     """
 
     def __init__(
@@ -1376,16 +1376,16 @@ class RootNode_env(AbstractConfLeapRootNode):
         **kwargs,
     ):
         super().__init__(
-            conf_leap=ConfLeap.leap_env,
+            conf_leap=_ConfLeap.leap_env,
             child_builder=Builder_RootNode_env(),
             **kwargs,
         )
         self.state_local_conf_file_abs_path_inited: str = state_local_conf_file_abs_path_inited
-        self.note_text = f"The `{ConfLeap.leap_env.name}` data is loaded from the [{self.state_local_conf_file_abs_path_inited}] file."
+        self.note_text = f"The `{_ConfLeap.leap_env.name}` data is loaded from the [{self.state_local_conf_file_abs_path_inited}] file."
 
 
 ########################################################################################################################
-# `ConfLeap.leap_derived` node types.
+# `_ConfLeap.leap_derived` node types.
 # See: FT_19_44_42_19.effective_config.md
 
 
@@ -1398,12 +1398,12 @@ class Builder_RootNode_derived(AbstractConfLeapNodeBuilder):
         **kwargs,
     ) -> None:
 
-        conf_leap = ConfLeap.leap_derived
+        conf_leap = _ConfLeap.leap_derived
 
         field_node: AbstractConfigNode
 
         # ===
-        # `ConfLeap.leap_input`
+        # `_ConfLeap.leap_input`
 
         field_node = self._create_used_dict_field(
             dict_node=dict_node,
@@ -1412,7 +1412,7 @@ class Builder_RootNode_derived(AbstractConfLeapNodeBuilder):
             conf_leap=conf_leap,
             **kwargs,
         )
-        field_node.note_text = f"{ConfConstGeneral.func_note_derived_based_on_conf_leap_field(_EnvState.state_proto_kernel_file_abs_path_inited.name, ConfLeap.leap_input)}\n"
+        field_node.note_text = f"{_ConfConstGeneral.func_note_derived_based_on_conf_leap_field(_EnvState.state_proto_kernel_file_abs_path_inited.name, _ConfLeap.leap_input)}\n"
 
         field_node = self._create_used_dict_field(
             dict_node=dict_node,
@@ -1421,10 +1421,10 @@ class Builder_RootNode_derived(AbstractConfLeapNodeBuilder):
             conf_leap=conf_leap,
             **kwargs,
         )
-        field_node.note_text = f"{ConfConstGeneral.func_note_derived_based_on_conf_leap_field(_EnvState.state_primer_conf_file_abs_path_inited.name, ConfLeap.leap_input)}\n"
+        field_node.note_text = f"{_ConfConstGeneral.func_note_derived_based_on_conf_leap_field(_EnvState.state_primer_conf_file_abs_path_inited.name, _ConfLeap.leap_input)}\n"
 
         # ===
-        # `ConfLeap.leap_primer`
+        # `_ConfLeap.leap_primer`
 
         field_node = self._create_used_dict_field(
             dict_node=dict_node,
@@ -1433,7 +1433,7 @@ class Builder_RootNode_derived(AbstractConfLeapNodeBuilder):
             conf_leap=conf_leap,
             **kwargs,
         )
-        field_node.note_text = f"{ConfConstGeneral.func_note_derived_based_on_conf_leap_field(ConfField.field_ref_root_dir_rel_path.value, ConfLeap.leap_primer)}\n"
+        field_node.note_text = f"{_ConfConstGeneral.func_note_derived_based_on_conf_leap_field(ConfField.field_ref_root_dir_rel_path.value, _ConfLeap.leap_primer)}\n"
 
         field_node = self._create_used_dict_field(
             dict_node=dict_node,
@@ -1442,7 +1442,7 @@ class Builder_RootNode_derived(AbstractConfLeapNodeBuilder):
             conf_leap=conf_leap,
             **kwargs,
         )
-        field_node.note_text = f"{ConfConstGeneral.func_note_derived_based_on_conf_leap_field(ConfField.field_global_conf_dir_rel_path.value, ConfLeap.leap_primer)}\n"
+        field_node.note_text = f"{_ConfConstGeneral.func_note_derived_based_on_conf_leap_field(ConfField.field_global_conf_dir_rel_path.value, _ConfLeap.leap_primer)}\n"
 
         field_node = self._create_used_dict_field(
             dict_node=dict_node,
@@ -1455,11 +1455,11 @@ class Builder_RootNode_derived(AbstractConfLeapNodeBuilder):
             # TODO: It is not derived from just this:
             #       *   dirname is from `field_global_conf_dir_rel_path`
             #       *   basename is from `state_primer_conf_file_abs_path_inited`
-            f"{ConfConstGeneral.func_note_derived_based_on_conf_leap_field(_EnvState.state_primer_conf_file_abs_path_inited.name, ConfLeap.leap_input)}\n"
+            f"{_ConfConstGeneral.func_note_derived_based_on_conf_leap_field(_EnvState.state_primer_conf_file_abs_path_inited.name, _ConfLeap.leap_input)}\n"
         )
 
         # ===
-        # `ConfLeap.leap_client`
+        # `_ConfLeap.leap_client`
 
         field_node = self._create_used_dict_field(
             dict_node=dict_node,
@@ -1470,7 +1470,7 @@ class Builder_RootNode_derived(AbstractConfLeapNodeBuilder):
         )
         field_node.note_text = (
             # TODO: Either default or --env arg:
-            f"{ConfConstGeneral.func_note_derived_based_on_conf_leap_field(ConfField.field_default_env_dir_rel_path.value, ConfLeap.leap_client)}\n"
+            f"{_ConfConstGeneral.func_note_derived_based_on_conf_leap_field(ConfField.field_default_env_dir_rel_path.value, _ConfLeap.leap_client)}\n"
         )
 
         field_node = self._create_used_dict_field(
@@ -1480,7 +1480,7 @@ class Builder_RootNode_derived(AbstractConfLeapNodeBuilder):
             conf_leap=conf_leap,
             **kwargs,
         )
-        field_node.note_text = f"{ConfConstGeneral.func_note_derived_based_on_conf_leap_field(ConfField.field_local_conf_symlink_rel_path.value, ConfLeap.leap_client)}\n"
+        field_node.note_text = f"{_ConfConstGeneral.func_note_derived_based_on_conf_leap_field(ConfField.field_local_conf_symlink_rel_path.value, _ConfLeap.leap_client)}\n"
 
         field_node = self._create_used_dict_field(
             dict_node=dict_node,
@@ -1493,15 +1493,15 @@ class Builder_RootNode_derived(AbstractConfLeapNodeBuilder):
             # TODO: It is not derived from just this:
             #       *   dirname is from `field_local_conf_symlink_rel_path`
             #       *   basename is from `state_primer_conf_file_abs_path_inited`
-            f"{ConfConstGeneral.func_note_derived_based_on_conf_leap_field(_EnvState.state_primer_conf_file_abs_path_inited.name, ConfLeap.leap_input)}\n"
+            f"{_ConfConstGeneral.func_note_derived_based_on_conf_leap_field(_EnvState.state_primer_conf_file_abs_path_inited.name, _ConfLeap.leap_input)}\n"
         )
 
         # ===
-        # `ConfLeap.leap_env`
+        # `_ConfLeap.leap_env`
         # nothing specific
 
         # ===
-        # `ConfLeap.leap_derived`
+        # `_ConfLeap.leap_derived`
 
         field_node = self._create_used_dict_field(
             dict_node=dict_node,
@@ -1510,7 +1510,7 @@ class Builder_RootNode_derived(AbstractConfLeapNodeBuilder):
             conf_leap=conf_leap,
             **kwargs,
         )
-        field_node.note_text = f"{ConfConstGeneral.func_note_derived_based_on_common(ConfField.field_required_python_version.value)}\n"
+        field_node.note_text = f"{_ConfConstGeneral.func_note_derived_based_on_common(ConfField.field_required_python_version.value)}\n"
 
         field_node = self._create_used_dict_field(
             dict_node=dict_node,
@@ -1519,7 +1519,7 @@ class Builder_RootNode_derived(AbstractConfLeapNodeBuilder):
             conf_leap=conf_leap,
             **kwargs,
         )
-        field_node.note_text = f"{ConfConstGeneral.func_note_derived_based_on_common(ConfField.field_python_selector_file_rel_path.value)}\n"
+        field_node.note_text = f"{_ConfConstGeneral.func_note_derived_based_on_common(ConfField.field_python_selector_file_rel_path.value)}\n"
 
         field_node = self._create_used_dict_field(
             dict_node=dict_node,
@@ -1528,7 +1528,7 @@ class Builder_RootNode_derived(AbstractConfLeapNodeBuilder):
             conf_leap=conf_leap,
             **kwargs,
         )
-        field_node.note_text = f"{ConfConstGeneral.func_note_derived_based_on_common(ConfField.field_local_venv_dir_rel_path.value)}\n"
+        field_node.note_text = f"{_ConfConstGeneral.func_note_derived_based_on_common(ConfField.field_local_venv_dir_rel_path.value)}\n"
 
         field_node = self._create_used_dict_field(
             dict_node=dict_node,
@@ -1537,7 +1537,7 @@ class Builder_RootNode_derived(AbstractConfLeapNodeBuilder):
             conf_leap=conf_leap,
             **kwargs,
         )
-        field_node.note_text = f"{ConfConstGeneral.func_note_derived_based_on_common(ConfField.field_local_log_dir_rel_path.value)}\n"
+        field_node.note_text = f"{_ConfConstGeneral.func_note_derived_based_on_common(ConfField.field_local_log_dir_rel_path.value)}\n"
 
         field_node = self._create_used_dict_field(
             dict_node=dict_node,
@@ -1546,7 +1546,7 @@ class Builder_RootNode_derived(AbstractConfLeapNodeBuilder):
             conf_leap=conf_leap,
             **kwargs,
         )
-        field_node.note_text = f"{ConfConstGeneral.func_note_derived_based_on_common(ConfField.field_local_tmp_dir_rel_path.value)}\n"
+        field_node.note_text = f"{_ConfConstGeneral.func_note_derived_based_on_common(ConfField.field_local_tmp_dir_rel_path.value)}\n"
 
         field_node = self._create_used_dict_field(
             dict_node=dict_node,
@@ -1555,7 +1555,7 @@ class Builder_RootNode_derived(AbstractConfLeapNodeBuilder):
             conf_leap=conf_leap,
             **kwargs,
         )
-        field_node.note_text = f"{ConfConstGeneral.func_note_derived_based_on_common(ConfField.field_local_cache_dir_rel_path.value)}\n"
+        field_node.note_text = f"{_ConfConstGeneral.func_note_derived_based_on_common(ConfField.field_local_cache_dir_rel_path.value)}\n"
 
         field_node = self._create_used_dict_field(
             dict_node=dict_node,
@@ -1564,7 +1564,7 @@ class Builder_RootNode_derived(AbstractConfLeapNodeBuilder):
             conf_leap=conf_leap,
             **kwargs,
         )
-        field_node.note_text = f"{ConfConstGeneral.func_note_derived_based_on_common(ConfField.field_venv_driver.value)}\n"
+        field_node.note_text = f"{_ConfConstGeneral.func_note_derived_based_on_common(ConfField.field_venv_driver.value)}\n"
 
         self._create_used_dict_field(
             dict_node=dict_node,
@@ -1580,7 +1580,7 @@ class Builder_RootNode_derived(AbstractConfLeapNodeBuilder):
 # noinspection PyPep8Naming
 class RootNode_derived(AbstractConfLeapRootNode):
     """
-    Root node for `ConfLeap.leap_derived`.
+    Root node for `_ConfLeap.leap_derived`.
     """
 
     def __init__(
@@ -1588,15 +1588,15 @@ class RootNode_derived(AbstractConfLeapRootNode):
         **kwargs,
     ):
         super().__init__(
-            conf_leap=ConfLeap.leap_derived,
+            conf_leap=_ConfLeap.leap_derived,
             child_builder=Builder_RootNode_derived(),
             **kwargs,
         )
         self.note_text = (
-            f"The `{ConfLeap.leap_derived.name}` data is derived from other data - it is computed by:\n"
+            f"The `{_ConfLeap.leap_derived.name}` data is derived from other data - it is computed by:\n"
             f"*   applying defaults to missing field values\n"
             f"*   combining with other field values\n"
-            f"Effectively, this is what ultimately used by the `{ConfConstGeneral.name_protoprimer_package}`.\n"
+            f"Effectively, this is what ultimately used by the `{_ConfConstGeneral.name_protoprimer_package}`.\n"
             #
         )
 
@@ -1667,9 +1667,9 @@ class _Node_state_primer_conf_file_data_loaded_rendered(_AbstractCachingStateNod
 
             state_input_stderr_log_level_eval_finalized: int = self.eval_parent_state(_EnvState.state_input_stderr_log_level_eval_finalized.name)
 
-            # Print `ConfLeap.leap_input` data together:
+            # Print `_ConfLeap.leap_input` data together:
             # ===
-            # `ConfLeap.leap_input`:
+            # `_ConfLeap.leap_input`:
             conf_input = RootNode_input(
                 node_indent=0,
                 orig_data={
@@ -1680,7 +1680,7 @@ class _Node_state_primer_conf_file_data_loaded_rendered(_AbstractCachingStateNod
             print(RenderConfigVisitor().render_node(conf_input))
 
             # ===
-            # `ConfLeap.leap_primer`:
+            # `_ConfLeap.leap_primer`:
             conf_primer = RootNode_primer(
                 node_indent=0,
                 orig_data=file_data,
@@ -1803,24 +1803,24 @@ class _Node_state_derived_conf_data_loaded_rendered(_AbstractCachingStateNode[di
     ):
         self.derived_data_env_states: list[str] = [
             # ===
-            # `ConfLeap.leap_input`
+            # `_ConfLeap.leap_input`
             _EnvState.state_proto_kernel_file_abs_path_inited.name,
             _EnvState.state_primer_conf_file_abs_path_inited.name,
             # ===
-            # `ConfLeap.leap_primer`
+            # `_ConfLeap.leap_primer`
             _EnvState.state_ref_root_dir_abs_path_inited.name,
             _EnvState.state_global_conf_dir_abs_path_inited.name,
             _EnvState.state_global_conf_file_abs_path_inited.name,
             # ===
-            # `ConfLeap.leap_client`
+            # `_ConfLeap.leap_client`
             _EnvState.state_selected_env_dir_rel_path_inited.name,
             _EnvState.state_local_conf_symlink_abs_path_inited.name,
             _EnvState.state_local_conf_file_abs_path_inited.name,
             # ===
-            # `ConfLeap.leap_env`
+            # `_ConfLeap.leap_env`
             # nothing specific
             # ===
-            # `ConfLeap.leap_derived`
+            # `_ConfLeap.leap_derived`
             _EnvState.state_required_python_version_inited.name,
             _EnvState.state_selected_python_file_abs_path_inited.name,
             _EnvState.state_local_venv_dir_abs_path_inited.name,

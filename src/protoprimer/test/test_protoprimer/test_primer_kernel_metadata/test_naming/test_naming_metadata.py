@@ -8,11 +8,11 @@ from typing import (
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer.primer_kernel import (
     ConfDst,
-    ConfLeap,
+    _ConfLeap,
     EnvVar,
     FilesystemObject,
     ParsedArg,
-    PathName,
+    _PathName,
     PathType,
     PrimerRuntime,
     ValueName,
@@ -71,9 +71,9 @@ def test_enum_str_value_uniqueness():
 
     for enum_type in [
         ConfDst,
-        ConfLeap,
+        _ConfLeap,
         PrimerRuntime,
-        PathName,
+        _PathName,
         ValueName,
         ValueSource,
     ]:
@@ -84,14 +84,14 @@ def test_enum_str_value_uniqueness_across_multiple_enums():
 
     check_enum_string_uniqueness_across_all(
         [
-            ConfLeap,
+            _ConfLeap,
             PrimerRuntime,
             FilesystemObject,
             PathType,
             EnvVar,
             ConfDst,
             ValueName,
-            PathName,
+            _PathName,
             ValueSource,
         ]
         + (

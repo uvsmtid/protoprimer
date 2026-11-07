@@ -14,9 +14,9 @@ import protoprimer
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer.primer_kernel import (
     _assert_proto_kernel_is_stand_alone,
-    ConfConstGeneral,
-    ConfConstInput,
-    VenvDriverPip,
+    _ConfConstGeneral,
+    _ConfConstInput,
+    _VenvDriverPip,
 )
 
 
@@ -32,7 +32,7 @@ def installed_venv(tmp_path_factory) -> tuple[str, str, dict[str, str]]:
     tmp_path = tmp_path_factory.mktemp("protoprimer_installed_venv")
     venv_dir = tmp_path / "venv"
 
-    venv_driver = VenvDriverPip(
+    venv_driver = _VenvDriverPip(
         required_python_version=platform.python_version(),
         selected_python_file_abs_path=sys.executable,
         state_local_venv_dir_abs_path_inited=str(venv_dir),
@@ -40,11 +40,11 @@ def installed_venv(tmp_path_factory) -> tuple[str, str, dict[str, str]]:
     )
     venv_driver.create_venv(str(venv_dir), "")
 
-    venv_python_abs_path = str(venv_dir / ConfConstGeneral.file_rel_path_venv_python)
+    venv_python_abs_path = str(venv_dir / _ConfConstGeneral.file_rel_path_venv_python)
 
     # Strip `PYTHONPATH` so subprocess uses only the fresh venv, not the editable source:
     clean_env = os.environ.copy()
-    clean_env.pop(ConfConstInput.ext_env_var_PYTHONPATH, None)
+    clean_env.pop(_ConfConstInput.ext_env_var_PYTHONPATH, None)
 
     # Install `protoprimer` (non-editable) so primer_kernel.py lands in site-packages:
     protoprimer_project_dir = pathlib.Path(str(protoprimer.__file__)).parent.parent.parent
@@ -120,7 +120,7 @@ def test_assert_proto_kernel_is_stand_alone_passes_for_standalone_copy(
         clean_env,
     ) = installed_venv
 
-    standalone_copy = tmp_path / ConfConstGeneral.default_proto_kernel_basename
+    standalone_copy = tmp_path / _ConfConstGeneral.default_proto_kernel_basename
     shutil.copy(
         primer_kernel_abs_path_in_venv,
         standalone_copy,

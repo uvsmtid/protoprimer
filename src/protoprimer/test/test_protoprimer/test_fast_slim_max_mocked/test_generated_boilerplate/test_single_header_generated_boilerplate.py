@@ -5,7 +5,7 @@ FT_56_85_65_41.generated_boilerplate.md
 import protoprimer.primer_kernel as pk_mod
 
 from protoprimer.primer_kernel import (
-    ConfConstGeneral,
+    _ConfConstGeneral,
     _read_text_file,
     _replace_single_header_in_empty_lines,
     write_text_file,
@@ -37,7 +37,7 @@ def test_replace_single_header_in_empty_lines(fs):
 
     # when:
 
-    header_text = ConfConstGeneral.func_get_proto_kernel_generated_boilerplate_single_header(pk_mod)
+    header_text = _ConfConstGeneral.func_get_proto_kernel_generated_boilerplate_single_header(pk_mod)
     result = _replace_single_header_in_empty_lines(
         input_text=_read_text_file(input_path),
         boilerplate_text=header_text,

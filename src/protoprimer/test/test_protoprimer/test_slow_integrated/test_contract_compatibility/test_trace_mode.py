@@ -18,7 +18,7 @@ from protoprimer.primer_kernel import (
     _EntryFunc,
     EnvVar,
     StateStride,
-    SyntaxArg,
+    _SyntaxArg,
     _generate_entry_script_content,
 )
 
@@ -59,8 +59,8 @@ def test_trace_mode_boot_env(tmp_path: Path):
                 "trace",
                 "--trace",
                 str(proto_kernel_abs_path),
-                SyntaxArg.arg_v,
-                SyntaxArg.arg_v,
+                _SyntaxArg.arg_v,
+                _SyntaxArg.arg_v,
             ],
             check=True,
             env=env,
@@ -108,8 +108,8 @@ def test_trace_mode_start_app(tmp_path: Path):
     run_primer_main(
         [
             str(proto_kernel_abs_path),
-            SyntaxArg.arg_v,
-            SyntaxArg.arg_v,
+            _SyntaxArg.arg_v,
+            _SyntaxArg.arg_v,
         ]
     )
 

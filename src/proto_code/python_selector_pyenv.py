@@ -8,7 +8,7 @@ def select_python_file_abs_path(required_version: tuple[int, int, int]) -> str |
     """
     Example to install `required_version` via `pyenv`.
 
-    Implements `SelectorFunc.select_python_file_abs_path` from `protoprimer.primer_kernel`.
+    Implements `_SelectorFunc.select_python_file_abs_path` from `protoprimer.primer_kernel`.
     """
 
     # Convert (3, 10, 12) to "3.10.12":

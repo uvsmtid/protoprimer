@@ -18,9 +18,9 @@ from protoprimer.primer_kernel import (
     _ContextBuilder,
     _EntryFunc,
     _EnvState,
-    VenvDriverPip,
+    _VenvDriverPip,
     VenvDriverType,
-    VenvDriverUv,
+    _VenvDriverUv,
     _Node_state_local_venv_dir_abs_path_inited,
     _Factory_state_input_exec_operation_loaded,
 )
@@ -75,13 +75,13 @@ def test_pip_driver_inited(
     state_value = env_ctx.eval_state(_EnvState.state_venv_driver_prepared.name)
 
     # then:
-    assert isinstance(state_value, VenvDriverPip)
+    assert isinstance(state_value, _VenvDriverPip)
 
 
 @patch(f"{primer_kernel.__name__}.os.path.isfile")
 @patch(f"{primer_kernel.__name__}.os.path.exists")
-@patch(f"{primer_kernel.__name__}.VenvDriverPip.install_packages")
-@patch(f"{primer_kernel.__name__}.VenvDriverPip.create_venv")
+@patch(f"{primer_kernel.__name__}._VenvDriverPip.install_packages")
+@patch(f"{primer_kernel.__name__}._VenvDriverPip.create_venv")
 @patch(f"{primer_kernel.__name__}.{_Node_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{_Node_state_venv_driver_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{_Factory_state_reset_triggered.__name__}.create_state_node")
@@ -120,13 +120,13 @@ def test_uv_driver_inited_when_not_installed(
     state_value = env_ctx.eval_state(_EnvState.state_venv_driver_prepared.name)
 
     # then:
-    assert isinstance(state_value, VenvDriverUv)
+    assert isinstance(state_value, _VenvDriverUv)
 
 
 @patch(f"{primer_kernel.__name__}.os.path.isfile")
 @patch(f"{primer_kernel.__name__}.os.path.exists")
-@patch(f"{primer_kernel.__name__}.VenvDriverPip.install_packages")
-@patch(f"{primer_kernel.__name__}.VenvDriverPip.create_venv")
+@patch(f"{primer_kernel.__name__}._VenvDriverPip.install_packages")
+@patch(f"{primer_kernel.__name__}._VenvDriverPip.create_venv")
 @patch(f"{primer_kernel.__name__}.{_Node_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{_Node_state_venv_driver_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{_Factory_state_reset_triggered.__name__}.create_state_node")
@@ -165,7 +165,7 @@ def test_uv_driver_inited_when_already_installed(
     state_value = env_ctx.eval_state(_EnvState.state_venv_driver_prepared.name)
 
     # then:
-    assert isinstance(state_value, VenvDriverUv)
+    assert isinstance(state_value, _VenvDriverUv)
     mock_pip_create_venv.assert_not_called()
 
 

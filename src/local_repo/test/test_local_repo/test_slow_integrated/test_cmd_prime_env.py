@@ -18,10 +18,10 @@ from local_test.integrated_helper import (
     test_pyproject_src_dir_rel_path,
 )
 from protoprimer.primer_kernel import (
-    ConfConstClient,
-    ConfConstEnv,
-    ConfConstInput,
-    ConfConstPrimer,
+    _ConfConstClient,
+    _ConfConstEnv,
+    _ConfConstInput,
+    _ConfConstPrimer,
     _EntryFunc,
     _generate_entry_script_content,
 )
@@ -39,7 +39,7 @@ def test_prime_env(tmp_path: pathlib.Path):
 
     # ===
 
-    proto_kernel_dir_abs_path = ref_root_abs_path / ConfConstInput.default_proto_conf_dir_rel_path
+    proto_kernel_dir_abs_path = ref_root_abs_path / _ConfConstInput.default_proto_conf_dir_rel_path
     proto_kernel_abs_path = create_plain_proto_kernel(proto_kernel_dir_abs_path)
     create_conf_primer_file(
         ref_root_abs_path,
@@ -53,7 +53,7 @@ def test_prime_env(tmp_path: pathlib.Path):
 
     # ===
 
-    conf_env_dir_abs_path = ref_root_abs_path / ConfConstClient.default_default_env_dir_rel_path
+    conf_env_dir_abs_path = ref_root_abs_path / _ConfConstClient.default_default_env_dir_rel_path
 
     create_conf_env_file(
         ref_root_abs_path,
@@ -63,7 +63,7 @@ def test_prime_env(tmp_path: pathlib.Path):
 
     # ===
 
-    conf_client_dir_abs_path = ref_root_abs_path / ConfConstPrimer.default_client_conf_dir_rel_path
+    conf_client_dir_abs_path = ref_root_abs_path / _ConfConstPrimer.default_client_conf_dir_rel_path
 
     create_conf_client_file(
         ref_root_abs_path,
@@ -154,6 +154,6 @@ def test_prime_env(tmp_path: pathlib.Path):
     get_command_code("./prime_env")
 
     # then:
-    venv_dir = ref_root_abs_path / ConfConstEnv.default_dir_rel_path_venv
+    venv_dir = ref_root_abs_path / _ConfConstEnv.default_dir_rel_path_venv
     pre_commit_executable = venv_dir / "bin" / "pre-commit"
     assert pre_commit_executable.exists()

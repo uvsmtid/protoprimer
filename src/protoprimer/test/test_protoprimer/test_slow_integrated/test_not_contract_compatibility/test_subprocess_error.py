@@ -9,10 +9,10 @@ from local_test.name_assertion import (
     assert_test_module_name_embeds_str,
 )
 from protoprimer.primer_kernel import (
-    ConfConstClient,
+    _ConfConstClient,
     ConfField,
     read_json_file,
-    SyntaxArg,
+    _SyntaxArg,
     write_json_file,
 )
 
@@ -37,8 +37,8 @@ def test_subprocess_error(tmp_path: Path):
     ) = create_max_leaps_shape(tmp_path)
 
     # Misconfigure the env config file to cause a failure during `pip install`:
-    conf_env_dir_abs_path = ref_root_abs_path / ConfConstClient.default_default_env_dir_rel_path
-    conf_env_file_abs_path = conf_env_dir_abs_path / ConfConstClient.default_file_basename_leap_env
+    conf_env_dir_abs_path = ref_root_abs_path / _ConfConstClient.default_default_env_dir_rel_path
+    conf_env_file_abs_path = conf_env_dir_abs_path / _ConfConstClient.default_file_basename_leap_env
 
     env_conf_data = read_json_file(str(conf_env_file_abs_path))
 
@@ -55,8 +55,8 @@ def test_subprocess_error(tmp_path: Path):
     result = subprocess.run(
         [
             str(proto_kernel_abs_path),
-            SyntaxArg.arg_v,
-            SyntaxArg.arg_v,
+            _SyntaxArg.arg_v,
+            _SyntaxArg.arg_v,
         ],
         capture_output=True,
         text=True,

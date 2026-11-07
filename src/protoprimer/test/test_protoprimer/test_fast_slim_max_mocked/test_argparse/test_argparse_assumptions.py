@@ -5,7 +5,7 @@ from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer.primer_kernel import (
     parse_args,
     ParsedArg,
-    SyntaxArg,
+    _SyntaxArg,
 )
 
 
@@ -22,11 +22,11 @@ class ThisTestClass(BaseTestClass):
         # given:
         test_args = [
             "boot",
-            SyntaxArg.arg_env,
+            _SyntaxArg.arg_env,
             "first",
-            SyntaxArg.arg_env,
+            _SyntaxArg.arg_env,
             "second",
-            SyntaxArg.arg_env,
+            _SyntaxArg.arg_env,
             "third",
         ]
 

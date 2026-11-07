@@ -8,9 +8,9 @@ import enum
 import typing
 
 from protoprimer.primer_kernel import (
-    ConfLeap,
+    _ConfLeap,
     FilesystemObject,
-    PathName,
+    _PathName,
     PathType,
     ValueName,
 )
@@ -87,7 +87,7 @@ class NameCategory(enum.Enum):
     # Some loaded data (e.g., command line args, config file, etc.)
     category_loaded_data = CategoryMeta(
         name_enums=[
-            ConfLeap,
+            _ConfLeap,
             #
             CompletedAction,
         ],
@@ -96,7 +96,7 @@ class NameCategory(enum.Enum):
     # Some value is read or computed:
     category_named_value = CategoryMeta(
         name_enums=[
-            ConfLeap,
+            _ConfLeap,
             ValueName,
             ValueSource,
             #
@@ -109,8 +109,8 @@ class NameCategory(enum.Enum):
     category_path_value_deprecated = CategoryMeta(
         name_enums=[
             # The first sub-list is synced with `category_path_action`:
-            ConfLeap,
-            PathName,
+            _ConfLeap,
+            _PathName,
             FilesystemObject,
             PathType,
             ValueSource,
@@ -121,7 +121,7 @@ class NameCategory(enum.Enum):
 
     category_path_value = CategoryMeta(
         name_enums=[
-            PathName,
+            _PathName,
             FilesystemObject,
             PathType,
             CompletedAction,
@@ -144,7 +144,7 @@ class NameCategory(enum.Enum):
     # to `category_path_value_deprecated` but for arg names
     category_path_arg_value = CategoryMeta(
         name_enums=[
-            PathName,
+            _PathName,
             FilesystemObject,
         ],
     )
@@ -159,8 +159,8 @@ class NameCategory(enum.Enum):
     # TODO: Remove (use `category_path_field`):
     category_leap_path_field = CategoryMeta(
         name_enums=[
-            ConfLeap,
-            PathName,
+            _ConfLeap,
+            _PathName,
             FilesystemObject,
             PathType,
         ],
@@ -168,17 +168,17 @@ class NameCategory(enum.Enum):
 
     category_path_field = CategoryMeta(
         name_enums=[
-            PathName,
+            _PathName,
             FilesystemObject,
             PathType,
         ],
     )
 
     # FT_00_22_19_59.derived_config.md:
-    # similar to `category_leap_path_field` but without `ConfLeap`:
+    # similar to `category_leap_path_field` but without `_ConfLeap`:
     category_derived_path_field = CategoryMeta(
         name_enums=[
-            PathName,
+            _PathName,
             FilesystemObject,
             PathType,
         ],

@@ -8,7 +8,7 @@ from unittest.mock import (
 
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer.primer_kernel import (
-    ConfConstInput,
+    _ConfConstInput,
     _log_python_context,
 )
 
@@ -31,8 +31,8 @@ def test_log_python_context(mock_logger):
     with patch.dict(
         os.environ,
         {
-            ConfConstInput.ext_env_var_VIRTUAL_ENV: virtual_env,
-            ConfConstInput.ext_env_var_PYTHONPATH: python_path,
+            _ConfConstInput.ext_env_var_VIRTUAL_ENV: virtual_env,
+            _ConfConstInput.ext_env_var_PYTHONPATH: python_path,
         },
     ):
         with patch.object(sys, "prefix", sys_prefix):
@@ -40,12 +40,12 @@ def test_log_python_context(mock_logger):
 
     # then:
     expected_calls = [
-        call(log_level, f"`{ConfConstInput.ext_env_var_VIRTUAL_ENV}`: {virtual_env}"),
+        call(log_level, f"`{_ConfConstInput.ext_env_var_VIRTUAL_ENV}`: {virtual_env}"),
         call(
             log_level,
-            f"`{ConfConstInput.ext_env_var_PATH}`: {os.environ.get(ConfConstInput.ext_env_var_PATH, None)}",
+            f"`{_ConfConstInput.ext_env_var_PATH}`: {os.environ.get(_ConfConstInput.ext_env_var_PATH, None)}",
         ),
-        call(log_level, f"`{ConfConstInput.ext_env_var_PYTHONPATH}`: {python_path}"),
+        call(log_level, f"`{_ConfConstInput.ext_env_var_PYTHONPATH}`: {python_path}"),
         call(log_level, f"`sys.path`: {sys.path}"),
         call(log_level, f"`sys.prefix`: {sys_prefix}"),
     ]

@@ -9,7 +9,7 @@ from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     _Node_state_global_conf_dir_abs_path_inited,
     _Node_state_primer_conf_file_abs_path_inited,
-    ConfConstPrimer,
+    _ConfConstPrimer,
     _EnvContext,
     _EnvState,
 )
@@ -48,12 +48,12 @@ def test_success_when_field_present(
 
     mock_state_global_conf_dir_abs_path_inited.return_value.eval_own_state.return_value = os.path.join(
         mock_ref_root,
-        ConfConstPrimer.default_client_conf_dir_rel_path,
+        _ConfConstPrimer.default_client_conf_dir_rel_path,
     )
 
     mock_state_primer_conf_file_abs_path_inited.return_value.eval_own_state.return_value = os.path.join(
         mock_ref_root,
-        ConfConstPrimer.default_client_conf_dir_rel_path,
+        _ConfConstPrimer.default_client_conf_dir_rel_path,
         "some_basename.json",
     )
 

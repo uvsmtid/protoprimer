@@ -139,7 +139,7 @@ class StateStride(enum.IntEnum):
         return f"{self.name}[{self.value}]"
 
 
-class TermColor(enum.Enum):
+class _TermColor(enum.Enum):
     """
     ANSI escape codes for terminal text colors:
 
@@ -178,7 +178,7 @@ class TermColor(enum.Enum):
     reset_style = "\033[0m"
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
-class TopDir(enum.Enum):
+class _TopDir(enum.Enum):
     """
     FT_20_13_95_11.reusable_dir.md
     """
@@ -194,7 +194,7 @@ class TopDir(enum.Enum):
     dir_cache = "cache"
 
 
-class ConfLeap(enum.Enum):
+class _ConfLeap(enum.Enum):
     """
     See FT_89_41_35_82.conf_leap.md
     """
@@ -220,7 +220,7 @@ class ConfLeap(enum.Enum):
     leap_derived = "derived"
 
     # TODO: TODO_39_94_67_54.rename_client_env_to_global_local.md:
-    # TODO: Consolidate `leap_global` and `leap_local` are not really `ConfLeap`-s.
+    # TODO: Consolidate `leap_global` and `leap_local` are not really `_ConfLeap`-s.
     #       Instead, see `leap_client` and `leap_env`.
     leap_global = "global"
     leap_local = "local"
@@ -403,7 +403,7 @@ class ValueName(enum.Enum):
     value_version_constraints = "version_constraints"
 
 
-class PathName(enum.Enum):
+class _PathName(enum.Enum):
 
     path_proto_kernel = "proto_kernel"
 
@@ -418,19 +418,19 @@ class PathName(enum.Enum):
     path_ref_root = "ref_root"
 
     # See FT_89_41_35_82.conf_leap.md / primer
-    path_primer_conf = f"{ConfLeap.leap_primer.value}_conf"
+    path_primer_conf = f"{_ConfLeap.leap_primer.value}_conf"
 
     # TODO: TODO_39_94_67_54.rename_client_env_to_global_local.md:
     # TODO: Instead of `path_conf_client`, use `path_global_conf`:
     # See FT_89_41_35_82.conf_leap.md / client
-    path_conf_client = f"conf_{ConfLeap.leap_client.value}"
-    path_global_conf = f"{ConfLeap.leap_global.value}_conf"
+    path_conf_client = f"conf_{_ConfLeap.leap_client.value}"
+    path_global_conf = f"{_ConfLeap.leap_global.value}_conf"
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     # TODO: TODO_39_94_67_54.rename_client_env_to_global_local.md:
     # TODO: Instead of `path_conf_env`, use `path_local_conf`:
     # See FT_89_41_35_82.conf_leap.md / env
-    path_conf_env = f"conf_{ConfLeap.leap_env.value}"
-    path_local_conf = f"{ConfLeap.leap_local.value}_conf"
+    path_conf_env = f"conf_{_ConfLeap.leap_env.value}"
+    path_local_conf = f"{_ConfLeap.leap_local.value}_conf"
 
     # TODO: TODO_53_40_17_68.default_env_config_vs_lconf_symlink.md:
     # TODO: Rename to "lconf_link" (otherwise, `local_conf_symlink_rel_path` does not reflect anything about `lconf` or `leap_env`):
@@ -462,7 +462,7 @@ class PathName(enum.Enum):
 
 class ParsedArg(enum.Enum):
 
-    name_selected_env_dir = f"{PathName.path_selected_env.value}_{FilesystemObject.fs_object_dir.value}"
+    name_selected_env_dir = f"{_PathName.path_selected_env.value}_{FilesystemObject.fs_object_dir.value}"
 
     name_shell_command = "shell_command"
 
@@ -482,7 +482,7 @@ class LogLevel(enum.Enum):
     name_verbose = "verbose"
 
 
-class SyntaxArg:
+class _SyntaxArg:
 
     arg_h = "-h"
     arg_help = "--help"
@@ -512,7 +512,7 @@ class SyntaxArg:
     arg_main_func = f"--{ParsedArg.name_main_func.value}"
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
-class SelectorFunc(enum.Enum):
+class _SelectorFunc(enum.Enum):
     """
     Lists selector functions (called from standalone `python` scripts).
     """
@@ -525,31 +525,31 @@ class SelectorFunc(enum.Enum):
 
 class ConfField(enum.Enum):
     """
-    Lists all conf fields from persisted files for every `ConfLeap.*`.
+    Lists all conf fields from persisted files for every `_ConfLeap.*`.
     """
 
     ####################################################################################################################
-    # `ConfLeap.leap_primer`-specific
+    # `_ConfLeap.leap_primer`-specific
 
     # state_ref_root_dir_abs_path_inited:
-    field_ref_root_dir_rel_path = f"{PathName.path_ref_root.value}_{FilesystemObject.fs_object_dir.value}_{PathType.path_rel.value}"
+    field_ref_root_dir_rel_path = f"{_PathName.path_ref_root.value}_{FilesystemObject.fs_object_dir.value}_{PathType.path_rel.value}"
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     # state_global_conf_dir_abs_path_inited
-    field_global_conf_dir_rel_path = f"{PathName.path_global_conf.value}_{FilesystemObject.fs_object_dir.value}_{PathType.path_rel.value}"
+    field_global_conf_dir_rel_path = f"{_PathName.path_global_conf.value}_{FilesystemObject.fs_object_dir.value}_{PathType.path_rel.value}"
 
     ####################################################################################################################
-    # `ConfLeap.leap_client`-specific
+    # `_ConfLeap.leap_client`-specific
 
     # FT_92_51_35_07.local_env_link.md: symlink name:
     # state_local_conf_symlink_abs_path_inited:
-    field_local_conf_symlink_rel_path = f"{PathName.path_local_conf.value}_{FilesystemObject.fs_object_symlink.value}_{PathType.path_rel.value}"
+    field_local_conf_symlink_rel_path = f"{_PathName.path_local_conf.value}_{FilesystemObject.fs_object_symlink.value}_{PathType.path_rel.value}"
 
     # FT_92_51_35_07.local_env_link.md: default symlink target:
     # state_selected_env_dir_rel_path_inited:
-    field_default_env_dir_rel_path = f"{PathName.path_default_env.value}_{FilesystemObject.fs_object_dir.value}_{PathType.path_rel.value}"
+    field_default_env_dir_rel_path = f"{_PathName.path_default_env.value}_{FilesystemObject.fs_object_dir.value}_{PathType.path_rel.value}"
 
     ####################################################################################################################
-    # `ConfLeap.leap_env`-specific
+    # `_ConfLeap.leap_env`-specific
 
     # None at the moment.
 
@@ -557,34 +557,34 @@ class ConfField(enum.Enum):
     # Common overridable `global` and `local` fields: FT_23_37_64_44.global_vs_local.md
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     # state_required_python_version_inited:
-    field_required_python_version = f"{PathName.path_required_python.value}_{ValueName.value_version.value}"
+    field_required_python_version = f"{_PathName.path_required_python.value}_{ValueName.value_version.value}"
 
     # TODO: TODO_41_10_50_01.implement_env_selector.md: What is the FT (feature_topic)?
     # state_python_selector_file_abs_path_inited:
-    field_python_selector_file_rel_path = f"{PathName.path_python_selector.value}_{FilesystemObject.fs_object_file.value}_{PathType.path_rel.value}"
+    field_python_selector_file_rel_path = f"{_PathName.path_python_selector.value}_{FilesystemObject.fs_object_file.value}_{PathType.path_rel.value}"
 
     # state_local_venv_dir_abs_path_inited:
-    field_local_venv_dir_rel_path = f"{PathName.path_local_venv.value}_{FilesystemObject.fs_object_dir.value}_{PathType.path_rel.value}"
+    field_local_venv_dir_rel_path = f"{_PathName.path_local_venv.value}_{FilesystemObject.fs_object_dir.value}_{PathType.path_rel.value}"
 
     # TODO: TODO_04_67_81_16.refactor_reusable_dirs.md:
     # TODO: combine by parent dir (~ `./var`):
     # state_local_log_dir_abs_path_inited:
-    field_local_log_dir_rel_path = f"{PathName.path_local_log.value}_{FilesystemObject.fs_object_dir.value}_{PathType.path_rel.value}"
+    field_local_log_dir_rel_path = f"{_PathName.path_local_log.value}_{FilesystemObject.fs_object_dir.value}_{PathType.path_rel.value}"
 
     # TODO: TODO_04_67_81_16.refactor_reusable_dirs.md:
     # TODO: combine by parent dir (~ `./var`):
     # state_local_run_dir_abs_path_inited:
-    field_local_run_dir_rel_path = f"{PathName.path_local_run.value}_{FilesystemObject.fs_object_dir.value}_{PathType.path_rel.value}"
+    field_local_run_dir_rel_path = f"{_PathName.path_local_run.value}_{FilesystemObject.fs_object_dir.value}_{PathType.path_rel.value}"
 
     # TODO: TODO_04_67_81_16.refactor_reusable_dirs.md:
     # TODO: combine by parent dir (~ `./var`):
     # state_local_tmp_dir_abs_path_inited:
-    field_local_tmp_dir_rel_path = f"{PathName.path_local_tmp.value}_{FilesystemObject.fs_object_dir.value}_{PathType.path_rel.value}"
+    field_local_tmp_dir_rel_path = f"{_PathName.path_local_tmp.value}_{FilesystemObject.fs_object_dir.value}_{PathType.path_rel.value}"
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     # TODO: TODO_04_67_81_16.refactor_reusable_dirs.md:
     # TODO: combine by parent dir (~ `./var`):
     # state_local_cache_dir_abs_path_inited:
-    field_local_cache_dir_rel_path = f"{PathName.path_local_cache.value}_{FilesystemObject.fs_object_dir.value}_{PathType.path_rel.value}"
+    field_local_cache_dir_rel_path = f"{_PathName.path_local_cache.value}_{FilesystemObject.fs_object_dir.value}_{PathType.path_rel.value}"
 
     # state_venv_driver_inited:
     field_venv_driver = f"{ValueName.value_venv_driver.value}"
@@ -601,7 +601,7 @@ class ConfField(enum.Enum):
     ####################################################################################################################
 
     # child of `field_project_descriptors`:
-    field_build_root_dir_rel_path = f"{PathName.path_build_root.value}_{FilesystemObject.fs_object_dir.value}_{PathType.path_rel.value}"
+    field_build_root_dir_rel_path = f"{_PathName.path_build_root.value}_{FilesystemObject.fs_object_dir.value}_{PathType.path_rel.value}"
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     # child of `field_project_descriptors`:
     field_install_extras = f"{ValueName.value_install_extras.value}"
@@ -618,7 +618,7 @@ class ConfField(enum.Enum):
 ########################################################################################################################
 
 
-class VenvDriverBase:
+class _VenvDriverBase:
 
     def get_type(self) -> VenvDriverType:
         raise NotImplementedError()
@@ -717,7 +717,7 @@ class VenvDriverBase:
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
         # Adding `venv/bin` is required for `uv` to access `keyring`.
         # See: FT_17_41_51_83.private_artifact_repo.md
-        env_vars[ConfConstInput.ext_env_var_PATH] = f"{os.path.dirname(venv_python_file_abs_path)}:{env_vars[ConfConstInput.ext_env_var_PATH]}"
+        env_vars[_ConfConstInput.ext_env_var_PATH] = f"{os.path.dirname(venv_python_file_abs_path)}:{env_vars[_ConfConstInput.ext_env_var_PATH]}"
 
         subprocess.check_call(
             sub_proc_args,
@@ -778,7 +778,7 @@ class VenvDriverBase:
         raise NotImplementedError()
 
 
-class VenvDriverPip(VenvDriverBase):
+class _VenvDriverPip(_VenvDriverBase):
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     def __init__(
         self,
@@ -812,14 +812,14 @@ class VenvDriverPip(VenvDriverBase):
             [
                 self.selected_python_file_abs_path,
                 "-m",
-                ConfConstEnv.default_dir_rel_path_venv,
+                _ConfConstEnv.default_dir_rel_path_venv,
                 local_venv_dir_abs_path,
             ]
         )
         # Use the python executable within the created `venv`:
         venv_python_executable = os.path.join(
             local_venv_dir_abs_path,
-            ConfConstGeneral.file_rel_path_venv_python,
+            _ConfConstGeneral.file_rel_path_venv_python,
         )
         pip_upgrade_cmd = [
             venv_python_executable,
@@ -870,7 +870,7 @@ class VenvDriverPip(VenvDriverBase):
         ]
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
-class VenvDriverUv(VenvDriverBase):
+class _VenvDriverUv(_VenvDriverBase):
 
     def __init__(
         self,
@@ -886,18 +886,18 @@ class VenvDriverUv(VenvDriverBase):
             # TODO: TODO_04_67_81_16.refactor_reusable_dirs.md:
             # TODO: make it relative to "cache/venv" specifically (instead of directly to "cache"):
             state_local_cache_dir_abs_path_inited,
-            ConfConstEnv.default_dir_rel_path_venv,
+            _ConfConstEnv.default_dir_rel_path_venv,
             # TODO: TODO_20_07_74_69.configure_dirs_at_client_level.md:
             # TODO: take from config (or default constant):
             "uv.venv",
         )
         self.uv_exec_abs_path: str = os.path.join(
             self.uv_venv_abs_path,
-            ConfConstGeneral.file_rel_path_venv_uv,
+            _ConfConstGeneral.file_rel_path_venv_uv,
         )
         self.venv_python_file_abs_path: str = os.path.join(
             self.state_local_venv_dir_abs_path_inited,
-            ConfConstGeneral.file_rel_path_venv_python,
+            _ConfConstGeneral.file_rel_path_venv_python,
         )
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     def get_type(self) -> VenvDriverType:
@@ -906,7 +906,7 @@ class VenvDriverUv(VenvDriverBase):
     def _ensure_uv_is_available(self):
         if not os.path.exists(self.uv_exec_abs_path):
             # To use `VenvDriverType.venv_uv`, use `VenvDriverType.venv_pip` to install `uv` first:
-            pip_driver = VenvDriverPip(
+            pip_driver = _VenvDriverPip(
                 required_python_version=self.required_python_version,
                 # TODO: TODO_65_18_47_30.uv_bootstrap_venv_python_version.md:
                 # TODO: assert python version suitable for `uv` (because this `venv` will be used to install `uv`).
@@ -925,12 +925,12 @@ class VenvDriverUv(VenvDriverBase):
             pip_driver.create_venv(self.uv_venv_abs_path, "")
             uv_exec_venv_python_abs_path = os.path.join(
                 self.uv_venv_abs_path,
-                ConfConstGeneral.file_rel_path_venv_python,
+                _ConfConstGeneral.file_rel_path_venv_python,
             )
             pip_driver.install_packages(
                 uv_exec_venv_python_abs_path,
                 [
-                    ConfConstGeneral.name_uv_package,
+                    _ConfConstGeneral.name_uv_package,
                 ],
             )
         else:
@@ -967,7 +967,7 @@ class VenvDriverUv(VenvDriverBase):
         subprocess.check_call(
             [
                 self.uv_exec_abs_path,
-                ConfConstEnv.default_dir_rel_path_venv,
+                _ConfConstEnv.default_dir_rel_path_venv,
                 # Creates `venv` with the standard `pip`:
                 "--seed",
                 "--python",
@@ -979,7 +979,7 @@ class VenvDriverUv(VenvDriverBase):
         if os.path.exists(constraints_file_abs_path):
             seeded_venv_python_abs_path = os.path.join(
                 local_venv_dir_abs_path,
-                ConfConstGeneral.file_rel_path_venv_python,
+                _ConfConstGeneral.file_rel_path_venv_python,
             )
             subprocess.check_call(
                 [
@@ -1048,9 +1048,9 @@ class VenvDriverType(enum.Enum):
     See UC_09_61_98_94.installer_pip_vs_uv.md
     """
 
-    venv_pip = VenvDriverPip
+    venv_pip = _VenvDriverPip
 
-    venv_uv = VenvDriverUv
+    venv_uv = _VenvDriverUv
 
 
 ########################################################################################################################
@@ -1109,7 +1109,7 @@ class ShellDriverBase:
     def get_venv_activate_script_abs_path(venv_abs_path: str) -> str:
         return os.path.join(
             venv_abs_path,
-            ConfConstGeneral.file_rel_path_venv_activate,
+            _ConfConstGeneral.file_rel_path_venv_activate,
         )
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     def get_source_builtin(self) -> str:
@@ -1302,7 +1302,7 @@ def _get_shell_driver(
 ########################################################################################################################
 
 
-class ConfConstGeneral:
+class _ConfConstGeneral:
 
     # The project name = package name:
     name_protoprimer_package = "protoprimer"
@@ -1394,27 +1394,27 @@ class ConfConstGeneral:
     entry_script_boilerplate_begin_marker = "# <<< BEGIN: FT_56_85_65_41.generated_boilerplate"
     entry_script_boilerplate_end_marker = "# >>> END: FT_56_85_65_41.generated_boilerplate"
 
-    relative_path_field_note: str = f"The path is relative to the `{PathName.path_ref_root.value}` dir specified in the `{ConfField.field_ref_root_dir_rel_path.value}` field."
-    common_field_global_note: str = f"This field can be specified in global config (see `{ConfLeap.leap_client.name}`) but it is override-able by local environment-specific config (see `{ConfLeap.leap_env.name}`)."
-    common_field_local_note: str = f"This local environment-specific field overrides the global one (see description in `{ConfLeap.leap_client.name}`)."
-    func_note_derived_based_on_common = lambda field_name: f"This value is derived from `{field_name}` in `{ConfLeap.leap_client.name}` (override-able in `{ConfLeap.leap_env.name}`) - see description there."
+    relative_path_field_note: str = f"The path is relative to the `{_PathName.path_ref_root.value}` dir specified in the `{ConfField.field_ref_root_dir_rel_path.value}` field."
+    common_field_global_note: str = f"This field can be specified in global config (see `{_ConfLeap.leap_client.name}`) but it is override-able by local environment-specific config (see `{_ConfLeap.leap_env.name}`)."
+    common_field_local_note: str = f"This local environment-specific field overrides the global one (see description in `{_ConfLeap.leap_client.name}`)."
+    func_note_derived_based_on_common = lambda field_name: f"This value is derived from `{field_name}` in `{_ConfLeap.leap_client.name}` (override-able in `{_ConfLeap.leap_env.name}`) - see description there."
     func_note_derived_based_on_conf_leap_field = lambda field_name, conf_leap: f"This value is derived from `{field_name}` - see description in `{conf_leap.name}`."
 
 
-class ConfConstInput:
+class _ConfConstInput:
     """
     Constants for FT_89_41_35_82.conf_leap.md / leap_input
     """
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-    file_abs_path_script = ConfConstGeneral.input_based
-    dir_abs_path_current = ConfConstGeneral.input_based
+    file_abs_path_script = _ConfConstGeneral.input_based
+    dir_abs_path_current = _ConfConstGeneral.input_based
 
-    default_proto_conf_dir_rel_path: str = f"{ConfConstGeneral.name_proto_code}"
+    default_proto_conf_dir_rel_path: str = f"{_ConfConstGeneral.name_proto_code}"
 
     conf_file_ext = "json"
 
-    # Next FT_89_41_35_82.conf_leap.md: `ConfLeap.leap_primer`:
-    default_file_basename_conf_primer = f"{ConfConstGeneral.name_protoprimer_package}.{conf_file_ext}"
+    # Next FT_89_41_35_82.conf_leap.md: `_ConfLeap.leap_primer`:
+    default_file_basename_conf_primer = f"{_ConfConstGeneral.name_protoprimer_package}.{conf_file_ext}"
 
     ext_env_var_VIRTUAL_ENV: str = "VIRTUAL_ENV"
     ext_env_var_PATH: str = "PATH"
@@ -1425,15 +1425,15 @@ class ConfConstInput:
     default_PROTOPRIMER_PY_EXEC: str = StateStride.stride_py_unknown.name
 
 
-class ConfConstPrimer:
+class _ConfConstPrimer:
     """
     Constants for FT_89_41_35_82.conf_leap.md / leap_primer
     """
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     default_client_conf_dir_rel_path: str = f"{ConfDst.dst_global.value}"
 
-    # Next FT_89_41_35_82.conf_leap.md: `ConfLeap.leap_client`:
-    default_file_basename_leap_client: str = ConfConstInput.default_file_basename_conf_primer
+    # Next FT_89_41_35_82.conf_leap.md: `_ConfLeap.leap_client`:
+    default_file_basename_leap_client: str = _ConfConstInput.default_file_basename_conf_primer
 
     # TODO: TODO_32_41_01_30.review_default_client_conf_file_rel_path.md:
     # TODO: Is this still needed if we propagate conf file base name primer -> client -> env?
@@ -1443,7 +1443,7 @@ class ConfConstPrimer:
     )
 
 
-class ConfConstClient:
+class _ConfConstClient:
     """
     Constants for FT_89_41_35_82.conf_leap.md / leap_client
     """
@@ -1462,8 +1462,8 @@ class ConfConstClient:
         common_env_name,
     )
 
-    # Next FT_89_41_35_82.conf_leap.md: `ConfLeap.leap_env`:
-    default_file_basename_leap_env: str = ConfConstInput.default_file_basename_conf_primer
+    # Next FT_89_41_35_82.conf_leap.md: `_ConfLeap.leap_env`:
+    default_file_basename_leap_env: str = _ConfConstInput.default_file_basename_conf_primer
 
     default_env_conf_file_rel_path: str = os.path.join(
         default_default_env_dir_rel_path,
@@ -1473,20 +1473,20 @@ class ConfConstClient:
     default_pyproject_toml_basename = "pyproject.toml"
 
 
-class ConfConstEnv:
+class _ConfConstEnv:
     """
     Constants for FT_89_41_35_82.conf_leap.md / leap_env
     """
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-    default_dir_rel_path_venv = str(TopDir.dir_venv.value)
+    default_dir_rel_path_venv = str(_TopDir.dir_venv.value)
 
-    default_dir_rel_path_log = str(TopDir.dir_log.value)
+    default_dir_rel_path_log = str(_TopDir.dir_log.value)
 
-    default_dir_rel_path_run = str(TopDir.dir_run.value)
+    default_dir_rel_path_run = str(_TopDir.dir_run.value)
 
-    default_dir_rel_path_tmp = str(TopDir.dir_tmp.value)
+    default_dir_rel_path_tmp = str(_TopDir.dir_tmp.value)
 
-    default_dir_rel_path_cache = str(TopDir.dir_cache.value)
+    default_dir_rel_path_cache = str(_TopDir.dir_cache.value)
 
     # NOTE: FT_84_11_73_28.supported_python_versions.md:
     #       The default is `uv` only if it is supported by the selected `python` version:
@@ -1537,22 +1537,22 @@ def parse_main_func(
     Parses the `module_name:function_name` format.
 
     Returns `(None, None)` only when both:
-    *   `main_func` is `ConfConstGeneral.default_proto_main`
+    *   `main_func` is `_ConfConstGeneral.default_proto_main`
     *   `allow_default_proto_main` is `True`
     """
-    if main_func == ConfConstGeneral.default_proto_main:
+    if main_func == _ConfConstGeneral.default_proto_main:
         if allow_default_proto_main:
             # FT_21_75_54_18.instant_scenario.md
             # Run `_proto_main`:
             return None, None
-        raise ValueError(f"`{SyntaxArg.arg_main_func}` must specify `module_name:function_name`.")
-    if ConfConstGeneral.module_func_separator not in main_func:
-        raise ValueError(f"`{SyntaxArg.arg_main_func}` [{main_func}] does not match expected format `module_name:function_name`.")
+        raise ValueError(f"`{_SyntaxArg.arg_main_func}` must specify `module_name:function_name`.")
+    if _ConfConstGeneral.module_func_separator not in main_func:
+        raise ValueError(f"`{_SyntaxArg.arg_main_func}` [{main_func}] does not match expected format `module_name:function_name`.")
     (
         module_name,
         func_name,
     ) = main_func.split(
-        ConfConstGeneral.module_func_separator,
+        _ConfConstGeneral.module_func_separator,
         1,
     )
     return module_name, func_name
@@ -1562,25 +1562,25 @@ def _create_parent_argparser():
     parent_argparser = CustomArgumentParser(add_help=False)
     parent_argparser.add_argument(
         # See: FT_38_73_38_52.log_verbosity.md
-        SyntaxArg.arg_q,
-        SyntaxArg.arg_quiet,
+        _SyntaxArg.arg_q,
+        _SyntaxArg.arg_quiet,
         action="count",
-        dest=SyntaxArg.dest_quiet,
+        dest=_SyntaxArg.dest_quiet,
         default=0,
         help="Decrease log verbosity level.",
     )
     parent_argparser.add_argument(
         # See: FT_38_73_38_52.log_verbosity.md
-        SyntaxArg.arg_v,
-        SyntaxArg.arg_verbose,
+        _SyntaxArg.arg_v,
+        _SyntaxArg.arg_verbose,
         action="count",
-        dest=SyntaxArg.dest_verbose,
+        dest=_SyntaxArg.dest_verbose,
         default=0,
         help="Increase log verbosity level.",
     )
     parent_argparser.add_argument(
-        SyntaxArg.arg_e,
-        SyntaxArg.arg_env,
+        _SyntaxArg.arg_e,
+        _SyntaxArg.arg_env,
         type=str,
         default=None,
         dest=ParsedArg.name_selected_env_dir.value,
@@ -1627,8 +1627,8 @@ def _create_child_argparser(parent_argparsers):
         )
         parser_shell.set_defaults(exec_operation=_ExecOperation.op_shell.value)
         parser_shell.add_argument(
-            SyntaxArg.arg_c,
-            SyntaxArg.arg_command,
+            _SyntaxArg.arg_c,
+            _SyntaxArg.arg_command,
             type=str,
             dest=ParsedArg.name_shell_command.value,
             metavar=ParsedArg.name_shell_command.value,
@@ -1636,7 +1636,7 @@ def _create_child_argparser(parent_argparsers):
         )
 
     def _create_start_parser(exec_operation_parsers):
-        exec_operation_desc = "Start `main_func` with activated `venv` (`venv` must already exist - see `boot`). " f"All args after a literal `{SyntaxArg.arg_double_dash}` are passed verbatim to `main_func`'s own `sys.argv`."
+        exec_operation_desc = "Start `main_func` with activated `venv` (`venv` must already exist - see `boot`). " f"All args after a literal `{_SyntaxArg.arg_double_dash}` are passed verbatim to `main_func`'s own `sys.argv`."
         parser_start = exec_operation_parsers.add_parser(
             _ExecOperation.op_start.value,
             help=exec_operation_desc,
@@ -1688,8 +1688,8 @@ def _create_child_argparser(parent_argparsers):
             )
             parser_entry_func.set_defaults(entry_func=selected_entry_func.value)
             parser_entry_func.add_argument(
-                SyntaxArg.arg_s,
-                SyntaxArg.arg_entry_script_path,
+                _SyntaxArg.arg_s,
+                _SyntaxArg.arg_entry_script_path,
                 type=str,
                 required=True,
                 dest=ParsedArg.name_entry_script_path.value,
@@ -1698,11 +1698,11 @@ def _create_child_argparser(parent_argparsers):
             )
             main_func_required: bool = selected_entry_func is not _EntryFunc.func_boot_env
             parser_entry_func.add_argument(
-                SyntaxArg.arg_m,
-                SyntaxArg.arg_main_func,
+                _SyntaxArg.arg_m,
+                _SyntaxArg.arg_main_func,
                 type=str,
                 required=main_func_required,
-                default=ConfConstGeneral.default_proto_main,
+                default=_ConfConstGeneral.default_proto_main,
                 dest=ParsedArg.name_main_func.value,
                 metavar=ParsedArg.name_main_func.value,
                 help=f"The `module_name:function_name` to invoke inside `venv` (for `{_EntryFunc.func_boot_env.value}`, empty runs the default bootstrap).",
@@ -1711,7 +1711,7 @@ def _create_child_argparser(parent_argparsers):
     child_argparser = CustomArgumentParser(
         description=f"The early [proto] environment bootstrapper [primer].",
         parents=parent_argparsers,
-        epilog=f"Version: {__version__} | {ConfConstGeneral.name_protoprimer_site_link} | {pathlib.Path(__file__).resolve()}",
+        epilog=f"Version: {__version__} | {_ConfConstGeneral.name_protoprimer_site_link} | {pathlib.Path(__file__).resolve()}",
     )
 
     child_argparsers = child_argparser.add_subparsers(
@@ -1757,8 +1757,8 @@ def parse_args(remaining_argv=None) -> argparse.Namespace:
     # so it can never be (re)interpreted as a protoprimer option or sub-command -
     # it is handed verbatim to `_ExecOperation.op_start`'s target function.
     target_args: list = []
-    if SyntaxArg.arg_double_dash in remaining_argv:
-        dash_index = remaining_argv.index(SyntaxArg.arg_double_dash)
+    if _SyntaxArg.arg_double_dash in remaining_argv:
+        dash_index = remaining_argv.index(_SyntaxArg.arg_double_dash)
         target_args = remaining_argv[dash_index + 1 :]
         remaining_argv = remaining_argv[:dash_index]
 
@@ -1776,8 +1776,8 @@ def parse_args(remaining_argv=None) -> argparse.Namespace:
         ],
     )
     if (
-        SyntaxArg.arg_h not in remaining_argv
-        and SyntaxArg.arg_help not in remaining_argv
+        _SyntaxArg.arg_h not in remaining_argv
+        and _SyntaxArg.arg_help not in remaining_argv
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     ):
         try:
@@ -1806,7 +1806,7 @@ def parse_args(remaining_argv=None) -> argparse.Namespace:
         )
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     if target_args and (getattr(parsed_args, ParsedArg.name_exec_operation.value) != _ExecOperation.op_start.value):
-        raise ValueError(f"`{SyntaxArg.arg_double_dash}` is only supported with `{_ExecOperation.op_start.value}`.")
+        raise ValueError(f"`{_SyntaxArg.arg_double_dash}` is only supported with `{_ExecOperation.op_start.value}`.")
     setattr(parsed_args, ParsedArg.name_target_args.value, target_args)
 
     return parsed_args
@@ -1997,7 +1997,7 @@ class _AbstractCachingStateNode(_StateNode[_ValueType]):
 
 class AbstractOverriddenFieldCachingStateNode(_AbstractCachingStateNode[_ValueType]):
     """
-    Base class that overrides field values from `ConfLeap.leap_client` and `ConfLeap.leap_env`.
+    Base class that overrides field values from `_ConfLeap.leap_client` and `_ConfLeap.leap_env`.
 
     See: FT_00_22_19_59.derived_config.md
     """
@@ -2034,7 +2034,7 @@ class _Node_state_input_py_exec_var_loaded(_AbstractCachingStateNode[StateStride
         py_exec = StateStride[
             os.getenv(
                 EnvVar.var_PROTOPRIMER_PY_EXEC.value,
-                ConfConstInput.default_PROTOPRIMER_PY_EXEC,
+                _ConfConstInput.default_PROTOPRIMER_PY_EXEC,
             )
         ]
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
@@ -2087,11 +2087,11 @@ class _Node_state_input_stderr_log_level_var_loaded(_AbstractCachingStateNode[in
 
         loaded_stderr_level: str = os.getenv(
             EnvVar.var_PROTOPRIMER_STDERR_LOG_LEVEL.value,
-            ConfConstInput.default_PROTOPRIMER_STDERR_LOG_LEVEL,
+            _ConfConstInput.default_PROTOPRIMER_STDERR_LOG_LEVEL,
         )
         default_stderr_log_level = getattr(
             logging,
-            ConfConstInput.default_PROTOPRIMER_STDERR_LOG_LEVEL,
+            _ConfConstInput.default_PROTOPRIMER_STDERR_LOG_LEVEL,
         )
 
         state_input_stderr_log_level_var_loaded: int
@@ -2186,11 +2186,11 @@ class _Node_state_input_stderr_log_level_eval_finalized_is_app(_AbstractCachingS
         parsed_args = self.eval_parent_state(_EnvState.state_args_parsed.name)
         stderr_log_level_quiet_count: int = getattr(
             parsed_args,
-            SyntaxArg.dest_quiet,
+            _SyntaxArg.dest_quiet,
         )
         stderr_log_level_verbose_count: int = getattr(
             parsed_args,
-            SyntaxArg.dest_verbose,
+            _SyntaxArg.dest_verbose,
         )
 
         state_input_stderr_log_level_eval_finalized: int
@@ -2198,10 +2198,10 @@ class _Node_state_input_stderr_log_level_eval_finalized_is_app(_AbstractCachingS
             state_input_stderr_log_level_eval_finalized = state_input_stderr_log_level_var_loaded
         else:
             # FT_38_73_38_52.log_verbosity.md
-            # The base is the numeric value of `ConfConstInput.default_PROTOPRIMER_STDERR_LOG_LEVEL`.
+            # The base is the numeric value of `_ConfConstInput.default_PROTOPRIMER_STDERR_LOG_LEVEL`.
             base_log_level: int = getattr(
                 logging,
-                ConfConstInput.default_PROTOPRIMER_STDERR_LOG_LEVEL,
+                _ConfConstInput.default_PROTOPRIMER_STDERR_LOG_LEVEL,
             )
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
             relative_log_level = 10 * (stderr_log_level_quiet_count - stderr_log_level_verbose_count)
@@ -2752,9 +2752,9 @@ class _Node_state_stride_py_arbitrary_reached_is_app(_AbstractCachingStateNode[S
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
         cleaned_env = os.environ.copy()
 
-        orig_venv_abs_path = cleaned_env.pop(ConfConstInput.ext_env_var_VIRTUAL_ENV, None)
-        orig_PYTHONPATH_value = cleaned_env.pop(ConfConstInput.ext_env_var_PYTHONPATH, None)
-        orig_PATH_value: str = cleaned_env.get(ConfConstInput.ext_env_var_PATH, "")
+        orig_venv_abs_path = cleaned_env.pop(_ConfConstInput.ext_env_var_VIRTUAL_ENV, None)
+        orig_PYTHONPATH_value = cleaned_env.pop(_ConfConstInput.ext_env_var_PYTHONPATH, None)
+        orig_PATH_value: str = cleaned_env.get(_ConfConstInput.ext_env_var_PATH, "")
 
         # TODO: TODO_80_28_71_21.review_env_clean_up_after_isolated_mode.md:
         # TODO: Is this (above and below) manual clean-up necessary after we switched to isolated `-I` `python` mode?
@@ -2766,7 +2766,7 @@ class _Node_state_stride_py_arbitrary_reached_is_app(_AbstractCachingStateNode[S
             )
             PATH_parts: list[str] = orig_PATH_value.split(os.pathsep)
             cleaned_path_parts = [p for p in PATH_parts if p != venv_bin_abs_path]
-            cleaned_env[ConfConstInput.ext_env_var_PATH] = os.pathsep.join(cleaned_path_parts)
+            cleaned_env[_ConfConstInput.ext_env_var_PATH] = os.pathsep.join(cleaned_path_parts)
 
         path_to_curr_python = _get_path_to_curr_python()
         path_to_next_python = _get_path_to_base_python()
@@ -2911,7 +2911,7 @@ class _Node_state_wrap_executed(_AbstractCachingStateNode[int]):
 
         entry_func: str = getattr(state_args_parsed, ParsedArg.name_entry_func.value)
         entry_script_path_arg: str = getattr(state_args_parsed, ParsedArg.name_entry_script_path.value)
-        main_func: str = getattr(state_args_parsed, ParsedArg.name_main_func.value) or ConfConstGeneral.default_proto_main
+        main_func: str = getattr(state_args_parsed, ParsedArg.name_main_func.value) or _ConfConstGeneral.default_proto_main
 
         (
             module_name,
@@ -2984,9 +2984,9 @@ class _Node_state_primer_conf_file_abs_path_inited(_AbstractCachingStateNode[str
 
         candidate_basenames.extend(
             [
-                f"{pathlib.Path(sys.argv[0]).stem}.{ConfConstInput.conf_file_ext}",
-                f"{pathlib.Path(state_proto_kernel_file_abs_path_inited).stem}.{ConfConstInput.conf_file_ext}",
-                ConfConstInput.default_file_basename_conf_primer,
+                f"{pathlib.Path(sys.argv[0]).stem}.{_ConfConstInput.conf_file_ext}",
+                f"{pathlib.Path(state_proto_kernel_file_abs_path_inited).stem}.{_ConfConstInput.conf_file_ext}",
+                _ConfConstInput.default_file_basename_conf_primer,
             ]
         )
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
@@ -2999,11 +2999,11 @@ class _Node_state_primer_conf_file_abs_path_inited(_AbstractCachingStateNode[str
             if os.path.exists(candidate_conf_file_abs_path):
                 return candidate_conf_file_abs_path
 
-        # Use `ConfConstInput.default_file_basename_conf_primer` even if not found
-        # because it names conf files for other `ConfLeap.*`:
+        # Use `_ConfConstInput.default_file_basename_conf_primer` even if not found
+        # because it names conf files for other `_ConfLeap.*`:
         return os.path.join(
             proto_kernel_dir_abs_path,
-            ConfConstInput.default_file_basename_conf_primer,
+            _ConfConstInput.default_file_basename_conf_primer,
         )
 
 
@@ -3039,13 +3039,13 @@ class _Node_state_primer_conf_file_data_loaded(_AbstractCachingStateNode[dict]):
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
         if _can_print_effective_config(self, state_print_conf_finalized):
 
-            # Print `ConfLeap.leap_input` data together:
+            # Print `_ConfLeap.leap_input` data together:
             # ===
-            # `ConfLeap.leap_input`:
+            # `_ConfLeap.leap_input`:
             print(
                 json.dumps(
                     {
-                        ConfLeap.leap_input.name: {
+                        _ConfLeap.leap_input.name: {
                             _EnvState.state_proto_kernel_file_abs_path_inited.name: state_proto_kernel_file_abs_path_inited,
                             _EnvState.state_primer_conf_file_abs_path_inited.name: state_primer_conf_file_abs_path_inited,
                         }
@@ -3055,11 +3055,11 @@ class _Node_state_primer_conf_file_data_loaded(_AbstractCachingStateNode[dict]):
             )
 
             # ===
-            # `ConfLeap.leap_primer`:
+            # `_ConfLeap.leap_primer`:
             print(
                 json.dumps(
                     {
-                        ConfLeap.leap_primer.name: file_data,
+                        _ConfLeap.leap_primer.name: file_data,
                     },
                     indent=4,
                 )
@@ -3132,7 +3132,7 @@ class _Node_state_global_conf_dir_abs_path_inited(_AbstractCachingStateNode[str]
         if field_client_config_dir_rel_path is None:
             state_global_conf_dir_abs_path_inited = os.path.join(
                 state_ref_root_dir_abs_path_inited,
-                ConfConstPrimer.default_client_conf_dir_rel_path,
+                _ConfConstPrimer.default_client_conf_dir_rel_path,
             )
         else:
             state_global_conf_dir_abs_path_inited = os.path.join(
@@ -3202,7 +3202,7 @@ class _Node_state_client_conf_file_data_loaded(_AbstractCachingStateNode[dict]):
             print(
                 json.dumps(
                     {
-                        ConfLeap.leap_client.name: file_data,
+                        _ConfLeap.leap_client.name: file_data,
                     },
                     indent=4,
                 )
@@ -3224,14 +3224,14 @@ class _BaseNode_state_selected_env_dir_rel_path(_AbstractCachingStateNode[str]):
         client_local_env_dir_abs_path: str = self._select_client_local_env_dir_abs_path(client_local_env_dir_any_path)
 
         if not os.path.isdir(client_local_env_dir_abs_path):
-            raise AssertionError(f"`{PathName.path_selected_env.value}` [{client_local_env_dir_abs_path}] must be a dir.")
+            raise AssertionError(f"`{_PathName.path_selected_env.value}` [{client_local_env_dir_abs_path}] must be a dir.")
 
         state_ref_root_dir_abs_path_inited = self.eval_parent_state(_EnvState.state_ref_root_dir_abs_path_inited.name)
         if not _is_sub_path(
             client_local_env_dir_abs_path,
             state_ref_root_dir_abs_path_inited,
         ):
-            raise AssertionError(f"`{PathName.path_selected_env.value}` [{client_local_env_dir_abs_path}] is not under `{_EnvState.state_ref_root_dir_abs_path_inited.name}` [{state_ref_root_dir_abs_path_inited}].")
+            raise AssertionError(f"`{_PathName.path_selected_env.value}` [{client_local_env_dir_abs_path}] is not under `{_EnvState.state_ref_root_dir_abs_path_inited.name}` [{state_ref_root_dir_abs_path_inited}].")
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
         state_selected_env_dir_rel_path_inited: str = os.path.normpath(
             _rel_path(
@@ -3296,7 +3296,7 @@ class _BaseNode_state_selected_env_dir_rel_path(_AbstractCachingStateNode[str]):
                 )
                 if os.path.isdir(abs_path):
                     return abs_path
-            raise AssertionError(f"`{PathName.path_selected_env.value}` [{client_local_env_dir_any_path}] is relative to neither `{PathName.path_ref_root.value}` [{state_ref_root_dir_abs_path_inited}] nor curr dir [{os.getcwd()}].")
+            raise AssertionError(f"`{_PathName.path_selected_env.value}` [{client_local_env_dir_any_path}] is relative to neither `{_PathName.path_ref_root.value}` [{state_ref_root_dir_abs_path_inited}] nor curr dir [{os.getcwd()}].")
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
 # noinspection PyPep8Naming
@@ -3496,7 +3496,7 @@ class _Node_state_env_conf_file_data_loaded(_AbstractCachingStateNode[dict]):
             print(
                 json.dumps(
                     {
-                        ConfLeap.leap_env.name: file_data,
+                        _ConfLeap.leap_env.name: file_data,
                     },
                     indent=4,
                 )
@@ -3529,7 +3529,7 @@ class _Node_state_required_python_version_inited(AbstractOverriddenFieldCachingS
         if state_required_python_version_inited is None:
             python_version_file_abs_path: str | None = _find_python_version_file(state_ref_root_dir_abs_path_inited)
             if python_version_file_abs_path is None:
-                raise AssertionError(f"Both field [{ConfField.field_required_python_version.name}] value is [{state_required_python_version_inited}] and no file [{ConfConstGeneral.python_version_file_basename}] found walking up from [{state_ref_root_dir_abs_path_inited}] dir.")
+                raise AssertionError(f"Both field [{ConfField.field_required_python_version.name}] value is [{state_required_python_version_inited}] and no file [{_ConfConstGeneral.python_version_file_basename}] found walking up from [{state_ref_root_dir_abs_path_inited}] dir.")
             logger.info(f"Using file [{python_version_file_abs_path}] as field [{ConfField.field_required_python_version.name}] value is [{state_required_python_version_inited}].")
             state_required_python_version_inited = _read_text_file(python_version_file_abs_path).strip()
 
@@ -3624,7 +3624,7 @@ class _Node_state_local_venv_dir_abs_path_inited(AbstractOverriddenFieldCachingS
             ConfField.field_local_venv_dir_rel_path.value,
             # TODO: TODO_20_07_74_69.configure_dirs_at_client_level.md:
             # TODO: Do not use default values directly - resolve it differently at the prev|next step based on the need:
-            ConfConstEnv.default_dir_rel_path_venv,
+            _ConfConstEnv.default_dir_rel_path_venv,
         )
 
         if not os.path.isabs(state_local_venv_dir_abs_path_inited):
@@ -3655,7 +3655,7 @@ class _Node_state_local_log_dir_abs_path_inited(AbstractOverriddenFieldCachingSt
 
         field_local_log_dir_rel_path: str = self._get_overridden_value_or_default(
             ConfField.field_local_log_dir_rel_path.value,
-            ConfConstEnv.default_dir_rel_path_log,
+            _ConfConstEnv.default_dir_rel_path_log,
         )
 
         state_ref_root_dir_abs_path_inited: str = self.eval_parent_state(_EnvState.state_ref_root_dir_abs_path_inited.name)
@@ -3687,7 +3687,7 @@ class _Node_state_local_run_dir_abs_path_inited(AbstractOverriddenFieldCachingSt
 
         field_local_run_dir_rel_path: str = self._get_overridden_value_or_default(
             ConfField.field_local_run_dir_rel_path.value,
-            ConfConstEnv.default_dir_rel_path_run,
+            _ConfConstEnv.default_dir_rel_path_run,
         )
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
         state_ref_root_dir_abs_path_inited: str = self.eval_parent_state(_EnvState.state_ref_root_dir_abs_path_inited.name)
@@ -3719,7 +3719,7 @@ class _Node_state_local_tmp_dir_abs_path_inited(AbstractOverriddenFieldCachingSt
 
         field_local_tmp_dir_rel_path: str = self._get_overridden_value_or_default(
             ConfField.field_local_tmp_dir_rel_path.value,
-            ConfConstEnv.default_dir_rel_path_tmp,
+            _ConfConstEnv.default_dir_rel_path_tmp,
         )
 
         state_ref_root_dir_abs_path_inited: str = self.eval_parent_state(_EnvState.state_ref_root_dir_abs_path_inited.name)
@@ -3751,7 +3751,7 @@ class _Node_state_local_cache_dir_abs_path_inited(AbstractOverriddenFieldCaching
 
         field_local_cache_dir_rel_path: str = self._get_overridden_value_or_default(
             ConfField.field_local_cache_dir_rel_path.value,
-            ConfConstEnv.default_dir_rel_path_cache,
+            _ConfConstEnv.default_dir_rel_path_cache,
         )
 
         state_ref_root_dir_abs_path_inited: str = self.eval_parent_state(_EnvState.state_ref_root_dir_abs_path_inited.name)
@@ -3791,7 +3791,7 @@ class _Node_state_venv_driver_inited(AbstractOverriddenFieldCachingStateNode[Ven
         if selected_version < uv_min_version:
             default_venv_driver = VenvDriverType.venv_pip.name
         else:
-            default_venv_driver = ConfConstEnv.default_venv_driver
+            default_venv_driver = _ConfConstEnv.default_venv_driver
 
         state_venv_driver_inited: VenvDriverType
         venv_driver_name: str | None = os.environ.get(EnvVar.var_PROTOPRIMER_VENV_DRIVER.value, None)
@@ -3831,7 +3831,7 @@ class _Node_state_version_constraints_file_basename_inited(AbstractOverriddenFie
     def _eval_state_once(self) -> _ValueType:
         return self._get_overridden_value_or_default(
             ConfField.field_version_constraints_file_basename.value,
-            ConfConstEnv.default_version_constraints_file_basename,
+            _ConfConstEnv.default_version_constraints_file_basename,
         )
 
 
@@ -3851,7 +3851,7 @@ class _Node_state_project_descriptors_inited(AbstractOverriddenFieldCachingState
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
         project_descriptors: list = self._get_overridden_value_or_default(
             ConfField.field_project_descriptors.value,
-            ConfConstEnv.default_project_descriptors,
+            _ConfConstEnv.default_project_descriptors,
         )
 
         return project_descriptors
@@ -3873,7 +3873,7 @@ class _Node_state_install_specs_inited(AbstractOverriddenFieldCachingStateNode[l
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
         install_specs: list = self._get_overridden_value_or_default(
             ConfField.field_install_specs.value,
-            ConfConstEnv.default_install_specs,
+            _ConfConstEnv.default_install_specs,
         )
 
         return install_specs
@@ -3894,24 +3894,24 @@ class _Node_state_derived_conf_data_loaded(_AbstractCachingStateNode[dict]):
     ):
         self.derived_data_env_states: list[str] = [
             # ===
-            # `ConfLeap.leap_input`
+            # `_ConfLeap.leap_input`
             _EnvState.state_proto_kernel_file_abs_path_inited.name,
             _EnvState.state_primer_conf_file_abs_path_inited.name,
             # ===
-            # `ConfLeap.leap_primer`
+            # `_ConfLeap.leap_primer`
             _EnvState.state_ref_root_dir_abs_path_inited.name,
             _EnvState.state_global_conf_dir_abs_path_inited.name,
             _EnvState.state_global_conf_file_abs_path_inited.name,
             # ===
-            # `ConfLeap.leap_client`
+            # `_ConfLeap.leap_client`
             _EnvState.state_selected_env_dir_rel_path_inited.name,
             _EnvState.state_local_conf_symlink_abs_path_inited.name,
             _EnvState.state_local_conf_file_abs_path_inited.name,
             # ===
-            # `ConfLeap.leap_env`
+            # `_ConfLeap.leap_env`
             # nothing specific
             # ===
-            # `ConfLeap.leap_derived`
+            # `_ConfLeap.leap_derived`
             _EnvState.state_required_python_version_inited.name,
             _EnvState.state_selected_python_file_abs_path_inited.name,
             _EnvState.state_local_venv_dir_abs_path_inited.name,
@@ -3954,7 +3954,7 @@ class _Node_state_derived_conf_data_loaded(_AbstractCachingStateNode[dict]):
             print(
                 json.dumps(
                     {
-                        ConfLeap.leap_derived.name: config_data_derived,
+                        _ConfLeap.leap_derived.name: config_data_derived,
                     },
                     indent=4,
                 )
@@ -3976,7 +3976,7 @@ class _Node_state_effective_conf_data_printed(_AbstractCachingStateNode[int]):
     def _eval_state_once(self) -> _ValueType:
         # Nothing to do:
         # If we reach this state,
-        # then, transitively, effective configs for all `ConfLeap.*` has been printed.
+        # then, transitively, effective configs for all `_ConfLeap.*` has been printed.
         return 0
 
 
@@ -4225,7 +4225,7 @@ class _Factory_state_reset_triggered(_NodeFactory[bool]):
 
 # noinspection PyPep8Naming
 @conditional_factory
-class _Node_state_venv_driver_prepared_is_app(_AbstractCachingStateNode[VenvDriverBase]):
+class _Node_state_venv_driver_prepared_is_app(_AbstractCachingStateNode[_VenvDriverBase]):
     _parent_states = staticmethod(
         lambda: [
             _EnvState.state_input_exec_operation_loaded.name,
@@ -4253,9 +4253,9 @@ class _Node_state_venv_driver_prepared_is_app(_AbstractCachingStateNode[VenvDriv
 
         state_local_cache_dir_abs_path_inited: str = self.eval_parent_state(_EnvState.state_local_cache_dir_abs_path_inited.name)
 
-        venv_driver: VenvDriverBase
+        venv_driver: _VenvDriverBase
         if VenvDriverType.venv_uv == state_venv_driver_inited:
-            venv_driver = VenvDriverUv(
+            venv_driver = _VenvDriverUv(
                 required_python_version=state_required_python_version_inited,
                 selected_python_file_abs_path=state_selected_python_file_abs_path_inited,
                 state_local_venv_dir_abs_path_inited=state_local_venv_dir_abs_path_inited,
@@ -4264,7 +4264,7 @@ class _Node_state_venv_driver_prepared_is_app(_AbstractCachingStateNode[VenvDriv
         elif VenvDriverType.venv_pip == state_venv_driver_inited:
             # Nothing to do:
             # `VenvDriverType.venv_pip` is available by default with the new `venv` without installation.
-            venv_driver = VenvDriverPip(
+            venv_driver = _VenvDriverPip(
                 required_python_version=state_required_python_version_inited,
                 selected_python_file_abs_path=state_selected_python_file_abs_path_inited,
                 state_local_venv_dir_abs_path_inited=state_local_venv_dir_abs_path_inited,
@@ -4278,20 +4278,20 @@ class _Node_state_venv_driver_prepared_is_app(_AbstractCachingStateNode[VenvDriv
 
 # noinspection PyPep8Naming
 @conditional_factory
-class _Node_state_venv_driver_prepared_not_is_app(_AbstractCachingStateNode[VenvDriverBase]):
+class _Node_state_venv_driver_prepared_not_is_app(_AbstractCachingStateNode[_VenvDriverBase]):
     _state_name = staticmethod(lambda: _EnvState.state_venv_driver_prepared.name)
 
     def _eval_state_once(self) -> _ValueType:
         # The only reason for `_EnvState.state_venv_driver_prepared`
-        # is to prepare `VenvDriverBase` to create `venv`.
+        # is to prepare `_VenvDriverBase` to create `venv`.
         # Skip it as `venv` is supposed to be ready in `_ExecOperation.op_start`:
-        return VenvDriverBase()
+        return _VenvDriverBase()
 
 
 # noinspection PyPep8Naming
-class _Factory_state_venv_driver_prepared(_NodeFactory[VenvDriverBase]):
+class _Factory_state_venv_driver_prepared(_NodeFactory[_VenvDriverBase]):
 
-    def create_state_node(self) -> _StateNode[VenvDriverBase]:
+    def create_state_node(self) -> _StateNode[_VenvDriverBase]:
         if self.env_ctx._is_app:
             return _Node_state_venv_driver_prepared_is_app(self.env_ctx)
         else:
@@ -4337,7 +4337,7 @@ class _Node_state_stride_py_venv_reached_is_app(_AbstractCachingStateNode[StateS
         state_selected_python_file_abs_path_inited: str = self.eval_parent_state(_EnvState.state_selected_python_file_abs_path_inited.name)
         state_local_venv_dir_abs_path_inited: str = self.eval_parent_state(_EnvState.state_local_venv_dir_abs_path_inited.name)
 
-        state_venv_driver_prepared: VenvDriverBase = self.eval_parent_state(_EnvState.state_venv_driver_prepared.name)
+        state_venv_driver_prepared: _VenvDriverBase = self.eval_parent_state(_EnvState.state_venv_driver_prepared.name)
 
         state_local_conf_symlink_abs_path_inited: str = self.eval_parent_state(_EnvState.state_local_conf_symlink_abs_path_inited.name)
         state_version_constraints_file_basename_inited: str = self.eval_parent_state(_EnvState.state_version_constraints_file_basename_inited.name)
@@ -4348,7 +4348,7 @@ class _Node_state_stride_py_venv_reached_is_app(_AbstractCachingStateNode[StateS
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
         venv_path_to_python: str = os.path.join(
             state_local_venv_dir_abs_path_inited,
-            ConfConstGeneral.file_rel_path_venv_python,
+            _ConfConstGeneral.file_rel_path_venv_python,
         )
         path_to_curr_python: str = _get_path_to_curr_python()
         logger.debug(f"path_to_curr_python: {path_to_curr_python}")
@@ -4443,7 +4443,7 @@ class _Node_state_stride_py_venv_reached_not_is_app(_AbstractCachingStateNode[St
 
         venv_path_to_python: str = os.path.join(
             state_local_venv_dir_abs_path_inited,
-            ConfConstGeneral.file_rel_path_venv_python,
+            _ConfConstGeneral.file_rel_path_venv_python,
         )
         return _switch_python(
             curr_python_path=_get_path_to_curr_python(),
@@ -4509,7 +4509,7 @@ class _Node_state_protoprimer_package_installed_is_app(_AbstractCachingStateNode
 
         state_install_specs_inited: list[dict] = self.eval_parent_state(_EnvState.state_install_specs_inited.name)
 
-        state_venv_driver_prepared: VenvDriverBase = self.eval_parent_state(_EnvState.state_venv_driver_prepared.name)
+        state_venv_driver_prepared: _VenvDriverBase = self.eval_parent_state(_EnvState.state_venv_driver_prepared.name)
 
         state_version_constraints_file_basename_inited: str = self.eval_parent_state(_EnvState.state_version_constraints_file_basename_inited.name)
 
@@ -4662,7 +4662,7 @@ class _Node_state_version_constraints_generated_is_app(_AbstractCachingStateNode
 
         state_local_conf_symlink_abs_path_inited: str = self.eval_parent_state(_EnvState.state_local_conf_symlink_abs_path_inited.name)
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-        state_venv_driver_prepared: VenvDriverBase = self.eval_parent_state(_EnvState.state_venv_driver_prepared.name)
+        state_venv_driver_prepared: _VenvDriverBase = self.eval_parent_state(_EnvState.state_venv_driver_prepared.name)
 
         state_version_constraints_file_basename_inited: str = self.eval_parent_state(_EnvState.state_version_constraints_file_basename_inited.name)
 
@@ -4739,7 +4739,7 @@ class _Node_state_stride_deps_updated_reached_is_app(_AbstractCachingStateNode[S
 
         venv_path_to_python: str = os.path.join(
             state_local_venv_dir_abs_path_inited,
-            ConfConstGeneral.file_rel_path_venv_python,
+            _ConfConstGeneral.file_rel_path_venv_python,
         )
 
         state_input_start_id_var_loaded: str = self.eval_parent_state(_EnvState.state_input_start_id_var_loaded.name)
@@ -4823,8 +4823,8 @@ class _Node_state_proto_kernel_updated_is_app(_AbstractCachingStateNode[bool]):
             import protoprimer
         except ImportError:
             logger.warning(
-                f"Module `{ConfConstGeneral.name_protoprimer_package}` is missing in `venv`. "
-                f"{_get_import_error_hint(ConfConstGeneral.name_protoprimer_package)} "
+                f"Module `{_ConfConstGeneral.name_protoprimer_package}` is missing in `venv`. "
+                f"{_get_import_error_hint(_ConfConstGeneral.name_protoprimer_package)} "
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
             )
             # FT_21_75_54_18.instant_scenario.md:
@@ -4834,8 +4834,8 @@ class _Node_state_proto_kernel_updated_is_app(_AbstractCachingStateNode[bool]):
         # Use generator from an immutable (source) `primer_kernel`
         # instead of the current local (target) `proto_kernel` module to avoid:
         # generated code inside generated code inside generated code ...
-        generated_content_single_header: str = protoprimer.primer_kernel.ConfConstGeneral.func_get_proto_kernel_generated_boilerplate_single_header(protoprimer.primer_kernel)
-        generated_content_multiple_body: str = protoprimer.primer_kernel.ConfConstGeneral.func_get_proto_kernel_generated_boilerplate_multiple_body(protoprimer.primer_kernel)
+        generated_content_single_header: str = protoprimer.primer_kernel._ConfConstGeneral.func_get_proto_kernel_generated_boilerplate_single_header(protoprimer.primer_kernel)
+        generated_content_multiple_body: str = protoprimer.primer_kernel._ConfConstGeneral.func_get_proto_kernel_generated_boilerplate_multiple_body(protoprimer.primer_kernel)
 
         # Use `primer_kernel` from installed package as the source for `proto_kernel` update:
         primer_kernel_abs_path = os.path.abspath(str(protoprimer.primer_kernel.__file__))
@@ -4846,7 +4846,7 @@ class _Node_state_proto_kernel_updated_is_app(_AbstractCachingStateNode[bool]):
         proto_kernel_text_with_body = _replace_multiple_body_in_empty_lines(
             input_text=primer_kernel_text,
             boilerplate_text=generated_content_multiple_body,
-            min_lines_between=ConfConstGeneral.min_lines_between_generated_boilerplate,
+            min_lines_between=_ConfConstGeneral.min_lines_between_generated_boilerplate,
         )
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
         # Update header:
@@ -4912,7 +4912,7 @@ class _Node_state_stride_src_updated_reached(_AbstractCachingStateNode[StateStri
 
         venv_path_to_python: str = os.path.join(
             state_local_venv_dir_abs_path_inited,
-            ConfConstGeneral.file_rel_path_venv_python,
+            _ConfConstGeneral.file_rel_path_venv_python,
         )
 
         state_input_start_id_var_loaded: str = self.eval_parent_state(_EnvState.state_input_start_id_var_loaded.name)
@@ -5169,7 +5169,7 @@ class _EnvState(enum.Enum):
 
     state_primer_conf_file_abs_path_inited = _Node_state_primer_conf_file_abs_path_inited
 
-    # `ConfLeap.leap_primer`:
+    # `_ConfLeap.leap_primer`:
     state_primer_conf_file_data_loaded = _Node_state_primer_conf_file_data_loaded
 
     state_ref_root_dir_abs_path_inited = _Node_state_ref_root_dir_abs_path_inited
@@ -5178,7 +5178,7 @@ class _EnvState(enum.Enum):
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     state_global_conf_file_abs_path_inited = _Node_state_global_conf_file_abs_path_inited
 
-    # `ConfLeap.leap_client`:
+    # `_ConfLeap.leap_client`:
     state_client_conf_file_data_loaded = _Node_state_client_conf_file_data_loaded
 
     state_selected_env_dir_rel_path_inited = _Factory_state_selected_env_dir_rel_path_inited
@@ -5187,7 +5187,7 @@ class _EnvState(enum.Enum):
 
     state_local_conf_file_abs_path_inited = _Node_state_local_conf_file_abs_path_inited
 
-    # `ConfLeap.leap_env`:
+    # `_ConfLeap.leap_env`:
     state_env_conf_file_data_loaded = _Node_state_env_conf_file_data_loaded
 
     state_required_python_version_inited = _Node_state_required_python_version_inited
@@ -5225,7 +5225,7 @@ class _EnvState(enum.Enum):
 
     state_install_specs_inited = _Node_state_install_specs_inited
 
-    # `ConfLeap.leap_derived`:
+    # `_ConfLeap.leap_derived`:
     state_derived_conf_data_loaded = _Node_state_derived_conf_data_loaded
 
     state_effective_conf_data_printed = _Node_state_effective_conf_data_printed
@@ -5470,23 +5470,23 @@ class _EnvContext:
         status_name: str
         is_reportable: bool
         if exit_code == 0:
-            color_status = f"{TermColor.back_dark_green.value}{TermColor.fore_dark_black.value}"
+            color_status = f"{_TermColor.back_dark_green.value}{_TermColor.fore_dark_black.value}"
             status_name = "SUCCESS"
             is_reportable = state_default_stderr_log_handler_configured.level <= logging.INFO
         else:
             if not test_failure and _is_test_run():
                 # Avoid confusing output with "FAILURE" in tests:
                 status_name = "TEST_EXIT"
-                color_status = f"{TermColor.back_dark_yellow.value}{TermColor.fore_dark_black.value}"
+                color_status = f"{_TermColor.back_dark_yellow.value}{_TermColor.fore_dark_black.value}"
             else:
                 status_name = "FAILURE"
-                color_status = f"{TermColor.back_dark_red.value}{TermColor.fore_bright_white.value}"
+                color_status = f"{_TermColor.back_dark_red.value}{_TermColor.fore_bright_white.value}"
 
             is_reportable = state_default_stderr_log_handler_configured.level <= logging.CRITICAL
 
         if is_reportable:
             print(
-                f"{color_status}{status_name}{TermColor.reset_style.value} [{exit_code}]: {_get_path_to_curr_python()} {_get_script_command_line()}",
+                f"{color_status}{status_name}{_TermColor.reset_style.value} [{exit_code}]: {_get_path_to_curr_python()} {_get_script_command_line()}",
                 file=sys.stderr,
                 flush=True,
             )
@@ -5549,7 +5549,7 @@ class StateStrideFilter(logging.Filter):
         record.py_exec_name = StateStride[
             os.getenv(
                 EnvVar.var_PROTOPRIMER_PY_EXEC.value,
-                ConfConstInput.default_PROTOPRIMER_PY_EXEC,
+                _ConfConstInput.default_PROTOPRIMER_PY_EXEC,
             )
         ]
         record.state_stride = log_stride.get(StateStride.stride_py_unknown)
@@ -5631,14 +5631,14 @@ class DefaultStderrLogFormatter(UtcTimeFormatter):
     Custom formatter with color and format based on log level for stderr.
     """
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-    color_reset = TermColor.reset_style.value
+    color_reset = _TermColor.reset_style.value
     color_set = {
-        "CRITICAL": TermColor.fore_bold_dark_red.value,
-        "ERROR": TermColor.fore_dark_red.value,
+        "CRITICAL": _TermColor.fore_bold_dark_red.value,
+        "ERROR": _TermColor.fore_dark_red.value,
         # The default is "WARNING" - see: FT_38_73_38_52.log_verbosity.md
-        "WARNING": TermColor.fore_dark_yellow.value,
-        "INFO": TermColor.fore_dark_green.value,
-        "DEBUG": TermColor.fore_dark_cyan.value,
+        "WARNING": _TermColor.fore_dark_yellow.value,
+        "INFO": _TermColor.fore_dark_green.value,
+        "DEBUG": _TermColor.fore_dark_cyan.value,
         # NOTE: `logging.DEBUG` practically the lowest:
         #       *   Level `logging.NOTSET` is 0 and is not printed (effectively, disabled).
         #       *   And numerical levels like 5 (even if printed) have no given names.
@@ -5799,7 +5799,7 @@ def _configure_primer_file_log_handler(
             write_text_file(
                 log_file_abs_path,
                 f"""
-{ConfConstGeneral.log_section_delimiter} file log starts at [{StateStride.stride_py_arbitrary.name}] after its config is resolved {ConfConstGeneral.log_section_delimiter}
+{_ConfConstGeneral.log_section_delimiter} file log starts at [{StateStride.stride_py_arbitrary.name}] after its config is resolved {_ConfConstGeneral.log_section_delimiter}
 
 """,
             )
@@ -5857,7 +5857,7 @@ def _find_python_version_file(curr_dir_any_path=".") -> str | None:
     while True:
         file_abs_path = os.path.join(
             curr_dir_abs_path,
-            ConfConstGeneral.python_version_file_basename,
+            _ConfConstGeneral.python_version_file_basename,
         )
 
         if os.path.isfile(file_abs_path):
@@ -5890,7 +5890,7 @@ def _switch_python(
     curr_py_exec: StateStride = StateStride[
         os.getenv(
             EnvVar.var_PROTOPRIMER_PY_EXEC.value,
-            ConfConstInput.default_PROTOPRIMER_PY_EXEC,
+            _ConfConstInput.default_PROTOPRIMER_PY_EXEC,
         )
     ]
 
@@ -5923,7 +5923,7 @@ def _switch_python(
     if proto_kernel_abs_file_path is not None:
         required_environ[EnvVar.var_PROTOPRIMER_PROTO_KERNEL.value] = proto_kernel_abs_file_path
 
-    logger.info(f"switching from current `python` executable [{curr_python_path}][{curr_py_exec.name}] to [{next_python_path}][{next_py_exec.name}] with `{EnvVar.var_PROTOPRIMER_PROTO_KERNEL.value}`[{proto_kernel_abs_file_path}] exec_argv: {exec_argv}" "\n" "\n" f"{ConfConstGeneral.log_section_delimiter} before: [{curr_py_exec.name}] <<< restart >>> after: [{next_py_exec.name}] {ConfConstGeneral.log_section_delimiter}" "\n")
+    logger.info(f"switching from current `python` executable [{curr_python_path}][{curr_py_exec.name}] to [{next_python_path}][{next_py_exec.name}] with `{EnvVar.var_PROTOPRIMER_PROTO_KERNEL.value}`[{proto_kernel_abs_file_path}] exec_argv: {exec_argv}" "\n" "\n" f"{_ConfConstGeneral.log_section_delimiter} before: [{curr_py_exec.name}] <<< restart >>> after: [{next_py_exec.name}] {_ConfConstGeneral.log_section_delimiter}" "\n")
 
     # FT_41_45_81_49.trace_mode.md
     # ensure `stdout` data is not lost on `os.execve`
@@ -6008,7 +6008,7 @@ def _get_path_to_base_python() -> str:
     # Instead, there are versioned ones like `python3.10`:
     path_to_next_python: str = os.path.join(
         sys.base_prefix,
-        ConfConstGeneral.file_rel_path_venv_bin,
+        _ConfConstGeneral.file_rel_path_venv_bin,
         executable_basename,
     )
     if os.path.exists(path_to_next_python):
@@ -6016,7 +6016,7 @@ def _get_path_to_base_python() -> str:
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     path_to_next_python = os.path.join(
         sys.base_prefix,
-        ConfConstGeneral.file_rel_path_venv_python,
+        _ConfConstGeneral.file_rel_path_venv_python,
     )
     return path_to_next_python
 
@@ -6135,7 +6135,7 @@ def _is_venv() -> bool:
 def _is_uv_venv(venv_cfg_file_abs_path: str) -> bool:
     with open(venv_cfg_file_abs_path, "r") as cfg_file:
         for file_line in cfg_file:
-            if file_line.strip().startswith(f"{ConfConstGeneral.name_uv_package} ="):
+            if file_line.strip().startswith(f"{_ConfConstGeneral.name_uv_package} ="):
                 return True
     return False
 
@@ -6149,13 +6149,13 @@ def _is_test_run() -> bool:
     """
     See: FT_83_60_72_19.test_perimeter.md
     """
-    return ConfConstGeneral.pytest_module in sys.modules
+    return _ConfConstGeneral.pytest_module in sys.modules
 
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 def _get_venv_type(local_venv_dir_abs_path: str) -> VenvDriverType:
     venv_cfg_file_abs_path = os.path.join(
         local_venv_dir_abs_path,
-        ConfConstGeneral.venv_config_file_basename,
+        _ConfConstGeneral.venv_config_file_basename,
     )
     if not os.path.exists(venv_cfg_file_abs_path):
         raise AssertionError(f"File [{venv_cfg_file_abs_path}] does not exist")
@@ -6282,10 +6282,10 @@ def _select_python_file_abs_path(
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     external_select_python_file_abs_path = getattr(
         python_selector_module,
-        SelectorFunc.select_python_file_abs_path.value,
+        _SelectorFunc.select_python_file_abs_path.value,
     )
 
-    logger.debug(f"running `{SelectorFunc.select_python_file_abs_path.value}` from `{proto_module_name}`")
+    logger.debug(f"running `{_SelectorFunc.select_python_file_abs_path.value}` from `{proto_module_name}`")
     selected_python_abs_path: str | None = external_select_python_file_abs_path(required_version)
     logger.debug(f"returned `selected_python_abs_path` value [{selected_python_abs_path}]")
 
@@ -6376,15 +6376,15 @@ def _log_python_context(log_level: int = logging.INFO):
     """
     logger.log(
         log_level,
-        f"`{ConfConstInput.ext_env_var_VIRTUAL_ENV}`: {os.environ.get(ConfConstInput.ext_env_var_VIRTUAL_ENV, None)}",
+        f"`{_ConfConstInput.ext_env_var_VIRTUAL_ENV}`: {os.environ.get(_ConfConstInput.ext_env_var_VIRTUAL_ENV, None)}",
     )
     logger.log(
         log_level,
-        f"`{ConfConstInput.ext_env_var_PATH}`: {os.environ.get(ConfConstInput.ext_env_var_PATH, None)}",
+        f"`{_ConfConstInput.ext_env_var_PATH}`: {os.environ.get(_ConfConstInput.ext_env_var_PATH, None)}",
     )
     logger.log(
         log_level,
-        f"`{ConfConstInput.ext_env_var_PYTHONPATH}`: {os.environ.get(ConfConstInput.ext_env_var_PYTHONPATH, None)}",
+        f"`{_ConfConstInput.ext_env_var_PYTHONPATH}`: {os.environ.get(_ConfConstInput.ext_env_var_PYTHONPATH, None)}",
     )
     logger.log(
         log_level,
@@ -6406,7 +6406,7 @@ def _log_python_context(log_level: int = logging.INFO):
 
 def _get_import_error_hint(meta_main_module: str) -> str:
     # See: UC_78_58_06_54.no_stray_packages.md
-    return f"Is `{meta_main_module}` a (transitive) dependency of any `{ConfConstClient.default_pyproject_toml_basename}` being installed?"
+    return f"Is `{meta_main_module}` a (transitive) dependency of any `{_ConfConstClient.default_pyproject_toml_basename}` being installed?"
 
 
 def get_proto_kernel_abs_path() -> str | None:
@@ -6414,7 +6414,7 @@ def get_proto_kernel_abs_path() -> str | None:
     return _proto_kernel_abs_path
 
 
-def get_config(conf_leap: ConfLeap) -> dict:
+def get_config(conf_leap: _ConfLeap) -> dict:
     """
     UC_54_26_66_63.lib_access_to_config_data.md:
     Retrieve config data for the specified `conf_leap` as a function call (without the process restarts).
@@ -6429,15 +6429,15 @@ def get_config(conf_leap: ConfLeap) -> dict:
     if False:
         _assert_proto_kernel_is_stand_alone(_proto_kernel_abs_path)
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-    _conf_leap_to_state: dict[ConfLeap, str] = {
-        ConfLeap.leap_primer: _EnvState.state_primer_conf_file_data_loaded.name,
-        ConfLeap.leap_client: _EnvState.state_client_conf_file_data_loaded.name,
-        ConfLeap.leap_env: _EnvState.state_env_conf_file_data_loaded.name,
-        ConfLeap.leap_derived: _EnvState.state_derived_conf_data_loaded.name,
+    _conf_leap_to_state: dict[_ConfLeap, str] = {
+        _ConfLeap.leap_primer: _EnvState.state_primer_conf_file_data_loaded.name,
+        _ConfLeap.leap_client: _EnvState.state_client_conf_file_data_loaded.name,
+        _ConfLeap.leap_env: _EnvState.state_env_conf_file_data_loaded.name,
+        _ConfLeap.leap_derived: _EnvState.state_derived_conf_data_loaded.name,
     }
 
     if conf_leap not in _conf_leap_to_state:
-        raise ValueError(f"Unsupported `ConfLeap` value: {conf_leap}")
+        raise ValueError(f"Unsupported `_ConfLeap` value: {conf_leap}")
 
     env_ctx = (
         _ContextBuilder()
@@ -6490,7 +6490,7 @@ def _generate_entry_script_content(
     # Built as a list of lines to survive stamped boilerplate lines.
     content_lines = [
         "#!/usr/bin/env python3",
-        ConfConstGeneral.entry_script_boilerplate_begin_marker,
+        _ConfConstGeneral.entry_script_boilerplate_begin_marker,
         "",
         "",
         "def import_proto_kernel(proto_kernel_rel_path: str):",
@@ -6528,15 +6528,15 @@ def _generate_entry_script_content(
     if module_name is None:
         # FT_21_75_54_18.instant_scenario.md
         # Run `_proto_main`:
-        main_func_arg = ConfConstGeneral.default_proto_main
+        main_func_arg = _ConfConstGeneral.default_proto_main
     else:
-        main_func_arg = f"{module_name}{ConfConstGeneral.module_func_separator}{func_name}"
+        main_func_arg = f"{module_name}{_ConfConstGeneral.module_func_separator}{func_name}"
 
     content_lines.extend(
         [
             f'    proto_kernel = import_proto_kernel("{proto_kernel_rel_path}")',
             f'    proto_kernel.{entry_func}("{main_func_arg}")',
-            ConfConstGeneral.entry_script_boilerplate_end_marker,
+            _ConfConstGeneral.entry_script_boilerplate_end_marker,
         ]
     )
 
@@ -6558,8 +6558,8 @@ def _merge_entry_script_content(
     if existing_entry_script_content is None:
         return generated_entry_script_content
 
-    begin_marker = ConfConstGeneral.entry_script_boilerplate_begin_marker
-    end_marker = ConfConstGeneral.entry_script_boilerplate_end_marker
+    begin_marker = _ConfConstGeneral.entry_script_boilerplate_begin_marker
+    end_marker = _ConfConstGeneral.entry_script_boilerplate_end_marker
 
     existing_lines = existing_entry_script_content.splitlines()
     if begin_marker not in existing_lines or end_marker not in existing_lines:
@@ -6649,11 +6649,11 @@ def _start_main(
     curr_py_exec = StateStride[
         os.getenv(
             EnvVar.var_PROTOPRIMER_PY_EXEC.value,
-            ConfConstInput.default_PROTOPRIMER_PY_EXEC,
+            _ConfConstInput.default_PROTOPRIMER_PY_EXEC,
         )
     ]
 
-    installed_kernel_name = f"{ConfConstGeneral.name_protoprimer_package}.{ConfConstGeneral.name_primer_kernel_module}"
+    installed_kernel_name = f"{_ConfConstGeneral.name_protoprimer_package}.{_ConfConstGeneral.name_primer_kernel_module}"
 
     try:
         if curr_py_exec.value >= StateStride.stride_src_updated.value:
@@ -6748,7 +6748,7 @@ def _start_main(
         if curr_py_exec.value >= StateStride.stride_py_venv.value and entry_func == _EntryFunc.func_start_app:
             raise AssertionError(
                 f"Failed to import `{import_error.name}` at [{curr_py_exec.name}]. "
-                f"Has `{TopDir.dir_venv.value}` been initialized via `{_ExecOperation.op_boot.value}` exec operation? "
+                f"Has `{_TopDir.dir_venv.value}` been initialized via `{_ExecOperation.op_boot.value}` exec operation? "
                 #
             ) from import_error
         raise import_error

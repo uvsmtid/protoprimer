@@ -8,7 +8,7 @@ from metaprimer.conf_renderer import (
 )
 from protoprimer.primer_kernel import (
     ConfField,
-    TermColor,
+    _TermColor,
 )
 
 
@@ -42,33 +42,33 @@ def test_render_env_config_data_with_unused_fields():
     )
 
     expected_output = f"""
-{TermColor.config_comment.value}# The `leap_env` data is loaded from the [/abs/path/to/file.json] file.{TermColor.reset_style.value}
+{_TermColor.config_comment.value}# The `leap_env` data is loaded from the [/abs/path/to/file.json] file.{_TermColor.reset_style.value}
 leap_env = (
     \n\
     {{
         \n\
-        {TermColor.config_comment.value}# This local environment-specific field overrides the global one (see description in `leap_client`).{TermColor.reset_style.value}
+        {_TermColor.config_comment.value}# This local environment-specific field overrides the global one (see description in `leap_client`).{_TermColor.reset_style.value}
         "required_python_version": "{test_python_version}",
         \n\
-        {TermColor.config_missing.value}# This local environment-specific field overrides the global one (see description in `leap_client`).{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# "python_selector_file_rel_path": None,{TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# This local environment-specific field overrides the global one (see description in `leap_client`).{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# "python_selector_file_rel_path": None,{_TermColor.reset_style.value}
         \n\
-        {TermColor.config_missing.value}# This local environment-specific field overrides the global one (see description in `leap_client`).{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# "local_venv_dir_rel_path": None,{TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# This local environment-specific field overrides the global one (see description in `leap_client`).{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# "local_venv_dir_rel_path": None,{_TermColor.reset_style.value}
         \n\
-        {TermColor.config_missing.value}# This local environment-specific field overrides the global one (see description in `leap_client`).{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# "local_log_dir_rel_path": None,{TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# This local environment-specific field overrides the global one (see description in `leap_client`).{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# "local_log_dir_rel_path": None,{_TermColor.reset_style.value}
         \n\
-        {TermColor.config_missing.value}# This local environment-specific field overrides the global one (see description in `leap_client`).{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# "local_tmp_dir_rel_path": None,{TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# This local environment-specific field overrides the global one (see description in `leap_client`).{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# "local_tmp_dir_rel_path": None,{_TermColor.reset_style.value}
         \n\
-        {TermColor.config_missing.value}# This local environment-specific field overrides the global one (see description in `leap_client`).{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# "local_cache_dir_rel_path": None,{TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# This local environment-specific field overrides the global one (see description in `leap_client`).{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# "local_cache_dir_rel_path": None,{_TermColor.reset_style.value}
         \n\
-        {TermColor.config_missing.value}# This local environment-specific field overrides the global one (see description in `leap_client`).{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# "venv_driver": None,{TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# This local environment-specific field overrides the global one (see description in `leap_client`).{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# "venv_driver": None,{_TermColor.reset_style.value}
         \n\
-        {TermColor.config_comment.value}# This local environment-specific field overrides the global one (see description in `leap_client`).{TermColor.reset_style.value}
+        {_TermColor.config_comment.value}# This local environment-specific field overrides the global one (see description in `leap_client`).{_TermColor.reset_style.value}
         "{ConfField.field_project_descriptors.value}": [
             \n\
             {{
@@ -80,7 +80,7 @@ leap_env = (
                     "test",
                 ],
                 \n\
-                {TermColor.config_unused.value}# This `list` is not used by the `protoprimer`.{TermColor.reset_style.value}
+                {_TermColor.config_unused.value}# This `list` is not used by the `protoprimer`.{_TermColor.reset_style.value}
                 "whatever_test": [
                     \n\
                     7,
@@ -88,7 +88,7 @@ leap_env = (
             }},
         ],
         \n\
-        {TermColor.config_unused.value}# This value is not used by the `protoprimer`.{TermColor.reset_style.value}
+        {_TermColor.config_unused.value}# This value is not used by the `protoprimer`.{_TermColor.reset_style.value}
         "whatever_test": 5,
     }}
 )\
@@ -108,35 +108,35 @@ def test_render_empty_env_config_data():
     )
 
     expected_output = f"""
-{TermColor.config_comment.value}# The `leap_env` data is loaded from the [/abs/path/to/file.json] file.{TermColor.reset_style.value}
+{_TermColor.config_comment.value}# The `leap_env` data is loaded from the [/abs/path/to/file.json] file.{_TermColor.reset_style.value}
 leap_env = (
     \n\
     {{
         \n\
-        {TermColor.config_missing.value}# This local environment-specific field overrides the global one (see description in `leap_client`).{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# "required_python_version": None,{TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# This local environment-specific field overrides the global one (see description in `leap_client`).{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# "required_python_version": None,{_TermColor.reset_style.value}
         \n\
-        {TermColor.config_missing.value}# This local environment-specific field overrides the global one (see description in `leap_client`).{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# "python_selector_file_rel_path": None,{TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# This local environment-specific field overrides the global one (see description in `leap_client`).{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# "python_selector_file_rel_path": None,{_TermColor.reset_style.value}
         \n\
-        {TermColor.config_missing.value}# This local environment-specific field overrides the global one (see description in `leap_client`).{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# "local_venv_dir_rel_path": None,{TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# This local environment-specific field overrides the global one (see description in `leap_client`).{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# "local_venv_dir_rel_path": None,{_TermColor.reset_style.value}
         \n\
-        {TermColor.config_missing.value}# This local environment-specific field overrides the global one (see description in `leap_client`).{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# "local_log_dir_rel_path": None,{TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# This local environment-specific field overrides the global one (see description in `leap_client`).{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# "local_log_dir_rel_path": None,{_TermColor.reset_style.value}
         \n\
-        {TermColor.config_missing.value}# This local environment-specific field overrides the global one (see description in `leap_client`).{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# "local_tmp_dir_rel_path": None,{TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# This local environment-specific field overrides the global one (see description in `leap_client`).{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# "local_tmp_dir_rel_path": None,{_TermColor.reset_style.value}
         \n\
-        {TermColor.config_missing.value}# This local environment-specific field overrides the global one (see description in `leap_client`).{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# "local_cache_dir_rel_path": None,{TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# This local environment-specific field overrides the global one (see description in `leap_client`).{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# "local_cache_dir_rel_path": None,{_TermColor.reset_style.value}
         \n\
-        {TermColor.config_missing.value}# This local environment-specific field overrides the global one (see description in `leap_client`).{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# "venv_driver": None,{TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# This local environment-specific field overrides the global one (see description in `leap_client`).{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# "venv_driver": None,{_TermColor.reset_style.value}
         \n\
-        {TermColor.config_missing.value}# This local environment-specific field overrides the global one (see description in `leap_client`).{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# "project_descriptors": [{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# ],{TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# This local environment-specific field overrides the global one (see description in `leap_client`).{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# "project_descriptors": [{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# ],{_TermColor.reset_style.value}
     }}
 )\
 """

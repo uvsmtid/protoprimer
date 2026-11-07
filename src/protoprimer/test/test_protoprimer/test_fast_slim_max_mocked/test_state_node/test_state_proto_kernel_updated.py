@@ -11,7 +11,7 @@ from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     _Factory_state_proto_kernel_file_abs_path_inited,
     _Factory_state_stride_deps_updated_reached,
-    ConfConstGeneral,
+    _ConfConstGeneral,
     _ContextBuilder,
     _EntryFunc,
     _EnvContext,
@@ -67,7 +67,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         # proto_kernel copy:
         proto_kernel_abs_file_path = os.path.join(
             mock_client_dir,
-            ConfConstGeneral.default_proto_kernel_basename,
+            _ConfConstGeneral.default_proto_kernel_basename,
         )
         self.fs.create_file(proto_kernel_abs_file_path)
 
@@ -92,11 +92,11 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         proto_kernel_obj = self.fs.get_object(proto_kernel_abs_file_path)
         self.assertIn(
-            ConfConstGeneral.func_get_proto_kernel_generated_boilerplate_single_header(protoprimer.primer_kernel),
+            _ConfConstGeneral.func_get_proto_kernel_generated_boilerplate_single_header(protoprimer.primer_kernel),
             proto_kernel_obj.contents,
         )
         self.assertIn(
-            ConfConstGeneral.func_get_proto_kernel_generated_boilerplate_multiple_body(protoprimer.primer_kernel),
+            _ConfConstGeneral.func_get_proto_kernel_generated_boilerplate_multiple_body(protoprimer.primer_kernel),
             proto_kernel_obj.contents,
         )
 

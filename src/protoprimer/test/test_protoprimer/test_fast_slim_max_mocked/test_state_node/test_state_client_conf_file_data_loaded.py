@@ -11,7 +11,7 @@ from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     _Node_state_global_conf_file_abs_path_inited,
-    ConfConstPrimer,
+    _ConfConstPrimer,
     _ContextBuilder,
     _EntryFunc,
     _EnvContext,
@@ -62,7 +62,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         os.chdir(mock_client_dir)
         state_global_conf_file_abs_path_inited = os.path.join(
             mock_client_dir,
-            ConfConstPrimer.default_client_conf_file_rel_path,
+            _ConfConstPrimer.default_client_conf_file_rel_path,
         )
         mock_factory_global_conf_file_abs_path_inited.return_value.eval_own_state.return_value = state_global_conf_file_abs_path_inited
         self.fs.create_file(
@@ -111,7 +111,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         os.chdir(mock_client_dir)
         state_global_conf_file_abs_path_inited = os.path.join(
             mock_client_dir,
-            ConfConstPrimer.default_client_conf_file_rel_path,
+            _ConfConstPrimer.default_client_conf_file_rel_path,
         )
         mock_factory_global_conf_file_abs_path_inited.return_value.eval_own_state.return_value = state_global_conf_file_abs_path_inited
 

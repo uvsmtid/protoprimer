@@ -8,7 +8,7 @@ from metaprimer.conf_renderer import (
 from protoprimer.primer_kernel import (
     ConfField,
     _EnvState,
-    TermColor,
+    _TermColor,
 )
 
 
@@ -37,71 +37,71 @@ def test_render_derived_config_data_with_unused_fields():
     )
 
     expected_output = f"""
-{TermColor.config_comment.value}# The `leap_derived` data is derived from other data - it is computed by:{TermColor.reset_style.value}
-{TermColor.config_comment.value}# *   applying defaults to missing field values{TermColor.reset_style.value}
-{TermColor.config_comment.value}# *   combining with other field values{TermColor.reset_style.value}
-{TermColor.config_comment.value}# Effectively, this is what ultimately used by the `protoprimer`.{TermColor.reset_style.value}
+{_TermColor.config_comment.value}# The `leap_derived` data is derived from other data - it is computed by:{_TermColor.reset_style.value}
+{_TermColor.config_comment.value}# *   applying defaults to missing field values{_TermColor.reset_style.value}
+{_TermColor.config_comment.value}# *   combining with other field values{_TermColor.reset_style.value}
+{_TermColor.config_comment.value}# Effectively, this is what ultimately used by the `protoprimer`.{_TermColor.reset_style.value}
 leap_derived = (
     \n\
     {{
         \n\
-        {TermColor.config_comment.value}# This value is derived from `state_proto_kernel_file_abs_path_inited` - see description in `leap_input`.{TermColor.reset_style.value}
+        {_TermColor.config_comment.value}# This value is derived from `state_proto_kernel_file_abs_path_inited` - see description in `leap_input`.{_TermColor.reset_style.value}
         "{_EnvState.state_proto_kernel_file_abs_path_inited.name}": "/abs/path/to/proto.py",
         \n\
-        {TermColor.config_missing.value}# This value is derived from `state_primer_conf_file_abs_path_inited` - see description in `leap_input`.{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# "state_primer_conf_file_abs_path_inited": None,{TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# This value is derived from `state_primer_conf_file_abs_path_inited` - see description in `leap_input`.{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# "state_primer_conf_file_abs_path_inited": None,{_TermColor.reset_style.value}
         \n\
-        {TermColor.config_missing.value}# This value is derived from `ref_root_dir_rel_path` - see description in `leap_primer`.{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# "state_ref_root_dir_abs_path_inited": None,{TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# This value is derived from `ref_root_dir_rel_path` - see description in `leap_primer`.{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# "state_ref_root_dir_abs_path_inited": None,{_TermColor.reset_style.value}
         \n\
-        {TermColor.config_missing.value}# This value is derived from `global_conf_dir_rel_path` - see description in `leap_primer`.{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# "state_global_conf_dir_abs_path_inited": None,{TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# This value is derived from `global_conf_dir_rel_path` - see description in `leap_primer`.{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# "state_global_conf_dir_abs_path_inited": None,{_TermColor.reset_style.value}
         \n\
-        {TermColor.config_missing.value}# This value is derived from `state_primer_conf_file_abs_path_inited` - see description in `leap_input`.{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# "state_global_conf_file_abs_path_inited": None,{TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# This value is derived from `state_primer_conf_file_abs_path_inited` - see description in `leap_input`.{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# "state_global_conf_file_abs_path_inited": None,{_TermColor.reset_style.value}
         \n\
-        {TermColor.config_missing.value}# This value is derived from `default_env_dir_rel_path` - see description in `leap_client`.{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# "state_selected_env_dir_rel_path_inited": None,{TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# This value is derived from `default_env_dir_rel_path` - see description in `leap_client`.{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# "state_selected_env_dir_rel_path_inited": None,{_TermColor.reset_style.value}
         \n\
-        {TermColor.config_missing.value}# This value is derived from `local_conf_symlink_rel_path` - see description in `leap_client`.{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# "state_local_conf_symlink_abs_path_inited": None,{TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# This value is derived from `local_conf_symlink_rel_path` - see description in `leap_client`.{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# "state_local_conf_symlink_abs_path_inited": None,{_TermColor.reset_style.value}
         \n\
-        {TermColor.config_missing.value}# This value is derived from `state_primer_conf_file_abs_path_inited` - see description in `leap_input`.{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# "state_local_conf_file_abs_path_inited": None,{TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# This value is derived from `state_primer_conf_file_abs_path_inited` - see description in `leap_input`.{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# "state_local_conf_file_abs_path_inited": None,{_TermColor.reset_style.value}
         \n\
-        {TermColor.config_missing.value}# This value is derived from `required_python_version` in `leap_client` (override-able in `leap_env`) - see description there.{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# "state_required_python_version_inited": None,{TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# This value is derived from `required_python_version` in `leap_client` (override-able in `leap_env`) - see description there.{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# "state_required_python_version_inited": None,{_TermColor.reset_style.value}
         \n\
-        {TermColor.config_missing.value}# This value is derived from `python_selector_file_rel_path` in `leap_client` (override-able in `leap_env`) - see description there.{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# "state_python_selector_file_abs_path_inited": None,{TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# This value is derived from `python_selector_file_rel_path` in `leap_client` (override-able in `leap_env`) - see description there.{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# "state_python_selector_file_abs_path_inited": None,{_TermColor.reset_style.value}
         \n\
-        {TermColor.config_missing.value}# This value is derived from `local_venv_dir_rel_path` in `leap_client` (override-able in `leap_env`) - see description there.{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# "state_local_venv_dir_abs_path_inited": None,{TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# This value is derived from `local_venv_dir_rel_path` in `leap_client` (override-able in `leap_env`) - see description there.{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# "state_local_venv_dir_abs_path_inited": None,{_TermColor.reset_style.value}
         \n\
-        {TermColor.config_missing.value}# This value is derived from `local_log_dir_rel_path` in `leap_client` (override-able in `leap_env`) - see description there.{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# "state_local_log_dir_abs_path_inited": None,{TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# This value is derived from `local_log_dir_rel_path` in `leap_client` (override-able in `leap_env`) - see description there.{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# "state_local_log_dir_abs_path_inited": None,{_TermColor.reset_style.value}
         \n\
-        {TermColor.config_missing.value}# This value is derived from `local_tmp_dir_rel_path` in `leap_client` (override-able in `leap_env`) - see description there.{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# "state_local_tmp_dir_abs_path_inited": None,{TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# This value is derived from `local_tmp_dir_rel_path` in `leap_client` (override-able in `leap_env`) - see description there.{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# "state_local_tmp_dir_abs_path_inited": None,{_TermColor.reset_style.value}
         \n\
-        {TermColor.config_missing.value}# This value is derived from `local_cache_dir_rel_path` in `leap_client` (override-able in `leap_env`) - see description there.{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# "state_local_cache_dir_abs_path_inited": None,{TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# This value is derived from `local_cache_dir_rel_path` in `leap_client` (override-able in `leap_env`) - see description there.{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# "state_local_cache_dir_abs_path_inited": None,{_TermColor.reset_style.value}
         \n\
-        {TermColor.config_missing.value}# This value is derived from `venv_driver` in `leap_client` (override-able in `leap_env`) - see description there.{TermColor.reset_style.value}
-        {TermColor.config_missing.value}# "state_venv_driver_inited": None,{TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# This value is derived from `venv_driver` in `leap_client` (override-able in `leap_env`) - see description there.{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# "state_venv_driver_inited": None,{_TermColor.reset_style.value}
         \n\
-        {TermColor.config_comment.value}# This value is derived from `project_descriptors` in `leap_client` (override-able in `leap_env`) - see description there.{TermColor.reset_style.value}
+        {_TermColor.config_comment.value}# This value is derived from `project_descriptors` in `leap_client` (override-able in `leap_env`) - see description there.{_TermColor.reset_style.value}
         "{_EnvState.state_project_descriptors_inited.name}": [
             \n\
             {{
                 \n\
-                {TermColor.config_comment.value}# This is similar to specifying the dir of `pyproject.toml` for `pip`:{TermColor.reset_style.value}
-                {TermColor.config_comment.value}# pip install path/to/project{TermColor.reset_style.value}
-                {TermColor.config_comment.value}# The path is relative to the `ref_root` dir specified in the `ref_root_dir_rel_path` field.{TermColor.reset_style.value}
+                {_TermColor.config_comment.value}# This is similar to specifying the dir of `pyproject.toml` for `pip`:{_TermColor.reset_style.value}
+                {_TermColor.config_comment.value}# pip install path/to/project{_TermColor.reset_style.value}
+                {_TermColor.config_comment.value}# The path is relative to the `ref_root` dir specified in the `ref_root_dir_rel_path` field.{_TermColor.reset_style.value}
                 "{ConfField.field_build_root_dir_rel_path.value}": "src/test_project",
                 \n\
-                {TermColor.config_comment.value}# This is similar to specifying a list of `extra_item`-s per `path/to/project` for `pip`:{TermColor.reset_style.value}
-                {TermColor.config_comment.value}# pip install path/to/project[extra_item_1,extra_item_2,...]{TermColor.reset_style.value}
+                {_TermColor.config_comment.value}# This is similar to specifying a list of `extra_item`-s per `path/to/project` for `pip`:{_TermColor.reset_style.value}
+                {_TermColor.config_comment.value}# pip install path/to/project[extra_item_1,extra_item_2,...]{_TermColor.reset_style.value}
                 "{ConfField.field_install_extras.value}": [
                     \n\
                     "test",
@@ -109,7 +109,7 @@ leap_derived = (
             }},
         ],
         \n\
-        {TermColor.config_unused.value}# This value is not used by the `protoprimer`.{TermColor.reset_style.value}
+        {_TermColor.config_unused.value}# This value is not used by the `protoprimer`.{_TermColor.reset_style.value}
         "whatever_test": 5,
     }}
 )\

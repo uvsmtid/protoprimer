@@ -4,9 +4,9 @@ import enum
 
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer.primer_kernel import (
-    ConfConstGeneral,
+    _ConfConstGeneral,
     EnvVar,
-    PathName,
+    _PathName,
     ValueName,
 )
 from test_protoprimer.test_primer_kernel_metadata.test_metadata.test_key_word import (
@@ -54,7 +54,7 @@ class EnvVarName(enum.Enum):
         env_var=EnvVar.var_PROTOPRIMER_MAIN_FUNC,
         name_category=NameCategory.category_name_only,
         name_components=[
-            ConfConstGeneral.name_protoprimer_package.upper(),
+            _ConfConstGeneral.name_protoprimer_package.upper(),
             KeyWord.key_main.value.upper(),
             KeyWord.key_func.value.upper(),
         ],
@@ -63,7 +63,7 @@ class EnvVarName(enum.Enum):
         env_var=EnvVar.var_PROTOPRIMER_STDERR_LOG_LEVEL,
         name_category=NameCategory.category_name_only,
         name_components=[
-            ConfConstGeneral.name_protoprimer_package.upper(),
+            _ConfConstGeneral.name_protoprimer_package.upper(),
             KeyWord.key_stderr.value.upper(),
             KeyWord.key_log.value.upper(),
             KeyWord.key_level.value.upper(),
@@ -73,7 +73,7 @@ class EnvVarName(enum.Enum):
         env_var=EnvVar.var_PROTOPRIMER_PY_EXEC,
         name_category=NameCategory.category_name_only,
         name_components=[
-            ConfConstGeneral.name_protoprimer_package.upper(),
+            _ConfConstGeneral.name_protoprimer_package.upper(),
             ValueName.value_py_exec.value.upper(),
         ],
     )
@@ -81,15 +81,15 @@ class EnvVarName(enum.Enum):
         env_var=EnvVar.var_PROTOPRIMER_PROTO_KERNEL,
         name_category=NameCategory.category_name_only,
         name_components=[
-            ConfConstGeneral.name_protoprimer_package.upper(),
-            PathName.path_proto_kernel.value.upper(),
+            _ConfConstGeneral.name_protoprimer_package.upper(),
+            _PathName.path_proto_kernel.value.upper(),
         ],
     )
     var_PROTOPRIMER_CONF_BASENAME = EnvVarMeta(
         env_var=EnvVar.var_PROTOPRIMER_CONF_BASENAME,
         name_category=NameCategory.category_name_only,
         name_components=[
-            ConfConstGeneral.name_protoprimer_package.upper(),
+            _ConfConstGeneral.name_protoprimer_package.upper(),
             KeyWord.key_conf.value.upper(),
             KeyWord.key_basename.value.upper(),
         ],
@@ -98,7 +98,7 @@ class EnvVarName(enum.Enum):
         env_var=EnvVar.var_PROTOPRIMER_START_ID,
         name_category=NameCategory.category_name_only,
         name_components=[
-            ConfConstGeneral.name_protoprimer_package.upper(),
+            _ConfConstGeneral.name_protoprimer_package.upper(),
             KeyWord.key_start.value.upper(),
             KeyWord.key_id.value.upper(),
         ],
@@ -107,7 +107,7 @@ class EnvVarName(enum.Enum):
         env_var=EnvVar.var_PROTOPRIMER_VENV_DRIVER,
         name_category=NameCategory.category_name_only,
         name_components=[
-            ConfConstGeneral.name_protoprimer_package.upper(),
+            _ConfConstGeneral.name_protoprimer_package.upper(),
             ValueName.value_venv_driver.value.upper(),
         ],
     )
@@ -115,7 +115,7 @@ class EnvVarName(enum.Enum):
         env_var=EnvVar.var_PROTOPRIMER_MOCKED_RESTART,
         name_category=NameCategory.category_name_only,
         name_components=[
-            ConfConstGeneral.name_protoprimer_package.upper(),
+            _ConfConstGeneral.name_protoprimer_package.upper(),
             KeyWord.key_mocked.value.upper(),
             KeyWord.key_restart.value.upper(),
         ],
@@ -124,7 +124,7 @@ class EnvVarName(enum.Enum):
         env_var=EnvVar.var_PROTOPRIMER_TRACE_EXECUTION,
         name_category=NameCategory.category_name_only,
         name_components=[
-            ConfConstGeneral.name_protoprimer_package.upper(),
+            _ConfConstGeneral.name_protoprimer_package.upper(),
             KeyWord.key_trace.value.upper(),
             KeyWord.key_execution.value.upper(),
         ],

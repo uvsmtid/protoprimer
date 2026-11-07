@@ -12,7 +12,7 @@ from metaprimer.conf_renderer import (
     RenderConfigVisitor,
 )
 from protoprimer.primer_kernel import (
-    TermColor,
+    _TermColor,
 )
 
 some_var: str = "some_var"
@@ -98,61 +98,61 @@ def test_render_config():
     )
 
     expected_output = f"""
-{TermColor.config_comment.value}# some help for [AbstractRootNode]{TermColor.reset_style.value}
+{_TermColor.config_comment.value}# some help for [AbstractRootNode]{_TermColor.reset_style.value}
 some_var = (
     \n\
-    {TermColor.config_comment.value}# some help for [AbstractDictNode]{TermColor.reset_style.value}
+    {_TermColor.config_comment.value}# some help for [AbstractDictNode]{_TermColor.reset_style.value}
     {{
         \n\
-        {TermColor.config_comment.value}# some help for [AbstractValueNode]{TermColor.reset_style.value}
+        {_TermColor.config_comment.value}# some help for [AbstractValueNode]{_TermColor.reset_style.value}
         "a": 1,
         \n\
-        {TermColor.config_comment.value}# some help for [AbstractValueNode]{TermColor.reset_style.value}
+        {_TermColor.config_comment.value}# some help for [AbstractValueNode]{_TermColor.reset_style.value}
         "b": "hello",
         \n\
-        {TermColor.config_comment.value}# some help for [AbstractValueNode]{TermColor.reset_style.value}
+        {_TermColor.config_comment.value}# some help for [AbstractValueNode]{_TermColor.reset_style.value}
         "c": True,
         \n\
-        {TermColor.config_comment.value}# some help for [AbstractListNode]{TermColor.reset_style.value}
+        {_TermColor.config_comment.value}# some help for [AbstractListNode]{_TermColor.reset_style.value}
         "d": [
             \n\
-            {TermColor.config_comment.value}# some help for [AbstractValueNode]{TermColor.reset_style.value}
+            {_TermColor.config_comment.value}# some help for [AbstractValueNode]{_TermColor.reset_style.value}
             1,
             \n\
-            {TermColor.config_comment.value}# some help for [AbstractValueNode]{TermColor.reset_style.value}
+            {_TermColor.config_comment.value}# some help for [AbstractValueNode]{_TermColor.reset_style.value}
             2,
             \n\
-            {TermColor.config_comment.value}# some help for [AbstractValueNode]{TermColor.reset_style.value}
+            {_TermColor.config_comment.value}# some help for [AbstractValueNode]{_TermColor.reset_style.value}
             3,
         ],
         \n\
-        {TermColor.config_comment.value}# some help for [AbstractDictNode]{TermColor.reset_style.value}
+        {_TermColor.config_comment.value}# some help for [AbstractDictNode]{_TermColor.reset_style.value}
         "e": {{
             \n\
-            {TermColor.config_comment.value}# some help for [AbstractValueNode]{TermColor.reset_style.value}
+            {_TermColor.config_comment.value}# some help for [AbstractValueNode]{_TermColor.reset_style.value}
             "f": "nested",
         }},
         \n\
-        {TermColor.config_comment.value}# some help for [AbstractListNode]{TermColor.reset_style.value}
+        {_TermColor.config_comment.value}# some help for [AbstractListNode]{_TermColor.reset_style.value}
         "f": [
             \n\
-            {TermColor.config_comment.value}# some help for [AbstractValueNode]{TermColor.reset_style.value}
+            {_TermColor.config_comment.value}# some help for [AbstractValueNode]{_TermColor.reset_style.value}
             4,
             \n\
-            {TermColor.config_comment.value}# some help for [AbstractValueNode]{TermColor.reset_style.value}
+            {_TermColor.config_comment.value}# some help for [AbstractValueNode]{_TermColor.reset_style.value}
             5,
             \n\
-            {TermColor.config_comment.value}# some help for [AbstractListNode]{TermColor.reset_style.value}
+            {_TermColor.config_comment.value}# some help for [AbstractListNode]{_TermColor.reset_style.value}
             [
                 \n\
-                {TermColor.config_comment.value}# some help for [AbstractValueNode]{TermColor.reset_style.value}
+                {_TermColor.config_comment.value}# some help for [AbstractValueNode]{_TermColor.reset_style.value}
                 6,
                 \n\
-                {TermColor.config_comment.value}# some help for [AbstractValueNode]{TermColor.reset_style.value}
+                {_TermColor.config_comment.value}# some help for [AbstractValueNode]{_TermColor.reset_style.value}
                 7,
             ],
             \n\
-            {TermColor.config_comment.value}# some help for [AbstractValueNode]{TermColor.reset_style.value}
+            {_TermColor.config_comment.value}# some help for [AbstractValueNode]{_TermColor.reset_style.value}
             8,
         ],
     }}
@@ -187,61 +187,61 @@ def test_render_config_not_present():
     root_node.child_node.child_nodes["c"].is_present = False
 
     expected_output = f"""
-{TermColor.config_comment.value}# some help for [AbstractRootNode]{TermColor.reset_style.value}
+{_TermColor.config_comment.value}# some help for [AbstractRootNode]{_TermColor.reset_style.value}
 some_var = (
     \n\
-    {TermColor.config_comment.value}# some help for [AbstractDictNode]{TermColor.reset_style.value}
+    {_TermColor.config_comment.value}# some help for [AbstractDictNode]{_TermColor.reset_style.value}
     {{
         \n\
-        {TermColor.config_comment.value}# some help for [AbstractValueNode]{TermColor.reset_style.value}
+        {_TermColor.config_comment.value}# some help for [AbstractValueNode]{_TermColor.reset_style.value}
         "a": 1,
         \n\
-        {TermColor.config_comment.value}# some help for [AbstractValueNode]{TermColor.reset_style.value}
+        {_TermColor.config_comment.value}# some help for [AbstractValueNode]{_TermColor.reset_style.value}
         "b": "hello",
         \n\
-        {TermColor.config_comment.value}# some help for [AbstractValueNode]{TermColor.reset_style.value}
-        {TermColor.config_comment.value}# "c": True,{TermColor.reset_style.value}
+        {_TermColor.config_comment.value}# some help for [AbstractValueNode]{_TermColor.reset_style.value}
+        {_TermColor.config_comment.value}# "c": True,{_TermColor.reset_style.value}
         \n\
-        {TermColor.config_comment.value}# some help for [AbstractListNode]{TermColor.reset_style.value}
+        {_TermColor.config_comment.value}# some help for [AbstractListNode]{_TermColor.reset_style.value}
         "d": [
             \n\
-            {TermColor.config_comment.value}# some help for [AbstractValueNode]{TermColor.reset_style.value}
+            {_TermColor.config_comment.value}# some help for [AbstractValueNode]{_TermColor.reset_style.value}
             1,
             \n\
-            {TermColor.config_comment.value}# some help for [AbstractValueNode]{TermColor.reset_style.value}
+            {_TermColor.config_comment.value}# some help for [AbstractValueNode]{_TermColor.reset_style.value}
             2,
             \n\
-            {TermColor.config_comment.value}# some help for [AbstractValueNode]{TermColor.reset_style.value}
+            {_TermColor.config_comment.value}# some help for [AbstractValueNode]{_TermColor.reset_style.value}
             3,
         ],
         \n\
-        {TermColor.config_comment.value}# some help for [AbstractDictNode]{TermColor.reset_style.value}
+        {_TermColor.config_comment.value}# some help for [AbstractDictNode]{_TermColor.reset_style.value}
         "e": {{
             \n\
-            {TermColor.config_comment.value}# some help for [AbstractValueNode]{TermColor.reset_style.value}
+            {_TermColor.config_comment.value}# some help for [AbstractValueNode]{_TermColor.reset_style.value}
             "f": "nested",
         }},
         \n\
-        {TermColor.config_comment.value}# some help for [AbstractListNode]{TermColor.reset_style.value}
+        {_TermColor.config_comment.value}# some help for [AbstractListNode]{_TermColor.reset_style.value}
         "f": [
             \n\
-            {TermColor.config_comment.value}# some help for [AbstractValueNode]{TermColor.reset_style.value}
+            {_TermColor.config_comment.value}# some help for [AbstractValueNode]{_TermColor.reset_style.value}
             4,
             \n\
-            {TermColor.config_comment.value}# some help for [AbstractValueNode]{TermColor.reset_style.value}
+            {_TermColor.config_comment.value}# some help for [AbstractValueNode]{_TermColor.reset_style.value}
             5,
             \n\
-            {TermColor.config_comment.value}# some help for [AbstractListNode]{TermColor.reset_style.value}
+            {_TermColor.config_comment.value}# some help for [AbstractListNode]{_TermColor.reset_style.value}
             [
                 \n\
-                {TermColor.config_comment.value}# some help for [AbstractValueNode]{TermColor.reset_style.value}
+                {_TermColor.config_comment.value}# some help for [AbstractValueNode]{_TermColor.reset_style.value}
                 6,
                 \n\
-                {TermColor.config_comment.value}# some help for [AbstractValueNode]{TermColor.reset_style.value}
+                {_TermColor.config_comment.value}# some help for [AbstractValueNode]{_TermColor.reset_style.value}
                 7,
             ],
             \n\
-            {TermColor.config_comment.value}# some help for [AbstractValueNode]{TermColor.reset_style.value}
+            {_TermColor.config_comment.value}# some help for [AbstractValueNode]{_TermColor.reset_style.value}
             8,
         ],
     }}
@@ -268,14 +268,14 @@ annotation
 """
 
     expected_output = f"""
-{TermColor.config_comment.value}# some help for [AbstractRootNode]{TermColor.reset_style.value}
+{_TermColor.config_comment.value}# some help for [AbstractRootNode]{_TermColor.reset_style.value}
 some_var = (
     \n\
-    {TermColor.config_comment.value}# some help for [AbstractDictNode]{TermColor.reset_style.value}
+    {_TermColor.config_comment.value}# some help for [AbstractDictNode]{_TermColor.reset_style.value}
     {{
         \n\
-        {TermColor.config_comment.value}# multi-line{TermColor.reset_style.value}
-        {TermColor.config_comment.value}# annotation{TermColor.reset_style.value}
+        {_TermColor.config_comment.value}# multi-line{_TermColor.reset_style.value}
+        {_TermColor.config_comment.value}# annotation{_TermColor.reset_style.value}
         "a": 1,
     }}
 )\
@@ -308,31 +308,31 @@ def test_render_config_nested_dict_not_present():
     l1_node.child_nodes["l2"].is_present = False
 
     expected_output = f"""
-{TermColor.config_comment.value}# some help for [AbstractRootNode]{TermColor.reset_style.value}
+{_TermColor.config_comment.value}# some help for [AbstractRootNode]{_TermColor.reset_style.value}
 some_var = (
     \n\
-    {TermColor.config_comment.value}# some help for [AbstractDictNode]{TermColor.reset_style.value}
+    {_TermColor.config_comment.value}# some help for [AbstractDictNode]{_TermColor.reset_style.value}
     {{
         \n\
-        {TermColor.config_comment.value}# some help for [AbstractValueNode]{TermColor.reset_style.value}
+        {_TermColor.config_comment.value}# some help for [AbstractValueNode]{_TermColor.reset_style.value}
         "a": 1,
         \n\
-        {TermColor.config_comment.value}# some help for [AbstractDictNode]{TermColor.reset_style.value}
+        {_TermColor.config_comment.value}# some help for [AbstractDictNode]{_TermColor.reset_style.value}
         "l1": {{
             \n\
-            {TermColor.config_comment.value}# some help for [AbstractDictNode]{TermColor.reset_style.value}
-            {TermColor.config_comment.value}# "l2": {{{TermColor.reset_style.value}
-            {TermColor.config_comment.value}#     {TermColor.reset_style.value}
-            {TermColor.config_comment.value}#     {TermColor.config_comment.value}# some help for [AbstractDictNode]{TermColor.reset_style.value}{TermColor.reset_style.value}
-            {TermColor.config_comment.value}#     "l3": {{{TermColor.reset_style.value}
-            {TermColor.config_comment.value}#         {TermColor.reset_style.value}
-            {TermColor.config_comment.value}#         {TermColor.config_comment.value}# some help for [AbstractValueNode]{TermColor.reset_style.value}{TermColor.reset_style.value}
-            {TermColor.config_comment.value}#         "l4": "nested",{TermColor.reset_style.value}
-            {TermColor.config_comment.value}#     }},{TermColor.reset_style.value}
-            {TermColor.config_comment.value}# }},{TermColor.reset_style.value}
+            {_TermColor.config_comment.value}# some help for [AbstractDictNode]{_TermColor.reset_style.value}
+            {_TermColor.config_comment.value}# "l2": {{{_TermColor.reset_style.value}
+            {_TermColor.config_comment.value}#     {_TermColor.reset_style.value}
+            {_TermColor.config_comment.value}#     {_TermColor.config_comment.value}# some help for [AbstractDictNode]{_TermColor.reset_style.value}{_TermColor.reset_style.value}
+            {_TermColor.config_comment.value}#     "l3": {{{_TermColor.reset_style.value}
+            {_TermColor.config_comment.value}#         {_TermColor.reset_style.value}
+            {_TermColor.config_comment.value}#         {_TermColor.config_comment.value}# some help for [AbstractValueNode]{_TermColor.reset_style.value}{_TermColor.reset_style.value}
+            {_TermColor.config_comment.value}#         "l4": "nested",{_TermColor.reset_style.value}
+            {_TermColor.config_comment.value}#     }},{_TermColor.reset_style.value}
+            {_TermColor.config_comment.value}# }},{_TermColor.reset_style.value}
         }},
         \n\
-        {TermColor.config_comment.value}# some help for [AbstractValueNode]{TermColor.reset_style.value}
+        {_TermColor.config_comment.value}# some help for [AbstractValueNode]{_TermColor.reset_style.value}
         "b": 2,
     }}
 )\
@@ -368,39 +368,39 @@ def test_render_config_nested_list_not_present():
     nested_list_node.is_present = False
 
     expected_output = f"""
-{TermColor.config_comment.value}# some help for [AbstractRootNode]{TermColor.reset_style.value}
+{_TermColor.config_comment.value}# some help for [AbstractRootNode]{_TermColor.reset_style.value}
 some_var = (
     \n\
-    {TermColor.config_comment.value}# some help for [AbstractDictNode]{TermColor.reset_style.value}
+    {_TermColor.config_comment.value}# some help for [AbstractDictNode]{_TermColor.reset_style.value}
     {{
         \n\
-        {TermColor.config_comment.value}# some help for [AbstractValueNode]{TermColor.reset_style.value}
+        {_TermColor.config_comment.value}# some help for [AbstractValueNode]{_TermColor.reset_style.value}
         "a": 1,
         \n\
-        {TermColor.config_comment.value}# some help for [AbstractListNode]{TermColor.reset_style.value}
+        {_TermColor.config_comment.value}# some help for [AbstractListNode]{_TermColor.reset_style.value}
         "f": [
             \n\
-            {TermColor.config_comment.value}# some help for [AbstractValueNode]{TermColor.reset_style.value}
+            {_TermColor.config_comment.value}# some help for [AbstractValueNode]{_TermColor.reset_style.value}
             4,
             \n\
-            {TermColor.config_comment.value}# some help for [AbstractValueNode]{TermColor.reset_style.value}
+            {_TermColor.config_comment.value}# some help for [AbstractValueNode]{_TermColor.reset_style.value}
             5,
             \n\
-            {TermColor.config_comment.value}# some help for [AbstractListNode]{TermColor.reset_style.value}
-            {TermColor.config_comment.value}# [{TermColor.reset_style.value}
-            {TermColor.config_comment.value}#     {TermColor.reset_style.value}
-            {TermColor.config_comment.value}#     {TermColor.config_comment.value}# some help for [AbstractValueNode]{TermColor.reset_style.value}{TermColor.reset_style.value}
-            {TermColor.config_comment.value}#     6,{TermColor.reset_style.value}
-            {TermColor.config_comment.value}#     {TermColor.reset_style.value}
-            {TermColor.config_comment.value}#     {TermColor.config_comment.value}# some help for [AbstractValueNode]{TermColor.reset_style.value}{TermColor.reset_style.value}
-            {TermColor.config_comment.value}#     7,{TermColor.reset_style.value}
-            {TermColor.config_comment.value}# ],{TermColor.reset_style.value}
+            {_TermColor.config_comment.value}# some help for [AbstractListNode]{_TermColor.reset_style.value}
+            {_TermColor.config_comment.value}# [{_TermColor.reset_style.value}
+            {_TermColor.config_comment.value}#     {_TermColor.reset_style.value}
+            {_TermColor.config_comment.value}#     {_TermColor.config_comment.value}# some help for [AbstractValueNode]{_TermColor.reset_style.value}{_TermColor.reset_style.value}
+            {_TermColor.config_comment.value}#     6,{_TermColor.reset_style.value}
+            {_TermColor.config_comment.value}#     {_TermColor.reset_style.value}
+            {_TermColor.config_comment.value}#     {_TermColor.config_comment.value}# some help for [AbstractValueNode]{_TermColor.reset_style.value}{_TermColor.reset_style.value}
+            {_TermColor.config_comment.value}#     7,{_TermColor.reset_style.value}
+            {_TermColor.config_comment.value}# ],{_TermColor.reset_style.value}
             \n\
-            {TermColor.config_comment.value}# some help for [AbstractValueNode]{TermColor.reset_style.value}
+            {_TermColor.config_comment.value}# some help for [AbstractValueNode]{_TermColor.reset_style.value}
             8,
         ],
         \n\
-        {TermColor.config_comment.value}# some help for [AbstractValueNode]{TermColor.reset_style.value}
+        {_TermColor.config_comment.value}# some help for [AbstractValueNode]{_TermColor.reset_style.value}
         "b": 2,
     }}
 )\

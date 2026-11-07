@@ -18,7 +18,7 @@ import protoprimer.primer_kernel
 from protoprimer.primer_kernel import (
     _EntryFunc,
     _ExecOperation,
-    SyntaxArg,
+    _SyntaxArg,
 )
 
 _ENTRY_FUNC_CALL_REGEX = re.compile(r"proto_kernel\.(?P<entry_func>" rf"{_EntryFunc.func_boot_env.value}|{_EntryFunc.func_start_app.value}" r")\(\"(?P<main_func>[^\"]+)\"\)")
@@ -82,9 +82,9 @@ def assert_wrap_regenerates_with_no_git_diff(
             str(proto_kernel_abs_path),
             _ExecOperation.op_wrap.value,
             parsed_entry_script.entry_func,
-            SyntaxArg.arg_entry_script_path,
+            _SyntaxArg.arg_entry_script_path,
             str(entry_script_abs_path),
-            SyntaxArg.arg_main_func,
+            _SyntaxArg.arg_main_func,
             parsed_entry_script.main_func,
         ],
         check=True,

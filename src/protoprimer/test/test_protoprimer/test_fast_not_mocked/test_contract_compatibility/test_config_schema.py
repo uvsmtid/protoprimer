@@ -22,10 +22,10 @@ from local_test.integrated_helper import (
 )
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer.primer_kernel import (
-    ConfConstClient,
-    ConfConstInput,
-    ConfConstPrimer,
-    ConfLeap,
+    _ConfConstClient,
+    _ConfConstInput,
+    _ConfConstPrimer,
+    _ConfLeap,
 )
 
 
@@ -35,7 +35,7 @@ def test_relationship():
 
 def create_conf_file(
     tmp_path: pathlib.Path,
-    conf_leap: ConfLeap,
+    conf_leap: _ConfLeap,
 ) -> dict:
     ref_root_abs_path = tmp_path / "ref_root"
     proto_kernel_dir_abs_path = ref_root_abs_path / "proto_code"
@@ -45,20 +45,20 @@ def create_conf_file(
     for dir_abs_path in [proto_kernel_dir_abs_path, project_dir_abs_path]:
         dir_abs_path.mkdir(parents=True)
 
-    if conf_leap is ConfLeap.leap_primer:
+    if conf_leap is _ConfLeap.leap_primer:
         create_conf_primer_file(ref_root_abs_path, proto_kernel_dir_abs_path)
-        conf_file_abs_path = proto_kernel_dir_abs_path / ConfConstInput.default_file_basename_conf_primer
-    elif conf_leap is ConfLeap.leap_client:
+        conf_file_abs_path = proto_kernel_dir_abs_path / _ConfConstInput.default_file_basename_conf_primer
+    elif conf_leap is _ConfLeap.leap_client:
         create_conf_client_file(ref_root_abs_path, conf_client_dir_abs_path, conf_env_dir_abs_path, project_dir_abs_path)
-        conf_file_abs_path = conf_client_dir_abs_path / ConfConstPrimer.default_file_basename_leap_client
-    elif conf_leap is ConfLeap.leap_env:
+        conf_file_abs_path = conf_client_dir_abs_path / _ConfConstPrimer.default_file_basename_leap_client
+    elif conf_leap is _ConfLeap.leap_env:
         create_conf_env_file(
             ref_root_abs_path,
             conf_env_dir_abs_path,
             project_dir_abs_path,
             python_selector_rel_path=pathlib.Path("src/proto_code/python_selector_same.py"),
         )
-        conf_file_abs_path = conf_env_dir_abs_path / ConfConstClient.default_file_basename_leap_env
+        conf_file_abs_path = conf_env_dir_abs_path / _ConfConstClient.default_file_basename_leap_env
     else:
         raise AssertionError(f"[{conf_leap}] has no config file")
     return json.loads(conf_file_abs_path.read_text())
@@ -68,14 +68,14 @@ def create_conf_file(
 @pytest.mark.parametrize(
     "conf_leap, model_name",
     [
-        (ConfLeap.leap_primer, "ConfPrimer"),
-        (ConfLeap.leap_client, "ConfClient"),
-        (ConfLeap.leap_env, "ConfEnv"),
+        (_ConfLeap.leap_primer, "ConfPrimer"),
+        (_ConfLeap.leap_client, "ConfClient"),
+        (_ConfLeap.leap_env, "ConfEnv"),
     ],
 )
 def test_conf_file_matches_schema(
     tmp_path: pathlib.Path,
-    conf_leap: ConfLeap,
+    conf_leap: _ConfLeap,
     model_name: str,
 ):
 

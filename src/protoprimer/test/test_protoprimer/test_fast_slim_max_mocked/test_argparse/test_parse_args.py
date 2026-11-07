@@ -16,7 +16,7 @@ from protoprimer.primer_kernel import (
     parse_args,
     ParsedArg,
     _ExecOperation,
-    SyntaxArg,
+    _SyntaxArg,
 )
 
 
@@ -26,8 +26,8 @@ def test_parse_args_defaults():
 
     # then:
     assert getattr(args, ParsedArg.name_exec_operation.value) == _ExecOperation.op_boot.value
-    assert getattr(args, SyntaxArg.dest_quiet) == 0
-    assert getattr(args, SyntaxArg.dest_verbose) == 0
+    assert getattr(args, _SyntaxArg.dest_quiet) == 0
+    assert getattr(args, _SyntaxArg.dest_verbose) == 0
 
 
 def test_parse_args_reset():
@@ -42,13 +42,13 @@ def test_parse_args_command():
     cmd = "ls -l"
 
     # when:
-    args = parse_args([_ExecOperation.op_shell.value, SyntaxArg.arg_command, cmd])
+    args = parse_args([_ExecOperation.op_shell.value, _SyntaxArg.arg_command, cmd])
 
     # then:
     assert getattr(args, ParsedArg.name_shell_command.value) == cmd
 
     # when: short arg
-    args_c = parse_args([_ExecOperation.op_shell.value, SyntaxArg.arg_c, cmd])
+    args_c = parse_args([_ExecOperation.op_shell.value, _SyntaxArg.arg_c, cmd])
 
     # then: short arg
     assert getattr(args_c, ParsedArg.name_shell_command.value) == cmd
@@ -69,13 +69,13 @@ def test_parse_args_env():
     env_dir = "/path/to/env"
 
     # when: long arg
-    args = parse_args([_ExecOperation.op_boot.value, SyntaxArg.arg_env, env_dir])
+    args = parse_args([_ExecOperation.op_boot.value, _SyntaxArg.arg_env, env_dir])
 
     # then: long arg
     assert getattr(args, ParsedArg.name_selected_env_dir.value) == env_dir
 
     # when: short arg
-    args_e = parse_args([_ExecOperation.op_boot.value, SyntaxArg.arg_e, env_dir])
+    args_e = parse_args([_ExecOperation.op_boot.value, _SyntaxArg.arg_e, env_dir])
 
     # then: short arg
     assert getattr(args_e, ParsedArg.name_selected_env_dir.value) == env_dir
@@ -97,34 +97,34 @@ def test_parse_args_exec_operation():
 
 def test_parse_args_log_level():
     # when: quiet long arg
-    args_quiet = parse_args([SyntaxArg.arg_quiet])
+    args_quiet = parse_args([_SyntaxArg.arg_quiet])
 
     # then: quiet long arg
-    assert getattr(args_quiet, SyntaxArg.dest_quiet) == 1
+    assert getattr(args_quiet, _SyntaxArg.dest_quiet) == 1
 
     # when: quiet short arg
-    args_q = parse_args([SyntaxArg.arg_q])
+    args_q = parse_args([_SyntaxArg.arg_q])
 
     # then: quiet short arg
-    assert getattr(args_q, SyntaxArg.dest_quiet) == 1
+    assert getattr(args_q, _SyntaxArg.dest_quiet) == 1
 
     # when: verbose once
-    args_verbose_1 = parse_args([SyntaxArg.arg_verbose])
+    args_verbose_1 = parse_args([_SyntaxArg.arg_verbose])
 
     # then: verbose once
-    assert getattr(args_verbose_1, SyntaxArg.dest_verbose) == 1
+    assert getattr(args_verbose_1, _SyntaxArg.dest_verbose) == 1
 
     # when: verbose once short
-    args_v_1 = parse_args([SyntaxArg.arg_v])
+    args_v_1 = parse_args([_SyntaxArg.arg_v])
 
     # then: verbose once short
-    assert getattr(args_v_1, SyntaxArg.dest_verbose) == 1
+    assert getattr(args_v_1, _SyntaxArg.dest_verbose) == 1
 
     # when: verbose three times
     args_verbose_3 = parse_args(["-vvv"])
 
     # then: verbose three times
-    assert getattr(args_verbose_3, SyntaxArg.dest_verbose) == 3
+    assert getattr(args_verbose_3, _SyntaxArg.dest_verbose) == 3
 
 
 @pytest.mark.parametrize(
@@ -135,8 +135,8 @@ def test_parse_args_log_level():
             {
                 ParsedArg.name_exec_operation.value: _ExecOperation.op_boot.value,
                 ParsedArg.name_selected_env_dir.value: None,
-                SyntaxArg.dest_quiet: 0,
-                SyntaxArg.dest_verbose: 0,
+                _SyntaxArg.dest_quiet: 0,
+                _SyntaxArg.dest_verbose: 0,
                 ParsedArg.name_target_args.value: [],
             },
         ),
@@ -145,8 +145,8 @@ def test_parse_args_log_level():
             {
                 ParsedArg.name_exec_operation.value: _ExecOperation.op_boot.value,
                 ParsedArg.name_selected_env_dir.value: None,
-                SyntaxArg.dest_quiet: 0,
-                SyntaxArg.dest_verbose: 0,
+                _SyntaxArg.dest_quiet: 0,
+                _SyntaxArg.dest_verbose: 0,
                 ParsedArg.name_target_args.value: [],
             },
         ),
@@ -155,8 +155,8 @@ def test_parse_args_log_level():
             {
                 ParsedArg.name_exec_operation.value: "reset",
                 ParsedArg.name_selected_env_dir.value: None,
-                SyntaxArg.dest_quiet: 0,
-                SyntaxArg.dest_verbose: 0,
+                _SyntaxArg.dest_quiet: 0,
+                _SyntaxArg.dest_verbose: 0,
                 ParsedArg.name_target_args.value: [],
             },
         ),
@@ -165,8 +165,8 @@ def test_parse_args_log_level():
             {
                 ParsedArg.name_exec_operation.value: "eval",
                 ParsedArg.name_selected_env_dir.value: None,
-                SyntaxArg.dest_quiet: 0,
-                SyntaxArg.dest_verbose: 0,
+                _SyntaxArg.dest_quiet: 0,
+                _SyntaxArg.dest_verbose: 0,
                 ParsedArg.name_target_args.value: [],
             },
         ),
@@ -175,8 +175,8 @@ def test_parse_args_log_level():
             {
                 ParsedArg.name_exec_operation.value: _ExecOperation.op_boot.value,
                 ParsedArg.name_selected_env_dir.value: None,
-                SyntaxArg.dest_quiet: 1,
-                SyntaxArg.dest_verbose: 0,
+                _SyntaxArg.dest_quiet: 1,
+                _SyntaxArg.dest_verbose: 0,
                 ParsedArg.name_target_args.value: [],
             },
         ),
@@ -185,8 +185,8 @@ def test_parse_args_log_level():
             {
                 ParsedArg.name_exec_operation.value: _ExecOperation.op_boot.value,
                 ParsedArg.name_selected_env_dir.value: None,
-                SyntaxArg.dest_quiet: 0,
-                SyntaxArg.dest_verbose: 1,
+                _SyntaxArg.dest_quiet: 0,
+                _SyntaxArg.dest_verbose: 1,
                 ParsedArg.name_target_args.value: [],
             },
         ),
@@ -195,8 +195,8 @@ def test_parse_args_log_level():
             {
                 ParsedArg.name_exec_operation.value: _ExecOperation.op_boot.value,
                 ParsedArg.name_selected_env_dir.value: None,
-                SyntaxArg.dest_quiet: 1,
-                SyntaxArg.dest_verbose: 0,
+                _SyntaxArg.dest_quiet: 1,
+                _SyntaxArg.dest_verbose: 0,
                 ParsedArg.name_target_args.value: [],
             },
         ),
@@ -205,8 +205,8 @@ def test_parse_args_log_level():
             {
                 ParsedArg.name_exec_operation.value: _ExecOperation.op_boot.value,
                 ParsedArg.name_selected_env_dir.value: None,
-                SyntaxArg.dest_quiet: 0,
-                SyntaxArg.dest_verbose: 3,
+                _SyntaxArg.dest_quiet: 0,
+                _SyntaxArg.dest_verbose: 3,
                 ParsedArg.name_target_args.value: [],
             },
         ),
@@ -215,8 +215,8 @@ def test_parse_args_log_level():
             {
                 ParsedArg.name_exec_operation.value: _ExecOperation.op_boot.value,
                 ParsedArg.name_selected_env_dir.value: "some/path",
-                SyntaxArg.dest_quiet: 0,
-                SyntaxArg.dest_verbose: 0,
+                _SyntaxArg.dest_quiet: 0,
+                _SyntaxArg.dest_verbose: 0,
                 ParsedArg.name_target_args.value: [],
             },
         ),
@@ -225,8 +225,8 @@ def test_parse_args_log_level():
             {
                 ParsedArg.name_exec_operation.value: _ExecOperation.op_boot.value,
                 ParsedArg.name_selected_env_dir.value: "some/path",
-                SyntaxArg.dest_quiet: 0,
-                SyntaxArg.dest_verbose: 0,
+                _SyntaxArg.dest_quiet: 0,
+                _SyntaxArg.dest_verbose: 0,
                 ParsedArg.name_target_args.value: [],
             },
         ),
@@ -235,8 +235,8 @@ def test_parse_args_log_level():
             {
                 ParsedArg.name_exec_operation.value: _ExecOperation.op_boot.value,
                 ParsedArg.name_selected_env_dir.value: "default_env",
-                SyntaxArg.dest_quiet: 0,
-                SyntaxArg.dest_verbose: 0,
+                _SyntaxArg.dest_quiet: 0,
+                _SyntaxArg.dest_verbose: 0,
                 ParsedArg.name_target_args.value: [],
             },
         ),

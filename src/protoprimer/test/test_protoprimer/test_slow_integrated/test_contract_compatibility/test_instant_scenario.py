@@ -18,8 +18,8 @@ from local_test.integrated_helper import (
 from protoprimer.primer_kernel import (
     ConfDst,
     _ExecOperation,
-    SyntaxArg,
-    TopDir,
+    _SyntaxArg,
+    _TopDir,
 )
 
 
@@ -53,8 +53,8 @@ def test_instant_scenario(tmp_path: Path):
     run_primer_main(
         [
             str(proto_kernel_abs_path),
-            SyntaxArg.arg_v,
-            SyntaxArg.arg_v,
+            _SyntaxArg.arg_v,
+            _SyntaxArg.arg_v,
         ]
     )
 
@@ -68,8 +68,8 @@ def test_instant_scenario(tmp_path: Path):
     assert not os.path.exists(gconf_dir)
     assert not os.path.exists(lconf_dir)
 
-    assert os.path.exists(ref_root_abs_path / TopDir.dir_log.value)
-    assert os.path.exists(ref_root_abs_path / TopDir.dir_venv.value)
+    assert os.path.exists(ref_root_abs_path / _TopDir.dir_log.value)
+    assert os.path.exists(ref_root_abs_path / _TopDir.dir_venv.value)
 
     # when:
     # re-run in eval command - it should not fail:
@@ -152,7 +152,7 @@ def test_instant_scenario_start_propagates_target_args_after_double_dash(tmp_pat
             str(proto_kernel_abs_path),
             _ExecOperation.op_start.value,
             "local_doc.cmd_echo_app:custom_echo_app_main",
-            SyntaxArg.arg_double_dash,
+            _SyntaxArg.arg_double_dash,
             "foo",
             "bar",
         ],
@@ -201,10 +201,10 @@ def test_instant_scenario_start_recurses_through_proto_main(tmp_path: Path):
             str(proto_kernel_abs_path),
             _ExecOperation.op_start.value,
             _proto_main,
-            SyntaxArg.arg_double_dash,
+            _SyntaxArg.arg_double_dash,
             _ExecOperation.op_start.value,
             echo_app,
-            SyntaxArg.arg_double_dash,
+            _SyntaxArg.arg_double_dash,
             "qwer",
         ],
         capture_output=True,
@@ -221,10 +221,10 @@ def test_instant_scenario_start_recurses_through_proto_main(tmp_path: Path):
             str(proto_kernel_abs_path),
             _ExecOperation.op_start.value,
             _proto_main,
-            SyntaxArg.arg_double_dash,
+            _SyntaxArg.arg_double_dash,
             _ExecOperation.op_start.value,
             echo_app,
-            SyntaxArg.arg_double_dash,
+            _SyntaxArg.arg_double_dash,
             "qwer",
             "asdf",
         ],
@@ -242,13 +242,13 @@ def test_instant_scenario_start_recurses_through_proto_main(tmp_path: Path):
             str(proto_kernel_abs_path),
             _ExecOperation.op_start.value,
             _proto_main,
-            SyntaxArg.arg_double_dash,
+            _SyntaxArg.arg_double_dash,
             _ExecOperation.op_start.value,
             _proto_main,
-            SyntaxArg.arg_double_dash,
+            _SyntaxArg.arg_double_dash,
             _ExecOperation.op_start.value,
             echo_app,
-            SyntaxArg.arg_double_dash,
+            _SyntaxArg.arg_double_dash,
             "qwer",
             "asdf",
             "zxcv",

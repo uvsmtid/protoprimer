@@ -15,13 +15,13 @@ from local_test.integrated_helper import (
     test_python_version,
 )
 from protoprimer.primer_kernel import (
-    ConfConstClient,
-    ConfConstGeneral,
-    ConfConstInput,
-    ConfConstPrimer,
+    _ConfConstClient,
+    _ConfConstGeneral,
+    _ConfConstInput,
+    _ConfConstPrimer,
     _EntryFunc,
-    SyntaxArg,
-    VenvDriverPip,
+    _SyntaxArg,
+    _VenvDriverPip,
     _generate_entry_script_content,
 )
 
@@ -37,7 +37,7 @@ def test_start_app_cleans_protoprimer_env_vars(tmp_path: pathlib.Path):
 
     ref_root_abs_path = switch_to_ref_root_abs_path(tmp_path)
 
-    proto_kernel_dir_abs_path = ref_root_abs_path / ConfConstInput.default_proto_conf_dir_rel_path
+    proto_kernel_dir_abs_path = ref_root_abs_path / _ConfConstInput.default_proto_conf_dir_rel_path
     proto_kernel_abs_path: pathlib.Path = create_plain_proto_kernel(proto_kernel_dir_abs_path)
     create_conf_primer_file(
         ref_root_abs_path,
@@ -45,7 +45,7 @@ def test_start_app_cleans_protoprimer_env_vars(tmp_path: pathlib.Path):
     )
 
     arbitrary_venv_dir = ref_root_abs_path / "arbitrary_venv"
-    venv_driver = VenvDriverPip(
+    venv_driver = _VenvDriverPip(
         test_python_version,
         sys.executable,
         str(arbitrary_venv_dir),
@@ -53,12 +53,12 @@ def test_start_app_cleans_protoprimer_env_vars(tmp_path: pathlib.Path):
         enforce_version_match=False,
     )
     venv_driver.create_venv(str(arbitrary_venv_dir), "")
-    arbitrary_venv_python = arbitrary_venv_dir / ConfConstGeneral.file_rel_path_venv_python
+    arbitrary_venv_python = arbitrary_venv_dir / _ConfConstGeneral.file_rel_path_venv_python
 
     project_dir_abs_path = ref_root_abs_path / test_pyproject_src_dir_rel_path
     create_test_pyproject_toml(project_dir_abs_path)
 
-    common_env_dir_name = ConfConstClient.common_env_name
+    common_env_dir_name = _ConfConstClient.common_env_name
     common_env_dir_abs_path = ref_root_abs_path / common_env_dir_name
     create_conf_env_file(
         ref_root_abs_path,
@@ -66,7 +66,7 @@ def test_start_app_cleans_protoprimer_env_vars(tmp_path: pathlib.Path):
         project_dir_abs_path,
     )
 
-    conf_client_dir_abs_path = ref_root_abs_path / ConfConstPrimer.default_client_conf_dir_rel_path
+    conf_client_dir_abs_path = ref_root_abs_path / _ConfConstPrimer.default_client_conf_dir_rel_path
     create_conf_client_file(
         ref_root_abs_path,
         conf_client_dir_abs_path,
@@ -93,8 +93,8 @@ def test_start_app_cleans_protoprimer_env_vars(tmp_path: pathlib.Path):
     run_primer_main(
         [
             str(proto_kernel_abs_path),
-            SyntaxArg.arg_v,
-            SyntaxArg.arg_v,
+            _SyntaxArg.arg_v,
+            _SyntaxArg.arg_v,
         ]
     )
 

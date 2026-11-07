@@ -1,6 +1,6 @@
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer.primer_kernel import (
-    ConfConstGeneral,
+    _ConfConstGeneral,
     _EntryFunc,
     _generate_entry_script_content,
     _merge_entry_script_content,
@@ -63,8 +63,8 @@ def test_merge_preserves_header_and_footer_outside_markers():
 
     assert custom_header in merged_content
     assert custom_footer in merged_content
-    assert ConfConstGeneral.entry_script_boilerplate_begin_marker in merged_content
-    assert ConfConstGeneral.entry_script_boilerplate_end_marker in merged_content
+    assert _ConfConstGeneral.entry_script_boilerplate_begin_marker in merged_content
+    assert _ConfConstGeneral.entry_script_boilerplate_end_marker in merged_content
 
     # Merging an already-consistent file is idempotent:
     assert _merge_entry_script_content(merged_content, generated_content) == merged_content

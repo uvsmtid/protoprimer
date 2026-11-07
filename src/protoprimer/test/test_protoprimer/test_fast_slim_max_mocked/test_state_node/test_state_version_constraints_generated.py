@@ -14,7 +14,7 @@ from protoprimer.primer_kernel import (
     _Factory_state_protoprimer_package_installed,
     _Factory_state_venv_driver_prepared,
     _Node_state_version_constraints_file_basename_inited,
-    ConfConstEnv,
+    _ConfConstEnv,
     _ContextBuilder,
     _EntryFunc,
     _EnvContext,
@@ -76,7 +76,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_client_conf_env_dir = "/mock_client_conf_env_dir"
         self.fs.create_dir(mock_client_conf_env_dir)
         mock_state_local_conf_symlink_abs_path_inited.return_value.eval_own_state.return_value = mock_client_conf_env_dir
-        mock_state_version_constraints_file_basename_inited.return_value.eval_own_state.return_value = ConfConstEnv.default_version_constraints_file_basename
+        mock_state_version_constraints_file_basename_inited.return_value.eval_own_state.return_value = _ConfConstEnv.default_version_constraints_file_basename
 
         def pin_versions_impl(
             selected_python_file_abs_path,
@@ -92,7 +92,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         # then:
         constraints_txt_path = os.path.join(
             mock_client_conf_env_dir,
-            ConfConstEnv.default_version_constraints_file_basename,
+            _ConfConstEnv.default_version_constraints_file_basename,
         )
         self.assertTrue(os.path.exists(constraints_txt_path))
         mock_state_venv_driver_prepared.return_value.eval_own_state.return_value.pin_versions.assert_called_once()
@@ -129,14 +129,14 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_client_conf_env_dir = "/mock_client_conf_env_dir"
         self.fs.create_dir(mock_client_conf_env_dir)
         mock_state_local_conf_symlink_abs_path_inited.return_value.eval_own_state.return_value = mock_client_conf_env_dir
-        mock_state_version_constraints_file_basename_inited.return_value.eval_own_state.return_value = ConfConstEnv.default_version_constraints_file_basename
+        mock_state_version_constraints_file_basename_inited.return_value.eval_own_state.return_value = _ConfConstEnv.default_version_constraints_file_basename
         mock_state_input_exec_operation_loaded.return_value.eval_own_state.return_value = "boot"
         # when:
         self.env_ctx.eval_state(_EnvState.state_version_constraints_generated.name)
         # then:
         constraints_txt_path = os.path.join(
             mock_client_conf_env_dir,
-            ConfConstEnv.default_version_constraints_file_basename,
+            _ConfConstEnv.default_version_constraints_file_basename,
         )
         self.assertFalse(os.path.exists(constraints_txt_path))
         mock_state_venv_driver_prepared.return_value.eval_own_state.return_value.pin_versions.assert_not_called()

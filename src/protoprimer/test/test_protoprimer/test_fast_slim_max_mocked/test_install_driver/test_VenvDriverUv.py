@@ -12,13 +12,13 @@ from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     ConfField,
-    VenvDriverUv,
+    _VenvDriverUv,
 )
 
 
 def test_relationship():
     assert_test_module_name_embeds_str(
-        VenvDriverUv.__name__,
+        _VenvDriverUv.__name__,
     )
 
 
@@ -30,7 +30,7 @@ def test_create_venv_when_constraints_file_does_not_exist(mock_subprocess_check_
     constraints_file_abs_path = "/tmp/constraints.txt"
     mock_exists.side_effect = lambda path: path != constraints_file_abs_path
     mock_isfile.return_value = True
-    install_driver = VenvDriverUv(
+    install_driver = _VenvDriverUv(
         required_python_version="3.10",
         selected_python_file_abs_path="/mock/python",
         state_local_venv_dir_abs_path_inited="/tmp/venv",
@@ -86,7 +86,7 @@ def test_create_venv_when_constraints_file_exists(mock_subprocess_check_call, mo
     mock_exists.return_value = True
     mock_isfile.return_value = True
     mock_subprocess_check_output.return_value = b"pip==25.0\nsetuptools==75.0\nwheel==0.47.0\n"
-    install_driver = VenvDriverUv(
+    install_driver = _VenvDriverUv(
         required_python_version="3.10",
         selected_python_file_abs_path="/mock/python",
         state_local_venv_dir_abs_path_inited="/tmp/venv",
@@ -166,7 +166,7 @@ def test_install_dependencies(mock_subprocess_check_call, mock_exists, mock_isfi
     mock_exists.return_value = True
     mock_isfile.return_value = True
     selected_python_file_abs_path = "/tmp/test_venv/bin/python"
-    install_driver = VenvDriverUv(
+    install_driver = _VenvDriverUv(
         required_python_version="3.10",
         selected_python_file_abs_path=selected_python_file_abs_path,
         state_local_venv_dir_abs_path_inited="/target/venv",
@@ -237,7 +237,7 @@ def test_pin_versions(mock_subprocess_check_call, mock_exists, mock_isfile):
     mock_exists.return_value = True
     mock_isfile.return_value = True
     selected_python_file_abs_path = "/tmp/test_venv/bin/python"
-    install_driver = VenvDriverUv(
+    install_driver = _VenvDriverUv(
         required_python_version="3.10",
         selected_python_file_abs_path=selected_python_file_abs_path,
         state_local_venv_dir_abs_path_inited="/mock/venv",
@@ -282,7 +282,7 @@ def test_pin_versions(mock_subprocess_check_call, mock_exists, mock_isfile):
 @patch("protoprimer.primer_kernel._get_venv_type")
 def test_is_mine_venv_when_uv_venv(mock_get_venv_type):
     # given
-    driver = VenvDriverUv(
+    driver = _VenvDriverUv(
         required_python_version="3.10",
         selected_python_file_abs_path="/mock/python",
         state_local_venv_dir_abs_path_inited="/tmp/venv",
@@ -302,7 +302,7 @@ def test_is_mine_venv_when_uv_venv(mock_get_venv_type):
 @patch("protoprimer.primer_kernel._get_venv_type")
 def test_is_mine_venv_when_pip_venv(mock_get_venv_type):
     # given
-    driver = VenvDriverUv(
+    driver = _VenvDriverUv(
         required_python_version="3.10",
         selected_python_file_abs_path="/mock/python",
         state_local_venv_dir_abs_path_inited="/tmp/venv",
@@ -322,7 +322,7 @@ def test_is_mine_venv_when_pip_venv(mock_get_venv_type):
 @patch("protoprimer.primer_kernel._get_venv_type")
 def test_is_mine_venv_when_cfg_not_exists(mock_get_venv_type):
     # given
-    driver = VenvDriverUv(
+    driver = _VenvDriverUv(
         required_python_version="3.10",
         selected_python_file_abs_path="/mock/python",
         state_local_venv_dir_abs_path_inited="/tmp/venv",

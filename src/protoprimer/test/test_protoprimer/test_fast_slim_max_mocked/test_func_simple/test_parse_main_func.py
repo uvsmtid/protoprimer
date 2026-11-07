@@ -2,7 +2,7 @@ import pytest
 
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer.primer_kernel import (
-    ConfConstGeneral,
+    _ConfConstGeneral,
     parse_main_func,
 )
 
@@ -26,7 +26,7 @@ def test_splits_only_on_first_separator():
 
 
 def test_empty_main_func_allowed():
-    assert parse_main_func(ConfConstGeneral.default_proto_main, allow_default_proto_main=True) == (
+    assert parse_main_func(_ConfConstGeneral.default_proto_main, allow_default_proto_main=True) == (
         None,
         None,
     )
@@ -34,7 +34,7 @@ def test_empty_main_func_allowed():
 
 def test_empty_main_func_rejected():
     with pytest.raises(ValueError):
-        parse_main_func(ConfConstGeneral.default_proto_main, allow_default_proto_main=False)
+        parse_main_func(_ConfConstGeneral.default_proto_main, allow_default_proto_main=False)
 
 
 def test_missing_separator_rejected():

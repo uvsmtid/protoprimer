@@ -20,7 +20,7 @@ from protoprimer.primer_kernel import (
     _Factory_state_prepare_venv_finalized,
     _Factory_state_proto_kernel_file_abs_path_inited,
     _Factory_state_stride_py_required_reached,
-    ConfConstEnv,
+    _ConfConstEnv,
     _EnvState,
     _ExecOperation,
     StateStride,
@@ -89,7 +89,7 @@ def test_reset_true(
     mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = "/path/to/venv"
     mock_state_local_tmp_dir_abs_path_inited.return_value.eval_own_state.return_value = "/path/to/tmp"
     mock_state_local_conf_symlink_abs_path_inited.return_value.eval_own_state.return_value = "/path/to/conf"
-    mock_state_version_constraints_file_basename_inited.return_value.eval_own_state.return_value = ConfConstEnv.default_version_constraints_file_basename
+    mock_state_version_constraints_file_basename_inited.return_value.eval_own_state.return_value = _ConfConstEnv.default_version_constraints_file_basename
     mock_os_path_exists.return_value = True
 
     # when:
@@ -98,7 +98,7 @@ def test_reset_true(
     # then:
     assert state_value is True
     mock_shutil_move.assert_called_once_with("/path/to/venv", "/path/to/tmp/venv.before.mock_start_id")
-    mock_os_remove.assert_called_once_with(f"/path/to/conf/{ConfConstEnv.default_version_constraints_file_basename}")
+    mock_os_remove.assert_called_once_with(f"/path/to/conf/{_ConfConstEnv.default_version_constraints_file_basename}")
 
 
 @patch("os.path.exists")

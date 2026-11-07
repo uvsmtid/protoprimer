@@ -4,7 +4,7 @@ import pytest
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer.primer_kernel import (
     _find_python_version_file,
-    ConfConstGeneral,
+    _ConfConstGeneral,
 )
 
 
@@ -26,7 +26,7 @@ def test_finds_version_file_in_current_dir(fs):
 
     fs.create_dir(current_dir)
 
-    version_file_path = os.path.join(current_dir, ConfConstGeneral.python_version_file_basename)
+    version_file_path = os.path.join(current_dir, _ConfConstGeneral.python_version_file_basename)
     fs.create_file(version_file_path, contents="3.9.5")
 
     # when:
@@ -52,7 +52,7 @@ def test_finds_version_file_in_parent_dir(fs):
     child_dir = os.path.join(parent_dir, "src", "app")
     fs.create_dir(child_dir)
 
-    version_file_path = os.path.join(parent_dir, ConfConstGeneral.python_version_file_basename)
+    version_file_path = os.path.join(parent_dir, _ConfConstGeneral.python_version_file_basename)
     fs.create_file(version_file_path, contents="3.8.10")
 
     # when:
@@ -75,7 +75,7 @@ def test_finds_version_file_at_root(fs):
     deep_dir = "/a/b/c/d/e"
     fs.create_dir(deep_dir)
 
-    version_file_path = os.path.join("/", ConfConstGeneral.python_version_file_basename)
+    version_file_path = os.path.join("/", _ConfConstGeneral.python_version_file_basename)
     fs.create_file(version_file_path, contents="3.7.0")
 
     # when:
@@ -118,10 +118,10 @@ def test_finds_closest_version_file(fs):
     current_dir = os.path.join(parent_dir, "src")
     fs.create_dir(current_dir)
 
-    parent_version_file = os.path.join(parent_dir, ConfConstGeneral.python_version_file_basename)
+    parent_version_file = os.path.join(parent_dir, _ConfConstGeneral.python_version_file_basename)
     fs.create_file(parent_version_file, contents="3.9.0")
 
-    child_version_file = os.path.join(current_dir, ConfConstGeneral.python_version_file_basename)
+    child_version_file = os.path.join(current_dir, _ConfConstGeneral.python_version_file_basename)
     fs.create_file(child_version_file, contents="3.10.0")
 
     # when:

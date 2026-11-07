@@ -10,7 +10,7 @@ from protoprimer.primer_kernel import (
     _Node_state_client_conf_file_data_loaded,
     _Node_state_env_conf_file_data_loaded,
     _Node_state_ref_root_dir_abs_path_inited,
-    ConfConstEnv,
+    _ConfConstEnv,
     ConfField,
     _EnvContext,
     _EnvState,
@@ -49,7 +49,7 @@ def test_default_when_field_absent(
     result = env_ctx.eval_state(_EnvState.state_local_run_dir_abs_path_inited.name)
 
     # then:
-    assert result == os.path.join(ref_root_abs_path, ConfConstEnv.default_dir_rel_path_run)
+    assert result == os.path.join(ref_root_abs_path, _ConfConstEnv.default_dir_rel_path_run)
 
 
 @patch(f"{primer_kernel.__name__}.{_Node_state_env_conf_file_data_loaded.__name__}.create_state_node")

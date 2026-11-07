@@ -13,9 +13,9 @@ from protoprimer.primer_kernel import (
     _Node_state_client_conf_file_data_loaded,
     _Node_state_ref_root_dir_abs_path_inited,
     _Factory_state_selected_env_dir_rel_path_inited,
-    ConfConstClient,
-    ConfConstInput,
-    ConfConstPrimer,
+    _ConfConstClient,
+    _ConfConstInput,
+    _ConfConstPrimer,
     ConfField,
     _EnvState,
     _ExecOperation,
@@ -57,19 +57,19 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         primer_conf_data = {
             ConfField.field_ref_root_dir_rel_path.value: ".",
-            ConfField.field_global_conf_dir_rel_path.value: ConfConstPrimer.default_client_conf_dir_rel_path,
+            ConfField.field_global_conf_dir_rel_path.value: _ConfConstPrimer.default_client_conf_dir_rel_path,
         }
         write_json_file(
-            os.path.join(mock_client_dir, ConfConstInput.default_file_basename_conf_primer),
+            os.path.join(mock_client_dir, _ConfConstInput.default_file_basename_conf_primer),
             primer_conf_data,
         )
 
         mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = mock_client_dir
-        mock_state_client_conf_file_data_loaded.return_value.eval_own_state.return_value = {ConfField.field_local_conf_symlink_rel_path.value: ConfConstClient.default_dir_rel_path_leap_env_link_name}
+        mock_state_client_conf_file_data_loaded.return_value.eval_own_state.return_value = {ConfField.field_local_conf_symlink_rel_path.value: _ConfConstClient.default_dir_rel_path_leap_env_link_name}
 
         state_local_conf_symlink_abs_path_inited = os.path.join(
             mock_client_dir,
-            ConfConstClient.default_dir_rel_path_leap_env_link_name,
+            _ConfConstClient.default_dir_rel_path_leap_env_link_name,
         )
         mock_target_dir = os.path.join(
             "target_dir",
@@ -118,18 +118,18 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         primer_conf_data = {
             ConfField.field_ref_root_dir_rel_path.value: ".",
-            ConfField.field_global_conf_dir_rel_path.value: ConfConstPrimer.default_client_conf_dir_rel_path,
+            ConfField.field_global_conf_dir_rel_path.value: _ConfConstPrimer.default_client_conf_dir_rel_path,
         }
         write_json_file(
-            os.path.join(mock_client_dir, ConfConstInput.default_file_basename_conf_primer),
+            os.path.join(mock_client_dir, _ConfConstInput.default_file_basename_conf_primer),
             primer_conf_data,
         )
         mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = mock_client_dir
-        mock_state_client_conf_file_data_loaded.return_value.eval_own_state.return_value = {ConfField.field_local_conf_symlink_rel_path.value: ConfConstClient.default_dir_rel_path_leap_env_link_name}
+        mock_state_client_conf_file_data_loaded.return_value.eval_own_state.return_value = {ConfField.field_local_conf_symlink_rel_path.value: _ConfConstClient.default_dir_rel_path_leap_env_link_name}
 
         state_local_conf_symlink_abs_path_inited = os.path.join(
             mock_client_dir,
-            ConfConstClient.default_dir_rel_path_leap_env_link_name,
+            _ConfConstClient.default_dir_rel_path_leap_env_link_name,
         )
         target_dst_dir_path = os.path.join(
             "target_dir",
@@ -172,10 +172,10 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         primer_conf_data = {
             ConfField.field_ref_root_dir_rel_path.value: ".",
-            ConfField.field_global_conf_dir_rel_path.value: ConfConstPrimer.default_client_conf_dir_rel_path,
+            ConfField.field_global_conf_dir_rel_path.value: _ConfConstPrimer.default_client_conf_dir_rel_path,
         }
         write_json_file(
-            os.path.join(mock_client_dir, ConfConstInput.default_file_basename_conf_primer),
+            os.path.join(mock_client_dir, _ConfConstInput.default_file_basename_conf_primer),
             primer_conf_data,
         )
         actual_target_dir = os.path.join(
@@ -228,21 +228,21 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         primer_conf_data = {
             ConfField.field_ref_root_dir_rel_path.value: ".",
-            ConfField.field_global_conf_dir_rel_path.value: ConfConstPrimer.default_client_conf_dir_rel_path,
+            ConfField.field_global_conf_dir_rel_path.value: _ConfConstPrimer.default_client_conf_dir_rel_path,
         }
         write_json_file(
-            os.path.join(mock_client_dir, ConfConstInput.default_file_basename_conf_primer),
+            os.path.join(mock_client_dir, _ConfConstInput.default_file_basename_conf_primer),
             primer_conf_data,
         )
         mock_not_a_dir = os.path.join(
             "file",
         )
         mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = mock_client_dir
-        mock_state_client_conf_file_data_loaded.return_value.eval_own_state.return_value = {ConfField.field_local_conf_symlink_rel_path.value: ConfConstClient.default_dir_rel_path_leap_env_link_name}
+        mock_state_client_conf_file_data_loaded.return_value.eval_own_state.return_value = {ConfField.field_local_conf_symlink_rel_path.value: _ConfConstClient.default_dir_rel_path_leap_env_link_name}
 
         state_local_conf_symlink_abs_path_inited = os.path.join(
             mock_client_dir,
-            ConfConstClient.default_dir_rel_path_leap_env_link_name,
+            _ConfConstClient.default_dir_rel_path_leap_env_link_name,
         )
         self.fs.create_file(mock_not_a_dir)
         self.fs.create_symlink(
@@ -283,19 +283,19 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         primer_conf_data = {
             ConfField.field_ref_root_dir_rel_path.value: ".",
-            ConfField.field_global_conf_dir_rel_path.value: ConfConstPrimer.default_client_conf_dir_rel_path,
+            ConfField.field_global_conf_dir_rel_path.value: _ConfConstPrimer.default_client_conf_dir_rel_path,
         }
         write_json_file(
-            os.path.join(mock_client_dir, ConfConstInput.default_file_basename_conf_primer),
+            os.path.join(mock_client_dir, _ConfConstInput.default_file_basename_conf_primer),
             primer_conf_data,
         )
 
         mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = mock_client_dir
-        mock_state_client_conf_file_data_loaded.return_value.eval_own_state.return_value = {ConfField.field_local_conf_symlink_rel_path.value: ConfConstClient.default_dir_rel_path_leap_env_link_name}
+        mock_state_client_conf_file_data_loaded.return_value.eval_own_state.return_value = {ConfField.field_local_conf_symlink_rel_path.value: _ConfConstClient.default_dir_rel_path_leap_env_link_name}
 
         state_local_conf_symlink_abs_path_inited = os.path.join(
             mock_client_dir,
-            ConfConstClient.default_dir_rel_path_leap_env_link_name,
+            _ConfConstClient.default_dir_rel_path_leap_env_link_name,
         )
         self.fs.create_dir(state_local_conf_symlink_abs_path_inited)
         client_script_basename = "client_script.py"
@@ -338,21 +338,21 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         primer_conf_data = {
             ConfField.field_ref_root_dir_rel_path.value: ".",
-            ConfField.field_global_conf_dir_rel_path.value: ConfConstPrimer.default_client_conf_dir_rel_path,
+            ConfField.field_global_conf_dir_rel_path.value: _ConfConstPrimer.default_client_conf_dir_rel_path,
         }
         write_json_file(
-            os.path.join(mock_client_dir, ConfConstInput.default_file_basename_conf_primer),
+            os.path.join(mock_client_dir, _ConfConstInput.default_file_basename_conf_primer),
             primer_conf_data,
         )
         target_dst_dir_path = os.path.join(
             "target_dir",
         )
         mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = mock_client_dir
-        mock_state_client_conf_file_data_loaded.return_value.eval_own_state.return_value = {ConfField.field_local_conf_symlink_rel_path.value: ConfConstClient.default_dir_rel_path_leap_env_link_name}
+        mock_state_client_conf_file_data_loaded.return_value.eval_own_state.return_value = {ConfField.field_local_conf_symlink_rel_path.value: _ConfConstClient.default_dir_rel_path_leap_env_link_name}
 
         state_local_conf_symlink_abs_path_inited = os.path.join(
             mock_client_dir,
-            ConfConstClient.default_dir_rel_path_leap_env_link_name,
+            _ConfConstClient.default_dir_rel_path_leap_env_link_name,
         )
         self.fs.create_dir(target_dst_dir_path)
 
@@ -393,21 +393,21 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         primer_conf_data = {
             ConfField.field_ref_root_dir_rel_path.value: ".",
-            ConfField.field_global_conf_dir_rel_path.value: ConfConstPrimer.default_client_conf_dir_rel_path,
+            ConfField.field_global_conf_dir_rel_path.value: _ConfConstPrimer.default_client_conf_dir_rel_path,
         }
         write_json_file(
-            os.path.join(mock_client_dir, ConfConstInput.default_file_basename_conf_primer),
+            os.path.join(mock_client_dir, _ConfConstInput.default_file_basename_conf_primer),
             primer_conf_data,
         )
 
         target_dst_dir_path_non_normalized = "target_dir/"
         target_dst_dir_path_normalized = "target_dir"
         mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = mock_client_dir
-        mock_state_client_conf_file_data_loaded.return_value.eval_own_state.return_value = {ConfField.field_local_conf_symlink_rel_path.value: ConfConstClient.default_dir_rel_path_leap_env_link_name}
+        mock_state_client_conf_file_data_loaded.return_value.eval_own_state.return_value = {ConfField.field_local_conf_symlink_rel_path.value: _ConfConstClient.default_dir_rel_path_leap_env_link_name}
 
         state_local_conf_symlink_abs_path_inited = os.path.join(
             mock_client_dir,
-            ConfConstClient.default_dir_rel_path_leap_env_link_name,
+            _ConfConstClient.default_dir_rel_path_leap_env_link_name,
         )
         self.fs.create_dir(target_dst_dir_path_normalized)
 
@@ -480,10 +480,10 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         primer_conf_data = {
             ConfField.field_ref_root_dir_rel_path.value: ".",
-            ConfField.field_global_conf_dir_rel_path.value: ConfConstPrimer.default_client_conf_dir_rel_path,
+            ConfField.field_global_conf_dir_rel_path.value: _ConfConstPrimer.default_client_conf_dir_rel_path,
         }
         write_json_file(
-            os.path.join(mock_client_dir, ConfConstInput.default_file_basename_conf_primer),
+            os.path.join(mock_client_dir, _ConfConstInput.default_file_basename_conf_primer),
             primer_conf_data,
         )
 
@@ -539,10 +539,10 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         primer_conf_data = {
             ConfField.field_ref_root_dir_rel_path.value: ".",
-            ConfField.field_global_conf_dir_rel_path.value: ConfConstPrimer.default_client_conf_dir_rel_path,
+            ConfField.field_global_conf_dir_rel_path.value: _ConfConstPrimer.default_client_conf_dir_rel_path,
         }
         write_json_file(
-            os.path.join(mock_client_dir, ConfConstInput.default_file_basename_conf_primer),
+            os.path.join(mock_client_dir, _ConfConstInput.default_file_basename_conf_primer),
             primer_conf_data,
         )
 
@@ -602,10 +602,10 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         primer_conf_data = {
             ConfField.field_ref_root_dir_rel_path.value: ".",
-            ConfField.field_global_conf_dir_rel_path.value: ConfConstPrimer.default_client_conf_dir_rel_path,
+            ConfField.field_global_conf_dir_rel_path.value: _ConfConstPrimer.default_client_conf_dir_rel_path,
         }
         write_json_file(
-            os.path.join(mock_client_dir, ConfConstInput.default_file_basename_conf_primer),
+            os.path.join(mock_client_dir, _ConfConstInput.default_file_basename_conf_primer),
             primer_conf_data,
         )
 

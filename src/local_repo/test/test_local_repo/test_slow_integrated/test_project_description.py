@@ -5,7 +5,7 @@ import requests
 
 import protoprimer
 from local_test.toml_handler import load_toml_data
-from protoprimer.primer_kernel import ConfConstClient
+from protoprimer.primer_kernel import _ConfConstClient
 
 
 def test_project_description():
@@ -25,7 +25,7 @@ def test_project_description():
                 ),
             ),
             protoprimer.__name__,
-            ConfConstClient.default_pyproject_toml_basename,
+            _ConfConstClient.default_pyproject_toml_basename,
         )
     )
 

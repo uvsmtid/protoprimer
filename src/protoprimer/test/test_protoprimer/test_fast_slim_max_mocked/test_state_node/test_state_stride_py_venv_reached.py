@@ -22,8 +22,8 @@ from protoprimer.primer_kernel import (
     _Factory_state_reset_triggered,
     _Node_state_selected_python_file_abs_path_inited,
     _Factory_state_venv_driver_prepared,
-    ConfConstEnv,
-    ConfConstGeneral,
+    _ConfConstEnv,
+    _ConfConstGeneral,
     _ContextBuilder,
     _EntryFunc,
     _EnvContext,
@@ -31,13 +31,13 @@ from protoprimer.primer_kernel import (
     EnvVar,
     StateStride,
     _Factory_state_input_exec_operation_loaded,
-    VenvDriverPip,
+    _VenvDriverPip,
 )
 
 mock_client_dir = "/mock_client_dir"
 state_proto_kernel_file_abs_path_inited = os.path.join(
     mock_client_dir,
-    ConfConstGeneral.default_proto_kernel_basename,
+    _ConfConstGeneral.default_proto_kernel_basename,
 )
 target_dst_dir_path = "target_dst_dir"
 mock_version_constraints_file_basename = "version_constraints.txt"
@@ -133,7 +133,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_reset_triggered.return_value.eval_own_state.return_value = False
         mock_state_proto_kernel_file_abs_path_inited.return_value.eval_own_state.return_value = state_proto_kernel_file_abs_path_inited
         mock_state_selected_python_file_abs_path_inited.return_value.eval_own_state.return_value = test_python_abs_path
-        mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = os.path.join(mock_client_dir, ConfConstEnv.default_dir_rel_path_venv)
+        mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = os.path.join(mock_client_dir, _ConfConstEnv.default_dir_rel_path_venv)
         mock_state_local_conf_file_abs_path_inited.return_value.eval_own_state.return_value = "fake: " + _EnvState.state_local_conf_file_abs_path_inited.name
 
         # when:
@@ -145,14 +145,14 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_venv_driver_prepared.return_value.eval_own_state.return_value.create_venv.assert_called_once_with(
             os.path.join(
                 mock_client_dir,
-                ConfConstEnv.default_dir_rel_path_venv,
+                _ConfConstEnv.default_dir_rel_path_venv,
             ),
             constraints_txt_path,
         )
         path_to_required_python = os.path.join(
             mock_client_dir,
-            ConfConstEnv.default_dir_rel_path_venv,
-            ConfConstGeneral.file_rel_path_venv_python,
+            _ConfConstEnv.default_dir_rel_path_venv,
+            _ConfConstGeneral.file_rel_path_venv_python,
         )
         expected_argv = [
             path_to_required_python,
@@ -219,7 +219,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_proto_kernel_file_abs_path_inited.return_value.eval_own_state.return_value = state_proto_kernel_file_abs_path_inited
 
         mock_state_selected_python_file_abs_path_inited.return_value.eval_own_state.return_value = test_python_abs_path
-        mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = os.path.join(mock_client_dir, ConfConstEnv.default_dir_rel_path_venv)
+        mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = os.path.join(mock_client_dir, _ConfConstEnv.default_dir_rel_path_venv)
         mock_state_local_conf_file_abs_path_inited.return_value.eval_own_state.return_value = "fake: " + _EnvState.state_local_conf_file_abs_path_inited.name
 
         # when:
@@ -284,7 +284,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_proto_kernel_file_abs_path_inited.return_value.eval_own_state.return_value = state_proto_kernel_file_abs_path_inited
 
         mock_state_selected_python_file_abs_path_inited.return_value.eval_own_state.return_value = test_python_abs_path
-        mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = os.path.join(mock_client_dir, ConfConstEnv.default_dir_rel_path_venv)
+        mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = os.path.join(mock_client_dir, _ConfConstEnv.default_dir_rel_path_venv)
         mock_state_local_conf_file_abs_path_inited.return_value.eval_own_state.return_value = "fake: " + _EnvState.state_local_conf_file_abs_path_inited.name
 
         # when:
@@ -351,7 +351,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_proto_kernel_file_abs_path_inited.return_value.eval_own_state.return_value = state_proto_kernel_file_abs_path_inited
 
         mock_state_selected_python_file_abs_path_inited.return_value.eval_own_state.return_value = non_default_file_abs_path_python
-        mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = ConfConstEnv.default_dir_rel_path_venv
+        mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = _ConfConstEnv.default_dir_rel_path_venv
         mock_state_local_conf_file_abs_path_inited.return_value.eval_own_state.return_value = "fake: " + _EnvState.state_local_conf_file_abs_path_inited.name
 
         # when:
@@ -418,7 +418,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_proto_kernel_file_abs_path_inited.return_value.eval_own_state.return_value = state_proto_kernel_file_abs_path_inited
 
         mock_state_selected_python_file_abs_path_inited.return_value.eval_own_state.return_value = test_python_abs_path
-        mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = os.path.join(mock_client_dir, ConfConstEnv.default_dir_rel_path_venv)
+        mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = os.path.join(mock_client_dir, _ConfConstEnv.default_dir_rel_path_venv)
         mock_state_local_conf_file_abs_path_inited.return_value.eval_own_state.return_value = "fake: " + _EnvState.state_local_conf_file_abs_path_inited.name
 
         # when:
@@ -429,7 +429,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         path_to_venv = os.path.join(
             mock_client_dir,
-            ConfConstEnv.default_dir_rel_path_venv,
+            _ConfConstEnv.default_dir_rel_path_venv,
         )
         mock_state_venv_driver_prepared.return_value.eval_own_state.return_value.create_venv.assert_called_once_with(
             path_to_venv,
@@ -437,7 +437,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
         path_to_venv_python = os.path.join(
             path_to_venv,
-            ConfConstGeneral.file_rel_path_venv_python,
+            _ConfConstGeneral.file_rel_path_venv_python,
         )
         expected_argv = [
             path_to_venv_python,
@@ -523,7 +523,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         path_to_venv_python = os.path.join(
             non_default_dir_abs_path_venv,
-            ConfConstGeneral.file_rel_path_venv_python,
+            _ConfConstGeneral.file_rel_path_venv_python,
         )
         expected_argv = [
             path_to_venv_python,
@@ -610,7 +610,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         # then:
         path_to_venv_python = os.path.join(
             "/not/the/parent/of/current/python",
-            ConfConstGeneral.file_rel_path_venv_python,
+            _ConfConstGeneral.file_rel_path_venv_python,
         )
         expected_argv = [
             path_to_venv_python,
@@ -743,7 +743,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_proto_kernel_file_abs_path_inited.return_value.eval_own_state.return_value = state_proto_kernel_file_abs_path_inited
 
         mock_state_selected_python_file_abs_path_inited.return_value.eval_own_state.return_value = test_python_abs_path
-        path_to_venv = os.path.join(mock_client_dir, ConfConstEnv.default_dir_rel_path_venv)
+        path_to_venv = os.path.join(mock_client_dir, _ConfConstEnv.default_dir_rel_path_venv)
         mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = path_to_venv
         mock_state_local_conf_file_abs_path_inited.return_value.eval_own_state.return_value = "fake: " + _EnvState.state_local_conf_file_abs_path_inited.name
 
@@ -760,7 +760,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         path_to_venv_python = os.path.join(
             path_to_venv,
-            ConfConstGeneral.file_rel_path_venv_python,
+            _ConfConstGeneral.file_rel_path_venv_python,
         )
         expected_argv = [
             path_to_venv_python,
@@ -793,7 +793,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         return_value=test_python_abs_path,
     )
     @patch(f"{primer_kernel.__name__}.os.execve")
-    @patch(f"{primer_kernel.__name__}.{VenvDriverPip.__name__}.create_venv")
+    @patch(f"{primer_kernel.__name__}.{_VenvDriverPip.__name__}.create_venv")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}._is_same_file", return_value=True)
     @patch(f"{primer_kernel.__name__}.{_Node_state_version_constraints_file_basename_inited.__name__}.create_state_node")
@@ -829,7 +829,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_proto_kernel_file_abs_path_inited.return_value.eval_own_state.return_value = state_proto_kernel_file_abs_path_inited
 
         mock_state_selected_python_file_abs_path_inited.return_value.eval_own_state.return_value = test_python_abs_path
-        path_to_venv = os.path.join(mock_client_dir, ConfConstEnv.default_dir_rel_path_venv)
+        path_to_venv = os.path.join(mock_client_dir, _ConfConstEnv.default_dir_rel_path_venv)
         mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = path_to_venv
         mock_state_local_conf_file_abs_path_inited.return_value.eval_own_state.return_value = "fake: " + _EnvState.state_local_conf_file_abs_path_inited.name
 
@@ -838,9 +838,9 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.fs.create_file(os.path.join(path_to_venv, "pyvenv.cfg"), contents="uv = 1.2.3")
 
         # But the driver is pip
-        from protoprimer.primer_kernel import VenvDriverPip
+        from protoprimer.primer_kernel import _VenvDriverPip
 
-        mock_state_venv_driver_prepared.return_value.eval_own_state.return_value = VenvDriverPip(
+        mock_state_venv_driver_prepared.return_value.eval_own_state.return_value = _VenvDriverPip(
             test_python_abs_path,
             test_python_version,
             path_to_venv,
