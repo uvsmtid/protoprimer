@@ -16,31 +16,31 @@ from local_test.integrated_helper import (
     test_python_version,
 )
 from protoprimer.primer_kernel import (
-    ConfConstClient,
-    ConfConstGeneral,
-    ConfConstInput,
-    ConfConstPrimer,
+    _ConfConstClient,
+    _ConfConstGeneral,
+    _ConfConstInput,
+    _ConfConstPrimer,
     _EntryFunc,
     _ExecOperation,
-    SyntaxArg,
-    VenvDriverPip,
+    _SyntaxArg,
+    _VenvDriverPip,
     _generate_entry_script_content,
 )
 
 
 def test_start_app_from_env_default(tmp_path: pathlib.Path):
     """
-    *   Boot env without args -> picks `ConfConstClient.common_env_name` as configured.
-    *   Start app -> picks `ConfConstClient.common_env_name` as specified.
+    *   Boot env without args -> picks `_ConfConstClient.common_env_name` as configured.
+    *   Start app -> picks `_ConfConstClient.common_env_name` as specified.
     """
 
     # given:
 
     ref_root_abs_path = switch_to_ref_root_abs_path(tmp_path)
 
-    # === create `ConfLeap.leap_primer`
+    # === create `_ConfLeap.leap_primer`
 
-    proto_kernel_dir_abs_path = ref_root_abs_path / ConfConstInput.default_proto_conf_dir_rel_path
+    proto_kernel_dir_abs_path = ref_root_abs_path / _ConfConstInput.default_proto_conf_dir_rel_path
     proto_kernel_abs_path: pathlib.Path = create_plain_proto_kernel(proto_kernel_dir_abs_path)
     create_conf_primer_file(
         ref_root_abs_path,
@@ -49,7 +49,7 @@ def test_start_app_from_env_default(tmp_path: pathlib.Path):
 
     # An arbitrary venv to start from:
     arbitrary_venv_dir = ref_root_abs_path / "arbitrary_venv"
-    venv_driver = VenvDriverPip(
+    venv_driver = _VenvDriverPip(
         test_python_version,
         sys.executable,
         str(arbitrary_venv_dir),
@@ -57,16 +57,16 @@ def test_start_app_from_env_default(tmp_path: pathlib.Path):
         enforce_version_match=False,
     )
     venv_driver.create_venv(str(arbitrary_venv_dir), "")
-    arbitrary_venv_python = arbitrary_venv_dir / ConfConstGeneral.file_rel_path_venv_python
+    arbitrary_venv_python = arbitrary_venv_dir / _ConfConstGeneral.file_rel_path_venv_python
 
     # === create `pyproject.toml`
 
     project_dir_abs_path = ref_root_abs_path / test_pyproject_src_dir_rel_path
     create_test_pyproject_toml(project_dir_abs_path)
 
-    # === create `ConfLeap.leap_env` / `ConfConstClient.common_env_name`
+    # === create `_ConfLeap.leap_env` / `_ConfConstClient.common_env_name`
 
-    common_env_dir_name = ConfConstClient.common_env_name
+    common_env_dir_name = _ConfConstClient.common_env_name
     common_env_dir_abs_path = ref_root_abs_path / common_env_dir_name
     default_venv_rel_path = "venv_default"
     create_conf_env_file(
@@ -76,7 +76,7 @@ def test_start_app_from_env_default(tmp_path: pathlib.Path):
         venv_dir_rel_path=default_venv_rel_path,
     )
 
-    # === create `ConfLeap.leap_env` / `special_env`
+    # === create `_ConfLeap.leap_env` / `special_env`
 
     special_env_dir_name = "special_env"
     special_env_dir_abs_path = ref_root_abs_path / special_env_dir_name
@@ -88,9 +88,9 @@ def test_start_app_from_env_default(tmp_path: pathlib.Path):
         venv_dir_rel_path=special_venv_rel_path,
     )
 
-    # === create `ConfLeap.leap_client` / `ConfConstClient.common_env_name`
+    # === create `_ConfLeap.leap_client` / `_ConfConstClient.common_env_name`
 
-    conf_client_dir_abs_path = ref_root_abs_path / ConfConstPrimer.default_client_conf_dir_rel_path
+    conf_client_dir_abs_path = ref_root_abs_path / _ConfConstPrimer.default_client_conf_dir_rel_path
 
     create_conf_client_file(
         ref_root_abs_path,
@@ -120,18 +120,18 @@ def test_start_app_from_env_default(tmp_path: pathlib.Path):
     start_app_script_abs_path.chmod(start_app_script_abs_path.stat().st_mode | stat.S_IEXEC)
 
     # when:
-    # bootstrap with `ConfConstClient.common_env_name`
+    # bootstrap with `_ConfConstClient.common_env_name`
 
     run_primer_main(
         [
             str(proto_kernel_abs_path),
-            SyntaxArg.arg_v,
-            SyntaxArg.arg_v,
+            _SyntaxArg.arg_v,
+            _SyntaxArg.arg_v,
         ]
     )
 
     # then:
-    # assert `ConfConstClient.common_env_name` created
+    # assert `_ConfConstClient.common_env_name` created
 
     assert default_venv_abs_path.exists()
     assert not special_venv_abs_path.exists()
@@ -161,17 +161,17 @@ def test_start_app_from_env_default(tmp_path: pathlib.Path):
 
 def test_app_started_from_env_special(tmp_path: pathlib.Path):
     """
-    *   Boot with override `SyntaxArg.arg_env` -> picks `special_env` as specified.
-    *   Start app -> still picks `special_env` as configured (not `ConfConstClient.common_env_name`).
+    *   Boot with override `_SyntaxArg.arg_env` -> picks `special_env` as specified.
+    *   Start app -> still picks `special_env` as configured (not `_ConfConstClient.common_env_name`).
     """
 
     # given:
 
     ref_root_abs_path = switch_to_ref_root_abs_path(tmp_path)
 
-    # === create `ConfLeap.leap_primer`
+    # === create `_ConfLeap.leap_primer`
 
-    proto_kernel_dir_abs_path = ref_root_abs_path / ConfConstInput.default_proto_conf_dir_rel_path
+    proto_kernel_dir_abs_path = ref_root_abs_path / _ConfConstInput.default_proto_conf_dir_rel_path
     proto_kernel_abs_path: pathlib.Path = create_plain_proto_kernel(proto_kernel_dir_abs_path)
     create_conf_primer_file(
         ref_root_abs_path,
@@ -180,7 +180,7 @@ def test_app_started_from_env_special(tmp_path: pathlib.Path):
 
     # An arbitrary venv to start from:
     arbitrary_venv_dir = ref_root_abs_path / "arbitrary_venv"
-    venv_driver = VenvDriverPip(
+    venv_driver = _VenvDriverPip(
         test_python_version,
         sys.executable,
         str(arbitrary_venv_dir),
@@ -188,14 +188,14 @@ def test_app_started_from_env_special(tmp_path: pathlib.Path):
         enforce_version_match=False,
     )
     venv_driver.create_venv(str(arbitrary_venv_dir), "")
-    arbitrary_venv_python = arbitrary_venv_dir / ConfConstGeneral.file_rel_path_venv_python
+    arbitrary_venv_python = arbitrary_venv_dir / _ConfConstGeneral.file_rel_path_venv_python
 
     # === create `pyproject.toml`
 
     project_dir_abs_path = ref_root_abs_path / test_pyproject_src_dir_rel_path
     create_test_pyproject_toml(project_dir_abs_path)
 
-    # === create `ConfLeap.leap_env` / `special_env`
+    # === create `_ConfLeap.leap_env` / `special_env`
 
     special_env_dir_name = "special_env"
     special_env_dir_abs_path = ref_root_abs_path / special_env_dir_name
@@ -207,9 +207,9 @@ def test_app_started_from_env_special(tmp_path: pathlib.Path):
         venv_dir_rel_path=special_venv_rel_path,
     )
 
-    # === create `ConfLeap.leap_env` / `ConfConstClient.common_env_name`
+    # === create `_ConfLeap.leap_env` / `_ConfConstClient.common_env_name`
 
-    common_env_dir_name = ConfConstClient.common_env_name
+    common_env_dir_name = _ConfConstClient.common_env_name
     common_env_dir_abs_path = ref_root_abs_path / common_env_dir_name
     default_venv_rel_path = "venv_default"
     create_conf_env_file(
@@ -219,9 +219,9 @@ def test_app_started_from_env_special(tmp_path: pathlib.Path):
         venv_dir_rel_path=default_venv_rel_path,
     )
 
-    # === create `ConfLeap.leap_client` / `special_env`
+    # === create `_ConfLeap.leap_client` / `special_env`
 
-    conf_client_dir_abs_path = ref_root_abs_path / ConfConstPrimer.default_client_conf_dir_rel_path
+    conf_client_dir_abs_path = ref_root_abs_path / _ConfConstPrimer.default_client_conf_dir_rel_path
 
     create_conf_client_file(
         ref_root_abs_path,
@@ -256,10 +256,10 @@ def test_app_started_from_env_special(tmp_path: pathlib.Path):
     run_primer_main(
         [
             str(proto_kernel_abs_path),
-            SyntaxArg.arg_v,
-            SyntaxArg.arg_v,
+            _SyntaxArg.arg_v,
+            _SyntaxArg.arg_v,
             _ExecOperation.op_boot.value,
-            SyntaxArg.arg_env,
+            _SyntaxArg.arg_env,
             special_env_dir_name,
         ]
     )
@@ -297,8 +297,8 @@ def test_app_started_with_symlink_to_env_special_but_config_to_env_common(
     tmp_path: pathlib.Path,
 ):
     """
-    *   Bootstrap with override `SyntaxArg.arg_env` -> picks `special_env` as specified.
-    *   Change config to use `ConfConstClient.common_env_name` as default.
+    *   Bootstrap with override `_SyntaxArg.arg_env` -> picks `special_env` as specified.
+    *   Change config to use `_ConfConstClient.common_env_name` as default.
     *   Start app -> still picks `special_env` as set by symlink.
     """
 
@@ -306,9 +306,9 @@ def test_app_started_with_symlink_to_env_special_but_config_to_env_common(
 
     ref_root_abs_path = switch_to_ref_root_abs_path(tmp_path)
 
-    # === create `ConfLeap.leap_primer`
+    # === create `_ConfLeap.leap_primer`
 
-    proto_kernel_dir_abs_path = ref_root_abs_path / ConfConstInput.default_proto_conf_dir_rel_path
+    proto_kernel_dir_abs_path = ref_root_abs_path / _ConfConstInput.default_proto_conf_dir_rel_path
     proto_kernel_abs_path: pathlib.Path = create_plain_proto_kernel(proto_kernel_dir_abs_path)
     create_conf_primer_file(
         ref_root_abs_path,
@@ -317,7 +317,7 @@ def test_app_started_with_symlink_to_env_special_but_config_to_env_common(
 
     # An arbitrary venv to start from:
     arbitrary_venv_dir = ref_root_abs_path / "arbitrary_venv"
-    venv_driver = VenvDriverPip(
+    venv_driver = _VenvDriverPip(
         test_python_version,
         sys.executable,
         str(arbitrary_venv_dir),
@@ -325,14 +325,14 @@ def test_app_started_with_symlink_to_env_special_but_config_to_env_common(
         enforce_version_match=False,
     )
     venv_driver.create_venv(str(arbitrary_venv_dir), "")
-    arbitrary_venv_python = arbitrary_venv_dir / ConfConstGeneral.file_rel_path_venv_python
+    arbitrary_venv_python = arbitrary_venv_dir / _ConfConstGeneral.file_rel_path_venv_python
 
     # === create `pyproject.toml`
 
     project_dir_abs_path = ref_root_abs_path / test_pyproject_src_dir_rel_path
     create_test_pyproject_toml(project_dir_abs_path)
 
-    # === create `ConfLeap.leap_env` / `special_env`
+    # === create `_ConfLeap.leap_env` / `special_env`
 
     special_env_dir_name = "special_env"
     special_env_dir_abs_path = ref_root_abs_path / special_env_dir_name
@@ -344,9 +344,9 @@ def test_app_started_with_symlink_to_env_special_but_config_to_env_common(
         venv_dir_rel_path=special_venv_rel_path,
     )
 
-    # === create `ConfLeap.leap_env` / `ConfConstClient.common_env_name`
+    # === create `_ConfLeap.leap_env` / `_ConfConstClient.common_env_name`
 
-    common_env_dir_name = ConfConstClient.common_env_name
+    common_env_dir_name = _ConfConstClient.common_env_name
     common_env_dir_abs_path = ref_root_abs_path / common_env_dir_name
     default_venv_rel_path = "venv_default"
     create_conf_env_file(
@@ -356,9 +356,9 @@ def test_app_started_with_symlink_to_env_special_but_config_to_env_common(
         venv_dir_rel_path=default_venv_rel_path,
     )
 
-    # === create `ConfLeap.leap_client` / `special_env`
+    # === create `_ConfLeap.leap_client` / `special_env`
 
-    conf_client_dir_abs_path = ref_root_abs_path / ConfConstPrimer.default_client_conf_dir_rel_path
+    conf_client_dir_abs_path = ref_root_abs_path / _ConfConstPrimer.default_client_conf_dir_rel_path
 
     create_conf_client_file(
         ref_root_abs_path,
@@ -393,10 +393,10 @@ def test_app_started_with_symlink_to_env_special_but_config_to_env_common(
     run_primer_main(
         [
             str(proto_kernel_abs_path),
-            SyntaxArg.arg_v,
-            SyntaxArg.arg_v,
+            _SyntaxArg.arg_v,
+            _SyntaxArg.arg_v,
             _ExecOperation.op_boot.value,
-            SyntaxArg.arg_env,
+            _SyntaxArg.arg_env,
             special_env_dir_name,
         ]
     )
@@ -408,7 +408,7 @@ def test_app_started_with_symlink_to_env_special_but_config_to_env_common(
     assert special_venv_abs_path.exists()
 
     # given:
-    # switch config from `env_special` to `ConfConstClient.common_env_name`
+    # switch config from `env_special` to `_ConfConstClient.common_env_name`
 
     create_conf_client_file(
         ref_root_abs_path,

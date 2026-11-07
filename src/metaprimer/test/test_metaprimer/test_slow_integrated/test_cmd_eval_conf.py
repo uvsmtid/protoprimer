@@ -18,9 +18,9 @@ from local_test.integrated_helper import (
 from metaprimer import cmd_eval_conf
 from metaprimer.cmd_eval_conf import custom_main
 from protoprimer.primer_kernel import (
-    ConfConstClient,
-    ConfConstInput,
-    ConfConstPrimer,
+    _ConfConstClient,
+    _ConfConstInput,
+    _ConfConstPrimer,
     _EntryFunc,
     _EnvState,
     _import_proto_module,
@@ -36,7 +36,7 @@ def test_eval_conf_returns_derived_config(tmp_path: pathlib.Path):
 
     # ===
 
-    proto_kernel_dir_abs_path = ref_root_abs_path / ConfConstInput.default_proto_conf_dir_rel_path
+    proto_kernel_dir_abs_path = ref_root_abs_path / _ConfConstInput.default_proto_conf_dir_rel_path
     proto_kernel_abs_path = create_plain_proto_kernel(proto_kernel_dir_abs_path)
     create_conf_primer_file(
         ref_root_abs_path,
@@ -50,7 +50,7 @@ def test_eval_conf_returns_derived_config(tmp_path: pathlib.Path):
 
     # ===
 
-    conf_env_dir_abs_path = ref_root_abs_path / ConfConstClient.default_default_env_dir_rel_path
+    conf_env_dir_abs_path = ref_root_abs_path / _ConfConstClient.default_default_env_dir_rel_path
 
     create_conf_env_file(
         ref_root_abs_path,
@@ -60,7 +60,7 @@ def test_eval_conf_returns_derived_config(tmp_path: pathlib.Path):
 
     # ===
 
-    conf_client_dir_abs_path = ref_root_abs_path / ConfConstPrimer.default_client_conf_dir_rel_path
+    conf_client_dir_abs_path = ref_root_abs_path / _ConfConstPrimer.default_client_conf_dir_rel_path
 
     create_conf_client_file(
         ref_root_abs_path,

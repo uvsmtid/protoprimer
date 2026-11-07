@@ -8,7 +8,7 @@ import pathlib
 
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
-    ConfConstGeneral,
+    _ConfConstGeneral,
     _is_blank_line,
 )
 
@@ -36,7 +36,7 @@ def test_single_header_placeholder():
     # given:
 
     file_lines = _primer_kernel_content.splitlines()
-    boilerplate_text = ConfConstGeneral.func_get_proto_kernel_generated_boilerplate_single_header(primer_kernel)
+    boilerplate_text = _ConfConstGeneral.func_get_proto_kernel_generated_boilerplate_single_header(primer_kernel)
     boilerplate_height = len(boilerplate_text.splitlines())
 
     # when:

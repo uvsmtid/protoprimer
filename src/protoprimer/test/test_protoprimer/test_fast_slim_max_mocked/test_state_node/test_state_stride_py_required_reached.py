@@ -18,8 +18,8 @@ from protoprimer.primer_kernel import (
     _Factory_state_proto_kernel_file_abs_path_inited,
     _Node_state_selected_python_file_abs_path_inited,
     _Factory_state_input_exec_operation_loaded,
-    ConfConstEnv,
-    ConfConstGeneral,
+    _ConfConstEnv,
+    _ConfConstGeneral,
     _ContextBuilder,
     _EntryFunc,
     _EnvContext,
@@ -31,7 +31,7 @@ from protoprimer.primer_kernel import (
 mock_client_dir = "/mock_client_dir"
 state_proto_kernel_file_abs_path_inited = os.path.join(
     mock_client_dir,
-    ConfConstGeneral.default_proto_kernel_basename,
+    _ConfConstGeneral.default_proto_kernel_basename,
 )
 target_dst_dir_path = "target_dst_dir"
 

@@ -15,7 +15,7 @@ from protoprimer.primer_kernel import (
     _Factory_state_stride_py_venv_reached,
     _Factory_state_venv_driver_prepared,
     _Node_state_version_constraints_file_basename_inited,
-    ConfConstClient,
+    _ConfConstClient,
     ConfField,
     _ContextBuilder,
     _EntryFunc,
@@ -103,7 +103,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             )
             project_toml = os.path.join(
                 project_abs_path,
-                ConfConstClient.default_pyproject_toml_basename,
+                _ConfConstClient.default_pyproject_toml_basename,
             )
             self.fs.create_file(project_toml)
             project_descriptors.append(
@@ -114,7 +114,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             )
         mock_state_project_descriptors_inited.return_value.eval_own_state.return_value = project_descriptors
         mock_state_install_specs_inited.return_value.eval_own_state.return_value = []
-        mock_state_version_constraints_file_basename_inited.return_value.eval_own_state.return_value = primer_kernel.ConfConstEnv.default_version_constraints_file_basename
+        mock_state_version_constraints_file_basename_inited.return_value.eval_own_state.return_value = primer_kernel._ConfConstEnv.default_version_constraints_file_basename
         mock_state_input_exec_operation_loaded.return_value.eval_own_state.return_value = _ExecOperation.op_boot
         # when:
         self.env_ctx.eval_state(_EnvState.state_protoprimer_package_installed.name)
@@ -125,7 +125,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             primer_kernel._get_path_to_curr_python(),
             os.path.join(
                 mock_state_local_conf_symlink_abs_path_inited.return_value.eval_own_state.return_value,
-                primer_kernel.ConfConstEnv.default_version_constraints_file_basename,
+                primer_kernel._ConfConstEnv.default_version_constraints_file_basename,
             ),
             project_descriptors,
             [],
@@ -187,7 +187,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             )
             project_toml = os.path.join(
                 project_abs_path,
-                ConfConstClient.default_pyproject_toml_basename,
+                _ConfConstClient.default_pyproject_toml_basename,
             )
             self.fs.create_file(project_toml)
             project_descriptors.append(
@@ -198,7 +198,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             )
         mock_state_project_descriptors_inited.return_value.eval_own_state.return_value = project_descriptors
         mock_state_install_specs_inited.return_value.eval_own_state.return_value = []
-        mock_state_version_constraints_file_basename_inited.return_value.eval_own_state.return_value = primer_kernel.ConfConstEnv.default_version_constraints_file_basename
+        mock_state_version_constraints_file_basename_inited.return_value.eval_own_state.return_value = primer_kernel._ConfConstEnv.default_version_constraints_file_basename
         mock_state_input_exec_operation_loaded.return_value.eval_own_state.return_value = _ExecOperation.op_reset
         # when:
         self.env_ctx.eval_state(_EnvState.state_protoprimer_package_installed.name)
@@ -209,7 +209,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             primer_kernel._get_path_to_curr_python(),
             os.path.join(
                 mock_state_local_conf_symlink_abs_path_inited.return_value.eval_own_state.return_value,
-                primer_kernel.ConfConstEnv.default_version_constraints_file_basename,
+                primer_kernel._ConfConstEnv.default_version_constraints_file_basename,
             ),
             project_descriptors,
             [],
@@ -274,7 +274,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             {"group1": {ConfField.field_extra_command_args.value: ["--group_1-arg"]}},
             {"group2": {}},
         ]
-        mock_state_version_constraints_file_basename_inited.return_value.eval_own_state.return_value = primer_kernel.ConfConstEnv.default_version_constraints_file_basename
+        mock_state_version_constraints_file_basename_inited.return_value.eval_own_state.return_value = primer_kernel._ConfConstEnv.default_version_constraints_file_basename
         mock_state_input_exec_operation_loaded.return_value.eval_own_state.return_value = _ExecOperation.op_boot
 
         # when:
@@ -285,7 +285,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         constraints_txt_path = os.path.join(
             mock_client_conf_env_dir,
-            primer_kernel.ConfConstEnv.default_version_constraints_file_basename,
+            primer_kernel._ConfConstEnv.default_version_constraints_file_basename,
         )
         mock_state_venv_driver_prepared.return_value.eval_own_state.return_value.install_dependencies.assert_has_calls(
             [
@@ -363,7 +363,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         mock_state_project_descriptors_inited.return_value.eval_own_state.return_value = project_descriptors
         mock_state_install_specs_inited.return_value.eval_own_state.return_value = []
-        mock_state_version_constraints_file_basename_inited.return_value.eval_own_state.return_value = primer_kernel.ConfConstEnv.default_version_constraints_file_basename
+        mock_state_version_constraints_file_basename_inited.return_value.eval_own_state.return_value = primer_kernel._ConfConstEnv.default_version_constraints_file_basename
 
         mock_state_input_exec_operation_loaded.return_value.eval_own_state.return_value = _ExecOperation.op_boot
 

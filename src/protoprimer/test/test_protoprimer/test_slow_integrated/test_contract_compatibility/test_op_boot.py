@@ -14,13 +14,13 @@ from local_test.name_assertion import (
     assert_test_module_name_embeds_str,
 )
 from protoprimer.primer_kernel import (
-    ConfConstClient,
-    ConfConstGeneral,
-    ConfConstInput,
-    ConfConstPrimer,
+    _ConfConstClient,
+    _ConfConstGeneral,
+    _ConfConstInput,
+    _ConfConstPrimer,
     ConfDst,
     _ExecOperation,
-    SyntaxArg,
+    _SyntaxArg,
 )
 
 
@@ -51,8 +51,8 @@ def test_op_boot(tmp_path: Path):
     run_primer_main(
         [
             str(proto_kernel_abs_path),
-            SyntaxArg.arg_v,
-            SyntaxArg.arg_v,
+            _SyntaxArg.arg_v,
+            _SyntaxArg.arg_v,
         ]
     )
 
@@ -64,9 +64,9 @@ def test_op_boot(tmp_path: Path):
     lconf_dir = ref_root_abs_path / ConfDst.dst_local.value
 
     # TODO: Unify names for default conf files:
-    conf_primer_file = ref_root_abs_path / ConfConstGeneral.name_proto_code / ConfConstInput.default_file_basename_conf_primer
-    conf_client_file = ref_root_abs_path / ConfConstPrimer.default_client_conf_file_rel_path
-    conf_env_file = ref_root_abs_path / ConfConstClient.default_env_conf_file_rel_path
+    conf_primer_file = ref_root_abs_path / _ConfConstGeneral.name_proto_code / _ConfConstInput.default_file_basename_conf_primer
+    conf_client_file = ref_root_abs_path / _ConfConstPrimer.default_client_conf_file_rel_path
+    conf_env_file = ref_root_abs_path / _ConfConstClient.default_env_conf_file_rel_path
 
     assert os.path.isdir(gconf_dir) and not os.path.islink(gconf_dir)
     assert os.path.isdir(lconf_dir) and os.path.islink(lconf_dir)

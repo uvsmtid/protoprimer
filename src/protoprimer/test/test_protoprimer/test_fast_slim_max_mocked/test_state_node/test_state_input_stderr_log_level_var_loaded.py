@@ -11,7 +11,7 @@ from local_test.mock_verifier import (
 )
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer.primer_kernel import (
-    ConfConstInput,
+    _ConfConstInput,
     _EnvContext,
     _EnvState,
     EnvVar,
@@ -19,7 +19,7 @@ from protoprimer.primer_kernel import (
 
 default_stderr_log_level = getattr(
     logging,
-    ConfConstInput.default_PROTOPRIMER_STDERR_LOG_LEVEL,
+    _ConfConstInput.default_PROTOPRIMER_STDERR_LOG_LEVEL,
 )
 
 
@@ -45,7 +45,7 @@ def test_default_case(mock_state_input_py_exec_var_loaded, mock_state_input_is_s
     # when:
     state_value = env_ctx.eval_state(_EnvState.state_input_stderr_log_level_var_loaded.name)
     # then:
-    assert getattr(logging, ConfConstInput.default_PROTOPRIMER_STDERR_LOG_LEVEL) == state_value
+    assert getattr(logging, _ConfConstInput.default_PROTOPRIMER_STDERR_LOG_LEVEL) == state_value
 
 
 @patch("protoprimer.primer_kernel._Node_state_input_is_stderr_log_enabled.create_state_node")

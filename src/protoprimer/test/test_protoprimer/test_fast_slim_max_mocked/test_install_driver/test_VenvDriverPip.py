@@ -13,13 +13,13 @@ from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     ConfField,
-    VenvDriverPip,
+    _VenvDriverPip,
 )
 
 
 def test_relationship():
     assert_test_module_name_embeds_str(
-        VenvDriverPip.__name__,
+        _VenvDriverPip.__name__,
     )
 
 
@@ -39,7 +39,7 @@ def test_create_venv_when_constraints_file_does_not_exist(mock_check_call, mock_
         "(3, 10, 5)",
         b"pip==25.0\nsetuptools==75.0\nwheel==0.47.0\n",
     ]
-    install_driver = VenvDriverPip(
+    install_driver = _VenvDriverPip(
         required_python_version=test_python_version,
         selected_python_file_abs_path=python_path,
         state_local_venv_dir_abs_path_inited=venv_dir_abs_path,
@@ -105,7 +105,7 @@ def test_create_venv_when_constraints_file_exists(mock_check_call, mock_check_ou
         "(3, 10, 5)",
         b"pip==25.0\nsetuptools==75.0\nwheel==0.47.0\n",
     ]
-    install_driver = VenvDriverPip(
+    install_driver = _VenvDriverPip(
         required_python_version=test_python_version,
         selected_python_file_abs_path=python_path,
         state_local_venv_dir_abs_path_inited=venv_dir_abs_path,
@@ -166,7 +166,7 @@ def test_list_installed_pkg_names_strips_versions(mock_check_output):
 
     # when:
 
-    result = VenvDriverPip._list_installed_pkg_names("/tmp/python")
+    result = _VenvDriverPip._list_installed_pkg_names("/tmp/python")
 
     # then:
 
@@ -192,7 +192,7 @@ def test_list_installed_pkg_names_with_empty_output(mock_check_output):
 
     # when:
 
-    result = VenvDriverPip._list_installed_pkg_names("/tmp/python")
+    result = _VenvDriverPip._list_installed_pkg_names("/tmp/python")
 
     # then:
 
@@ -208,7 +208,7 @@ def test_list_installed_pkg_names_ignores_blank_lines(mock_check_output):
 
     # when:
 
-    result = VenvDriverPip._list_installed_pkg_names("/tmp/python")
+    result = _VenvDriverPip._list_installed_pkg_names("/tmp/python")
 
     # then:
 
@@ -235,7 +235,7 @@ def test_create_venv_upgrades_all_seeded_packages(mock_check_call, mock_check_ou
         "(3, 10, 5)",
         b"pip==25.0\n",
     ]
-    install_driver = VenvDriverPip(
+    install_driver = _VenvDriverPip(
         required_python_version=test_python_version,
         selected_python_file_abs_path=python_path,
         state_local_venv_dir_abs_path_inited=venv_dir_abs_path,
@@ -270,7 +270,7 @@ def test_install_dependencies(mock_subprocess_check_call):
 
     ref_root_dir_abs_path = "/tmp"
     selected_python_file_abs_path = "/tmp/test_venv/bin/python"
-    install_driver = VenvDriverPip(
+    install_driver = _VenvDriverPip(
         required_python_version=test_python_version,
         selected_python_file_abs_path=selected_python_file_abs_path,
         state_local_venv_dir_abs_path_inited="/tmp/venv",
@@ -324,7 +324,7 @@ def test_pin_versions(mock_subprocess_check_call):
     # given:
 
     venv_python_file_abs_path = "/tmp/test_venv/bin/python"
-    install_driver = VenvDriverPip(
+    install_driver = _VenvDriverPip(
         required_python_version=test_python_version,
         selected_python_file_abs_path=venv_python_file_abs_path,
         state_local_venv_dir_abs_path_inited="/tmp/venv",
@@ -362,7 +362,7 @@ def test_is_mine_venv_when_pip_venv(mock_get_venv_type):
 
     venv_path = "/fake/venv"
 
-    install_driver = VenvDriverPip(
+    install_driver = _VenvDriverPip(
         required_python_version=test_python_version,
         selected_python_file_abs_path="/tmp/python",
         state_local_venv_dir_abs_path_inited=venv_path,
@@ -386,7 +386,7 @@ def test_is_mine_venv_when_uv_venv(mock_get_venv_type):
 
     # given:
 
-    install_driver = VenvDriverPip(
+    install_driver = _VenvDriverPip(
         required_python_version=test_python_version,
         selected_python_file_abs_path="/tmp/python",
         state_local_venv_dir_abs_path_inited="/tmp/venv",
@@ -411,7 +411,7 @@ def test_is_mine_venv_when_cfg_not_exists(mock_exists):
 
     # given:
 
-    install_driver = VenvDriverPip(
+    install_driver = _VenvDriverPip(
         required_python_version=test_python_version,
         selected_python_file_abs_path="/tmp/python",
         state_local_venv_dir_abs_path_inited="/tmp/venv",

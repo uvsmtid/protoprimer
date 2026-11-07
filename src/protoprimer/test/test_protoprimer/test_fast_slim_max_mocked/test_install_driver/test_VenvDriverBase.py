@@ -11,17 +11,17 @@ import pytest
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer.primer_kernel import (
     ConfField,
-    VenvDriverBase,
+    _VenvDriverBase,
 )
 
 
 def test_relationship():
     assert_test_module_name_embeds_str(
-        VenvDriverBase.__name__,
+        _VenvDriverBase.__name__,
     )
 
 
-class VenvDriverConcrete(VenvDriverBase):
+class VenvDriverConcrete(_VenvDriverBase):
     def _create_venv_impl(self, local_venv_dir_abs_path: str, constraints_file_abs_path: str) -> None:
         pass
 
@@ -37,7 +37,7 @@ def test_venv_driver_base_is_instantiable():
     # when:
     driver = VenvDriverConcrete()
     # then:
-    assert isinstance(driver, VenvDriverBase)
+    assert isinstance(driver, _VenvDriverBase)
 
 
 @patch.object(VenvDriverConcrete, "_create_venv_impl")
@@ -109,7 +109,7 @@ def test_venv_driver_base_create_venv_impl_raises_not_implemented_error():
     # given:
     # when/then:
     with pytest.raises(NotImplementedError):
-        VenvDriverBase._create_venv_impl(None, "venv_path", "constraints_path")
+        _VenvDriverBase._create_venv_impl(None, "venv_path", "constraints_path")
 
 
 @patch.object(VenvDriverConcrete, "get_install_dependencies_cmd")
@@ -151,14 +151,14 @@ def test_venv_driver_base_get_install_dependencies_cmd_raises_not_implemented_er
     # given:
     # when/then:
     with pytest.raises(NotImplementedError):
-        VenvDriverBase.get_install_dependencies_cmd(None, "python_path")
+        _VenvDriverBase.get_install_dependencies_cmd(None, "python_path")
 
 
 def test_venv_driver_base_get_pin_versions_cmd_raises_not_implemented_error():
     # given:
     # when/then:
     with pytest.raises(NotImplementedError):
-        VenvDriverBase._get_pin_versions_cmd(None, "python_path")
+        _VenvDriverBase._get_pin_versions_cmd(None, "python_path")
 
 
 @patch.object(VenvDriverConcrete, "get_install_dependencies_cmd")
@@ -191,4 +191,4 @@ def test_venv_driver_base_get_type_raises_not_implemented_error():
     # given:
     # when/then:
     with pytest.raises(NotImplementedError):
-        VenvDriverBase.get_type(None)
+        _VenvDriverBase.get_type(None)

@@ -6,7 +6,7 @@ from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer.primer_kernel import (
     FilesystemObject,
     ParsedArg,
-    PathName,
+    _PathName,
     ValueName,
 )
 from test_protoprimer.test_primer_kernel_metadata.test_metadata.test_key_word import (
@@ -55,7 +55,7 @@ class ArgName(enum.Enum):
         command_arg=ParsedArg.name_selected_env_dir,
         name_category=NameCategory.category_path_arg_value,
         name_components=[
-            PathName.path_selected_env.value,
+            _PathName.path_selected_env.value,
             FilesystemObject.fs_object_dir.value,
         ],
     )

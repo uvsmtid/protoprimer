@@ -1,5 +1,5 @@
 """
-The schema of `protoprimer` config files (for testing only): one model per `ConfLeap` which has a config file.
+The schema of `protoprimer` config files (for testing only): one model per `_ConfLeap` which has a config file.
 
 *   Field names are literals (not taken from `protoprimer`): the schema does not depend on the code it describes.
 *   Fields are optional: configs are partial (defaults are applied for the missing ones).
@@ -48,7 +48,7 @@ class CommonConf(SchemaModel):
 
 class ConfPrimer(SchemaModel):
     """
-    `ConfLeap.leap_primer`
+    `_ConfLeap.leap_primer`
     """
 
     ref_root_dir_rel_path: Optional[str] = None
@@ -57,7 +57,7 @@ class ConfPrimer(SchemaModel):
 
 class ConfClient(CommonConf):
     """
-    `ConfLeap.leap_client`
+    `_ConfLeap.leap_client`
     """
 
     local_conf_symlink_rel_path: Optional[str] = None
@@ -66,7 +66,7 @@ class ConfClient(CommonConf):
 
 class ConfEnv(CommonConf):
     """
-    `ConfLeap.leap_env`
+    `_ConfLeap.leap_env`
     """
 
 

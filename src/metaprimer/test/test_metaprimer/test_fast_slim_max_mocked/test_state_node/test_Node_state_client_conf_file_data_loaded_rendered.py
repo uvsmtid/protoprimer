@@ -18,7 +18,7 @@ from protoprimer.primer_kernel import (
     _Node_state_global_conf_file_abs_path_inited,
     _Factory_state_input_exec_operation_loaded,
     _Factory_state_input_stderr_log_level_eval_finalized,
-    ConfConstPrimer,
+    _ConfConstPrimer,
     _EnvState,
     StateStride,
 )
@@ -58,7 +58,7 @@ def test_conf_file_exists(
     os.chdir(mock_client_dir)
     state_global_conf_file_abs_path_inited = os.path.join(
         mock_client_dir,
-        ConfConstPrimer.default_client_conf_file_rel_path,
+        _ConfConstPrimer.default_client_conf_file_rel_path,
     )
     mock_factory_global_conf_file_abs_path_inited.return_value.eval_own_state.return_value = state_global_conf_file_abs_path_inited
     fs.create_file(state_global_conf_file_abs_path_inited, contents=json.dumps({}))
@@ -102,7 +102,7 @@ def test_conf_file_missing(
     os.chdir(mock_client_dir)
     state_global_conf_file_abs_path_inited = os.path.join(
         mock_client_dir,
-        ConfConstPrimer.default_client_conf_file_rel_path,
+        _ConfConstPrimer.default_client_conf_file_rel_path,
     )
     mock_factory_global_conf_file_abs_path_inited.return_value.eval_own_state.return_value = state_global_conf_file_abs_path_inited
     mock_get_stride.return_value = StateStride.stride_py_arbitrary

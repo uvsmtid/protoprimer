@@ -394,7 +394,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # then:
         self.assertIn(
-            f"`{primer_kernel.PathName.path_selected_env.value}` [{arg_value}] must be a dir.",
+            f"`{primer_kernel._PathName.path_selected_env.value}` [{arg_value}] must be a dir.",
             str(ctx.exception),
         )
 

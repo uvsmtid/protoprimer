@@ -15,13 +15,13 @@ from local_test.integrated_helper import (
 )
 from local_test.package_version_verifier import extract_package_version
 from protoprimer.primer_kernel import (
-    ConfConstClient,
-    ConfConstEnv,
-    ConfConstGeneral,
-    ConfConstInput,
-    ConfConstPrimer,
+    _ConfConstClient,
+    _ConfConstEnv,
+    _ConfConstGeneral,
+    _ConfConstInput,
+    _ConfConstPrimer,
     _ExecOperation,
-    SyntaxArg,
+    _SyntaxArg,
 )
 
 
@@ -31,9 +31,9 @@ def test_op_reset(tmp_path: pathlib.Path):
 
     ref_root_abs_path = switch_to_ref_root_abs_path(tmp_path)
 
-    # === create `ConfLeap.leap_primer`
+    # === create `_ConfLeap.leap_primer`
 
-    proto_kernel_dir_abs_path = ref_root_abs_path / ConfConstInput.default_proto_conf_dir_rel_path
+    proto_kernel_dir_abs_path = ref_root_abs_path / _ConfConstInput.default_proto_conf_dir_rel_path
     proto_kernel_abs_path: pathlib.Path = create_plain_proto_kernel(proto_kernel_dir_abs_path)
     create_conf_primer_file(
         ref_root_abs_path,
@@ -47,14 +47,14 @@ def test_op_reset(tmp_path: pathlib.Path):
         project_dir_abs_path,
         [
             # NOTE: Install `pip` to query package versions below (even if it might be a `venv` created with `uv`):
-            ConfConstGeneral.name_pip_package,
+            _ConfConstGeneral.name_pip_package,
             "pyfakefs",
         ],
     )
 
-    # === create `ConfLeap.leap_env` / `default_env`
+    # === create `_ConfLeap.leap_env` / `default_env`
 
-    conf_env_dir_abs_path = ref_root_abs_path / ConfConstClient.default_default_env_dir_rel_path
+    conf_env_dir_abs_path = ref_root_abs_path / _ConfConstClient.default_default_env_dir_rel_path
 
     create_conf_env_file(
         ref_root_abs_path,
@@ -62,9 +62,9 @@ def test_op_reset(tmp_path: pathlib.Path):
         project_dir_abs_path,
     )
 
-    # === create `ConfLeap.leap_client`
+    # === create `_ConfLeap.leap_client`
 
-    conf_client_dir_abs_path = ref_root_abs_path / ConfConstPrimer.default_client_conf_dir_rel_path
+    conf_client_dir_abs_path = ref_root_abs_path / _ConfConstPrimer.default_client_conf_dir_rel_path
 
     create_conf_client_file(
         ref_root_abs_path,
@@ -76,7 +76,7 @@ def test_op_reset(tmp_path: pathlib.Path):
     # ===
 
     package_name = "pyfakefs"
-    constraints_file = conf_env_dir_abs_path / ConfConstEnv.default_version_constraints_file_basename
+    constraints_file = conf_env_dir_abs_path / _ConfConstEnv.default_version_constraints_file_basename
     constraints_file.write_text(f"{package_name}==5.7.4")
 
     # when:
@@ -85,14 +85,14 @@ def test_op_reset(tmp_path: pathlib.Path):
         [
             str(proto_kernel_abs_path),
             _ExecOperation.op_boot.value,
-            SyntaxArg.arg_v,
-            SyntaxArg.arg_v,
+            _SyntaxArg.arg_v,
+            _SyntaxArg.arg_v,
         ]
     )
 
     # then:
 
-    venv_pip: str = str(ref_root_abs_path / ConfConstEnv.default_dir_rel_path_venv / "bin" / ConfConstGeneral.name_pip_package)
+    venv_pip: str = str(ref_root_abs_path / _ConfConstEnv.default_dir_rel_path_venv / "bin" / _ConfConstGeneral.name_pip_package)
     pip_freeze_output_install = get_command_output(f"{venv_pip} freeze")
     package_version_install = extract_package_version(
         pip_freeze_output_install,
@@ -106,8 +106,8 @@ def test_op_reset(tmp_path: pathlib.Path):
         [
             str(proto_kernel_abs_path),
             _ExecOperation.op_reset.value,
-            SyntaxArg.arg_v,
-            SyntaxArg.arg_v,
+            _SyntaxArg.arg_v,
+            _SyntaxArg.arg_v,
         ]
     )
 

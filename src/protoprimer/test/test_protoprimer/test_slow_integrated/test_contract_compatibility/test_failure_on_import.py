@@ -12,9 +12,9 @@ from local_test.integrated_helper import (
     test_pyproject_src_dir_rel_path,
 )
 from protoprimer.primer_kernel import (
-    ConfConstClient,
-    ConfConstInput,
-    ConfConstPrimer,
+    _ConfConstClient,
+    _ConfConstInput,
+    _ConfConstPrimer,
     _EntryFunc,
     _generate_entry_script_content,
 )
@@ -25,7 +25,7 @@ def test_failure_on_import(tmp_path: pathlib.Path):
     ref_root_abs_path = switch_to_ref_root_abs_path(tmp_path)
 
     # ===
-    proto_kernel_dir_abs_path = ref_root_abs_path / ConfConstInput.default_proto_conf_dir_rel_path
+    proto_kernel_dir_abs_path = ref_root_abs_path / _ConfConstInput.default_proto_conf_dir_rel_path
     proto_kernel_abs_path = create_plain_proto_kernel(proto_kernel_dir_abs_path)
     create_conf_primer_file(
         ref_root_abs_path,
@@ -37,7 +37,7 @@ def test_failure_on_import(tmp_path: pathlib.Path):
     create_test_pyproject_toml(project_dir_abs_path, [])
 
     # ===
-    conf_env_dir_abs_path = ref_root_abs_path / ConfConstClient.default_default_env_dir_rel_path
+    conf_env_dir_abs_path = ref_root_abs_path / _ConfConstClient.default_default_env_dir_rel_path
     create_conf_env_file(
         ref_root_abs_path,
         conf_env_dir_abs_path,
@@ -45,7 +45,7 @@ def test_failure_on_import(tmp_path: pathlib.Path):
     )
 
     # ===
-    conf_client_dir_abs_path = ref_root_abs_path / ConfConstPrimer.default_client_conf_dir_rel_path
+    conf_client_dir_abs_path = ref_root_abs_path / _ConfConstPrimer.default_client_conf_dir_rel_path
     create_conf_client_file(
         ref_root_abs_path,
         conf_client_dir_abs_path,

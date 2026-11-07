@@ -9,7 +9,7 @@ import protoprimer.primer_kernel
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer.primer_kernel import (
     _select_python_file_abs_path,
-    SelectorFunc,
+    _SelectorFunc,
 )
 
 
@@ -33,7 +33,7 @@ def test_select_python_finds_executable_which_returns_its_version(
 
     mock_selector_module = MagicMock()
     mock_import_proto_module.return_value = mock_selector_module
-    mock_external_selector_func = getattr(mock_selector_module, SelectorFunc.select_python_file_abs_path.value)
+    mock_external_selector_func = getattr(mock_selector_module, _SelectorFunc.select_python_file_abs_path.value)
     expected_path = "/path/to/python3.8"
     mock_external_selector_func.return_value = expected_path
 
@@ -71,7 +71,7 @@ def test_select_python_cannot_find_executable_which_returns_its_version(
 
     mock_selector_module = MagicMock()
     mock_import_proto_module.return_value = mock_selector_module
-    mock_external_selector_func = getattr(mock_selector_module, SelectorFunc.select_python_file_abs_path.value)
+    mock_external_selector_func = getattr(mock_selector_module, _SelectorFunc.select_python_file_abs_path.value)
     selected_path = "/path/to/nonexistent_python"
     mock_external_selector_func.return_value = selected_path
 
@@ -111,7 +111,7 @@ def test_select_python_finds_no_matching_version(mock_import_proto_module):
     mock_import_proto_module.return_value = mock_selector_module
     mock_external_selector_func = getattr(
         mock_selector_module,
-        SelectorFunc.select_python_file_abs_path.value,
+        _SelectorFunc.select_python_file_abs_path.value,
     )
     mock_external_selector_func.return_value = None
 

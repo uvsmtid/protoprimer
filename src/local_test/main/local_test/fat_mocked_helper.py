@@ -24,11 +24,11 @@ from local_test.mock_subprocess import (
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     _proto_main,
-    ConfConstGeneral,
+    _ConfConstGeneral,
     EnvVar,
-    VenvDriverBase,
-    VenvDriverPip,
-    VenvDriverUv,
+    _VenvDriverBase,
+    _VenvDriverPip,
+    _VenvDriverUv,
 )
 
 
@@ -74,10 +74,10 @@ def fat_mock_wrapper(
     ):
         # Create the `venv` directory and the `python` executable within it:
         fs.create_dir(
-            os.path.join(venv_dir, ConfConstGeneral.file_rel_path_venv_bin),
+            os.path.join(venv_dir, _ConfConstGeneral.file_rel_path_venv_bin),
         )
         fs.create_file(
-            os.path.join(venv_dir, ConfConstGeneral.file_rel_path_venv_python),
+            os.path.join(venv_dir, _ConfConstGeneral.file_rel_path_venv_python),
             contents="# whatever",
         )
 
@@ -104,7 +104,7 @@ def fat_mock_wrapper(
         venv_dir_abs_path = os.path.dirname(os.path.dirname(selected_python_file_abs_path))
         if "uv" in given_packages:
             fs.create_file(
-                os.path.join(venv_dir_abs_path, ConfConstGeneral.file_rel_path_venv_uv),
+                os.path.join(venv_dir_abs_path, _ConfConstGeneral.file_rel_path_venv_uv),
                 contents="# whatever",
             )
 
@@ -123,19 +123,19 @@ def fat_mock_wrapper(
             )
         exit_stack.enter_context(
             patch(
-                f"{primer_kernel.__name__}.{VenvDriverBase.__name__}.install_packages",
+                f"{primer_kernel.__name__}.{_VenvDriverBase.__name__}.install_packages",
                 side_effect=_mock_install_packages,
             )
         )
         exit_stack.enter_context(
             patch(
-                f"{protoprimer.primer_kernel.__name__}.{VenvDriverPip.__name__}._create_venv_impl",
+                f"{protoprimer.primer_kernel.__name__}.{_VenvDriverPip.__name__}._create_venv_impl",
                 side_effect=_mock_create_pip_venv,
             )
         )
         exit_stack.enter_context(
             patch(
-                f"{protoprimer.primer_kernel.__name__}.{VenvDriverUv.__name__}._create_venv_impl",
+                f"{protoprimer.primer_kernel.__name__}.{_VenvDriverUv.__name__}._create_venv_impl",
                 side_effect=_mock_create_uv_venv,
             )
         )

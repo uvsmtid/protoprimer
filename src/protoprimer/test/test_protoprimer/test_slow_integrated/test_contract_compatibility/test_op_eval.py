@@ -14,7 +14,7 @@ from local_test.name_assertion import (
 )
 from protoprimer.primer_kernel import (
     _ExecOperation,
-    TopDir,
+    _TopDir,
 )
 
 
@@ -46,8 +46,8 @@ def test_op_eval_with_min_leaps_shape(tmp_path: Path):
     # then:
     # no installation happened:
 
-    assert not os.path.exists(ref_root_abs_path / TopDir.dir_venv.value)
-    assert not os.path.exists(ref_root_abs_path / TopDir.dir_cache.value)
+    assert not os.path.exists(ref_root_abs_path / _TopDir.dir_venv.value)
+    assert not os.path.exists(ref_root_abs_path / _TopDir.dir_cache.value)
 
 
 def test_op_eval_with_max_leaps_shape(tmp_path: Path):
@@ -74,5 +74,5 @@ def test_op_eval_with_max_leaps_shape(tmp_path: Path):
     # then:
     # no installation happened:
 
-    assert not os.path.exists(ref_root_abs_path / TopDir.dir_venv.value)
-    assert not os.path.exists(ref_root_abs_path / TopDir.dir_cache.value)
+    assert not os.path.exists(ref_root_abs_path / _TopDir.dir_venv.value)
+    assert not os.path.exists(ref_root_abs_path / _TopDir.dir_cache.value)

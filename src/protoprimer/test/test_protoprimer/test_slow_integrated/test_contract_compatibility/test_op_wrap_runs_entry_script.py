@@ -23,7 +23,7 @@ from local_test.name_assertion import (
 from protoprimer.primer_kernel import (
     _EntryFunc,
     _ExecOperation,
-    SyntaxArg,
+    _SyntaxArg,
 )
 
 
@@ -42,9 +42,9 @@ def wrap(
             str(proto_kernel_abs_path),
             _ExecOperation.op_wrap.value,
             entry_func.value,
-            SyntaxArg.arg_entry_script_path,
+            _SyntaxArg.arg_entry_script_path,
             str(entry_script_abs_path),
-            SyntaxArg.arg_main_func,
+            _SyntaxArg.arg_main_func,
             main_func,
         ]
     )
@@ -105,8 +105,8 @@ def test_wrap_start_app_runs(tmp_path: pathlib.Path):
     run_primer_main(
         [
             str(proto_kernel_abs_path),
-            SyntaxArg.arg_v,
-            SyntaxArg.arg_v,
+            _SyntaxArg.arg_v,
+            _SyntaxArg.arg_v,
         ]
     )
 

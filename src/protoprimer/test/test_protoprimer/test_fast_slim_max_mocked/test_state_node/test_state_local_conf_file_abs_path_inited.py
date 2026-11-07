@@ -11,7 +11,7 @@ from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     _Node_state_local_conf_symlink_abs_path_inited,
     _Node_state_primer_conf_file_abs_path_inited,
-    ConfConstClient,
+    _ConfConstClient,
     _EnvContext,
     _EnvState,
 )
@@ -46,7 +46,7 @@ def test_success(
 
     mock_state_local_conf_symlink_abs_path_inited.return_value.eval_own_state.return_value = os.path.join(
         mock_client_dir,
-        ConfConstClient.default_dir_rel_path_leap_env_link_name,
+        _ConfConstClient.default_dir_rel_path_leap_env_link_name,
     )
     mock_state_primer_conf_file_abs_path_inited.return_value.eval_own_state.return_value = "protoprimer.json"
 
@@ -56,7 +56,7 @@ def test_success(
     # then:
     expected_path = os.path.join(
         mock_client_dir,
-        ConfConstClient.default_dir_rel_path_leap_env_link_name,
-        ConfConstClient.default_file_basename_leap_env,
+        _ConfConstClient.default_dir_rel_path_leap_env_link_name,
+        _ConfConstClient.default_file_basename_leap_env,
     )
     assert state_local_conf_file_abs_path_inited == expected_path

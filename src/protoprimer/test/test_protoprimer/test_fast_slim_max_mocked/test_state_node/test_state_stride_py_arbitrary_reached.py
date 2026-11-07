@@ -11,7 +11,7 @@ from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     _Factory_state_input_exec_operation_loaded,
     _Node_state_input_start_id_var_loaded,
-    ConfConstInput,
+    _ConfConstInput,
     _ContextBuilder,
     _EntryFunc,
     _EnvState,
@@ -39,8 +39,8 @@ def test_relationship():
 @patch.dict(
     f"{os.__name__}.environ",
     {
-        ConfConstInput.ext_env_var_VIRTUAL_ENV: "/path/to/venv",
-        ConfConstInput.ext_env_var_PATH: "/path/to/venv/bin:/usr/bin",
+        _ConfConstInput.ext_env_var_VIRTUAL_ENV: "/path/to/venv",
+        _ConfConstInput.ext_env_var_PATH: "/path/to/venv/bin:/usr/bin",
     },
     clear=True,
 )
@@ -91,8 +91,8 @@ def test_py_exec_stride_py_unknown_in_venv(
         start_id="mock_start_id",
         proto_kernel_abs_file_path=None,
         required_environ={
-            ConfConstInput.ext_env_var_PATH: "/usr/bin",
-            # NOTE: No more `ConfConstInput.ext_env_var_VIRTUAL_ENV`.
+            _ConfConstInput.ext_env_var_PATH: "/usr/bin",
+            # NOTE: No more `_ConfConstInput.ext_env_var_VIRTUAL_ENV`.
         },
     )
 
@@ -101,7 +101,7 @@ def test_py_exec_stride_py_unknown_in_venv(
     f"{os.__name__}.environ",
     {
         # NOTE: Even if `venv` is part of the `PATH`, it is not detectable:
-        ConfConstInput.ext_env_var_PATH: "/path/to/venv/bin:/usr/bin",
+        _ConfConstInput.ext_env_var_PATH: "/path/to/venv/bin:/usr/bin",
     },
     clear=True,
 )
@@ -152,6 +152,6 @@ def test_py_exec_stride_py_unknown_not_in_venv(
         start_id="mock_start_id",
         proto_kernel_abs_file_path=None,
         required_environ={
-            ConfConstInput.ext_env_var_PATH: "/path/to/venv/bin:/usr/bin",
+            _ConfConstInput.ext_env_var_PATH: "/path/to/venv/bin:/usr/bin",
         },
     )

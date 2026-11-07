@@ -7,7 +7,7 @@ import sys
 
 def select_python_file_abs_path(required_version: tuple[int, int, int]) -> str | None:
     """
-    Implements `SelectorFunc.select_python_file_abs_path` from `protoprimer.primer_kernel`.
+    Implements `_SelectorFunc.select_python_file_abs_path` from `protoprimer.primer_kernel`.
     """
 
     # NOTE: This trivially re-evaluates the basename of the current `python` via `PATH` env var

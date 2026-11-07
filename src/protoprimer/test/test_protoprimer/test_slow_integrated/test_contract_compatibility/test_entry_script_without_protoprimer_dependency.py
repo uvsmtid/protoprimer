@@ -22,9 +22,9 @@ from local_test.integrated_helper import (
 )
 from local_test.toml_handler import save_toml_data
 from protoprimer.primer_kernel import (
-    ConfConstClient,
+    _ConfConstClient,
     _EntryFunc,
-    SyntaxArg,
+    _SyntaxArg,
     _generate_entry_script_content,
 )
 
@@ -38,7 +38,7 @@ def _create_instant_pyproject_toml_without_protoprimer(
     a dependency - that absence is the whole point of the instant scenario.
     """
 
-    pyproject_file_abs_path = project_dir_abs_path / ConfConstClient.default_pyproject_toml_basename
+    pyproject_file_abs_path = project_dir_abs_path / _ConfConstClient.default_pyproject_toml_basename
 
     toml_data = {
         "project": {
@@ -122,8 +122,8 @@ def test_start_app_entry_script_without_protoprimer_dependency(tmp_path: pathlib
     run_primer_main(
         [
             str(proto_kernel_abs_path),
-            SyntaxArg.arg_v,
-            SyntaxArg.arg_v,
+            _SyntaxArg.arg_v,
+            _SyntaxArg.arg_v,
         ]
     )
 

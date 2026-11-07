@@ -14,7 +14,7 @@ from local_test.name_assertion import (
 from protoprimer.primer_kernel import (
     _EntryFunc,
     _ExecOperation,
-    SyntaxArg,
+    _SyntaxArg,
     _generate_entry_script_content,
 )
 
@@ -44,9 +44,9 @@ def _wrap_and_assert(
             str(proto_kernel_abs_path),
             _ExecOperation.op_wrap.value,
             entry_func.value,
-            SyntaxArg.arg_entry_script_path,
+            _SyntaxArg.arg_entry_script_path,
             str(entry_script_abs_path),
-            SyntaxArg.arg_main_func,
+            _SyntaxArg.arg_main_func,
             main_func,
         ]
     )
@@ -100,7 +100,7 @@ def test_wrap_boot_env_without_main_func(tmp_path: pathlib.Path):
             str(proto_kernel_abs_path),
             _ExecOperation.op_wrap.value,
             _EntryFunc.func_boot_env.value,
-            SyntaxArg.arg_entry_script_path,
+            _SyntaxArg.arg_entry_script_path,
             str(entry_script_abs_path),
         ]
     )

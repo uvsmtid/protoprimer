@@ -24,9 +24,9 @@ from protoprimer.primer_kernel import (
     _EnvState,
     EnvVar,
     _StateNode,
-    VenvDriverPip,
+    _VenvDriverPip,
     VenvDriverType,
-    VenvDriverUv,
+    _VenvDriverUv,
 )
 
 
@@ -97,9 +97,9 @@ class TestEnvContext(BasePyfakefsTestClass):
         venv_driver = env_ctx.eval_state(_EnvState.state_venv_driver_prepared.name)
         # then:
         if is_min_python():
-            assert isinstance(venv_driver, VenvDriverPip)
+            assert isinstance(venv_driver, _VenvDriverPip)
         else:
-            assert isinstance(venv_driver, VenvDriverUv)
+            assert isinstance(venv_driver, _VenvDriverUv)
 
     @patch("sys.argv", ["script_name"])
     @patch.dict(
@@ -165,9 +165,9 @@ class TestEnvContext(BasePyfakefsTestClass):
         venv_driver = env_ctx.eval_state(_EnvState.state_venv_driver_prepared.name)
         # then:
         if is_min_python():
-            assert isinstance(venv_driver, VenvDriverPip)
+            assert isinstance(venv_driver, _VenvDriverPip)
         else:
-            assert isinstance(venv_driver, VenvDriverUv)
+            assert isinstance(venv_driver, _VenvDriverUv)
 
     @patch("sys.argv", ["script_name"])
     @patch.dict(
@@ -229,4 +229,4 @@ class TestEnvContext(BasePyfakefsTestClass):
         )
         venv_driver = env_ctx.eval_state(_EnvState.state_venv_driver_prepared.name)
         # then:
-        assert isinstance(venv_driver, VenvDriverPip)
+        assert isinstance(venv_driver, _VenvDriverPip)

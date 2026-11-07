@@ -1,6 +1,6 @@
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer.primer_kernel import (
-    ConfConstGeneral,
+    _ConfConstGeneral,
     _EntryFunc,
     _generate_entry_script_content,
 )
@@ -77,5 +77,5 @@ def test_generate_entry_script_content_empty_main_func():
 
     # then:
 
-    assert f'proto_kernel.{_EntryFunc.func_boot_env.value}("{ConfConstGeneral.default_proto_main}")' in generated_content
+    assert f'proto_kernel.{_EntryFunc.func_boot_env.value}("{_ConfConstGeneral.default_proto_main}")' in generated_content
     assert "None" not in generated_content.split("if __name__", 1)[1]

@@ -15,12 +15,12 @@ from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     _Factory_state_args_parsed,
     _Node_state_input_stderr_log_level_var_loaded,
-    ConfConstInput,
+    _ConfConstInput,
     _ContextBuilder,
     _EntryFunc,
     _EnvState,
     EnvVar,
-    SyntaxArg,
+    _SyntaxArg,
 )
 
 
@@ -54,8 +54,8 @@ def test_default_case_no_flags_uses_default_from_var(
     )
     mock_state_input_stderr_log_level_var_loaded.return_value.eval_own_state.return_value = logging.INFO
     mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(
-        **{SyntaxArg.dest_quiet: 0},
-        **{SyntaxArg.dest_verbose: 0},
+        **{_SyntaxArg.dest_quiet: 0},
+        **{_SyntaxArg.dest_verbose: 0},
     )
 
     # when:
@@ -82,12 +82,12 @@ def test_default_case_no_flags_uses_warning(
     )
     default_log_level: int = getattr(
         logging,
-        ConfConstInput.default_PROTOPRIMER_STDERR_LOG_LEVEL,
+        _ConfConstInput.default_PROTOPRIMER_STDERR_LOG_LEVEL,
     )
     mock_state_input_stderr_log_level_var_loaded.return_value.eval_own_state.return_value = default_log_level
     mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(
-        **{SyntaxArg.dest_quiet: 0},
-        **{SyntaxArg.dest_verbose: 0},
+        **{_SyntaxArg.dest_quiet: 0},
+        **{_SyntaxArg.dest_verbose: 0},
     )
 
     # when:
@@ -114,12 +114,12 @@ def test_quiet_1_only(
     )
     default_log_level: int = getattr(
         logging,
-        ConfConstInput.default_PROTOPRIMER_STDERR_LOG_LEVEL,
+        _ConfConstInput.default_PROTOPRIMER_STDERR_LOG_LEVEL,
     )
     mock_state_input_stderr_log_level_var_loaded.return_value.eval_own_state.return_value = default_log_level
     mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(
-        **{SyntaxArg.dest_quiet: 1},
-        **{SyntaxArg.dest_verbose: 0},
+        **{_SyntaxArg.dest_quiet: 1},
+        **{_SyntaxArg.dest_verbose: 0},
     )
 
     # when:
@@ -146,12 +146,12 @@ def test_quiet_2_only(
     )
     default_log_level: int = getattr(
         logging,
-        ConfConstInput.default_PROTOPRIMER_STDERR_LOG_LEVEL,
+        _ConfConstInput.default_PROTOPRIMER_STDERR_LOG_LEVEL,
     )
     mock_state_input_stderr_log_level_var_loaded.return_value.eval_own_state.return_value = default_log_level
     mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(
-        **{SyntaxArg.dest_quiet: 2},
-        **{SyntaxArg.dest_verbose: 0},
+        **{_SyntaxArg.dest_quiet: 2},
+        **{_SyntaxArg.dest_verbose: 0},
     )
 
     # when:
@@ -178,12 +178,12 @@ def test_quiet_5_only(
     )
     default_log_level: int = getattr(
         logging,
-        ConfConstInput.default_PROTOPRIMER_STDERR_LOG_LEVEL,
+        _ConfConstInput.default_PROTOPRIMER_STDERR_LOG_LEVEL,
     )
     mock_state_input_stderr_log_level_var_loaded.return_value.eval_own_state.return_value = default_log_level
     mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(
-        **{SyntaxArg.dest_quiet: 5},
-        **{SyntaxArg.dest_verbose: 0},
+        **{_SyntaxArg.dest_quiet: 5},
+        **{_SyntaxArg.dest_verbose: 0},
     )
 
     # when:
@@ -210,12 +210,12 @@ def test_verbose_1_only(
     )
     default_log_level: int = getattr(
         logging,
-        ConfConstInput.default_PROTOPRIMER_STDERR_LOG_LEVEL,
+        _ConfConstInput.default_PROTOPRIMER_STDERR_LOG_LEVEL,
     )
     mock_state_input_stderr_log_level_var_loaded.return_value.eval_own_state.return_value = default_log_level
     mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(
-        **{SyntaxArg.dest_quiet: 0},
-        **{SyntaxArg.dest_verbose: 1},
+        **{_SyntaxArg.dest_quiet: 0},
+        **{_SyntaxArg.dest_verbose: 1},
     )
 
     # when:
@@ -242,12 +242,12 @@ def test_verbose_2_only(
     )
     default_log_level: int = getattr(
         logging,
-        ConfConstInput.default_PROTOPRIMER_STDERR_LOG_LEVEL,
+        _ConfConstInput.default_PROTOPRIMER_STDERR_LOG_LEVEL,
     )
     mock_state_input_stderr_log_level_var_loaded.return_value.eval_own_state.return_value = default_log_level
     mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(
-        **{SyntaxArg.dest_quiet: 0},
-        **{SyntaxArg.dest_verbose: 2},
+        **{_SyntaxArg.dest_quiet: 0},
+        **{_SyntaxArg.dest_verbose: 2},
     )
 
     # when:
@@ -274,12 +274,12 @@ def test_verbose_3_only(
     )
     default_log_level: int = getattr(
         logging,
-        ConfConstInput.default_PROTOPRIMER_STDERR_LOG_LEVEL,
+        _ConfConstInput.default_PROTOPRIMER_STDERR_LOG_LEVEL,
     )
     mock_state_input_stderr_log_level_var_loaded.return_value.eval_own_state.return_value = default_log_level
     mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(
-        **{SyntaxArg.dest_quiet: 0},
-        **{SyntaxArg.dest_verbose: 3},
+        **{_SyntaxArg.dest_quiet: 0},
+        **{_SyntaxArg.dest_verbose: 3},
     )
 
     # when:
@@ -306,12 +306,12 @@ def test_verbose_4_only(
     )
     default_log_level: int = getattr(
         logging,
-        ConfConstInput.default_PROTOPRIMER_STDERR_LOG_LEVEL,
+        _ConfConstInput.default_PROTOPRIMER_STDERR_LOG_LEVEL,
     )
     mock_state_input_stderr_log_level_var_loaded.return_value.eval_own_state.return_value = default_log_level
     mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(
-        **{SyntaxArg.dest_quiet: 0},
-        **{SyntaxArg.dest_verbose: 4},
+        **{_SyntaxArg.dest_quiet: 0},
+        **{_SyntaxArg.dest_verbose: 4},
     )
 
     # when:
@@ -338,12 +338,12 @@ def test_quiet_and_verbose(
     )
     default_log_level: int = getattr(
         logging,
-        ConfConstInput.default_PROTOPRIMER_STDERR_LOG_LEVEL,
+        _ConfConstInput.default_PROTOPRIMER_STDERR_LOG_LEVEL,
     )
     mock_state_input_stderr_log_level_var_loaded.return_value.eval_own_state.return_value = default_log_level
     mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(
-        **{SyntaxArg.dest_quiet: 2},
-        **{SyntaxArg.dest_verbose: 1},
+        **{_SyntaxArg.dest_quiet: 2},
+        **{_SyntaxArg.dest_verbose: 1},
     )
 
     # when:
@@ -371,12 +371,12 @@ def test_env_var_not_updated_read_only(
     )
     default_log_level: int = getattr(
         logging,
-        ConfConstInput.default_PROTOPRIMER_STDERR_LOG_LEVEL,
+        _ConfConstInput.default_PROTOPRIMER_STDERR_LOG_LEVEL,
     )
     mock_state_input_stderr_log_level_var_loaded.return_value.eval_own_state.return_value = default_log_level
     mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(
-        **{SyntaxArg.dest_quiet: 1},
-        **{SyntaxArg.dest_verbose: 0},
+        **{_SyntaxArg.dest_quiet: 1},
+        **{_SyntaxArg.dest_verbose: 0},
     )
 
     # when:

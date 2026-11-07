@@ -14,7 +14,7 @@ from metaprimer.conf_renderer import (
 )
 from metaprimer.script_lib import configure_script
 from protoprimer.primer_kernel import (
-    ConfLeap,
+    _ConfLeap,
     _EnvState,
     get_config,
 )
@@ -42,21 +42,21 @@ def custom_main():
 
     conf_primer = RootNode_primer(
         node_indent=0,
-        orig_data=get_config(ConfLeap.leap_primer),
+        orig_data=get_config(_ConfLeap.leap_primer),
         state_primer_conf_file_abs_path_inited=state_primer_conf_file_abs_path_inited,
     )
     print(RenderConfigVisitor().render_node(conf_primer))
 
     conf_client = RootNode_client(
         node_indent=0,
-        orig_data=get_config(ConfLeap.leap_client),
+        orig_data=get_config(_ConfLeap.leap_client),
         state_global_conf_file_abs_path_inited=state_global_conf_file_abs_path_inited,
     )
     print(RenderConfigVisitor().render_node(conf_client))
 
     conf_env = RootNode_env(
         node_indent=0,
-        orig_data=get_config(ConfLeap.leap_env),
+        orig_data=get_config(_ConfLeap.leap_env),
         state_local_conf_file_abs_path_inited=state_local_conf_file_abs_path_inited,
     )
     print(RenderConfigVisitor().render_node(conf_env))

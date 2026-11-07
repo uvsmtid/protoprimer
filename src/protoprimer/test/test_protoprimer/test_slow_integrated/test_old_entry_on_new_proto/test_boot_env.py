@@ -11,8 +11,8 @@ from local_test.name_assertion import (
 from protoprimer.primer_kernel import (
     _EntryFunc,
     _ExecOperation,
-    SyntaxArg,
-    TopDir,
+    _SyntaxArg,
+    _TopDir,
 )
 
 
@@ -58,7 +58,7 @@ def test_old_entry_script_boot_env(
             str(proto_kernel_abs_path),
             _ExecOperation.op_wrap.value,
             _EntryFunc.func_boot_env.value,
-            SyntaxArg.arg_entry_script_path,
+            _SyntaxArg.arg_entry_script_path,
             str(entry_script_abs_path),
         ]
     )
@@ -76,4 +76,4 @@ def test_old_entry_script_boot_env(
 
     # then:
 
-    assert (ref_root_abs_path / TopDir.dir_venv.value).exists()
+    assert (ref_root_abs_path / _TopDir.dir_venv.value).exists()

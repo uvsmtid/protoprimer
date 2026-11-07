@@ -24,13 +24,13 @@ from local_test.name_assertion import (
 )
 from local_test.package_version_verifier import extract_package_version
 from protoprimer.primer_kernel import (
-    ConfConstClient,
-    ConfConstEnv,
-    ConfConstGeneral,
-    ConfConstInput,
-    ConfConstPrimer,
+    _ConfConstClient,
+    _ConfConstEnv,
+    _ConfConstGeneral,
+    _ConfConstInput,
+    _ConfConstPrimer,
     _ExecOperation,
-    SyntaxArg,
+    _SyntaxArg,
 )
 
 
@@ -61,7 +61,7 @@ def test_shell_requires_boot_first(tmp_path: Path):
         [
             str(proto_kernel_abs_path),
             _ExecOperation.op_shell.value,
-            SyntaxArg.arg_c,
+            _SyntaxArg.arg_c,
             "echo should_not_run",
         ],
         capture_output=True,
@@ -98,7 +98,7 @@ def test_shell_command_execution(tmp_path: Path):
         [
             str(proto_kernel_abs_path),
             _ExecOperation.op_shell.value,
-            SyntaxArg.arg_c,
+            _SyntaxArg.arg_c,
             f"touch {output_file}",
         ],
         check=True,
@@ -121,7 +121,7 @@ def test_shell_does_not_reinstall_dependencies(tmp_path: Path):
 
     ref_root_abs_path = switch_to_ref_root_abs_path(tmp_path)
 
-    proto_kernel_dir_abs_path = ref_root_abs_path / ConfConstInput.default_proto_conf_dir_rel_path
+    proto_kernel_dir_abs_path = ref_root_abs_path / _ConfConstInput.default_proto_conf_dir_rel_path
     proto_kernel_abs_path = create_plain_proto_kernel(proto_kernel_dir_abs_path)
     create_conf_primer_file(
         ref_root_abs_path,
@@ -133,19 +133,19 @@ def test_shell_does_not_reinstall_dependencies(tmp_path: Path):
         project_dir_abs_path,
         [
             # NOTE: Install `pip` to query package versions below (even if it might be a `venv` created with `uv`):
-            ConfConstGeneral.name_pip_package,
+            _ConfConstGeneral.name_pip_package,
             "pyfakefs",
         ],
     )
 
-    conf_env_dir_abs_path = ref_root_abs_path / ConfConstClient.default_default_env_dir_rel_path
+    conf_env_dir_abs_path = ref_root_abs_path / _ConfConstClient.default_default_env_dir_rel_path
     create_conf_env_file(
         ref_root_abs_path,
         conf_env_dir_abs_path,
         project_dir_abs_path,
     )
 
-    conf_client_dir_abs_path = ref_root_abs_path / ConfConstPrimer.default_client_conf_dir_rel_path
+    conf_client_dir_abs_path = ref_root_abs_path / _ConfConstPrimer.default_client_conf_dir_rel_path
     create_conf_client_file(
         ref_root_abs_path,
         conf_client_dir_abs_path,
@@ -154,13 +154,13 @@ def test_shell_does_not_reinstall_dependencies(tmp_path: Path):
     )
 
     package_name = "pyfakefs"
-    constraints_file = conf_env_dir_abs_path / ConfConstEnv.default_version_constraints_file_basename
+    constraints_file = conf_env_dir_abs_path / _ConfConstEnv.default_version_constraints_file_basename
     constraints_file.write_text(f"{package_name}==5.7.4")
 
     # Bootstrap the env before running `shell` - it assumes `venv` already exists:
     run_primer_main([str(proto_kernel_abs_path)])
 
-    venv_pip: str = str(ref_root_abs_path / ConfConstEnv.default_dir_rel_path_venv / "bin" / ConfConstGeneral.name_pip_package)
+    venv_pip: str = str(ref_root_abs_path / _ConfConstEnv.default_dir_rel_path_venv / "bin" / _ConfConstGeneral.name_pip_package)
     pip_freeze_output_install = get_command_output(f"{venv_pip} freeze")
     package_version_install = extract_package_version(pip_freeze_output_install, package_name)
     assert f"{package_name}==5.7.4" in pip_freeze_output_install
@@ -242,7 +242,7 @@ def test_shell_sh_interactive_applies_init_file(tmp_path: Path):
 
     run_primer_main([str(proto_kernel_abs_path)])
 
-    expected_venv = str(ref_root_abs_path / ConfConstEnv.default_dir_rel_path_venv)
+    expected_venv = str(ref_root_abs_path / _ConfConstEnv.default_dir_rel_path_venv)
 
     # when:
     # `SHELL` explicitly points to POSIX `sh`.
@@ -289,7 +289,7 @@ def test_shell_sh_command_execution_applies_init_file(tmp_path: Path):
 
     run_primer_main([str(proto_kernel_abs_path)])
 
-    expected_venv = str(ref_root_abs_path / ConfConstEnv.default_dir_rel_path_venv)
+    expected_venv = str(ref_root_abs_path / _ConfConstEnv.default_dir_rel_path_venv)
 
     output_file = ref_root_abs_path / "test_file_sh.txt"
     assert not output_file.exists()
@@ -306,7 +306,7 @@ def test_shell_sh_command_execution_applies_init_file(tmp_path: Path):
         [
             str(proto_kernel_abs_path),
             _ExecOperation.op_shell.value,
-            SyntaxArg.arg_c,
+            _SyntaxArg.arg_c,
             f'test "$VIRTUAL_ENV" = "{expected_venv}" && touch {output_file}',
         ],
         check=True,
