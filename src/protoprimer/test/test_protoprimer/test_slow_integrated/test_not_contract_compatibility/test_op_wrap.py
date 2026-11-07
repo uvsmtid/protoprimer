@@ -15,7 +15,7 @@ from protoprimer.primer_kernel import (
     _EntryFunc,
     ExecOperation,
     SyntaxArg,
-    generate_entry_script_content,
+    _generate_entry_script_content,
 )
 
 
@@ -58,7 +58,7 @@ def _wrap_and_assert(
     entry_script_stat = os.stat(entry_script_abs_path)
     assert entry_script_stat.st_mode & stat.S_IXUSR
 
-    expected_content = generate_entry_script_content(
+    expected_content = _generate_entry_script_content(
         entry_func.value,
         str(proto_kernel_abs_path),
         str(entry_script_abs_path),
@@ -112,7 +112,7 @@ def test_wrap_boot_env_without_main_func(tmp_path: pathlib.Path):
     entry_script_stat = os.stat(entry_script_abs_path)
     assert entry_script_stat.st_mode & stat.S_IXUSR
 
-    expected_content = generate_entry_script_content(
+    expected_content = _generate_entry_script_content(
         _EntryFunc.func_boot_env.value,
         str(proto_kernel_abs_path),
         str(entry_script_abs_path),

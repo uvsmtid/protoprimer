@@ -23,7 +23,7 @@ from protoprimer.primer_kernel import (
     ConfConstInput,
     ConfConstPrimer,
     _EntryFunc,
-    generate_entry_script_content,
+    _generate_entry_script_content,
 )
 
 
@@ -75,7 +75,7 @@ def test_prime_env(tmp_path: pathlib.Path):
     # ===
 
     prime_env_script_abs_path = ref_root_abs_path / "prime_env"
-    prime_env_script_content = generate_entry_script_content(
+    prime_env_script_content = _generate_entry_script_content(
         _EntryFunc.func_boot_env.value,
         str(proto_kernel_abs_path),
         str(prime_env_script_abs_path),

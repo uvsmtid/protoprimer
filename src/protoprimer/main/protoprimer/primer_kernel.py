@@ -1065,7 +1065,7 @@ class ShellType(enum.Enum):
     shell_sh = "sh"
 
 
-def remove_protoprimer_env_vars(env_vars: typing.MutableMapping[str, str]) -> None:
+def _remove_protoprimer_env_vars(env_vars: typing.MutableMapping[str, str]) -> None:
     """
     FT_66_02_54_56.context_isolation.md
     """
@@ -1290,7 +1290,7 @@ def _get_shell_driver(
         raise ValueError(f"env var `{var_shell}` has unknown value [{shell_abs_path}]")
 
     shell_env_vars = os.environ.copy()
-    remove_protoprimer_env_vars(shell_env_vars)
+    _remove_protoprimer_env_vars(shell_env_vars)
     return shell_driver_type(
         shell_abs_path=shell_abs_path,
         shell_env_vars=shell_env_vars,
@@ -2818,7 +2818,7 @@ class _Node_state_proto_kernel_file_abs_path_inited_func_call_lib(AbstractCachin
             raise AssertionError(f"`proto_kernel_abs_path` [{proto_kernel_abs_path}] is not set")
         if not os.path.isfile(proto_kernel_abs_path):
             raise AssertionError(f"`proto_kernel_abs_path` [{proto_kernel_abs_path}] is not a file")
-        assert_proto_kernel_is_stand_alone(proto_kernel_abs_path)
+        _assert_proto_kernel_is_stand_alone(proto_kernel_abs_path)
         return proto_kernel_abs_path
 
 
@@ -2876,7 +2876,7 @@ class _Node_state_proto_kernel_file_abs_path_inited_not_func_call_lib(AbstractCa
                 state_proto_kernel_file_abs_path_inited = state_input_proto_kernel_file_abs_path_var_loaded
 
         assert os.path.isabs(state_proto_kernel_file_abs_path_inited)
-        assert_proto_kernel_is_stand_alone(state_proto_kernel_file_abs_path_inited)
+        _assert_proto_kernel_is_stand_alone(state_proto_kernel_file_abs_path_inited)
         return state_proto_kernel_file_abs_path_inited
 
 
@@ -2931,7 +2931,7 @@ class _Node_state_wrap_executed(AbstractCachingStateNode[int]):
             )
         )
 
-        entry_script_content: str = generate_entry_script_content(
+        entry_script_content: str = _generate_entry_script_content(
             entry_func,
             proto_kernel_abs_path,
             entry_script_abs_path,
@@ -2941,9 +2941,9 @@ class _Node_state_wrap_executed(AbstractCachingStateNode[int]):
 
         existing_entry_script_content: str | None = None
         if os.path.isfile(entry_script_abs_path):
-            existing_entry_script_content = read_text_file(entry_script_abs_path)
+            existing_entry_script_content = _read_text_file(entry_script_abs_path)
 
-        entry_script_content = merge_entry_script_content(
+        entry_script_content = _merge_entry_script_content(
             existing_entry_script_content,
             entry_script_content,
         )
@@ -3531,7 +3531,7 @@ class _Node_state_required_python_version_inited(AbstractOverriddenFieldCachingS
             if python_version_file_abs_path is None:
                 raise AssertionError(f"Both field [{ConfField.field_required_python_version.name}] value is [{state_required_python_version_inited}] and no file [{ConfConstGeneral.python_version_file_basename}] found walking up from [{state_ref_root_dir_abs_path_inited}] dir.")
             logger.info(f"Using file [{python_version_file_abs_path}] as field [{ConfField.field_required_python_version.name}] value is [{state_required_python_version_inited}].")
-            state_required_python_version_inited = read_text_file(python_version_file_abs_path).strip()
+            state_required_python_version_inited = _read_text_file(python_version_file_abs_path).strip()
 
         assert state_required_python_version_inited is not None
         logger.debug(f"raw `state_required_python_version_inited` [{state_required_python_version_inited}]")
@@ -4824,7 +4824,7 @@ class _Node_state_proto_kernel_updated_is_app(AbstractCachingStateNode[bool]):
         except ImportError:
             logger.warning(
                 f"Module `{ConfConstGeneral.name_protoprimer_package}` is missing in `venv`. "
-                f"{get_import_error_hint(ConfConstGeneral.name_protoprimer_package)} "
+                f"{_get_import_error_hint(ConfConstGeneral.name_protoprimer_package)} "
                 #
             )
             # FT_21_75_54_18.instant_scenario.md:
@@ -4839,8 +4839,8 @@ class _Node_state_proto_kernel_updated_is_app(AbstractCachingStateNode[bool]):
 
         # Use `primer_kernel` from installed package as the source for `proto_kernel` update:
         primer_kernel_abs_path = os.path.abspath(str(protoprimer.primer_kernel.__file__))
-        primer_kernel_text: str = read_text_file(primer_kernel_abs_path)
-        proto_kernel_text_old: str = read_text_file(state_proto_kernel_file_abs_path_inited)
+        primer_kernel_text: str = _read_text_file(primer_kernel_abs_path)
+        proto_kernel_text_old: str = _read_text_file(state_proto_kernel_file_abs_path_inited)
 
         # Update body:
         proto_kernel_text_with_body = _replace_multiple_body_in_empty_lines(
@@ -5486,7 +5486,7 @@ class _EnvContext:
 
         if is_reportable:
             print(
-                f"{color_status}{status_name}{TermColor.reset_style.value} [{exit_code}]: {_get_path_to_curr_python()} {get_script_command_line()}",
+                f"{color_status}{status_name}{TermColor.reset_style.value} [{exit_code}]: {_get_path_to_curr_python()} {_get_script_command_line()}",
                 file=sys.stderr,
                 flush=True,
             )
@@ -5814,7 +5814,7 @@ def _configure_primer_file_log_handler(
     return file_handler
 
 
-def rename_to_moved_state_name(state_name: str) -> str:
+def _rename_to_moved_state_name(state_name: str) -> str:
     """
     See UC_27_40_17_59.replace_by_new_and_use_old.md
     """
@@ -6021,11 +6021,11 @@ def _get_path_to_base_python() -> str:
     return path_to_next_python
 
 
-def get_script_command_line():
-    return get_shell_command_line(sys.argv)
+def _get_script_command_line():
+    return _get_shell_command_line(sys.argv)
 
 
-def get_shell_command_line(arg_list: list[str]):
+def _get_shell_command_line(arg_list: list[str]):
     command_line = " ".join(shlex.quote(arg_item) for arg_item in arg_list)
     return command_line
 
@@ -6048,7 +6048,7 @@ def write_json_file(
         file_obj.write("\n")
 
 
-def read_text_file(file_path: str) -> str:
+def _read_text_file(file_path: str) -> str:
     with open(file_path, "r", encoding="utf-8") as file_obj:
         return file_obj.read()
 
@@ -6106,7 +6106,7 @@ def _replace_multiple_body_in_empty_lines(
     return "\n".join(output_lines) + "\n"
 
 
-def assert_proto_kernel_is_stand_alone(proto_kernel_abs_path: str) -> None:
+def _assert_proto_kernel_is_stand_alone(proto_kernel_abs_path: str) -> None:
     import site
 
     normalized_path = os.path.realpath(proto_kernel_abs_path)
@@ -6241,7 +6241,7 @@ def _assert_python_version_matches(
         raise AssertionError(f"`python` [{python_file_abs_path}] version {actual_version} " f"does not satisfy required version [{required_python_version}].")
 
 
-def import_proto_module(
+def _import_proto_module(
     proto_module_name: str,
     proto_module_abs_path: str,
 ):
@@ -6275,7 +6275,7 @@ def _select_python_file_abs_path(
     # TODO: Implement local repo example with `python_selector_module`:
     # TODO: use constants:
     proto_module_name: str = "python_selector_module"
-    python_selector_module = import_proto_module(
+    python_selector_module = _import_proto_module(
         proto_module_name,
         state_python_selector_file_abs_path_inited,
     )
@@ -6404,7 +6404,7 @@ def _log_python_context(log_level: int = logging.INFO):
     )
 
 
-def get_import_error_hint(meta_main_module: str) -> str:
+def _get_import_error_hint(meta_main_module: str) -> str:
     # See: UC_78_58_06_54.no_stray_packages.md
     return f"Is `{meta_main_module}` a (transitive) dependency of any `{ConfConstClient.default_pyproject_toml_basename}` being installed?"
 
@@ -6427,7 +6427,7 @@ def get_config(conf_leap: ConfLeap) -> dict:
     # Assume (no verification) that `_proto_kernel_abs_path` was set to a stand-alone to load config.
     # None of `EnvVar.*` can be used to ensure FT_66_02_54_56.context_isolation.md.
     if False:
-        assert_proto_kernel_is_stand_alone(_proto_kernel_abs_path)
+        _assert_proto_kernel_is_stand_alone(_proto_kernel_abs_path)
 
     _conf_leap_to_state: dict[ConfLeap, str] = {
         ConfLeap.leap_primer: EnvState.state_primer_conf_file_data_loaded.name,
@@ -6452,7 +6452,7 @@ def get_config(conf_leap: ConfLeap) -> dict:
     return env_ctx.eval_state(_conf_leap_to_state[conf_leap])
 
 
-def generate_entry_script_content(
+def _generate_entry_script_content(
     entry_func: str,
     proto_kernel_abs_path: str,
     entry_script_abs_path: str,
@@ -6543,7 +6543,7 @@ def generate_entry_script_content(
     return "\n".join(content_lines) + "\n"
 
 
-def merge_entry_script_content(
+def _merge_entry_script_content(
     existing_entry_script_content: str | None,
     generated_entry_script_content: str,
 ) -> str:
@@ -6724,7 +6724,7 @@ def _start_main(
                 imported_kernel = None
             if imported_kernel is not None:
                 setattr(imported_kernel, "_proto_kernel_abs_path", os.environ[EnvVar.var_PROTOPRIMER_PROTO_KERNEL.value])
-            remove_protoprimer_env_vars(os.environ)
+            _remove_protoprimer_env_vars(os.environ)
             selected_main()
         else:
             # FT_14_52_73_23.primer_runtime.md:
@@ -6742,7 +6742,7 @@ def _start_main(
         if import_error.name == installed_kernel_name:
             raise AssertionError(
                 f"Failed to import `{installed_kernel_name}` at [{curr_py_exec.name}]. "
-                f"{get_import_error_hint(installed_kernel_name)} "
+                f"{_get_import_error_hint(installed_kernel_name)} "
                 #
             ) from import_error
         if curr_py_exec.value >= StateStride.stride_py_venv.value and entry_func == _EntryFunc.func_start_app:

@@ -25,7 +25,7 @@ from protoprimer.primer_kernel import (
     ConfConstClient,
     _EntryFunc,
     SyntaxArg,
-    generate_entry_script_content,
+    _generate_entry_script_content,
 )
 
 
@@ -90,7 +90,7 @@ def _generate_and_run_entry_script(
     module_name = "some_app" if with_main_func else None
     func_name = "some_main" if with_main_func else None
 
-    entry_script_content = generate_entry_script_content(
+    entry_script_content = _generate_entry_script_content(
         entry_func.value,
         str(proto_kernel_abs_path),
         str(entry_script_abs_path),

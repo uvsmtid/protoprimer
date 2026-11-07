@@ -5,7 +5,7 @@ FT_56_85_65_41.generated_boilerplate.md
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     ConfConstGeneral,
-    read_text_file,
+    _read_text_file,
     _replace_multiple_body_in_empty_lines,
     write_text_file,
 )
@@ -19,12 +19,12 @@ def _call(fs, input_content: str) -> str:
     fs.create_file(input_path, contents=input_content)
     boilerplate_text = ConfConstGeneral.func_get_proto_kernel_generated_boilerplate_multiple_body(primer_kernel)
     output_text = _replace_multiple_body_in_empty_lines(
-        input_text=read_text_file(input_path),
+        input_text=_read_text_file(input_path),
         boilerplate_text=boilerplate_text,
         min_lines_between=ConfConstGeneral.min_lines_between_generated_boilerplate,
     )
     write_text_file(output_path, output_text)
-    return read_text_file(output_path)
+    return _read_text_file(output_path)
 
 
 def test_no_replacement_when_lines_less_than_min(fs):

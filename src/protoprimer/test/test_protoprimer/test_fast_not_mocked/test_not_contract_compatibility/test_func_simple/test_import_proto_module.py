@@ -1,16 +1,16 @@
 from local_test.name_assertion import assert_test_module_name_embeds_str
-from protoprimer.primer_kernel import import_proto_module
+from protoprimer.primer_kernel import _import_proto_module
 
 
 def test_relationship():
     assert_test_module_name_embeds_str(
-        import_proto_module.__name__,
+        _import_proto_module.__name__,
     )
 
 
 def test_import_proto_module_by_importing_this_test():
     """
-    Tests that `import_proto_module` can load a Python file and that its contents are accessible.
+    Tests that `_import_proto_module` can load a Python file and that its contents are accessible.
     """
 
     # given:
@@ -25,7 +25,7 @@ def test_import_proto_module_by_importing_this_test():
     # when:
 
     # Import the current test file as a new module.
-    imported_module = import_proto_module(unique_module_name, current_file_path)
+    imported_module = _import_proto_module(unique_module_name, current_file_path)
 
     # then:
 

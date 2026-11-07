@@ -19,7 +19,7 @@ from protoprimer.primer_kernel import (
     EnvVar,
     StateStride,
     SyntaxArg,
-    generate_entry_script_content,
+    _generate_entry_script_content,
 )
 
 
@@ -115,7 +115,7 @@ def test_trace_mode_start_app(tmp_path: Path):
 
     # create `start_app` entry script
     start_app_script_abs_path = ref_root_abs_path / "start_app"
-    start_app_script_content = generate_entry_script_content(
+    start_app_script_content = _generate_entry_script_content(
         _EntryFunc.func_start_app.value,
         str(proto_kernel_abs_path),
         str(start_app_script_abs_path),

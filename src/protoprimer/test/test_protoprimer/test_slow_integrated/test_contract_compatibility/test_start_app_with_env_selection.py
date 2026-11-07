@@ -24,7 +24,7 @@ from protoprimer.primer_kernel import (
     ExecOperation,
     SyntaxArg,
     VenvDriverPip,
-    generate_entry_script_content,
+    _generate_entry_script_content,
 )
 
 
@@ -107,7 +107,7 @@ def test_start_app_from_env_default(tmp_path: pathlib.Path):
     # === create `start_app` entry script
 
     start_app_script_abs_path = ref_root_abs_path / "start_app"
-    start_app_script_content = generate_entry_script_content(
+    start_app_script_content = _generate_entry_script_content(
         _EntryFunc.func_start_app.value,
         str(proto_kernel_abs_path),
         str(start_app_script_abs_path),
@@ -238,7 +238,7 @@ def test_app_started_from_env_special(tmp_path: pathlib.Path):
     # === create `start_app` entry script
 
     start_app_script_abs_path = ref_root_abs_path / "start_app"
-    start_app_script_content = generate_entry_script_content(
+    start_app_script_content = _generate_entry_script_content(
         _EntryFunc.func_start_app.value,
         str(proto_kernel_abs_path),
         str(start_app_script_abs_path),
@@ -375,7 +375,7 @@ def test_app_started_with_symlink_to_env_special_but_config_to_env_common(
     # === create `start_app` entry script
 
     start_app_script_abs_path = ref_root_abs_path / "start_app"
-    start_app_script_content = generate_entry_script_content(
+    start_app_script_content = _generate_entry_script_content(
         _EntryFunc.func_start_app.value,
         str(proto_kernel_abs_path),
         str(start_app_script_abs_path),

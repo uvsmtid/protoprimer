@@ -23,8 +23,8 @@ from protoprimer.primer_kernel import (
     ConfConstPrimer,
     _EntryFunc,
     EnvState,
-    import_proto_module,
-    generate_entry_script_content,
+    _import_proto_module,
+    _generate_entry_script_content,
 )
 
 
@@ -77,7 +77,7 @@ def test_eval_conf_returns_derived_config(tmp_path: pathlib.Path):
     # ===
 
     eval_conf_script_abs_path = ref_root_abs_path / "eval_conf"
-    eval_conf_script_content = generate_entry_script_content(
+    eval_conf_script_content = _generate_entry_script_content(
         _EntryFunc.func_start_app.value,
         str(proto_kernel_abs_path),
         str(eval_conf_script_abs_path),
@@ -104,7 +104,7 @@ def test_eval_conf_returns_derived_config(tmp_path: pathlib.Path):
     module_file.write_text(clean_output)
 
     # Load it dynamically:
-    derived_config_module = import_proto_module(module_name, str(module_file))
+    derived_config_module = _import_proto_module(module_name, str(module_file))
 
     # Access the values it sets:
     # It should have leap_input, leap_primer, leap_client, leap_env, leap_derived

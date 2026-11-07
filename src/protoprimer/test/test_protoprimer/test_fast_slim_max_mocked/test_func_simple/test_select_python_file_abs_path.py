@@ -20,7 +20,7 @@ def test_relationship():
 
 
 @patch(f"{protoprimer.primer_kernel.__name__}._get_python_version")
-@patch(f"{protoprimer.primer_kernel.__name__}.import_proto_module")
+@patch(f"{protoprimer.primer_kernel.__name__}._import_proto_module")
 def test_select_python_finds_executable_which_returns_its_version(
     mock_import_proto_module,
     mock_get_python_version,
@@ -56,7 +56,7 @@ def test_select_python_finds_executable_which_returns_its_version(
 
 
 @patch(f"{protoprimer.primer_kernel.__name__}._get_python_version")
-@patch(f"{protoprimer.primer_kernel.__name__}.import_proto_module")
+@patch(f"{protoprimer.primer_kernel.__name__}._import_proto_module")
 def test_select_python_cannot_find_executable_which_returns_its_version(
     mock_import_proto_module,
     mock_get_python_version,
@@ -99,7 +99,7 @@ def test_select_python_cannot_find_executable_which_returns_its_version(
     mock_get_python_version.assert_called_once_with(selected_path)
 
 
-@patch(f"{protoprimer.primer_kernel.__name__}.import_proto_module")
+@patch(f"{protoprimer.primer_kernel.__name__}._import_proto_module")
 def test_select_python_finds_no_matching_version(mock_import_proto_module):
     """
     Tests that `_select_python_file_abs_path` returns `None` when the delegated selector returns `None`.

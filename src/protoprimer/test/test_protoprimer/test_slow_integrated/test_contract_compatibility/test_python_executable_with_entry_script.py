@@ -32,7 +32,7 @@ from protoprimer.primer_kernel import (
     VenvDriverBase,
     VenvDriverPip,
     VenvDriverUv,
-    generate_entry_script_content,
+    _generate_entry_script_content,
 )
 from test_protoprimer.test_primer_kernel_metadata.test_metadata.test_key_word import (
     KeyWord,
@@ -101,7 +101,7 @@ def test_python_from_arbitrary_venv_with_start_app(
     # === create `boot_env` entry script
 
     boot_env_script_abs_path = ref_root_abs_path / "boot_env"
-    boot_env_script_content = generate_entry_script_content(
+    boot_env_script_content = _generate_entry_script_content(
         _EntryFunc.func_boot_env.value,
         str(proto_kernel_abs_path),
         str(boot_env_script_abs_path),
@@ -116,7 +116,7 @@ def test_python_from_arbitrary_venv_with_start_app(
     # === create `start_app` entry script
 
     start_app_script_abs_path = ref_root_abs_path / "start_app"
-    start_app_script_content = generate_entry_script_content(
+    start_app_script_content = _generate_entry_script_content(
         _EntryFunc.func_start_app.value,
         str(proto_kernel_abs_path),
         str(start_app_script_abs_path),
@@ -250,7 +250,7 @@ def test_python_from_required_venv_with_start_app(
     # === create `boot_env` entry script
 
     boot_env_script_abs_path = ref_root_abs_path / "boot_env"
-    boot_env_script_content = generate_entry_script_content(
+    boot_env_script_content = _generate_entry_script_content(
         _EntryFunc.func_boot_env.value,
         str(proto_kernel_abs_path),
         str(boot_env_script_abs_path),
@@ -265,7 +265,7 @@ def test_python_from_required_venv_with_start_app(
     # === create `start_app` entry script
 
     start_app_script_abs_path = ref_root_abs_path / "start_app"
-    start_app_script_content = generate_entry_script_content(
+    start_app_script_content = _generate_entry_script_content(
         _EntryFunc.func_start_app.value,
         str(proto_kernel_abs_path),
         str(start_app_script_abs_path),
