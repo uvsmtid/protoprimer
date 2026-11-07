@@ -15,7 +15,7 @@ from protoprimer.primer_kernel import (
     _EntryFunc,
     _EnvState,
     _ExecOperation,
-    StateStride,
+    _StateStride,
     _Node_state_local_venv_dir_abs_path_inited,
     _Factory_state_input_exec_operation_loaded,
 )
@@ -67,8 +67,8 @@ def test_stride_py_required_to_next_stride_deps_updated(
 
     mock_state_version_constraints_generated.return_value.eval_own_state.return_value = True
 
-    env_ctx._state_stride = StateStride.stride_py_required
-    mock_switch_python.return_value = StateStride.stride_deps_updated
+    env_ctx._state_stride = _StateStride.stride_py_required
+    mock_switch_python.return_value = _StateStride.stride_deps_updated
 
     mock_state_proto_kernel_file_abs_path_inited.return_value.eval_own_state.return_value = "path/to/whatever"
 
@@ -84,13 +84,13 @@ def test_stride_py_required_to_next_stride_deps_updated(
 
     mock_switch_python.assert_called_once_with(
         curr_python_path=mock_get_path_to_curr_python.return_value,
-        next_py_exec=StateStride.stride_deps_updated,
+        next_py_exec=_StateStride.stride_deps_updated,
         next_python_path=mock_get_path_to_curr_python.return_value,
         start_id="mock_start_id",
         proto_kernel_abs_file_path=mock_state_proto_kernel_file_abs_path_inited.return_value.eval_own_state.return_value,
     )
 
-    assert state_value == StateStride.stride_deps_updated
+    assert state_value == _StateStride.stride_deps_updated
 
 
 @patch(f"{primer_kernel.__name__}.{_Node_state_input_start_id_var_loaded.__name__}.create_state_node")
@@ -119,7 +119,7 @@ def test_stride_deps_updated_to_same_stride_deps_updated(
     mock_state_input_start_id_var_loaded.return_value.eval_own_state.return_value = "mock_start_id"
     mock_state_version_constraints_generated.return_value.eval_own_state.return_value = True
 
-    py_exec = StateStride.stride_deps_updated
+    py_exec = _StateStride.stride_deps_updated
 
     env_ctx._state_stride = py_exec
 
@@ -135,4 +135,4 @@ def test_stride_deps_updated_to_same_stride_deps_updated(
 
     mock_switch_python.assert_not_called()
 
-    assert state_value == StateStride.stride_deps_updated
+    assert state_value == _StateStride.stride_deps_updated

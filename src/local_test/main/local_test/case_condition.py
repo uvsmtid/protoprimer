@@ -12,7 +12,7 @@ import pytest
 from local_test.mock_environ import mock_and_restore_environ
 from protoprimer.primer_kernel import (
     EnvVar,
-    str_to_bool,
+    _str_to_bool,
 )
 
 integ_env_var = "CI"
@@ -31,7 +31,7 @@ def any_to_bool(v) -> bool:
         if len(v) == 0:
             return False
         else:
-            return str_to_bool(v)
+            return _str_to_bool(v)
     raise argparse.ArgumentTypeError(f"Unable to convert type [{type(v)}] to [{bool.__name__}].")
 
 

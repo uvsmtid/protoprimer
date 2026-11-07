@@ -7,7 +7,7 @@ from protoprimer.primer_kernel import (
     _ConfConstGeneral,
     _read_text_file,
     _replace_multiple_body_in_empty_lines,
-    write_text_file,
+    _write_text_file,
 )
 
 _boilerplate_text = _ConfConstGeneral.func_get_proto_kernel_generated_boilerplate_multiple_body(primer_kernel).strip("\n")
@@ -23,7 +23,7 @@ def _call(fs, input_content: str) -> str:
         boilerplate_text=boilerplate_text,
         min_lines_between=_ConfConstGeneral.min_lines_between_generated_boilerplate,
     )
-    write_text_file(output_path, output_text)
+    _write_text_file(output_path, output_text)
     return _read_text_file(output_path)
 
 

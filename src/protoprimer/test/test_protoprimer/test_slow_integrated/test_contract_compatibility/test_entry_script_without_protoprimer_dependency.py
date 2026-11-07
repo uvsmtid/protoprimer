@@ -141,7 +141,7 @@ def test_start_app_entry_script_without_protoprimer_dependency(tmp_path: pathlib
 def test_boot_env_entry_script_without_protoprimer_dependency(tmp_path: pathlib.Path):
     """
     `boot_env()` must not require `protoprimer` to be importable in the `venv`
-    once the app's own dependencies reach `StateStride.stride_deps_updated`
+    once the app's own dependencies reach `_StateStride.stride_deps_updated`
     (the corresponding branch of `_start_main`).
     """
 

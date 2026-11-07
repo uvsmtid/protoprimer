@@ -18,7 +18,7 @@ from protoprimer.primer_kernel import (
     _ConfConstGeneral,
     _ConfConstInput,
     _ConfConstPrimer,
-    ConfDst,
+    _ConfDst,
     _ExecOperation,
     _SyntaxArg,
 )
@@ -60,8 +60,8 @@ def test_op_boot(tmp_path: Path):
 
     assert_editable_install(project_dir_abs_path, test_package_name)
 
-    gconf_dir = ref_root_abs_path / ConfDst.dst_global.value
-    lconf_dir = ref_root_abs_path / ConfDst.dst_local.value
+    gconf_dir = ref_root_abs_path / _ConfDst.dst_global.value
+    lconf_dir = ref_root_abs_path / _ConfDst.dst_local.value
 
     # TODO: Unify names for default conf files:
     conf_primer_file = ref_root_abs_path / _ConfConstGeneral.name_proto_code / _ConfConstInput.default_file_basename_conf_primer

@@ -15,7 +15,7 @@ from protoprimer.primer_kernel import (
     _ContextBuilder,
     _EntryFunc,
     _EnvState,
-    StateStride,
+    _StateStride,
 )
 
 
@@ -46,7 +46,7 @@ def test_relationship():
 )
 @patch(
     f"{primer_kernel.__name__}._EnvContext.set_max_stride",
-    return_value=StateStride.stride_py_arbitrary,
+    return_value=_StateStride.stride_py_arbitrary,
 )
 @patch(f"{primer_kernel.__name__}._get_path_to_curr_python")
 @patch(f"{primer_kernel.__name__}._get_path_to_base_python")
@@ -74,7 +74,7 @@ def test_py_exec_stride_py_unknown_in_venv(
     mock_get_path_to_curr_python.return_value = "/path/to/venv/bin/python"
     mock_get_path_to_base_python.return_value = "/usr/bin/python"
 
-    mock_switch_python.return_value = StateStride.stride_py_arbitrary
+    mock_switch_python.return_value = _StateStride.stride_py_arbitrary
 
     # when:
 
@@ -82,11 +82,11 @@ def test_py_exec_stride_py_unknown_in_venv(
 
     # then:
 
-    assert state_value == StateStride.stride_py_arbitrary
+    assert state_value == _StateStride.stride_py_arbitrary
 
     mock_switch_python.assert_called_once_with(
         curr_python_path=mock_get_path_to_curr_python.return_value,
-        next_py_exec=StateStride.stride_py_arbitrary,
+        next_py_exec=_StateStride.stride_py_arbitrary,
         next_python_path=mock_get_path_to_base_python.return_value,
         start_id="mock_start_id",
         proto_kernel_abs_file_path=None,
@@ -107,7 +107,7 @@ def test_py_exec_stride_py_unknown_in_venv(
 )
 @patch(
     f"{primer_kernel.__name__}._EnvContext.set_max_stride",
-    return_value=StateStride.stride_py_arbitrary,
+    return_value=_StateStride.stride_py_arbitrary,
 )
 @patch(f"{primer_kernel.__name__}._get_path_to_curr_python")
 @patch(f"{primer_kernel.__name__}._get_path_to_base_python")
@@ -135,7 +135,7 @@ def test_py_exec_stride_py_unknown_not_in_venv(
     mock_get_path_to_curr_python.return_value = "/usr/bin/python"
     mock_get_path_to_base_python.return_value = "/usr/bin/python"
 
-    mock_switch_python.return_value = StateStride.stride_py_arbitrary
+    mock_switch_python.return_value = _StateStride.stride_py_arbitrary
 
     # when:
 
@@ -143,11 +143,11 @@ def test_py_exec_stride_py_unknown_not_in_venv(
 
     # then:
 
-    assert state_value == StateStride.stride_py_arbitrary
+    assert state_value == _StateStride.stride_py_arbitrary
 
     mock_switch_python.assert_called_once_with(
         curr_python_path=mock_get_path_to_curr_python.return_value,
-        next_py_exec=StateStride.stride_py_arbitrary,
+        next_py_exec=_StateStride.stride_py_arbitrary,
         next_python_path=mock_get_path_to_base_python.return_value,
         start_id="mock_start_id",
         proto_kernel_abs_file_path=None,

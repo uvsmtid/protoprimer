@@ -11,9 +11,9 @@ from local_test.name_assertion import (
 from protoprimer.primer_kernel import (
     _ConfConstClient,
     ConfField,
-    read_json_file,
+    _read_json_file,
     _SyntaxArg,
-    write_json_file,
+    _write_json_file,
 )
 
 
@@ -40,7 +40,7 @@ def test_subprocess_error(tmp_path: Path):
     conf_env_dir_abs_path = ref_root_abs_path / _ConfConstClient.default_default_env_dir_rel_path
     conf_env_file_abs_path = conf_env_dir_abs_path / _ConfConstClient.default_file_basename_leap_env
 
-    env_conf_data = read_json_file(str(conf_env_file_abs_path))
+    env_conf_data = _read_json_file(str(conf_env_file_abs_path))
 
     # Replace `field_extra_command_args` with `["--cause_failure"]`:
     for spec in env_conf_data[ConfField.field_install_specs.value]:
@@ -48,7 +48,7 @@ def test_subprocess_error(tmp_path: Path):
         if "whatever_group_main" in spec:
             spec["whatever_group_main"][ConfField.field_extra_command_args.value] = ["--cause_failure"]
 
-    write_json_file(str(conf_env_file_abs_path), env_conf_data)
+    _write_json_file(str(conf_env_file_abs_path), env_conf_data)
 
     # when:
 

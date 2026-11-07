@@ -22,7 +22,7 @@ from protoprimer.primer_kernel import (
     _EnvContext,
     _EnvState,
     EnvVar,
-    StateStride,
+    _StateStride,
 )
 
 
@@ -65,8 +65,8 @@ def test_start_executed_imports_and_calls_main_func(
     mock_state_proto_kernel_file_abs_path_inited.return_value.eval_own_state.return_value = "/fake/proto_kernel.py"
     mock_state_local_cache_dir_abs_path_inited.return_value.eval_own_state.return_value = "/fake/cache"
     mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = "/fake/venv"
-    mock_state_stride_src_updated_reached.return_value.eval_own_state.return_value = StateStride.stride_src_updated
-    mock_get_stride.return_value = StateStride.stride_src_updated
+    mock_state_stride_src_updated_reached.return_value.eval_own_state.return_value = _StateStride.stride_src_updated
+    mock_get_stride.return_value = _StateStride.stride_src_updated
 
     mock_module = MagicMock()
     mock_func = MagicMock()
@@ -118,8 +118,8 @@ def test_start_executed_resets_argv_before_calling_main_func(
     mock_state_proto_kernel_file_abs_path_inited.return_value.eval_own_state.return_value = "/fake/proto_kernel.py"
     mock_state_local_cache_dir_abs_path_inited.return_value.eval_own_state.return_value = "/fake/cache"
     mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = "/fake/venv"
-    mock_state_stride_src_updated_reached.return_value.eval_own_state.return_value = StateStride.stride_src_updated
-    mock_get_stride.return_value = StateStride.stride_src_updated
+    mock_state_stride_src_updated_reached.return_value.eval_own_state.return_value = _StateStride.stride_src_updated
+    mock_get_stride.return_value = _StateStride.stride_src_updated
 
     mock_module = MagicMock()
     argv_at_call_time = []
@@ -154,7 +154,7 @@ def test_start_executed_propagates_target_args_after_double_dash(
 ):
     """
     TODO: TODO_19_13_09_01.propagate_start_sub_command_cli_args.md:
-    Tokens captured after a literal `--` (as `ParsedArg.name_target_args`) must reach
+    Tokens captured after a literal `--` (as `_ParsedArg.name_target_args`) must reach
     the target function's `sys.argv`, in order, after the program name.
     """
     # given:
@@ -169,8 +169,8 @@ def test_start_executed_propagates_target_args_after_double_dash(
     mock_state_proto_kernel_file_abs_path_inited.return_value.eval_own_state.return_value = "/fake/proto_kernel.py"
     mock_state_local_cache_dir_abs_path_inited.return_value.eval_own_state.return_value = "/fake/cache"
     mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = "/fake/venv"
-    mock_state_stride_src_updated_reached.return_value.eval_own_state.return_value = StateStride.stride_src_updated
-    mock_get_stride.return_value = StateStride.stride_src_updated
+    mock_state_stride_src_updated_reached.return_value.eval_own_state.return_value = _StateStride.stride_src_updated
+    mock_get_stride.return_value = _StateStride.stride_src_updated
 
     mock_module = MagicMock()
     argv_at_call_time = []
@@ -209,7 +209,7 @@ def test_start_executed_rejects_malformed_main_func(
 ):
     """
     A `main_func` without the `module_name:function_name` separator must be rejected
-    before anything is imported (uncaught, per `parse_main_func`).
+    before anything is imported (uncaught, per `_parse_main_func`).
     """
     # given:
     assert_parent_factories_mocked(
@@ -220,8 +220,8 @@ def test_start_executed_rejects_malformed_main_func(
     mock_state_proto_kernel_file_abs_path_inited.return_value.eval_own_state.return_value = "/fake/proto_kernel.py"
     mock_state_local_cache_dir_abs_path_inited.return_value.eval_own_state.return_value = "/fake/cache"
     mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = "/fake/venv"
-    mock_state_stride_src_updated_reached.return_value.eval_own_state.return_value = StateStride.stride_src_updated
-    mock_get_stride.return_value = StateStride.stride_src_updated
+    mock_state_stride_src_updated_reached.return_value.eval_own_state.return_value = _StateStride.stride_src_updated
+    mock_get_stride.return_value = _StateStride.stride_src_updated
 
     # when/then:
     with pytest.raises(ValueError):

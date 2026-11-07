@@ -40,7 +40,7 @@ def test_python_selection(
     env_ctx,
 ):
     # given
-    from protoprimer.primer_kernel import parse_python_version
+    from protoprimer.primer_kernel import _parse_python_version
 
     assert_parent_factories_mocked(
         env_ctx,
@@ -54,5 +54,5 @@ def test_python_selection(
     result = env_ctx.eval_state(_EnvState.state_selected_python_file_abs_path_inited.name)
 
     # then
-    mock_probe_python_file_abs_path.assert_called_once_with("python3.10", parse_python_version("3.10"))
+    mock_probe_python_file_abs_path.assert_called_once_with("python3.10", _parse_python_version("3.10"))
     assert result == "/usr/bin/python3.10"

@@ -5,14 +5,14 @@ from freezegun import freeze_time
 
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer.primer_kernel import (
-    DefaultStderrLogFormatter,
+    _DefaultStderrLogFormatter,
     _TermColor,
 )
 
 
 def test_relationship():
     assert_test_module_name_embeds_str(
-        DefaultStderrLogFormatter.__name__,
+        _DefaultStderrLogFormatter.__name__,
     )
 
 
@@ -34,7 +34,7 @@ def _create_log_record(level, msg):
 @freeze_time("2025-01-18 12:00:00")
 def test_format_stderr_default_verbosity():
     # given:
-    formatter = DefaultStderrLogFormatter(verbosity_level=logging.WARNING)
+    formatter = _DefaultStderrLogFormatter(verbosity_level=logging.WARNING)
     record = _create_log_record(logging.WARNING, "Test message")
 
     # when:
@@ -42,7 +42,7 @@ def test_format_stderr_default_verbosity():
 
     # then:
     expected_msg = "WARNING Test message"
-    expected_color = DefaultStderrLogFormatter.color_set.get("WARNING")
+    expected_color = _DefaultStderrLogFormatter.color_set.get("WARNING")
     expected = f"{expected_color}{expected_msg}{_TermColor.reset_style.value}"
     assert formatted_log == expected
 
@@ -50,7 +50,7 @@ def test_format_stderr_default_verbosity():
 @freeze_time("2025-01-18 12:00:00")
 def test_format_stderr_info_verbosity():
     # given:
-    formatter = DefaultStderrLogFormatter(verbosity_level=logging.INFO)
+    formatter = _DefaultStderrLogFormatter(verbosity_level=logging.INFO)
     record = _create_log_record(logging.INFO, "Test message")
 
     # when:
@@ -59,7 +59,7 @@ def test_format_stderr_info_verbosity():
 
     # then:
     expected_msg = "12:00:00.000Z pid:12345 INFO Test message"
-    expected_color = DefaultStderrLogFormatter.color_set.get("INFO")
+    expected_color = _DefaultStderrLogFormatter.color_set.get("INFO")
     expected = f"{expected_color}{expected_msg}{_TermColor.reset_style.value}"
     assert formatted_log == expected
 
@@ -67,7 +67,7 @@ def test_format_stderr_info_verbosity():
 @freeze_time("2025-01-18 12:00:00")
 def test_format_stderr_debug_verbosity():
     # given:
-    formatter = DefaultStderrLogFormatter(verbosity_level=logging.DEBUG)
+    formatter = _DefaultStderrLogFormatter(verbosity_level=logging.DEBUG)
     record = _create_log_record(logging.DEBUG, "Test message")
 
     # when:
@@ -76,14 +76,14 @@ def test_format_stderr_debug_verbosity():
 
     # then:
     expected_msg = "2025-01-18T12:00:00.000Z pid:12345 DEBUG test.py:123 Test message"
-    expected_color = DefaultStderrLogFormatter.color_set.get("DEBUG")
+    expected_color = _DefaultStderrLogFormatter.color_set.get("DEBUG")
     expected = f"{expected_color}{expected_msg}{_TermColor.reset_style.value}"
     assert formatted_log == expected
 
 
 def test_set_verbosity_level():
     # given:
-    formatter = DefaultStderrLogFormatter(verbosity_level=logging.WARNING)
+    formatter = _DefaultStderrLogFormatter(verbosity_level=logging.WARNING)
     assert formatter.verbosity_level == logging.WARNING
 
     # when:

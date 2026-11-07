@@ -32,7 +32,7 @@ from metaprimer.script_lib import (
 )
 from protoprimer.primer_kernel import (
     _EnvState,
-    read_json_file,
+    _read_json_file,
 )
 
 logger: logging.Logger = logging.getLogger()
@@ -46,7 +46,7 @@ def custom_main():
 
     env_conf_dir: str = derived_data[_EnvState.state_local_conf_symlink_abs_path_inited.name]
     script_conf_path = os.path.join(env_conf_dir, "publish_package.json")
-    script_conf = read_json_file(script_conf_path) if os.path.exists(script_conf_path) else {}
+    script_conf = _read_json_file(script_conf_path) if os.path.exists(script_conf_path) else {}
 
     parsed_args = init_arg_parser(default_repository_url=script_conf.get("repository_url")).parse_args()
 

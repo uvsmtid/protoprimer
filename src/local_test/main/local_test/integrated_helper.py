@@ -21,9 +21,9 @@ from protoprimer.primer_kernel import (
     _ConfConstPrimer,
     ConfField,
     _TopDir,
-    parse_python_version,
-    write_json_file,
-    write_text_file,
+    _parse_python_version,
+    _write_json_file,
+    _write_text_file,
 )
 
 logger = logging.getLogger()
@@ -43,7 +43,7 @@ def convert_test_python_version(python_version_str: str) -> str:
     Use this function only as an input to generate test config files.
     """
 
-    python_version_tuple: tuple[int, int, int] = parse_python_version(python_version_str)
+    python_version_tuple: tuple[int, int, int] = _parse_python_version(python_version_str)
 
     (
         major_version,
@@ -179,7 +179,7 @@ def create_test_python_selector(
     """
     python_selector_abs_path = ref_root_abs_path / python_selector_rel_path
     python_selector_abs_path.parent.mkdir(parents=True, exist_ok=True)
-    write_text_file(
+    _write_text_file(
         str(python_selector_abs_path),
         f"""\
 from __future__ import annotations
@@ -210,7 +210,7 @@ def create_conf_primer_file(
 
     conf_primer_file_abs_path = proto_kernel_dir_abs_path / _ConfConstInput.default_file_basename_conf_primer
 
-    write_json_file(
+    _write_json_file(
         str(conf_primer_file_abs_path),
         prime_conf_data,
     )
@@ -224,7 +224,7 @@ def create_python_version_file(
         ref_root_dir_abs_path,
         _ConfConstGeneral.python_version_file_basename,
     )
-    write_text_file(
+    _write_text_file(
         python_version_file_abs_path,
         python_version,
     )
@@ -263,7 +263,7 @@ def create_conf_client_file(
 
     conf_client_file_abs_path = conf_client_dir_abs_path / _ConfConstPrimer.default_file_basename_leap_client
 
-    write_json_file(
+    _write_json_file(
         str(conf_client_file_abs_path),
         client_conf_data,
     )
@@ -333,7 +333,7 @@ def create_conf_env_file(
 
     conf_env_file_abs_path = conf_env_dir_abs_path / _ConfConstClient.default_file_basename_leap_env
 
-    write_json_file(
+    _write_json_file(
         str(conf_env_file_abs_path),
         env_conf_data,
     )

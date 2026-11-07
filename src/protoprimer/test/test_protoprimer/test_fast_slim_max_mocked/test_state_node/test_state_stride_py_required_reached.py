@@ -24,7 +24,7 @@ from protoprimer.primer_kernel import (
     _EntryFunc,
     _EnvContext,
     _EnvState,
-    StateStride,
+    _StateStride,
     _ExecOperation,
 )
 
@@ -51,7 +51,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             #
             .is_app(True)
             #
-            .state_stride(StateStride.stride_py_unknown)
+            .state_stride(_StateStride.stride_py_unknown)
             #
             .build_context()
         )
@@ -76,7 +76,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     ####################################################################################################################
     @patch.dict(
         os.environ,
-        {primer_kernel.EnvVar.var_PROTOPRIMER_PY_EXEC.value: StateStride.stride_py_arbitrary.name},
+        {primer_kernel.EnvVar.var_PROTOPRIMER_PY_EXEC.value: _StateStride.stride_py_arbitrary.name},
         clear=True,
     )
     @patch(f"{primer_kernel.__name__}.{_Node_state_input_start_id_var_loaded.__name__}.create_state_node")
@@ -142,7 +142,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
     @patch.dict(
         os.environ,
-        {primer_kernel.EnvVar.var_PROTOPRIMER_PY_EXEC.value: StateStride.stride_py_required.name},
+        {primer_kernel.EnvVar.var_PROTOPRIMER_PY_EXEC.value: _StateStride.stride_py_required.name},
         clear=True,
     )
     @patch(f"{primer_kernel.__name__}.{_Node_state_input_start_id_var_loaded.__name__}.create_state_node")
@@ -178,7 +178,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         # given:
         self.env_ctx._exec_operation = _ExecOperation.op_boot
         self.env_ctx._prepare_venv = True
-        self.env_ctx._state_stride = StateStride.stride_py_required
+        self.env_ctx._state_stride = _StateStride.stride_py_required
         mock_state_prepare_venv_finalized.return_value.eval_own_state.return_value = True
 
         # when:
@@ -186,7 +186,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # then:
         self.assertEqual(
-            StateStride.stride_py_required,
+            _StateStride.stride_py_required,
             actual_result,
         )
         mock_execve.assert_not_called()
@@ -195,7 +195,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
     @patch.dict(
         os.environ,
-        {primer_kernel.EnvVar.var_PROTOPRIMER_PY_EXEC.value: StateStride.stride_py_arbitrary.name},
+        {primer_kernel.EnvVar.var_PROTOPRIMER_PY_EXEC.value: _StateStride.stride_py_arbitrary.name},
         clear=True,
     )
     @patch(f"{primer_kernel.__name__}.{_Node_state_input_start_id_var_loaded.__name__}.create_state_node")
@@ -240,7 +240,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # then:
         self.assertEqual(
-            StateStride.stride_py_required,
+            _StateStride.stride_py_required,
             actual_result,
         )
         mock_execve.assert_not_called()

@@ -5,10 +5,10 @@ import enum
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer.primer_kernel import (
     ConfField,
-    FilesystemObject,
+    _FilesystemObject,
     _PathName,
-    PathType,
-    ValueName,
+    _PathType,
+    _ValueName,
 )
 from test_protoprimer.test_primer_kernel_metadata.test_naming.naming_metadata import (
     AbstractMeta,
@@ -54,8 +54,8 @@ class FieldName(enum.Enum):
         name_category=NameCategory.category_path_field,
         name_components=[
             _PathName.path_ref_root.value,
-            FilesystemObject.fs_object_dir.value,
-            PathType.path_rel.value,
+            _FilesystemObject.fs_object_dir.value,
+            _PathType.path_rel.value,
         ],
     )
 
@@ -64,8 +64,8 @@ class FieldName(enum.Enum):
         name_category=NameCategory.category_path_field,
         name_components=[
             _PathName.path_global_conf.value,
-            FilesystemObject.fs_object_dir.value,
-            PathType.path_rel.value,
+            _FilesystemObject.fs_object_dir.value,
+            _PathType.path_rel.value,
         ],
     )
 
@@ -74,8 +74,8 @@ class FieldName(enum.Enum):
         name_category=NameCategory.category_path_field,
         name_components=[
             _PathName.path_local_conf.value,
-            FilesystemObject.fs_object_symlink.value,
-            PathType.path_rel.value,
+            _FilesystemObject.fs_object_symlink.value,
+            _PathType.path_rel.value,
         ],
     )
 
@@ -84,8 +84,8 @@ class FieldName(enum.Enum):
         name_category=NameCategory.category_path_field,
         name_components=[
             _PathName.path_default_env.value,
-            FilesystemObject.fs_object_dir.value,
-            PathType.path_rel.value,
+            _FilesystemObject.fs_object_dir.value,
+            _PathType.path_rel.value,
         ],
     )
 
@@ -94,7 +94,7 @@ class FieldName(enum.Enum):
         name_category=NameCategory.category_value_field,
         name_components=[
             _PathName.path_required_python.value,
-            ValueName.value_version.value,
+            _ValueName.value_version.value,
         ],
     )
 
@@ -103,8 +103,8 @@ class FieldName(enum.Enum):
         name_category=NameCategory.category_path_field,
         name_components=[
             _PathName.path_python_selector.value,
-            FilesystemObject.fs_object_file.value,
-            PathType.path_rel.value,
+            _FilesystemObject.fs_object_file.value,
+            _PathType.path_rel.value,
         ],
     )
 
@@ -113,8 +113,8 @@ class FieldName(enum.Enum):
         name_category=NameCategory.category_derived_path_field,
         name_components=[
             _PathName.path_local_venv.value,
-            FilesystemObject.fs_object_dir.value,
-            PathType.path_rel.value,
+            _FilesystemObject.fs_object_dir.value,
+            _PathType.path_rel.value,
         ],
     )
 
@@ -122,7 +122,7 @@ class FieldName(enum.Enum):
         conf_field=ConfField.field_project_descriptors,
         name_category=NameCategory.category_value_field,
         name_components=[
-            ValueName.value_project_descriptors.value,
+            _ValueName.value_project_descriptors.value,
         ],
     )
 
@@ -130,7 +130,7 @@ class FieldName(enum.Enum):
         conf_field=ConfField.field_install_specs,
         name_category=NameCategory.category_value_field,
         name_components=[
-            ValueName.value_install_specs.value,
+            _ValueName.value_install_specs.value,
         ],
     )
 
@@ -138,8 +138,8 @@ class FieldName(enum.Enum):
         conf_field=ConfField.field_version_constraints_file_basename,
         name_category=NameCategory.category_value_field,
         name_components=[
-            ValueName.value_version_constraints.value,
-            ValueName.value_file_basename.value,
+            _ValueName.value_version_constraints.value,
+            _ValueName.value_file_basename.value,
         ],
     )
 
@@ -148,8 +148,8 @@ class FieldName(enum.Enum):
         name_category=NameCategory.category_path_arg_value,
         name_components=[
             _PathName.path_build_root.value,
-            FilesystemObject.fs_object_dir.value,
-            PathType.path_rel.value,
+            _FilesystemObject.fs_object_dir.value,
+            _PathType.path_rel.value,
         ],
     )
 
@@ -157,7 +157,7 @@ class FieldName(enum.Enum):
         conf_field=ConfField.field_install_extras,
         name_category=NameCategory.category_value_field,
         name_components=[
-            ValueName.value_install_extras.value,
+            _ValueName.value_install_extras.value,
         ],
     )
 
@@ -165,7 +165,7 @@ class FieldName(enum.Enum):
         conf_field=ConfField.field_install_group,
         name_category=NameCategory.category_value_field,
         name_components=[
-            ValueName.value_install_group.value,
+            _ValueName.value_install_group.value,
         ],
     )
 
@@ -173,7 +173,7 @@ class FieldName(enum.Enum):
         conf_field=ConfField.field_extra_command_args,
         name_category=NameCategory.category_value_field,
         name_components=[
-            ValueName.value_extra_command_args.value,
+            _ValueName.value_extra_command_args.value,
         ],
     )
 
@@ -182,8 +182,8 @@ class FieldName(enum.Enum):
         name_category=NameCategory.category_derived_path_field,
         name_components=[
             _PathName.path_local_log.value,
-            FilesystemObject.fs_object_dir.value,
-            PathType.path_rel.value,
+            _FilesystemObject.fs_object_dir.value,
+            _PathType.path_rel.value,
         ],
     )
 
@@ -192,8 +192,8 @@ class FieldName(enum.Enum):
         name_category=NameCategory.category_derived_path_field,
         name_components=[
             _PathName.path_local_run.value,
-            FilesystemObject.fs_object_dir.value,
-            PathType.path_rel.value,
+            _FilesystemObject.fs_object_dir.value,
+            _PathType.path_rel.value,
         ],
     )
 
@@ -202,8 +202,8 @@ class FieldName(enum.Enum):
         name_category=NameCategory.category_derived_path_field,
         name_components=[
             _PathName.path_local_tmp.value,
-            FilesystemObject.fs_object_dir.value,
-            PathType.path_rel.value,
+            _FilesystemObject.fs_object_dir.value,
+            _PathType.path_rel.value,
         ],
     )
 
@@ -212,8 +212,8 @@ class FieldName(enum.Enum):
         name_category=NameCategory.category_derived_path_field,
         name_components=[
             _PathName.path_local_cache.value,
-            FilesystemObject.fs_object_dir.value,
-            PathType.path_rel.value,
+            _FilesystemObject.fs_object_dir.value,
+            _PathType.path_rel.value,
         ],
     )
 
@@ -221,7 +221,7 @@ class FieldName(enum.Enum):
         conf_field=ConfField.field_venv_driver,
         name_category=NameCategory.category_value_field,
         name_components=[
-            ValueName.value_venv_driver.value,
+            _ValueName.value_venv_driver.value,
         ],
     )
 

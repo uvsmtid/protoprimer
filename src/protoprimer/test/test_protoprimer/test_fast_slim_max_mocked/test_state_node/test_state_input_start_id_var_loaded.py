@@ -32,7 +32,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         {},
         clear=True,
     )
-    @patch(f"{primer_kernel.__name__}.get_default_start_id")
+    @patch(f"{primer_kernel.__name__}._get_default_start_id")
     def test_default_case(
         self,
         mock_get_default_start_id,

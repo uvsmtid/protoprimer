@@ -20,7 +20,7 @@ from protoprimer.primer_kernel import (
     _EnvState,
     EnvVar,
     _ExecOperation,
-    StateStride,
+    _StateStride,
 )
 
 
@@ -51,7 +51,7 @@ class TestStartMain:
 
     @patch.dict(
         os.environ,
-        {EnvVar.var_PROTOPRIMER_PY_EXEC.value: StateStride.stride_src_updated.name},
+        {EnvVar.var_PROTOPRIMER_PY_EXEC.value: _StateStride.stride_src_updated.name},
         clear=True,
     )
     def test_empty_main_func_boot_env_runs_standard_bootstrap(self):
@@ -65,7 +65,7 @@ class TestStartMain:
 
     @patch.dict(
         os.environ,
-        {EnvVar.var_PROTOPRIMER_PY_EXEC.value: StateStride.stride_src_updated.name},
+        {EnvVar.var_PROTOPRIMER_PY_EXEC.value: _StateStride.stride_src_updated.name},
         clear=True,
     )
     def test_stride_src_updated(self):
@@ -85,7 +85,7 @@ class TestStartMain:
 
     @patch.dict(
         os.environ,
-        {EnvVar.var_PROTOPRIMER_PY_EXEC.value: StateStride.stride_deps_updated.name},
+        {EnvVar.var_PROTOPRIMER_PY_EXEC.value: _StateStride.stride_deps_updated.name},
         clear=True,
     )
     def test_stride_deps_updated(self):
@@ -105,7 +105,7 @@ class TestStartMain:
 
     @patch.dict(
         os.environ,
-        {EnvVar.var_PROTOPRIMER_PY_EXEC.value: StateStride.stride_src_updated.name},
+        {EnvVar.var_PROTOPRIMER_PY_EXEC.value: _StateStride.stride_src_updated.name},
         clear=True,
     )
     def test_import_error_with_stride_src_updated(self):
@@ -118,7 +118,7 @@ class TestStartMain:
 
     @patch.dict(
         os.environ,
-        {EnvVar.var_PROTOPRIMER_PY_EXEC.value: StateStride.stride_py_venv.name},
+        {EnvVar.var_PROTOPRIMER_PY_EXEC.value: _StateStride.stride_py_venv.name},
         clear=True,
     )
     def test_import_error_with_lower_stride(self):
@@ -133,7 +133,7 @@ class TestStartMain:
 
     @patch.dict(
         os.environ,
-        {EnvVar.var_PROTOPRIMER_PY_EXEC.value: StateStride.stride_py_venv.name},
+        {EnvVar.var_PROTOPRIMER_PY_EXEC.value: _StateStride.stride_py_venv.name},
         clear=True,
     )
     def test_default_case(self):

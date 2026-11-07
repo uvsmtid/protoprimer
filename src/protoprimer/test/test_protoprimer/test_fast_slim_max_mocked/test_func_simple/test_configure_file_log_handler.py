@@ -2,7 +2,7 @@ import logging
 from unittest.mock import patch
 
 from local_test.name_assertion import assert_test_module_name_embeds_str
-from protoprimer.primer_kernel import DefaultFileLogFormatter
+from protoprimer.primer_kernel import _DefaultFileLogFormatter
 from metaprimer.script_lib import configure_file_log_handler
 
 
@@ -31,7 +31,7 @@ def test_configure_file_log_handler(
 
     assert isinstance(log_handler, logging.FileHandler)
     mock_logger.addHandler.assert_called_once_with(log_handler)
-    assert isinstance(log_handler.formatter, DefaultFileLogFormatter)
+    assert isinstance(log_handler.formatter, _DefaultFileLogFormatter)
     assert log_handler.level == log_level
 
     log_handler.close()

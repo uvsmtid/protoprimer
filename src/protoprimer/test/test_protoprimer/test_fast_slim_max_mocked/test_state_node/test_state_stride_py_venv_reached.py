@@ -29,7 +29,7 @@ from protoprimer.primer_kernel import (
     _EnvContext,
     _EnvState,
     EnvVar,
-    StateStride,
+    _StateStride,
     _Factory_state_input_exec_operation_loaded,
     _VenvDriverPip,
 )
@@ -59,7 +59,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             #
             .is_app(True)
             #
-            .state_stride(StateStride.stride_py_unknown)
+            .state_stride(_StateStride.stride_py_unknown)
             #
             .build_context()
         )
@@ -164,7 +164,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             path=path_to_required_python,
             argv=expected_argv,
             env={
-                EnvVar.var_PROTOPRIMER_PY_EXEC.value: StateStride.stride_py_venv.name,
+                EnvVar.var_PROTOPRIMER_PY_EXEC.value: _StateStride.stride_py_venv.name,
                 EnvVar.var_PROTOPRIMER_START_ID.value: "mock_start_id",
                 EnvVar.var_PROTOPRIMER_PROTO_KERNEL.value: state_proto_kernel_file_abs_path_inited,
             },
@@ -449,7 +449,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             path=path_to_venv_python,
             argv=expected_argv,
             env={
-                EnvVar.var_PROTOPRIMER_PY_EXEC.value: StateStride.stride_py_venv.name,
+                EnvVar.var_PROTOPRIMER_PY_EXEC.value: _StateStride.stride_py_venv.name,
                 EnvVar.var_PROTOPRIMER_START_ID.value: "mock_start_id",
                 EnvVar.var_PROTOPRIMER_PROTO_KERNEL.value: state_proto_kernel_file_abs_path_inited,
             },
@@ -535,7 +535,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             path=path_to_venv_python,
             argv=expected_argv,
             env={
-                EnvVar.var_PROTOPRIMER_PY_EXEC.value: StateStride.stride_py_venv.name,
+                EnvVar.var_PROTOPRIMER_PY_EXEC.value: _StateStride.stride_py_venv.name,
                 EnvVar.var_PROTOPRIMER_START_ID.value: "mock_start_id",
                 EnvVar.var_PROTOPRIMER_PROTO_KERNEL.value: state_proto_kernel_file_abs_path_inited,
             },
@@ -593,8 +593,8 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_reset_triggered.return_value.eval_own_state.return_value = False
         mock_state_proto_kernel_file_abs_path_inited.return_value.eval_own_state.return_value = "any/path"
 
-        # Important: it should be `StateStride.stride_py_arbitrary` for this test case:
-        self.env_ctx._state_stride = StateStride.stride_py_arbitrary
+        # Important: it should be `_StateStride.stride_py_arbitrary` for this test case:
+        self.env_ctx._state_stride = _StateStride.stride_py_arbitrary
 
         # Make sure `path_to_curr_python` != `configured python`:
         mock_state_selected_python_file_abs_path_inited.return_value.eval_own_state.return_value = "/a/different/python"
@@ -622,7 +622,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             path=path_to_venv_python,
             argv=expected_argv,
             env={
-                EnvVar.var_PROTOPRIMER_PY_EXEC.value: StateStride.stride_py_venv.name,
+                EnvVar.var_PROTOPRIMER_PY_EXEC.value: _StateStride.stride_py_venv.name,
                 EnvVar.var_PROTOPRIMER_START_ID.value: "mock_start_id",
                 EnvVar.var_PROTOPRIMER_PROTO_KERNEL.value: "any/path",
             },
@@ -633,7 +633,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     ####################################################################################################################
     @patch.dict(
         f"{os.__name__}.environ",
-        {primer_kernel.EnvVar.var_PROTOPRIMER_PY_EXEC.value: StateStride.stride_py_venv.name},
+        {primer_kernel.EnvVar.var_PROTOPRIMER_PY_EXEC.value: _StateStride.stride_py_venv.name},
         clear=True,
     )
     @patch.object(sys, "argv", ["/path/to/script.py", "--some-arg"])
@@ -677,7 +677,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_local_conf_symlink_abs_path_inited.return_value.eval_own_state.return_value = mock_client_dir
         mock_state_version_constraints_file_basename_inited.return_value.eval_own_state.return_value = mock_version_constraints_file_basename
 
-        self.env_ctx._state_stride = StateStride.stride_py_venv
+        self.env_ctx._state_stride = _StateStride.stride_py_venv
 
         # when:
 
@@ -685,7 +685,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # then:
 
-        self.assertEqual(StateStride.stride_py_venv, actual_result)
+        self.assertEqual(_StateStride.stride_py_venv, actual_result)
 
         mock_state_venv_driver_prepared.return_value.eval_own_state.return_value.create_venv.assert_not_called()
         mock_execve.assert_not_called()
@@ -693,7 +693,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     ####################################################################################################################
     @patch.dict(f"{os.__name__}.environ", {}, clear=True)
     @patch.object(sys, "argv", ["/path/to/script.py", "--some-arg"])
-    @patch(f"{primer_kernel.__name__}.logger.info")
+    @patch(f"{primer_kernel.__name__}._logger.info")
     @patch(f"{primer_kernel.__name__}.{_Node_state_input_start_id_var_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_reset_triggered.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_proto_kernel_file_abs_path_inited.__name__}.create_state_node")
@@ -772,7 +772,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             path=path_to_venv_python,
             argv=expected_argv,
             env={
-                EnvVar.var_PROTOPRIMER_PY_EXEC.value: StateStride.stride_py_venv.name,
+                EnvVar.var_PROTOPRIMER_PY_EXEC.value: _StateStride.stride_py_venv.name,
                 EnvVar.var_PROTOPRIMER_START_ID.value: "mock_start_id",
                 EnvVar.var_PROTOPRIMER_PROTO_KERNEL.value: state_proto_kernel_file_abs_path_inited,
             },

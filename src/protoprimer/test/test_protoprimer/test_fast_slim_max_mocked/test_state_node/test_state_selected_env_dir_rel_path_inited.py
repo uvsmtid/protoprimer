@@ -16,7 +16,7 @@ from protoprimer.primer_kernel import (
     ConfField,
     _ContextBuilder,
     _EnvState,
-    StateStride,
+    _StateStride,
 )
 
 
@@ -67,7 +67,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         # Create it inside ref_root, and CWD will be ref_root
         os.chdir(self.mock_ref_root)
         self.fs.create_dir(arg_value)
-        mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(**{primer_kernel.ParsedArg.name_selected_env_dir.value: arg_value})
+        mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(**{primer_kernel._ParsedArg.name_selected_env_dir.value: arg_value})
 
         # when:
         state_selected_env_dir_rel_path_inited = self.env_ctx.eval_state(_EnvState.state_selected_env_dir_rel_path_inited.name)
@@ -102,7 +102,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         # This should be used:
         arg_value = "my_env_dir_from_arg"
         self.fs.create_dir(os.path.join(self.mock_ref_root, arg_value))
-        mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(**{primer_kernel.ParsedArg.name_selected_env_dir.value: arg_value})
+        mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(**{primer_kernel._ParsedArg.name_selected_env_dir.value: arg_value})
 
         # when:
         state_selected_env_dir_rel_path_inited = self.env_ctx.eval_state(_EnvState.state_selected_env_dir_rel_path_inited.name)
@@ -127,7 +127,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = self.mock_ref_root
         os.chdir(self.mock_ref_root)
 
-        mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(**{primer_kernel.ParsedArg.name_selected_env_dir.value: None})
+        mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(**{primer_kernel._ParsedArg.name_selected_env_dir.value: None})
 
         client_conf_file_data = {
             ConfField.field_default_env_dir_rel_path.value: "my_env_dir",
@@ -161,15 +161,15 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = self.mock_ref_root
         os.chdir(self.mock_ref_root)
 
-        mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(**{primer_kernel.ParsedArg.name_selected_env_dir.value: None})
+        mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(**{primer_kernel._ParsedArg.name_selected_env_dir.value: None})
 
         client_conf_file_data = {}
         mock_state_client_conf_file_data_loaded.return_value.eval_own_state.return_value = client_conf_file_data
-        mock_get_stride.return_value = StateStride.stride_py_arbitrary
+        mock_get_stride.return_value = _StateStride.stride_py_arbitrary
 
         # when:
 
-        with self.assertLogs(primer_kernel.logger, level=WARNING) as log_dst:
+        with self.assertLogs(primer_kernel._logger, level=WARNING) as log_dst:
             self.env_ctx.eval_state(_EnvState.state_selected_env_dir_rel_path_inited.name)
 
         # then:
@@ -196,7 +196,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = self.mock_ref_root
         os.chdir(self.mock_ref_root)
 
-        mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(**{primer_kernel.ParsedArg.name_selected_env_dir.value: None})
+        mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(**{primer_kernel._ParsedArg.name_selected_env_dir.value: None})
 
         client_conf_file_data = {
             ConfField.field_default_env_dir_rel_path.value: "not_a_dir",
@@ -228,7 +228,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = self.mock_ref_root
         os.chdir(self.mock_ref_root)
 
-        mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(**{primer_kernel.ParsedArg.name_selected_env_dir.value: None})
+        mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(**{primer_kernel._ParsedArg.name_selected_env_dir.value: None})
 
         client_conf_file_data = {
             ConfField.field_default_env_dir_rel_path.value: "/abs/path",
@@ -263,7 +263,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         arg_value = "/abs/path/outside/ref_root"
         self.fs.create_dir(arg_value)
-        mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(**{primer_kernel.ParsedArg.name_selected_env_dir.value: arg_value})
+        mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(**{primer_kernel._ParsedArg.name_selected_env_dir.value: arg_value})
 
         # when:
         with self.assertRaises(AssertionError) as ctx:
@@ -294,7 +294,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         arg_value_rel = "my_env"
         arg_value_abs = os.path.join(self.mock_ref_root, arg_value_rel)
         self.fs.create_dir(arg_value_abs)
-        mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(**{primer_kernel.ParsedArg.name_selected_env_dir.value: arg_value_abs})
+        mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(**{primer_kernel._ParsedArg.name_selected_env_dir.value: arg_value_abs})
 
         # when:
         result = self.env_ctx.eval_state(_EnvState.state_selected_env_dir_rel_path_inited.name)
@@ -319,7 +319,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = self.mock_ref_root
         os.chdir(self.mock_ref_root)
 
-        mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(**{primer_kernel.ParsedArg.name_selected_env_dir.value: None})
+        mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(**{primer_kernel._ParsedArg.name_selected_env_dir.value: None})
 
         client_conf_file_data = {
             ConfField.field_default_env_dir_rel_path.value: "missing_dir",
@@ -350,7 +350,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = self.mock_ref_root
         os.chdir(self.mock_ref_root)
 
-        mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(**{primer_kernel.ParsedArg.name_selected_env_dir.value: None})
+        mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(**{primer_kernel._ParsedArg.name_selected_env_dir.value: None})
 
         self.fs.create_dir("valid_dir")
         self.fs.create_symlink("symlink_to_dir", "valid_dir")
@@ -386,7 +386,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         arg_value = "/abs/path/not_a_dir"
         self.fs.create_file(arg_value)
-        mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(**{primer_kernel.ParsedArg.name_selected_env_dir.value: arg_value})
+        mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(**{primer_kernel._ParsedArg.name_selected_env_dir.value: arg_value})
 
         # when:
         with self.assertRaises(AssertionError) as ctx:
@@ -430,7 +430,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         os.chdir(mock_cwd)
 
         self.fs.create_dir(arg_value)
-        mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(**{primer_kernel.ParsedArg.name_selected_env_dir.value: arg_value})
+        mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(**{primer_kernel._ParsedArg.name_selected_env_dir.value: arg_value})
 
         # when:
         result = self.env_ctx.eval_state(_EnvState.state_selected_env_dir_rel_path_inited.name)

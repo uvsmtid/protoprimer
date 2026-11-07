@@ -7,15 +7,15 @@ from typing import (
 
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer.primer_kernel import (
-    ConfDst,
+    _ConfDst,
     _ConfLeap,
     EnvVar,
-    FilesystemObject,
-    ParsedArg,
+    _FilesystemObject,
+    _ParsedArg,
     _PathName,
-    PathType,
-    PrimerRuntime,
-    ValueName,
+    _PathType,
+    _PrimerRuntime,
+    _ValueName,
 )
 from test_protoprimer.test_primer_kernel_metadata.test_naming import naming_metadata
 from test_protoprimer.test_primer_kernel_metadata.test_naming.naming_metadata import (
@@ -70,11 +70,11 @@ def test_relationship():
 def test_enum_str_value_uniqueness():
 
     for enum_type in [
-        ConfDst,
+        _ConfDst,
         _ConfLeap,
-        PrimerRuntime,
+        _PrimerRuntime,
         _PathName,
-        ValueName,
+        _ValueName,
         ValueSource,
     ]:
         verify_enum_string_uniqueness(enum_type)
@@ -85,18 +85,18 @@ def test_enum_str_value_uniqueness_across_multiple_enums():
     check_enum_string_uniqueness_across_all(
         [
             _ConfLeap,
-            PrimerRuntime,
-            FilesystemObject,
-            PathType,
+            _PrimerRuntime,
+            _FilesystemObject,
+            _PathType,
             EnvVar,
-            ConfDst,
-            ValueName,
+            _ConfDst,
+            _ValueName,
             _PathName,
             ValueSource,
         ]
         + (
-            # Referencing, but not including - ParsedArg duplicates values from ValueName:
-            [ParsedArg]
+            # Referencing, but not including - _ParsedArg duplicates values from _ValueName:
+            [_ParsedArg]
             if False
             else []
         ),

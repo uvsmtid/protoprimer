@@ -28,7 +28,7 @@ def test_format_file_log():
     )
     record.created = datetime.datetime.now(datetime.timezone.utc).timestamp()
     record.process = 12345
-    # These attributes are added by the StateStrideFilter:
+    # These attributes are added by the _StateStrideFilter:
     record.py_exec_name = "test_exec"
     record.state_stride = "test_stride"
 

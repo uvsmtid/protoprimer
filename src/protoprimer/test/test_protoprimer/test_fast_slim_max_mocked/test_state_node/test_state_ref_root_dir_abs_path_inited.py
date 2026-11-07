@@ -14,7 +14,7 @@ from protoprimer.primer_kernel import (
     _EnvContext,
     _EnvState,
     _ExecOperation,
-    StateStride,
+    _StateStride,
 )
 
 
@@ -81,7 +81,7 @@ def test_warning_when_field_missing(
     state_proto_kernel_file_abs_path_inited.return_value.eval_own_state.return_value = mock_proto_kernel_dir
 
     mock_state_primer_conf_file_data_loaded.return_value.eval_own_state.return_value = {}
-    mock_get_stride.return_value = StateStride.stride_py_arbitrary
+    mock_get_stride.return_value = _StateStride.stride_py_arbitrary
 
     # when:
     caplog.set_level(WARNING)

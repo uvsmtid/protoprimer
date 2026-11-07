@@ -8,7 +8,7 @@ from unittest.mock import (
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer.primer_kernel import (
     EnvVar,
-    StateStride,
+    _StateStride,
     _switch_python,
 )
 
@@ -26,9 +26,9 @@ def test_switch_python(
     mock_execve: MagicMock,
 ):
     # given:
-    curr_py_exec = StateStride.stride_py_arbitrary
+    curr_py_exec = _StateStride.stride_py_arbitrary
     curr_python_path = "/usr/bin/python"
-    next_py_exec = StateStride.stride_py_required
+    next_py_exec = _StateStride.stride_py_required
     next_python_path = "/usr/bin/python3.9"
     start_id = "test_start_id"
     proto_kernel_abs_file_path = "/path/to/proto_kernel.py"
@@ -53,7 +53,7 @@ def test_switch_python(
         path=next_python_path,
         argv=expected_argv,
         env={
-            EnvVar.var_PROTOPRIMER_PY_EXEC.value: StateStride.stride_py_required.name,
+            EnvVar.var_PROTOPRIMER_PY_EXEC.value: _StateStride.stride_py_required.name,
             EnvVar.var_PROTOPRIMER_START_ID.value: start_id,
             EnvVar.var_PROTOPRIMER_PROTO_KERNEL.value: proto_kernel_abs_file_path,
         },
@@ -72,7 +72,7 @@ def test_switch_python_trace_execution(
 ):
     # given:
     curr_python_path = "/usr/bin/python"
-    next_py_exec = StateStride.stride_py_required
+    next_py_exec = _StateStride.stride_py_required
     next_python_path = "/usr/bin/python3.9"
     start_id = "test_start_id"
     proto_kernel_abs_file_path = "/path/to/proto_kernel.py"
@@ -101,7 +101,7 @@ def test_switch_python_trace_execution(
         argv=expected_argv,
         env={
             EnvVar.var_PROTOPRIMER_TRACE_EXECUTION.value: "true",
-            EnvVar.var_PROTOPRIMER_PY_EXEC.value: StateStride.stride_py_required.name,
+            EnvVar.var_PROTOPRIMER_PY_EXEC.value: _StateStride.stride_py_required.name,
             EnvVar.var_PROTOPRIMER_START_ID.value: start_id,
             EnvVar.var_PROTOPRIMER_PROTO_KERNEL.value: proto_kernel_abs_file_path,
         },
@@ -115,9 +115,9 @@ def test_switch_python_no_proto_kernel(
     mock_execve: MagicMock,
 ):
     # given:
-    curr_py_exec = StateStride.stride_py_arbitrary
+    curr_py_exec = _StateStride.stride_py_arbitrary
     curr_python_path = "/usr/bin/python"
-    next_py_exec = StateStride.stride_py_required
+    next_py_exec = _StateStride.stride_py_required
     next_python_path = "/usr/bin/python3.9"
     start_id = "test_start_id"
     proto_kernel_abs_file_path = None
@@ -142,7 +142,7 @@ def test_switch_python_no_proto_kernel(
         path=next_python_path,
         argv=expected_argv,
         env={
-            EnvVar.var_PROTOPRIMER_PY_EXEC.value: StateStride.stride_py_required.name,
+            EnvVar.var_PROTOPRIMER_PY_EXEC.value: _StateStride.stride_py_required.name,
             EnvVar.var_PROTOPRIMER_START_ID.value: start_id,
         },
     )
