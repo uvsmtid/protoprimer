@@ -17,9 +17,9 @@ from protoprimer.primer_kernel import (
     boot_env,
     ConfConstGeneral,
     _EntryFunc,
-    EnvState,
+    _EnvState,
     EnvVar,
-    ExecOperation,
+    _ExecOperation,
     StateStride,
 )
 
@@ -203,4 +203,4 @@ class TestBootEnvAndStartApp:
         called_env_ctx = self.mock_run_process.call_args[0][0]
         assert called_env_ctx._client_func is my_client_func
         assert called_env_ctx._entry_func == _EntryFunc.func_boot_env
-        assert called_env_ctx._forced_final_state == EnvState.state_client_func_executed.name
+        assert called_env_ctx._forced_final_state == _EnvState.state_client_func_executed.name

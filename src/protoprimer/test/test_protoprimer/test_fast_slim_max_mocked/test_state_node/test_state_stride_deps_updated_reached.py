@@ -13,8 +13,8 @@ from protoprimer.primer_kernel import (
     _Factory_state_version_constraints_generated,
     _ContextBuilder,
     _EntryFunc,
-    EnvState,
-    ExecOperation,
+    _EnvState,
+    _ExecOperation,
     StateStride,
     _Node_state_local_venv_dir_abs_path_inited,
     _Factory_state_input_exec_operation_loaded,
@@ -35,7 +35,7 @@ def env_ctx():
 
 
 def test_relationship():
-    assert_test_module_name_embeds_str(EnvState.state_stride_deps_updated_reached.name)
+    assert_test_module_name_embeds_str(_EnvState.state_stride_deps_updated_reached.name)
 
 
 @patch(f"{primer_kernel.__name__}.{_Node_state_input_start_id_var_loaded.__name__}.create_state_node")
@@ -60,7 +60,7 @@ def test_stride_py_required_to_next_stride_deps_updated(
 
     assert_parent_factories_mocked(
         env_ctx,
-        EnvState.state_stride_deps_updated_reached.name,
+        _EnvState.state_stride_deps_updated_reached.name,
     )
 
     mock_state_input_start_id_var_loaded.return_value.eval_own_state.return_value = "mock_start_id"
@@ -73,12 +73,12 @@ def test_stride_py_required_to_next_stride_deps_updated(
     mock_state_proto_kernel_file_abs_path_inited.return_value.eval_own_state.return_value = "path/to/whatever"
 
     mock_get_path_to_curr_python.return_value = "/path/to/venv/bin/python"
-    mock_state_input_exec_operation_loaded.return_value.eval_own_state.return_value = ExecOperation.op_boot
+    mock_state_input_exec_operation_loaded.return_value.eval_own_state.return_value = _ExecOperation.op_boot
     mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = "/path/to/venv"
 
     # when:
 
-    state_value = env_ctx.eval_state(EnvState.state_stride_deps_updated_reached.name)
+    state_value = env_ctx.eval_state(_EnvState.state_stride_deps_updated_reached.name)
 
     # then:
 
@@ -113,7 +113,7 @@ def test_stride_deps_updated_to_same_stride_deps_updated(
 
     assert_parent_factories_mocked(
         env_ctx,
-        EnvState.state_stride_deps_updated_reached.name,
+        _EnvState.state_stride_deps_updated_reached.name,
     )
 
     mock_state_input_start_id_var_loaded.return_value.eval_own_state.return_value = "mock_start_id"
@@ -124,12 +124,12 @@ def test_stride_deps_updated_to_same_stride_deps_updated(
     env_ctx._state_stride = py_exec
 
     mock_state_proto_kernel_file_abs_path_inited.return_value.eval_own_state.return_value = "path/to/whatever"
-    mock_state_input_exec_operation_loaded.return_value.eval_own_state.return_value = ExecOperation.op_boot
+    mock_state_input_exec_operation_loaded.return_value.eval_own_state.return_value = _ExecOperation.op_boot
     mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = "/path/to/venv"
 
     # when:
 
-    state_value = env_ctx.eval_state(EnvState.state_stride_deps_updated_reached.name)
+    state_value = env_ctx.eval_state(_EnvState.state_stride_deps_updated_reached.name)
 
     # then:
 

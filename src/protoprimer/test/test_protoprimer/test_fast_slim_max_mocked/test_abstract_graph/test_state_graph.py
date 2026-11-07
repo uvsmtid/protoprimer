@@ -3,20 +3,20 @@ from unittest.mock import Mock
 
 from protoprimer.primer_kernel import (
     _EnvContext,
-    StateGraph,
-    StateNode,
+    _StateGraph,
+    _StateNode,
 )
 
 
 class TestStateGraph(unittest.TestCase):
 
     def setUp(self):
-        self.graph = StateGraph()
+        self.graph = _StateGraph()
         self.env_ctx = _EnvContext()
 
     def test_register_factory(self):
         # given:
-        node = Mock(spec=StateNode)
+        node = Mock(spec=_StateNode)
         node.get_state_name.return_value = "A"
         node.create_state_node = Mock(return_value=node)
         factory = node
@@ -30,11 +30,11 @@ class TestStateGraph(unittest.TestCase):
 
     def test_register_factory_replace(self):
         # given:
-        node1 = Mock(spec=StateNode)
+        node1 = Mock(spec=_StateNode)
         node1.get_state_name.return_value = "A"
         node1.create_state_node = Mock(return_value=node1)
         factory1 = node1
-        node2 = Mock(spec=StateNode)
+        node2 = Mock(spec=_StateNode)
         node2.get_state_name.return_value = "A"
         node2.create_state_node = Mock(return_value=node2)
         factory2 = node2
@@ -49,11 +49,11 @@ class TestStateGraph(unittest.TestCase):
 
     def test_register_factory_no_replace(self):
         # given:
-        node1 = Mock(spec=StateNode)
+        node1 = Mock(spec=_StateNode)
         node1.get_state_name.return_value = "A"
         node1.create_state_node = Mock(return_value=node1)
         factory1 = node1
-        node2 = Mock(spec=StateNode)
+        node2 = Mock(spec=_StateNode)
         node2.get_state_name.return_value = "A"
         node2.create_state_node = Mock(return_value=node2)
         factory2 = node2
@@ -66,7 +66,7 @@ class TestStateGraph(unittest.TestCase):
 
     def test_get_state_node(self):
         # given:
-        node = Mock(spec=StateNode)
+        node = Mock(spec=_StateNode)
         node.get_state_name.return_value = "A"
         node.create_state_node = Mock(return_value=node)
         factory = node
@@ -88,7 +88,7 @@ class TestStateGraph(unittest.TestCase):
 
     def test_eval_state(self):
         # given:
-        node = Mock(spec=StateNode)
+        node = Mock(spec=_StateNode)
         node.get_state_name.return_value = "A"
         node.eval_own_state.return_value = "value_A"
         node.create_state_node = Mock(return_value=node)

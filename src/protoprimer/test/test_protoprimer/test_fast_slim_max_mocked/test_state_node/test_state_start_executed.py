@@ -20,7 +20,7 @@ from protoprimer.primer_kernel import (
     _Node_state_local_venv_dir_abs_path_inited,
     _Node_state_stride_src_updated_reached,
     _EnvContext,
-    EnvState,
+    _EnvState,
     EnvVar,
     StateStride,
 )
@@ -32,7 +32,7 @@ def env_ctx():
 
 
 def test_relationship():
-    assert_test_module_name_embeds_str(EnvState.state_start_executed.name)
+    assert_test_module_name_embeds_str(_EnvState.state_start_executed.name)
 
 
 @patch(f"{primer_kernel.__name__}.importlib.import_module")
@@ -56,7 +56,7 @@ def test_start_executed_imports_and_calls_main_func(
     # given:
     assert_parent_factories_mocked(
         env_ctx,
-        EnvState.state_start_executed.name,
+        _EnvState.state_start_executed.name,
     )
     mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(
         main_func="my_module:my_func",
@@ -74,7 +74,7 @@ def test_start_executed_imports_and_calls_main_func(
     mock_import_module.return_value = mock_module
 
     # when:
-    result = env_ctx.eval_state(EnvState.state_start_executed.name)
+    result = env_ctx.eval_state(_EnvState.state_start_executed.name)
 
     # then:
     assert result == 0
@@ -109,7 +109,7 @@ def test_start_executed_resets_argv_before_calling_main_func(
     # given:
     assert_parent_factories_mocked(
         env_ctx,
-        EnvState.state_start_executed.name,
+        _EnvState.state_start_executed.name,
     )
     mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(
         main_func="my_module:my_func",
@@ -128,7 +128,7 @@ def test_start_executed_resets_argv_before_calling_main_func(
 
     # when:
     with patch.object(sys, "argv", ["/fake/proto_kernel.py", "start", "my_module:my_func"]):
-        env_ctx.eval_state(EnvState.state_start_executed.name)
+        env_ctx.eval_state(_EnvState.state_start_executed.name)
 
     # then:
     assert argv_at_call_time == [["/fake/proto_kernel.py"]]
@@ -160,7 +160,7 @@ def test_start_executed_propagates_target_args_after_double_dash(
     # given:
     assert_parent_factories_mocked(
         env_ctx,
-        EnvState.state_start_executed.name,
+        _EnvState.state_start_executed.name,
     )
     mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(
         main_func="my_module:my_func",
@@ -183,7 +183,7 @@ def test_start_executed_propagates_target_args_after_double_dash(
         "argv",
         ["/fake/proto_kernel.py", "start", "my_module:my_func", "--", "--foo", "bar", "-v"],
     ):
-        env_ctx.eval_state(EnvState.state_start_executed.name)
+        env_ctx.eval_state(_EnvState.state_start_executed.name)
 
     # then:
     assert argv_at_call_time == [["/fake/proto_kernel.py", "--foo", "bar", "-v"]]
@@ -214,7 +214,7 @@ def test_start_executed_rejects_malformed_main_func(
     # given:
     assert_parent_factories_mocked(
         env_ctx,
-        EnvState.state_start_executed.name,
+        _EnvState.state_start_executed.name,
     )
     mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(main_func="invalid_format")
     mock_state_proto_kernel_file_abs_path_inited.return_value.eval_own_state.return_value = "/fake/proto_kernel.py"
@@ -225,6 +225,6 @@ def test_start_executed_rejects_malformed_main_func(
 
     # when/then:
     with pytest.raises(ValueError):
-        env_ctx.eval_state(EnvState.state_start_executed.name)
+        env_ctx.eval_state(_EnvState.state_start_executed.name)
 
     mock_import_module.assert_not_called()

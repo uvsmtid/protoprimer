@@ -13,7 +13,7 @@ from protoprimer.primer_kernel import (
     ConfConstEnv,
     ConfField,
     _EnvContext,
-    EnvState,
+    _EnvState,
 )
 
 
@@ -23,7 +23,7 @@ def env_ctx():
 
 
 def test_relationship():
-    assert_test_module_name_embeds_str(EnvState.state_local_run_dir_abs_path_inited.name)
+    assert_test_module_name_embeds_str(_EnvState.state_local_run_dir_abs_path_inited.name)
 
 
 @patch(f"{primer_kernel.__name__}.{_Node_state_env_conf_file_data_loaded.__name__}.create_state_node")
@@ -38,7 +38,7 @@ def test_default_when_field_absent(
     # given:
     assert_parent_factories_mocked(
         env_ctx,
-        EnvState.state_local_run_dir_abs_path_inited.name,
+        _EnvState.state_local_run_dir_abs_path_inited.name,
     )
     ref_root_abs_path = os.path.normpath("/ref_root")
     mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = ref_root_abs_path
@@ -46,7 +46,7 @@ def test_default_when_field_absent(
     mock_state_env_conf_file_data_loaded.return_value.eval_own_state.return_value = {}
 
     # when:
-    result = env_ctx.eval_state(EnvState.state_local_run_dir_abs_path_inited.name)
+    result = env_ctx.eval_state(_EnvState.state_local_run_dir_abs_path_inited.name)
 
     # then:
     assert result == os.path.join(ref_root_abs_path, ConfConstEnv.default_dir_rel_path_run)
@@ -64,7 +64,7 @@ def test_client_conf_overrides_default(
     # given:
     assert_parent_factories_mocked(
         env_ctx,
-        EnvState.state_local_run_dir_abs_path_inited.name,
+        _EnvState.state_local_run_dir_abs_path_inited.name,
     )
     ref_root_abs_path = os.path.normpath("/ref_root")
     mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = ref_root_abs_path
@@ -74,7 +74,7 @@ def test_client_conf_overrides_default(
     mock_state_env_conf_file_data_loaded.return_value.eval_own_state.return_value = {}
 
     # when:
-    result = env_ctx.eval_state(EnvState.state_local_run_dir_abs_path_inited.name)
+    result = env_ctx.eval_state(_EnvState.state_local_run_dir_abs_path_inited.name)
 
     # then:
     assert result == os.path.join(ref_root_abs_path, "client_run")
@@ -92,7 +92,7 @@ def test_env_conf_overrides_client_conf(
     # given:
     assert_parent_factories_mocked(
         env_ctx,
-        EnvState.state_local_run_dir_abs_path_inited.name,
+        _EnvState.state_local_run_dir_abs_path_inited.name,
     )
     ref_root_abs_path = os.path.normpath("/ref_root")
     mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = ref_root_abs_path
@@ -104,7 +104,7 @@ def test_env_conf_overrides_client_conf(
     }
 
     # when:
-    result = env_ctx.eval_state(EnvState.state_local_run_dir_abs_path_inited.name)
+    result = env_ctx.eval_state(_EnvState.state_local_run_dir_abs_path_inited.name)
 
     # then:
     assert result == os.path.join(ref_root_abs_path, "env_run")

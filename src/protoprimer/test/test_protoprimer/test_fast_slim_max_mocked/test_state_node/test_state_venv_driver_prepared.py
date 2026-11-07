@@ -17,7 +17,7 @@ from protoprimer.primer_kernel import (
     _Node_state_venv_driver_inited,
     _ContextBuilder,
     _EntryFunc,
-    EnvState,
+    _EnvState,
     VenvDriverPip,
     VenvDriverType,
     VenvDriverUv,
@@ -40,7 +40,7 @@ def env_ctx():
 
 
 def test_relationship():
-    assert_test_module_name_embeds_str(EnvState.state_venv_driver_prepared.name)
+    assert_test_module_name_embeds_str(_EnvState.state_venv_driver_prepared.name)
 
 
 @patch(f"{primer_kernel.__name__}.{_Node_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
@@ -63,7 +63,7 @@ def test_pip_driver_inited(
     # given:
     assert_parent_factories_mocked(
         env_ctx,
-        EnvState.state_venv_driver_prepared.name,
+        _EnvState.state_venv_driver_prepared.name,
     )
     mock_state_venv_driver_inited.return_value.eval_own_state.return_value = VenvDriverType.venv_pip
     mock_state_selected_python_file_abs_path_inited.return_value.eval_own_state.return_value = "/usr/bin/python"
@@ -72,7 +72,7 @@ def test_pip_driver_inited(
     mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = "/venv"
 
     # when:
-    state_value = env_ctx.eval_state(EnvState.state_venv_driver_prepared.name)
+    state_value = env_ctx.eval_state(_EnvState.state_venv_driver_prepared.name)
 
     # then:
     assert isinstance(state_value, VenvDriverPip)
@@ -106,7 +106,7 @@ def test_uv_driver_inited_when_not_installed(
     # given:
     assert_parent_factories_mocked(
         env_ctx,
-        EnvState.state_venv_driver_prepared.name,
+        _EnvState.state_venv_driver_prepared.name,
     )
     mock_state_venv_driver_inited.return_value.eval_own_state.return_value = VenvDriverType.venv_uv
     mock_state_selected_python_file_abs_path_inited.return_value.eval_own_state.return_value = "/usr/bin/python"
@@ -117,7 +117,7 @@ def test_uv_driver_inited_when_not_installed(
     mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = "/venv"
 
     # when:
-    state_value = env_ctx.eval_state(EnvState.state_venv_driver_prepared.name)
+    state_value = env_ctx.eval_state(_EnvState.state_venv_driver_prepared.name)
 
     # then:
     assert isinstance(state_value, VenvDriverUv)
@@ -151,7 +151,7 @@ def test_uv_driver_inited_when_already_installed(
     # given:
     assert_parent_factories_mocked(
         env_ctx,
-        EnvState.state_venv_driver_prepared.name,
+        _EnvState.state_venv_driver_prepared.name,
     )
     mock_state_venv_driver_inited.return_value.eval_own_state.return_value = VenvDriverType.venv_uv
     mock_state_selected_python_file_abs_path_inited.return_value.eval_own_state.return_value = "/usr/bin/python"
@@ -162,7 +162,7 @@ def test_uv_driver_inited_when_already_installed(
     mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = "/venv"
 
     # when:
-    state_value = env_ctx.eval_state(EnvState.state_venv_driver_prepared.name)
+    state_value = env_ctx.eval_state(_EnvState.state_venv_driver_prepared.name)
 
     # then:
     assert isinstance(state_value, VenvDriverUv)
@@ -189,7 +189,7 @@ def test_unsupported_driver(
     # given:
     assert_parent_factories_mocked(
         env_ctx,
-        EnvState.state_venv_driver_prepared.name,
+        _EnvState.state_venv_driver_prepared.name,
     )
     mock_driver = Mock()
     mock_driver.name = "unsupported_driver"
@@ -200,4 +200,4 @@ def test_unsupported_driver(
 
     # when/then:
     with pytest.raises(AssertionError, match="unsupported `VenvDriverType`"):
-        env_ctx.eval_state(EnvState.state_venv_driver_prepared.name)
+        env_ctx.eval_state(_EnvState.state_venv_driver_prepared.name)

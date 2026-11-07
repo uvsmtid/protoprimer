@@ -17,14 +17,14 @@ It is supposed to work via its own copy as a stand-alone script in any client re
 
 ## Bootstrap process
 
-Bootstrap process is implemented as a set of states (listed in `EnvState` enum)
+Bootstrap process is implemented as a set of states (listed in `_EnvState` enum)
 which depend on each other (via list of `parent_states`) forming a DAG.
 
-Each `EnvState` enum item points to the implementation of the state (derived from `StateNode`).
+Each `_EnvState` enum item points to the implementation of the state (derived from `_StateNode`).
 
 When a bootstrap process starts, eventually, method `_eval_state_once` does the job.
 
-The final goal of the bootstrap process is `TargetState.target_proto_bootstrap_completed`.
+The final goal of the bootstrap process is `_TargetState.target_proto_bootstrap_completed`.
 
 ## Testing changes
 

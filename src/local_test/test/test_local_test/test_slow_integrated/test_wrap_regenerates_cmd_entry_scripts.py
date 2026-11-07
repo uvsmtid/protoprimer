@@ -10,14 +10,14 @@ from local_test.name_assertion import (
     assert_test_func_name_embeds_str,
     assert_test_module_name_embeds_str,
 )
-from protoprimer.primer_kernel import ExecOperation
+from protoprimer.primer_kernel import _ExecOperation
 
 repo_root_abs_path = get_repo_root_abs_path()
 proto_kernel_abs_path = repo_root_abs_path / "src" / "proto_code" / "proto_kernel.py"
 
 
 def test_relationship():
-    assert_test_module_name_embeds_str(ExecOperation.op_wrap.value)
+    assert_test_module_name_embeds_str(_ExecOperation.op_wrap.value)
 
 
 @pytest.mark.skipif(git_is_not_available(), reason="git command is not available")
@@ -27,11 +27,11 @@ def test_relationship():
 )
 def test_wrap_regenerates_cmd_entry_script(entry_script_rel_path: str):
     """
-    Regenerates `./cmd/<entry_script_rel_path>` via `ExecOperation.op_wrap`
+    Regenerates `./cmd/<entry_script_rel_path>` via `_ExecOperation.op_wrap`
     and asserts the result is byte-for-byte identical to what is committed.
     """
 
-    assert_test_func_name_embeds_str(ExecOperation.op_wrap.value)
+    assert_test_func_name_embeds_str(_ExecOperation.op_wrap.value)
 
     entry_script_abs_path = repo_root_abs_path / "cmd" / entry_script_rel_path
 

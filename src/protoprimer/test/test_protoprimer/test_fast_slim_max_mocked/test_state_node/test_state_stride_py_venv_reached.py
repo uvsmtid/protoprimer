@@ -27,7 +27,7 @@ from protoprimer.primer_kernel import (
     _ContextBuilder,
     _EntryFunc,
     _EnvContext,
-    EnvState,
+    _EnvState,
     EnvVar,
     StateStride,
     _Factory_state_input_exec_operation_loaded,
@@ -75,7 +75,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
     # noinspection PyMethodMayBeStatic
     def test_relationship(self):
-        assert_test_module_name_embeds_str(EnvState.state_stride_py_venv_reached.name)
+        assert_test_module_name_embeds_str(_EnvState.state_stride_py_venv_reached.name)
 
     def test_assumptions_used_in_other_tests(self):
         self.assertNotEqual(
@@ -123,7 +123,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         assert_parent_factories_mocked(
             self.env_ctx,
-            EnvState.state_stride_py_venv_reached.name,
+            _EnvState.state_stride_py_venv_reached.name,
         )
 
         mock_state_local_conf_symlink_abs_path_inited.return_value.eval_own_state.return_value = mock_client_dir
@@ -134,11 +134,11 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_proto_kernel_file_abs_path_inited.return_value.eval_own_state.return_value = state_proto_kernel_file_abs_path_inited
         mock_state_selected_python_file_abs_path_inited.return_value.eval_own_state.return_value = test_python_abs_path
         mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = os.path.join(mock_client_dir, ConfConstEnv.default_dir_rel_path_venv)
-        mock_state_local_conf_file_abs_path_inited.return_value.eval_own_state.return_value = "fake: " + EnvState.state_local_conf_file_abs_path_inited.name
+        mock_state_local_conf_file_abs_path_inited.return_value.eval_own_state.return_value = "fake: " + _EnvState.state_local_conf_file_abs_path_inited.name
 
         # when:
 
-        self.env_ctx.eval_state(EnvState.state_stride_py_venv_reached.name)
+        self.env_ctx.eval_state(_EnvState.state_stride_py_venv_reached.name)
 
         # then:
 
@@ -208,7 +208,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         assert_parent_factories_mocked(
             self.env_ctx,
-            EnvState.state_stride_py_venv_reached.name,
+            _EnvState.state_stride_py_venv_reached.name,
         )
 
         mock_state_local_conf_symlink_abs_path_inited.return_value.eval_own_state.return_value = mock_client_dir
@@ -220,11 +220,11 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         mock_state_selected_python_file_abs_path_inited.return_value.eval_own_state.return_value = test_python_abs_path
         mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = os.path.join(mock_client_dir, ConfConstEnv.default_dir_rel_path_venv)
-        mock_state_local_conf_file_abs_path_inited.return_value.eval_own_state.return_value = "fake: " + EnvState.state_local_conf_file_abs_path_inited.name
+        mock_state_local_conf_file_abs_path_inited.return_value.eval_own_state.return_value = "fake: " + _EnvState.state_local_conf_file_abs_path_inited.name
 
         # when:
         with self.assertRaises(AssertionError) as cm:
-            self.env_ctx.eval_state(EnvState.state_stride_py_venv_reached.name)
+            self.env_ctx.eval_state(_EnvState.state_stride_py_venv_reached.name)
 
         # then:
         self.assertIn(
@@ -273,7 +273,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         assert_parent_factories_mocked(
             self.env_ctx,
-            EnvState.state_stride_py_venv_reached.name,
+            _EnvState.state_stride_py_venv_reached.name,
         )
 
         mock_state_local_conf_symlink_abs_path_inited.return_value.eval_own_state.return_value = mock_client_dir
@@ -285,11 +285,11 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         mock_state_selected_python_file_abs_path_inited.return_value.eval_own_state.return_value = test_python_abs_path
         mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = os.path.join(mock_client_dir, ConfConstEnv.default_dir_rel_path_venv)
-        mock_state_local_conf_file_abs_path_inited.return_value.eval_own_state.return_value = "fake: " + EnvState.state_local_conf_file_abs_path_inited.name
+        mock_state_local_conf_file_abs_path_inited.return_value.eval_own_state.return_value = "fake: " + _EnvState.state_local_conf_file_abs_path_inited.name
 
         # when:
         with self.assertRaises(AssertionError) as cm:
-            self.env_ctx.eval_state(EnvState.state_stride_py_venv_reached.name)
+            self.env_ctx.eval_state(_EnvState.state_stride_py_venv_reached.name)
 
         # then:
         self.assertIn(
@@ -340,7 +340,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         assert_parent_factories_mocked(
             self.env_ctx,
-            EnvState.state_stride_py_venv_reached.name,
+            _EnvState.state_stride_py_venv_reached.name,
         )
 
         mock_state_local_conf_symlink_abs_path_inited.return_value.eval_own_state.return_value = mock_client_dir
@@ -352,11 +352,11 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         mock_state_selected_python_file_abs_path_inited.return_value.eval_own_state.return_value = non_default_file_abs_path_python
         mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = ConfConstEnv.default_dir_rel_path_venv
-        mock_state_local_conf_file_abs_path_inited.return_value.eval_own_state.return_value = "fake: " + EnvState.state_local_conf_file_abs_path_inited.name
+        mock_state_local_conf_file_abs_path_inited.return_value.eval_own_state.return_value = "fake: " + _EnvState.state_local_conf_file_abs_path_inited.name
 
         # when:
         with self.assertRaises(AssertionError) as cm:
-            self.env_ctx.eval_state(EnvState.state_stride_py_venv_reached.name)
+            self.env_ctx.eval_state(_EnvState.state_stride_py_venv_reached.name)
 
         # then:
         self.assertIn(
@@ -407,7 +407,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         assert_parent_factories_mocked(
             self.env_ctx,
-            EnvState.state_stride_py_venv_reached.name,
+            _EnvState.state_stride_py_venv_reached.name,
         )
 
         mock_state_local_conf_symlink_abs_path_inited.return_value.eval_own_state.return_value = mock_client_dir
@@ -419,11 +419,11 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         mock_state_selected_python_file_abs_path_inited.return_value.eval_own_state.return_value = test_python_abs_path
         mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = os.path.join(mock_client_dir, ConfConstEnv.default_dir_rel_path_venv)
-        mock_state_local_conf_file_abs_path_inited.return_value.eval_own_state.return_value = "fake: " + EnvState.state_local_conf_file_abs_path_inited.name
+        mock_state_local_conf_file_abs_path_inited.return_value.eval_own_state.return_value = "fake: " + _EnvState.state_local_conf_file_abs_path_inited.name
 
         # when:
 
-        self.env_ctx.eval_state(EnvState.state_stride_py_venv_reached.name)
+        self.env_ctx.eval_state(_EnvState.state_stride_py_venv_reached.name)
 
         # then:
 
@@ -496,7 +496,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         assert_parent_factories_mocked(
             self.env_ctx,
-            EnvState.state_stride_py_venv_reached.name,
+            _EnvState.state_stride_py_venv_reached.name,
         )
 
         mock_state_local_conf_symlink_abs_path_inited.return_value.eval_own_state.return_value = mock_client_dir
@@ -508,11 +508,11 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         mock_state_selected_python_file_abs_path_inited.return_value.eval_own_state.return_value = non_default_file_abs_path_python
         mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = non_default_dir_abs_path_venv
-        mock_state_local_conf_file_abs_path_inited.return_value.eval_own_state.return_value = "fake: " + EnvState.state_local_conf_file_abs_path_inited.name
+        mock_state_local_conf_file_abs_path_inited.return_value.eval_own_state.return_value = "fake: " + _EnvState.state_local_conf_file_abs_path_inited.name
 
         # when:
 
-        self.env_ctx.eval_state(EnvState.state_stride_py_venv_reached.name)
+        self.env_ctx.eval_state(_EnvState.state_stride_py_venv_reached.name)
 
         # then:
 
@@ -583,7 +583,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         assert_parent_factories_mocked(
             self.env_ctx,
-            EnvState.state_stride_py_venv_reached.name,
+            _EnvState.state_stride_py_venv_reached.name,
         )
 
         mock_state_local_conf_symlink_abs_path_inited.return_value.eval_own_state.return_value = mock_client_dir
@@ -605,7 +605,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_local_conf_file_abs_path_inited.return_value.eval_own_state.return_value = "any/path"
 
         # when:
-        self.env_ctx.eval_state(EnvState.state_stride_py_venv_reached.name)
+        self.env_ctx.eval_state(_EnvState.state_stride_py_venv_reached.name)
 
         # then:
         path_to_venv_python = os.path.join(
@@ -671,7 +671,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         assert_parent_factories_mocked(
             self.env_ctx,
-            EnvState.state_stride_py_venv_reached.name,
+            _EnvState.state_stride_py_venv_reached.name,
         )
 
         mock_state_local_conf_symlink_abs_path_inited.return_value.eval_own_state.return_value = mock_client_dir
@@ -681,7 +681,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # when:
 
-        actual_result = self.env_ctx.eval_state(EnvState.state_stride_py_venv_reached.name)
+        actual_result = self.env_ctx.eval_state(_EnvState.state_stride_py_venv_reached.name)
 
         # then:
 
@@ -732,7 +732,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         assert_parent_factories_mocked(
             self.env_ctx,
-            EnvState.state_stride_py_venv_reached.name,
+            _EnvState.state_stride_py_venv_reached.name,
         )
 
         mock_state_local_conf_symlink_abs_path_inited.return_value.eval_own_state.return_value = mock_client_dir
@@ -745,13 +745,13 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_selected_python_file_abs_path_inited.return_value.eval_own_state.return_value = test_python_abs_path
         path_to_venv = os.path.join(mock_client_dir, ConfConstEnv.default_dir_rel_path_venv)
         mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = path_to_venv
-        mock_state_local_conf_file_abs_path_inited.return_value.eval_own_state.return_value = "fake: " + EnvState.state_local_conf_file_abs_path_inited.name
+        mock_state_local_conf_file_abs_path_inited.return_value.eval_own_state.return_value = "fake: " + _EnvState.state_local_conf_file_abs_path_inited.name
 
         self.fs.create_dir(path_to_venv)
 
         # when:
 
-        self.env_ctx.eval_state(EnvState.state_stride_py_venv_reached.name)
+        self.env_ctx.eval_state(_EnvState.state_stride_py_venv_reached.name)
 
         # then:
 
@@ -818,7 +818,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         # given:
         assert_parent_factories_mocked(
             self.env_ctx,
-            EnvState.state_stride_py_venv_reached.name,
+            _EnvState.state_stride_py_venv_reached.name,
         )
 
         mock_state_local_conf_symlink_abs_path_inited.return_value.eval_own_state.return_value = mock_client_dir
@@ -831,7 +831,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_selected_python_file_abs_path_inited.return_value.eval_own_state.return_value = test_python_abs_path
         path_to_venv = os.path.join(mock_client_dir, ConfConstEnv.default_dir_rel_path_venv)
         mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = path_to_venv
-        mock_state_local_conf_file_abs_path_inited.return_value.eval_own_state.return_value = "fake: " + EnvState.state_local_conf_file_abs_path_inited.name
+        mock_state_local_conf_file_abs_path_inited.return_value.eval_own_state.return_value = "fake: " + _EnvState.state_local_conf_file_abs_path_inited.name
 
         # Create an uv-style `venv`:
         self.fs.create_dir(path_to_venv)
@@ -849,7 +849,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # when:
         with self.assertRaises(AssertionError) as cm:
-            self.env_ctx.eval_state(EnvState.state_stride_py_venv_reached.name)
+            self.env_ctx.eval_state(_EnvState.state_stride_py_venv_reached.name)
 
         # then:
         self.assertIn("was not created by this driver", str(cm.exception))

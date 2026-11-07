@@ -18,7 +18,7 @@ from protoprimer.primer_kernel import (
     ConfConstInput,
     _ContextBuilder,
     _EntryFunc,
-    EnvState,
+    _EnvState,
     EnvVar,
     SyntaxArg,
 )
@@ -36,7 +36,7 @@ def env_ctx():
 
 
 def test_relationship():
-    assert_test_module_name_embeds_str(EnvState.state_input_stderr_log_level_eval_finalized.name)
+    assert_test_module_name_embeds_str(_EnvState.state_input_stderr_log_level_eval_finalized.name)
 
 
 @patch(f"{primer_kernel.__name__}.{_Factory_state_args_parsed.__name__}.create_state_node")
@@ -50,7 +50,7 @@ def test_default_case_no_flags_uses_default_from_var(
 
     assert_parent_factories_mocked(
         env_ctx,
-        EnvState.state_input_stderr_log_level_eval_finalized.name,
+        _EnvState.state_input_stderr_log_level_eval_finalized.name,
     )
     mock_state_input_stderr_log_level_var_loaded.return_value.eval_own_state.return_value = logging.INFO
     mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(
@@ -60,7 +60,7 @@ def test_default_case_no_flags_uses_default_from_var(
 
     # when:
 
-    state_value = env_ctx.eval_state(EnvState.state_input_stderr_log_level_eval_finalized.name)
+    state_value = env_ctx.eval_state(_EnvState.state_input_stderr_log_level_eval_finalized.name)
 
     # then:
 
@@ -78,7 +78,7 @@ def test_default_case_no_flags_uses_warning(
 
     assert_parent_factories_mocked(
         env_ctx,
-        EnvState.state_input_stderr_log_level_eval_finalized.name,
+        _EnvState.state_input_stderr_log_level_eval_finalized.name,
     )
     default_log_level: int = getattr(
         logging,
@@ -92,7 +92,7 @@ def test_default_case_no_flags_uses_warning(
 
     # when:
 
-    state_value = env_ctx.eval_state(EnvState.state_input_stderr_log_level_eval_finalized.name)
+    state_value = env_ctx.eval_state(_EnvState.state_input_stderr_log_level_eval_finalized.name)
 
     # then:
 
@@ -110,7 +110,7 @@ def test_quiet_1_only(
 
     assert_parent_factories_mocked(
         env_ctx,
-        EnvState.state_input_stderr_log_level_eval_finalized.name,
+        _EnvState.state_input_stderr_log_level_eval_finalized.name,
     )
     default_log_level: int = getattr(
         logging,
@@ -124,7 +124,7 @@ def test_quiet_1_only(
 
     # when:
 
-    state_value = env_ctx.eval_state(EnvState.state_input_stderr_log_level_eval_finalized.name)
+    state_value = env_ctx.eval_state(_EnvState.state_input_stderr_log_level_eval_finalized.name)
 
     # then:
 
@@ -142,7 +142,7 @@ def test_quiet_2_only(
 
     assert_parent_factories_mocked(
         env_ctx,
-        EnvState.state_input_stderr_log_level_eval_finalized.name,
+        _EnvState.state_input_stderr_log_level_eval_finalized.name,
     )
     default_log_level: int = getattr(
         logging,
@@ -156,7 +156,7 @@ def test_quiet_2_only(
 
     # when:
 
-    state_value = env_ctx.eval_state(EnvState.state_input_stderr_log_level_eval_finalized.name)
+    state_value = env_ctx.eval_state(_EnvState.state_input_stderr_log_level_eval_finalized.name)
 
     # then:
 
@@ -174,7 +174,7 @@ def test_quiet_5_only(
 
     assert_parent_factories_mocked(
         env_ctx,
-        EnvState.state_input_stderr_log_level_eval_finalized.name,
+        _EnvState.state_input_stderr_log_level_eval_finalized.name,
     )
     default_log_level: int = getattr(
         logging,
@@ -188,7 +188,7 @@ def test_quiet_5_only(
 
     # when:
 
-    state_value = env_ctx.eval_state(EnvState.state_input_stderr_log_level_eval_finalized.name)
+    state_value = env_ctx.eval_state(_EnvState.state_input_stderr_log_level_eval_finalized.name)
 
     # then:
 
@@ -206,7 +206,7 @@ def test_verbose_1_only(
 
     assert_parent_factories_mocked(
         env_ctx,
-        EnvState.state_input_stderr_log_level_eval_finalized.name,
+        _EnvState.state_input_stderr_log_level_eval_finalized.name,
     )
     default_log_level: int = getattr(
         logging,
@@ -220,7 +220,7 @@ def test_verbose_1_only(
 
     # when:
 
-    state_value = env_ctx.eval_state(EnvState.state_input_stderr_log_level_eval_finalized.name)
+    state_value = env_ctx.eval_state(_EnvState.state_input_stderr_log_level_eval_finalized.name)
 
     # then:
 
@@ -238,7 +238,7 @@ def test_verbose_2_only(
 
     assert_parent_factories_mocked(
         env_ctx,
-        EnvState.state_input_stderr_log_level_eval_finalized.name,
+        _EnvState.state_input_stderr_log_level_eval_finalized.name,
     )
     default_log_level: int = getattr(
         logging,
@@ -252,7 +252,7 @@ def test_verbose_2_only(
 
     # when:
 
-    state_value = env_ctx.eval_state(EnvState.state_input_stderr_log_level_eval_finalized.name)
+    state_value = env_ctx.eval_state(_EnvState.state_input_stderr_log_level_eval_finalized.name)
 
     # then:
 
@@ -270,7 +270,7 @@ def test_verbose_3_only(
 
     assert_parent_factories_mocked(
         env_ctx,
-        EnvState.state_input_stderr_log_level_eval_finalized.name,
+        _EnvState.state_input_stderr_log_level_eval_finalized.name,
     )
     default_log_level: int = getattr(
         logging,
@@ -284,7 +284,7 @@ def test_verbose_3_only(
 
     # when:
 
-    state_value = env_ctx.eval_state(EnvState.state_input_stderr_log_level_eval_finalized.name)
+    state_value = env_ctx.eval_state(_EnvState.state_input_stderr_log_level_eval_finalized.name)
 
     # then:
 
@@ -302,7 +302,7 @@ def test_verbose_4_only(
 
     assert_parent_factories_mocked(
         env_ctx,
-        EnvState.state_input_stderr_log_level_eval_finalized.name,
+        _EnvState.state_input_stderr_log_level_eval_finalized.name,
     )
     default_log_level: int = getattr(
         logging,
@@ -316,7 +316,7 @@ def test_verbose_4_only(
 
     # when:
 
-    state_value = env_ctx.eval_state(EnvState.state_input_stderr_log_level_eval_finalized.name)
+    state_value = env_ctx.eval_state(_EnvState.state_input_stderr_log_level_eval_finalized.name)
 
     # then:
 
@@ -334,7 +334,7 @@ def test_quiet_and_verbose(
 
     assert_parent_factories_mocked(
         env_ctx,
-        EnvState.state_input_stderr_log_level_eval_finalized.name,
+        _EnvState.state_input_stderr_log_level_eval_finalized.name,
     )
     default_log_level: int = getattr(
         logging,
@@ -348,7 +348,7 @@ def test_quiet_and_verbose(
 
     # when:
 
-    state_value = env_ctx.eval_state(EnvState.state_input_stderr_log_level_eval_finalized.name)
+    state_value = env_ctx.eval_state(_EnvState.state_input_stderr_log_level_eval_finalized.name)
 
     # then:
 
@@ -367,7 +367,7 @@ def test_env_var_not_updated_read_only(
 
     assert_parent_factories_mocked(
         env_ctx,
-        EnvState.state_input_stderr_log_level_eval_finalized.name,
+        _EnvState.state_input_stderr_log_level_eval_finalized.name,
     )
     default_log_level: int = getattr(
         logging,
@@ -381,7 +381,7 @@ def test_env_var_not_updated_read_only(
 
     # when:
 
-    state_value = env_ctx.eval_state(EnvState.state_input_stderr_log_level_eval_finalized.name)
+    state_value = env_ctx.eval_state(_EnvState.state_input_stderr_log_level_eval_finalized.name)
 
     # then:
 

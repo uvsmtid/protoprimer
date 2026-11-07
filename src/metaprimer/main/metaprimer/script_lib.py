@@ -8,7 +8,7 @@ from protoprimer.primer_kernel import (
     ConfLeap,
     DefaultFileLogFormatter,
     DefaultStderrLogFormatter,
-    EnvState,
+    _EnvState,
     get_config,
     get_default_start_id,
 )
@@ -55,7 +55,7 @@ def configure_script(
 
     derived_data: dict = get_config(ConfLeap.leap_derived)
 
-    log_dir_abs_path: str = derived_data[EnvState.state_local_log_dir_abs_path_inited.name]
+    log_dir_abs_path: str = derived_data[_EnvState.state_local_log_dir_abs_path_inited.name]
 
     start_id: str = get_default_start_id()
     log_file_abs_path = os.path.join(

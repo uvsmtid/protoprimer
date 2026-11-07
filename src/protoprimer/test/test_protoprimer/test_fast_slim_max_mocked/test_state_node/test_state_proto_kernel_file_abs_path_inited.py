@@ -11,7 +11,7 @@ from protoprimer.primer_kernel import (
     _Node_state_input_proto_kernel_file_abs_path_var_loaded,
     _Factory_state_stride_py_arbitrary_reached,
     _EnvContext,
-    EnvState,
+    _EnvState,
     StateStride,
 )
 
@@ -22,7 +22,7 @@ def env_ctx():
 
 
 def test_relationship():
-    assert_test_module_name_embeds_str(EnvState.state_proto_kernel_file_abs_path_inited.name)
+    assert_test_module_name_embeds_str(_EnvState.state_proto_kernel_file_abs_path_inited.name)
 
 
 @patch(f"{primer_kernel.__name__}.{_EnvContext.__name__}.{_EnvContext.get_stride.__name__}")
@@ -40,7 +40,7 @@ def test_stride_py_arbitrary_not_in_venv(
 
     assert_parent_factories_mocked(
         env_ctx,
-        EnvState.state_proto_kernel_file_abs_path_inited.name,
+        _EnvState.state_proto_kernel_file_abs_path_inited.name,
     )
 
     mock_state_stride_py_arbitrary_reached.return_value.eval_own_state.return_value = StateStride.stride_py_arbitrary
@@ -53,7 +53,7 @@ def test_stride_py_arbitrary_not_in_venv(
 
     # when:
 
-    state_value: str = env_ctx.eval_state(EnvState.state_proto_kernel_file_abs_path_inited.name)
+    state_value: str = env_ctx.eval_state(_EnvState.state_proto_kernel_file_abs_path_inited.name)
 
     # then:
 
@@ -73,7 +73,7 @@ def test_stride_py_venv(
 
     assert_parent_factories_mocked(
         env_ctx,
-        EnvState.state_proto_kernel_file_abs_path_inited.name,
+        _EnvState.state_proto_kernel_file_abs_path_inited.name,
     )
 
     proto_kernel_abs_file_path = "/path/to/proto_kernel.py"
@@ -83,7 +83,7 @@ def test_stride_py_venv(
 
     # when:
 
-    state_value: str = env_ctx.eval_state(EnvState.state_proto_kernel_file_abs_path_inited.name)
+    state_value: str = env_ctx.eval_state(_EnvState.state_proto_kernel_file_abs_path_inited.name)
 
     # then:
 
@@ -103,7 +103,7 @@ def test_stride_py_venv_no_arg(
 
     assert_parent_factories_mocked(
         env_ctx,
-        EnvState.state_proto_kernel_file_abs_path_inited.name,
+        _EnvState.state_proto_kernel_file_abs_path_inited.name,
     )
 
     mock_state_input_proto_kernel_file_abs_path_var_loaded.return_value.eval_own_state.return_value = None
@@ -112,6 +112,6 @@ def test_stride_py_venv_no_arg(
     # when/then:
 
     with pytest.raises(AssertionError) as exc_info:
-        env_ctx.eval_state(EnvState.state_proto_kernel_file_abs_path_inited.name)
+        env_ctx.eval_state(_EnvState.state_proto_kernel_file_abs_path_inited.name)
 
     assert "is not specified at" in str(exc_info.value)

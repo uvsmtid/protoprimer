@@ -17,7 +17,7 @@ from local_test.integrated_helper import (
 )
 from protoprimer.primer_kernel import (
     ConfDst,
-    ExecOperation,
+    _ExecOperation,
     SyntaxArg,
     TopDir,
 )
@@ -77,7 +77,7 @@ def test_instant_scenario(tmp_path: Path):
     run_primer_main(
         [
             str(proto_kernel_abs_path),
-            ExecOperation.op_eval.value,
+            _ExecOperation.op_eval.value,
         ]
     )
 
@@ -85,7 +85,7 @@ def test_instant_scenario(tmp_path: Path):
 @requires_max_python
 def test_instant_scenario_start_presents_clean_argv(tmp_path: Path):
     """
-    This test runs `ExecOperation.op_start` directly via `proto_kernel`
+    This test runs `_ExecOperation.op_start` directly via `proto_kernel`
     (rather than via a dedicated `entry_script`).
 
     Unlike a dedicated `entry_script` (whose own `sys.argv` is naturally clean),
@@ -112,7 +112,7 @@ def test_instant_scenario_start_presents_clean_argv(tmp_path: Path):
     sub_proc = subprocess.run(
         [
             str(proto_kernel_abs_path),
-            ExecOperation.op_start.value,
+            _ExecOperation.op_start.value,
             "local_doc.cmd_echo_app:custom_echo_app_main",
         ],
         capture_output=True,
@@ -150,7 +150,7 @@ def test_instant_scenario_start_propagates_target_args_after_double_dash(tmp_pat
     sub_proc = subprocess.run(
         [
             str(proto_kernel_abs_path),
-            ExecOperation.op_start.value,
+            _ExecOperation.op_start.value,
             "local_doc.cmd_echo_app:custom_echo_app_main",
             SyntaxArg.arg_double_dash,
             "foo",
@@ -199,10 +199,10 @@ def test_instant_scenario_start_recurses_through_proto_main(tmp_path: Path):
     sub_proc_1 = subprocess.run(
         [
             str(proto_kernel_abs_path),
-            ExecOperation.op_start.value,
+            _ExecOperation.op_start.value,
             _proto_main,
             SyntaxArg.arg_double_dash,
-            ExecOperation.op_start.value,
+            _ExecOperation.op_start.value,
             echo_app,
             SyntaxArg.arg_double_dash,
             "qwer",
@@ -219,10 +219,10 @@ def test_instant_scenario_start_recurses_through_proto_main(tmp_path: Path):
     sub_proc_2 = subprocess.run(
         [
             str(proto_kernel_abs_path),
-            ExecOperation.op_start.value,
+            _ExecOperation.op_start.value,
             _proto_main,
             SyntaxArg.arg_double_dash,
-            ExecOperation.op_start.value,
+            _ExecOperation.op_start.value,
             echo_app,
             SyntaxArg.arg_double_dash,
             "qwer",
@@ -240,13 +240,13 @@ def test_instant_scenario_start_recurses_through_proto_main(tmp_path: Path):
     sub_proc_3 = subprocess.run(
         [
             str(proto_kernel_abs_path),
-            ExecOperation.op_start.value,
+            _ExecOperation.op_start.value,
             _proto_main,
             SyntaxArg.arg_double_dash,
-            ExecOperation.op_start.value,
+            _ExecOperation.op_start.value,
             _proto_main,
             SyntaxArg.arg_double_dash,
-            ExecOperation.op_start.value,
+            _ExecOperation.op_start.value,
             echo_app,
             SyntaxArg.arg_double_dash,
             "qwer",

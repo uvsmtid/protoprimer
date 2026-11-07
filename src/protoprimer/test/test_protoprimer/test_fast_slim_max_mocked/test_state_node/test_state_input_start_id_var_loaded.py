@@ -11,7 +11,7 @@ from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     _EnvContext,
-    EnvState,
+    _EnvState,
     EnvVar,
 )
 
@@ -25,7 +25,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
     # noinspection PyMethodMayBeStatic
     def test_relationship(self):
-        assert_test_module_name_embeds_str(EnvState.state_input_start_id_var_loaded.name)
+        assert_test_module_name_embeds_str(_EnvState.state_input_start_id_var_loaded.name)
 
     @patch.dict(
         f"{os.__name__}.environ",
@@ -41,10 +41,10 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_get_default_start_id.return_value = "default_start_id"
         assert_parent_factories_mocked(
             self.env_ctx,
-            EnvState.state_input_start_id_var_loaded.name,
+            _EnvState.state_input_start_id_var_loaded.name,
         )
         # when:
-        state_value = self.env_ctx.eval_state(EnvState.state_input_start_id_var_loaded.name)
+        state_value = self.env_ctx.eval_state(_EnvState.state_input_start_id_var_loaded.name)
         # then:
         self.assertEqual(
             "default_start_id",
@@ -62,9 +62,9 @@ class ThisTestClass(BasePyfakefsTestClass):
         # given:
         assert_parent_factories_mocked(
             self.env_ctx,
-            EnvState.state_input_start_id_var_loaded.name,
+            _EnvState.state_input_start_id_var_loaded.name,
         )
         # when:
-        state_value = self.env_ctx.eval_state(EnvState.state_input_start_id_var_loaded.name)
+        state_value = self.env_ctx.eval_state(_EnvState.state_input_start_id_var_loaded.name)
         # then:
         self.assertEqual("explicit_start_id", state_value)

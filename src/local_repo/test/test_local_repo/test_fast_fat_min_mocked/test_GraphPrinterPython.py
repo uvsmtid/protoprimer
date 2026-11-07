@@ -12,8 +12,8 @@ from local_repo.graph_printer import (
 )
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer.primer_kernel import (
-    EnvState,
-    TargetState,
+    _EnvState,
+    _TargetState,
 )
 
 
@@ -36,7 +36,7 @@ def test_relationship():
         "--format",
         "python",
         "--target_state",
-        TargetState.target_proto_bootstrap_completed.name,
+        _TargetState.target_proto_bootstrap_completed.name,
     ],
 )
 def test_print_dag_python_output(
@@ -63,12 +63,12 @@ def test_print_dag_python_output(
     )
     mock_state_graph = mock_env_ctx._state_graph
     mock_state_node = MagicMock()
-    mock_state_node.get_state_name.return_value = EnvState.state_args_parsed.name
+    mock_state_node.get_state_name.return_value = _EnvState.state_args_parsed.name
     mock_state_graph.get_state_node.return_value = mock_state_node
 
     mock_get_trans.return_value = [
-        EnvState.state_input_py_exec_var_loaded.name,
-        EnvState.state_input_stderr_log_level_var_loaded.name,
+        _EnvState.state_input_py_exec_var_loaded.name,
+        _EnvState.state_input_stderr_log_level_var_loaded.name,
     ]
 
     # when:
@@ -90,9 +90,9 @@ def test_print_dag_python_output(
     exec_result = exec_namespace["get_env_states"]()
 
     expected_list = [
-        EnvState.state_input_py_exec_var_loaded,
-        EnvState.state_input_stderr_log_level_var_loaded,
-        EnvState.state_args_parsed,
+        _EnvState.state_input_py_exec_var_loaded,
+        _EnvState.state_input_stderr_log_level_var_loaded,
+        _EnvState.state_args_parsed,
     ]
 
     if exec_result != expected_list:
@@ -104,9 +104,9 @@ def test_compose_python_output_is_executable():
     # given:
 
     state_names = [
-        EnvState.state_input_py_exec_var_loaded.name,
-        EnvState.state_input_stderr_log_level_var_loaded.name,
-        EnvState.state_args_parsed.name,
+        _EnvState.state_input_py_exec_var_loaded.name,
+        _EnvState.state_input_stderr_log_level_var_loaded.name,
+        _EnvState.state_args_parsed.name,
     ]
 
     # when:
@@ -127,9 +127,9 @@ def test_compose_python_output_is_executable():
     exec_result = exec_namespace["get_env_states"]()
 
     expected_list = [
-        EnvState.state_input_py_exec_var_loaded,
-        EnvState.state_input_stderr_log_level_var_loaded,
-        EnvState.state_args_parsed,
+        _EnvState.state_input_py_exec_var_loaded,
+        _EnvState.state_input_stderr_log_level_var_loaded,
+        _EnvState.state_args_parsed,
     ]
 
     if exec_result != expected_list:

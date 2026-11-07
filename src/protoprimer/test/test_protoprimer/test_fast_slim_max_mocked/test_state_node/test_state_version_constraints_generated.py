@@ -18,7 +18,7 @@ from protoprimer.primer_kernel import (
     _ContextBuilder,
     _EntryFunc,
     _EnvContext,
-    EnvState,
+    _EnvState,
     _Factory_state_input_exec_operation_loaded,
 )
 
@@ -40,7 +40,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
     # noinspection PyMethodMayBeStatic
     def test_relationship(self):
-        assert_test_module_name_embeds_str(EnvState.state_version_constraints_generated.name)
+        assert_test_module_name_embeds_str(_EnvState.state_version_constraints_generated.name)
 
     @patch(f"{primer_kernel.__name__}.{_Factory_state_protoprimer_package_installed.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_venv_driver_prepared.__name__}.create_state_node")
@@ -60,7 +60,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         assert_parent_factories_mocked(
             self.env_ctx,
-            EnvState.state_version_constraints_generated.name,
+            _EnvState.state_version_constraints_generated.name,
         )
         self.fs.reset()
         self.env_ctx = (
@@ -88,7 +88,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_input_exec_operation_loaded.return_value.eval_own_state.return_value = "boot"
 
         # when:
-        self.env_ctx.eval_state(EnvState.state_version_constraints_generated.name)
+        self.env_ctx.eval_state(_EnvState.state_version_constraints_generated.name)
         # then:
         constraints_txt_path = os.path.join(
             mock_client_conf_env_dir,
@@ -113,7 +113,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         # given:
         assert_parent_factories_mocked(
             self.env_ctx,
-            EnvState.state_version_constraints_generated.name,
+            _EnvState.state_version_constraints_generated.name,
         )
         self.fs.reset()
         self.env_ctx = (
@@ -132,7 +132,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_version_constraints_file_basename_inited.return_value.eval_own_state.return_value = ConfConstEnv.default_version_constraints_file_basename
         mock_state_input_exec_operation_loaded.return_value.eval_own_state.return_value = "boot"
         # when:
-        self.env_ctx.eval_state(EnvState.state_version_constraints_generated.name)
+        self.env_ctx.eval_state(_EnvState.state_version_constraints_generated.name)
         # then:
         constraints_txt_path = os.path.join(
             mock_client_conf_env_dir,

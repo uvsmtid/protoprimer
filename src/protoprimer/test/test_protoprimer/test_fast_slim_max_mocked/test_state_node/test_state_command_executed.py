@@ -14,7 +14,7 @@ from protoprimer.primer_kernel import (
     _Node_state_local_venv_dir_abs_path_inited,
     _Node_state_stride_src_updated_reached,
     _EnvContext,
-    EnvState,
+    _EnvState,
     StateStride,
 )
 
@@ -25,7 +25,7 @@ def env_ctx():
 
 
 def test_relationship():
-    assert_test_module_name_embeds_str(EnvState.state_command_executed.name)
+    assert_test_module_name_embeds_str(_EnvState.state_command_executed.name)
 
 
 @patch(f"{primer_kernel.__name__}.{_EnvContext.__name__}.{_EnvContext.get_stride.__name__}")
@@ -55,7 +55,7 @@ def test_command_executed_in_bash(
     fs.create_dir("/fake")
     assert_parent_factories_mocked(
         env_ctx,
-        EnvState.state_command_executed.name,
+        _EnvState.state_command_executed.name,
     )
     mock_state_input_command_line.return_value.eval_own_state.return_value = "echo hello"
     mock_get_stride.return_value = StateStride.stride_src_updated
@@ -64,7 +64,7 @@ def test_command_executed_in_bash(
     mock_state_local_cache_dir_abs_path_inited.return_value.eval_own_state.return_value = "/fake/cache"
 
     # when:
-    env_ctx.eval_state(EnvState.state_command_executed.name)
+    env_ctx.eval_state(_EnvState.state_command_executed.name)
 
     # then:
     mock_os_execve.assert_called_once_with(
@@ -110,7 +110,7 @@ def test_command_executed_in_zsh(
     fs.create_dir("/fake")
     assert_parent_factories_mocked(
         env_ctx,
-        EnvState.state_command_executed.name,
+        _EnvState.state_command_executed.name,
     )
     mock_state_input_command_line.return_value.eval_own_state.return_value = "echo hello"
     mock_get_stride.return_value = StateStride.stride_src_updated
@@ -119,7 +119,7 @@ def test_command_executed_in_zsh(
     mock_state_local_cache_dir_abs_path_inited.return_value.eval_own_state.return_value = "/fake/cache"
 
     # when:
-    env_ctx.eval_state(EnvState.state_command_executed.name)
+    env_ctx.eval_state(_EnvState.state_command_executed.name)
 
     # then:
     # In ShellDriverZsh, there are no extra shell_args, just an env var `ZDOTDIR`.
@@ -163,14 +163,14 @@ def test_command_not_executed_when_no_command_line_provided(
     # given:
     assert_parent_factories_mocked(
         env_ctx,
-        EnvState.state_command_executed.name,
+        _EnvState.state_command_executed.name,
     )
     mock_state_input_command_line.return_value.eval_own_state.return_value = None
     mock_get_stride.return_value = StateStride.stride_src_updated
     mock_state_stride_src_updated_reached.return_value.eval_own_state.return_value = StateStride.stride_src_updated
 
     # when:
-    state_value = env_ctx.eval_state(EnvState.state_command_executed.name)
+    state_value = env_ctx.eval_state(_EnvState.state_command_executed.name)
 
     # then:
     assert state_value == 0
@@ -204,7 +204,7 @@ def test_command_executed_empty(
     fs.create_dir("/fake")
     assert_parent_factories_mocked(
         env_ctx,
-        EnvState.state_command_executed.name,
+        _EnvState.state_command_executed.name,
     )
     mock_state_input_command_line.return_value.eval_own_state.return_value = ""
     mock_get_stride.return_value = StateStride.stride_src_updated
@@ -213,7 +213,7 @@ def test_command_executed_empty(
     mock_state_local_cache_dir_abs_path_inited.return_value.eval_own_state.return_value = "/fake/cache"
 
     # when:
-    env_ctx.eval_state(EnvState.state_command_executed.name)
+    env_ctx.eval_state(_EnvState.state_command_executed.name)
 
     # then:
     mock_os_execve.assert_called_once_with(
@@ -259,7 +259,7 @@ def test_command_executed_with_whitespace(
     fs.create_dir("/fake")
     assert_parent_factories_mocked(
         env_ctx,
-        EnvState.state_command_executed.name,
+        _EnvState.state_command_executed.name,
     )
     mock_state_input_command_line.return_value.eval_own_state.return_value = "  echo hello  "
     mock_get_stride.return_value = StateStride.stride_src_updated
@@ -268,7 +268,7 @@ def test_command_executed_with_whitespace(
     mock_state_local_cache_dir_abs_path_inited.return_value.eval_own_state.return_value = "/fake/cache"
 
     # when:
-    env_ctx.eval_state(EnvState.state_command_executed.name)
+    env_ctx.eval_state(_EnvState.state_command_executed.name)
 
     # then:
     mock_os_execve.assert_called_once_with(

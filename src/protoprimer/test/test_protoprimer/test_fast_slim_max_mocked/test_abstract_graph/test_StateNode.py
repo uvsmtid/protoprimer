@@ -4,12 +4,12 @@ import pytest
 
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer.primer_kernel import (
-    StateNode,
+    _StateNode,
 )
 
 
 def test_relationship():
-    assert_test_module_name_embeds_str(StateNode.__name__)
+    assert_test_module_name_embeds_str(_StateNode.__name__)
 
 
 def test_init():
@@ -19,7 +19,7 @@ def test_init():
     state_name = "my_state"
 
     # when:
-    state_node = StateNode(mock_env_ctx, parent_states, state_name)
+    state_node = _StateNode(mock_env_ctx, parent_states, state_name)
 
     # then:
     assert state_node.env_ctx == mock_env_ctx
@@ -30,7 +30,7 @@ def test_init():
 def test_get_state_name():
     # given:
     state_name = "my_state"
-    state_node = StateNode(MagicMock(), [], state_name)
+    state_node = _StateNode(MagicMock(), [], state_name)
 
     # when:
     result = state_node.get_state_name()
@@ -42,7 +42,7 @@ def test_get_state_name():
 def test_get_parent_states():
     # given:
     parent_states = ["parent1", "parent2"]
-    state_node = StateNode(MagicMock(), parent_states, "my_state")
+    state_node = _StateNode(MagicMock(), parent_states, "my_state")
 
     # when:
     result = state_node.get_parent_states()
@@ -56,7 +56,7 @@ def test_eval_parent_state():
     mock_env_ctx = MagicMock()
     mock_env_ctx.eval_state.return_value = "parent_value"
     parent_states = ["parent1"]
-    state_node = StateNode(mock_env_ctx, parent_states, "my_state")
+    state_node = _StateNode(mock_env_ctx, parent_states, "my_state")
 
     # when:
     result = state_node.eval_parent_state("parent1")
@@ -68,7 +68,7 @@ def test_eval_parent_state():
 
 def test_eval_parent_state_not_declared():
     # given:
-    state_node = StateNode(MagicMock(), [], "my_state")
+    state_node = _StateNode(MagicMock(), [], "my_state")
 
     # when/then:
     with pytest.raises(AssertionError):
@@ -77,7 +77,7 @@ def test_eval_parent_state_not_declared():
 
 def test_eval_own_state_raises_not_implemented_error():
     # given:
-    state_node = StateNode(MagicMock(), [], "my_state")
+    state_node = _StateNode(MagicMock(), [], "my_state")
 
     # when/then:
     with pytest.raises(NotImplementedError):

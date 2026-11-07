@@ -28,7 +28,7 @@ from protoprimer.primer_kernel import (
     _Factory_state_selected_env_dir_rel_path_inited,
     _Node_state_selected_python_file_abs_path_inited,
     _Node_state_venv_driver_inited,
-    EnvState,
+    _EnvState,
 )
 
 
@@ -112,9 +112,9 @@ def test_state_evaluation(
     # then:
 
     assert isinstance(result, dict)
-    assert EnvState.state_local_venv_dir_abs_path_inited.name in result
-    assert EnvState.state_local_cache_dir_abs_path_inited.name in result
-    assert EnvState.state_project_descriptors_inited.name in result
-    assert result[EnvState.state_local_venv_dir_abs_path_inited.name] == "/mock/venv"
-    assert result[EnvState.state_local_cache_dir_abs_path_inited.name] == "/mock/cache"
-    assert result[EnvState.state_project_descriptors_inited.name] == []
+    assert _EnvState.state_local_venv_dir_abs_path_inited.name in result
+    assert _EnvState.state_local_cache_dir_abs_path_inited.name in result
+    assert _EnvState.state_project_descriptors_inited.name in result
+    assert result[_EnvState.state_local_venv_dir_abs_path_inited.name] == "/mock/venv"
+    assert result[_EnvState.state_local_cache_dir_abs_path_inited.name] == "/mock/cache"
+    assert result[_EnvState.state_project_descriptors_inited.name] == []

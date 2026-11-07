@@ -13,18 +13,18 @@ from local_test.name_assertion import (
     assert_test_module_name_embeds_str,
 )
 from protoprimer.primer_kernel import (
-    ExecOperation,
+    _ExecOperation,
     TopDir,
 )
 
 
 def test_relationship():
-    assert_test_module_name_embeds_str(ExecOperation.op_eval.value)
+    assert_test_module_name_embeds_str(_ExecOperation.op_eval.value)
 
 
 def test_op_eval_with_min_leaps_shape(tmp_path: Path):
 
-    assert_test_func_name_embeds_str(ExecOperation.op_eval.value)
+    assert_test_func_name_embeds_str(_ExecOperation.op_eval.value)
 
     # given:
 
@@ -39,7 +39,7 @@ def test_op_eval_with_min_leaps_shape(tmp_path: Path):
     run_primer_main(
         [
             str(proto_kernel_abs_path),
-            ExecOperation.op_eval.value,
+            _ExecOperation.op_eval.value,
         ]
     )
 
@@ -52,7 +52,7 @@ def test_op_eval_with_min_leaps_shape(tmp_path: Path):
 
 def test_op_eval_with_max_leaps_shape(tmp_path: Path):
 
-    assert_test_func_name_embeds_str(ExecOperation.op_eval.value)
+    assert_test_func_name_embeds_str(_ExecOperation.op_eval.value)
 
     # given:
 
@@ -67,7 +67,7 @@ def test_op_eval_with_max_leaps_shape(tmp_path: Path):
     run_primer_main(
         [
             str(proto_kernel_abs_path),
-            ExecOperation.op_eval.value,
+            _ExecOperation.op_eval.value,
         ]
     )
 

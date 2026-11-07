@@ -12,7 +12,7 @@ from local_repo.graph_printer import StateMeta
 from local_test.name_assertion import (
     assert_test_module_name_embeds_another_module_name,
 )
-from protoprimer.primer_kernel import EnvState
+from protoprimer.primer_kernel import _EnvState
 
 
 graph_printer_file_name = os.path.basename(str(graph_printer.__file__))
@@ -26,13 +26,13 @@ def test_state_meta_matches_env_state():
 
     # given:
 
-    env_state_names = [enum_item.name for enum_item in EnvState]
+    env_state_names = [enum_item.name for enum_item in _EnvState]
     state_meta_names = [enum_item.name for enum_item in StateMeta]
 
     # then:
 
     if env_state_names != state_meta_names:
-        raise AssertionError("StateMeta should define enum item for every EnvState, in the same order, with the same name")
+        raise AssertionError("StateMeta should define enum item for every _EnvState, in the same order, with the same name")
 
 
 @patch(

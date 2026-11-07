@@ -4,20 +4,20 @@ import enum
 
 from protoprimer.primer_kernel import (
     _EnvContext,
-    StateGraph,
-    StateNode,
+    _StateGraph,
+    _StateNode,
 )
 
 
 def topological_sort(
-    state_graph: StateGraph,
+    state_graph: _StateGraph,
     env_ctx: _EnvContext,
 ) -> list[str]:
     """
-    Performs a topological sort on the given `StateGraph`.
+    Performs a topological sort on the given `_StateGraph`.
 
     Args:
-        state_graph: The StateGraph object to sort.
+        state_graph: The _StateGraph object to sort.
         env_ctx: The environment context.
 
     Returns:
@@ -39,13 +39,13 @@ def topological_sort(
     def depth_first_search(node_name: str):
         node_statuses[node_name] = VisitState.being_visited
 
-        curr_node: StateNode = state_graph.get_state_node(node_name)
+        curr_node: _StateNode = state_graph.get_state_node(node_name)
         if curr_node is None:
-            raise ValueError(f"`{StateNode.__name__}` [{node_name}] not found in graph")
+            raise ValueError(f"`{_StateNode.__name__}` [{node_name}] not found in graph")
 
         for parent_name in curr_node.get_parent_states():
             if parent_name not in state_graph.state_factories:
-                raise ValueError(f"`{StateNode.__name__}` [{parent_name}] not found in graph")
+                raise ValueError(f"`{_StateNode.__name__}` [{parent_name}] not found in graph")
             if node_statuses[parent_name] == VisitState.being_visited:
                 raise ValueError("cycle detected in graph")
             if node_statuses[parent_name] == VisitState.unvisited_node:
@@ -62,7 +62,7 @@ def topological_sort(
 
 
 def topological_sort_of_verified_states(
-    state_graph: StateGraph,
+    state_graph: _StateGraph,
     env_ctx: _EnvContext,
     root_state_name: str,
 ) -> list[str]:
@@ -83,10 +83,10 @@ def topological_sort_of_verified_states(
 
     def dfs(node_name: str):
         node_statuses[node_name] = VisitState.in_progress
-        curr_node: StateNode = state_graph.get_state_node(node_name)
+        curr_node: _StateNode = state_graph.get_state_node(node_name)
         for parent_name in curr_node.get_parent_states():
             if parent_name not in state_graph.state_factories:
-                raise ValueError(f"`{StateNode.__name__}` [{parent_name}] not found in graph")
+                raise ValueError(f"`{_StateNode.__name__}` [{parent_name}] not found in graph")
             status = node_statuses.get(parent_name, VisitState.unvisited)
             if status == VisitState.in_progress:
                 raise ValueError(f"cycle detected at [{parent_name}]")
@@ -100,7 +100,7 @@ def topological_sort_of_verified_states(
 
 
 def get_transitive_dependencies(
-    state_graph: StateGraph,
+    state_graph: _StateGraph,
     state_name: str,
     env_ctx: _EnvContext,
 ) -> list[str]:
@@ -108,7 +108,7 @@ def get_transitive_dependencies(
     Lists all transitive dependencies for a given state name.
 
     Args:
-        state_graph: The `StateGraph` object.
+        state_graph: The `_StateGraph` object.
         state_name: The name of the state to get dependencies for.
         env_ctx: The environment context.
 
@@ -120,13 +120,13 @@ def get_transitive_dependencies(
 
     def depth_first_search(node_name: str):
         visited_nodes.add(node_name)
-        curr_node: StateNode = state_graph.get_state_node(node_name)
+        curr_node: _StateNode = state_graph.get_state_node(node_name)
         if curr_node is None:
-            raise ValueError(f"`{StateNode.__name__}` [{node_name}] not found in graph")
+            raise ValueError(f"`{_StateNode.__name__}` [{node_name}] not found in graph")
 
         for parent_name in curr_node.get_parent_states():
             if parent_name not in state_graph.state_factories:
-                raise ValueError(f"`{StateNode.__name__}` [{parent_name}] not found in graph")
+                raise ValueError(f"`{_StateNode.__name__}` [{parent_name}] not found in graph")
             if parent_name not in visited_nodes:
                 depth_first_search(parent_name)
         if node_name != state_name:

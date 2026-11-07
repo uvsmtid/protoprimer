@@ -16,7 +16,7 @@ from protoprimer.primer_kernel import (
     _ContextBuilder,
     _EntryFunc,
     _EnvContext,
-    EnvState,
+    _EnvState,
     _Factory_state_print_conf_finalized,
     StateStride,
 )
@@ -41,7 +41,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
     # noinspection PyMethodMayBeStatic
     def test_relationship(self):
-        assert_test_module_name_embeds_str(EnvState.state_env_conf_file_data_loaded.name)
+        assert_test_module_name_embeds_str(_EnvState.state_env_conf_file_data_loaded.name)
 
     @patch(f"{primer_kernel.__name__}.{_Factory_state_print_conf_finalized.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Node_state_local_conf_file_abs_path_inited.__name__}.create_state_node")
@@ -55,7 +55,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         assert_parent_factories_mocked(
             self.env_ctx,
-            EnvState.state_env_conf_file_data_loaded.name,
+            _EnvState.state_env_conf_file_data_loaded.name,
         )
 
         mock_conf_file = "/mock/path/to/env_conf.json"
@@ -66,7 +66,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # when:
 
-        state_value = self.env_ctx.eval_state(EnvState.state_env_conf_file_data_loaded.name)
+        state_value = self.env_ctx.eval_state(_EnvState.state_env_conf_file_data_loaded.name)
 
         # then:
 
@@ -84,7 +84,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         assert_parent_factories_mocked(
             self.env_ctx,
-            EnvState.state_env_conf_file_data_loaded.name,
+            _EnvState.state_env_conf_file_data_loaded.name,
         )
 
         mock_conf_file = "/mock/path/to/env_conf.json"
@@ -99,7 +99,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         logger = primer_kernel.logger
         logger.addHandler(handler)
         try:
-            state_value = self.env_ctx.eval_state(EnvState.state_env_conf_file_data_loaded.name)
+            state_value = self.env_ctx.eval_state(_EnvState.state_env_conf_file_data_loaded.name)
         finally:
             logger.removeHandler(handler)
 
@@ -119,7 +119,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         assert_parent_factories_mocked(
             self.env_ctx,
-            EnvState.state_env_conf_file_data_loaded.name,
+            _EnvState.state_env_conf_file_data_loaded.name,
         )
 
         mock_conf_file = "/mock/path/to/env_conf.json"
@@ -129,4 +129,4 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # when/then:
         with self.assertRaises(json.decoder.JSONDecodeError):
-            self.env_ctx.eval_state(EnvState.state_env_conf_file_data_loaded.name)
+            self.env_ctx.eval_state(_EnvState.state_env_conf_file_data_loaded.name)

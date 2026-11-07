@@ -10,7 +10,7 @@ from typing import (
 )
 
 from protoprimer.primer_kernel import (
-    AbstractCachingStateNode,
+    _AbstractCachingStateNode,
     ConfConstClient,
     ConfConstEnv,
     ConfConstGeneral,
@@ -20,16 +20,16 @@ from protoprimer.primer_kernel import (
     _EntryFunc,
     _ContextBuilder,
     _EnvContext,
-    EnvState,
+    _EnvState,
     missing_conf_file_message,
     PathName,
     read_json_file,
     SelectorFunc,
-    ExecOperation,
+    _ExecOperation,
     SyntaxArg,
     TermColor,
-    trivial_factory,
-    ValueType,
+    _trivial_factory,
+    _ValueType,
     VenvDriverType,
     warn_once_at_state_stride,
 )
@@ -445,7 +445,7 @@ class UnusedConfigBuilderVisitor(ConfigBuilderVisitor):
 # See: FT_19_44_42_19.effective_config.md
 
 
-class AbstractConfigNode(Generic[ValueType]):
+class AbstractConfigNode(Generic[_ValueType]):
     """
     Models a node in a JSON-like (nested) data structure.
 
@@ -459,7 +459,7 @@ class AbstractConfigNode(Generic[ValueType]):
         node_name: str | None,
         node_indent: int,
         is_present: bool,
-        orig_data: ValueType | None,
+        orig_data: _ValueType | None,
         **kwargs,
     ):
         self.node_name: str | None = node_name
@@ -469,7 +469,7 @@ class AbstractConfigNode(Generic[ValueType]):
         # allows distinguishing between (A) a valid `None` value and (B) a missing value.
         self.is_present: bool = is_present
 
-        self.orig_data: ValueType | None = orig_data
+        self.orig_data: _ValueType | None = orig_data
 
         self.note_text: str = ""
         self.note_color: TermColor = TermColor.config_comment if is_present else TermColor.config_missing
@@ -545,14 +545,14 @@ class AbstractListNode(AbstractConfigNode[list]):
         )
 
 
-class AbstractValueNode(AbstractConfigNode[ValueType]):
+class AbstractValueNode(AbstractConfigNode[_ValueType]):
     """
     Models any simple value in JSON-like data structure (neither `list` nor `dict`).
     """
 
     def __init__(
         self,
-        orig_data: ValueType | None,
+        orig_data: _ValueType | None,
         **kwargs,
     ):
         super().__init__(
@@ -573,7 +573,7 @@ class AbstractValueNode(AbstractConfigNode[ValueType]):
         )
 
 
-class AbstractRootNode(AbstractConfigNode[ValueType]):
+class AbstractRootNode(AbstractConfigNode[_ValueType]):
     """
     Wraps any given `child_node` as `node_name = ( child_node )`.
 
@@ -775,34 +775,34 @@ class Builder_RootNode_input(AbstractConfLeapNodeBuilder):
 
         field_node = self._create_used_dict_field(
             dict_node=dict_node,
-            field_name=EnvState.state_proto_kernel_file_abs_path_inited.name,
+            field_name=_EnvState.state_proto_kernel_file_abs_path_inited.name,
             node_class=AbstractValueNode,
             conf_leap=conf_leap,
             **kwargs,
         )
         field_node.note_text = (
-            f"Value `{EnvState.state_proto_kernel_file_abs_path_inited.name}` is an absolute path to `{ConfConstGeneral.default_proto_kernel_module}`.\n"
+            f"Value `{_EnvState.state_proto_kernel_file_abs_path_inited.name}` is an absolute path to `{ConfConstGeneral.default_proto_kernel_module}`.\n"
             f"It allows resolving all other relative paths (via `{PathName.path_ref_root.value}` - see field `{ConfField.field_ref_root_dir_rel_path.value}`).\n"
             #
         )
 
         field_node = self._create_used_dict_field(
             dict_node=dict_node,
-            field_name=EnvState.state_primer_conf_file_abs_path_inited.name,
+            field_name=_EnvState.state_primer_conf_file_abs_path_inited.name,
             node_class=AbstractValueNode,
             conf_leap=conf_leap,
             **kwargs,
         )
         # TODO: Link to `ConfLeap.leap_derived` fields.
         field_node.note_text = (
-            f"Value `{EnvState.state_primer_conf_file_abs_path_inited.name}` is an absolute path to `{ConfLeap.leap_primer}` config file.\n"
+            f"Value `{_EnvState.state_primer_conf_file_abs_path_inited.name}` is an absolute path to `{ConfLeap.leap_primer}` config file.\n"
             f"The config file is selected from the list of possible candidates (whichever is found first, replacing extension to `.{ConfConstInput.conf_file_ext}`):\n"
             f"*   basename of the entry script,\n"
             f"*   basename of the `{ConfConstGeneral.default_proto_kernel_module}` file,\n"
             f"*   default `{ConfConstInput.default_file_basename_conf_primer}`.\n"
             f"Note that the selected config file basename is subsequently re-used for others:\n"
-            f"*   see `{EnvState.state_global_conf_file_abs_path_inited.name}` for `{ConfLeap.leap_client.name}`,\n"
-            f"*   see `{EnvState.state_local_conf_file_abs_path_inited.name}` for `{ConfLeap.leap_env.name}`.\n"
+            f"*   see `{_EnvState.state_global_conf_file_abs_path_inited.name}` for `{ConfLeap.leap_client.name}`,\n"
+            f"*   see `{_EnvState.state_local_conf_file_abs_path_inited.name}` for `{ConfLeap.leap_env.name}`.\n"
             #
         )
 
@@ -908,7 +908,7 @@ class Node_field_ref_root_dir_rel_path(AbstractValueNode[str]):
             f"Field `{ConfField.field_ref_root_dir_rel_path.value}` points to the dir called `{PathName.path_ref_root.value}`.\n"
             f"The path is relative to the `{ConfConstGeneral.default_proto_kernel_module}` file [{self.state_primer_conf_file_abs_path_inited}].\n"
             f"Normally, the `{PathName.path_ref_root.value}` dir is the client repo root, but it can be anything.\n"
-            f"See `{EnvState.state_ref_root_dir_abs_path_inited.name}` in `{ConfLeap.leap_derived.name}` -\n"
+            f"See `{_EnvState.state_ref_root_dir_abs_path_inited.name}` in `{ConfLeap.leap_derived.name}` -\n"
             f"the derived abs path is the base path for all the configured relative paths (except for this field itself, obviously).\n"
             #
         )
@@ -929,7 +929,7 @@ class Node_field_global_conf_dir_rel_path(AbstractValueNode[str]):
         self.note_text = (
             f"Field `{ConfField.field_global_conf_dir_rel_path.value}` points to the global config dir (as opposed to local config dir `{ConfField.field_local_conf_symlink_rel_path.value}`).\n"
             f"{ConfConstGeneral.relative_path_field_note}\n"
-            f"See `{EnvState.state_global_conf_dir_abs_path_inited.name}` in `{ConfLeap.leap_derived.name}` -\n"
+            f"See `{_EnvState.state_global_conf_dir_abs_path_inited.name}` in `{ConfLeap.leap_derived.name}` -\n"
             f"normally, the resolved global config dir contains all other global client config files.\n"
             #
         )
@@ -1012,7 +1012,7 @@ class Node_field_local_conf_symlink_rel_path(AbstractValueNode[str]):
             f"If the symlink does not exist yet, its target is set from:\n"
             f"*   either field `{ConfField.field_default_env_dir_rel_path.value}`,\n"
             f"*   or arg `{SyntaxArg.arg_env}` which can also be used to re-set the symlink target to a new path.\n"
-            f"See `{EnvState.state_global_conf_dir_abs_path_inited.name}` in `{ConfLeap.leap_derived.name}` -\n"
+            f"See `{_EnvState.state_global_conf_dir_abs_path_inited.name}` in `{ConfLeap.leap_derived.name}` -\n"
             f"normally, the resolved local config dir contains all local environment-specific config files.\n"
             #
         )
@@ -1231,7 +1231,7 @@ class Node_field_project_descriptors(AbstractListNode):
                 # See: UC_78_58_06_54.no_stray_packages.md:
                 f"Note that the `{ConfConstGeneral.name_protoprimer_package}` does not manage package dependencies itself.\n"
                 f"Instead, the `{ConfConstGeneral.name_protoprimer_package}` relies on `{ConfConstClient.default_pyproject_toml_basename}` file per `python` project to specify these dependencies.\n"
-                f"See `{EnvState.state_project_descriptors_inited.name}` in `{ConfLeap.leap_derived.name}`.\n"
+                f"See `{_EnvState.state_project_descriptors_inited.name}` in `{ConfLeap.leap_derived.name}`.\n"
             )
         elif conf_leap == ConfLeap.leap_env:
             self.note_text = f"{ConfConstGeneral.common_field_local_note}\n"
@@ -1407,28 +1407,28 @@ class Builder_RootNode_derived(AbstractConfLeapNodeBuilder):
 
         field_node = self._create_used_dict_field(
             dict_node=dict_node,
-            field_name=EnvState.state_proto_kernel_file_abs_path_inited.name,
+            field_name=_EnvState.state_proto_kernel_file_abs_path_inited.name,
             node_class=AbstractValueNode,
             conf_leap=conf_leap,
             **kwargs,
         )
-        field_node.note_text = f"{ConfConstGeneral.func_note_derived_based_on_conf_leap_field(EnvState.state_proto_kernel_file_abs_path_inited.name, ConfLeap.leap_input)}\n"
+        field_node.note_text = f"{ConfConstGeneral.func_note_derived_based_on_conf_leap_field(_EnvState.state_proto_kernel_file_abs_path_inited.name, ConfLeap.leap_input)}\n"
 
         field_node = self._create_used_dict_field(
             dict_node=dict_node,
-            field_name=EnvState.state_primer_conf_file_abs_path_inited.name,
+            field_name=_EnvState.state_primer_conf_file_abs_path_inited.name,
             node_class=AbstractValueNode,
             conf_leap=conf_leap,
             **kwargs,
         )
-        field_node.note_text = f"{ConfConstGeneral.func_note_derived_based_on_conf_leap_field(EnvState.state_primer_conf_file_abs_path_inited.name, ConfLeap.leap_input)}\n"
+        field_node.note_text = f"{ConfConstGeneral.func_note_derived_based_on_conf_leap_field(_EnvState.state_primer_conf_file_abs_path_inited.name, ConfLeap.leap_input)}\n"
 
         # ===
         # `ConfLeap.leap_primer`
 
         field_node = self._create_used_dict_field(
             dict_node=dict_node,
-            field_name=EnvState.state_ref_root_dir_abs_path_inited.name,
+            field_name=_EnvState.state_ref_root_dir_abs_path_inited.name,
             node_class=AbstractValueNode,
             conf_leap=conf_leap,
             **kwargs,
@@ -1437,7 +1437,7 @@ class Builder_RootNode_derived(AbstractConfLeapNodeBuilder):
 
         field_node = self._create_used_dict_field(
             dict_node=dict_node,
-            field_name=EnvState.state_global_conf_dir_abs_path_inited.name,
+            field_name=_EnvState.state_global_conf_dir_abs_path_inited.name,
             node_class=AbstractValueNode,
             conf_leap=conf_leap,
             **kwargs,
@@ -1446,7 +1446,7 @@ class Builder_RootNode_derived(AbstractConfLeapNodeBuilder):
 
         field_node = self._create_used_dict_field(
             dict_node=dict_node,
-            field_name=EnvState.state_global_conf_file_abs_path_inited.name,
+            field_name=_EnvState.state_global_conf_file_abs_path_inited.name,
             node_class=AbstractValueNode,
             conf_leap=conf_leap,
             **kwargs,
@@ -1455,7 +1455,7 @@ class Builder_RootNode_derived(AbstractConfLeapNodeBuilder):
             # TODO: It is not derived from just this:
             #       *   dirname is from `field_global_conf_dir_rel_path`
             #       *   basename is from `state_primer_conf_file_abs_path_inited`
-            f"{ConfConstGeneral.func_note_derived_based_on_conf_leap_field(EnvState.state_primer_conf_file_abs_path_inited.name, ConfLeap.leap_input)}\n"
+            f"{ConfConstGeneral.func_note_derived_based_on_conf_leap_field(_EnvState.state_primer_conf_file_abs_path_inited.name, ConfLeap.leap_input)}\n"
         )
 
         # ===
@@ -1463,7 +1463,7 @@ class Builder_RootNode_derived(AbstractConfLeapNodeBuilder):
 
         field_node = self._create_used_dict_field(
             dict_node=dict_node,
-            field_name=EnvState.state_selected_env_dir_rel_path_inited.name,
+            field_name=_EnvState.state_selected_env_dir_rel_path_inited.name,
             node_class=AbstractValueNode,
             conf_leap=conf_leap,
             **kwargs,
@@ -1475,7 +1475,7 @@ class Builder_RootNode_derived(AbstractConfLeapNodeBuilder):
 
         field_node = self._create_used_dict_field(
             dict_node=dict_node,
-            field_name=EnvState.state_local_conf_symlink_abs_path_inited.name,
+            field_name=_EnvState.state_local_conf_symlink_abs_path_inited.name,
             node_class=AbstractValueNode,
             conf_leap=conf_leap,
             **kwargs,
@@ -1484,7 +1484,7 @@ class Builder_RootNode_derived(AbstractConfLeapNodeBuilder):
 
         field_node = self._create_used_dict_field(
             dict_node=dict_node,
-            field_name=EnvState.state_local_conf_file_abs_path_inited.name,
+            field_name=_EnvState.state_local_conf_file_abs_path_inited.name,
             node_class=AbstractValueNode,
             conf_leap=conf_leap,
             **kwargs,
@@ -1493,7 +1493,7 @@ class Builder_RootNode_derived(AbstractConfLeapNodeBuilder):
             # TODO: It is not derived from just this:
             #       *   dirname is from `field_local_conf_symlink_rel_path`
             #       *   basename is from `state_primer_conf_file_abs_path_inited`
-            f"{ConfConstGeneral.func_note_derived_based_on_conf_leap_field(EnvState.state_primer_conf_file_abs_path_inited.name, ConfLeap.leap_input)}\n"
+            f"{ConfConstGeneral.func_note_derived_based_on_conf_leap_field(_EnvState.state_primer_conf_file_abs_path_inited.name, ConfLeap.leap_input)}\n"
         )
 
         # ===
@@ -1505,7 +1505,7 @@ class Builder_RootNode_derived(AbstractConfLeapNodeBuilder):
 
         field_node = self._create_used_dict_field(
             dict_node=dict_node,
-            field_name=EnvState.state_required_python_version_inited.name,
+            field_name=_EnvState.state_required_python_version_inited.name,
             node_class=AbstractValueNode,
             conf_leap=conf_leap,
             **kwargs,
@@ -1514,7 +1514,7 @@ class Builder_RootNode_derived(AbstractConfLeapNodeBuilder):
 
         field_node = self._create_used_dict_field(
             dict_node=dict_node,
-            field_name=EnvState.state_python_selector_file_abs_path_inited.name,
+            field_name=_EnvState.state_python_selector_file_abs_path_inited.name,
             node_class=AbstractValueNode,
             conf_leap=conf_leap,
             **kwargs,
@@ -1523,7 +1523,7 @@ class Builder_RootNode_derived(AbstractConfLeapNodeBuilder):
 
         field_node = self._create_used_dict_field(
             dict_node=dict_node,
-            field_name=EnvState.state_local_venv_dir_abs_path_inited.name,
+            field_name=_EnvState.state_local_venv_dir_abs_path_inited.name,
             node_class=AbstractValueNode,
             conf_leap=conf_leap,
             **kwargs,
@@ -1532,7 +1532,7 @@ class Builder_RootNode_derived(AbstractConfLeapNodeBuilder):
 
         field_node = self._create_used_dict_field(
             dict_node=dict_node,
-            field_name=EnvState.state_local_log_dir_abs_path_inited.name,
+            field_name=_EnvState.state_local_log_dir_abs_path_inited.name,
             node_class=AbstractValueNode,
             conf_leap=conf_leap,
             **kwargs,
@@ -1541,7 +1541,7 @@ class Builder_RootNode_derived(AbstractConfLeapNodeBuilder):
 
         field_node = self._create_used_dict_field(
             dict_node=dict_node,
-            field_name=EnvState.state_local_tmp_dir_abs_path_inited.name,
+            field_name=_EnvState.state_local_tmp_dir_abs_path_inited.name,
             node_class=AbstractValueNode,
             conf_leap=conf_leap,
             **kwargs,
@@ -1550,7 +1550,7 @@ class Builder_RootNode_derived(AbstractConfLeapNodeBuilder):
 
         field_node = self._create_used_dict_field(
             dict_node=dict_node,
-            field_name=EnvState.state_local_cache_dir_abs_path_inited.name,
+            field_name=_EnvState.state_local_cache_dir_abs_path_inited.name,
             node_class=AbstractValueNode,
             conf_leap=conf_leap,
             **kwargs,
@@ -1559,7 +1559,7 @@ class Builder_RootNode_derived(AbstractConfLeapNodeBuilder):
 
         field_node = self._create_used_dict_field(
             dict_node=dict_node,
-            field_name=EnvState.state_venv_driver_inited.name,
+            field_name=_EnvState.state_venv_driver_inited.name,
             node_class=AbstractValueNode,
             conf_leap=conf_leap,
             **kwargs,
@@ -1568,7 +1568,7 @@ class Builder_RootNode_derived(AbstractConfLeapNodeBuilder):
 
         self._create_used_dict_field(
             dict_node=dict_node,
-            field_name=EnvState.state_project_descriptors_inited.name,
+            field_name=_EnvState.state_project_descriptors_inited.name,
             node_class=Node_field_project_descriptors,
             conf_leap=conf_leap,
             **kwargs,
@@ -1620,37 +1620,37 @@ def can_render_effective_config(
     state_node,
 ) -> bool:
     """
-    Like `can_print_effective_config` but for `ExecOperation.op_boot` and without the `StateStride` restriction.
+    Like `can_print_effective_config` but for `_ExecOperation.op_boot` and without the `StateStride` restriction.
     The rendered `_Node_*` only run when the venv module is imported (later `StateStride`).
     """
     # TODO: TODO_28_48_19_20.api_to_traverse_config_when_primed.md:
     #       With access to config, this will change from DAG to simple access of config via `custom_main`.
-    state_input_exec_operation_loaded: ExecOperation = state_node.eval_parent_state(EnvState.state_input_exec_operation_loaded.name)
-    return state_input_exec_operation_loaded == ExecOperation.op_boot
+    state_input_exec_operation_loaded: _ExecOperation = state_node.eval_parent_state(_EnvState.state_input_exec_operation_loaded.name)
+    return state_input_exec_operation_loaded == _ExecOperation.op_boot
 
 
 # noinspection PyPep8Naming
-@trivial_factory
-class _Node_state_primer_conf_file_data_loaded_rendered(AbstractCachingStateNode[dict]):
+@_trivial_factory
+class _Node_state_primer_conf_file_data_loaded_rendered(_AbstractCachingStateNode[dict]):
     # TODO: TODO_28_48_19_20.api_to_traverse_config_when_primed.md:
     #       With access to config, this will change from DAG to simple access of config via `custom_main`.
 
     _parent_states = staticmethod(
         lambda: [
-            EnvState.state_stride_src_updated_reached.name,
-            EnvState.state_input_stderr_log_level_eval_finalized.name,
-            EnvState.state_input_exec_operation_loaded.name,
-            EnvState.state_proto_kernel_file_abs_path_inited.name,
-            EnvState.state_primer_conf_file_abs_path_inited.name,
+            _EnvState.state_stride_src_updated_reached.name,
+            _EnvState.state_input_stderr_log_level_eval_finalized.name,
+            _EnvState.state_input_exec_operation_loaded.name,
+            _EnvState.state_proto_kernel_file_abs_path_inited.name,
+            _EnvState.state_primer_conf_file_abs_path_inited.name,
         ]
     )
     _state_name = staticmethod(lambda: RendererState.state_primer_conf_file_data_loaded_rendered.name)
 
     def _eval_state_once(
         self,
-    ) -> ValueType:
-        state_proto_kernel_file_abs_path_inited: str = self.eval_parent_state(EnvState.state_proto_kernel_file_abs_path_inited.name)
-        state_primer_conf_file_abs_path_inited: str = self.eval_parent_state(EnvState.state_primer_conf_file_abs_path_inited.name)
+    ) -> _ValueType:
+        state_proto_kernel_file_abs_path_inited: str = self.eval_parent_state(_EnvState.state_proto_kernel_file_abs_path_inited.name)
+        state_primer_conf_file_abs_path_inited: str = self.eval_parent_state(_EnvState.state_primer_conf_file_abs_path_inited.name)
 
         file_data: dict
         if os.path.exists(state_primer_conf_file_abs_path_inited):
@@ -1665,7 +1665,7 @@ class _Node_state_primer_conf_file_data_loaded_rendered(AbstractCachingStateNode
 
         if can_render_effective_config(self):
 
-            state_input_stderr_log_level_eval_finalized: int = self.eval_parent_state(EnvState.state_input_stderr_log_level_eval_finalized.name)
+            state_input_stderr_log_level_eval_finalized: int = self.eval_parent_state(_EnvState.state_input_stderr_log_level_eval_finalized.name)
 
             # Print `ConfLeap.leap_input` data together:
             # ===
@@ -1673,8 +1673,8 @@ class _Node_state_primer_conf_file_data_loaded_rendered(AbstractCachingStateNode
             conf_input = RootNode_input(
                 node_indent=0,
                 orig_data={
-                    EnvState.state_proto_kernel_file_abs_path_inited.name: state_proto_kernel_file_abs_path_inited,
-                    EnvState.state_primer_conf_file_abs_path_inited.name: state_primer_conf_file_abs_path_inited,
+                    _EnvState.state_proto_kernel_file_abs_path_inited.name: state_proto_kernel_file_abs_path_inited,
+                    _EnvState.state_primer_conf_file_abs_path_inited.name: state_primer_conf_file_abs_path_inited,
                 },
             )
             print(RenderConfigVisitor().render_node(conf_input))
@@ -1692,26 +1692,26 @@ class _Node_state_primer_conf_file_data_loaded_rendered(AbstractCachingStateNode
 
 
 # noinspection PyPep8Naming
-@trivial_factory
-class _Node_state_client_conf_file_data_loaded_rendered(AbstractCachingStateNode[dict]):
+@_trivial_factory
+class _Node_state_client_conf_file_data_loaded_rendered(_AbstractCachingStateNode[dict]):
     # TODO: TODO_28_48_19_20.api_to_traverse_config_when_primed.md:
     #       With access to config, this will change from DAG to simple access of config via `custom_main`.
 
     _parent_states = staticmethod(
         lambda: [
             RendererState.state_primer_conf_file_data_loaded_rendered.name,
-            EnvState.state_input_stderr_log_level_eval_finalized.name,
-            EnvState.state_input_exec_operation_loaded.name,
-            EnvState.state_global_conf_file_abs_path_inited.name,
+            _EnvState.state_input_stderr_log_level_eval_finalized.name,
+            _EnvState.state_input_exec_operation_loaded.name,
+            _EnvState.state_global_conf_file_abs_path_inited.name,
         ]
     )
     _state_name = staticmethod(lambda: RendererState.state_client_conf_file_data_loaded_rendered.name)
 
     def _eval_state_once(
         self,
-    ) -> ValueType:
+    ) -> _ValueType:
 
-        state_global_conf_file_abs_path_inited: str = self.eval_parent_state(EnvState.state_global_conf_file_abs_path_inited.name)
+        state_global_conf_file_abs_path_inited: str = self.eval_parent_state(_EnvState.state_global_conf_file_abs_path_inited.name)
 
         file_data: dict
         if os.path.exists(state_global_conf_file_abs_path_inited):
@@ -1725,7 +1725,7 @@ class _Node_state_client_conf_file_data_loaded_rendered(AbstractCachingStateNode
             file_data = {}
 
         if can_render_effective_config(self):
-            state_input_stderr_log_level_eval_finalized: int = self.eval_parent_state(EnvState.state_input_stderr_log_level_eval_finalized.name)
+            state_input_stderr_log_level_eval_finalized: int = self.eval_parent_state(_EnvState.state_input_stderr_log_level_eval_finalized.name)
 
             conf_client = RootNode_client(
                 node_indent=0,
@@ -1738,25 +1738,25 @@ class _Node_state_client_conf_file_data_loaded_rendered(AbstractCachingStateNode
 
 
 # noinspection PyPep8Naming
-@trivial_factory
-class _Node_state_env_conf_file_data_loaded_rendered(AbstractCachingStateNode[dict]):
+@_trivial_factory
+class _Node_state_env_conf_file_data_loaded_rendered(_AbstractCachingStateNode[dict]):
     # TODO: TODO_28_48_19_20.api_to_traverse_config_when_primed.md:
     #       With access to config, this will change from DAG to simple access of config via `custom_main`.
 
     _parent_states = staticmethod(
         lambda: [
             RendererState.state_client_conf_file_data_loaded_rendered.name,
-            EnvState.state_input_stderr_log_level_eval_finalized.name,
-            EnvState.state_input_exec_operation_loaded.name,
-            EnvState.state_local_conf_file_abs_path_inited.name,
+            _EnvState.state_input_stderr_log_level_eval_finalized.name,
+            _EnvState.state_input_exec_operation_loaded.name,
+            _EnvState.state_local_conf_file_abs_path_inited.name,
         ]
     )
     _state_name = staticmethod(lambda: RendererState.state_env_conf_file_data_loaded_rendered.name)
 
     def _eval_state_once(
         self,
-    ) -> ValueType:
-        state_local_conf_file_abs_path_inited: str = self.eval_parent_state(EnvState.state_local_conf_file_abs_path_inited.name)
+    ) -> _ValueType:
+        state_local_conf_file_abs_path_inited: str = self.eval_parent_state(_EnvState.state_local_conf_file_abs_path_inited.name)
 
         file_data: dict
         if os.path.exists(state_local_conf_file_abs_path_inited):
@@ -1773,7 +1773,7 @@ class _Node_state_env_conf_file_data_loaded_rendered(AbstractCachingStateNode[di
             file_data = {}
 
         if can_render_effective_config(self):
-            state_input_stderr_log_level_eval_finalized: int = self.eval_parent_state(EnvState.state_input_stderr_log_level_eval_finalized.name)
+            state_input_stderr_log_level_eval_finalized: int = self.eval_parent_state(_EnvState.state_input_stderr_log_level_eval_finalized.name)
 
             conf_env = RootNode_env(
                 node_indent=0,
@@ -1786,8 +1786,8 @@ class _Node_state_env_conf_file_data_loaded_rendered(AbstractCachingStateNode[di
 
 
 # noinspection PyPep8Naming
-@trivial_factory
-class _Node_state_derived_conf_data_loaded_rendered(AbstractCachingStateNode[dict]):
+@_trivial_factory
+class _Node_state_derived_conf_data_loaded_rendered(_AbstractCachingStateNode[dict]):
     """
     Implements: FT_00_22_19_59.derived_config.md
     """
@@ -1804,43 +1804,43 @@ class _Node_state_derived_conf_data_loaded_rendered(AbstractCachingStateNode[dic
         self.derived_data_env_states: list[str] = [
             # ===
             # `ConfLeap.leap_input`
-            EnvState.state_proto_kernel_file_abs_path_inited.name,
-            EnvState.state_primer_conf_file_abs_path_inited.name,
+            _EnvState.state_proto_kernel_file_abs_path_inited.name,
+            _EnvState.state_primer_conf_file_abs_path_inited.name,
             # ===
             # `ConfLeap.leap_primer`
-            EnvState.state_ref_root_dir_abs_path_inited.name,
-            EnvState.state_global_conf_dir_abs_path_inited.name,
-            EnvState.state_global_conf_file_abs_path_inited.name,
+            _EnvState.state_ref_root_dir_abs_path_inited.name,
+            _EnvState.state_global_conf_dir_abs_path_inited.name,
+            _EnvState.state_global_conf_file_abs_path_inited.name,
             # ===
             # `ConfLeap.leap_client`
-            EnvState.state_selected_env_dir_rel_path_inited.name,
-            EnvState.state_local_conf_symlink_abs_path_inited.name,
-            EnvState.state_local_conf_file_abs_path_inited.name,
+            _EnvState.state_selected_env_dir_rel_path_inited.name,
+            _EnvState.state_local_conf_symlink_abs_path_inited.name,
+            _EnvState.state_local_conf_file_abs_path_inited.name,
             # ===
             # `ConfLeap.leap_env`
             # nothing specific
             # ===
             # `ConfLeap.leap_derived`
-            EnvState.state_required_python_version_inited.name,
-            EnvState.state_selected_python_file_abs_path_inited.name,
-            EnvState.state_local_venv_dir_abs_path_inited.name,
-            EnvState.state_local_log_dir_abs_path_inited.name,
-            EnvState.state_local_tmp_dir_abs_path_inited.name,
-            EnvState.state_local_cache_dir_abs_path_inited.name,
-            EnvState.state_venv_driver_inited.name,
-            EnvState.state_project_descriptors_inited.name,
+            _EnvState.state_required_python_version_inited.name,
+            _EnvState.state_selected_python_file_abs_path_inited.name,
+            _EnvState.state_local_venv_dir_abs_path_inited.name,
+            _EnvState.state_local_log_dir_abs_path_inited.name,
+            _EnvState.state_local_tmp_dir_abs_path_inited.name,
+            _EnvState.state_local_cache_dir_abs_path_inited.name,
+            _EnvState.state_venv_driver_inited.name,
+            _EnvState.state_project_descriptors_inited.name,
         ]
 
         # TODO: Is this needed given the list of dependencies in `derived_data_env_states`?
         parent_states = [
             RendererState.state_env_conf_file_data_loaded_rendered.name,
-            EnvState.state_input_exec_operation_loaded.name,
-            EnvState.state_input_stderr_log_level_eval_finalized.name,
+            _EnvState.state_input_exec_operation_loaded.name,
+            _EnvState.state_input_stderr_log_level_eval_finalized.name,
             *self.derived_data_env_states,
         ]
 
-        # The list parent states sorted by their definition order in `EnvState` and `RendererState`:
-        enum_names = [enum_item.name for enum_item in EnvState] + [enum_item.name for enum_item in RendererState]
+        # The list parent states sorted by their definition order in `_EnvState` and `RendererState`:
+        enum_names = [enum_item.name for enum_item in _EnvState] + [enum_item.name for enum_item in RendererState]
         parent_states.sort(
             key=lambda parent_state: enum_names.index(parent_state),
         )
@@ -1850,7 +1850,7 @@ class _Node_state_derived_conf_data_loaded_rendered(AbstractCachingStateNode[dic
 
     def _eval_state_once(
         self,
-    ) -> ValueType:
+    ) -> _ValueType:
 
         config_data_derived = {}
         for derived_data_env_state in self.derived_data_env_states:
@@ -1861,7 +1861,7 @@ class _Node_state_derived_conf_data_loaded_rendered(AbstractCachingStateNode[dic
                 config_data_derived[derived_data_env_state] = evaluated_value
 
         if can_render_effective_config(self):
-            state_input_stderr_log_level_eval_finalized: int = self.eval_parent_state(EnvState.state_input_stderr_log_level_eval_finalized.name)
+            state_input_stderr_log_level_eval_finalized: int = self.eval_parent_state(_EnvState.state_input_stderr_log_level_eval_finalized.name)
 
             conf_derived = RootNode_derived(
                 node_indent=0,
@@ -1873,8 +1873,8 @@ class _Node_state_derived_conf_data_loaded_rendered(AbstractCachingStateNode[dic
 
 
 # noinspection PyPep8Naming
-@trivial_factory
-class _Node_state_all_conf_data_rendered(AbstractCachingStateNode[int]):
+@_trivial_factory
+class _Node_state_all_conf_data_rendered(_AbstractCachingStateNode[int]):
     # TODO: TODO_28_48_19_20.api_to_traverse_config_when_primed.md:
     #       With access to config, this will change from DAG to simple access of config via `custom_main`.
 
@@ -1887,7 +1887,7 @@ class _Node_state_all_conf_data_rendered(AbstractCachingStateNode[int]):
 
     def _eval_state_once(
         self,
-    ) -> ValueType:
+    ) -> _ValueType:
         return 0
 
 

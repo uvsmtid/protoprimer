@@ -17,11 +17,11 @@ from metaprimer.script_lib import configure_script
 from protoprimer.primer_kernel import (
     _ContextBuilder,
     _EntryFunc,
-    EnvState,
-    StateGraph,
-    StateNode,
-    ExecOperation,
-    TargetState,
+    _EnvState,
+    _StateGraph,
+    _StateNode,
+    _ExecOperation,
+    _TargetState,
 )
 
 logger: logging.Logger = logging.getLogger()
@@ -55,25 +55,25 @@ def custom_main():
     run_print_graph(
         output_format=OutputFormat(parsed_args.format),
         output_layout=OutputLayout(parsed_args.layout),
-        target_state=TargetState[parsed_args.target_state],
+        target_state=_TargetState[parsed_args.target_state],
         entry_func=_EntryFunc[parsed_args.entry_func],
-        exec_operation=ExecOperation[parsed_args.exec_operation] if parsed_args.exec_operation else None,
+        exec_operation=_ExecOperation[parsed_args.exec_operation] if parsed_args.exec_operation else None,
     )
 
 
-def _populate_all_state_nodes(state_graph: StateGraph) -> None:
+def _populate_all_state_nodes(state_graph: _StateGraph) -> None:
     # Nodes enter `state_nodes` only on first access lazily.
     # Force-instantiate all so any consumer of `state_nodes` sees the full graph.
-    for env_state in EnvState:
+    for env_state in _EnvState:
         state_graph.get_state_node(env_state.name)
 
 
 def run_print_graph(
     output_format: OutputFormat,
     output_layout: OutputLayout,
-    target_state: TargetState,
+    target_state: _TargetState,
     entry_func: _EntryFunc,
-    exec_operation: ExecOperation | None,
+    exec_operation: _ExecOperation | None,
 ) -> None:
 
     logger.info(f"output_format: {output_format}")
@@ -94,7 +94,7 @@ def run_print_graph(
 
     _populate_all_state_nodes(env_ctx._state_graph)
 
-    state_node: StateNode = env_ctx._state_graph.get_state_node(env_ctx._forced_final_state)
+    state_node: _StateNode = env_ctx._state_graph.get_state_node(env_ctx._forced_final_state)
 
     if output_format == OutputFormat.output_mermaid and output_layout != OutputLayout.layout_nested:
         raise ValueError(f"Format `{OutputFormat.output_mermaid.value}` requires layout `{OutputLayout.layout_nested.value}`")
@@ -125,7 +125,7 @@ def run_print_graph(
 def init_arg_parser():
 
     arg_parser = argparse.ArgumentParser(
-        description=f"Print `{StateGraph.__name__}`.",
+        description=f"Print `{_StateGraph.__name__}`.",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
 
@@ -151,8 +151,8 @@ def init_arg_parser():
     arg_parser.add_argument(
         "--target_state",
         dest="target_state",
-        choices=[enum_item.name for enum_item in TargetState],
-        default=TargetState.target_proto_bootstrap_completed.name,
+        choices=[enum_item.name for enum_item in _TargetState],
+        default=_TargetState.target_proto_bootstrap_completed.name,
         help="Target state to print.",
     )
     arg_parser.add_argument(
@@ -165,7 +165,7 @@ def init_arg_parser():
     arg_parser.add_argument(
         "--exec_operation",
         dest="exec_operation",
-        choices=[enum_item.name for enum_item in ExecOperation],
+        choices=[enum_item.name for enum_item in _ExecOperation],
         default=None,
         help="Exec operation coordinate.",
     )

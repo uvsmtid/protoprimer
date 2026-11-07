@@ -8,7 +8,7 @@ from unittest.mock import (
 from local_repo.cmd_print_graph import custom_main
 from local_repo.graph_printer import GraphPrinterTextFlat
 from local_test.name_assertion import assert_test_module_name_embeds_str
-from protoprimer.primer_kernel import TargetState
+from protoprimer.primer_kernel import _TargetState
 
 
 def test_relationship():
@@ -30,7 +30,7 @@ def test_relationship():
         "--layout",
         "flat",
         "--target_state",
-        TargetState.target_proto_bootstrap_completed.name,
+        _TargetState.target_proto_bootstrap_completed.name,
     ],
 )
 def test_print_dag_flat_output(

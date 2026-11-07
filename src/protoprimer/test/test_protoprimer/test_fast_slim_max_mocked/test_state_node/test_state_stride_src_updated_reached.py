@@ -12,7 +12,7 @@ from protoprimer.primer_kernel import (
     _Factory_state_proto_kernel_updated,
     _ContextBuilder,
     _EntryFunc,
-    EnvState,
+    _EnvState,
     StateStride,
     _Node_state_local_venv_dir_abs_path_inited,
 )
@@ -35,7 +35,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
     # noinspection PyMethodMayBeStatic
     def test_relationship(self):
-        assert_test_module_name_embeds_str(EnvState.state_stride_src_updated_reached.name)
+        assert_test_module_name_embeds_str(_EnvState.state_stride_src_updated_reached.name)
 
     @patch(f"{primer_kernel.__name__}.{_Node_state_input_start_id_var_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_proto_kernel_updated.__name__}.create_state_node")
@@ -55,7 +55,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         assert_parent_factories_mocked(
             self.env_ctx,
-            EnvState.state_stride_src_updated_reached.name,
+            _EnvState.state_stride_src_updated_reached.name,
         )
 
         mock_state_input_start_id_var_loaded.return_value.eval_own_state.return_value = "mock_start_id"
@@ -71,7 +71,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # when:
 
-        self.env_ctx.eval_state(EnvState.state_stride_src_updated_reached.name)
+        self.env_ctx.eval_state(_EnvState.state_stride_src_updated_reached.name)
 
         # then:
 
@@ -104,7 +104,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         assert_parent_factories_mocked(
             self.env_ctx,
-            EnvState.state_stride_src_updated_reached.name,
+            _EnvState.state_stride_src_updated_reached.name,
         )
 
         mock_state_input_start_id_var_loaded.return_value.eval_own_state.return_value = "mock_start_id"
@@ -119,7 +119,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # when:
 
-        self.env_ctx.eval_state(EnvState.state_stride_src_updated_reached.name)
+        self.env_ctx.eval_state(_EnvState.state_stride_src_updated_reached.name)
 
         # then:
 

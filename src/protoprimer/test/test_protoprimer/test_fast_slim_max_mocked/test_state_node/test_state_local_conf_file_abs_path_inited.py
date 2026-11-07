@@ -13,7 +13,7 @@ from protoprimer.primer_kernel import (
     _Node_state_primer_conf_file_abs_path_inited,
     ConfConstClient,
     _EnvContext,
-    EnvState,
+    _EnvState,
 )
 
 
@@ -23,7 +23,7 @@ def env_ctx():
 
 
 def test_relationship():
-    assert_test_module_name_embeds_str(EnvState.state_local_conf_file_abs_path_inited.name)
+    assert_test_module_name_embeds_str(_EnvState.state_local_conf_file_abs_path_inited.name)
 
 
 @patch(f"{primer_kernel.__name__}.{_Node_state_primer_conf_file_abs_path_inited.__name__}.create_state_node")
@@ -37,7 +37,7 @@ def test_success(
     # given:
     assert_parent_factories_mocked(
         env_ctx,
-        EnvState.state_local_conf_file_abs_path_inited.name,
+        _EnvState.state_local_conf_file_abs_path_inited.name,
     )
 
     mock_client_dir = "/mock_client_dir"
@@ -51,7 +51,7 @@ def test_success(
     mock_state_primer_conf_file_abs_path_inited.return_value.eval_own_state.return_value = "protoprimer.json"
 
     # when:
-    state_local_conf_file_abs_path_inited = env_ctx.eval_state(EnvState.state_local_conf_file_abs_path_inited.name)
+    state_local_conf_file_abs_path_inited = env_ctx.eval_state(_EnvState.state_local_conf_file_abs_path_inited.name)
 
     # then:
     expected_path = os.path.join(

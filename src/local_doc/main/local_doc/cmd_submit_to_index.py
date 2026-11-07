@@ -27,7 +27,7 @@ from google.oauth2 import service_account
 from metaprimer.script_lib import (
     configure_script,
 )
-from protoprimer.primer_kernel import EnvState
+from protoprimer.primer_kernel import _EnvState
 
 logger: logging.Logger = logging.getLogger()
 
@@ -59,8 +59,8 @@ def custom_main():
 
     derived_data = configure_script(script_basename=os.path.basename(sys.argv[0]))
 
-    ref_root_abs_path: str = derived_data[EnvState.state_ref_root_dir_abs_path_inited.name]
-    global_conf_dir_abs_path: str = derived_data[EnvState.state_global_conf_dir_abs_path_inited.name]
+    ref_root_abs_path: str = derived_data[_EnvState.state_ref_root_dir_abs_path_inited.name]
+    global_conf_dir_abs_path: str = derived_data[_EnvState.state_global_conf_dir_abs_path_inited.name]
 
     # Relative to ref root — shown as default in help:
     credentials_file_rel_display = os.path.relpath(

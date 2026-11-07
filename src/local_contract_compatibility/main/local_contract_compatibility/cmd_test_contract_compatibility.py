@@ -11,7 +11,7 @@ from local_contract_compatibility.old_entry_on_new_proto import run_old_entry_on
 from local_contract_compatibility.old_proto_on_new_venv import run_old_proto_on_new_venv
 from local_contract_compatibility.old_tests_on_new_changes import run_old_tests_on_new_changes
 from metaprimer.script_lib import configure_script
-from protoprimer.primer_kernel import EnvState
+from protoprimer.primer_kernel import _EnvState
 
 
 def custom_main():
@@ -19,8 +19,8 @@ def custom_main():
     parsed_args = init_arg_parser().parse_args()
 
     derived_data = configure_script(script_basename=os.path.basename(sys.argv[0]))
-    ref_root_abs_path = pathlib.Path(derived_data[EnvState.state_ref_root_dir_abs_path_inited.name])
-    scratch_dir_abs_path = pathlib.Path(derived_data[EnvState.state_local_tmp_dir_abs_path_inited.name]) / "local_contract_compatibility"
+    ref_root_abs_path = pathlib.Path(derived_data[_EnvState.state_ref_root_dir_abs_path_inited.name])
+    scratch_dir_abs_path = pathlib.Path(derived_data[_EnvState.state_local_tmp_dir_abs_path_inited.name]) / "local_contract_compatibility"
 
     if parsed_args.commit_name:
         commit_names = [parsed_args.commit_name]

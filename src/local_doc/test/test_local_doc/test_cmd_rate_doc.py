@@ -70,7 +70,7 @@ def test_rate_doc_last_verified(mock_configure_script, fs, capsys) -> None:
     # given:
     _create_doc_files(fs)
     mock_configure_script.return_value = {
-        cmd_rate_doc.EnvState.state_ref_root_dir_abs_path_inited.name: _ref_root_abs_path,
+        cmd_rate_doc._EnvState.state_ref_root_dir_abs_path_inited.name: _ref_root_abs_path,
     }
 
     # when:
@@ -92,7 +92,7 @@ def test_rate_doc_last_updated(mock_configure_script, mock_get_last_updated_date
     # given:
     _create_doc_files(fs)
     mock_configure_script.return_value = {
-        cmd_rate_doc.EnvState.state_ref_root_dir_abs_path_inited.name: _ref_root_abs_path,
+        cmd_rate_doc._EnvState.state_ref_root_dir_abs_path_inited.name: _ref_root_abs_path,
     }
 
     last_updated_by_basename = {
@@ -120,7 +120,7 @@ def test_rate_doc_most_linked(mock_configure_script, fs, capsys) -> None:
     # given:
     _create_doc_files(fs)
     mock_configure_script.return_value = {
-        cmd_rate_doc.EnvState.state_ref_root_dir_abs_path_inited.name: _ref_root_abs_path,
+        cmd_rate_doc._EnvState.state_ref_root_dir_abs_path_inited.name: _ref_root_abs_path,
     }
 
     # when:
@@ -144,7 +144,7 @@ def test_rate_doc_most_linked_reverse_sort(mock_configure_script, fs, capsys) ->
     # given:
     _create_doc_files(fs)
     mock_configure_script.return_value = {
-        cmd_rate_doc.EnvState.state_ref_root_dir_abs_path_inited.name: _ref_root_abs_path,
+        cmd_rate_doc._EnvState.state_ref_root_dir_abs_path_inited.name: _ref_root_abs_path,
     }
 
     # when:

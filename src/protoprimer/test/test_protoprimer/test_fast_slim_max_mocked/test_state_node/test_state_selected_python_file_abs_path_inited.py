@@ -9,7 +9,7 @@ from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     _EnvContext,
-    EnvState,
+    _EnvState,
     _Node_state_required_python_version_inited,
     _Node_state_client_conf_file_data_loaded,
     _Node_state_python_selector_file_abs_path_inited,
@@ -23,7 +23,7 @@ def env_ctx():
 
 
 def test_relationship():
-    assert_test_module_name_embeds_str(EnvState.state_selected_python_file_abs_path_inited.name)
+    assert_test_module_name_embeds_str(_EnvState.state_selected_python_file_abs_path_inited.name)
 
 
 @patch(f"{primer_kernel.__name__}._probe_python_file_abs_path")
@@ -44,14 +44,14 @@ def test_python_selection(
 
     assert_parent_factories_mocked(
         env_ctx,
-        EnvState.state_selected_python_file_abs_path_inited.name,
+        _EnvState.state_selected_python_file_abs_path_inited.name,
     )
     mock_state_required_python_version_inited.return_value.eval_own_state.return_value = "3.10"
     mock_state_python_selector_file_abs_path_inited.return_value.eval_own_state.return_value = "python3.10"
     mock_probe_python_file_abs_path.return_value = "/usr/bin/python3.10"
 
     # when
-    result = env_ctx.eval_state(EnvState.state_selected_python_file_abs_path_inited.name)
+    result = env_ctx.eval_state(_EnvState.state_selected_python_file_abs_path_inited.name)
 
     # then
     mock_probe_python_file_abs_path.assert_called_once_with("python3.10", parse_python_version("3.10"))

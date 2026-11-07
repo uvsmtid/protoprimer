@@ -18,7 +18,7 @@ from local_test.verified_dynamic_graph import (
 )
 from protoprimer.primer_kernel import (
     _EntryFunc,
-    EnvState,
+    _EnvState,
     EnvVar,
     StateStride,
 )
@@ -39,7 +39,7 @@ def _eval_and_collect(
 ) -> list[str]:
     state_graph: TrackingStateGraph = env_ctx._state_graph
     try:
-        state_graph.eval_state(EnvState.state_everything_executed.name)
+        state_graph.eval_state(_EnvState.state_everything_executed.name)
     except _ExitCalled:
         pass
     return state_graph.get_evaluated_state_names()
@@ -65,7 +65,7 @@ def _verify_actual_have_all_mandatory_state_names(
 
 class TestEvaluatedStateSets:
     """
-    Verifies the actual set of `EnvState` names evaluated during graph execution.
+    Verifies the actual set of `_EnvState` names evaluated during graph execution.
 
     Each function uses a meaningful `_EnvContext` coordinate combination.
 
@@ -97,69 +97,69 @@ class TestEvaluatedStateSets:
                 actual_state_names = _eval_and_collect(env_ctx)
 
         assert actual_state_names == [
-            EnvState.state_is_app_defined.name,
-            EnvState.state_input_py_exec_var_loaded.name,
-            EnvState.state_input_is_stderr_log_enabled.name,
-            EnvState.state_input_stderr_log_level_var_loaded.name,
-            EnvState.state_default_stderr_log_handler_configured.name,
-            EnvState.state_args_parsed.name,
-            EnvState.state_input_stderr_log_level_eval_finalized.name,
-            EnvState.state_input_stderr_log_level_handler_configured.name,
-            EnvState.state_input_exec_operation_loaded.name,
-            EnvState.state_input_final_state_eval_finalized.name,
-            EnvState.state_input_proto_kernel_file_abs_path_var_loaded.name,
-            EnvState.state_input_start_id_var_loaded.name,
-            EnvState.state_stride_py_arbitrary_reached.name,
-            EnvState.state_proto_kernel_file_abs_path_inited.name,
-            EnvState.state_print_conf_finalized.name,
-            EnvState.state_primer_conf_file_abs_path_inited.name,
-            EnvState.state_primer_conf_file_data_loaded.name,
-            EnvState.state_ref_root_dir_abs_path_inited.name,
-            EnvState.state_global_conf_dir_abs_path_inited.name,
-            EnvState.state_global_conf_file_abs_path_inited.name,
-            EnvState.state_client_conf_file_data_loaded.name,
-            EnvState.state_selected_env_dir_rel_path_inited.name,
-            EnvState.state_local_conf_symlink_abs_path_inited.name,
-            EnvState.state_local_conf_file_abs_path_inited.name,
-            EnvState.state_env_conf_file_data_loaded.name,
-            EnvState.state_local_venv_dir_abs_path_inited.name,
-            EnvState.state_local_cache_dir_abs_path_inited.name,
-            EnvState.state_version_constraints_file_basename_inited.name,
-            EnvState.state_required_python_version_inited.name,
-            EnvState.state_python_selector_file_abs_path_inited.name,
-            EnvState.state_selected_python_file_abs_path_inited.name,
-            EnvState.state_venv_driver_inited.name,
-            EnvState.state_prepare_venv_finalized.name,
-            EnvState.state_local_tmp_dir_abs_path_inited.name,
-            EnvState.state_local_log_dir_abs_path_inited.name,
-            EnvState.state_default_file_log_handler_configured.name,
-            EnvState.state_stride_py_required_reached.name,
-            EnvState.state_reset_triggered.name,
-            EnvState.state_venv_driver_prepared.name,
-            EnvState.state_project_descriptors_inited.name,
-            EnvState.state_install_specs_inited.name,
-            EnvState.state_stride_py_venv_reached.name,
-            EnvState.state_protoprimer_package_installed.name,
-            EnvState.state_version_constraints_generated.name,
-            EnvState.state_stride_deps_updated_reached.name,
-            EnvState.state_proto_kernel_updated.name,
-            EnvState.state_stride_src_updated_reached.name,
-            EnvState.state_input_command_line.name,
-            EnvState.state_command_executed.name,
-            EnvState.state_func_boot_env_executed.name,
-            EnvState.state_everything_executed.name,
+            _EnvState.state_is_app_defined.name,
+            _EnvState.state_input_py_exec_var_loaded.name,
+            _EnvState.state_input_is_stderr_log_enabled.name,
+            _EnvState.state_input_stderr_log_level_var_loaded.name,
+            _EnvState.state_default_stderr_log_handler_configured.name,
+            _EnvState.state_args_parsed.name,
+            _EnvState.state_input_stderr_log_level_eval_finalized.name,
+            _EnvState.state_input_stderr_log_level_handler_configured.name,
+            _EnvState.state_input_exec_operation_loaded.name,
+            _EnvState.state_input_final_state_eval_finalized.name,
+            _EnvState.state_input_proto_kernel_file_abs_path_var_loaded.name,
+            _EnvState.state_input_start_id_var_loaded.name,
+            _EnvState.state_stride_py_arbitrary_reached.name,
+            _EnvState.state_proto_kernel_file_abs_path_inited.name,
+            _EnvState.state_print_conf_finalized.name,
+            _EnvState.state_primer_conf_file_abs_path_inited.name,
+            _EnvState.state_primer_conf_file_data_loaded.name,
+            _EnvState.state_ref_root_dir_abs_path_inited.name,
+            _EnvState.state_global_conf_dir_abs_path_inited.name,
+            _EnvState.state_global_conf_file_abs_path_inited.name,
+            _EnvState.state_client_conf_file_data_loaded.name,
+            _EnvState.state_selected_env_dir_rel_path_inited.name,
+            _EnvState.state_local_conf_symlink_abs_path_inited.name,
+            _EnvState.state_local_conf_file_abs_path_inited.name,
+            _EnvState.state_env_conf_file_data_loaded.name,
+            _EnvState.state_local_venv_dir_abs_path_inited.name,
+            _EnvState.state_local_cache_dir_abs_path_inited.name,
+            _EnvState.state_version_constraints_file_basename_inited.name,
+            _EnvState.state_required_python_version_inited.name,
+            _EnvState.state_python_selector_file_abs_path_inited.name,
+            _EnvState.state_selected_python_file_abs_path_inited.name,
+            _EnvState.state_venv_driver_inited.name,
+            _EnvState.state_prepare_venv_finalized.name,
+            _EnvState.state_local_tmp_dir_abs_path_inited.name,
+            _EnvState.state_local_log_dir_abs_path_inited.name,
+            _EnvState.state_default_file_log_handler_configured.name,
+            _EnvState.state_stride_py_required_reached.name,
+            _EnvState.state_reset_triggered.name,
+            _EnvState.state_venv_driver_prepared.name,
+            _EnvState.state_project_descriptors_inited.name,
+            _EnvState.state_install_specs_inited.name,
+            _EnvState.state_stride_py_venv_reached.name,
+            _EnvState.state_protoprimer_package_installed.name,
+            _EnvState.state_version_constraints_generated.name,
+            _EnvState.state_stride_deps_updated_reached.name,
+            _EnvState.state_proto_kernel_updated.name,
+            _EnvState.state_stride_src_updated_reached.name,
+            _EnvState.state_input_command_line.name,
+            _EnvState.state_command_executed.name,
+            _EnvState.state_func_boot_env_executed.name,
+            _EnvState.state_everything_executed.name,
         ]
 
         mandatory_state_names = [
             # args:
-            EnvState.state_args_parsed.name,
+            _EnvState.state_args_parsed.name,
             # logs:
-            EnvState.state_input_stderr_log_level_handler_configured.name,
-            EnvState.state_default_file_log_handler_configured.name,
+            _EnvState.state_input_stderr_log_level_handler_configured.name,
+            _EnvState.state_default_file_log_handler_configured.name,
             # main:
-            EnvState.state_everything_executed.name,
-            EnvState.state_func_boot_env_executed.name,
-            EnvState.state_command_executed.name,
+            _EnvState.state_everything_executed.name,
+            _EnvState.state_func_boot_env_executed.name,
+            _EnvState.state_command_executed.name,
         ]
 
         _verify_actual_have_all_mandatory_state_names(
@@ -168,7 +168,7 @@ class TestEvaluatedStateSets:
         )
 
         prohibited_state_names = [
-            EnvState.state_func_start_app_executed.name,
+            _EnvState.state_func_start_app_executed.name,
         ]
 
         _verify_actual_have_no_prohibited_state_names(
@@ -193,35 +193,35 @@ class TestEvaluatedStateSets:
             actual_state_names = _eval_and_collect(env_ctx)
 
         assert actual_state_names == [
-            EnvState.state_is_app_defined.name,
-            EnvState.state_input_is_stderr_log_enabled.name,
-            EnvState.state_input_final_state_eval_finalized.name,
-            EnvState.state_input_start_id_var_loaded.name,
-            EnvState.state_input_proto_kernel_file_abs_path_var_loaded.name,
-            EnvState.state_stride_py_arbitrary_reached.name,
-            EnvState.state_proto_kernel_file_abs_path_inited.name,
-            EnvState.state_print_conf_finalized.name,
-            EnvState.state_primer_conf_file_abs_path_inited.name,
-            EnvState.state_primer_conf_file_data_loaded.name,
-            EnvState.state_ref_root_dir_abs_path_inited.name,
-            EnvState.state_global_conf_dir_abs_path_inited.name,
-            EnvState.state_global_conf_file_abs_path_inited.name,
-            EnvState.state_client_conf_file_data_loaded.name,
-            EnvState.state_selected_env_dir_rel_path_inited.name,
-            EnvState.state_local_conf_symlink_abs_path_inited.name,
-            EnvState.state_local_conf_file_abs_path_inited.name,
-            EnvState.state_env_conf_file_data_loaded.name,
-            EnvState.state_local_venv_dir_abs_path_inited.name,
-            EnvState.state_stride_py_venv_reached.name,
-            EnvState.state_func_start_app_executed.name,
-            EnvState.state_everything_executed.name,
+            _EnvState.state_is_app_defined.name,
+            _EnvState.state_input_is_stderr_log_enabled.name,
+            _EnvState.state_input_final_state_eval_finalized.name,
+            _EnvState.state_input_start_id_var_loaded.name,
+            _EnvState.state_input_proto_kernel_file_abs_path_var_loaded.name,
+            _EnvState.state_stride_py_arbitrary_reached.name,
+            _EnvState.state_proto_kernel_file_abs_path_inited.name,
+            _EnvState.state_print_conf_finalized.name,
+            _EnvState.state_primer_conf_file_abs_path_inited.name,
+            _EnvState.state_primer_conf_file_data_loaded.name,
+            _EnvState.state_ref_root_dir_abs_path_inited.name,
+            _EnvState.state_global_conf_dir_abs_path_inited.name,
+            _EnvState.state_global_conf_file_abs_path_inited.name,
+            _EnvState.state_client_conf_file_data_loaded.name,
+            _EnvState.state_selected_env_dir_rel_path_inited.name,
+            _EnvState.state_local_conf_symlink_abs_path_inited.name,
+            _EnvState.state_local_conf_file_abs_path_inited.name,
+            _EnvState.state_env_conf_file_data_loaded.name,
+            _EnvState.state_local_venv_dir_abs_path_inited.name,
+            _EnvState.state_stride_py_venv_reached.name,
+            _EnvState.state_func_start_app_executed.name,
+            _EnvState.state_everything_executed.name,
         ]
 
         mandatory_state_names = [
             # main:
-            EnvState.state_everything_executed.name,
-            EnvState.state_func_start_app_executed.name,
-            EnvState.state_stride_py_venv_reached.name,
+            _EnvState.state_everything_executed.name,
+            _EnvState.state_func_start_app_executed.name,
+            _EnvState.state_stride_py_venv_reached.name,
         ]
 
         _verify_actual_have_all_mandatory_state_names(
@@ -231,18 +231,18 @@ class TestEvaluatedStateSets:
 
         prohibited_state_names = [
             # args:
-            EnvState.state_input_exec_operation_loaded.name,
+            _EnvState.state_input_exec_operation_loaded.name,
             # python:
-            EnvState.state_required_python_version_inited.name,
-            EnvState.state_python_selector_file_abs_path_inited.name,
-            EnvState.state_selected_python_file_abs_path_inited.name,
-            EnvState.state_reset_triggered.name,
-            EnvState.state_venv_driver_prepared.name,
+            _EnvState.state_required_python_version_inited.name,
+            _EnvState.state_python_selector_file_abs_path_inited.name,
+            _EnvState.state_selected_python_file_abs_path_inited.name,
+            _EnvState.state_reset_triggered.name,
+            _EnvState.state_venv_driver_prepared.name,
             # wrong func:
-            EnvState.state_func_boot_env_executed.name,
+            _EnvState.state_func_boot_env_executed.name,
             # logs:
-            EnvState.state_input_stderr_log_level_handler_configured.name,
-            EnvState.state_default_file_log_handler_configured.name,
+            _EnvState.state_input_stderr_log_level_handler_configured.name,
+            _EnvState.state_default_file_log_handler_configured.name,
         ]
 
         _verify_actual_have_no_prohibited_state_names(
@@ -267,42 +267,42 @@ class TestEvaluatedStateSets:
             actual_state_names = _eval_and_collect(env_ctx)
 
         assert actual_state_names == [
-            EnvState.state_is_app_defined.name,
-            EnvState.state_input_is_stderr_log_enabled.name,
-            EnvState.state_input_final_state_eval_finalized.name,
-            EnvState.state_print_conf_finalized.name,
-            EnvState.state_proto_kernel_file_abs_path_inited.name,
-            EnvState.state_primer_conf_file_abs_path_inited.name,
-            EnvState.state_primer_conf_file_data_loaded.name,
-            EnvState.state_ref_root_dir_abs_path_inited.name,
-            EnvState.state_global_conf_dir_abs_path_inited.name,
-            EnvState.state_global_conf_file_abs_path_inited.name,
-            EnvState.state_client_conf_file_data_loaded.name,
-            EnvState.state_selected_env_dir_rel_path_inited.name,
-            EnvState.state_local_conf_symlink_abs_path_inited.name,
-            EnvState.state_local_conf_file_abs_path_inited.name,
-            EnvState.state_env_conf_file_data_loaded.name,
-            EnvState.state_required_python_version_inited.name,
-            EnvState.state_python_selector_file_abs_path_inited.name,
-            EnvState.state_selected_python_file_abs_path_inited.name,
-            EnvState.state_local_venv_dir_abs_path_inited.name,
-            EnvState.state_local_log_dir_abs_path_inited.name,
-            EnvState.state_local_run_dir_abs_path_inited.name,
-            EnvState.state_local_tmp_dir_abs_path_inited.name,
-            EnvState.state_local_cache_dir_abs_path_inited.name,
-            EnvState.state_venv_driver_inited.name,
-            EnvState.state_version_constraints_file_basename_inited.name,
-            EnvState.state_project_descriptors_inited.name,
-            EnvState.state_derived_conf_data_loaded.name,
-            EnvState.state_func_call_lib_executed.name,
-            EnvState.state_everything_executed.name,
+            _EnvState.state_is_app_defined.name,
+            _EnvState.state_input_is_stderr_log_enabled.name,
+            _EnvState.state_input_final_state_eval_finalized.name,
+            _EnvState.state_print_conf_finalized.name,
+            _EnvState.state_proto_kernel_file_abs_path_inited.name,
+            _EnvState.state_primer_conf_file_abs_path_inited.name,
+            _EnvState.state_primer_conf_file_data_loaded.name,
+            _EnvState.state_ref_root_dir_abs_path_inited.name,
+            _EnvState.state_global_conf_dir_abs_path_inited.name,
+            _EnvState.state_global_conf_file_abs_path_inited.name,
+            _EnvState.state_client_conf_file_data_loaded.name,
+            _EnvState.state_selected_env_dir_rel_path_inited.name,
+            _EnvState.state_local_conf_symlink_abs_path_inited.name,
+            _EnvState.state_local_conf_file_abs_path_inited.name,
+            _EnvState.state_env_conf_file_data_loaded.name,
+            _EnvState.state_required_python_version_inited.name,
+            _EnvState.state_python_selector_file_abs_path_inited.name,
+            _EnvState.state_selected_python_file_abs_path_inited.name,
+            _EnvState.state_local_venv_dir_abs_path_inited.name,
+            _EnvState.state_local_log_dir_abs_path_inited.name,
+            _EnvState.state_local_run_dir_abs_path_inited.name,
+            _EnvState.state_local_tmp_dir_abs_path_inited.name,
+            _EnvState.state_local_cache_dir_abs_path_inited.name,
+            _EnvState.state_venv_driver_inited.name,
+            _EnvState.state_version_constraints_file_basename_inited.name,
+            _EnvState.state_project_descriptors_inited.name,
+            _EnvState.state_derived_conf_data_loaded.name,
+            _EnvState.state_func_call_lib_executed.name,
+            _EnvState.state_everything_executed.name,
         ]
 
         mandatory_state_names = [
             # main:
-            EnvState.state_everything_executed.name,
-            EnvState.state_func_call_lib_executed.name,
-            EnvState.state_derived_conf_data_loaded.name,
+            _EnvState.state_everything_executed.name,
+            _EnvState.state_func_call_lib_executed.name,
+            _EnvState.state_derived_conf_data_loaded.name,
         ]
 
         _verify_actual_have_all_mandatory_state_names(
@@ -312,10 +312,10 @@ class TestEvaluatedStateSets:
 
         prohibited_state_names = [
             # args:
-            EnvState.state_input_exec_operation_loaded.name,
+            _EnvState.state_input_exec_operation_loaded.name,
             # logs:
-            EnvState.state_input_stderr_log_level_handler_configured.name,
-            EnvState.state_default_file_log_handler_configured.name,
+            _EnvState.state_input_stderr_log_level_handler_configured.name,
+            _EnvState.state_default_file_log_handler_configured.name,
         ]
 
         _verify_actual_have_no_prohibited_state_names(

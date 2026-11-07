@@ -229,7 +229,7 @@ def test_generate_preview_image_uses_ref_root(
 ) -> None:
     # given:
     mock_configure_script.return_value = {
-        cmd_generate_preview_image.EnvState.state_ref_root_dir_abs_path_inited.name: "/fake_repo",
+        cmd_generate_preview_image._EnvState.state_ref_root_dir_abs_path_inited.name: "/fake_repo",
     }
 
     # when:

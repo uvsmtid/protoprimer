@@ -21,7 +21,7 @@ from protoprimer.primer_kernel import (
     ConfConstInput,
     ConfConstPrimer,
     _EntryFunc,
-    ExecOperation,
+    _ExecOperation,
     SyntaxArg,
     VenvDriverPip,
     _generate_entry_script_content,
@@ -258,7 +258,7 @@ def test_app_started_from_env_special(tmp_path: pathlib.Path):
             str(proto_kernel_abs_path),
             SyntaxArg.arg_v,
             SyntaxArg.arg_v,
-            ExecOperation.op_boot.value,
+            _ExecOperation.op_boot.value,
             SyntaxArg.arg_env,
             special_env_dir_name,
         ]
@@ -395,7 +395,7 @@ def test_app_started_with_symlink_to_env_special_but_config_to_env_common(
             str(proto_kernel_abs_path),
             SyntaxArg.arg_v,
             SyntaxArg.arg_v,
-            ExecOperation.op_boot.value,
+            _ExecOperation.op_boot.value,
             SyntaxArg.arg_env,
             special_env_dir_name,
         ]

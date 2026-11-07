@@ -15,8 +15,8 @@ from protoprimer.primer_kernel import (
     _ContextBuilder,
     _EntryFunc,
     _EnvContext,
-    EnvState,
-    ExecOperation,
+    _EnvState,
+    _ExecOperation,
     StateStride,
     _Factory_state_input_exec_operation_loaded,
 )
@@ -39,7 +39,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
     # noinspection PyMethodMayBeStatic
     def test_relationship(self):
-        assert_test_module_name_embeds_str(EnvState.state_proto_kernel_updated.name)
+        assert_test_module_name_embeds_str(_EnvState.state_proto_kernel_updated.name)
 
     @patch(f"{primer_kernel.__name__}.{_Factory_state_proto_kernel_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_stride_deps_updated_reached.__name__}.create_state_node")
@@ -57,7 +57,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         assert_parent_factories_mocked(
             self.env_ctx,
-            EnvState.state_proto_kernel_updated.name,
+            _EnvState.state_proto_kernel_updated.name,
         )
 
         mock_client_dir = "/mock_client_dir"
@@ -82,11 +82,11 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_stride_deps_updated_reached.return_value.eval_own_state.return_value = StateStride.stride_deps_updated
 
         mock_state_proto_kernel_file_abs_path_inited.return_value.eval_own_state.return_value = proto_kernel_abs_file_path
-        mock_state_input_exec_operation_loaded.return_value.eval_own_state.return_value = ExecOperation.op_boot
+        mock_state_input_exec_operation_loaded.return_value.eval_own_state.return_value = _ExecOperation.op_boot
 
         # when:
 
-        self.env_ctx.eval_state(EnvState.state_proto_kernel_updated.name)
+        self.env_ctx.eval_state(_EnvState.state_proto_kernel_updated.name)
 
         # then:
 
@@ -119,19 +119,19 @@ class ThisTestClass(BasePyfakefsTestClass):
         # given:
         assert_parent_factories_mocked(
             self.env_ctx,
-            EnvState.state_proto_kernel_updated.name,
+            _EnvState.state_proto_kernel_updated.name,
         )
         mock_get_stride.return_value = StateStride.stride_deps_updated
 
         fake_path = "/fake/path"
         self.fs.create_file(fake_path)
         mock_state_proto_kernel_file_abs_path_inited.return_value.eval_own_state.return_value = fake_path
-        mock_state_input_exec_operation_loaded.return_value.eval_own_state.return_value = ExecOperation.op_boot
+        mock_state_input_exec_operation_loaded.return_value.eval_own_state.return_value = _ExecOperation.op_boot
 
         # when:
         with patch.dict("sys.modules", {"protoprimer": None}):
             with self.assertLogs(primer_kernel.logger, level="WARNING") as cm:
-                result = self.env_ctx.eval_state(EnvState.state_proto_kernel_updated.name)
+                result = self.env_ctx.eval_state(_EnvState.state_proto_kernel_updated.name)
 
         # then:
         self.assertFalse(result)

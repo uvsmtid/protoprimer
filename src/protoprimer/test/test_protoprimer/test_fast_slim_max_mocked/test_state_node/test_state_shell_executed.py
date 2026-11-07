@@ -14,7 +14,7 @@ from protoprimer.primer_kernel import (
     _Node_state_local_venv_dir_abs_path_inited,
     _Node_state_stride_src_updated_reached,
     _EnvContext,
-    EnvState,
+    _EnvState,
     StateStride,
 )
 
@@ -25,7 +25,7 @@ def env_ctx():
 
 
 def test_relationship():
-    assert_test_module_name_embeds_str(EnvState.state_shell_executed.name)
+    assert_test_module_name_embeds_str(_EnvState.state_shell_executed.name)
 
 
 @patch(f"{primer_kernel.__name__}.{_EnvContext.__name__}.{_EnvContext.get_stride.__name__}")
@@ -55,7 +55,7 @@ def test_shell_executed_in_bash(
     fs.create_dir("/fake")
     assert_parent_factories_mocked(
         env_ctx,
-        EnvState.state_shell_executed.name,
+        _EnvState.state_shell_executed.name,
     )
     mock_state_input_command_line.return_value.eval_own_state.return_value = "echo hello"
     mock_get_stride.return_value = StateStride.stride_src_updated
@@ -64,7 +64,7 @@ def test_shell_executed_in_bash(
     mock_state_local_cache_dir_abs_path_inited.return_value.eval_own_state.return_value = "/fake/cache"
 
     # when:
-    env_ctx.eval_state(EnvState.state_shell_executed.name)
+    env_ctx.eval_state(_EnvState.state_shell_executed.name)
 
     # then:
     mock_os_execve.assert_called_once_with(
@@ -110,7 +110,7 @@ def test_shell_executed_in_zsh(
     fs.create_dir("/fake")
     assert_parent_factories_mocked(
         env_ctx,
-        EnvState.state_shell_executed.name,
+        _EnvState.state_shell_executed.name,
     )
     mock_state_input_command_line.return_value.eval_own_state.return_value = "echo hello"
     mock_get_stride.return_value = StateStride.stride_src_updated
@@ -119,7 +119,7 @@ def test_shell_executed_in_zsh(
     mock_state_local_cache_dir_abs_path_inited.return_value.eval_own_state.return_value = "/fake/cache"
 
     # when:
-    env_ctx.eval_state(EnvState.state_shell_executed.name)
+    env_ctx.eval_state(_EnvState.state_shell_executed.name)
 
     # then:
     # In ShellDriverZsh, there are no extra shell_args, just an env var `ZDOTDIR`.
@@ -165,7 +165,7 @@ def test_shell_executed_in_sh(
     fs.create_dir("/fake")
     assert_parent_factories_mocked(
         env_ctx,
-        EnvState.state_shell_executed.name,
+        _EnvState.state_shell_executed.name,
     )
     mock_state_input_command_line.return_value.eval_own_state.return_value = "echo hello"
     mock_get_stride.return_value = StateStride.stride_src_updated
@@ -174,7 +174,7 @@ def test_shell_executed_in_sh(
     mock_state_local_cache_dir_abs_path_inited.return_value.eval_own_state.return_value = "/fake/cache"
 
     # when:
-    env_ctx.eval_state(EnvState.state_shell_executed.name)
+    env_ctx.eval_state(_EnvState.state_shell_executed.name)
 
     # then:
     # In ShellDriverSh, there are no extra shell_args, just an env var `ENV`.
@@ -217,14 +217,14 @@ def test_shell_executed_interactive_without_command(
     fs,
 ):
     """
-    Unlike `EnvState.state_command_executed`, this state must start an interactive shell
+    Unlike `_EnvState.state_command_executed`, this state must start an interactive shell
     even when no `ParsedArg.name_shell_command` is given.
     """
     # given:
     fs.create_dir("/fake")
     assert_parent_factories_mocked(
         env_ctx,
-        EnvState.state_shell_executed.name,
+        _EnvState.state_shell_executed.name,
     )
     mock_state_input_command_line.return_value.eval_own_state.return_value = None
     mock_get_stride.return_value = StateStride.stride_src_updated
@@ -233,7 +233,7 @@ def test_shell_executed_interactive_without_command(
     mock_state_local_cache_dir_abs_path_inited.return_value.eval_own_state.return_value = "/fake/cache"
 
     # when:
-    env_ctx.eval_state(EnvState.state_shell_executed.name)
+    env_ctx.eval_state(_EnvState.state_shell_executed.name)
 
     # then:
     mock_os_execve.assert_called_once_with(

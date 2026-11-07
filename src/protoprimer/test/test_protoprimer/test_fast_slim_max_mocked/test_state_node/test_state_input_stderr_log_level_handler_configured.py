@@ -13,7 +13,7 @@ from protoprimer.primer_kernel import (
     _Node_state_default_stderr_log_handler_configured,
     _Factory_state_input_stderr_log_level_eval_finalized,
     _EnvContext,
-    EnvState,
+    _EnvState,
     _PrimerStderrLogFormatter,
 )
 
@@ -35,7 +35,7 @@ def stderr_handler():
 
 
 def test_relationship():
-    assert_test_module_name_embeds_str(EnvState.state_input_stderr_log_level_handler_configured.name)
+    assert_test_module_name_embeds_str(_EnvState.state_input_stderr_log_level_handler_configured.name)
 
 
 @patch(f"{primer_kernel.__name__}.{_Factory_state_input_stderr_log_level_eval_finalized.__name__}.create_state_node")
@@ -50,7 +50,7 @@ def test_handler_level_configured(
 
     assert_parent_factories_mocked(
         env_ctx,
-        EnvState.state_input_stderr_log_level_handler_configured.name,
+        _EnvState.state_input_stderr_log_level_handler_configured.name,
     )
     stderr_handler.setLevel(logging.WARNING)
     mock_state_default_stderr_log_handler_configured.return_value.eval_own_state.return_value = stderr_handler
@@ -58,7 +58,7 @@ def test_handler_level_configured(
 
     # when:
 
-    result_handler = env_ctx.eval_state(EnvState.state_input_stderr_log_level_handler_configured.name)
+    result_handler = env_ctx.eval_state(_EnvState.state_input_stderr_log_level_handler_configured.name)
 
     # then:
 
@@ -78,14 +78,14 @@ def test_returns_handler(
 
     assert_parent_factories_mocked(
         env_ctx,
-        EnvState.state_input_stderr_log_level_handler_configured.name,
+        _EnvState.state_input_stderr_log_level_handler_configured.name,
     )
     mock_state_default_stderr_log_handler_configured.return_value.eval_own_state.return_value = stderr_handler
     mock_state_input_stderr_log_level_eval_finalized.return_value.eval_own_state.return_value = logging.WARNING
 
     # when:
 
-    result = env_ctx.eval_state(EnvState.state_input_stderr_log_level_handler_configured.name)
+    result = env_ctx.eval_state(_EnvState.state_input_stderr_log_level_handler_configured.name)
 
     # then:
 

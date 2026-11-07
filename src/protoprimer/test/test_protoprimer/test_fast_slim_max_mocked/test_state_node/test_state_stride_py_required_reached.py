@@ -23,9 +23,9 @@ from protoprimer.primer_kernel import (
     _ContextBuilder,
     _EntryFunc,
     _EnvContext,
-    EnvState,
+    _EnvState,
     StateStride,
-    ExecOperation,
+    _ExecOperation,
 )
 
 mock_client_dir = "/mock_client_dir"
@@ -65,7 +65,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
     # noinspection PyMethodMayBeStatic
     def test_relationship(self):
-        assert_test_module_name_embeds_str(EnvState.state_stride_py_required_reached.name)
+        assert_test_module_name_embeds_str(_EnvState.state_stride_py_required_reached.name)
 
     def test_assumptions_used_in_other_tests(self):
         self.assertNotEqual(
@@ -109,12 +109,12 @@ class ThisTestClass(BasePyfakefsTestClass):
     ):
 
         # given:
-        self.env_ctx._exec_operation = ExecOperation.op_boot
+        self.env_ctx._exec_operation = _ExecOperation.op_boot
         self.env_ctx._prepare_venv = True
 
         assert_parent_factories_mocked(
             self.env_ctx,
-            EnvState.state_stride_py_required_reached.name,
+            _EnvState.state_stride_py_required_reached.name,
         )
         mock_state_prepare_venv_finalized.return_value.eval_own_state.return_value = True
 
@@ -131,7 +131,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # when:
 
-        self.env_ctx.eval_state(EnvState.state_stride_py_required_reached.name)
+        self.env_ctx.eval_state(_EnvState.state_stride_py_required_reached.name)
 
         # then:
 
@@ -176,13 +176,13 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_input_start_id_var_loaded,
     ):
         # given:
-        self.env_ctx._exec_operation = ExecOperation.op_boot
+        self.env_ctx._exec_operation = _ExecOperation.op_boot
         self.env_ctx._prepare_venv = True
         self.env_ctx._state_stride = StateStride.stride_py_required
         mock_state_prepare_venv_finalized.return_value.eval_own_state.return_value = True
 
         # when:
-        actual_result = self.env_ctx.eval_state(EnvState.state_stride_py_required_reached.name)
+        actual_result = self.env_ctx.eval_state(_EnvState.state_stride_py_required_reached.name)
 
         # then:
         self.assertEqual(
@@ -229,14 +229,14 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_input_start_id_var_loaded,
     ):
         # given:
-        self.env_ctx._exec_operation = ExecOperation.op_boot
+        self.env_ctx._exec_operation = _ExecOperation.op_boot
         self.env_ctx._prepare_venv = True
         mock_state_prepare_venv_finalized.return_value.eval_own_state.return_value = True
         mock_state_selected_python_file_abs_path_inited.return_value.eval_own_state.return_value = non_default_file_abs_path_python
         mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = non_default_dir_abs_path_venv
 
         # when:
-        actual_result = self.env_ctx.eval_state(EnvState.state_stride_py_required_reached.name)
+        actual_result = self.env_ctx.eval_state(_EnvState.state_stride_py_required_reached.name)
 
         # then:
         self.assertEqual(
