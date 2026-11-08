@@ -8,14 +8,14 @@ from local_test.invoke_condition_helper import (
     ContainerSession,
     InvokeCondition,
     boot_max_script,
-    image_python_3_14,
+    image_python_3_15,
 )
 
 
 def test_venv_with_system_site_packages_enabled_is_silently_reused(tmp_path):
     assert InvokeCondition.venv_with_system_site_packages.test_file_basename == "test_invoke_condition_19.py"
 
-    with ContainerSession(image_python_3_14, tmp_path) as container:
+    with ContainerSession(image_python_3_15, tmp_path) as container:
         boot_result = container.run(boot_max_script)
         assert boot_result.exit_code == 0, str(boot_result)
 

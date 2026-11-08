@@ -42,7 +42,7 @@ import typing
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 # The release process ensures that content in this file matches the version below while tagging the release commit
 # (otherwise, if the file comes from a different commit, the version is irrelevant):
-__version__ = "0.14.0.dev2"
+__version__ = "0.14.0"
 
 _logger: logging.Logger = logging.getLogger()
 
@@ -1505,7 +1505,7 @@ class _ConfConstEnv:
     default_install_specs = []
 
     # FT_84_11_73_28.supported_python_versions.md:
-    latest_known_python_version = "3.14"
+    latest_known_python_version = "3.15"
 
 
 class _CustomArgumentParser(argparse.ArgumentParser):

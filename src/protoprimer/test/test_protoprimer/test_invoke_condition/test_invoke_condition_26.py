@@ -11,14 +11,14 @@ from protoprimer.primer_kernel import (
 from local_test.invoke_condition_helper import (
     ContainerSession,
     InvokeCondition,
-    image_python_3_14,
+    image_python_3_15,
 )
 
 
 def test_pip_user_var_breaks_pip_driver_install(tmp_path):
     assert InvokeCondition.env_foreign_tool_vars.test_file_basename == "test_invoke_condition_26.py"
 
-    with ContainerSession(image_python_3_14, tmp_path) as container:
+    with ContainerSession(image_python_3_15, tmp_path) as container:
         result = container.run(
             "./prime --env dst/test_python_max",
             env={

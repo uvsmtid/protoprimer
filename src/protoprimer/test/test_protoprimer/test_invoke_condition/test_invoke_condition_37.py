@@ -8,14 +8,14 @@ from local_test.invoke_condition_helper import (
     ContainerSession,
     InvokeCondition,
     boot_max_script,
-    image_python_3_14,
+    image_python_3_15,
 )
 
 
 def test_boot_with_another_env_than_lconf_symlink_fails(tmp_path):
     assert InvokeCondition.env_selection_mismatch.test_file_basename == "test_invoke_condition_37.py"
 
-    with ContainerSession(image_python_3_14, tmp_path) as container:
+    with ContainerSession(image_python_3_15, tmp_path) as container:
         boot_result = container.run(boot_max_script)
         assert boot_result.exit_code == 0, str(boot_result)
 

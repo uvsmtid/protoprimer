@@ -11,14 +11,14 @@ from protoprimer.primer_kernel import (
 from local_test.invoke_condition_helper import (
     ContainerSession,
     InvokeCondition,
-    image_python_3_14,
+    image_python_3_15,
 )
 
 
 def test_py_exec_not_verified_against_actual_python(tmp_path):
     assert InvokeCondition.state_var_mismatch_reality.test_file_basename == "test_invoke_condition_29.py"
 
-    with ContainerSession(image_python_3_14, tmp_path) as container:
+    with ContainerSession(image_python_3_15, tmp_path) as container:
         # Claim `venv` stride while running in the system `python` (and no `venv` exists):
         result = container.run("./prime --env dst/test_python_max", env={EnvVar.var_PROTOPRIMER_PY_EXEC.value: _StateStride.stride_py_venv.name})
 

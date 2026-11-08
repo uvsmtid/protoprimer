@@ -60,7 +60,8 @@ def test_get_config_with_leap_client(proto_kernel_abs_path):
 
     assert conf_data[ConfField.field_default_env_dir_rel_path.value] == "dst/default_env"
 
-    assert conf_data[ConfField.field_required_python_version.value] == "3.14.0"
+    # FT_84_11_73_28.supported_python_versions.md:
+    assert conf_data[ConfField.field_required_python_version.value] == "3.15.2"
 
     assert conf_data[ConfField.field_python_selector_file_rel_path.value] == "src/proto_code/python_selector_same.py"
 
@@ -175,7 +176,8 @@ def test_get_config_with_leap_derived(proto_kernel_abs_path):
 
     assert conf_data[_EnvState.state_selected_env_dir_rel_path_inited.name] == "dst/default_env"
 
-    assert conf_data[_EnvState.state_required_python_version_inited.name] == "3.14.0"
+    # FT_84_11_73_28.supported_python_versions.md:
+    assert conf_data[_EnvState.state_required_python_version_inited.name] == "3.15.2"
 
     assert conf_data[_EnvState.state_venv_driver_inited.name] == VenvDriverType.venv_uv.name
 

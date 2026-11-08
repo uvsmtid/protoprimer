@@ -31,7 +31,7 @@ jobs:
             matrix:
                 # FT_84_11_73_28.supported_python_versions.md:
                 python-version:
-                    -   "3.14"
+                    -   "3.15"
         steps:
             -   run: "echo runner.os: ${{ runner.os }}"
             -   run: "echo github.repository: ${{ github.repository }}"
@@ -43,7 +43,7 @@ jobs:
                     python-version: ${{ matrix.python-version }}
 
             # FT_84_11_73_28.supported_python_versions.md:
-            -   run: "which python3.14"
+            -   run: "which python3.15"
             -   run: "python --version"
 
             -   uses: actions/checkout@v4

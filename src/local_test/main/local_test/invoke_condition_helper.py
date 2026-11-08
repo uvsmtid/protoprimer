@@ -30,10 +30,10 @@ image_python_3_6 = "python:3.6.15-slim"
 image_python_3_7 = "python:3.7.17-slim"
 image_python_3_9 = "python:3.9.25-slim"
 image_python_3_12 = "python:3.12.12-slim"
-image_python_3_14 = "python:3.14.0-slim"
+image_python_3_15 = "python:3.15.2-slim"
 image_debian = "debian:bookworm-slim"
 
-# Boot this repo into `/work/venv` with the `required_python_version` 3.14.0:
+# Boot this repo into `/work/venv` with the `required_python_version` 3.15.2:
 boot_max_script = "./prime --env dst/test_python_max"
 
 

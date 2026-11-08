@@ -3,7 +3,7 @@
     "default_env_dir_rel_path": "dst/default_env",
 
     "__comment__": "See: FT_84_11_73_28.supported_python_versions.md",
-    "required_python_version": "3.14.0",
+    "required_python_version": "3.15.2",
     "python_selector_file_rel_path": "src/proto_code/python_selector_same.py",
 
     "venv_driver": "venv_uv",

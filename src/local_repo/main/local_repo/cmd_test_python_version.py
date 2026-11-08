@@ -13,8 +13,8 @@ logger = logging.getLogger()
 class PythonVersion(enum.Enum):
 
     python_min = "3.7"
-    python_med = "3.10"
-    python_max = "3.14"
+    python_med = "3.11"
+    python_max = "3.15"
 
 
 def custom_main():

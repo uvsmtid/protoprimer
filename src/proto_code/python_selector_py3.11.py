@@ -8,4 +8,4 @@ def select_python_file_abs_path(required_version: tuple[int, int, int]) -> str |
     Implements `_SelectorFunc.select_python_file_abs_path` from `protoprimer.primer_kernel`.
     """
 
-    return shutil.which("python3.10")
+    return shutil.which("python3.11")

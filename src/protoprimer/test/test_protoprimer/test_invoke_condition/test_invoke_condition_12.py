@@ -8,14 +8,14 @@ from local_test.invoke_condition_helper import (
     ContainerSession,
     InvokeCondition,
     boot_max_script,
-    image_python_3_14,
+    image_python_3_15,
 )
 
 
 def test_selector_returning_python_from_dedicated_venv_is_rejected(tmp_path):
     assert InvokeCondition.venv_python_is_selected_python.test_file_basename == "test_invoke_condition_12.py"
 
-    with ContainerSession(image_python_3_14, tmp_path) as container:
+    with ContainerSession(image_python_3_15, tmp_path) as container:
         boot_result = container.run(boot_max_script)
         assert boot_result.exit_code == 0, str(boot_result)
 
@@ -26,7 +26,7 @@ def select_python_file_abs_path(required_version):
     return "/work/venv/bin/python"
 """,
         )
-        container.run("sed -i 's#src/proto_code/python_selector_py3.14.py#src/proto_code/venv_selector.py#' dst/test_python_max/proto_kernel.json")
+        container.run("sed -i 's#src/proto_code/python_selector_py3.15.py#src/proto_code/venv_selector.py#' dst/test_python_max/proto_kernel.json")
         result = container.run(boot_max_script)
 
     assert result.exit_code != 0, str(result)

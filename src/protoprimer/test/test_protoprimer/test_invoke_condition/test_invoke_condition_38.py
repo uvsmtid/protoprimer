@@ -8,14 +8,14 @@ from local_test.invoke_condition_helper import (
     ContainerSession,
     InvokeCondition,
     boot_max_script,
-    image_python_3_14,
+    image_python_3_15,
 )
 
 
 def test_start_and_reboot_work_offline_after_online_boot(tmp_path):
     assert InvokeCondition.host_offline_or_proxied.test_file_basename == "test_invoke_condition_38.py"
 
-    with ContainerSession(image_python_3_14, tmp_path) as container:
+    with ContainerSession(image_python_3_15, tmp_path) as container:
         boot_result = container.run(boot_max_script)
         assert boot_result.exit_code == 0, str(boot_result)
 

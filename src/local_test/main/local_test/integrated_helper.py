@@ -52,8 +52,8 @@ def convert_test_python_version(python_version_str: str) -> str:
     ) = python_version_tuple
 
     # FT_84_11_73_28.supported_python_versions.md:
-    if (3, 14) <= (major_version, minor_version) < (3, 15):
-        python_version_tuple = (3, 14, 0)
+    if (3, 15) <= (major_version, minor_version) < (3, 16):
+        python_version_tuple = (3, 15, 0)
 
     return f"{python_version_tuple[0]}.{python_version_tuple[1]}.{python_version_tuple[2]}"
 
