@@ -23,4 +23,4 @@ def test_python_older_than_required_switches_to_required_python(tmp_path):
 
     assert result.exit_code == 0, str(result)
     assert _StateStride.stride_py_required.name in result.stderr, str(result)
-    assert venv_version.stdout.strip() == "Python 3.14.0", str(venv_version)
+    assert venv_version.stdout.strip() == "Python 3.15.2", str(venv_version)

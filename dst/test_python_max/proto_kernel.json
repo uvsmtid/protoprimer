@@ -1,5 +1,5 @@
 {
     "__comment__": "See: FT_84_11_73_28.supported_python_versions.md",
-    "required_python_version": "3.14.0",
-    "python_selector_file_rel_path": "src/proto_code/python_selector_py3.14.py"
+    "required_python_version": "3.15.2",
+    "python_selector_file_rel_path": "src/proto_code/python_selector_py3.15.py"
 }

@@ -11,14 +11,14 @@ from protoprimer.primer_kernel import (
 from local_test.invoke_condition_helper import (
     ContainerSession,
     InvokeCondition,
-    image_python_3_14,
+    image_python_3_15,
 )
 
 
 def test_leaked_py_exec_makes_new_run_skip_switching_to_venv(tmp_path):
     assert InvokeCondition.state_var_stale_leaked.test_file_basename == "test_invoke_condition_28.py"
 
-    with ContainerSession(image_python_3_14, tmp_path) as container:
+    with ContainerSession(image_python_3_15, tmp_path) as container:
         # The last stride leaked from a parent process - nothing is switched, client code runs in a wrong `python`:
         result = container.run("./prime --env dst/test_python_max", env={EnvVar.var_PROTOPRIMER_PY_EXEC.value: _StateStride.stride_src_updated.name})
 

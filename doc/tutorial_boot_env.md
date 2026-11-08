@@ -50,7 +50,7 @@ some_app_process = subprocess.run(
     text=True,
 )
 assert some_app_process.returncode != 0, some_app_process.stdout + some_app_process.stderr
-assert some_app_process.stderr.endswith(expected_import_error), some_app_process.stderr
+assert some_app_process.stderr.strip().splitlines()[-1].startswith(expected_import_error.strip()), some_app_process.stderr
 --->
 
 Although [A] creating, [B] activating, and [C] populating a `venv` is standard practice:

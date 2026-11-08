@@ -8,14 +8,14 @@ from local_test.invoke_condition_helper import (
     ContainerSession,
     InvokeCondition,
     boot_max_script,
-    image_python_3_14,
+    image_python_3_15,
 )
 
 
 def test_dangling_venv_python_fails_with_raw_file_not_found(tmp_path):
     assert InvokeCondition.venv_broken_or_dangling.test_file_basename == "test_invoke_condition_16.py"
 
-    with ContainerSession(image_python_3_14, tmp_path) as container:
+    with ContainerSession(image_python_3_15, tmp_path) as container:
         boot_result = container.run(boot_max_script)
         assert boot_result.exit_code == 0, str(boot_result)
 
