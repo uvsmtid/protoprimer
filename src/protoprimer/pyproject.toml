@@ -61,6 +61,15 @@ classifiers = [
     "Intended Audience :: End Users/Desktop",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3 :: Only",
+    # FT_84_11_73_28.supported_python_versions.md:
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "Operating System :: OS Independent",
     "Topic :: Software Development :: Build Tools",
     "Topic :: System :: Installation/Setup",
@@ -86,7 +95,7 @@ Documentation = "https://protoprimer.readthedocs.io"
 
 [tool.local_contract_compatibility]
 baseline_commit_names = [
-    "HEAD",
+    "47a3f83f29510baa881554d80250fb171ccc5aa8",
 ]
 
 [tool.setuptools.packages.find]

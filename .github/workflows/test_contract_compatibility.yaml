@@ -12,6 +12,10 @@ on:
         -   cron: "0 10 * * *"
 permissions:
     contents: read
+# Cancel superseded runs per branch (never on `main`: every commit keeps its run):
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref == 'refs/heads/main' && github.sha || github.ref }}
+    cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 jobs:
     bootstrap_scenarios:
         # Same-repo PR-s are already covered by `push` (avoid running twice):
@@ -46,6 +50,13 @@ jobs:
                 with:
                     # Full history with tags: `baseline_commit_names` can be arbitrary commit names:
                     fetch-depth: 0
+
+            -   uses: actions/cache@v4
+                with:
+                    path: |
+                        ~/.cache/uv
+                        ~/.cache/pip
+                    key: deps-${{ runner.os }}-${{ hashFiles('dst/test_python_max/version_constraints.txt') }}
 
             -   run: |
                     ${{ github.workspace }}/prime -vvv --env dst/test_python_max

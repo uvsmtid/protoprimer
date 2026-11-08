@@ -11,7 +11,6 @@
 #
 # A bootstrap script that starts with a **wild** `python` version
 # to invoke code from a configured `venv` using the **required** `python` version.
-# FT_84_11_73_28.supported_python_versions.md: tested for `python` 3.7 min and above.
 # Documentation: https://protoprimer.readthedocs.io/
 # Source: https://github.com/uvsmtid/protoprimer
 # SPDX-License-Identifier: MIT
@@ -21,6 +20,7 @@
 #       Be able to generate any shebang for `proto_code`.
 #
 
+# FT_84_11_73_28.supported_python_versions.md: tested for `python` 3.7 min and above.
 from __future__ import annotations
 
 import argparse
