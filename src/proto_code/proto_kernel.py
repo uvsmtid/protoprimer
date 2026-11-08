@@ -11,7 +11,6 @@
 #
 # A bootstrap script that starts with a **wild** `python` version
 # to invoke code from a configured `venv` using the **required** `python` version.
-# FT_84_11_73_28.supported_python_versions.md: tested for `python` 3.7 min and above.
 # Documentation: https://protoprimer.readthedocs.io/
 # Source: https://github.com/uvsmtid/protoprimer
 # SPDX-License-Identifier: MIT
@@ -21,6 +20,7 @@
 #       Be able to generate any shebang for `proto_code`.
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+# FT_84_11_73_28.supported_python_versions.md: tested for `python` 3.7 min and above.
 from __future__ import annotations
 
 import argparse
@@ -39,11 +39,11 @@ import subprocess
 import sys
 import textwrap
 import typing
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 # The release process ensures that content in this file matches the version below while tagging the release commit
 # (otherwise, if the file comes from a different commit, the version is irrelevant):
 __version__ = "0.14.0.dev2"
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
 _logger: logging.Logger = logging.getLogger()
 
 _log_stride = contextvars.ContextVar("state_stride")
@@ -63,11 +63,11 @@ def _run_process(env_ctx: _EnvContext) -> None:
     # See UC_10_80_27_57.extend_DAG.md
     try:
         _ensure_min_python_version()
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
         state_everything_executed: bool = env_ctx.eval_state(_TargetState.target_everything_executed.value.name)
         assert state_everything_executed
         atexit.register(lambda: env_ctx.print_exit_line(0))
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     except subprocess.CalledProcessError as subproc_error:
         # Convert the list of arguments into a single shell-escaped string:
         if isinstance(subproc_error.cmd, list):

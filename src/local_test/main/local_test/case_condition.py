@@ -17,6 +17,10 @@ from protoprimer.primer_kernel import (
 
 integ_env_var = "CI"
 
+# Unlike `CI` (a convention set by CI systems), this one is a project-specific switch:
+# FT_64_09_03_66.invoke_condition.md
+invoke_condition_env_var = "TEST_PROTOPRIMER_INVOKE_CONDITION"
+
 
 def any_to_bool(v) -> bool:
     """

@@ -1,0 +1,61 @@
+run-name: "${{ github.workflow }}: ${{ github.actor }}: ${{ github.event_name }}: ${{ github.ref_name }}: ${{ github.ref_type }}"
+on:
+    push:
+        branches:
+        -   "*"
+    pull_request:
+        branches:
+        -   "*"
+    schedule:
+        # Keep running periodically to detect issues with newly released dependencies and images:
+        # Every day at 18:00 SGT:
+        -   cron: "0 10 * * *"
+permissions:
+    contents: read
+# Cancel superseded runs per branch (never on `main`: every commit keeps its run):
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref == 'refs/heads/main' && github.sha || github.ref }}
+    cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+jobs:
+    invoke_condition_scenarios:
+        # Same-repo PR-s are already covered by `push` (avoid running twice):
+        if: >-
+            github.event_name != 'pull_request'
+            ||
+            github.event.pull_request.head.repo.full_name != github.repository
+        runs-on: ubuntu-latest
+
+        steps:
+            -   run: "echo runner.os: ${{ runner.os }}"
+            -   run: "echo github.repository: ${{ github.repository }}"
+            -   run: "echo github.ref: ${{ github.ref }}"
+
+            # The host `python` only runs the tests (scenarios run inside containers):
+            -   uses: actions/setup-python@v5
+                with:
+                    python-version: "3.14"
+
+            -   run: "python --version"
+            -   run: "docker --version"
+
+            -   uses: actions/checkout@v4
+
+            -   uses: actions/cache@v4
+                with:
+                    path: |
+                        ~/.cache/uv
+                        ~/.cache/pip
+                    key: deps-${{ runner.os }}-${{ hashFiles('dst/test_python_max/version_constraints.txt') }}
+
+            -   run: |
+                    ${{ github.workspace }}/prime -vvv --env dst/test_python_max
+                    ${{ github.workspace }}/cmd/prime_env -vvv --env dst/test_python_max
+
+            # FT_64_09_03_66.invoke_condition.md:
+            # These tests are skipped by default (not run by `CI=true` runs of `test_py_*` jobs):
+            -   run: |
+                    ${{ github.workspace }}/venv/bin/python -m pytest src/protoprimer/test/test_protoprimer/test_invoke_condition
+                env:
+                    TEST_PROTOPRIMER_INVOKE_CONDITION: "true"
+
+            -   run: "echo job.status: ${{ job.status }}"
