@@ -1,5 +1,6 @@
 [build-system]
 
+# TODO: FT_32_61_30_43.monorepo_support.md: use different `venv` for `metaprimer` with recent `setuptools` version:
 requires = ["setuptools>=42"]
 build-backend = "setuptools.build_meta"
 
@@ -11,11 +12,13 @@ authors = [
 ]
 description = "bootstrap beyond protoprimer"
 readme = "readme.md"
+# TODO: FT_32_61_30_43.monorepo_support.md: use different `venv` for `metaprimer` with recent `python` version:
 # FT_84_11_73_28.supported_python_versions.md:
 requires-python = ">=3.7"
-# TODO: TODO_92_43_44_50.migrate_license_to_spdx.md:
-# TODO: Use an SPDX string (the TOML table is deprecated by 2027-Feb-18).
-license = { text = "MIT" }
+
+# TODO: FT_32_61_30_43.monorepo_support.md: use different `venv` for `metaprimer` with no requirement to support EOL:
+# FT_81_79_98_73.EOL_support.md: an instance of old/new mutually-exclusive dependency formats.
+dynamic = ["license"]
 
 keywords = [
 ]

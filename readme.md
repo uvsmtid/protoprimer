@@ -1,13 +1,13 @@
 
 [![PyPI version](https://img.shields.io/pypi/v/protoprimer.svg?style=flat-square&color=blue&label=package)](https://pypi.org/project/protoprimer)
-[![Python versions](https://img.shields.io/pypi/pyversions/protoprimer.svg?style=flat-square&color=blue)](https://pypi.org/project/protoprimer)
+[![Python versions](https://img.shields.io/pypi/pyversions/protoprimer.svg?style=flat-square&color=blue&label=py%5Bmin%7Cmed%7Cmax%5D)](https://pypi.org/project/protoprimer)
 
 <!--
 FT_84_11_73_28.supported_python_versions.md:
 -->
-[![GitHub test min python job](https://img.shields.io/github/actions/workflow/status/uvsmtid/protoprimer/test_py_min.yaml.svg?style=flat-square&color=palegreen&label=%5Bmin%5D)](https://github.com/uvsmtid/protoprimer/actions/workflows/test_py_min.yaml)
-[![GitHub test med python job](https://img.shields.io/github/actions/workflow/status/uvsmtid/protoprimer/test_py_med.yaml.svg?style=flat-square&color=palegreen&label=%5Bmed%5D)](https://github.com/uvsmtid/protoprimer/actions/workflows/test_py_med.yaml)
-[![GitHub test max python job](https://img.shields.io/github/actions/workflow/status/uvsmtid/protoprimer/test_py_max.yaml.svg?style=flat-square&color=palegreen&label=%5Bmax%5D)](https://github.com/uvsmtid/protoprimer/actions/workflows/test_py_max.yaml)
+[![GitHub test min python job](https://img.shields.io/github/actions/workflow/status/uvsmtid/protoprimer/test_py_min.yaml.svg?style=flat-square&color=palegreen&label=py%5Bmin%5D)](https://github.com/uvsmtid/protoprimer/actions/workflows/test_py_min.yaml)
+[![GitHub test med python job](https://img.shields.io/github/actions/workflow/status/uvsmtid/protoprimer/test_py_med.yaml.svg?style=flat-square&color=palegreen&label=py%5Bmed%5D)](https://github.com/uvsmtid/protoprimer/actions/workflows/test_py_med.yaml)
+[![GitHub test max python job](https://img.shields.io/github/actions/workflow/status/uvsmtid/protoprimer/test_py_max.yaml.svg?style=flat-square&color=palegreen&label=py%5Bmax%5D)](https://github.com/uvsmtid/protoprimer/actions/workflows/test_py_max.yaml)
 [![GitHub test compatibility job](https://img.shields.io/github/actions/workflow/status/uvsmtid/protoprimer/test_contract_compatibility.yaml.svg?style=flat-square&color=palegreen&label=api)](https://github.com/uvsmtid/protoprimer/actions/workflows/test_contract_compatibility.yaml)
 [![GitHub test invoke condition job](https://img.shields.io/github/actions/workflow/status/uvsmtid/protoprimer/test_invoke_condition.yaml.svg?style=flat-square&color=palegreen&label=invoke)](https://github.com/uvsmtid/protoprimer/actions/workflows/test_invoke_condition.yaml)
 [![GitHub lint job](https://img.shields.io/github/actions/workflow/status/uvsmtid/protoprimer/lint.yaml.svg?style=flat-square&color=palegreen&label=lint)](https://github.com/uvsmtid/protoprimer/actions/workflows/lint.yaml)
@@ -16,23 +16,39 @@ FT_84_11_73_28.supported_python_versions.md:
 
 # `protoprimer`
 
-... eliminates `shell` scripts **right off the bootstrap**:
-
 <!-- NOTE: style="width: 11ch" ~ 11 chars = len("protoprimer"); snippet locked to height: 11ch so both track the same ch unit -->
 
 # <code><a href="https://protoprimer.readthedocs.io/"><img src="doc/_static/protoprimer.logo.svg" alt="logo" style="width: 11ch; height: auto;"></a></code> <code><img src="doc/_static/shell_snippet.svg" alt="shell snippet" style="height: 11ch; width: auto;"></code>
 
-Want your users to run software **isolated** in a `git` repo after a single zero-argument command?
+`protoprimer` eliminates `shell` scripts **right off the bootstrap**:
 
 ```sh
 ./prime
 ```
 
+This triggers customizable pure-`python` end-to-end repo clone initialization:
+
+*   single-touch
+*   zero-argument
+*   self-contained
+*   cross-platform
+*   well-tested
+
+Do you want to spend time 🟥 **writing manuals** or 🟩 **writing code**?
+
+Do you want your users to 🟥 **read manuals** or 🟩 **run one command**?
+
+Make software distribution via a repo clone trivial:
+
+*   **isolate** environments [per repo clone]
+*   **customize** steps [per repo clone]
+*   **pin** versions [per repo clone]
+
 See the [Intro][protoprimer_readthedocs_intro] doc.
 
-## TL;DR
+## Bootstrap
 
-`protoprimer` employs ubiquitous `python` for version pinning to provide a robust alternative to `shell`:
+`protoprimer` employs **ubiquitous** `python` to provide a **robust** alternative to `shell`:
 
 *   First, a **wild** `python` version found in `PATH` executes a shim that invokes `protoprimer`.
 *   Last, `protoprimer` executes user code by the **required** `python` version from the configured `venv`.
@@ -173,6 +189,8 @@ graph LR;
 ```
 <!-- diagram:proto_kernel_copy:end -->
 
+For example, in the trivial case of a flat repo:
+
 *   Copy (one time):
 
     Commit your **own copy** next to `pyproject.toml`:
@@ -185,6 +203,12 @@ graph LR;
     ```
 
     The location, name, and details can be changed through optional config.
+
+*   Run (any time):
+
+    ```sh
+    ./proto_kernel.py
+    ```
 
 <a id="protoprimer-first-examples"></a>
 
@@ -242,6 +266,19 @@ See [Start app][protoprimer_readthedocs_tutorial_start_app].
 
 </details>
 
+<a id="protoprimer-entry-functions"></a>
+
+## Entry functions
+
+There are two primary entry functions - see details in [boot_vs_start][FT_58_74_37_70.boot_vs_start.md]:
+
+| Function:    | [boot_env][FT_85_17_35_21.boot_env.md]                | [start_app][FT_05_08_64_67.start_app.md]                              |
+|--------------|-------------------------------------------------------|-----------------------------------------------------------------------|
+| Purpose:     | **extend** the default bootstrap<br>with custom steps | run an **arbitrary** script<br>from `venv` with the required `python` |
+| Cardinality: | **one** script per project                            | **many** scripts per project                                          |
+| Assumes:     | `venv` is **not** ready                               | `venv` is ready                                                       |
+| Example:     | `./cmd/boot_env_example`                              | `./cmd/start_app_example`                                             |
+
 ## Main terms
 
 See the [Dictionary][protoprimer_readthedocs_dictionary].
@@ -278,17 +315,6 @@ It is a convenient wrapper around a `venv` function - the **easy** (generatable)
 ./cmd/start_app_example
 ```
 
-## Entry functions
-
-There are two primary entry functions - see details in [boot_vs_start][FT_58_74_37_70.boot_vs_start.md]:
-
-| Function:    | [boot_env][FT_85_17_35_21.boot_env.md]                | [start_app][FT_05_08_64_67.start_app.md]                              |
-|--------------|-------------------------------------------------------|-----------------------------------------------------------------------|
-| Purpose:     | **extend** the default bootstrap<br>with custom steps | run an **arbitrary** script<br>from `venv` with the required `python` |
-| Cardinality: | **one** script per project                            | **many** scripts per project                                          |
-| Assumes:     | `venv` is **not** ready                               | `venv` is ready                                                       |
-| Example:     | `./cmd/boot_env_example`                              | `./cmd/start_app_example`                                             |
-
 ## Docs
 
 *   [Intro][protoprimer_readthedocs_intro]
@@ -298,8 +324,6 @@ There are two primary entry functions - see details in [boot_vs_start][FT_58_74_
 *   [Reference][protoprimer_readthedocs_reference]
 *   [Dictionary][protoprimer_readthedocs_dictionary]
 *   [Alternative][protoprimer_readthedocs_alternative]
-
-<a id="protoprimer-entry-functions"></a>
 
 [protoprimer_readthedocs_intro]: https://protoprimer.readthedocs.io/latest/intro.html
 [protoprimer_readthedocs_tutorial]: https://protoprimer.readthedocs.io/latest/tutorial_overview.html
