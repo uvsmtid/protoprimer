@@ -13,7 +13,7 @@ concurrency:
     group: ${{ github.workflow }}-${{ github.ref == 'refs/heads/main' && github.sha || github.ref }}
     cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 jobs:
-    bootstrap_scenarios:
+    report_coverage:
         # Same-repo PR-s are already covered by `push` (avoid running twice):
         if: >-
             github.event_name != 'pull_request'

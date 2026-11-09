@@ -60,12 +60,7 @@ def test_project_description():
     assert github_description is not None
 
     emoji_map = {
-        ":sparkles:": "✨",
-        ":boot:": "👢",
-        ":bomb:": "💣",
-        ":shield:": "🛡️",
-        ":rocket:": "🚀",
-        ":fast_forward:": "⏩",
+        ":arrow_forward:": "▶️",
     }
 
     translated_description = github_description
