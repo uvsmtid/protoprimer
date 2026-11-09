@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "protoprimer"
-version = "0.14.0"
+version = "0.14.1"
 
 authors = [
     { name = "uvsmtid", email = "uvsmtid@gmail.com" },
@@ -15,7 +15,7 @@ authors = [
 # https://github.com/uvsmtid/protoprimer
 description = "Escape the fragile mess of pre-venv shell scripts with a pure python bootstrapper: single-touch, zero-args, self-contained, no-deps, cross-platform, testable init logic using standard tools to run apps in a custom environment isolated per repository clone"
 
-readme = "readme.md"
+readme = { text = "See the [documentation](https://protoprimer.readthedocs.io).", content-type = "text/markdown" }
 
 # FT_84_11_73_28.supported_python_versions.md:
 requires-python = ">=3.7"
@@ -56,24 +56,30 @@ keywords = [
 ]
 
 classifiers = [
+    "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Information Technology",
     "Intended Audience :: Developers",
     "Intended Audience :: End Users/Desktop",
-    "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3 :: Only",
-    # FT_84_11_73_28.supported_python_versions.md:
-    "Programming Language :: Python :: 3.7",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
-    "Programming Language :: Python :: 3.13",
-    "Programming Language :: Python :: 3.14",
-    "Programming Language :: Python :: 3.15",
-    "Operating System :: OS Independent",
+    "Intended Audience :: System Administrators",
     "Topic :: Software Development :: Build Tools",
     "Topic :: System :: Installation/Setup",
+    "Topic :: System :: Systems Administration",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: System :: Software Distribution",
+    "Topic :: Utilities",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    # FT_84_11_73_28.supported_python_versions.md: min:
+    "Programming Language :: Python :: 3.7",
+    # FT_84_11_73_28.supported_python_versions.md: max:
+    "Programming Language :: Python :: 3.15",
+    "Operating System :: OS Independent",
+    "Operating System :: POSIX :: Linux",
+    "Operating System :: MacOS",
+    # TODO: TODO_50_98_96_87.support_windows.md:
+    # "Operating System :: Microsoft :: Windows",
+    "Natural Language :: English",
     "Environment :: Console",
 ]
 
