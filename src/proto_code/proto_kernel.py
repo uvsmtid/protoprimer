@@ -42,7 +42,7 @@ import typing
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 # The release process ensures that content in this file matches the version below while tagging the release commit
 # (otherwise, if the file comes from a different commit, the version is irrelevant):
-__version__ = "0.14.0"
+__version__ = "0.14.1"
 
 _logger: logging.Logger = logging.getLogger()
 
