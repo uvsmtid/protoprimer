@@ -717,7 +717,7 @@ class _VenvDriverBase:
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
         # Adding `venv/bin` is required for `uv` to access `keyring`.
         # See: FT_17_41_51_83.private_artifact_repo.md
-        env_vars[_ConfConstInput.ext_env_var_PATH] = f"{os.path.dirname(venv_python_file_abs_path)}:{env_vars[_ConfConstInput.ext_env_var_PATH]}"
+        env_vars[_ConfConstInput.ext_env_var_PATH] = f"{os.path.dirname(venv_python_file_abs_path)}{os.pathsep}{env_vars[_ConfConstInput.ext_env_var_PATH]}"
 
         subprocess.check_call(
             sub_proc_args,
@@ -1346,27 +1346,36 @@ class _ConfConstGeneral:
     # but unused (evaluated dynamically via the bootstrap process):
     input_based = None
 
-    file_rel_path_venv_bin = os.path.join("bin")
+    # TODO: TODO_50_98_96_87.support_windows.md: Milestone 1 minimal patch; see "`venv` layout" `## Plan` item for the real fix:
+    name_windows_executable_ext = ".exe"
 
+    name_venv_bin_dir = "Scripts" if os.name == "nt" else "bin"
+
+    name_python_executable = f"python{name_windows_executable_ext}" if os.name == "nt" else "python"
+
+    file_rel_path_venv_bin = os.path.join(name_venv_bin_dir)
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     file_rel_path_venv_python = os.path.join(
         file_rel_path_venv_bin,
-        "python",
+        name_python_executable,
     )
 
     file_rel_path_venv_activate = os.path.join(
         file_rel_path_venv_bin,
-        "activate",
+        "activate.bat" if os.name == "nt" else "activate",
     )
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
+    name_uv_executable = f"{name_uv_package}{name_windows_executable_ext}" if os.name == "nt" else name_uv_package
+
     file_rel_path_venv_uv = os.path.join(
         file_rel_path_venv_bin,
-        name_uv_package,
+        name_uv_executable,
     )
 
     log_section_delimiter = "=" * 5
 
     min_lines_between_generated_boilerplate = 20
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     # FT_56_85_65_41.generated_boilerplate.md
     func_get_proto_kernel_generated_boilerplate_single_header = lambda module_obj: (
         f"""
@@ -1381,14 +1390,14 @@ class _ConfConstGeneral:
 ################################################################################
 """
     )
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     # FT_56_85_65_41.generated_boilerplate.md
     func_get_proto_kernel_generated_boilerplate_multiple_body = lambda module_obj: (
         f"""
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 """
     )
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     # FT_56_85_65_41.generated_boilerplate.md
     # UC_71_59_90_97.generated_entry_script.md
     entry_script_boilerplate_begin_marker = "# <<< BEGIN: FT_56_85_65_41.generated_boilerplate"
@@ -1405,12 +1414,12 @@ class _ConfConstInput:
     """
     Constants for FT_89_41_35_82.conf_leap.md / leap_input
     """
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     file_abs_path_script = _ConfConstGeneral.input_based
     dir_abs_path_current = _ConfConstGeneral.input_based
 
     default_proto_conf_dir_rel_path: str = f"{_ConfConstGeneral.name_proto_code}"
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     conf_file_ext = "json"
 
     # Next FT_89_41_35_82.conf_leap.md: `_ConfLeap.leap_primer`:
@@ -1429,9 +1438,9 @@ class _ConfConstPrimer:
     """
     Constants for FT_89_41_35_82.conf_leap.md / leap_primer
     """
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-    default_client_conf_dir_rel_path: str = f"{_ConfDst.dst_global.value}"
 
+    default_client_conf_dir_rel_path: str = f"{_ConfDst.dst_global.value}"
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     # Next FT_89_41_35_82.conf_leap.md: `_ConfLeap.leap_client`:
     default_file_basename_leap_client: str = _ConfConstInput.default_file_basename_conf_primer
 
@@ -2762,7 +2771,7 @@ class _Node_state_stride_py_arbitrary_reached_is_app(_AbstractCachingStateNode[_
             # Remove `venv/bin` dir from the `PATH` env var:
             venv_bin_abs_path: str = os.path.join(
                 orig_venv_abs_path,
-                "bin",
+                _ConfConstGeneral.file_rel_path_venv_bin,
             )
             PATH_parts: list[str] = orig_PATH_value.split(os.pathsep)
             cleaned_path_parts = [p for p in PATH_parts if p != venv_bin_abs_path]
@@ -3398,8 +3407,7 @@ class _Node_state_local_conf_symlink_abs_path_inited(_AbstractCachingStateNode[s
                         pass
                     else:
                         # Compare the existing link target and the configured one.
-                        # NOTE: `state_selected_env_dir_rel_path_inited` is relative to `state_ref_root_dir_abs_path_inited`,
-                        #       but a symlink target is resolved relative to the symlink's own dir - adjust before comparing:
+                        # NOTE: `state_selected_env_dir_rel_path_inited` is relative to `state_ref_root_dir_abs_path_inited`, but a symlink target is resolved relative to the symlink's own dir - adjust before comparing:
                         conf_dir_path = os.path.normpath(os.readlink(state_local_conf_symlink_abs_path_inited))
                         expected_conf_dir_path = os.path.normpath(
                             os.path.relpath(
@@ -3420,7 +3428,7 @@ class _Node_state_local_conf_symlink_abs_path_inited(_AbstractCachingStateNode[s
             else:
                 raise AssertionError(f"The entry [{state_local_conf_symlink_abs_path_inited}] is not a symlink.")
         else:
-            # Target must be relative to the symlink's own dir, not `state_ref_root_dir_abs_path_inited`:
+            # Target must be relative to the symlink's own dir, not `state_ref_root_dir_abs_path_inited`; `target_is_directory` is ignored on non-Windows (the target here is always a dir, TODO_50_98_96_87.support_windows.md):
             os.symlink(
                 os.path.normpath(
                     os.path.relpath(
@@ -3429,6 +3437,7 @@ class _Node_state_local_conf_symlink_abs_path_inited(_AbstractCachingStateNode[s
                     )
                 ),
                 state_local_conf_symlink_abs_path_inited,
+                target_is_directory=True,
             )
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
         return state_local_conf_symlink_abs_path_inited
@@ -5929,11 +5938,19 @@ def _switch_python(
     # ensure `stdout` data is not lost on `os.execve`
     sys.stdout.flush()
 
-    os.execve(
-        path=next_python_path,
-        argv=exec_argv,
-        env=required_environ,
-    )
+    if os.name == "nt":
+        # Windows has no real `exec()`; `os.execve` there is emulated as spawn+wait+exit and was observed in CI to lose this self-reinvocation's output (TODO_50_98_96_87.support_windows.md):
+        completed_process = subprocess.run(
+            exec_argv,
+            env=required_environ,
+        )
+        sys.exit(completed_process.returncode)
+    else:
+        os.execve(
+            path=next_python_path,
+            argv=exec_argv,
+            env=required_environ,
+        )
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     # When `os.execve` is mocked:
     # noinspection PyUnreachableCode
@@ -6002,13 +6019,16 @@ def _get_path_to_base_python() -> str:
 
     executable_basename: str = os.path.basename(sys.executable)
 
+    # A plain Windows `python` install has no `Scripts` dir for the interpreter itself, unlike a `venv` (TODO_50_98_96_87.support_windows.md):
+    base_bin_dir_rel_path: str = "" if os.name == "nt" else _ConfConstGeneral.file_rel_path_venv_bin
+
     # Try the current `executable_basename` first.
     # In some cases (e.g. on `macOS` with `homebrew`),
     # there are no simple basenames like `python`.
     # Instead, there are versioned ones like `python3.10`:
     path_to_next_python: str = os.path.join(
         sys.base_prefix,
-        _ConfConstGeneral.file_rel_path_venv_bin,
+        base_bin_dir_rel_path,
         executable_basename,
     )
     if os.path.exists(path_to_next_python):
@@ -6016,7 +6036,7 @@ def _get_path_to_base_python() -> str:
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     path_to_next_python = os.path.join(
         sys.base_prefix,
-        _ConfConstGeneral.file_rel_path_venv_python,
+        _ConfConstGeneral.name_python_executable if os.name == "nt" else _ConfConstGeneral.file_rel_path_venv_python,
     )
     return path_to_next_python
 
