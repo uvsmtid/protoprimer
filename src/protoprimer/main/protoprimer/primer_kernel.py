@@ -3436,8 +3436,6 @@ class _Node_state_local_conf_symlink_abs_path_inited(_AbstractCachingStateNode[s
             else:
                 raise AssertionError(f"The entry [{state_local_conf_symlink_abs_path_inited}] is not a symlink.")
         else:
-            # NOTE: blank line above is required - this function would otherwise exceed the 40-consecutive-
-            #       non-blank-line limit enforced by test_boilerplate_placeholder.py; do not remove it.
 
             # Target must be relative to the symlink's own dir, not `state_ref_root_dir_abs_path_inited`:
             os.symlink(
