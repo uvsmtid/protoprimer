@@ -3436,6 +3436,9 @@ class _Node_state_local_conf_symlink_abs_path_inited(_AbstractCachingStateNode[s
             else:
                 raise AssertionError(f"The entry [{state_local_conf_symlink_abs_path_inited}] is not a symlink.")
         else:
+            # NOTE: blank line above is required - this function would otherwise exceed the 40-consecutive-
+            #       non-blank-line limit enforced by test_boilerplate_placeholder.py; do not remove it.
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
             # Target must be relative to the symlink's own dir, not `state_ref_root_dir_abs_path_inited`:
             os.symlink(
                 os.path.normpath(
@@ -3449,14 +3452,14 @@ class _Node_state_local_conf_symlink_abs_path_inited(_AbstractCachingStateNode[s
                 #       The target here is always a dir (`target_is_directory` is ignored on non-Windows):
                 target_is_directory=True,
             )
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
         return state_local_conf_symlink_abs_path_inited
 
 
 # noinspection PyPep8Naming
 @_trivial_factory
 class _Node_state_local_conf_file_abs_path_inited(_AbstractCachingStateNode[str]):
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     _parent_states = staticmethod(
         lambda: [
             _EnvState.state_primer_conf_file_abs_path_inited.name,
@@ -3471,14 +3474,14 @@ class _Node_state_local_conf_file_abs_path_inited(_AbstractCachingStateNode[str]
         conf_file_base_name = os.path.basename(state_primer_conf_file_abs_path_inited)
 
         state_local_conf_symlink_abs_path_inited: str = self.eval_parent_state(_EnvState.state_local_conf_symlink_abs_path_inited.name)
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
         state_local_conf_file_abs_path_inited = os.path.join(
             state_local_conf_symlink_abs_path_inited,
             conf_file_base_name,
         )
 
         return state_local_conf_file_abs_path_inited
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
 # noinspection PyPep8Naming
 @_trivial_factory
@@ -3495,7 +3498,7 @@ class _Node_state_env_conf_file_data_loaded(_AbstractCachingStateNode[dict]):
     def _eval_state_once(self) -> _ValueType:
         state_print_conf_finalized: bool = self.eval_parent_state(_EnvState.state_print_conf_finalized.name)
         state_local_conf_file_abs_path_inited: str = self.eval_parent_state(_EnvState.state_local_conf_file_abs_path_inited.name)
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
         file_data: dict
         if os.path.exists(state_local_conf_file_abs_path_inited):
             file_data = _read_json_file(state_local_conf_file_abs_path_inited)
@@ -3510,7 +3513,7 @@ class _Node_state_env_conf_file_data_loaded(_AbstractCachingStateNode[dict]):
                     self.env_ctx.get_stride(),
                 )
             file_data = {}
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
         if _can_print_effective_config(self, state_print_conf_finalized):
             print(
                 json.dumps(
@@ -3520,7 +3523,7 @@ class _Node_state_env_conf_file_data_loaded(_AbstractCachingStateNode[dict]):
                     indent=4,
                 )
             )
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
         return file_data
 
 
@@ -3536,13 +3539,13 @@ class _Node_state_required_python_version_inited(_AbstractOverriddenFieldCaching
         ]
     )
     _state_name = staticmethod(lambda: _EnvState.state_required_python_version_inited.name)
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     def _eval_state_once(self) -> _ValueType:
         state_required_python_version_inited: str | None = self._get_overridden_value_or_default(
             ConfField.field_required_python_version.value,
             None,
         )
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
         state_ref_root_dir_abs_path_inited: str = self.eval_parent_state(_EnvState.state_ref_root_dir_abs_path_inited.name)
 
         if state_required_python_version_inited is None:
@@ -3557,14 +3560,14 @@ class _Node_state_required_python_version_inited(_AbstractOverriddenFieldCaching
 
         # validate:
         _parse_python_version(state_required_python_version_inited)
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
         return state_required_python_version_inited
 
 
 # noinspection PyPep8Naming
 @_trivial_factory
 class _Node_state_python_selector_file_abs_path_inited(_AbstractOverriddenFieldCachingStateNode[str]):
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     _parent_states = staticmethod(
         lambda: [
             _EnvState.state_ref_root_dir_abs_path_inited.name,
@@ -3580,7 +3583,7 @@ class _Node_state_python_selector_file_abs_path_inited(_AbstractOverriddenFieldC
             ConfField.field_python_selector_file_rel_path.value,
             None,
         )
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
         state_python_selector_file_abs_path_inited: str | None
         if python_selector_file_rel_path is not None:
             state_ref_root_dir_abs_path_inited: str = self.eval_parent_state(_EnvState.state_ref_root_dir_abs_path_inited.name)
@@ -3590,7 +3593,7 @@ class _Node_state_python_selector_file_abs_path_inited(_AbstractOverriddenFieldC
             )
         else:
             state_python_selector_file_abs_path_inited = None
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
         return state_python_selector_file_abs_path_inited
 
 
@@ -3607,11 +3610,11 @@ class _Node_state_selected_python_file_abs_path_inited(_AbstractCachingStateNode
         ]
     )
     _state_name = staticmethod(lambda: _EnvState.state_selected_python_file_abs_path_inited.name)
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     def _eval_state_once(self) -> _ValueType:
 
         state_python_selector_file_abs_path_inited: str | None = self.eval_parent_state(_EnvState.state_python_selector_file_abs_path_inited.name)
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
         state_required_python_version_inited: str = self.eval_parent_state(_EnvState.state_required_python_version_inited.name)
 
         required_python_version: tuple[int, int, int] = _parse_python_version(state_required_python_version_inited)
