@@ -1,0 +1,70 @@
+run-name: "${{ github.workflow }}: ${{ github.actor }}: ${{ github.event_name }}: ${{ github.ref_name }}: ${{ github.ref_type }}"
+# TODO: TODO_50_98_96_87.support_windows.md: Milestone 1 - experimental only (see `continue-on-error` below).
+on:
+    push:
+        branches:
+        -   "*"
+    pull_request:
+        branches:
+        -   "*"
+permissions:
+    contents: read
+# Cancel superseded runs per branch (never on `main`: every commit keeps its run):
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref == 'refs/heads/main' && github.sha || github.ref }}
+    cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+jobs:
+    test_py_med_windows:
+        # Same-repo PR-s are already covered by `push` (avoid running twice):
+        if: >-
+            github.event_name != 'pull_request'
+            ||
+            github.event.pull_request.head.repo.full_name != github.repository
+        runs-on: windows-latest
+
+        # This job is a first experiment, not yet a decided/required check:
+        # TODO: TODO_50_98_96_87.support_windows.md: Milestone 1 ("first working CI job for Windows").
+        continue-on-error: true
+
+        strategy:
+            # When one of the jobs fails, this prevents canceling another job (for another Python version):
+            fail-fast: false
+            matrix:
+                # FT_84_11_73_28.supported_python_versions.md:
+                python-version:
+                -   "3.11"
+        steps:
+            -   run: "echo runner.os: ${{ runner.os }}"
+            -   run: "echo github.repository: ${{ github.repository }}"
+            -   run: "echo github.ref: ${{ github.ref }}"
+
+            -   name: "matrix.python-version: ${{ matrix.python-version }}"
+                uses: actions/setup-python@v5
+                with:
+                    python-version: ${{ matrix.python-version }}
+
+            # FT_84_11_73_28.supported_python_versions.md:
+            -   run: "python --version"
+
+            -   uses: actions/checkout@v4
+
+            # TODO: TODO_50_98_96_87.support_windows.md: Milestone 1 minimal patch:
+            # invoke via `python` explicitly to sidestep the chmod/shebang sub-section for now.
+            -   run: |
+                    python ${{ github.workspace }}/prime -vvv --env dst/test_python_med
+                    python ${{ github.workspace }}/cmd/prime_env -vvv --env dst/test_python_med
+
+            -   name: ensure git has no local changes and untracked files
+                # TODO: TODO_50_98_96_87.support_windows.md: `version_constraints.txt` legitimately differs on Windows (platform-specific extras), excluded here rather than "fixed" in the kernel.
+                # PowerShell (the default shell for `run:` steps on `windows-latest`):
+                run: |
+                    git diff -- . ':(exclude)dst/test_python_med/version_constraints.txt'
+                    git status --porcelain -- . ':(exclude)dst/test_python_med/version_constraints.txt'
+                    $gitChanges = git status --porcelain -- . ':(exclude)dst/test_python_med/version_constraints.txt'
+                    if ($gitChanges) {
+                        Write-Error "git has local changes:`n$gitChanges"
+                        exit 1
+                    }
+
+            # TODO: TODO_50_98_96_87.support_windows.md: `pytest` is intentionally not run here yet - see Milestone 1 in the doc for why.
+            -   run: "echo job.status: ${{ job.status }}"

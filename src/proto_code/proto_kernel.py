@@ -717,7 +717,7 @@ class _VenvDriverBase:
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
         # Adding `venv/bin` is required for `uv` to access `keyring`.
         # See: FT_17_41_51_83.private_artifact_repo.md
-        env_vars[_ConfConstInput.ext_env_var_PATH] = f"{os.path.dirname(venv_python_file_abs_path)}:{env_vars[_ConfConstInput.ext_env_var_PATH]}"
+        env_vars[_ConfConstInput.ext_env_var_PATH] = f"{os.path.dirname(venv_python_file_abs_path)}{os.pathsep}{env_vars[_ConfConstInput.ext_env_var_PATH]}"
 
         subprocess.check_call(
             sub_proc_args,
@@ -1346,23 +1346,39 @@ class _ConfConstGeneral:
     # but unused (evaluated dynamically via the bootstrap process):
     input_based = None
 
-    file_rel_path_venv_bin = os.path.join("bin")
+    # TODO: TODO_50_98_96_87.support_windows.md:
+    is_os_windows = os.name == "nt"
+
+    name_windows_executable_ext = ".exe"
+    name_windows_script_ext = ".bat"
+
+    name_venv_bin_dir = "Scripts" if is_os_windows else "bin"
+
+    name_python_executable = f"python{name_windows_executable_ext}" if is_os_windows else "python"
+    name_activate_script = f"activate{name_windows_script_ext}" if is_os_windows else "activate"
+    name_uv_executable = f"uv{name_windows_executable_ext}" if is_os_windows else "uv"
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+    file_rel_path_venv_bin = os.path.join(name_venv_bin_dir)
 
     file_rel_path_venv_python = os.path.join(
         file_rel_path_venv_bin,
-        "python",
+        name_python_executable,
     )
 
     file_rel_path_venv_activate = os.path.join(
         file_rel_path_venv_bin,
-        "activate",
-    )
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-    file_rel_path_venv_uv = os.path.join(
-        file_rel_path_venv_bin,
-        name_uv_package,
+        name_activate_script,
     )
 
+    file_rel_path_venv_uv = os.path.join(
+        file_rel_path_venv_bin,
+        name_uv_executable,
+    )
+
+    # TODO: TODO_50_98_96_87.support_windows.md:
+    #       Unlike a `venv`, a plain Windows `python` install has no `Scripts` dir for the interpreter itself:
+    file_rel_path_base_python_bin = "" if is_os_windows else file_rel_path_venv_bin
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     log_section_delimiter = "=" * 5
 
     min_lines_between_generated_boilerplate = 20
@@ -1381,14 +1397,14 @@ class _ConfConstGeneral:
 ################################################################################
 """
     )
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     # FT_56_85_65_41.generated_boilerplate.md
     func_get_proto_kernel_generated_boilerplate_multiple_body = lambda module_obj: (
         f"""
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 """
     )
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     # FT_56_85_65_41.generated_boilerplate.md
     # UC_71_59_90_97.generated_entry_script.md
     entry_script_boilerplate_begin_marker = "# <<< BEGIN: FT_56_85_65_41.generated_boilerplate"
@@ -1405,12 +1421,12 @@ class _ConfConstInput:
     """
     Constants for FT_89_41_35_82.conf_leap.md / leap_input
     """
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     file_abs_path_script = _ConfConstGeneral.input_based
     dir_abs_path_current = _ConfConstGeneral.input_based
 
     default_proto_conf_dir_rel_path: str = f"{_ConfConstGeneral.name_proto_code}"
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     conf_file_ext = "json"
 
     # Next FT_89_41_35_82.conf_leap.md: `_ConfLeap.leap_primer`:
@@ -1429,9 +1445,9 @@ class _ConfConstPrimer:
     """
     Constants for FT_89_41_35_82.conf_leap.md / leap_primer
     """
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-    default_client_conf_dir_rel_path: str = f"{_ConfDst.dst_global.value}"
 
+    default_client_conf_dir_rel_path: str = f"{_ConfDst.dst_global.value}"
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     # Next FT_89_41_35_82.conf_leap.md: `_ConfLeap.leap_client`:
     default_file_basename_leap_client: str = _ConfConstInput.default_file_basename_conf_primer
 
@@ -2762,7 +2778,7 @@ class _Node_state_stride_py_arbitrary_reached_is_app(_AbstractCachingStateNode[_
             # Remove `venv/bin` dir from the `PATH` env var:
             venv_bin_abs_path: str = os.path.join(
                 orig_venv_abs_path,
-                "bin",
+                _ConfConstGeneral.file_rel_path_venv_bin,
             )
             PATH_parts: list[str] = orig_PATH_value.split(os.pathsep)
             cleaned_path_parts = [p for p in PATH_parts if p != venv_bin_abs_path]
@@ -3420,6 +3436,7 @@ class _Node_state_local_conf_symlink_abs_path_inited(_AbstractCachingStateNode[s
             else:
                 raise AssertionError(f"The entry [{state_local_conf_symlink_abs_path_inited}] is not a symlink.")
         else:
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
             # Target must be relative to the symlink's own dir, not `state_ref_root_dir_abs_path_inited`:
             os.symlink(
                 os.path.normpath(
@@ -3429,15 +3446,18 @@ class _Node_state_local_conf_symlink_abs_path_inited(_AbstractCachingStateNode[s
                     )
                 ),
                 state_local_conf_symlink_abs_path_inited,
+                # TODO: TODO_50_98_96_87.support_windows.md:
+                #       The target here is always a dir (`target_is_directory` is ignored on non-Windows):
+                target_is_directory=True,
             )
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
         return state_local_conf_symlink_abs_path_inited
 
 
 # noinspection PyPep8Naming
 @_trivial_factory
 class _Node_state_local_conf_file_abs_path_inited(_AbstractCachingStateNode[str]):
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     _parent_states = staticmethod(
         lambda: [
             _EnvState.state_primer_conf_file_abs_path_inited.name,
@@ -3452,14 +3472,14 @@ class _Node_state_local_conf_file_abs_path_inited(_AbstractCachingStateNode[str]
         conf_file_base_name = os.path.basename(state_primer_conf_file_abs_path_inited)
 
         state_local_conf_symlink_abs_path_inited: str = self.eval_parent_state(_EnvState.state_local_conf_symlink_abs_path_inited.name)
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
         state_local_conf_file_abs_path_inited = os.path.join(
             state_local_conf_symlink_abs_path_inited,
             conf_file_base_name,
         )
 
         return state_local_conf_file_abs_path_inited
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
 # noinspection PyPep8Naming
 @_trivial_factory
@@ -3476,7 +3496,7 @@ class _Node_state_env_conf_file_data_loaded(_AbstractCachingStateNode[dict]):
     def _eval_state_once(self) -> _ValueType:
         state_print_conf_finalized: bool = self.eval_parent_state(_EnvState.state_print_conf_finalized.name)
         state_local_conf_file_abs_path_inited: str = self.eval_parent_state(_EnvState.state_local_conf_file_abs_path_inited.name)
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
         file_data: dict
         if os.path.exists(state_local_conf_file_abs_path_inited):
             file_data = _read_json_file(state_local_conf_file_abs_path_inited)
@@ -3491,7 +3511,7 @@ class _Node_state_env_conf_file_data_loaded(_AbstractCachingStateNode[dict]):
                     self.env_ctx.get_stride(),
                 )
             file_data = {}
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
         if _can_print_effective_config(self, state_print_conf_finalized):
             print(
                 json.dumps(
@@ -3501,7 +3521,7 @@ class _Node_state_env_conf_file_data_loaded(_AbstractCachingStateNode[dict]):
                     indent=4,
                 )
             )
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
         return file_data
 
 
@@ -3517,13 +3537,13 @@ class _Node_state_required_python_version_inited(_AbstractOverriddenFieldCaching
         ]
     )
     _state_name = staticmethod(lambda: _EnvState.state_required_python_version_inited.name)
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     def _eval_state_once(self) -> _ValueType:
         state_required_python_version_inited: str | None = self._get_overridden_value_or_default(
             ConfField.field_required_python_version.value,
             None,
         )
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
         state_ref_root_dir_abs_path_inited: str = self.eval_parent_state(_EnvState.state_ref_root_dir_abs_path_inited.name)
 
         if state_required_python_version_inited is None:
@@ -3538,14 +3558,14 @@ class _Node_state_required_python_version_inited(_AbstractOverriddenFieldCaching
 
         # validate:
         _parse_python_version(state_required_python_version_inited)
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
         return state_required_python_version_inited
 
 
 # noinspection PyPep8Naming
 @_trivial_factory
 class _Node_state_python_selector_file_abs_path_inited(_AbstractOverriddenFieldCachingStateNode[str]):
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     _parent_states = staticmethod(
         lambda: [
             _EnvState.state_ref_root_dir_abs_path_inited.name,
@@ -3561,7 +3581,7 @@ class _Node_state_python_selector_file_abs_path_inited(_AbstractOverriddenFieldC
             ConfField.field_python_selector_file_rel_path.value,
             None,
         )
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
         state_python_selector_file_abs_path_inited: str | None
         if python_selector_file_rel_path is not None:
             state_ref_root_dir_abs_path_inited: str = self.eval_parent_state(_EnvState.state_ref_root_dir_abs_path_inited.name)
@@ -3571,7 +3591,7 @@ class _Node_state_python_selector_file_abs_path_inited(_AbstractOverriddenFieldC
             )
         else:
             state_python_selector_file_abs_path_inited = None
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
         return state_python_selector_file_abs_path_inited
 
 
@@ -3588,11 +3608,11 @@ class _Node_state_selected_python_file_abs_path_inited(_AbstractCachingStateNode
         ]
     )
     _state_name = staticmethod(lambda: _EnvState.state_selected_python_file_abs_path_inited.name)
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     def _eval_state_once(self) -> _ValueType:
 
         state_python_selector_file_abs_path_inited: str | None = self.eval_parent_state(_EnvState.state_python_selector_file_abs_path_inited.name)
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
         state_required_python_version_inited: str = self.eval_parent_state(_EnvState.state_required_python_version_inited.name)
 
         required_python_version: tuple[int, int, int] = _parse_python_version(state_required_python_version_inited)
@@ -5929,11 +5949,20 @@ def _switch_python(
     # ensure `stdout` data is not lost on `os.execve`
     sys.stdout.flush()
 
-    os.execve(
-        path=next_python_path,
-        argv=exec_argv,
-        env=required_environ,
-    )
+    if _ConfConstGeneral.is_os_windows:
+        # TODO: TODO_50_98_96_87.support_windows.md:
+        #       Windows has no real `exec()`:
+        completed_process = subprocess.run(
+            exec_argv,
+            env=required_environ,
+        )
+        sys.exit(completed_process.returncode)
+    else:
+        os.execve(
+            path=next_python_path,
+            argv=exec_argv,
+            env=required_environ,
+        )
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     # When `os.execve` is mocked:
     # noinspection PyUnreachableCode
@@ -6008,7 +6037,7 @@ def _get_path_to_base_python() -> str:
     # Instead, there are versioned ones like `python3.10`:
     path_to_next_python: str = os.path.join(
         sys.base_prefix,
-        _ConfConstGeneral.file_rel_path_venv_bin,
+        _ConfConstGeneral.file_rel_path_base_python_bin,
         executable_basename,
     )
     if os.path.exists(path_to_next_python):
@@ -6016,7 +6045,8 @@ def _get_path_to_base_python() -> str:
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     path_to_next_python = os.path.join(
         sys.base_prefix,
-        _ConfConstGeneral.file_rel_path_venv_python,
+        _ConfConstGeneral.file_rel_path_base_python_bin,
+        _ConfConstGeneral.name_python_executable,
     )
     return path_to_next_python
 
@@ -6033,8 +6063,8 @@ def _get_shell_command_line(arg_list: list[str]):
 def _read_json_file(file_path: str) -> dict:
     with open(file_path, "r", encoding="utf-8") as file_obj:
         return json.load(file_obj)
-
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
 def _write_json_file(
     file_path: str,
     file_data: dict,

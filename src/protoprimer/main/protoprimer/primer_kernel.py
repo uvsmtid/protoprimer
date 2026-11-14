@@ -717,7 +717,7 @@ class _VenvDriverBase:
 
         # Adding `venv/bin` is required for `uv` to access `keyring`.
         # See: FT_17_41_51_83.private_artifact_repo.md
-        env_vars[_ConfConstInput.ext_env_var_PATH] = f"{os.path.dirname(venv_python_file_abs_path)}:{env_vars[_ConfConstInput.ext_env_var_PATH]}"
+        env_vars[_ConfConstInput.ext_env_var_PATH] = f"{os.path.dirname(venv_python_file_abs_path)}{os.pathsep}{env_vars[_ConfConstInput.ext_env_var_PATH]}"
 
         subprocess.check_call(
             sub_proc_args,
@@ -1346,22 +1346,38 @@ class _ConfConstGeneral:
     # but unused (evaluated dynamically via the bootstrap process):
     input_based = None
 
-    file_rel_path_venv_bin = os.path.join("bin")
+    # TODO: TODO_50_98_96_87.support_windows.md:
+    is_os_windows = os.name == "nt"
+
+    name_windows_executable_ext = ".exe"
+    name_windows_script_ext = ".bat"
+
+    name_venv_bin_dir = "Scripts" if is_os_windows else "bin"
+
+    name_python_executable = f"python{name_windows_executable_ext}" if is_os_windows else "python"
+    name_activate_script = f"activate{name_windows_script_ext}" if is_os_windows else "activate"
+    name_uv_executable = f"uv{name_windows_executable_ext}" if is_os_windows else "uv"
+
+    file_rel_path_venv_bin = os.path.join(name_venv_bin_dir)
 
     file_rel_path_venv_python = os.path.join(
         file_rel_path_venv_bin,
-        "python",
+        name_python_executable,
     )
 
     file_rel_path_venv_activate = os.path.join(
         file_rel_path_venv_bin,
-        "activate",
+        name_activate_script,
     )
 
     file_rel_path_venv_uv = os.path.join(
         file_rel_path_venv_bin,
-        name_uv_package,
+        name_uv_executable,
     )
+
+    # TODO: TODO_50_98_96_87.support_windows.md:
+    #       Unlike a `venv`, a plain Windows `python` install has no `Scripts` dir for the interpreter itself:
+    file_rel_path_base_python_bin = "" if is_os_windows else file_rel_path_venv_bin
 
     log_section_delimiter = "=" * 5
 
@@ -2762,7 +2778,7 @@ class _Node_state_stride_py_arbitrary_reached_is_app(_AbstractCachingStateNode[_
             # Remove `venv/bin` dir from the `PATH` env var:
             venv_bin_abs_path: str = os.path.join(
                 orig_venv_abs_path,
-                "bin",
+                _ConfConstGeneral.file_rel_path_venv_bin,
             )
             PATH_parts: list[str] = orig_PATH_value.split(os.pathsep)
             cleaned_path_parts = [p for p in PATH_parts if p != venv_bin_abs_path]
@@ -3420,6 +3436,7 @@ class _Node_state_local_conf_symlink_abs_path_inited(_AbstractCachingStateNode[s
             else:
                 raise AssertionError(f"The entry [{state_local_conf_symlink_abs_path_inited}] is not a symlink.")
         else:
+
             # Target must be relative to the symlink's own dir, not `state_ref_root_dir_abs_path_inited`:
             os.symlink(
                 os.path.normpath(
@@ -3429,6 +3446,9 @@ class _Node_state_local_conf_symlink_abs_path_inited(_AbstractCachingStateNode[s
                     )
                 ),
                 state_local_conf_symlink_abs_path_inited,
+                # TODO: TODO_50_98_96_87.support_windows.md:
+                #       The target here is always a dir (`target_is_directory` is ignored on non-Windows):
+                target_is_directory=True,
             )
 
         return state_local_conf_symlink_abs_path_inited
@@ -5929,11 +5949,20 @@ def _switch_python(
     # ensure `stdout` data is not lost on `os.execve`
     sys.stdout.flush()
 
-    os.execve(
-        path=next_python_path,
-        argv=exec_argv,
-        env=required_environ,
-    )
+    if _ConfConstGeneral.is_os_windows:
+        # TODO: TODO_50_98_96_87.support_windows.md:
+        #       Windows has no real `exec()`:
+        completed_process = subprocess.run(
+            exec_argv,
+            env=required_environ,
+        )
+        sys.exit(completed_process.returncode)
+    else:
+        os.execve(
+            path=next_python_path,
+            argv=exec_argv,
+            env=required_environ,
+        )
 
     # When `os.execve` is mocked:
     # noinspection PyUnreachableCode
@@ -6008,7 +6037,7 @@ def _get_path_to_base_python() -> str:
     # Instead, there are versioned ones like `python3.10`:
     path_to_next_python: str = os.path.join(
         sys.base_prefix,
-        _ConfConstGeneral.file_rel_path_venv_bin,
+        _ConfConstGeneral.file_rel_path_base_python_bin,
         executable_basename,
     )
     if os.path.exists(path_to_next_python):
@@ -6016,7 +6045,8 @@ def _get_path_to_base_python() -> str:
 
     path_to_next_python = os.path.join(
         sys.base_prefix,
-        _ConfConstGeneral.file_rel_path_venv_python,
+        _ConfConstGeneral.file_rel_path_base_python_bin,
+        _ConfConstGeneral.name_python_executable,
     )
     return path_to_next_python
 
