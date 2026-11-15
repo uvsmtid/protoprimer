@@ -8,7 +8,7 @@ from local_test.mock_verifier import (
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
-    _Node_state_local_conf_symlink_abs_path_inited,
+    _Factory_state_local_conf_symlink_abs_path_inited,
     _Node_state_project_descriptors_inited,
     _Node_state_install_specs_inited,
     _Node_state_ref_root_dir_abs_path_inited,
@@ -47,7 +47,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     def test_relationship(self):
         assert_test_module_name_embeds_str(_EnvState.state_protoprimer_package_installed.name)
 
-    @patch(f"{primer_kernel.__name__}.{_Node_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Factory_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Node_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_stride_py_venv_reached.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Node_state_project_descriptors_inited.__name__}.create_state_node")
@@ -131,7 +131,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             [],
         )
 
-    @patch(f"{primer_kernel.__name__}.{_Node_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Factory_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Node_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_stride_py_venv_reached.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Node_state_project_descriptors_inited.__name__}.create_state_node")
@@ -215,7 +215,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             [],
         )
 
-    @patch(f"{primer_kernel.__name__}.{_Node_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Factory_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Node_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_stride_py_venv_reached.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Node_state_project_descriptors_inited.__name__}.create_state_node")
@@ -314,7 +314,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             any_order=False,
         )
 
-    @patch(f"{primer_kernel.__name__}.{_Node_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Factory_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Node_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_stride_py_venv_reached.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Node_state_project_descriptors_inited.__name__}.create_state_node")

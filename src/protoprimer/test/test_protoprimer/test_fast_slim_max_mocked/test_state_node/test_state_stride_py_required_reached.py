@@ -11,7 +11,7 @@ from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     _Node_state_default_file_log_handler_configured,
     _Node_state_input_start_id_var_loaded,
-    _Node_state_local_conf_file_abs_path_inited,
+    _Factory_state_local_conf_file_abs_path_inited,
     _Node_state_local_tmp_dir_abs_path_inited,
     _Node_state_local_venv_dir_abs_path_inited,
     _Factory_state_prepare_venv_finalized,
@@ -83,7 +83,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(f"{primer_kernel.__name__}.{_Node_state_local_tmp_dir_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Node_state_default_file_log_handler_configured.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_proto_kernel_file_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{_Node_state_local_conf_file_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Factory_state_local_conf_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Node_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Node_state_selected_python_file_abs_path_inited.__name__}.create_state_node")
     @patch(
@@ -149,7 +149,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(f"{primer_kernel.__name__}.{_Node_state_local_tmp_dir_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Node_state_default_file_log_handler_configured.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_proto_kernel_file_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{_Node_state_local_conf_file_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Factory_state_local_conf_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Node_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Node_state_selected_python_file_abs_path_inited.__name__}.create_state_node")
     @patch(
@@ -202,7 +202,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(f"{primer_kernel.__name__}.{_Node_state_local_tmp_dir_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Node_state_default_file_log_handler_configured.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_proto_kernel_file_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{_Node_state_local_conf_file_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Factory_state_local_conf_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Node_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Node_state_selected_python_file_abs_path_inited.__name__}.create_state_node")
     @patch(

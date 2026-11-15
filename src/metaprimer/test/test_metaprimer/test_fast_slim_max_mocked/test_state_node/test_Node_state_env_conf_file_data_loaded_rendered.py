@@ -16,7 +16,7 @@ from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     _Factory_state_input_exec_operation_loaded,
     _Factory_state_input_stderr_log_level_eval_finalized,
-    _Node_state_local_conf_file_abs_path_inited,
+    _Factory_state_local_conf_file_abs_path_inited,
     _EnvState,
 )
 
@@ -32,7 +32,7 @@ def test_relationship():
 
 @patch(f"{primer_kernel.__name__}.{_Factory_state_input_stderr_log_level_eval_finalized.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{_Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{_Node_state_local_conf_file_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Factory_state_local_conf_file_abs_path_inited.__name__}.create_state_node")
 @patch(f"{conf_renderer.__name__}.{_Node_state_client_conf_file_data_loaded_rendered.__name__}.create_state_node")
 def test_conf_file_exists(
     mock_factory_client_conf_file_data_loaded_rendered,
@@ -69,7 +69,7 @@ def test_conf_file_exists(
 
 @patch(f"{primer_kernel.__name__}.{_Factory_state_input_stderr_log_level_eval_finalized.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{_Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{_Node_state_local_conf_file_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Factory_state_local_conf_file_abs_path_inited.__name__}.create_state_node")
 @patch(f"{conf_renderer.__name__}.{_Node_state_client_conf_file_data_loaded_rendered.__name__}.create_state_node")
 def test_conf_file_missing(
     mock_factory_client_conf_file_data_loaded_rendered,
@@ -108,7 +108,7 @@ def test_conf_file_missing(
 
 @patch(f"{primer_kernel.__name__}.{_Factory_state_input_stderr_log_level_eval_finalized.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{_Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{_Node_state_local_conf_file_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Factory_state_local_conf_file_abs_path_inited.__name__}.create_state_node")
 @patch(f"{conf_renderer.__name__}.{_Node_state_client_conf_file_data_loaded_rendered.__name__}.create_state_node")
 def test_conf_file_malformed(
     mock_factory_client_conf_file_data_loaded_rendered,
