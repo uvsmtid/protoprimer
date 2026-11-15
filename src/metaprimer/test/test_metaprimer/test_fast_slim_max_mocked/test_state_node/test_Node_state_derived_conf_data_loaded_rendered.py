@@ -16,8 +16,8 @@ from protoprimer.primer_kernel import (
     _Factory_state_input_exec_operation_loaded,
     _Factory_state_input_stderr_log_level_eval_finalized,
     _Node_state_local_cache_dir_abs_path_inited,
-    _Node_state_local_conf_file_abs_path_inited,
-    _Node_state_local_conf_symlink_abs_path_inited,
+    _Factory_state_local_conf_file_abs_path_inited,
+    _Factory_state_local_conf_symlink_abs_path_inited,
     _Node_state_local_log_dir_abs_path_inited,
     _Node_state_local_tmp_dir_abs_path_inited,
     _Node_state_local_venv_dir_abs_path_inited,
@@ -45,8 +45,8 @@ def test_relationship():
 @patch(f"{primer_kernel.__name__}.{_Node_state_global_conf_dir_abs_path_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{_Node_state_global_conf_file_abs_path_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{_Factory_state_selected_env_dir_rel_path_inited.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{_Node_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
-@patch(f"{primer_kernel.__name__}.{_Node_state_local_conf_file_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Factory_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Factory_state_local_conf_file_abs_path_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{_Node_state_required_python_version_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{_Node_state_selected_python_file_abs_path_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{_Node_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")

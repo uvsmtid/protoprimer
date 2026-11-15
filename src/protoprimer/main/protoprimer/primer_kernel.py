@@ -3227,6 +3227,65 @@ class _Node_state_client_conf_file_data_loaded(_AbstractCachingStateNode[dict]):
         return file_data
 
 
+def _compose_env_dir_abs_path(
+    env_dir_any_path: str,
+    ref_root_dir_abs_path: str,
+) -> str:
+    """
+    Determine the env dir abs path by trying the path it is relative to.
+
+    *   If the input path is already absolute, return as is.
+    *   Use ref root as the base first.
+    *   Use curr dir as the base last.
+    """
+
+    if os.path.isabs(env_dir_any_path):
+        return env_dir_any_path
+    else:
+        for base_dir_abs_path in [
+            ref_root_dir_abs_path,
+            os.getcwd(),
+        ]:
+            abs_path = os.path.join(
+                base_dir_abs_path,
+                env_dir_any_path,
+            )
+            if os.path.isdir(abs_path):
+                return abs_path
+        raise AssertionError(f"`{_PathName.path_selected_env.value}` [{env_dir_any_path}] is relative to neither `{_PathName.path_ref_root.value}` [{ref_root_dir_abs_path}] nor curr dir [{os.getcwd()}].")
+
+
+def _compose_env_dir_rel_path(
+    env_dir_any_path: str,
+    ref_root_dir_abs_path: str,
+) -> str:
+    """
+    Convert any env dir path into the normalized path relative to `ref_root` (the dir must exist under `ref_root`).
+    """
+
+    env_dir_abs_path: str = _compose_env_dir_abs_path(env_dir_any_path, ref_root_dir_abs_path)
+
+    if not os.path.isdir(env_dir_abs_path):
+        raise AssertionError(f"`{_PathName.path_selected_env.value}` [{env_dir_abs_path}] must be a dir.")
+
+    if not _is_sub_path(
+        env_dir_abs_path,
+        ref_root_dir_abs_path,
+    ):
+        raise AssertionError(f"`{_PathName.path_selected_env.value}` [{env_dir_abs_path}] is not under `{_EnvState.state_ref_root_dir_abs_path_inited.name}` [{ref_root_dir_abs_path}].")
+
+    env_dir_rel_path: str = os.path.normpath(
+        _rel_path(
+            env_dir_abs_path,
+            ref_root_dir_abs_path,
+        )
+    )
+
+    assert ".." not in pathlib.Path(env_dir_rel_path).parts
+
+    return env_dir_rel_path
+
+
 # noinspection PyPep8Naming
 @_conditional_factory
 class _BaseNode_state_selected_env_dir_rel_path(_AbstractCachingStateNode[str]):
@@ -3237,28 +3296,12 @@ class _BaseNode_state_selected_env_dir_rel_path(_AbstractCachingStateNode[str]):
         if client_local_env_dir_any_path is None:
             return None
 
-        client_local_env_dir_abs_path: str = self._select_client_local_env_dir_abs_path(client_local_env_dir_any_path)
+        state_ref_root_dir_abs_path_inited: str = self.eval_parent_state(_EnvState.state_ref_root_dir_abs_path_inited.name)
 
-        if not os.path.isdir(client_local_env_dir_abs_path):
-            raise AssertionError(f"`{_PathName.path_selected_env.value}` [{client_local_env_dir_abs_path}] must be a dir.")
-
-        state_ref_root_dir_abs_path_inited = self.eval_parent_state(_EnvState.state_ref_root_dir_abs_path_inited.name)
-        if not _is_sub_path(
-            client_local_env_dir_abs_path,
+        return _compose_env_dir_rel_path(
+            client_local_env_dir_any_path,
             state_ref_root_dir_abs_path_inited,
-        ):
-            raise AssertionError(f"`{_PathName.path_selected_env.value}` [{client_local_env_dir_abs_path}] is not under `{_EnvState.state_ref_root_dir_abs_path_inited.name}` [{state_ref_root_dir_abs_path_inited}].")
-
-        state_selected_env_dir_rel_path_inited: str = os.path.normpath(
-            _rel_path(
-                client_local_env_dir_abs_path,
-                state_ref_root_dir_abs_path_inited,
-            )
         )
-
-        assert ".." not in pathlib.Path(state_selected_env_dir_rel_path_inited).parts
-
-        return state_selected_env_dir_rel_path_inited
 
     def _select_env_conf_dir_any_path(self) -> str | None:
         raise NotImplementedError()
@@ -3285,34 +3328,6 @@ class _BaseNode_state_selected_env_dir_rel_path(_AbstractCachingStateNode[str]):
             return field_default_env_dir_rel_path
         else:
             return env_conf_dir_any_path
-
-    def _select_client_local_env_dir_abs_path(
-        self,
-        client_local_env_dir_any_path: str,
-    ) -> str:
-        """
-        Determine the target dir abs path by trying the path it is relative to.
-
-        *   If the input path is already absolute, return as is.
-        *   Use ref root as the base first.
-        *   Use curr dir as the base last.
-        """
-
-        if os.path.isabs(client_local_env_dir_any_path):
-            return client_local_env_dir_any_path
-        else:
-            state_ref_root_dir_abs_path_inited = self.eval_parent_state(_EnvState.state_ref_root_dir_abs_path_inited.name)
-            for base_dir_abs_path in [
-                state_ref_root_dir_abs_path_inited,
-                os.getcwd(),
-            ]:
-                abs_path = os.path.join(
-                    base_dir_abs_path,
-                    client_local_env_dir_any_path,
-                )
-                if os.path.isdir(abs_path):
-                    return abs_path
-            raise AssertionError(f"`{_PathName.path_selected_env.value}` [{client_local_env_dir_any_path}] is relative to neither `{_PathName.path_ref_root.value}` [{state_ref_root_dir_abs_path_inited}] nor curr dir [{os.getcwd()}].")
 
 
 # noinspection PyPep8Naming
@@ -3365,9 +3380,63 @@ class _Factory_state_selected_env_dir_rel_path_inited(_NodeFactory[_StateStride]
             return _Node_state_selected_env_dir_rel_path_inited_not_is_app(self.env_ctx)
 
 
+def _compose_local_conf_symlink_abs_path(
+    ref_root_dir_abs_path: str,
+    client_conf_file_data: dict,
+) -> str:
+    """
+    Compose the abs path of the `local_env_link` symlink itself (not the dir it points to).
+    """
+    client_env_conf_link_name_dir_rel_path: str | None = client_conf_file_data.get(ConfField.field_local_conf_symlink_rel_path.value, None)
+    if client_env_conf_link_name_dir_rel_path is None:
+        return ref_root_dir_abs_path
+    if os.path.isabs(client_env_conf_link_name_dir_rel_path):
+        raise AssertionError(f"Field `{ConfField.field_local_conf_symlink_rel_path.value}` cannot be absolute [{client_env_conf_link_name_dir_rel_path}]")
+    return os.path.join(
+        ref_root_dir_abs_path,
+        client_env_conf_link_name_dir_rel_path,
+    )
+
+
+def _compose_symlink_target(
+    ref_root_dir_abs_path: str,
+    selected_env_dir_rel_path: str,
+    symlink_abs_path: str,
+) -> str:
+    """
+    Compose the symlink target: relative to the symlink parent dir (not to `ref_root`).
+    """
+    return os.path.normpath(
+        os.path.relpath(
+            os.path.join(ref_root_dir_abs_path, selected_env_dir_rel_path),
+            os.path.dirname(symlink_abs_path),
+        )
+    )
+
+
+def _validate_symlink_to_dir(symlink_abs_path: str) -> None:
+    if not os.path.islink(symlink_abs_path):
+        raise AssertionError(f"The entry [{symlink_abs_path}] is not a symlink.")
+    if not os.path.isdir(symlink_abs_path):
+        raise AssertionError(f"The symlink [{symlink_abs_path}] target [{symlink_abs_path}] is not a directory.")
+
+
+def _create_symlink_to_dir(
+    symlink_abs_path: str,
+    symlink_target: str,
+) -> None:
+    os.symlink(
+        symlink_target,
+        symlink_abs_path,
+        # TODO: TODO_50_98_96_87.support_windows.md:
+        #       The target here is always a dir (`target_is_directory` is ignored on non-Windows):
+        target_is_directory=True,
+    )
+
+
 # noinspection PyPep8Naming
-@_trivial_factory
-class _Node_state_local_conf_symlink_abs_path_inited(_AbstractCachingStateNode[str]):
+@_conditional_factory
+class _BaseNode_state_local_conf_symlink_abs_path_inited(_AbstractCachingStateNode[str]):
 
     _parent_states = staticmethod(
         lambda: [
@@ -3384,6 +3453,7 @@ class _Node_state_local_conf_symlink_abs_path_inited(_AbstractCachingStateNode[s
 
         state_selected_env_dir_rel_path_inited: str | None = self.eval_parent_state(_EnvState.state_selected_env_dir_rel_path_inited.name)
 
+        # TODO: TODO_41_10_50_01.implement_env_selector.md: Why None is possible? Is it repo config without env-specific config?
         # TODO: TODO_53_40_17_68.default_env_config_vs_lconf_symlink.md
         #       This is `None` when (A) config is missing (B) no CLI arg.
         #       But do we want to use `gconf` as target for `lconf`?
@@ -3392,71 +3462,80 @@ class _Node_state_local_conf_symlink_abs_path_inited(_AbstractCachingStateNode[s
             return state_ref_root_dir_abs_path_inited
 
         state_client_conf_file_data_loaded: dict = self.eval_parent_state(_EnvState.state_client_conf_file_data_loaded.name)
-        client_env_conf_link_name_dir_rel_path: str | None = state_client_conf_file_data_loaded.get(ConfField.field_local_conf_symlink_rel_path.value, None)
 
-        # Convert to absolute:
-        state_local_conf_symlink_abs_path_inited: str
-        if client_env_conf_link_name_dir_rel_path is None:
-            state_local_conf_symlink_abs_path_inited = state_ref_root_dir_abs_path_inited
-        else:
-            if os.path.isabs(client_env_conf_link_name_dir_rel_path):
-                raise AssertionError(f"Field `{ConfField.field_local_conf_symlink_rel_path.value}` cannot be absolute [{client_env_conf_link_name_dir_rel_path}]")
-            state_local_conf_symlink_abs_path_inited = os.path.join(
+        return self._eval_symlink_abs_path(
+            state_ref_root_dir_abs_path_inited,
+            state_selected_env_dir_rel_path_inited,
+            _compose_local_conf_symlink_abs_path(
                 state_ref_root_dir_abs_path_inited,
-                client_env_conf_link_name_dir_rel_path,
-            )
+                state_client_conf_file_data_loaded,
+            ),
+        )
 
-        if os.path.exists(state_local_conf_symlink_abs_path_inited):
-            if os.path.islink(state_local_conf_symlink_abs_path_inited):
-                if os.path.isdir(state_local_conf_symlink_abs_path_inited):
-                    if not self.env_ctx._is_app:
-                        # Nothing to do:
-                        pass
-                    else:
-                        # Compare the existing link target and the configured one.
-                        # NOTE: `state_selected_env_dir_rel_path_inited` is relative to `state_ref_root_dir_abs_path_inited`,
-                        #       but a symlink target is resolved relative to the symlink's own dir - adjust before comparing:
-                        conf_dir_path = os.path.normpath(os.readlink(state_local_conf_symlink_abs_path_inited))
-                        expected_conf_dir_path = os.path.normpath(
-                            os.path.relpath(
-                                os.path.join(state_ref_root_dir_abs_path_inited, state_selected_env_dir_rel_path_inited),
-                                os.path.dirname(state_local_conf_symlink_abs_path_inited),
-                            )
-                        )
-                        if expected_conf_dir_path != conf_dir_path:
-                            # TODO: TODO_53_40_17_68.default_env_config_vs_lconf_symlink.md
-                            #       If symlink target does not match default env, why not reset instead of raising?
-                            #       If we do not reset automatically, user has to do it manually.
-                            #       More over, symlink matching default env may actually be normal...
-                            #       What if user wants to keep "decision" of what env he uses in that symlink?
-                            #       The automatic reset must only be done when --env arg is specified.
-                            raise AssertionError(f"The symlink [{state_local_conf_symlink_abs_path_inited}] target [{conf_dir_path}] is not the same as the provided target [{expected_conf_dir_path}].")
-                else:
-                    raise AssertionError(f"The symlink [{state_local_conf_symlink_abs_path_inited}] target [{state_local_conf_symlink_abs_path_inited}] is not a directory.")
-            else:
-                raise AssertionError(f"The entry [{state_local_conf_symlink_abs_path_inited}] is not a symlink.")
-        else:
-
-            # Target must be relative to the symlink's own dir, not `state_ref_root_dir_abs_path_inited`:
-            os.symlink(
-                os.path.normpath(
-                    os.path.relpath(
-                        os.path.join(state_ref_root_dir_abs_path_inited, state_selected_env_dir_rel_path_inited),
-                        os.path.dirname(state_local_conf_symlink_abs_path_inited),
-                    )
-                ),
-                state_local_conf_symlink_abs_path_inited,
-                # TODO: TODO_50_98_96_87.support_windows.md:
-                #       The target here is always a dir (`target_is_directory` is ignored on non-Windows):
-                target_is_directory=True,
-            )
-
-        return state_local_conf_symlink_abs_path_inited
+    def _eval_symlink_abs_path(
+        self,
+        ref_root_dir_abs_path: str,
+        selected_env_dir_rel_path: str,
+        symlink_abs_path: str,
+    ) -> str:
+        raise NotImplementedError()
 
 
 # noinspection PyPep8Naming
-@_trivial_factory
-class _Node_state_local_conf_file_abs_path_inited(_AbstractCachingStateNode[str]):
+@_conditional_factory
+class _Node_state_local_conf_symlink_abs_path_inited_strict(_BaseNode_state_local_conf_symlink_abs_path_inited):
+
+    def _eval_symlink_abs_path(
+        self,
+        ref_root_dir_abs_path: str,
+        selected_env_dir_rel_path: str,
+        symlink_abs_path: str,
+    ) -> str:
+
+        if os.path.exists(symlink_abs_path):
+            _validate_symlink_to_dir(symlink_abs_path)
+            if self.env_ctx._is_app:
+                # Compare the existing link target and the configured one.
+                # NOTE: `selected_env_dir_rel_path` is relative to `ref_root_dir_abs_path`,
+                #       but a symlink target is resolved relative to the symlink's own dir - adjust before comparing:
+                conf_dir_path = os.path.normpath(os.readlink(symlink_abs_path))
+                expected_conf_dir_path = _compose_symlink_target(
+                    ref_root_dir_abs_path,
+                    selected_env_dir_rel_path,
+                    symlink_abs_path,
+                )
+                if expected_conf_dir_path != conf_dir_path:
+                    # TODO: TODO_53_40_17_68.default_env_config_vs_lconf_symlink.md
+                    #       If symlink target does not match default env, why not reset instead of raising?
+                    #       If we do not reset automatically, user has to do it manually.
+                    #       More over, symlink matching default env may actually be normal...
+                    #       What if user wants to keep "decision" of what env he uses in that symlink?
+                    #       The automatic reset must only be done when --env arg is specified.
+                    raise AssertionError(f"The symlink [{symlink_abs_path}] target [{conf_dir_path}] is not the same as the provided target [{expected_conf_dir_path}].")
+        else:
+            # Target must be relative to the symlink's own dir, not `ref_root_dir_abs_path`:
+            _create_symlink_to_dir(
+                symlink_abs_path,
+                _compose_symlink_target(
+                    ref_root_dir_abs_path,
+                    selected_env_dir_rel_path,
+                    symlink_abs_path,
+                ),
+            )
+
+        return symlink_abs_path
+
+
+# noinspection PyPep8Naming
+class _Factory_state_local_conf_symlink_abs_path_inited(_NodeFactory[str]):
+
+    def create_state_node(self) -> _StateNode[_ValueType]:
+        return _Node_state_local_conf_symlink_abs_path_inited_strict(self.env_ctx)
+
+
+# noinspection PyPep8Naming
+@_conditional_factory
+class _BaseNode_state_local_conf_file_abs_path_inited(_AbstractCachingStateNode[str]):
 
     _parent_states = staticmethod(
         lambda: [
@@ -3479,6 +3558,28 @@ class _Node_state_local_conf_file_abs_path_inited(_AbstractCachingStateNode[str]
         )
 
         return state_local_conf_file_abs_path_inited
+
+
+# noinspection PyPep8Naming
+@_conditional_factory
+class _Node_state_local_conf_file_abs_path_inited_is_app(_BaseNode_state_local_conf_file_abs_path_inited):
+    pass
+
+
+# noinspection PyPep8Naming
+@_conditional_factory
+class _Node_state_local_conf_file_abs_path_inited_not_is_app(_BaseNode_state_local_conf_file_abs_path_inited):
+    pass
+
+
+# noinspection PyPep8Naming
+class _Factory_state_local_conf_file_abs_path_inited(_NodeFactory[str]):
+
+    def create_state_node(self) -> _StateNode[_ValueType]:
+        if self.env_ctx._is_app:
+            return _Node_state_local_conf_file_abs_path_inited_is_app(self.env_ctx)
+        else:
+            return _Node_state_local_conf_file_abs_path_inited_not_is_app(self.env_ctx)
 
 
 # noinspection PyPep8Naming
@@ -3900,8 +4001,8 @@ class _Node_state_install_specs_inited(_AbstractOverriddenFieldCachingStateNode[
 
 
 # noinspection PyPep8Naming
-@_trivial_factory
-class _Node_state_derived_conf_data_loaded(_AbstractCachingStateNode[dict]):
+@_conditional_factory
+class _BaseNode_state_derived_conf_data_loaded(_AbstractCachingStateNode[dict]):
     """
     Implements: FT_00_22_19_59.derived_config.md
     """
@@ -3981,6 +4082,28 @@ class _Node_state_derived_conf_data_loaded(_AbstractCachingStateNode[dict]):
             )
 
         return config_data_derived
+
+
+# noinspection PyPep8Naming
+@_conditional_factory
+class _Node_state_derived_conf_data_loaded_is_app(_BaseNode_state_derived_conf_data_loaded):
+    pass
+
+
+# noinspection PyPep8Naming
+@_conditional_factory
+class _Node_state_derived_conf_data_loaded_not_is_app(_BaseNode_state_derived_conf_data_loaded):
+    pass
+
+
+# noinspection PyPep8Naming
+class _Factory_state_derived_conf_data_loaded(_NodeFactory[dict]):
+
+    def create_state_node(self) -> _StateNode[_ValueType]:
+        if self.env_ctx._is_app:
+            return _Node_state_derived_conf_data_loaded_is_app(self.env_ctx)
+        else:
+            return _Node_state_derived_conf_data_loaded_not_is_app(self.env_ctx)
 
 
 # noinspection PyPep8Naming
@@ -5203,9 +5326,9 @@ class _EnvState(enum.Enum):
 
     state_selected_env_dir_rel_path_inited = _Factory_state_selected_env_dir_rel_path_inited
 
-    state_local_conf_symlink_abs_path_inited = _Node_state_local_conf_symlink_abs_path_inited
+    state_local_conf_symlink_abs_path_inited = _Factory_state_local_conf_symlink_abs_path_inited
 
-    state_local_conf_file_abs_path_inited = _Node_state_local_conf_file_abs_path_inited
+    state_local_conf_file_abs_path_inited = _Factory_state_local_conf_file_abs_path_inited
 
     # `_ConfLeap.leap_env`:
     state_env_conf_file_data_loaded = _Node_state_env_conf_file_data_loaded
@@ -5246,7 +5369,7 @@ class _EnvState(enum.Enum):
     state_install_specs_inited = _Node_state_install_specs_inited
 
     # `_ConfLeap.leap_derived`:
-    state_derived_conf_data_loaded = _Node_state_derived_conf_data_loaded
+    state_derived_conf_data_loaded = _Factory_state_derived_conf_data_loaded
 
     state_effective_conf_data_printed = _Node_state_effective_conf_data_printed
 

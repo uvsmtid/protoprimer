@@ -14,8 +14,8 @@ from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     _Node_state_input_start_id_var_loaded,
-    _Node_state_local_conf_file_abs_path_inited,
-    _Node_state_local_conf_symlink_abs_path_inited,
+    _Factory_state_local_conf_file_abs_path_inited,
+    _Factory_state_local_conf_symlink_abs_path_inited,
     _Node_state_version_constraints_file_basename_inited,
     _Node_state_local_venv_dir_abs_path_inited,
     _Factory_state_proto_kernel_file_abs_path_inited,
@@ -89,7 +89,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(f"{primer_kernel.__name__}.{_Node_state_input_start_id_var_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_reset_triggered.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_proto_kernel_file_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{_Node_state_local_conf_file_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Factory_state_local_conf_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Node_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Node_state_selected_python_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_venv_driver_prepared.__name__}.create_state_node")
@@ -101,7 +101,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(f"{primer_kernel.__name__}.{_Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}._is_same_file", return_value=True)
     @patch(f"{primer_kernel.__name__}.{_Node_state_version_constraints_file_basename_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{_Node_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Factory_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
     def test_success_on_path_to_curr_python_is_outside_of_path_to_venv_when_venv_is_created(
         self,
         mock_state_local_conf_symlink_abs_path_inited,
@@ -176,7 +176,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(f"{primer_kernel.__name__}.{_Node_state_input_start_id_var_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_reset_triggered.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_proto_kernel_file_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{_Node_state_local_conf_file_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Factory_state_local_conf_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Node_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Node_state_selected_python_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_venv_driver_prepared.__name__}.create_state_node")
@@ -187,7 +187,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(f"{primer_kernel.__name__}.os.execve")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Node_state_version_constraints_file_basename_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{_Node_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Factory_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
     def test_failure_when_path_to_curr_python_is_inside_venv(
         self,
         mock_state_local_conf_symlink_abs_path_inited,
@@ -240,7 +240,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(f"{primer_kernel.__name__}.{_Node_state_input_start_id_var_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_reset_triggered.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_proto_kernel_file_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{_Node_state_local_conf_file_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Factory_state_local_conf_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Node_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Node_state_selected_python_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_venv_driver_prepared.__name__}.create_state_node")
@@ -252,7 +252,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(f"{primer_kernel.__name__}.os.execve")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Node_state_version_constraints_file_basename_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{_Node_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Factory_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
     def test_failure_when_path_to_curr_python_is_inside_venv_initially_and_expected(
         self,
         mock_state_local_conf_symlink_abs_path_inited,
@@ -306,7 +306,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(f"{primer_kernel.__name__}.{_Node_state_input_start_id_var_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_reset_triggered.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_proto_kernel_file_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{_Node_state_local_conf_file_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Factory_state_local_conf_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Node_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Node_state_selected_python_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_venv_driver_prepared.__name__}.create_state_node")
@@ -318,7 +318,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(f"{primer_kernel.__name__}.{_Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}._is_same_file", return_value=False)
     @patch(f"{primer_kernel.__name__}.{_Node_state_version_constraints_file_basename_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{_Node_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Factory_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
     def test_failure_when_path_to_python_differs_from_path_to_curr_python(
         self,
         mock_state_local_conf_symlink_abs_path_inited,
@@ -373,7 +373,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(f"{primer_kernel.__name__}.{_Node_state_input_start_id_var_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_reset_triggered.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_proto_kernel_file_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{_Node_state_local_conf_file_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Factory_state_local_conf_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Node_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Node_state_selected_python_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_venv_driver_prepared.__name__}.create_state_node")
@@ -385,7 +385,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(f"{primer_kernel.__name__}.{_Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}._is_same_file", return_value=True)
     @patch(f"{primer_kernel.__name__}.{_Node_state_version_constraints_file_basename_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{_Node_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Factory_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
     def test_success_when_path_to_python_matches_path_to_curr_python_and_execv_is_called_for_venv_python(
         self,
         mock_state_local_conf_symlink_abs_path_inited,
@@ -462,7 +462,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(f"{primer_kernel.__name__}.{_Node_state_input_start_id_var_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_reset_triggered.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_proto_kernel_file_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{_Node_state_local_conf_file_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Factory_state_local_conf_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Node_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Node_state_selected_python_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_venv_driver_prepared.__name__}.create_state_node")
@@ -474,7 +474,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(f"{primer_kernel.__name__}.{_Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}._is_same_file", return_value=True)
     @patch(f"{primer_kernel.__name__}.{_Node_state_version_constraints_file_basename_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{_Node_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Factory_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
     def test_success_when_path_to_python_is_not_inside_existing_venv(
         self,
         mock_state_local_conf_symlink_abs_path_inited,
@@ -549,7 +549,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(f"{primer_kernel.__name__}.{_Node_state_input_start_id_var_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_reset_triggered.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_proto_kernel_file_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{_Node_state_local_conf_file_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Factory_state_local_conf_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Node_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Node_state_selected_python_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_venv_driver_prepared.__name__}.create_state_node")
@@ -561,7 +561,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(f"{primer_kernel.__name__}.{_Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}._is_same_file", return_value=True)
     @patch(f"{primer_kernel.__name__}.{_Node_state_version_constraints_file_basename_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{_Node_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Factory_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
     def test_success_on_arbitrary_py_exec_outside_venv(
         self,
         mock_state_local_conf_symlink_abs_path_inited,
@@ -640,7 +640,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(f"{primer_kernel.__name__}.{_Node_state_input_start_id_var_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_reset_triggered.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_proto_kernel_file_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{_Node_state_local_conf_file_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Factory_state_local_conf_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Node_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Node_state_selected_python_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_venv_driver_prepared.__name__}.create_state_node")
@@ -650,7 +650,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(f"{primer_kernel.__name__}.os.execve")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Node_state_version_constraints_file_basename_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{_Node_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Factory_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
     def test_success_when_py_exec_is_already_venv(
         self,
         mock_state_local_conf_symlink_abs_path_inited,
@@ -697,7 +697,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(f"{primer_kernel.__name__}.{_Node_state_input_start_id_var_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_reset_triggered.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_proto_kernel_file_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{_Node_state_local_conf_file_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Factory_state_local_conf_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Node_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Node_state_selected_python_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_venv_driver_prepared.__name__}.create_state_node")
@@ -709,7 +709,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(f"{primer_kernel.__name__}.{_Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}._is_same_file", return_value=True)
     @patch(f"{primer_kernel.__name__}.{_Node_state_version_constraints_file_basename_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{_Node_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Factory_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
     def test_success_when_reusing_existing_venv(
         self,
         mock_state_local_conf_symlink_abs_path_inited,
@@ -784,7 +784,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(f"{primer_kernel.__name__}.{_Node_state_input_start_id_var_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_reset_triggered.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_proto_kernel_file_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{_Node_state_local_conf_file_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Factory_state_local_conf_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Node_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Node_state_selected_python_file_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_venv_driver_prepared.__name__}.create_state_node")
@@ -797,7 +797,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(f"{primer_kernel.__name__}.{_Factory_state_input_exec_operation_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}._is_same_file", return_value=True)
     @patch(f"{primer_kernel.__name__}.{_Node_state_version_constraints_file_basename_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{_Node_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Factory_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
     def test_failure_when_reusing_existing_venv_of_wrong_type(
         self,
         mock_state_local_conf_symlink_abs_path_inited,

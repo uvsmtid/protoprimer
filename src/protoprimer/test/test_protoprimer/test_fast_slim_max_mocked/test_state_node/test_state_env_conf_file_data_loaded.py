@@ -12,7 +12,7 @@ from local_test.mock_verifier import (
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
-    _Node_state_local_conf_file_abs_path_inited,
+    _Factory_state_local_conf_file_abs_path_inited,
     _ContextBuilder,
     _EntryFunc,
     _EnvContext,
@@ -44,7 +44,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         assert_test_module_name_embeds_str(_EnvState.state_env_conf_file_data_loaded.name)
 
     @patch(f"{primer_kernel.__name__}.{_Factory_state_print_conf_finalized.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{_Node_state_local_conf_file_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Factory_state_local_conf_file_abs_path_inited.__name__}.create_state_node")
     def test_state_env_conf_file_data_loaded_exists(
         self,
         mock_state_local_conf_file_abs_path_inited,
@@ -73,7 +73,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.assertEqual(state_value, mock_data)
 
     @patch(f"{primer_kernel.__name__}.{_Factory_state_print_conf_finalized.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{_Node_state_local_conf_file_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Factory_state_local_conf_file_abs_path_inited.__name__}.create_state_node")
     def test_state_env_conf_file_data_loaded_missing(
         self,
         mock_state_local_conf_file_abs_path_inited,
@@ -108,7 +108,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.assertNotIn("does not exist", log_stream.getvalue())
 
     @patch(f"{primer_kernel.__name__}.{_Factory_state_print_conf_finalized.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{_Node_state_local_conf_file_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Factory_state_local_conf_file_abs_path_inited.__name__}.create_state_node")
     def test_state_env_conf_file_data_loaded_malformed(
         self,
         mock_state_local_conf_file_abs_path_inited,
