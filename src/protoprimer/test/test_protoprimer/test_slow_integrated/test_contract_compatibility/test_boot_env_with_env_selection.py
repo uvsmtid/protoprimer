@@ -15,7 +15,7 @@ from local_test.integrated_helper import (
 )
 from local_test.version_gate import (
     since_version,
-    until_version,
+    before_version,
 )
 from protoprimer.primer_kernel import (
     _ConfConstClient,
@@ -348,7 +348,7 @@ def _given_persisted_special_env_but_config_default_common(
     return proto_kernel_abs_path, default_venv_abs_path, special_venv_abs_path
 
 
-@until_version("0.14.2")
+@before_version("0.15.0")
 def test_boot_env_with_symlink_to_env_special_but_config_to_env_common_fails(
     tmp_path: pathlib.Path,
 ):
@@ -385,7 +385,7 @@ def test_boot_env_with_symlink_to_env_special_but_config_to_env_common_fails(
     assert not special_venv_abs_path.exists()
 
 
-@since_version("0.14.2")
+@since_version("0.15.0")
 def test_boot_env_with_symlink_to_env_special_but_config_to_env_common_uses_persisted(
     tmp_path: pathlib.Path,
 ):

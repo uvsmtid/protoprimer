@@ -19,7 +19,7 @@ def new_code_version() -> Version:
 
 def since_version(version_str: str):
     """
-    Run the test only for `protoprimer` version `>= version_str`.
+    Run the test only for `protoprimer` version `>= version_str` (the lower bound is **inclusive**).
     """
 
     return pytest.mark.skipif(
@@ -28,14 +28,14 @@ def since_version(version_str: str):
     )
 
 
-def until_version(version_str: str):
+def before_version(version_str: str):
     """
-    Run the test only for `protoprimer` version `< version_str`.
+    Run the test only for `protoprimer` version `< version_str` (the upper bound is **exclusive**).
     """
 
     return pytest.mark.skipif(
         new_code_version() >= Version(version_str),
-        reason=f"applies until `protoprimer` version [{version_str}] (exclusive)",
+        reason=f"applies before `protoprimer` version [{version_str}]",
     )
 
 
