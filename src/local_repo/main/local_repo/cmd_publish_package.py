@@ -122,6 +122,62 @@ def init_arg_parser(default_repository_url: Optional[str] = None):
     return arg_parser
 
 
+# FT_60_28_38_74.compatibility_maintenance.md
+git_main_branch = "main"
+git_support_branch_prefix = "support-"
+
+
+def parse_support_branch_names(
+    git_main_remote: str,
+    remote_branch_list_output: str,
+) -> list[str]:
+    """
+    Extracts `support-*` branch names from the output of `git branch --remotes --list`.
+    """
+
+    remote_prefix = f"{git_main_remote}/"
+    support_branch_names = []
+    for output_line in remote_branch_list_output.splitlines():
+        # Skip aliases like `origin/HEAD -> origin/main`:
+        branch_ref = output_line.strip().split(" ")[0]
+        if not branch_ref.startswith(remote_prefix):
+            continue
+        branch_name = branch_ref[len(remote_prefix) :]
+        if branch_name.startswith(git_support_branch_prefix):
+            support_branch_names.append(branch_name)
+    return support_branch_names
+
+
+def get_protected_branch_names(
+    git_main_remote: str,
+) -> list[str]:
+    """
+    Protected branches are trunk `main` and `support-*` branches.
+    """
+
+    remote_branch_list_output = get_command_output(f'git branch --remotes --list "{git_main_remote}/{git_support_branch_prefix}*"')
+    return [git_main_branch] + parse_support_branch_names(git_main_remote, remote_branch_list_output)
+
+
+def find_protected_branch_containing_head(
+    git_main_remote: str,
+) -> Optional[str]:
+    """
+    Returns the first protected branch which contains `HEAD` (or `None`).
+    """
+
+    for branch_name in get_protected_branch_names(git_main_remote):
+        if (
+            get_command_code(
+                f"git merge-base --is-ancestor HEAD {git_main_remote}/{branch_name}",
+                fail_on_error=False,
+            )
+            == 0
+        ):
+            return branch_name
+    return None
+
+
 def get_tag_name(
     package_name: str,
     distrib_version: str,
@@ -229,21 +285,16 @@ def _publish_package(
     git_main_remote = "origin"
     get_command_code(f"git fetch {git_main_remote}")
 
-    # Check if the current commit is in the main branch:
-    git_main_branch = "main"
-    if (
-        get_command_code(
-            f"git merge-base --is-ancestor HEAD {git_main_remote}/{git_main_branch}",
-            fail_on_error=False,
-        )
-        != 0
-    ):
+    # Check if the current commit is in a protected branch (trunk `main` or one of `support-*`):
+    # FT_60_28_38_74.compatibility_maintenance.md
+    protected_branch_name = find_protected_branch_containing_head(git_main_remote)
+    if protected_branch_name is None:
         if dry_run or package_name == DistribPackage.package_dummy_private.value or is_dev_version:
-            logger.warning(f"current HEAD is not in {git_main_remote}/{git_main_branch}")
+            logger.warning(f"current HEAD is not in any protected branch of {git_main_remote}")
         else:
-            raise RuntimeError(f"current HEAD is not in {git_main_remote}/{git_main_branch}")
+            raise RuntimeError(f"current HEAD is not in any protected branch of {git_main_remote}: {get_protected_branch_names(git_main_remote)}")
     else:
-        logger.info(f"current HEAD is in {git_main_remote}/{git_main_branch}")
+        logger.info(f"current HEAD is in {git_main_remote}/{protected_branch_name}")
 
     if not no_tag:
         git_tag = get_command_output("git describe --tags")
