@@ -3,6 +3,10 @@ import pathlib
 from pyfakefs.fake_filesystem import FakeFilesystem
 
 from local_test.fat_mocked_helper import fat_mock_wrapper
+from local_test.version_gate import (
+    before_version,
+    since_version,
+)
 from local_test.name_assertion import (
     assert_test_func_name_embeds_str,
     assert_test_module_name_embeds_another_module_name,
@@ -34,13 +38,27 @@ def test_boot_env_with_env_selection_special_to_default(fs: FakeFilesystem):
         test_boot_env_with_env_selection.test_boot_env_with_env_selection_special_to_default(pathlib.Path(mock_test_dir.path))
 
 
-def test_boot_env_with_symlink_to_env_special_but_config_to_env_common(
+@before_version("0.15.0")
+def test_boot_env_with_symlink_to_env_special_but_config_to_env_common_fails(
     fs: FakeFilesystem,
 ):
 
-    assert_test_func_name_embeds_str(test_boot_env_with_env_selection.test_boot_env_with_symlink_to_env_special_but_config_to_env_common.__name__)
+    assert_test_func_name_embeds_str(test_boot_env_with_env_selection.test_boot_env_with_symlink_to_env_special_but_config_to_env_common_fails.__name__)
 
     mock_test_dir = fs.create_dir("/mock_test_dir")
 
     with fat_mock_wrapper(fs):
-        test_boot_env_with_env_selection.test_boot_env_with_symlink_to_env_special_but_config_to_env_common(pathlib.Path(mock_test_dir.path))
+        test_boot_env_with_env_selection.test_boot_env_with_symlink_to_env_special_but_config_to_env_common_fails(pathlib.Path(mock_test_dir.path))
+
+
+@since_version("0.15.0")
+def test_boot_env_with_symlink_to_env_special_but_config_to_env_common_uses_persisted(
+    fs: FakeFilesystem,
+):
+
+    assert_test_func_name_embeds_str(test_boot_env_with_env_selection.test_boot_env_with_symlink_to_env_special_but_config_to_env_common_uses_persisted.__name__)
+
+    mock_test_dir = fs.create_dir("/mock_test_dir")
+
+    with fat_mock_wrapper(fs):
+        test_boot_env_with_env_selection.test_boot_env_with_symlink_to_env_special_but_config_to_env_common_uses_persisted(pathlib.Path(mock_test_dir.path))
