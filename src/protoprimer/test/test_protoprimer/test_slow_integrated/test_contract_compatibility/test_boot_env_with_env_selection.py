@@ -13,6 +13,10 @@ from local_test.integrated_helper import (
     switch_to_ref_root_abs_path,
     test_pyproject_src_dir_rel_path,
 )
+from local_test.version_gate import (
+    since,
+    until,
+)
 from protoprimer.primer_kernel import (
     _ConfConstClient,
     _ConfConstInput,
@@ -238,14 +242,14 @@ def test_boot_env_with_env_selection_special_to_default(tmp_path: pathlib.Path):
     assert special_venv_abs_path.exists()
 
 
-def test_boot_env_with_symlink_to_env_special_but_config_to_env_common(
+def _given_persisted_special_env_but_config_default_common(
     tmp_path: pathlib.Path,
 ):
     """
     *   Bootstrap with override `_SyntaxArg.arg_env` -> picks `special_env` as specified.
     *   Change config to use `_ConfConstClient.common_env_name` as default.
-    *   Bootstrap without args -> fails because configured `_ConfConstClient.common_env_name` mismatches with symlink.
-        TODO: TODO_53_40_17_68.default_env_config_vs_lconf_symlink.md: review this behavior.
+
+    The outcome (then) of the following bootstrap without args depends on the version (see `FT_60_28_38_74.compatibility_maintenance.md`).
     """
 
     # given:
@@ -341,8 +345,21 @@ def test_boot_env_with_symlink_to_env_special_but_config_to_env_common(
         project_dir_abs_path,
     )
 
-    # TODO: TODO_53_40_17_68.default_env_config_vs_lconf_symlink.md:
-    #       Review this behavior:
+    return proto_kernel_abs_path, default_venv_abs_path, special_venv_abs_path
+
+
+@until("0.14.2")
+def test_boot_env_with_symlink_to_env_special_but_config_to_env_common_fails(
+    tmp_path: pathlib.Path,
+):
+    """
+    *   Bootstrap without args -> fails because configured `_ConfConstClient.common_env_name` mismatches with symlink.
+    """
+
+    # given:
+
+    proto_kernel_abs_path, default_venv_abs_path, special_venv_abs_path = _given_persisted_special_env_but_config_default_common(tmp_path)
+
     # when:
     # then:
     # fails because symlink `lconf_env` points to `special_env`
@@ -366,3 +383,36 @@ def test_boot_env_with_symlink_to_env_special_but_config_to_env_common(
     # assert bootstrap failed, so no venv created
     assert not default_venv_abs_path.exists()
     assert not special_venv_abs_path.exists()
+
+
+@since("0.14.2")
+def test_boot_env_with_symlink_to_env_special_but_config_to_env_common_uses_persisted(
+    tmp_path: pathlib.Path,
+):
+    """
+    *   Bootstrap without args -> the persisted `special_env` (symlink) is used:
+        the default env is only a fallback (see `FT_03_31_63_70.environment_selection.md`).
+    """
+
+    # given:
+
+    proto_kernel_abs_path, default_venv_abs_path, special_venv_abs_path = _given_persisted_special_env_but_config_default_common(tmp_path)
+
+    # when:
+    # bootstrap without args: nothing is selected, so the persisted `special_env` is used
+    # (even though client config default is `_ConfConstClient.common_env_name`)
+
+    run_primer_main(
+        [
+            str(proto_kernel_abs_path),
+            _SyntaxArg.arg_v,
+            _SyntaxArg.arg_v,
+            _ExecOperation.op_boot.value,
+        ]
+    )
+
+    # then:
+    # `venv_special` is re-created and `venv_default` is not created
+
+    assert not default_venv_abs_path.exists()
+    assert special_venv_abs_path.exists()
