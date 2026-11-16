@@ -19,10 +19,10 @@ def test_new_code_version_ignores_dev_suffix(mocker):
 
 def test_since_and_until_are_complementary(mocker):
     mocker.patch.object(protoprimer, "__version__", "1.2.3")
-    assert version_gate.since("1.2.3").args[0] is False
-    assert version_gate.since("1.2.4").args[0] is True
-    assert version_gate.until("1.2.3").args[0] is True
-    assert version_gate.until("1.2.4").args[0] is False
+    assert version_gate.since_version("1.2.3").args[0] is False
+    assert version_gate.since_version("1.2.4").args[0] is True
+    assert version_gate.until_version("1.2.3").args[0] is True
+    assert version_gate.until_version("1.2.4").args[0] is False
 
 
 def test_proto_kernel_version_is_read_from_source(tmp_path, mocker):

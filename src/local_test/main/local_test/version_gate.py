@@ -17,7 +17,7 @@ def new_code_version() -> Version:
     return Version(Version(protoprimer.__version__).base_version)
 
 
-def since(version_str: str):
+def since_version(version_str: str):
     """
     Run the test only for `protoprimer` version `>= version_str`.
     """
@@ -28,7 +28,7 @@ def since(version_str: str):
     )
 
 
-def until(version_str: str):
+def until_version(version_str: str):
     """
     Run the test only for `protoprimer` version `< version_str`.
     """
