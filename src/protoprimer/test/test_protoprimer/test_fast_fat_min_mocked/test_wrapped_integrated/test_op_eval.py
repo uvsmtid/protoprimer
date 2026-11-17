@@ -26,4 +26,18 @@ def test_max_leaps_shape(fs: FakeFilesystem):
     mock_test_dir = fs.create_dir("/mock_test_dir")
 
     with fat_mock_wrapper(fs):
-        test_op_eval.test_op_eval_with_min_leaps_shape(pathlib.Path(mock_test_dir.path))
+        test_op_eval.test_op_eval_with_max_leaps_shape(pathlib.Path(mock_test_dir.path))
+
+
+def test_env_overrides_persisted_env_without_changing_it(fs: FakeFilesystem):
+    mock_test_dir = fs.create_dir("/mock_test_dir")
+
+    with fat_mock_wrapper(fs):
+        test_op_eval.test_op_eval_env_overrides_persisted_env_without_changing_it(pathlib.Path(mock_test_dir.path))
+
+
+def test_does_not_create_env_link(fs: FakeFilesystem):
+    mock_test_dir = fs.create_dir("/mock_test_dir")
+
+    with fat_mock_wrapper(fs):
+        test_op_eval.test_op_eval_does_not_create_env_link(pathlib.Path(mock_test_dir.path))

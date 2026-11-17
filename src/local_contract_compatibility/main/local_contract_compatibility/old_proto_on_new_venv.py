@@ -4,6 +4,7 @@ import pathlib
 import subprocess
 
 from local_contract_compatibility.mode_id import ModeId
+from local_contract_compatibility.old_tests_on_new_changes import resolve_commit_id
 from local_contract_compatibility.run_mode_tests import run_handoff_mode_tests
 
 
@@ -25,7 +26,7 @@ def extract_old_proto_kernel(
     """
 
     old_content = subprocess.run(
-        ["git", "show", f"{commit_name}:{get_old_proto_kernel_rel_path()}"],
+        ["git", "show", f"{resolve_commit_id(repo_dir_abs_path, commit_name)}:{get_old_proto_kernel_rel_path()}"],
         cwd=str(repo_dir_abs_path),
         capture_output=True,
         text=True,

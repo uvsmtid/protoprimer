@@ -67,3 +67,34 @@ def test_old_tests_on_new_changes_fails_on_missing_contract_dir(tmp_path: pathli
         worktree_abs_path = tmp_path / commit_id / "worktree"
         if worktree_abs_path.exists():
             remove_worktree(repo_dir, worktree_abs_path)
+
+
+def test_resolve_commit_id_falls_back_to_remote_branch(tmp_path: pathlib.Path):
+    """
+    A fresh `actions/checkout` has no local branches: only `origin/<name>`.
+    """
+
+    # given:
+    repo_dir = tmp_path / "repo"
+    repo_dir.mkdir()
+
+    def git(*args: str) -> str:
+        return subprocess.run(
+            ["git", "-c", "user.name=test", "-c", "user.email=test@example.com", *args],
+            cwd=str(repo_dir),
+            capture_output=True,
+            text=True,
+            check=True,
+        ).stdout.strip()
+
+    git("init", "-q")
+    git("commit", "-q", "--allow-empty", "-m", "first")
+    commit_id = git("rev-parse", "HEAD")
+    git("update-ref", "refs/remotes/origin/remote_only_branch", commit_id)
+
+    # when/then:
+    assert resolve_commit_id(repo_dir, "remote_only_branch") == commit_id
+    assert resolve_commit_id(repo_dir, "HEAD") == commit_id
+
+    with pytest.raises(ValueError):
+        resolve_commit_id(repo_dir, "no_such_branch")

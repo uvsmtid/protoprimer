@@ -42,7 +42,7 @@ import typing
 
 # The release process ensures that content in this file matches the version below while tagging the release commit
 # (otherwise, if the file comes from a different commit, the version is irrelevant):
-__version__ = "0.14.2"
+__version__ = "0.15.0.dev0"
 
 _logger: logging.Logger = logging.getLogger()
 
@@ -1446,6 +1446,7 @@ class _ConfConstPrimer:
     Constants for FT_89_41_35_82.conf_leap.md / leap_primer
     """
 
+    # TODO: TODO_32_41_01_30.review_default_client_conf_file_rel_path.md: the kernel no longer uses it as the default (it is `ref_root`).
     default_client_conf_dir_rel_path: str = f"{_ConfDst.dst_global.value}"
 
     # Next FT_89_41_35_82.conf_leap.md: `_ConfLeap.leap_client`:
@@ -3146,10 +3147,9 @@ class _Node_state_global_conf_dir_abs_path_inited(_AbstractCachingStateNode[str]
 
         state_global_conf_dir_abs_path_inited: str | None
         if field_client_config_dir_rel_path is None:
-            state_global_conf_dir_abs_path_inited = os.path.join(
-                state_ref_root_dir_abs_path_inited,
-                _ConfConstPrimer.default_client_conf_dir_rel_path,
-            )
+            # FT_59_95_81_63.tree_shape.md:
+            # Not configured => no separate global config dir (min leaps shape):
+            state_global_conf_dir_abs_path_inited = state_ref_root_dir_abs_path_inited
         else:
             state_global_conf_dir_abs_path_inited = os.path.join(
                 state_ref_root_dir_abs_path_inited,
@@ -3289,45 +3289,27 @@ def _compose_env_dir_rel_path(
 # noinspection PyPep8Naming
 @_conditional_factory
 class _BaseNode_state_selected_env_dir_rel_path(_AbstractCachingStateNode[str]):
+    """
+    Implements: FT_03_31_63_70.environment_selection.md
+
+    The default env is not a part of the selection (see `_BaseNode_state_local_conf_symlink_abs_path_inited`).
+    """
 
     def _eval_state_once(self) -> _ValueType:
 
-        client_local_env_dir_any_path: str | None = self._select_client_local_env_dir_any_path()
-        if client_local_env_dir_any_path is None:
+        env_conf_dir_any_path: str | None = self._select_env_conf_dir_any_path()
+        if env_conf_dir_any_path is None:
             return None
 
         state_ref_root_dir_abs_path_inited: str = self.eval_parent_state(_EnvState.state_ref_root_dir_abs_path_inited.name)
 
         return _compose_env_dir_rel_path(
-            client_local_env_dir_any_path,
+            env_conf_dir_any_path,
             state_ref_root_dir_abs_path_inited,
         )
 
     def _select_env_conf_dir_any_path(self) -> str | None:
         raise NotImplementedError()
-
-    def _select_client_local_env_dir_any_path(self) -> str | None:
-        """
-        TODO: TODO_41_10_50_01.implement_env_selector.md
-        """
-        env_conf_dir_any_path = self._select_env_conf_dir_any_path()
-        if env_conf_dir_any_path is None:
-            # Use the default env configured:
-            state_client_conf_file_data_loaded: dict = self.eval_parent_state(_EnvState.state_client_conf_file_data_loaded.name)
-            field_default_env_dir_rel_path: str | None = state_client_conf_file_data_loaded.get(ConfField.field_default_env_dir_rel_path.value, None)
-            if field_default_env_dir_rel_path is None:
-                _warn_once_at_state_stride(
-                    f"Field `{ConfField.field_default_env_dir_rel_path.value}` is [{field_default_env_dir_rel_path}] - use [{_ExecOperation.op_eval.value}] exec operation for description.",
-                    self.env_ctx.get_stride(),
-                )
-                return None
-            if os.path.isabs(field_default_env_dir_rel_path):
-                # Disable wrong complain about `.value`:
-                # noinspection PyUnresolvedReferences
-                raise AssertionError(f"Field `{ConfField.field_default_env_dir_rel_path.value}` must be a relative path.")
-            return field_default_env_dir_rel_path
-        else:
-            return env_conf_dir_any_path
 
 
 # noinspection PyPep8Naming
@@ -3338,7 +3320,6 @@ class _Node_state_selected_env_dir_rel_path_inited_is_app(_BaseNode_state_select
         lambda: [
             _EnvState.state_args_parsed.name,
             _EnvState.state_ref_root_dir_abs_path_inited.name,
-            _EnvState.state_client_conf_file_data_loaded.name,
         ]
     )
     _state_name = staticmethod(lambda: _EnvState.state_selected_env_dir_rel_path_inited.name)
@@ -3348,7 +3329,6 @@ class _Node_state_selected_env_dir_rel_path_inited_is_app(_BaseNode_state_select
         env_conf_dir_any_path: str | None = getattr(
             state_args_parsed,
             _ParsedArg.name_selected_env_dir.value,
-            # NOTE: The value is only set for `_ExecOperation.op_boot`, otherwise, this default is used:
             None,
         )
         return env_conf_dir_any_path
@@ -3358,12 +3338,6 @@ class _Node_state_selected_env_dir_rel_path_inited_is_app(_BaseNode_state_select
 @_conditional_factory
 class _Node_state_selected_env_dir_rel_path_inited_not_is_app(_BaseNode_state_selected_env_dir_rel_path):
 
-    _parent_states = staticmethod(
-        lambda: [
-            _EnvState.state_ref_root_dir_abs_path_inited.name,
-            _EnvState.state_client_conf_file_data_loaded.name,
-        ]
-    )
     _state_name = staticmethod(lambda: _EnvState.state_selected_env_dir_rel_path_inited.name)
 
     def _select_env_conf_dir_any_path(self) -> str | None:
@@ -3383,13 +3357,15 @@ class _Factory_state_selected_env_dir_rel_path_inited(_NodeFactory[_StateStride]
 def _compose_local_conf_symlink_abs_path(
     ref_root_dir_abs_path: str,
     client_conf_file_data: dict,
-) -> str:
+) -> str | None:
     """
     Compose the abs path of the `local_env_link` symlink itself (not the dir it points to).
+
+    Returns `None` if the symlink is not configured (there is nothing to persist the env in).
     """
     client_env_conf_link_name_dir_rel_path: str | None = client_conf_file_data.get(ConfField.field_local_conf_symlink_rel_path.value, None)
     if client_env_conf_link_name_dir_rel_path is None:
-        return ref_root_dir_abs_path
+        return None
     if os.path.isabs(client_env_conf_link_name_dir_rel_path):
         raise AssertionError(f"Field `{ConfField.field_local_conf_symlink_rel_path.value}` cannot be absolute [{client_env_conf_link_name_dir_rel_path}]")
     return os.path.join(
@@ -3460,6 +3436,7 @@ class _BaseNode_state_local_conf_symlink_abs_path_inited(_AbstractCachingStateNo
     _parent_states = staticmethod(
         lambda: [
             _EnvState.state_ref_root_dir_abs_path_inited.name,
+            _EnvState.state_global_conf_dir_abs_path_inited.name,
             _EnvState.state_client_conf_file_data_loaded.name,
             _EnvState.state_selected_env_dir_rel_path_inited.name,
         ]
@@ -3469,33 +3446,48 @@ class _BaseNode_state_local_conf_symlink_abs_path_inited(_AbstractCachingStateNo
     def _eval_state_once(self) -> _ValueType:
 
         state_ref_root_dir_abs_path_inited: str = self.eval_parent_state(_EnvState.state_ref_root_dir_abs_path_inited.name)
-
+        state_client_conf_file_data_loaded: dict = self.eval_parent_state(_EnvState.state_client_conf_file_data_loaded.name)
         state_selected_env_dir_rel_path_inited: str | None = self.eval_parent_state(_EnvState.state_selected_env_dir_rel_path_inited.name)
 
-        # TODO: TODO_41_10_50_01.implement_env_selector.md: Why None is possible? Is it repo config without env-specific config?
-        # TODO: TODO_53_40_17_68.default_env_config_vs_lconf_symlink.md
-        #       This is `None` when (A) config is missing (B) no CLI arg.
-        #       But do we want to use `gconf` as target for `lconf`?
-        if state_selected_env_dir_rel_path_inited is None:
-            # No symlink target => no `conf_leap` => use `client_conf` instead of `env_conf`:
-            return state_ref_root_dir_abs_path_inited
+        symlink_abs_path: str | None = _compose_local_conf_symlink_abs_path(
+            state_ref_root_dir_abs_path_inited,
+            state_client_conf_file_data_loaded,
+        )
 
-        state_client_conf_file_data_loaded: dict = self.eval_parent_state(_EnvState.state_client_conf_file_data_loaded.name)
+        if state_selected_env_dir_rel_path_inited is not None:
+            return self._eval_env_dir_abs_path(
+                state_ref_root_dir_abs_path_inited,
+                state_selected_env_dir_rel_path_inited,
+                symlink_abs_path,
+            )
 
+        # Nothing is selected - the persisted env is the only choice:
+        if symlink_abs_path is not None and os.path.lexists(symlink_abs_path):
+            _validate_symlink_to_dir(symlink_abs_path)
+            return _resolve_symlink_dir_abs_path(symlink_abs_path)
+
+        # Nothing is persisted - fall back to the default:
+        field_default_env_dir_rel_path: str | None = state_client_conf_file_data_loaded.get(ConfField.field_default_env_dir_rel_path.value, None)
+        if field_default_env_dir_rel_path is None:
+            return self.eval_parent_state(_EnvState.state_global_conf_dir_abs_path_inited.name)
+        if os.path.isabs(field_default_env_dir_rel_path):
+            # Disable wrong complain about `.value`:
+            # noinspection PyUnresolvedReferences
+            raise AssertionError(f"Field `{ConfField.field_default_env_dir_rel_path.value}` must be a relative path.")
         return self._eval_env_dir_abs_path(
             state_ref_root_dir_abs_path_inited,
-            state_selected_env_dir_rel_path_inited,
-            _compose_local_conf_symlink_abs_path(
+            _compose_env_dir_rel_path(
+                field_default_env_dir_rel_path,
                 state_ref_root_dir_abs_path_inited,
-                state_client_conf_file_data_loaded,
             ),
+            symlink_abs_path,
         )
 
     def _eval_env_dir_abs_path(
         self,
         ref_root_dir_abs_path: str,
         selected_env_dir_rel_path: str,
-        symlink_abs_path: str,
+        symlink_abs_path: str | None,
     ) -> str:
         raise NotImplementedError()
 
@@ -3526,8 +3518,10 @@ class _Node_state_local_conf_symlink_abs_path_inited_read(_BaseNode_state_local_
         self,
         ref_root_dir_abs_path: str,
         selected_env_dir_rel_path: str,
-        symlink_abs_path: str,
+        symlink_abs_path: str | None,
     ) -> str:
+        if symlink_abs_path is None:
+            return self._compose_selected_env_dir_abs_path(ref_root_dir_abs_path, selected_env_dir_rel_path)
 
         if os.path.exists(symlink_abs_path):
             _validate_symlink_to_dir(symlink_abs_path)
@@ -3542,12 +3536,6 @@ class _Node_state_local_conf_symlink_abs_path_inited_read(_BaseNode_state_local_
                     symlink_abs_path,
                 )
                 if expected_conf_dir_path != conf_dir_path:
-                    # TODO: TODO_53_40_17_68.default_env_config_vs_lconf_symlink.md
-                    #       If symlink target does not match default env, why not reset instead of raising?
-                    #       If we do not reset automatically, user has to do it manually.
-                    #       More over, symlink matching default env may actually be normal...
-                    #       What if user wants to keep "decision" of what env he uses in that symlink?
-                    #       The automatic reset must only be done when --env arg is specified.
                     raise AssertionError(f"The symlink [{symlink_abs_path}] target [{conf_dir_path}] is not the same as the provided target [{expected_conf_dir_path}].")
             return _resolve_symlink_dir_abs_path(symlink_abs_path)
 
@@ -3585,26 +3573,26 @@ class _Node_state_local_conf_symlink_abs_path_inited_reset(_BaseNode_state_local
         self,
         ref_root_dir_abs_path: str,
         selected_env_dir_rel_path: str,
-        symlink_abs_path: str,
+        symlink_abs_path: str | None,
     ) -> str:
-        expected_conf_dir_path = _compose_symlink_target(
-            ref_root_dir_abs_path,
-            selected_env_dir_rel_path,
-            symlink_abs_path,
-        )
-
-        if os.path.islink(symlink_abs_path):
-            conf_dir_path = os.path.normpath(os.readlink(symlink_abs_path))
-            if conf_dir_path != expected_conf_dir_path:
-                _logger.info(f"overwriting symlink [{symlink_abs_path}] target [{conf_dir_path}] with [{expected_conf_dir_path}]")
-                # TODO: TODO_50_98_96_87.support_windows.md: removing a dir symlink may need `os.rmdir` on Windows:
-                os.remove(symlink_abs_path)
+        if symlink_abs_path is not None:
+            expected_conf_dir_path = _compose_symlink_target(
+                ref_root_dir_abs_path,
+                selected_env_dir_rel_path,
+                symlink_abs_path,
+            )
+            if os.path.islink(symlink_abs_path):
+                conf_dir_path = os.path.normpath(os.readlink(symlink_abs_path))
+                if conf_dir_path != expected_conf_dir_path:
+                    _logger.info(f"overwriting symlink [{symlink_abs_path}] target [{conf_dir_path}] with [{expected_conf_dir_path}]")
+                    # TODO: TODO_50_98_96_87.support_windows.md: removing a dir symlink may need `os.rmdir` on Windows:
+                    os.remove(symlink_abs_path)
+                    _create_symlink_to_dir(symlink_abs_path, expected_conf_dir_path)
+            elif os.path.lexists(symlink_abs_path):
+                # Never delete a real file/dir:
+                raise AssertionError(f"The entry [{symlink_abs_path}] is not a symlink.")
+            else:
                 _create_symlink_to_dir(symlink_abs_path, expected_conf_dir_path)
-        elif os.path.lexists(symlink_abs_path):
-            # Never delete a real file/dir:
-            raise AssertionError(f"The entry [{symlink_abs_path}] is not a symlink.")
-        else:
-            _create_symlink_to_dir(symlink_abs_path, expected_conf_dir_path)
 
         return self._compose_selected_env_dir_abs_path(ref_root_dir_abs_path, selected_env_dir_rel_path)
 
@@ -3613,14 +3601,14 @@ class _Node_state_local_conf_symlink_abs_path_inited_reset(_BaseNode_state_local
 @_conditional_factory
 class _Node_state_local_conf_symlink_abs_path_inited_eval(_BaseNode_state_local_conf_symlink_abs_path_inited):
     """
-    Used by `_ExecOperation.op_eval`: the selected env overrides the persisted symlink (never read or written).
+    Used by `_ExecOperation.op_eval`: a selected (or default) env overrides the persisted symlink (never read or written).
     """
 
     def _eval_env_dir_abs_path(
         self,
         ref_root_dir_abs_path: str,
         selected_env_dir_rel_path: str,
-        symlink_abs_path: str,
+        symlink_abs_path: str | None,
     ) -> str:
         return self._compose_selected_env_dir_abs_path(ref_root_dir_abs_path, selected_env_dir_rel_path)
 

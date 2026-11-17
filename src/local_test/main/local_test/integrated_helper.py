@@ -7,6 +7,7 @@ import sys
 from pathlib import Path
 from typing import (
     List,
+    NamedTuple,
     Tuple,
     Union,
 )
@@ -233,24 +234,21 @@ def create_python_version_file(
 def create_conf_client_file(
     ref_root_abs_path: pathlib.Path,
     conf_client_dir_abs_path: pathlib.Path,
-    conf_env_dir_abs_path: pathlib.Path,
+    conf_env_dir_abs_path: Union[pathlib.Path, None],
     project_dir_abs_path: pathlib.Path,
 ) -> None:
+    """
+    Pass `None` as `conf_env_dir_abs_path` to configure no default env (see `FT_03_31_63_70.environment_selection.md`).
+    """
 
     project_dir_rel_path: str = os.path.relpath(
         project_dir_abs_path,
         ref_root_abs_path,
     )
 
-    conf_env_dir_rel_path: str = os.path.relpath(
-        conf_env_dir_abs_path,
-        ref_root_abs_path,
-    )
-
     client_conf_data = {
         ConfField.field_required_python_version.value: test_python_version,
         ConfField.field_local_conf_symlink_rel_path.value: _ConfConstClient.default_dir_rel_path_leap_env_link_name,
-        ConfField.field_default_env_dir_rel_path.value: str(conf_env_dir_rel_path),
         ConfField.field_project_descriptors.value: [
             {
                 ConfField.field_build_root_dir_rel_path.value: str(project_dir_rel_path),
@@ -258,6 +256,13 @@ def create_conf_client_file(
             },
         ],
     }
+    if conf_env_dir_abs_path is not None:
+        client_conf_data[ConfField.field_default_env_dir_rel_path.value] = str(
+            os.path.relpath(
+                conf_env_dir_abs_path,
+                ref_root_abs_path,
+            )
+        )
 
     conf_client_dir_abs_path.mkdir(parents=True, exist_ok=True)
 
@@ -420,4 +425,78 @@ def create_max_leaps_shape(tmp_path: Path) -> Tuple[Path, Path, Path]:
         proto_kernel_abs_path,
         ref_root_abs_path,
         project_dir_abs_path,
+    )
+
+
+class TwoEnvsShape(NamedTuple):
+    """
+    See "max leaps shape" (FT_59_95_81_63.tree_shape.md) with two envs: the default one and a special one.
+    """
+
+    proto_kernel_abs_path: Path
+    ref_root_abs_path: Path
+    default_env_dir_abs_path: Path
+    special_env_dir_abs_path: Path
+    default_venv_abs_path: Path
+    special_venv_abs_path: Path
+
+
+def create_two_envs_shape(tmp_path: Path) -> TwoEnvsShape:
+    """
+    The client config selects `_ConfConstClient.common_env_name` as the default env.
+    Each env has its own `venv` dir: `venv_default` and `venv_special` (see `TwoEnvsShape`).
+    """
+
+    ref_root_abs_path: pathlib.Path = switch_to_ref_root_abs_path(tmp_path)
+
+    # === create `_ConfLeap.leap_primer`
+
+    proto_kernel_dir_abs_path = ref_root_abs_path / _ConfConstInput.default_proto_conf_dir_rel_path
+    proto_kernel_abs_path: Path = create_plain_proto_kernel(proto_kernel_dir_abs_path)
+    create_conf_primer_file(
+        ref_root_abs_path,
+        proto_kernel_dir_abs_path,
+    )
+
+    # === create `pyproject.toml`
+
+    project_dir_abs_path = ref_root_abs_path / test_pyproject_src_dir_rel_path
+    create_test_pyproject_toml(project_dir_abs_path)
+
+    # === create `_ConfLeap.leap_env`
+
+    default_venv_rel_path = "venv_default"
+    default_env_dir_abs_path = ref_root_abs_path / _ConfConstClient.common_env_name
+    create_conf_env_file(
+        ref_root_abs_path,
+        default_env_dir_abs_path,
+        project_dir_abs_path,
+        venv_dir_rel_path=default_venv_rel_path,
+    )
+
+    special_venv_rel_path = "venv_special"
+    special_env_dir_abs_path = ref_root_abs_path / "special_env"
+    create_conf_env_file(
+        ref_root_abs_path,
+        special_env_dir_abs_path,
+        project_dir_abs_path,
+        venv_dir_rel_path=special_venv_rel_path,
+    )
+
+    # === create `_ConfLeap.leap_client`
+
+    create_conf_client_file(
+        ref_root_abs_path,
+        ref_root_abs_path / _ConfConstPrimer.default_client_conf_dir_rel_path,
+        default_env_dir_abs_path,
+        project_dir_abs_path,
+    )
+
+    return TwoEnvsShape(
+        proto_kernel_abs_path=proto_kernel_abs_path,
+        ref_root_abs_path=ref_root_abs_path,
+        default_env_dir_abs_path=default_env_dir_abs_path,
+        special_env_dir_abs_path=special_env_dir_abs_path,
+        default_venv_abs_path=ref_root_abs_path / default_venv_rel_path,
+        special_venv_abs_path=ref_root_abs_path / special_venv_rel_path,
     )

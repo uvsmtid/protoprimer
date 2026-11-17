@@ -1,3 +1,4 @@
+import os
 import pathlib
 
 from local_repo.sub_proc_util import (
@@ -9,11 +10,13 @@ from local_test.integrated_helper import (
     create_conf_env_file,
     create_conf_primer_file,
     create_plain_proto_kernel,
+    create_two_envs_shape,
     create_test_pyproject_toml,
     switch_to_ref_root_abs_path,
     test_pyproject_src_dir_rel_path,
 )
 from local_test.package_version_verifier import extract_package_version
+from local_test.version_gate import skip_if_proto_kernel_older_than
 from protoprimer.primer_kernel import (
     _ConfConstClient,
     _ConfConstEnv,
@@ -120,3 +123,43 @@ def test_op_reset(tmp_path: pathlib.Path):
         package_name,
     )
     assert package_version_install < package_version_reset
+
+
+def test_op_reset_overwrites_persisted_env(tmp_path: pathlib.Path):
+    """
+    FT_03_31_63_70.environment_selection.md: `_ExecOperation.op_reset` selects the env any time.
+    """
+
+    # `proto_kernel.py` older than this does not have the behavior (see `old_proto_on_new_venv`):
+    skip_if_proto_kernel_older_than("0.15.0")
+
+    # given:
+    # the default env is persisted:
+
+    two_envs_shape = create_two_envs_shape(tmp_path)
+    env_link_abs_path = two_envs_shape.ref_root_abs_path / _ConfConstClient.default_dir_rel_path_leap_env_link_name
+    os.symlink(
+        two_envs_shape.default_env_dir_abs_path.name,
+        env_link_abs_path,
+    )
+
+    # when:
+    # reset with another env:
+
+    run_primer_main(
+        [
+            str(two_envs_shape.proto_kernel_abs_path),
+            _ExecOperation.op_reset.value,
+            _SyntaxArg.arg_env,
+            two_envs_shape.special_env_dir_abs_path.name,
+            _SyntaxArg.arg_v,
+            _SyntaxArg.arg_v,
+        ]
+    )
+
+    # then:
+    # the persisted env is overwritten and the new env is bootstrapped:
+
+    assert os.readlink(env_link_abs_path) == two_envs_shape.special_env_dir_abs_path.name
+    assert two_envs_shape.special_venv_abs_path.exists()
+    assert not two_envs_shape.default_venv_abs_path.exists()

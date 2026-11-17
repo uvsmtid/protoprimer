@@ -31,13 +31,23 @@ def resolve_commit_id(
     repo_dir_abs_path: pathlib.Path,
     commit_name: str,
 ) -> str:
-    return subprocess.run(
-        ["git", "rev-parse", "--verify", f"{commit_name}^{{commit}}"],
-        cwd=str(repo_dir_abs_path),
-        capture_output=True,
-        text=True,
-        check=True,
-    ).stdout.strip()
+    """
+    Resolves `commit_name` (id, tag, local branch) to a commit id.
+
+    A branch which exists only on the remote (e.g. a fresh `actions/checkout` has no local branches)
+    is resolved as `origin/<commit_name>`.
+    """
+
+    for candidate_name in [commit_name, f"origin/{commit_name}"]:
+        resolved = subprocess.run(
+            ["git", "rev-parse", "--verify", f"{candidate_name}^{{commit}}"],
+            cwd=str(repo_dir_abs_path),
+            capture_output=True,
+            text=True,
+        )
+        if resolved.returncode == 0:
+            return resolved.stdout.strip()
+    raise ValueError(f"commit name [{commit_name}] is neither a local commit name nor [origin/{commit_name}]")
 
 
 def ensure_worktree(
