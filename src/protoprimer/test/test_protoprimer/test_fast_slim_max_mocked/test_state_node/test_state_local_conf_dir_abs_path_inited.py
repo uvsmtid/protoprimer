@@ -11,15 +11,15 @@ from local_test.mock_verifier import (
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
-    _BaseNode_state_local_conf_symlink_abs_path_inited,
-    _Factory_state_local_conf_symlink_abs_path_inited,
+    _BaseNode_state_local_conf_dir_abs_path_inited,
+    _Factory_state_local_conf_dir_abs_path_inited,
     _Node_state_client_conf_file_data_loaded,
     _NodeFactory,
     _Node_state_global_conf_dir_abs_path_inited,
-    _Node_state_local_conf_symlink_abs_path_inited_boot,
-    _Node_state_local_conf_symlink_abs_path_inited_eval,
-    _Node_state_local_conf_symlink_abs_path_inited_reset,
-    _Node_state_local_conf_symlink_abs_path_inited_read,
+    _Node_state_local_conf_dir_abs_path_inited_boot,
+    _Node_state_local_conf_dir_abs_path_inited_eval,
+    _Node_state_local_conf_dir_abs_path_inited_reset,
+    _Node_state_local_conf_dir_abs_path_inited_read,
     _Node_state_ref_root_dir_abs_path_inited,
     _Factory_state_selected_env_dir_rel_path_inited,
     _ConfConstClient,
@@ -45,7 +45,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
     # noinspection PyMethodMayBeStatic
     def test_relationship(self):
-        assert_test_module_name_embeds_str(_EnvState.state_local_conf_symlink_abs_path_inited.name)
+        assert_test_module_name_embeds_str(_EnvState.state_local_conf_dir_abs_path_inited.name)
 
     @patch(f"{primer_kernel.__name__}.{_Node_state_client_conf_file_data_loaded.__name__}.{_NodeFactory.create_state_node.__name__}")
     @patch(f"{primer_kernel.__name__}.{_Node_state_ref_root_dir_abs_path_inited.__name__}.{_NodeFactory.create_state_node.__name__}")
@@ -61,7 +61,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         assert_parent_factories_mocked(
             self.env_ctx,
-            _EnvState.state_local_conf_symlink_abs_path_inited.name,
+            _EnvState.state_local_conf_dir_abs_path_inited.name,
         )
 
         mock_client_dir = "/mock_client_dir"
@@ -80,7 +80,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = mock_client_dir
         mock_state_client_conf_file_data_loaded.return_value.eval_own_state.return_value = {ConfField.field_local_conf_symlink_rel_path.value: _ConfConstClient.default_dir_rel_path_leap_env_link_name}
 
-        state_local_conf_symlink_abs_path_inited = os.path.join(
+        state_local_conf_dir_abs_path_inited = os.path.join(
             mock_client_dir,
             _ConfConstClient.default_dir_rel_path_leap_env_link_name,
         )
@@ -89,7 +89,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
         self.fs.create_dir(mock_target_dir)
         self.fs.create_symlink(
-            state_local_conf_symlink_abs_path_inited,
+            state_local_conf_dir_abs_path_inited,
             mock_target_dir,
         )
         client_script_basename = "client_script.py"
@@ -102,7 +102,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         # when:
 
         with patch.object(sys, "argv", test_args):
-            self.env_ctx.eval_state(_EnvState.state_local_conf_symlink_abs_path_inited.name)
+            self.env_ctx.eval_state(_EnvState.state_local_conf_dir_abs_path_inited.name)
 
         # then:
 
@@ -122,7 +122,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         assert_parent_factories_mocked(
             self.env_ctx,
-            _EnvState.state_local_conf_symlink_abs_path_inited.name,
+            _EnvState.state_local_conf_dir_abs_path_inited.name,
         )
 
         mock_client_dir = "/mock_client_dir"
@@ -140,7 +140,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = mock_client_dir
         mock_state_client_conf_file_data_loaded.return_value.eval_own_state.return_value = {ConfField.field_local_conf_symlink_rel_path.value: _ConfConstClient.default_dir_rel_path_leap_env_link_name}
 
-        state_local_conf_symlink_abs_path_inited = os.path.join(
+        state_local_conf_dir_abs_path_inited = os.path.join(
             mock_client_dir,
             _ConfConstClient.default_dir_rel_path_leap_env_link_name,
         )
@@ -149,14 +149,14 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
         self.fs.create_dir(target_dst_dir_path)
         self.fs.create_symlink(
-            state_local_conf_symlink_abs_path_inited,
+            state_local_conf_dir_abs_path_inited,
             target_dst_dir_path,
         )
         mock_state_selected_env_dir_rel_path_inited.return_value.eval_own_state.return_value = target_dst_dir_path
 
         # when:
 
-        self.env_ctx.eval_state(_EnvState.state_local_conf_symlink_abs_path_inited.name)
+        self.env_ctx.eval_state(_EnvState.state_local_conf_dir_abs_path_inited.name)
 
         # then:
 
@@ -176,7 +176,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         assert_parent_factories_mocked(
             self.env_ctx,
-            _EnvState.state_local_conf_symlink_abs_path_inited.name,
+            _EnvState.state_local_conf_dir_abs_path_inited.name,
         )
 
         mock_client_dir = "/mock_client_dir"
@@ -197,13 +197,13 @@ class ThisTestClass(BasePyfakefsTestClass):
         expected_target_dir = os.path.join(
             "expected_target_dir",
         )
-        state_local_conf_symlink_abs_path_inited = os.path.join(mock_client_dir, "lconf")
+        state_local_conf_dir_abs_path_inited = os.path.join(mock_client_dir, "lconf")
         mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = mock_client_dir
-        mock_state_client_conf_file_data_loaded.return_value.eval_own_state.return_value = {ConfField.field_local_conf_symlink_rel_path.value: os.path.basename(state_local_conf_symlink_abs_path_inited)}
+        mock_state_client_conf_file_data_loaded.return_value.eval_own_state.return_value = {ConfField.field_local_conf_symlink_rel_path.value: os.path.basename(state_local_conf_dir_abs_path_inited)}
         self.fs.create_dir(actual_target_dir)
         self.fs.create_dir(expected_target_dir)
         self.fs.create_symlink(
-            state_local_conf_symlink_abs_path_inited,
+            state_local_conf_dir_abs_path_inited,
             actual_target_dir,
         )
 
@@ -212,7 +212,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         # when:
 
         with self.assertRaises(AssertionError) as ctx:
-            self.env_ctx.eval_state(_EnvState.state_local_conf_symlink_abs_path_inited.name)
+            self.env_ctx.eval_state(_EnvState.state_local_conf_dir_abs_path_inited.name)
 
         # then:
 
@@ -232,7 +232,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         assert_parent_factories_mocked(
             self.env_ctx,
-            _EnvState.state_local_conf_symlink_abs_path_inited.name,
+            _EnvState.state_local_conf_dir_abs_path_inited.name,
         )
 
         mock_client_dir = "/mock_client_dir"
@@ -253,13 +253,13 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = mock_client_dir
         mock_state_client_conf_file_data_loaded.return_value.eval_own_state.return_value = {ConfField.field_local_conf_symlink_rel_path.value: _ConfConstClient.default_dir_rel_path_leap_env_link_name}
 
-        state_local_conf_symlink_abs_path_inited = os.path.join(
+        state_local_conf_dir_abs_path_inited = os.path.join(
             mock_client_dir,
             _ConfConstClient.default_dir_rel_path_leap_env_link_name,
         )
         self.fs.create_file(mock_not_a_dir)
         self.fs.create_symlink(
-            state_local_conf_symlink_abs_path_inited,
+            state_local_conf_dir_abs_path_inited,
             mock_not_a_dir,
         )
         mock_state_selected_env_dir_rel_path_inited.return_value.eval_own_state.return_value = mock_not_a_dir
@@ -267,7 +267,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         # when:
 
         with self.assertRaises(AssertionError) as ctx:
-            self.env_ctx.eval_state(_EnvState.state_local_conf_symlink_abs_path_inited.name)
+            self.env_ctx.eval_state(_EnvState.state_local_conf_dir_abs_path_inited.name)
 
         # then:
 
@@ -287,7 +287,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         assert_parent_factories_mocked(
             self.env_ctx,
-            _EnvState.state_local_conf_symlink_abs_path_inited.name,
+            _EnvState.state_local_conf_dir_abs_path_inited.name,
         )
 
         mock_client_dir = "/mock_client_dir"
@@ -306,11 +306,11 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = mock_client_dir
         mock_state_client_conf_file_data_loaded.return_value.eval_own_state.return_value = {ConfField.field_local_conf_symlink_rel_path.value: _ConfConstClient.default_dir_rel_path_leap_env_link_name}
 
-        state_local_conf_symlink_abs_path_inited = os.path.join(
+        state_local_conf_dir_abs_path_inited = os.path.join(
             mock_client_dir,
             _ConfConstClient.default_dir_rel_path_leap_env_link_name,
         )
-        self.fs.create_dir(state_local_conf_symlink_abs_path_inited)
+        self.fs.create_dir(state_local_conf_dir_abs_path_inited)
         client_script_basename = "client_script.py"
         test_args = [
             client_script_basename,
@@ -322,7 +322,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         with patch.object(sys, "argv", test_args):
             with self.assertRaises(AssertionError) as ctx:
-                self.env_ctx.eval_state(_EnvState.state_local_conf_symlink_abs_path_inited.name)
+                self.env_ctx.eval_state(_EnvState.state_local_conf_dir_abs_path_inited.name)
 
         # then:
 
@@ -343,7 +343,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.env_ctx._exec_operation = _ExecOperation.op_boot
         assert_parent_factories_mocked(
             self.env_ctx,
-            _EnvState.state_local_conf_symlink_abs_path_inited.name,
+            _EnvState.state_local_conf_dir_abs_path_inited.name,
         )
 
         mock_client_dir = "/mock_client_dir"
@@ -364,7 +364,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = mock_client_dir
         mock_state_client_conf_file_data_loaded.return_value.eval_own_state.return_value = {ConfField.field_local_conf_symlink_rel_path.value: _ConfConstClient.default_dir_rel_path_leap_env_link_name}
 
-        state_local_conf_symlink_abs_path_inited = os.path.join(
+        state_local_conf_dir_abs_path_inited = os.path.join(
             mock_client_dir,
             _ConfConstClient.default_dir_rel_path_leap_env_link_name,
         )
@@ -374,13 +374,13 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # when:
 
-        self.env_ctx.eval_state(_EnvState.state_local_conf_symlink_abs_path_inited.name)
+        self.env_ctx.eval_state(_EnvState.state_local_conf_dir_abs_path_inited.name)
 
         # then:
 
-        self.assertTrue(os.path.islink(state_local_conf_symlink_abs_path_inited))
+        self.assertTrue(os.path.islink(state_local_conf_dir_abs_path_inited))
         self.assertEqual(
-            os.readlink(state_local_conf_symlink_abs_path_inited),
+            os.readlink(state_local_conf_dir_abs_path_inited),
             target_dst_dir_path,
         )
 
@@ -399,7 +399,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.env_ctx._exec_operation = _ExecOperation.op_boot
         assert_parent_factories_mocked(
             self.env_ctx,
-            _EnvState.state_local_conf_symlink_abs_path_inited.name,
+            _EnvState.state_local_conf_dir_abs_path_inited.name,
         )
 
         mock_client_dir = "/mock_client_dir"
@@ -420,7 +420,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = mock_client_dir
         mock_state_client_conf_file_data_loaded.return_value.eval_own_state.return_value = {ConfField.field_local_conf_symlink_rel_path.value: _ConfConstClient.default_dir_rel_path_leap_env_link_name}
 
-        state_local_conf_symlink_abs_path_inited = os.path.join(
+        state_local_conf_dir_abs_path_inited = os.path.join(
             mock_client_dir,
             _ConfConstClient.default_dir_rel_path_leap_env_link_name,
         )
@@ -430,13 +430,13 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # when:
 
-        self.env_ctx.eval_state(_EnvState.state_local_conf_symlink_abs_path_inited.name)
+        self.env_ctx.eval_state(_EnvState.state_local_conf_dir_abs_path_inited.name)
 
         # then:
 
-        self.assertTrue(os.path.islink(state_local_conf_symlink_abs_path_inited))
+        self.assertTrue(os.path.islink(state_local_conf_dir_abs_path_inited))
         self.assertEqual(
-            os.readlink(state_local_conf_symlink_abs_path_inited),
+            os.readlink(state_local_conf_dir_abs_path_inited),
             target_dst_dir_path_normalized,
         )
 
@@ -452,7 +452,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         # given:
         assert_parent_factories_mocked(
             self.env_ctx,
-            _EnvState.state_local_conf_symlink_abs_path_inited.name,
+            _EnvState.state_local_conf_dir_abs_path_inited.name,
         )
 
         mock_ref_root = "/mock_ref_root"
@@ -461,7 +461,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_client_conf_file_data_loaded.return_value.eval_own_state.return_value = {}  # no symlink, no default
 
         # when:
-        result = self.env_ctx.eval_state(_EnvState.state_local_conf_symlink_abs_path_inited.name)
+        result = self.env_ctx.eval_state(_EnvState.state_local_conf_dir_abs_path_inited.name)
 
         # then: nothing selected, nothing persisted, no default => global config dir
         self.assertEqual(result, "/mock_global_conf_dir")
@@ -486,7 +486,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         assert_parent_factories_mocked(
             self.env_ctx,
-            _EnvState.state_local_conf_symlink_abs_path_inited.name,
+            _EnvState.state_local_conf_dir_abs_path_inited.name,
         )
 
         mock_client_dir = "/mock_client_dir"
@@ -511,13 +511,13 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = mock_client_dir
         mock_state_client_conf_file_data_loaded.return_value.eval_own_state.return_value = {ConfField.field_local_conf_symlink_rel_path.value: nested_conf_link_rel_path}
 
-        state_local_conf_symlink_abs_path_inited = os.path.join(
+        state_local_conf_dir_abs_path_inited = os.path.join(
             mock_client_dir,
             nested_conf_link_rel_path,
         )
         self.fs.create_dir(os.path.join(mock_client_dir, "conf", "dst", "default_env"))
         self.fs.create_symlink(
-            state_local_conf_symlink_abs_path_inited,
+            state_local_conf_dir_abs_path_inited,
             symlink_dir_rel_target_dir,
         )
 
@@ -525,7 +525,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # when:
 
-        self.env_ctx.eval_state(_EnvState.state_local_conf_symlink_abs_path_inited.name)
+        self.env_ctx.eval_state(_EnvState.state_local_conf_dir_abs_path_inited.name)
 
         # then:
 
@@ -545,7 +545,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         assert_parent_factories_mocked(
             self.env_ctx,
-            _EnvState.state_local_conf_symlink_abs_path_inited.name,
+            _EnvState.state_local_conf_dir_abs_path_inited.name,
         )
 
         mock_client_dir = "/mock_client_dir"
@@ -568,14 +568,14 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = mock_client_dir
         mock_state_client_conf_file_data_loaded.return_value.eval_own_state.return_value = {ConfField.field_local_conf_symlink_rel_path.value: nested_conf_link_rel_path}
 
-        state_local_conf_symlink_abs_path_inited = os.path.join(
+        state_local_conf_dir_abs_path_inited = os.path.join(
             mock_client_dir,
             nested_conf_link_rel_path,
         )
         self.fs.create_dir(os.path.join(mock_client_dir, "conf", "dst", "default_env"))
         self.fs.create_dir(os.path.join(mock_client_dir, "conf", "dst", "other_env"))
         self.fs.create_symlink(
-            state_local_conf_symlink_abs_path_inited,
+            state_local_conf_dir_abs_path_inited,
             actual_symlink_dir_rel_target_dir,
         )
 
@@ -584,7 +584,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         # when:
 
         with self.assertRaises(AssertionError) as ctx:
-            self.env_ctx.eval_state(_EnvState.state_local_conf_symlink_abs_path_inited.name)
+            self.env_ctx.eval_state(_EnvState.state_local_conf_dir_abs_path_inited.name)
 
         # then:
 
@@ -609,7 +609,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.env_ctx._exec_operation = _ExecOperation.op_boot
         assert_parent_factories_mocked(
             self.env_ctx,
-            _EnvState.state_local_conf_symlink_abs_path_inited.name,
+            _EnvState.state_local_conf_dir_abs_path_inited.name,
         )
 
         mock_client_dir = "/mock_client_dir"
@@ -632,7 +632,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = mock_client_dir
         mock_state_client_conf_file_data_loaded.return_value.eval_own_state.return_value = {ConfField.field_local_conf_symlink_rel_path.value: nested_conf_link_rel_path}
 
-        state_local_conf_symlink_abs_path_inited = os.path.join(
+        state_local_conf_dir_abs_path_inited = os.path.join(
             mock_client_dir,
             nested_conf_link_rel_path,
         )
@@ -642,13 +642,13 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # when:
 
-        self.env_ctx.eval_state(_EnvState.state_local_conf_symlink_abs_path_inited.name)
+        self.env_ctx.eval_state(_EnvState.state_local_conf_dir_abs_path_inited.name)
 
         # then:
 
-        self.assertTrue(os.path.islink(state_local_conf_symlink_abs_path_inited))
+        self.assertTrue(os.path.islink(state_local_conf_dir_abs_path_inited))
         self.assertEqual(
-            os.readlink(state_local_conf_symlink_abs_path_inited),
+            os.readlink(state_local_conf_dir_abs_path_inited),
             symlink_dir_rel_target_dir,
         )
 
@@ -671,7 +671,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.env_ctx._exec_operation = exec_operation
         assert_parent_factories_mocked(
             self.env_ctx,
-            _EnvState.state_local_conf_symlink_abs_path_inited.name,
+            _EnvState.state_local_conf_dir_abs_path_inited.name,
         )
 
         mock_client_dir = "/mock_client_dir"
@@ -704,17 +704,17 @@ class ThisTestClass(BasePyfakefsTestClass):
     # noinspection PyMethodMayBeStatic
     def test_factory_selects_node_by_exec_operation(self):
         for exec_operation, expected_node_class in [
-            (_ExecOperation.op_eval, _Node_state_local_conf_symlink_abs_path_inited_eval),
-            (_ExecOperation.op_reset, _Node_state_local_conf_symlink_abs_path_inited_reset),
-            (_ExecOperation.op_boot, _Node_state_local_conf_symlink_abs_path_inited_boot),
-            (_ExecOperation.op_start, _Node_state_local_conf_symlink_abs_path_inited_read),
-            (_ExecOperation.op_shell, _Node_state_local_conf_symlink_abs_path_inited_read),
-            (_ExecOperation.op_wrap, _Node_state_local_conf_symlink_abs_path_inited_read),
-            (None, _Node_state_local_conf_symlink_abs_path_inited_read),
+            (_ExecOperation.op_eval, _Node_state_local_conf_dir_abs_path_inited_eval),
+            (_ExecOperation.op_reset, _Node_state_local_conf_dir_abs_path_inited_reset),
+            (_ExecOperation.op_boot, _Node_state_local_conf_dir_abs_path_inited_boot),
+            (_ExecOperation.op_start, _Node_state_local_conf_dir_abs_path_inited_read),
+            (_ExecOperation.op_shell, _Node_state_local_conf_dir_abs_path_inited_read),
+            (_ExecOperation.op_wrap, _Node_state_local_conf_dir_abs_path_inited_read),
+            (None, _Node_state_local_conf_dir_abs_path_inited_read),
         ]:
             with self.subTest(exec_operation=exec_operation):
                 self.env_ctx._exec_operation = exec_operation
-                state_node = _Factory_state_local_conf_symlink_abs_path_inited(self.env_ctx).create_state_node()
+                state_node = _Factory_state_local_conf_dir_abs_path_inited(self.env_ctx).create_state_node()
                 self.assertIs(type(state_node), expected_node_class)
 
     @patch(f"{primer_kernel.__name__}.{_Node_state_client_conf_file_data_loaded.__name__}.{_NodeFactory.create_state_node.__name__}")
@@ -730,7 +730,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         symlink_abs_path = self._given_env_with_persisted_symlink(mock_selected, mock_ref_root, mock_client_conf, _ExecOperation.op_boot, "target_dir", "target_dir")
 
         # when:
-        result = self.env_ctx.eval_state(_EnvState.state_local_conf_symlink_abs_path_inited.name)
+        result = self.env_ctx.eval_state(_EnvState.state_local_conf_dir_abs_path_inited.name)
 
         # then:
         self.assertEqual(result, "/mock_client_dir/target_dir")
@@ -749,7 +749,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         symlink_abs_path = self._given_env_with_persisted_symlink(mock_selected, mock_ref_root, mock_client_conf, _ExecOperation.op_boot, "target_dir", None)
 
         # when:
-        result = self.env_ctx.eval_state(_EnvState.state_local_conf_symlink_abs_path_inited.name)
+        result = self.env_ctx.eval_state(_EnvState.state_local_conf_dir_abs_path_inited.name)
 
         # then:
         self.assertEqual(result, "/mock_client_dir/target_dir")
@@ -774,7 +774,7 @@ class ThisTestClass(BasePyfakefsTestClass):
                 self._given_env_with_persisted_symlink(mock_selected, mock_ref_root, mock_client_conf, exec_operation, "selected_dir", "persisted_dir")
 
                 with self.assertRaises(AssertionError) as ctx:
-                    self.env_ctx.eval_state(_EnvState.state_local_conf_symlink_abs_path_inited.name)
+                    self.env_ctx.eval_state(_EnvState.state_local_conf_dir_abs_path_inited.name)
 
                 self.assertIn("not the same as the provided target", str(ctx.exception))
 
@@ -791,7 +791,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         symlink_abs_path = self._given_env_with_persisted_symlink(mock_selected, mock_ref_root, mock_client_conf, _ExecOperation.op_reset, "selected_dir", "persisted_dir")
 
         # when:
-        result = self.env_ctx.eval_state(_EnvState.state_local_conf_symlink_abs_path_inited.name)
+        result = self.env_ctx.eval_state(_EnvState.state_local_conf_dir_abs_path_inited.name)
 
         # then:
         self.assertEqual(os.readlink(symlink_abs_path), "selected_dir")
@@ -810,7 +810,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         symlink_abs_path = self._given_env_with_persisted_symlink(mock_selected, mock_ref_root, mock_client_conf, _ExecOperation.op_reset, "target_dir", "target_dir")
 
         # when:
-        result = self.env_ctx.eval_state(_EnvState.state_local_conf_symlink_abs_path_inited.name)
+        result = self.env_ctx.eval_state(_EnvState.state_local_conf_dir_abs_path_inited.name)
 
         # then:
         self.assertEqual(os.readlink(symlink_abs_path), "target_dir")
@@ -829,7 +829,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         symlink_abs_path = self._given_env_with_persisted_symlink(mock_selected, mock_ref_root, mock_client_conf, _ExecOperation.op_reset, "selected_dir", None)
 
         # when:
-        self.env_ctx.eval_state(_EnvState.state_local_conf_symlink_abs_path_inited.name)
+        self.env_ctx.eval_state(_EnvState.state_local_conf_dir_abs_path_inited.name)
 
         # then:
         self.assertEqual(os.readlink(symlink_abs_path), "selected_dir")
@@ -849,7 +849,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # when:
         with self.assertRaises(AssertionError) as ctx:
-            self.env_ctx.eval_state(_EnvState.state_local_conf_symlink_abs_path_inited.name)
+            self.env_ctx.eval_state(_EnvState.state_local_conf_dir_abs_path_inited.name)
 
         # then:
         self.assertIn("is not a symlink", str(ctx.exception))
@@ -869,7 +869,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         symlink_abs_path = self._given_env_with_persisted_symlink(mock_selected, mock_ref_root, mock_client_conf, _ExecOperation.op_eval, "selected_dir", "persisted_dir")
 
         # when:
-        result = self.env_ctx.eval_state(_EnvState.state_local_conf_symlink_abs_path_inited.name)
+        result = self.env_ctx.eval_state(_EnvState.state_local_conf_dir_abs_path_inited.name)
 
         # then:
         self.assertEqual(result, "/mock_client_dir/selected_dir")
@@ -888,7 +888,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         symlink_abs_path = self._given_env_with_persisted_symlink(mock_selected, mock_ref_root, mock_client_conf, _ExecOperation.op_eval, "selected_dir", None)
 
         # when:
-        result = self.env_ctx.eval_state(_EnvState.state_local_conf_symlink_abs_path_inited.name)
+        result = self.env_ctx.eval_state(_EnvState.state_local_conf_dir_abs_path_inited.name)
 
         # then:
         self.assertEqual(result, "/mock_client_dir/selected_dir")
@@ -908,7 +908,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.fs.create_dir(symlink_abs_path)
 
         # when:
-        result = self.env_ctx.eval_state(_EnvState.state_local_conf_symlink_abs_path_inited.name)
+        result = self.env_ctx.eval_state(_EnvState.state_local_conf_dir_abs_path_inited.name)
 
         # then:
         self.assertEqual(result, "/mock_client_dir/selected_dir")
@@ -935,7 +935,7 @@ class ThisTestClass(BasePyfakefsTestClass):
                 self.env_ctx = customize_env_context()
                 symlink_abs_path = self._given_env_with_persisted_symlink(mock_selected, mock_ref_root, mock_client_conf, exec_operation, None, "persisted_dir", default_env_dir_rel_path="default_dir")
 
-                result = self.env_ctx.eval_state(_EnvState.state_local_conf_symlink_abs_path_inited.name)
+                result = self.env_ctx.eval_state(_EnvState.state_local_conf_dir_abs_path_inited.name)
 
                 # the default is only a fallback - the persisted value wins and the link is untouched:
                 self.assertEqual(result, "/mock_client_dir/persisted_dir")
@@ -965,7 +965,7 @@ class ThisTestClass(BasePyfakefsTestClass):
                 if os.path.lexists(symlink_abs_path):
                     os.remove(symlink_abs_path)
 
-                result = self.env_ctx.eval_state(_EnvState.state_local_conf_symlink_abs_path_inited.name)
+                result = self.env_ctx.eval_state(_EnvState.state_local_conf_dir_abs_path_inited.name)
 
                 self.assertEqual(result, "/mock_client_dir/default_dir")
                 self.assertEqual(os.path.islink(symlink_abs_path), expect_link)
@@ -994,7 +994,7 @@ class ThisTestClass(BasePyfakefsTestClass):
                 if os.path.lexists(symlink_abs_path):
                     os.remove(symlink_abs_path)
 
-                result = self.env_ctx.eval_state(_EnvState.state_local_conf_symlink_abs_path_inited.name)
+                result = self.env_ctx.eval_state(_EnvState.state_local_conf_dir_abs_path_inited.name)
 
                 self.assertEqual(result, "/mock_global_conf_dir")
                 self.assertFalse(os.path.lexists(symlink_abs_path))
@@ -1019,7 +1019,7 @@ class ThisTestClass(BasePyfakefsTestClass):
                 if os.path.lexists(symlink_abs_path):
                     os.remove(symlink_abs_path)
 
-                result = self.env_ctx.eval_state(_EnvState.state_local_conf_symlink_abs_path_inited.name)
+                result = self.env_ctx.eval_state(_EnvState.state_local_conf_dir_abs_path_inited.name)
 
                 self.assertEqual(result, "/mock_client_dir/selected_dir")
                 self.assertFalse(os.path.lexists(symlink_abs_path))
@@ -1038,7 +1038,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_client_conf.return_value.eval_own_state.return_value = {}
 
         # when:
-        result = self.env_ctx.eval_state(_EnvState.state_local_conf_symlink_abs_path_inited.name)
+        result = self.env_ctx.eval_state(_EnvState.state_local_conf_dir_abs_path_inited.name)
 
         # then:
         self.assertEqual(result, "/mock_client_dir/selected_dir")
@@ -1061,7 +1061,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # when:
         with self.assertRaises(AssertionError) as ctx:
-            self.env_ctx.eval_state(_EnvState.state_local_conf_symlink_abs_path_inited.name)
+            self.env_ctx.eval_state(_EnvState.state_local_conf_dir_abs_path_inited.name)
 
         # then:
         self.assertIn("must be a relative path", str(ctx.exception))
@@ -1080,7 +1080,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         self._given_env_with_persisted_symlink(mock_selected, mock_ref_root, mock_client_conf, _ExecOperation.op_start, "selected_dir", "persisted_dir")
 
         # when:
-        result = self.env_ctx.eval_state(_EnvState.state_local_conf_symlink_abs_path_inited.name)
+        result = self.env_ctx.eval_state(_EnvState.state_local_conf_dir_abs_path_inited.name)
 
         # then:
         self.assertEqual(result, "/mock_client_dir/persisted_dir")
@@ -1099,7 +1099,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_client_conf.return_value.eval_own_state.return_value = {}
 
         # when:
-        result = self.env_ctx.eval_state(_EnvState.state_local_conf_symlink_abs_path_inited.name)
+        result = self.env_ctx.eval_state(_EnvState.state_local_conf_dir_abs_path_inited.name)
 
         # then: nothing to persist the env in
         self.assertEqual(result, "/mock_client_dir/selected_dir")
@@ -1107,15 +1107,15 @@ class ThisTestClass(BasePyfakefsTestClass):
     # noinspection PyMethodMayBeStatic
     def test_base_node_hook_is_not_implemented(self):
         with self.assertRaises(NotImplementedError):
-            _BaseNode_state_local_conf_symlink_abs_path_inited._eval_env_dir_abs_path(None, "/ref_root", "dst/env", "/ref_root/lconf")
+            _BaseNode_state_local_conf_dir_abs_path_inited._eval_env_dir_abs_path(None, "/ref_root", "dst/env", "/ref_root/lconf")
 
     # noinspection PyMethodMayBeStatic
     def test_compose_selected_env_dir_abs_path_is_normalized(self):
         self.assertEqual(
-            _BaseNode_state_local_conf_symlink_abs_path_inited._compose_selected_env_dir_abs_path("/ref_root", "dst/./env/"),
+            _BaseNode_state_local_conf_dir_abs_path_inited._compose_selected_env_dir_abs_path("/ref_root", "dst/./env/"),
             "/ref_root/dst/env",
         )
         self.assertEqual(
-            _BaseNode_state_local_conf_symlink_abs_path_inited._compose_selected_env_dir_abs_path("/ref_root", "conf/../dst/env"),
+            _BaseNode_state_local_conf_dir_abs_path_inited._compose_selected_env_dir_abs_path("/ref_root", "conf/../dst/env"),
             "/ref_root/dst/env",
         )

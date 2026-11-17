@@ -383,13 +383,13 @@ class StateName(enum.Enum):
         ],
     )
 
-    state_local_conf_symlink_abs_path_inited = StateMeta(
-        env_state=_EnvState.state_local_conf_symlink_abs_path_inited,
+    state_local_conf_dir_abs_path_inited = StateMeta(
+        env_state=_EnvState.state_local_conf_dir_abs_path_inited,
         name_category=NameCategory.category_path_value,
         name_components=[
             KeyWord.key_state.value,
             _PathName.path_local_conf.value,
-            _FilesystemObject.fs_object_symlink.value,
+            _FilesystemObject.fs_object_dir.value,
             _PathType.path_abs.value,
             CompletedAction.action_inited.value,
         ],

@@ -1475,7 +1475,7 @@ class Builder_RootNode_derived(AbstractConfLeapNodeBuilder):
 
         field_node = self._create_used_dict_field(
             dict_node=dict_node,
-            field_name=_EnvState.state_local_conf_symlink_abs_path_inited.name,
+            field_name=_EnvState.state_local_conf_dir_abs_path_inited.name,
             node_class=AbstractValueNode,
             conf_leap=conf_leap,
             **kwargs,
@@ -1814,7 +1814,7 @@ class _Node_state_derived_conf_data_loaded_rendered(_AbstractCachingStateNode[di
             # ===
             # `_ConfLeap.leap_client`
             _EnvState.state_selected_env_dir_rel_path_inited.name,
-            _EnvState.state_local_conf_symlink_abs_path_inited.name,
+            _EnvState.state_local_conf_dir_abs_path_inited.name,
             _EnvState.state_local_conf_file_abs_path_inited.name,
             # ===
             # `_ConfLeap.leap_env`

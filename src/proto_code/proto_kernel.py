@@ -432,7 +432,7 @@ class _PathName(enum.Enum):
     path_conf_env = f"conf_{_ConfLeap.leap_env.value}"
     path_local_conf = f"{_ConfLeap.leap_local.value}_conf"
 
-    # TODO: TODO_53_40_17_68.default_env_config_vs_lconf_symlink.md:
+    # FT_03_31_63_70.environment_selection.md
     # TODO: Rename to "lconf_link" (otherwise, `local_conf_symlink_rel_path` does not reflect anything about `lconf` or `leap_env`):
     path_link_name = "link_name"
 
@@ -473,7 +473,7 @@ class _ParsedArg(enum.Enum):
     name_entry_script_path = "entry_script_path"
     name_main_func = "main_func"
 
-    # TODO: TODO_19_13_09_01.propagate_start_sub_command_cli_args.md
+    # FT_05_08_64_67.start_app.md
     name_target_args = "target_args"
 
 
@@ -487,7 +487,7 @@ class _SyntaxArg:
     arg_h = "-h"
     arg_help = "--help"
 
-    # TODO: TODO_19_13_09_01.propagate_start_sub_command_cli_args.md
+    # FT_05_08_64_67.start_app.md
     arg_double_dash = "--"
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     arg_c = "-c"
@@ -541,7 +541,7 @@ class ConfField(enum.Enum):
     # `_ConfLeap.leap_client`-specific
 
     # FT_92_51_35_07.local_env_link.md: symlink name:
-    # state_local_conf_symlink_abs_path_inited:
+    # state_local_conf_dir_abs_path_inited:
     field_local_conf_symlink_rel_path = f"{_PathName.path_local_conf.value}_{_FilesystemObject.fs_object_symlink.value}_{_PathType.path_rel.value}"
 
     # FT_92_51_35_07.local_env_link.md: default symlink target:
@@ -1467,7 +1467,7 @@ class _ConfConstClient:
 
     common_env_name = "common_env"
 
-    # TODO: TODO_53_40_17_68.default_env_config_vs_lconf_symlink.md:
+    # FT_03_31_63_70.environment_selection.md
     # TODO: Is this used? If link_name is not specified, the env conf dir becomes ref root dir:
     default_dir_rel_path_leap_env_link_name: str = os.path.join(_ConfDst.dst_local.value)
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
@@ -1769,7 +1769,7 @@ def _parse_args(remaining_argv=None) -> argparse.Namespace:
     if remaining_argv is None:
         remaining_argv = sys.argv[1:]
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-    # TODO: TODO_19_13_09_01.propagate_start_sub_command_cli_args.md:
+    # FT_05_08_64_67.start_app.md:
     # Split off everything after a literal `--` before `argparse` ever sees it,
     # so it can never be (re)interpreted as a protoprimer option or sub-command -
     # it is handed verbatim to `_ExecOperation.op_start`'s target function.
@@ -3292,7 +3292,7 @@ class _BaseNode_state_selected_env_dir_rel_path(_AbstractCachingStateNode[str]):
     """
     Implements: FT_03_31_63_70.environment_selection.md
 
-    The default env is not a part of the selection (see `_BaseNode_state_local_conf_symlink_abs_path_inited`).
+    The default env is not a part of the selection (see `_BaseNode_state_local_conf_dir_abs_path_inited`).
     """
 
     def _eval_state_once(self) -> _ValueType:
@@ -3424,7 +3424,7 @@ def _create_symlink_to_dir(
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 # noinspection PyPep8Naming
 @_conditional_factory
-class _BaseNode_state_local_conf_symlink_abs_path_inited(_AbstractCachingStateNode[str]):
+class _BaseNode_state_local_conf_dir_abs_path_inited(_AbstractCachingStateNode[str]):
     """
     The state value is the direct abs path of the env config dir (no symlink).
 
@@ -3441,7 +3441,7 @@ class _BaseNode_state_local_conf_symlink_abs_path_inited(_AbstractCachingStateNo
             _EnvState.state_selected_env_dir_rel_path_inited.name,
         ]
     )
-    _state_name = staticmethod(lambda: _EnvState.state_local_conf_symlink_abs_path_inited.name)
+    _state_name = staticmethod(lambda: _EnvState.state_local_conf_dir_abs_path_inited.name)
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     def _eval_state_once(self) -> _ValueType:
 
@@ -3506,7 +3506,7 @@ class _BaseNode_state_local_conf_symlink_abs_path_inited(_AbstractCachingStateNo
 
 # noinspection PyPep8Naming
 @_conditional_factory
-class _Node_state_local_conf_symlink_abs_path_inited_read(_BaseNode_state_local_conf_symlink_abs_path_inited):
+class _Node_state_local_conf_dir_abs_path_inited_read(_BaseNode_state_local_conf_dir_abs_path_inited):
     """
     Used by all `_ExecOperation`-s which only read the persisted env (never create the symlink):
     a mismatch between the persisted and the selected env is a failure.
@@ -3554,7 +3554,7 @@ class _Node_state_local_conf_symlink_abs_path_inited_read(_BaseNode_state_local_
 
 # noinspection PyPep8Naming
 @_conditional_factory
-class _Node_state_local_conf_symlink_abs_path_inited_boot(_Node_state_local_conf_symlink_abs_path_inited_read):
+class _Node_state_local_conf_dir_abs_path_inited_boot(_Node_state_local_conf_dir_abs_path_inited_read):
     """
     Used by `_ExecOperation.op_boot`: same as reading, but selects (writes) the env if it is not persisted yet.
     """
@@ -3564,7 +3564,7 @@ class _Node_state_local_conf_symlink_abs_path_inited_boot(_Node_state_local_conf
 
 # noinspection PyPep8Naming
 @_conditional_factory
-class _Node_state_local_conf_symlink_abs_path_inited_reset(_BaseNode_state_local_conf_symlink_abs_path_inited):
+class _Node_state_local_conf_dir_abs_path_inited_reset(_BaseNode_state_local_conf_dir_abs_path_inited):
     """
     Used by `_ExecOperation.op_reset`: selects the env any time (overwrites the persisted env on a mismatch).
     """
@@ -3599,7 +3599,7 @@ class _Node_state_local_conf_symlink_abs_path_inited_reset(_BaseNode_state_local
 
 # noinspection PyPep8Naming
 @_conditional_factory
-class _Node_state_local_conf_symlink_abs_path_inited_eval(_BaseNode_state_local_conf_symlink_abs_path_inited):
+class _Node_state_local_conf_dir_abs_path_inited_eval(_BaseNode_state_local_conf_dir_abs_path_inited):
     """
     Used by `_ExecOperation.op_eval`: a selected (or default) env overrides the persisted symlink (never read or written).
     """
@@ -3614,19 +3614,19 @@ class _Node_state_local_conf_symlink_abs_path_inited_eval(_BaseNode_state_local_
 
 
 # noinspection PyPep8Naming
-class _Factory_state_local_conf_symlink_abs_path_inited(_NodeFactory[str]):
+class _Factory_state_local_conf_dir_abs_path_inited(_NodeFactory[str]):
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     def create_state_node(self) -> _StateNode[_ValueType]:
         # NOTE: `_exec_operation` is set when `_EnvState.state_input_exec_operation_loaded` is evaluated
         #       (`None` for `_EntryFunc.func_call_lib`):
         if self.env_ctx._exec_operation == _ExecOperation.op_eval:
-            return _Node_state_local_conf_symlink_abs_path_inited_eval(self.env_ctx)
+            return _Node_state_local_conf_dir_abs_path_inited_eval(self.env_ctx)
         elif self.env_ctx._exec_operation == _ExecOperation.op_reset:
-            return _Node_state_local_conf_symlink_abs_path_inited_reset(self.env_ctx)
+            return _Node_state_local_conf_dir_abs_path_inited_reset(self.env_ctx)
         elif self.env_ctx._exec_operation == _ExecOperation.op_boot:
-            return _Node_state_local_conf_symlink_abs_path_inited_boot(self.env_ctx)
+            return _Node_state_local_conf_dir_abs_path_inited_boot(self.env_ctx)
         else:
-            return _Node_state_local_conf_symlink_abs_path_inited_read(self.env_ctx)
+            return _Node_state_local_conf_dir_abs_path_inited_read(self.env_ctx)
 
 
 # noinspection PyPep8Naming
@@ -3640,10 +3640,10 @@ class _BaseNode_state_local_conf_file_abs_path_inited(_AbstractCachingStateNode[
         state_primer_conf_file_abs_path_inited: str = self.eval_parent_state(_EnvState.state_primer_conf_file_abs_path_inited.name)
         conf_file_base_name = os.path.basename(state_primer_conf_file_abs_path_inited)
 
-        state_local_conf_symlink_abs_path_inited: str = self.eval_parent_state(_EnvState.state_local_conf_symlink_abs_path_inited.name)
+        state_local_conf_dir_abs_path_inited: str = self.eval_parent_state(_EnvState.state_local_conf_dir_abs_path_inited.name)
 
         state_local_conf_file_abs_path_inited = os.path.join(
-            state_local_conf_symlink_abs_path_inited,
+            state_local_conf_dir_abs_path_inited,
             conf_file_base_name,
         )
 
@@ -3659,7 +3659,7 @@ class _Node_state_local_conf_file_abs_path_inited_is_app(_BaseNode_state_local_c
             # Must precede the symlink state: the exec operation decides which `Node` that state gets:
             _EnvState.state_input_exec_operation_loaded.name,
             _EnvState.state_primer_conf_file_abs_path_inited.name,
-            _EnvState.state_local_conf_symlink_abs_path_inited.name,
+            _EnvState.state_local_conf_dir_abs_path_inited.name,
         ]
     )
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
@@ -3674,7 +3674,7 @@ class _Node_state_local_conf_file_abs_path_inited_not_is_app(_BaseNode_state_loc
     _parent_states = staticmethod(
         lambda: [
             _EnvState.state_primer_conf_file_abs_path_inited.name,
-            _EnvState.state_local_conf_symlink_abs_path_inited.name,
+            _EnvState.state_local_conf_dir_abs_path_inited.name,
         ]
     )
 
@@ -4135,7 +4135,7 @@ class _BaseNode_state_derived_conf_data_loaded(_AbstractCachingStateNode[dict]):
             # ===
             # `_ConfLeap.leap_client`
             _EnvState.state_selected_env_dir_rel_path_inited.name,
-            _EnvState.state_local_conf_symlink_abs_path_inited.name,
+            _EnvState.state_local_conf_dir_abs_path_inited.name,
             _EnvState.state_local_conf_file_abs_path_inited.name,
             # ===
             # `_ConfLeap.leap_env`
@@ -4393,7 +4393,7 @@ class _Node_state_reset_triggered_is_app(_AbstractCachingStateNode[bool]):
             _EnvState.state_prepare_venv_finalized.name,
             _EnvState.state_input_start_id_var_loaded.name,
             _EnvState.state_proto_kernel_file_abs_path_inited.name,
-            _EnvState.state_local_conf_symlink_abs_path_inited.name,
+            _EnvState.state_local_conf_dir_abs_path_inited.name,
             _EnvState.state_local_venv_dir_abs_path_inited.name,
             _EnvState.state_local_tmp_dir_abs_path_inited.name,
             _EnvState.state_version_constraints_file_basename_inited.name,
@@ -4448,10 +4448,10 @@ class _Node_state_reset_triggered_is_app(_AbstractCachingStateNode[bool]):
                 moved_venv_dir,
             )
 
-        state_local_conf_symlink_abs_path_inited = self.eval_parent_state(_EnvState.state_local_conf_symlink_abs_path_inited.name)
+        state_local_conf_dir_abs_path_inited = self.eval_parent_state(_EnvState.state_local_conf_dir_abs_path_inited.name)
         state_version_constraints_file_basename_inited: str = self.eval_parent_state(_EnvState.state_version_constraints_file_basename_inited.name)
         constraints_txt_path = os.path.join(
-            state_local_conf_symlink_abs_path_inited,
+            state_local_conf_dir_abs_path_inited,
             state_version_constraints_file_basename_inited,
         )
         if os.path.exists(constraints_txt_path):
@@ -4568,7 +4568,7 @@ class _Node_state_stride_py_venv_reached_is_app(_AbstractCachingStateNode[_State
             _EnvState.state_input_exec_operation_loaded.name,
             _EnvState.state_input_start_id_var_loaded.name,
             _EnvState.state_proto_kernel_file_abs_path_inited.name,
-            _EnvState.state_local_conf_symlink_abs_path_inited.name,
+            _EnvState.state_local_conf_dir_abs_path_inited.name,
             _EnvState.state_local_conf_file_abs_path_inited.name,
             _EnvState.state_selected_python_file_abs_path_inited.name,
             _EnvState.state_local_venv_dir_abs_path_inited.name,
@@ -4597,10 +4597,10 @@ class _Node_state_stride_py_venv_reached_is_app(_AbstractCachingStateNode[_State
 
         state_venv_driver_prepared: _VenvDriverBase = self.eval_parent_state(_EnvState.state_venv_driver_prepared.name)
 
-        state_local_conf_symlink_abs_path_inited: str = self.eval_parent_state(_EnvState.state_local_conf_symlink_abs_path_inited.name)
+        state_local_conf_dir_abs_path_inited: str = self.eval_parent_state(_EnvState.state_local_conf_dir_abs_path_inited.name)
         state_version_constraints_file_basename_inited: str = self.eval_parent_state(_EnvState.state_version_constraints_file_basename_inited.name)
         constraints_txt_path = os.path.join(
-            state_local_conf_symlink_abs_path_inited,
+            state_local_conf_dir_abs_path_inited,
             state_version_constraints_file_basename_inited,
         )
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
@@ -4730,7 +4730,7 @@ class _Node_state_protoprimer_package_installed_is_app(_AbstractCachingStateNode
         lambda: [
             _EnvState.state_input_exec_operation_loaded.name,
             _EnvState.state_ref_root_dir_abs_path_inited.name,
-            _EnvState.state_local_conf_symlink_abs_path_inited.name,
+            _EnvState.state_local_conf_dir_abs_path_inited.name,
             _EnvState.state_version_constraints_file_basename_inited.name,
             _EnvState.state_project_descriptors_inited.name,
             _EnvState.state_install_specs_inited.name,
@@ -4761,7 +4761,7 @@ class _Node_state_protoprimer_package_installed_is_app(_AbstractCachingStateNode
 
         state_ref_root_dir_abs_path_inited: str = self.eval_parent_state(_EnvState.state_ref_root_dir_abs_path_inited.name)
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-        state_local_conf_symlink_abs_path_inited: str = self.eval_parent_state(_EnvState.state_local_conf_symlink_abs_path_inited.name)
+        state_local_conf_dir_abs_path_inited: str = self.eval_parent_state(_EnvState.state_local_conf_dir_abs_path_inited.name)
 
         state_project_descriptors_inited: list[dict] = self.eval_parent_state(_EnvState.state_project_descriptors_inited.name)
 
@@ -4777,7 +4777,7 @@ class _Node_state_protoprimer_package_installed_is_app(_AbstractCachingStateNode
             return False
 
         constraints_txt_path = os.path.join(
-            state_local_conf_symlink_abs_path_inited,
+            state_local_conf_dir_abs_path_inited,
             state_version_constraints_file_basename_inited,
         )
         if not os.path.exists(constraints_txt_path):
@@ -4889,7 +4889,7 @@ class _Node_state_version_constraints_generated_is_app(_AbstractCachingStateNode
     _parent_states = staticmethod(
         lambda: [
             _EnvState.state_input_exec_operation_loaded.name,
-            _EnvState.state_local_conf_symlink_abs_path_inited.name,
+            _EnvState.state_local_conf_dir_abs_path_inited.name,
             _EnvState.state_version_constraints_file_basename_inited.name,
             _EnvState.state_venv_driver_prepared.name,
             _EnvState.state_protoprimer_package_installed.name,
@@ -4918,7 +4918,7 @@ class _Node_state_version_constraints_generated_is_app(_AbstractCachingStateNode
         if not state_protoprimer_package_installed:
             return False
 
-        state_local_conf_symlink_abs_path_inited: str = self.eval_parent_state(_EnvState.state_local_conf_symlink_abs_path_inited.name)
+        state_local_conf_dir_abs_path_inited: str = self.eval_parent_state(_EnvState.state_local_conf_dir_abs_path_inited.name)
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
         state_venv_driver_prepared: _VenvDriverBase = self.eval_parent_state(_EnvState.state_venv_driver_prepared.name)
 
@@ -4927,7 +4927,7 @@ class _Node_state_version_constraints_generated_is_app(_AbstractCachingStateNode
         state_venv_driver_prepared.pin_versions(
             _get_path_to_curr_python(),
             os.path.join(
-                state_local_conf_symlink_abs_path_inited,
+                state_local_conf_dir_abs_path_inited,
                 state_version_constraints_file_basename_inited,
             ),
         )
@@ -5441,8 +5441,7 @@ class _EnvState(enum.Enum):
 
     state_selected_env_dir_rel_path_inited = _Factory_state_selected_env_dir_rel_path_inited
 
-    # TODO: TODO_89_47_85_02.fix_selected_persistent_env_handling.md: rename to state_local_conf_dir_abs_path_inited
-    state_local_conf_symlink_abs_path_inited = _Factory_state_local_conf_symlink_abs_path_inited
+    state_local_conf_dir_abs_path_inited = _Factory_state_local_conf_dir_abs_path_inited
 
     state_local_conf_file_abs_path_inited = _Factory_state_local_conf_file_abs_path_inited
 

@@ -44,7 +44,7 @@ def custom_main():
 
     ref_root_abs_path: str = derived_data[_EnvState.state_ref_root_dir_abs_path_inited.name]
 
-    env_conf_dir: str = derived_data[_EnvState.state_local_conf_symlink_abs_path_inited.name]
+    env_conf_dir: str = derived_data[_EnvState.state_local_conf_dir_abs_path_inited.name]
     script_conf_path = os.path.join(env_conf_dir, "publish_package.json")
     script_conf = _read_json_file(script_conf_path) if os.path.exists(script_conf_path) else {}
 

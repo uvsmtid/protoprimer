@@ -93,8 +93,9 @@ def test_instant_scenario_start_presents_clean_argv(tmp_path: Path):
     so it must strip its own `start`/`main_func` CLI args before calling the target function -
     otherwise a target function that inspects `sys.argv` on its own sees unexpected extra arguments.
 
-    See also `test_instant_scenario_start_propagates_target_args_after_double_dash` below:
-    TODO: TODO_19_13_09_01.propagate_start_sub_command_cli_args.md.
+    See also `test_instant_scenario_start_propagates_target_args_after_double_dash` below.
+
+    FT_05_08_64_67.start_app.md.
     """
 
     # given:
@@ -129,7 +130,7 @@ def test_instant_scenario_start_presents_clean_argv(tmp_path: Path):
 @requires_max_python
 def test_instant_scenario_start_propagates_target_args_after_double_dash(tmp_path: Path):
     """
-    TODO: TODO_19_13_09_01.propagate_start_sub_command_cli_args.md:
+    FT_05_08_64_67.start_app.md:
     Tokens placed after a literal `--` are handed verbatim to the target function's own
     `sys.argv`, while tokens before it (even ones that look like target args) are still
     parsed as `proto_kernel`'s own CLI args.
@@ -171,7 +172,7 @@ def test_instant_scenario_start_propagates_target_args_after_double_dash(tmp_pat
 @requires_max_python
 def test_instant_scenario_start_recurses_through_proto_main(tmp_path: Path):
     """
-    TODO: TODO_19_13_09_01.propagate_start_sub_command_cli_args.md:
+    FT_05_08_64_67.start_app.md:
     `protoprimer.primer_kernel:_proto_main` is an ordinary importable function, so it can be
     given to `op_start` as `main_func` like any other target. Since `_proto_main` itself
     re-parses whatever `sys.argv` it is handed (the same as running `proto_kernel.py` directly),

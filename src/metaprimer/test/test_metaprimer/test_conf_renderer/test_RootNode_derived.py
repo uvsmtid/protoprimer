@@ -64,7 +64,7 @@ leap_derived = (
         {_TermColor.config_missing.value}# "state_selected_env_dir_rel_path_inited": None,{_TermColor.reset_style.value}
         \n\
         {_TermColor.config_missing.value}# This value is derived from `local_conf_symlink_rel_path` - see description in `leap_client`.{_TermColor.reset_style.value}
-        {_TermColor.config_missing.value}# "state_local_conf_symlink_abs_path_inited": None,{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# "state_local_conf_dir_abs_path_inited": None,{_TermColor.reset_style.value}
         \n\
         {_TermColor.config_missing.value}# This value is derived from `state_primer_conf_file_abs_path_inited` - see description in `leap_input`.{_TermColor.reset_style.value}
         {_TermColor.config_missing.value}# "state_local_conf_file_abs_path_inited": None,{_TermColor.reset_style.value}
