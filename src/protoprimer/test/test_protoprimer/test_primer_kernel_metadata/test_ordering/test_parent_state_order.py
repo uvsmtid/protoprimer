@@ -60,7 +60,7 @@ def test_EnvState_parent_order() -> None:
 # noinspection PyPep8Naming
 def test_EnvState_exec_operation_precedes_symlink_in_parents() -> None:
     """
-    The `Node` for `state_local_conf_symlink_abs_path_inited` is selected by a factory
+    The `Node` for `state_local_conf_dir_abs_path_inited` is selected by a factory
     which reads `env_ctx._exec_operation` (set by `state_input_exec_operation_loaded`).
 
     The order is ensured by the DAG: every state depending on the symlink state
@@ -83,14 +83,14 @@ def test_EnvState_exec_operation_precedes_symlink_in_parents() -> None:
 
     for env_state in _EnvState:
         parent_states = list(state_graph_instance.get_state_node(env_state.name).get_parent_states())
-        if _EnvState.state_local_conf_symlink_abs_path_inited.name not in parent_states:
+        if _EnvState.state_local_conf_dir_abs_path_inited.name not in parent_states:
             continue
 
         # then:
 
         if _EnvState.state_input_exec_operation_loaded.name not in parent_states:
-            order_violations.append(f"`{env_state.name}` depends on `{_EnvState.state_local_conf_symlink_abs_path_inited.name}` but not on `{_EnvState.state_input_exec_operation_loaded.name}`.")
-        elif parent_states.index(_EnvState.state_input_exec_operation_loaded.name) > parent_states.index(_EnvState.state_local_conf_symlink_abs_path_inited.name):
-            order_violations.append(f"`{env_state.name}` lists `{_EnvState.state_input_exec_operation_loaded.name}` after `{_EnvState.state_local_conf_symlink_abs_path_inited.name}`.")
+            order_violations.append(f"`{env_state.name}` depends on `{_EnvState.state_local_conf_dir_abs_path_inited.name}` but not on `{_EnvState.state_input_exec_operation_loaded.name}`.")
+        elif parent_states.index(_EnvState.state_input_exec_operation_loaded.name) > parent_states.index(_EnvState.state_local_conf_dir_abs_path_inited.name):
+            order_violations.append(f"`{env_state.name}` lists `{_EnvState.state_input_exec_operation_loaded.name}` after `{_EnvState.state_local_conf_dir_abs_path_inited.name}`.")
 
     _report_order_violations(order_violations)

@@ -160,7 +160,7 @@ def test_get_config_with_leap_derived(proto_kernel_abs_path):
         _EnvState.state_global_conf_dir_abs_path_inited.name,
         _EnvState.state_global_conf_file_abs_path_inited.name,
         _EnvState.state_selected_env_dir_rel_path_inited.name,
-        _EnvState.state_local_conf_symlink_abs_path_inited.name,
+        _EnvState.state_local_conf_dir_abs_path_inited.name,
         _EnvState.state_local_conf_file_abs_path_inited.name,
         _EnvState.state_required_python_version_inited.name,
         _EnvState.state_selected_python_file_abs_path_inited.name,

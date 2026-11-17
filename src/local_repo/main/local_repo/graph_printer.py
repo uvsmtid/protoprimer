@@ -136,8 +136,8 @@ class StateMeta(enum.Enum):
         env_state=_EnvState.state_selected_env_dir_rel_path_inited,
         sub_graph=SubGraph.graph_config,
     )
-    state_local_conf_symlink_abs_path_inited = StateNodeMeta(
-        env_state=_EnvState.state_local_conf_symlink_abs_path_inited,
+    state_local_conf_dir_abs_path_inited = StateNodeMeta(
+        env_state=_EnvState.state_local_conf_dir_abs_path_inited,
         sub_graph=SubGraph.graph_config,
     )
     state_local_conf_file_abs_path_inited = StateNodeMeta(

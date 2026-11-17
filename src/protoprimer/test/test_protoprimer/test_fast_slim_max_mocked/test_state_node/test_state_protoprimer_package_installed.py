@@ -8,7 +8,7 @@ from local_test.mock_verifier import (
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
-    _Factory_state_local_conf_symlink_abs_path_inited,
+    _Factory_state_local_conf_dir_abs_path_inited,
     _Node_state_project_descriptors_inited,
     _Node_state_install_specs_inited,
     _Node_state_ref_root_dir_abs_path_inited,
@@ -47,7 +47,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     def test_relationship(self):
         assert_test_module_name_embeds_str(_EnvState.state_protoprimer_package_installed.name)
 
-    @patch(f"{primer_kernel.__name__}.{_Factory_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Factory_state_local_conf_dir_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Node_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_stride_py_venv_reached.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Node_state_project_descriptors_inited.__name__}.create_state_node")
@@ -70,7 +70,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_project_descriptors_inited,
         mock_state_stride_py_venv_reached,
         mock_state_ref_root_dir_abs_path_inited,
-        mock_state_local_conf_symlink_abs_path_inited,
+        mock_state_local_conf_dir_abs_path_inited,
     ):
         # given:
         assert_parent_factories_mocked(
@@ -85,7 +85,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = mock_client_ref_root_dir
         mock_client_conf_env_dir = "/mock_client_conf_env_dir"
         self.fs.create_dir(mock_client_conf_env_dir)
-        mock_state_local_conf_symlink_abs_path_inited.return_value.eval_own_state.return_value = mock_client_conf_env_dir
+        mock_state_local_conf_dir_abs_path_inited.return_value.eval_own_state.return_value = mock_client_conf_env_dir
         project_descriptors: list[dict] = []
         for project_name in [
             "local_repo",
@@ -124,14 +124,14 @@ class ThisTestClass(BasePyfakefsTestClass):
             mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value,
             primer_kernel._get_path_to_curr_python(),
             os.path.join(
-                mock_state_local_conf_symlink_abs_path_inited.return_value.eval_own_state.return_value,
+                mock_state_local_conf_dir_abs_path_inited.return_value.eval_own_state.return_value,
                 primer_kernel._ConfConstEnv.default_version_constraints_file_basename,
             ),
             project_descriptors,
             [],
         )
 
-    @patch(f"{primer_kernel.__name__}.{_Factory_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Factory_state_local_conf_dir_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Node_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_stride_py_venv_reached.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Node_state_project_descriptors_inited.__name__}.create_state_node")
@@ -154,7 +154,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_project_descriptors_inited,
         mock_state_stride_py_venv_reached,
         mock_state_ref_root_dir_abs_path_inited,
-        mock_state_local_conf_symlink_abs_path_inited,
+        mock_state_local_conf_dir_abs_path_inited,
     ):
         # given:
         assert_parent_factories_mocked(
@@ -169,7 +169,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = mock_client_ref_root_dir
         mock_client_conf_env_dir = "/mock_client_conf_env_dir"
         self.fs.create_dir(mock_client_conf_env_dir)
-        mock_state_local_conf_symlink_abs_path_inited.return_value.eval_own_state.return_value = mock_client_conf_env_dir
+        mock_state_local_conf_dir_abs_path_inited.return_value.eval_own_state.return_value = mock_client_conf_env_dir
         project_descriptors: list[dict] = []
         for project_name in [
             "local_repo",
@@ -208,14 +208,14 @@ class ThisTestClass(BasePyfakefsTestClass):
             mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value,
             primer_kernel._get_path_to_curr_python(),
             os.path.join(
-                mock_state_local_conf_symlink_abs_path_inited.return_value.eval_own_state.return_value,
+                mock_state_local_conf_dir_abs_path_inited.return_value.eval_own_state.return_value,
                 primer_kernel._ConfConstEnv.default_version_constraints_file_basename,
             ),
             project_descriptors,
             [],
         )
 
-    @patch(f"{primer_kernel.__name__}.{_Factory_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Factory_state_local_conf_dir_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Node_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_stride_py_venv_reached.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Node_state_project_descriptors_inited.__name__}.create_state_node")
@@ -238,7 +238,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_project_descriptors_inited,
         mock_state_stride_py_venv_reached,
         mock_state_ref_root_dir_abs_path_inited,
-        mock_state_local_conf_symlink_abs_path_inited,
+        mock_state_local_conf_dir_abs_path_inited,
     ):
         # given:
         assert_parent_factories_mocked(
@@ -253,7 +253,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = mock_client_ref_root_dir
         mock_client_conf_env_dir = "/mock_client_conf_env_dir"
         self.fs.create_dir(mock_client_conf_env_dir)
-        mock_state_local_conf_symlink_abs_path_inited.return_value.eval_own_state.return_value = mock_client_conf_env_dir
+        mock_state_local_conf_dir_abs_path_inited.return_value.eval_own_state.return_value = mock_client_conf_env_dir
 
         project_descriptors = [
             {
@@ -314,7 +314,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             any_order=False,
         )
 
-    @patch(f"{primer_kernel.__name__}.{_Factory_state_local_conf_symlink_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Factory_state_local_conf_dir_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Node_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_stride_py_venv_reached.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Node_state_project_descriptors_inited.__name__}.create_state_node")
@@ -337,7 +337,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_project_descriptors_inited,
         mock_state_stride_py_venv_reached,
         mock_state_ref_root_dir_abs_path_inited,
-        mock_state_local_conf_symlink_abs_path_inited,
+        mock_state_local_conf_dir_abs_path_inited,
     ):
 
         # given:
@@ -357,7 +357,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         mock_client_conf_env_dir = "/mock_client_conf_env_dir"
         self.fs.create_dir(mock_client_conf_env_dir)
-        mock_state_local_conf_symlink_abs_path_inited.return_value.eval_own_state.return_value = mock_client_conf_env_dir
+        mock_state_local_conf_dir_abs_path_inited.return_value.eval_own_state.return_value = mock_client_conf_env_dir
 
         project_descriptors: list[dict] = []
 

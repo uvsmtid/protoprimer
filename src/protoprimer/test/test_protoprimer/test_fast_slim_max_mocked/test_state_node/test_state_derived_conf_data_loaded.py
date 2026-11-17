@@ -24,7 +24,7 @@ def test_factory_is_app_node_depends_on_exec_operation_before_symlink():
     assert type(state_node) is _Node_state_derived_conf_data_loaded_is_app
     parent_states = state_node.get_parent_states()
     assert _EnvState.state_input_exec_operation_loaded.name in parent_states
-    assert parent_states.index(_EnvState.state_input_exec_operation_loaded.name) < parent_states.index(_EnvState.state_local_conf_symlink_abs_path_inited.name)
+    assert parent_states.index(_EnvState.state_input_exec_operation_loaded.name) < parent_states.index(_EnvState.state_local_conf_dir_abs_path_inited.name)
 
 
 def test_factory_not_is_app_node_does_not_depend_on_exec_operation():

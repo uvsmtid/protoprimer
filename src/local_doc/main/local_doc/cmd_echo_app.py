@@ -8,8 +8,6 @@ def custom_echo_app_main():
     """
     Print back the parsed positional args.
 
-    TODO: TODO_19_13_09_01.propagate_start_sub_command_cli_args.md
-
     FT_05_08_64_67.start_app.md
     """
     arg_parser = argparse.ArgumentParser(
