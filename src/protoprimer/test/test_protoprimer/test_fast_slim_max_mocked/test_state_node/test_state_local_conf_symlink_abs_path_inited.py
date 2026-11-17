@@ -11,8 +11,11 @@ from local_test.mock_verifier import (
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
+    _BaseNode_state_local_conf_symlink_abs_path_inited,
     _Factory_state_local_conf_symlink_abs_path_inited,
     _Node_state_client_conf_file_data_loaded,
+    _NodeFactory,
+    _Node_state_global_conf_dir_abs_path_inited,
     _Node_state_local_conf_symlink_abs_path_inited_boot,
     _Node_state_local_conf_symlink_abs_path_inited_eval,
     _Node_state_local_conf_symlink_abs_path_inited_reset,
@@ -25,9 +28,6 @@ from protoprimer.primer_kernel import (
     ConfField,
     _EnvState,
     _ExecOperation,
-    _compose_local_conf_symlink_abs_path,
-    _compose_symlink_target,
-    _resolve_symlink_dir_abs_path,
     _write_json_file,
 )
 
@@ -38,14 +38,18 @@ class ThisTestClass(BasePyfakefsTestClass):
     def setUp(self):
         self.setUpPyfakefs()
         self.env_ctx = customize_env_context()
+        patcher = patch(f"{primer_kernel.__name__}.{_Node_state_global_conf_dir_abs_path_inited.__name__}.{_NodeFactory.create_state_node.__name__}")
+        self.mock_state_global_conf_dir_abs_path_inited = patcher.start()
+        self.addCleanup(patcher.stop)
+        self.mock_state_global_conf_dir_abs_path_inited.return_value.eval_own_state.return_value = "/mock_global_conf_dir"
 
     # noinspection PyMethodMayBeStatic
     def test_relationship(self):
         assert_test_module_name_embeds_str(_EnvState.state_local_conf_symlink_abs_path_inited.name)
 
-    @patch(f"{primer_kernel.__name__}.{_Node_state_client_conf_file_data_loaded.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{_Node_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{_Factory_state_selected_env_dir_rel_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Node_state_client_conf_file_data_loaded.__name__}.{_NodeFactory.create_state_node.__name__}")
+    @patch(f"{primer_kernel.__name__}.{_Node_state_ref_root_dir_abs_path_inited.__name__}.{_NodeFactory.create_state_node.__name__}")
+    @patch(f"{primer_kernel.__name__}.{_Factory_state_selected_env_dir_rel_path_inited.__name__}.{_NodeFactory.create_state_node.__name__}")
     def test_success_when_conf_symlink_exists_and_target_dst_dir_unspecified(
         self,
         mock_state_selected_env_dir_rel_path_inited,
@@ -104,9 +108,9 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # no exception happens
 
-    @patch(f"{primer_kernel.__name__}.{_Node_state_client_conf_file_data_loaded.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{_Node_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{_Factory_state_selected_env_dir_rel_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Node_state_client_conf_file_data_loaded.__name__}.{_NodeFactory.create_state_node.__name__}")
+    @patch(f"{primer_kernel.__name__}.{_Node_state_ref_root_dir_abs_path_inited.__name__}.{_NodeFactory.create_state_node.__name__}")
+    @patch(f"{primer_kernel.__name__}.{_Factory_state_selected_env_dir_rel_path_inited.__name__}.{_NodeFactory.create_state_node.__name__}")
     def test_success_when_conf_symlink_exists_and_target_dst_dir_matches(
         self,
         mock_state_selected_env_dir_rel_path_inited,
@@ -158,9 +162,9 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # no exception happens
 
-    @patch(f"{primer_kernel.__name__}.{_Node_state_client_conf_file_data_loaded.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{_Node_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{_Factory_state_selected_env_dir_rel_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Node_state_client_conf_file_data_loaded.__name__}.{_NodeFactory.create_state_node.__name__}")
+    @patch(f"{primer_kernel.__name__}.{_Node_state_ref_root_dir_abs_path_inited.__name__}.{_NodeFactory.create_state_node.__name__}")
+    @patch(f"{primer_kernel.__name__}.{_Factory_state_selected_env_dir_rel_path_inited.__name__}.{_NodeFactory.create_state_node.__name__}")
     def test_failure_when_conf_symlink_exists_but_target_dst_dir_mismatches(
         self,
         mock_state_selected_env_dir_rel_path_inited,
@@ -214,9 +218,9 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         self.assertIn("not the same as the provided target", str(ctx.exception))
 
-    @patch(f"{primer_kernel.__name__}.{_Node_state_client_conf_file_data_loaded.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{_Node_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{_Factory_state_selected_env_dir_rel_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Node_state_client_conf_file_data_loaded.__name__}.{_NodeFactory.create_state_node.__name__}")
+    @patch(f"{primer_kernel.__name__}.{_Node_state_ref_root_dir_abs_path_inited.__name__}.{_NodeFactory.create_state_node.__name__}")
+    @patch(f"{primer_kernel.__name__}.{_Factory_state_selected_env_dir_rel_path_inited.__name__}.{_NodeFactory.create_state_node.__name__}")
     def test_failure_when_conf_symlink_is_not_directory(
         self,
         mock_state_selected_env_dir_rel_path_inited,
@@ -269,9 +273,9 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         self.assertIn("is not a directory", str(ctx.exception))
 
-    @patch(f"{primer_kernel.__name__}.{_Node_state_client_conf_file_data_loaded.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{_Node_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{_Factory_state_selected_env_dir_rel_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Node_state_client_conf_file_data_loaded.__name__}.{_NodeFactory.create_state_node.__name__}")
+    @patch(f"{primer_kernel.__name__}.{_Node_state_ref_root_dir_abs_path_inited.__name__}.{_NodeFactory.create_state_node.__name__}")
+    @patch(f"{primer_kernel.__name__}.{_Factory_state_selected_env_dir_rel_path_inited.__name__}.{_NodeFactory.create_state_node.__name__}")
     def test_failure_when_conf_is_not_symlink(
         self,
         mock_state_selected_env_dir_rel_path_inited,
@@ -324,9 +328,9 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         self.assertIn("is not a symlink", str(ctx.exception))
 
-    @patch(f"{primer_kernel.__name__}.{_Node_state_client_conf_file_data_loaded.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{_Node_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{_Factory_state_selected_env_dir_rel_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Node_state_client_conf_file_data_loaded.__name__}.{_NodeFactory.create_state_node.__name__}")
+    @patch(f"{primer_kernel.__name__}.{_Node_state_ref_root_dir_abs_path_inited.__name__}.{_NodeFactory.create_state_node.__name__}")
+    @patch(f"{primer_kernel.__name__}.{_Factory_state_selected_env_dir_rel_path_inited.__name__}.{_NodeFactory.create_state_node.__name__}")
     def test_success_when_conf_symlink_is_created_if_it_is_missing_and_target_dir_is_given(
         self,
         mock_state_selected_env_dir_rel_path_inited,
@@ -380,9 +384,9 @@ class ThisTestClass(BasePyfakefsTestClass):
             target_dst_dir_path,
         )
 
-    @patch(f"{primer_kernel.__name__}.{_Node_state_client_conf_file_data_loaded.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{_Node_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{_Factory_state_selected_env_dir_rel_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Node_state_client_conf_file_data_loaded.__name__}.{_NodeFactory.create_state_node.__name__}")
+    @patch(f"{primer_kernel.__name__}.{_Node_state_ref_root_dir_abs_path_inited.__name__}.{_NodeFactory.create_state_node.__name__}")
+    @patch(f"{primer_kernel.__name__}.{_Factory_state_selected_env_dir_rel_path_inited.__name__}.{_NodeFactory.create_state_node.__name__}")
     def test_success_when_conf_symlink_is_created_with_normalized_target(
         self,
         mock_state_selected_env_dir_rel_path_inited,
@@ -436,9 +440,9 @@ class ThisTestClass(BasePyfakefsTestClass):
             target_dst_dir_path_normalized,
         )
 
-    @patch(f"{primer_kernel.__name__}.{_Node_state_client_conf_file_data_loaded.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{_Node_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{_Factory_state_selected_env_dir_rel_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Node_state_client_conf_file_data_loaded.__name__}.{_NodeFactory.create_state_node.__name__}")
+    @patch(f"{primer_kernel.__name__}.{_Node_state_ref_root_dir_abs_path_inited.__name__}.{_NodeFactory.create_state_node.__name__}")
+    @patch(f"{primer_kernel.__name__}.{_Factory_state_selected_env_dir_rel_path_inited.__name__}.{_NodeFactory.create_state_node.__name__}")
     def test_success_when_local_env_conf_dir_is_none(
         self,
         mock_state_selected_env_dir_rel_path_inited,
@@ -454,17 +458,17 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_ref_root = "/mock_ref_root"
         mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = mock_ref_root
         mock_state_selected_env_dir_rel_path_inited.return_value.eval_own_state.return_value = None
-        mock_state_client_conf_file_data_loaded.return_value.eval_own_state.return_value = {}  # Not used in this branch
+        mock_state_client_conf_file_data_loaded.return_value.eval_own_state.return_value = {}  # no symlink, no default
 
         # when:
         result = self.env_ctx.eval_state(_EnvState.state_local_conf_symlink_abs_path_inited.name)
 
-        # then:
-        self.assertEqual(result, mock_ref_root)
+        # then: nothing selected, nothing persisted, no default => global config dir
+        self.assertEqual(result, "/mock_global_conf_dir")
 
-    @patch(f"{primer_kernel.__name__}.{_Node_state_client_conf_file_data_loaded.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{_Node_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{_Factory_state_selected_env_dir_rel_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Node_state_client_conf_file_data_loaded.__name__}.{_NodeFactory.create_state_node.__name__}")
+    @patch(f"{primer_kernel.__name__}.{_Node_state_ref_root_dir_abs_path_inited.__name__}.{_NodeFactory.create_state_node.__name__}")
+    @patch(f"{primer_kernel.__name__}.{_Factory_state_selected_env_dir_rel_path_inited.__name__}.{_NodeFactory.create_state_node.__name__}")
     def test_success_when_conf_symlink_is_nested_and_target_matches(
         self,
         mock_state_selected_env_dir_rel_path_inited,
@@ -527,9 +531,9 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # no exception happens
 
-    @patch(f"{primer_kernel.__name__}.{_Node_state_client_conf_file_data_loaded.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{_Node_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{_Factory_state_selected_env_dir_rel_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Node_state_client_conf_file_data_loaded.__name__}.{_NodeFactory.create_state_node.__name__}")
+    @patch(f"{primer_kernel.__name__}.{_Node_state_ref_root_dir_abs_path_inited.__name__}.{_NodeFactory.create_state_node.__name__}")
+    @patch(f"{primer_kernel.__name__}.{_Factory_state_selected_env_dir_rel_path_inited.__name__}.{_NodeFactory.create_state_node.__name__}")
     def test_failure_when_conf_symlink_is_nested_and_target_mismatches(
         self,
         mock_state_selected_env_dir_rel_path_inited,
@@ -586,9 +590,9 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         self.assertIn("not the same as the provided target", str(ctx.exception))
 
-    @patch(f"{primer_kernel.__name__}.{_Node_state_client_conf_file_data_loaded.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{_Node_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{_Factory_state_selected_env_dir_rel_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Node_state_client_conf_file_data_loaded.__name__}.{_NodeFactory.create_state_node.__name__}")
+    @patch(f"{primer_kernel.__name__}.{_Node_state_ref_root_dir_abs_path_inited.__name__}.{_NodeFactory.create_state_node.__name__}")
+    @patch(f"{primer_kernel.__name__}.{_Factory_state_selected_env_dir_rel_path_inited.__name__}.{_NodeFactory.create_state_node.__name__}")
     def test_success_when_conf_symlink_is_nested_and_created_with_dir_relative_target(
         self,
         mock_state_selected_env_dir_rel_path_inited,
@@ -654,8 +658,9 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_ref_root_dir_abs_path_inited,
         mock_state_client_conf_file_data_loaded,
         exec_operation: typing.Optional[_ExecOperation],
-        selected_env_dir_rel_path: str,
+        selected_env_dir_rel_path: typing.Optional[str],
         persisted_env_dir_rel_path: typing.Optional[str],
+        default_env_dir_rel_path: typing.Optional[str] = None,
     ) -> str:
         """
         Set up `ref_root` with `selected` and `persisted` env dirs (the latter is `None` if the symlink is missing).
@@ -679,7 +684,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             mock_client_dir,
             _ConfConstClient.default_dir_rel_path_leap_env_link_name,
         )
-        for env_dir_rel_path in [selected_env_dir_rel_path, persisted_env_dir_rel_path]:
+        for env_dir_rel_path in [selected_env_dir_rel_path, persisted_env_dir_rel_path, default_env_dir_rel_path]:
             if env_dir_rel_path is not None and not os.path.exists(env_dir_rel_path):
                 self.fs.create_dir(env_dir_rel_path)
         if persisted_env_dir_rel_path is not None and not os.path.lexists(symlink_abs_path):
@@ -689,7 +694,10 @@ class ThisTestClass(BasePyfakefsTestClass):
             )
 
         mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = mock_client_dir
-        mock_state_client_conf_file_data_loaded.return_value.eval_own_state.return_value = {ConfField.field_local_conf_symlink_rel_path.value: _ConfConstClient.default_dir_rel_path_leap_env_link_name}
+        client_conf_data = {ConfField.field_local_conf_symlink_rel_path.value: _ConfConstClient.default_dir_rel_path_leap_env_link_name}
+        if default_env_dir_rel_path is not None:
+            client_conf_data[ConfField.field_default_env_dir_rel_path.value] = default_env_dir_rel_path
+        mock_state_client_conf_file_data_loaded.return_value.eval_own_state.return_value = client_conf_data
         mock_state_selected_env_dir_rel_path_inited.return_value.eval_own_state.return_value = selected_env_dir_rel_path
         return symlink_abs_path
 
@@ -709,9 +717,9 @@ class ThisTestClass(BasePyfakefsTestClass):
                 state_node = _Factory_state_local_conf_symlink_abs_path_inited(self.env_ctx).create_state_node()
                 self.assertIs(type(state_node), expected_node_class)
 
-    @patch(f"{primer_kernel.__name__}.{_Node_state_client_conf_file_data_loaded.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{_Node_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{_Factory_state_selected_env_dir_rel_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Node_state_client_conf_file_data_loaded.__name__}.{_NodeFactory.create_state_node.__name__}")
+    @patch(f"{primer_kernel.__name__}.{_Node_state_ref_root_dir_abs_path_inited.__name__}.{_NodeFactory.create_state_node.__name__}")
+    @patch(f"{primer_kernel.__name__}.{_Factory_state_selected_env_dir_rel_path_inited.__name__}.{_NodeFactory.create_state_node.__name__}")
     def test_strict_returns_direct_env_dir_not_symlink_when_persisted_matches(
         self,
         mock_selected,
@@ -728,9 +736,9 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.assertEqual(result, "/mock_client_dir/target_dir")
         self.assertNotEqual(result, symlink_abs_path)
 
-    @patch(f"{primer_kernel.__name__}.{_Node_state_client_conf_file_data_loaded.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{_Node_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{_Factory_state_selected_env_dir_rel_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Node_state_client_conf_file_data_loaded.__name__}.{_NodeFactory.create_state_node.__name__}")
+    @patch(f"{primer_kernel.__name__}.{_Node_state_ref_root_dir_abs_path_inited.__name__}.{_NodeFactory.create_state_node.__name__}")
+    @patch(f"{primer_kernel.__name__}.{_Factory_state_selected_env_dir_rel_path_inited.__name__}.{_NodeFactory.create_state_node.__name__}")
     def test_strict_creates_symlink_and_returns_direct_env_dir_when_not_persisted(
         self,
         mock_selected,
@@ -747,9 +755,9 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.assertEqual(result, "/mock_client_dir/target_dir")
         self.assertEqual(os.readlink(symlink_abs_path), "target_dir")
 
-    @patch(f"{primer_kernel.__name__}.{_Node_state_client_conf_file_data_loaded.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{_Node_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{_Factory_state_selected_env_dir_rel_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Node_state_client_conf_file_data_loaded.__name__}.{_NodeFactory.create_state_node.__name__}")
+    @patch(f"{primer_kernel.__name__}.{_Node_state_ref_root_dir_abs_path_inited.__name__}.{_NodeFactory.create_state_node.__name__}")
+    @patch(f"{primer_kernel.__name__}.{_Factory_state_selected_env_dir_rel_path_inited.__name__}.{_NodeFactory.create_state_node.__name__}")
     def test_strict_fails_on_mismatch_for_ops_which_only_read_persisted_env(
         self,
         mock_selected,
@@ -770,9 +778,9 @@ class ThisTestClass(BasePyfakefsTestClass):
 
                 self.assertIn("not the same as the provided target", str(ctx.exception))
 
-    @patch(f"{primer_kernel.__name__}.{_Node_state_client_conf_file_data_loaded.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{_Node_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{_Factory_state_selected_env_dir_rel_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Node_state_client_conf_file_data_loaded.__name__}.{_NodeFactory.create_state_node.__name__}")
+    @patch(f"{primer_kernel.__name__}.{_Node_state_ref_root_dir_abs_path_inited.__name__}.{_NodeFactory.create_state_node.__name__}")
+    @patch(f"{primer_kernel.__name__}.{_Factory_state_selected_env_dir_rel_path_inited.__name__}.{_NodeFactory.create_state_node.__name__}")
     def test_reset_overwrites_persisted_symlink_on_mismatch(
         self,
         mock_selected,
@@ -789,9 +797,9 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.assertEqual(os.readlink(symlink_abs_path), "selected_dir")
         self.assertEqual(result, "/mock_client_dir/selected_dir")
 
-    @patch(f"{primer_kernel.__name__}.{_Node_state_client_conf_file_data_loaded.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{_Node_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{_Factory_state_selected_env_dir_rel_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Node_state_client_conf_file_data_loaded.__name__}.{_NodeFactory.create_state_node.__name__}")
+    @patch(f"{primer_kernel.__name__}.{_Node_state_ref_root_dir_abs_path_inited.__name__}.{_NodeFactory.create_state_node.__name__}")
+    @patch(f"{primer_kernel.__name__}.{_Factory_state_selected_env_dir_rel_path_inited.__name__}.{_NodeFactory.create_state_node.__name__}")
     def test_reset_keeps_persisted_symlink_on_match(
         self,
         mock_selected,
@@ -808,9 +816,9 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.assertEqual(os.readlink(symlink_abs_path), "target_dir")
         self.assertEqual(result, "/mock_client_dir/target_dir")
 
-    @patch(f"{primer_kernel.__name__}.{_Node_state_client_conf_file_data_loaded.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{_Node_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{_Factory_state_selected_env_dir_rel_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Node_state_client_conf_file_data_loaded.__name__}.{_NodeFactory.create_state_node.__name__}")
+    @patch(f"{primer_kernel.__name__}.{_Node_state_ref_root_dir_abs_path_inited.__name__}.{_NodeFactory.create_state_node.__name__}")
+    @patch(f"{primer_kernel.__name__}.{_Factory_state_selected_env_dir_rel_path_inited.__name__}.{_NodeFactory.create_state_node.__name__}")
     def test_reset_creates_symlink_when_not_persisted(
         self,
         mock_selected,
@@ -826,9 +834,9 @@ class ThisTestClass(BasePyfakefsTestClass):
         # then:
         self.assertEqual(os.readlink(symlink_abs_path), "selected_dir")
 
-    @patch(f"{primer_kernel.__name__}.{_Node_state_client_conf_file_data_loaded.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{_Node_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{_Factory_state_selected_env_dir_rel_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Node_state_client_conf_file_data_loaded.__name__}.{_NodeFactory.create_state_node.__name__}")
+    @patch(f"{primer_kernel.__name__}.{_Node_state_ref_root_dir_abs_path_inited.__name__}.{_NodeFactory.create_state_node.__name__}")
+    @patch(f"{primer_kernel.__name__}.{_Factory_state_selected_env_dir_rel_path_inited.__name__}.{_NodeFactory.create_state_node.__name__}")
     def test_reset_never_deletes_real_dir_in_place_of_symlink(
         self,
         mock_selected,
@@ -848,9 +856,9 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.assertTrue(os.path.isdir(symlink_abs_path))
         self.assertFalse(os.path.islink(symlink_abs_path))
 
-    @patch(f"{primer_kernel.__name__}.{_Node_state_client_conf_file_data_loaded.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{_Node_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{_Factory_state_selected_env_dir_rel_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Node_state_client_conf_file_data_loaded.__name__}.{_NodeFactory.create_state_node.__name__}")
+    @patch(f"{primer_kernel.__name__}.{_Node_state_ref_root_dir_abs_path_inited.__name__}.{_NodeFactory.create_state_node.__name__}")
+    @patch(f"{primer_kernel.__name__}.{_Factory_state_selected_env_dir_rel_path_inited.__name__}.{_NodeFactory.create_state_node.__name__}")
     def test_eval_ignores_persisted_symlink_on_mismatch(
         self,
         mock_selected,
@@ -867,9 +875,9 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.assertEqual(result, "/mock_client_dir/selected_dir")
         self.assertEqual(os.readlink(symlink_abs_path), "persisted_dir")
 
-    @patch(f"{primer_kernel.__name__}.{_Node_state_client_conf_file_data_loaded.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{_Node_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{_Factory_state_selected_env_dir_rel_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Node_state_client_conf_file_data_loaded.__name__}.{_NodeFactory.create_state_node.__name__}")
+    @patch(f"{primer_kernel.__name__}.{_Node_state_ref_root_dir_abs_path_inited.__name__}.{_NodeFactory.create_state_node.__name__}")
+    @patch(f"{primer_kernel.__name__}.{_Factory_state_selected_env_dir_rel_path_inited.__name__}.{_NodeFactory.create_state_node.__name__}")
     def test_eval_does_not_create_symlink_when_not_persisted(
         self,
         mock_selected,
@@ -886,9 +894,9 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.assertEqual(result, "/mock_client_dir/selected_dir")
         self.assertFalse(os.path.lexists(symlink_abs_path))
 
-    @patch(f"{primer_kernel.__name__}.{_Node_state_client_conf_file_data_loaded.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{_Node_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{_Factory_state_selected_env_dir_rel_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Node_state_client_conf_file_data_loaded.__name__}.{_NodeFactory.create_state_node.__name__}")
+    @patch(f"{primer_kernel.__name__}.{_Node_state_ref_root_dir_abs_path_inited.__name__}.{_NodeFactory.create_state_node.__name__}")
+    @patch(f"{primer_kernel.__name__}.{_Factory_state_selected_env_dir_rel_path_inited.__name__}.{_NodeFactory.create_state_node.__name__}")
     def test_eval_works_when_entry_is_not_a_symlink(
         self,
         mock_selected,
@@ -905,41 +913,95 @@ class ThisTestClass(BasePyfakefsTestClass):
         # then:
         self.assertEqual(result, "/mock_client_dir/selected_dir")
 
-    # noinspection PyMethodMayBeStatic
-    def test_compose_local_conf_symlink_abs_path(self):
-        self.assertEqual(
-            _compose_local_conf_symlink_abs_path("/ref_root", {ConfField.field_local_conf_symlink_rel_path.value: "conf/env"}),
-            "/ref_root/conf/env",
-        )
-        self.assertEqual(
-            _compose_local_conf_symlink_abs_path("/ref_root", {}),
-            "/ref_root",
-        )
-        with self.assertRaises(AssertionError):
-            _compose_local_conf_symlink_abs_path("/ref_root", {ConfField.field_local_conf_symlink_rel_path.value: "/abs/env"})
+    @patch(f"{primer_kernel.__name__}.{_Node_state_client_conf_file_data_loaded.__name__}.{_NodeFactory.create_state_node.__name__}")
+    @patch(f"{primer_kernel.__name__}.{_Node_state_ref_root_dir_abs_path_inited.__name__}.{_NodeFactory.create_state_node.__name__}")
+    @patch(f"{primer_kernel.__name__}.{_Factory_state_selected_env_dir_rel_path_inited.__name__}.{_NodeFactory.create_state_node.__name__}")
+    def test_nothing_selected_uses_persisted_symlink_value_for_all_ops(
+        self,
+        mock_selected,
+        mock_ref_root,
+        mock_client_conf,
+    ):
+        for exec_operation in [
+            _ExecOperation.op_boot,
+            _ExecOperation.op_reset,
+            _ExecOperation.op_start,
+            _ExecOperation.op_shell,
+            _ExecOperation.op_wrap,
+            _ExecOperation.op_eval,
+            None,
+        ]:
+            with self.subTest(exec_operation=exec_operation):
+                self.env_ctx = customize_env_context()
+                symlink_abs_path = self._given_env_with_persisted_symlink(mock_selected, mock_ref_root, mock_client_conf, exec_operation, None, "persisted_dir", default_env_dir_rel_path="default_dir")
 
-    # noinspection PyMethodMayBeStatic
-    def test_compose_symlink_target_is_relative_to_symlink_dir(self):
-        self.assertEqual(
-            _compose_symlink_target("/ref_root", "conf/dst/env", "/ref_root/conf/lconf"),
-            "dst/env",
-        )
-        self.assertEqual(
-            _compose_symlink_target("/ref_root", "dst/env/", "/ref_root/lconf"),
-            "dst/env",
-        )
+                result = self.env_ctx.eval_state(_EnvState.state_local_conf_symlink_abs_path_inited.name)
 
-    def test_resolve_symlink_dir_abs_path(self):
-        self.fs.create_dir("/ref_root/conf/dst/env")
-        self.fs.create_symlink("/ref_root/conf/lconf", "dst/env")
-        self.assertEqual(
-            _resolve_symlink_dir_abs_path("/ref_root/conf/lconf"),
-            "/ref_root/conf/dst/env",
-        )
+                # the default is only a fallback - the persisted value wins and the link is untouched:
+                self.assertEqual(result, "/mock_client_dir/persisted_dir")
+                self.assertEqual(os.readlink(symlink_abs_path), "persisted_dir")
 
-    @patch(f"{primer_kernel.__name__}.{_Node_state_client_conf_file_data_loaded.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{_Node_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{_Factory_state_selected_env_dir_rel_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Node_state_client_conf_file_data_loaded.__name__}.{_NodeFactory.create_state_node.__name__}")
+    @patch(f"{primer_kernel.__name__}.{_Node_state_ref_root_dir_abs_path_inited.__name__}.{_NodeFactory.create_state_node.__name__}")
+    @patch(f"{primer_kernel.__name__}.{_Factory_state_selected_env_dir_rel_path_inited.__name__}.{_NodeFactory.create_state_node.__name__}")
+    def test_nothing_selected_nothing_persisted_uses_default_and_only_boot_and_reset_persist_it(
+        self,
+        mock_selected,
+        mock_ref_root,
+        mock_client_conf,
+    ):
+        for exec_operation, expect_link in [
+            (_ExecOperation.op_boot, True),
+            (_ExecOperation.op_reset, True),
+            (_ExecOperation.op_start, False),
+            (_ExecOperation.op_shell, False),
+            (_ExecOperation.op_wrap, False),
+            (_ExecOperation.op_eval, False),
+            (None, False),
+        ]:
+            with self.subTest(exec_operation=exec_operation):
+                self.env_ctx = customize_env_context()
+                symlink_abs_path = self._given_env_with_persisted_symlink(mock_selected, mock_ref_root, mock_client_conf, exec_operation, None, None, default_env_dir_rel_path="default_dir")
+                if os.path.lexists(symlink_abs_path):
+                    os.remove(symlink_abs_path)
+
+                result = self.env_ctx.eval_state(_EnvState.state_local_conf_symlink_abs_path_inited.name)
+
+                self.assertEqual(result, "/mock_client_dir/default_dir")
+                self.assertEqual(os.path.islink(symlink_abs_path), expect_link)
+                if expect_link:
+                    self.assertEqual(os.readlink(symlink_abs_path), "default_dir")
+
+    @patch(f"{primer_kernel.__name__}.{_Node_state_client_conf_file_data_loaded.__name__}.{_NodeFactory.create_state_node.__name__}")
+    @patch(f"{primer_kernel.__name__}.{_Node_state_ref_root_dir_abs_path_inited.__name__}.{_NodeFactory.create_state_node.__name__}")
+    @patch(f"{primer_kernel.__name__}.{_Factory_state_selected_env_dir_rel_path_inited.__name__}.{_NodeFactory.create_state_node.__name__}")
+    def test_nothing_selected_nothing_persisted_no_default_uses_global_conf_dir_without_link(
+        self,
+        mock_selected,
+        mock_ref_root,
+        mock_client_conf,
+    ):
+        for exec_operation in [
+            _ExecOperation.op_boot,
+            _ExecOperation.op_reset,
+            _ExecOperation.op_start,
+            _ExecOperation.op_eval,
+            None,
+        ]:
+            with self.subTest(exec_operation=exec_operation):
+                self.env_ctx = customize_env_context()
+                symlink_abs_path = self._given_env_with_persisted_symlink(mock_selected, mock_ref_root, mock_client_conf, exec_operation, None, None)
+                if os.path.lexists(symlink_abs_path):
+                    os.remove(symlink_abs_path)
+
+                result = self.env_ctx.eval_state(_EnvState.state_local_conf_symlink_abs_path_inited.name)
+
+                self.assertEqual(result, "/mock_global_conf_dir")
+                self.assertFalse(os.path.lexists(symlink_abs_path))
+
+    @patch(f"{primer_kernel.__name__}.{_Node_state_client_conf_file_data_loaded.__name__}.{_NodeFactory.create_state_node.__name__}")
+    @patch(f"{primer_kernel.__name__}.{_Node_state_ref_root_dir_abs_path_inited.__name__}.{_NodeFactory.create_state_node.__name__}")
+    @patch(f"{primer_kernel.__name__}.{_Factory_state_selected_env_dir_rel_path_inited.__name__}.{_NodeFactory.create_state_node.__name__}")
     def test_read_ops_do_not_create_symlink_for_selected_env(
         self,
         mock_selected,
@@ -961,3 +1023,99 @@ class ThisTestClass(BasePyfakefsTestClass):
 
                 self.assertEqual(result, "/mock_client_dir/selected_dir")
                 self.assertFalse(os.path.lexists(symlink_abs_path))
+
+    @patch(f"{primer_kernel.__name__}.{_Node_state_client_conf_file_data_loaded.__name__}.{_NodeFactory.create_state_node.__name__}")
+    @patch(f"{primer_kernel.__name__}.{_Node_state_ref_root_dir_abs_path_inited.__name__}.{_NodeFactory.create_state_node.__name__}")
+    @patch(f"{primer_kernel.__name__}.{_Factory_state_selected_env_dir_rel_path_inited.__name__}.{_NodeFactory.create_state_node.__name__}")
+    def test_selected_env_is_used_when_symlink_is_not_configured(
+        self,
+        mock_selected,
+        mock_ref_root,
+        mock_client_conf,
+    ):
+        # given:
+        self._given_env_with_persisted_symlink(mock_selected, mock_ref_root, mock_client_conf, _ExecOperation.op_boot, "selected_dir", None)
+        mock_client_conf.return_value.eval_own_state.return_value = {}
+
+        # when:
+        result = self.env_ctx.eval_state(_EnvState.state_local_conf_symlink_abs_path_inited.name)
+
+        # then:
+        self.assertEqual(result, "/mock_client_dir/selected_dir")
+
+    @patch(f"{primer_kernel.__name__}.{_Node_state_client_conf_file_data_loaded.__name__}.{_NodeFactory.create_state_node.__name__}")
+    @patch(f"{primer_kernel.__name__}.{_Node_state_ref_root_dir_abs_path_inited.__name__}.{_NodeFactory.create_state_node.__name__}")
+    @patch(f"{primer_kernel.__name__}.{_Factory_state_selected_env_dir_rel_path_inited.__name__}.{_NodeFactory.create_state_node.__name__}")
+    def test_failure_when_default_env_path_is_absolute(
+        self,
+        mock_selected,
+        mock_ref_root,
+        mock_client_conf,
+    ):
+        # given:
+        self._given_env_with_persisted_symlink(mock_selected, mock_ref_root, mock_client_conf, _ExecOperation.op_boot, None, None)
+        mock_client_conf.return_value.eval_own_state.return_value = {
+            ConfField.field_local_conf_symlink_rel_path.value: _ConfConstClient.default_dir_rel_path_leap_env_link_name,
+            ConfField.field_default_env_dir_rel_path.value: "/abs/default_env",
+        }
+
+        # when:
+        with self.assertRaises(AssertionError) as ctx:
+            self.env_ctx.eval_state(_EnvState.state_local_conf_symlink_abs_path_inited.name)
+
+        # then:
+        self.assertIn("must be a relative path", str(ctx.exception))
+
+    @patch(f"{primer_kernel.__name__}.{_Node_state_client_conf_file_data_loaded.__name__}.{_NodeFactory.create_state_node.__name__}")
+    @patch(f"{primer_kernel.__name__}.{_Node_state_ref_root_dir_abs_path_inited.__name__}.{_NodeFactory.create_state_node.__name__}")
+    @patch(f"{primer_kernel.__name__}.{_Factory_state_selected_env_dir_rel_path_inited.__name__}.{_NodeFactory.create_state_node.__name__}")
+    def test_read_outside_of_app_uses_persisted_env_without_comparing_it(
+        self,
+        mock_selected,
+        mock_ref_root,
+        mock_client_conf,
+    ):
+        # given: `_is_app` is `False` (e.g. `_EntryFunc.func_start_app`), the selected env mismatches the persisted one
+        self.env_ctx._is_app = False
+        self._given_env_with_persisted_symlink(mock_selected, mock_ref_root, mock_client_conf, _ExecOperation.op_start, "selected_dir", "persisted_dir")
+
+        # when:
+        result = self.env_ctx.eval_state(_EnvState.state_local_conf_symlink_abs_path_inited.name)
+
+        # then:
+        self.assertEqual(result, "/mock_client_dir/persisted_dir")
+
+    @patch(f"{primer_kernel.__name__}.{_Node_state_client_conf_file_data_loaded.__name__}.{_NodeFactory.create_state_node.__name__}")
+    @patch(f"{primer_kernel.__name__}.{_Node_state_ref_root_dir_abs_path_inited.__name__}.{_NodeFactory.create_state_node.__name__}")
+    @patch(f"{primer_kernel.__name__}.{_Factory_state_selected_env_dir_rel_path_inited.__name__}.{_NodeFactory.create_state_node.__name__}")
+    def test_reset_uses_selected_env_when_symlink_is_not_configured(
+        self,
+        mock_selected,
+        mock_ref_root,
+        mock_client_conf,
+    ):
+        # given:
+        self._given_env_with_persisted_symlink(mock_selected, mock_ref_root, mock_client_conf, _ExecOperation.op_reset, "selected_dir", None)
+        mock_client_conf.return_value.eval_own_state.return_value = {}
+
+        # when:
+        result = self.env_ctx.eval_state(_EnvState.state_local_conf_symlink_abs_path_inited.name)
+
+        # then: nothing to persist the env in
+        self.assertEqual(result, "/mock_client_dir/selected_dir")
+
+    # noinspection PyMethodMayBeStatic
+    def test_base_node_hook_is_not_implemented(self):
+        with self.assertRaises(NotImplementedError):
+            _BaseNode_state_local_conf_symlink_abs_path_inited._eval_env_dir_abs_path(None, "/ref_root", "dst/env", "/ref_root/lconf")
+
+    # noinspection PyMethodMayBeStatic
+    def test_compose_selected_env_dir_abs_path_is_normalized(self):
+        self.assertEqual(
+            _BaseNode_state_local_conf_symlink_abs_path_inited._compose_selected_env_dir_abs_path("/ref_root", "dst/./env/"),
+            "/ref_root/dst/env",
+        )
+        self.assertEqual(
+            _BaseNode_state_local_conf_symlink_abs_path_inited._compose_selected_env_dir_abs_path("/ref_root", "conf/../dst/env"),
+            "/ref_root/dst/env",
+        )

@@ -62,3 +62,23 @@ def test_boot_env_with_symlink_to_env_special_but_config_to_env_common_uses_pers
 
     with fat_mock_wrapper(fs):
         test_boot_env_with_env_selection.test_boot_env_with_symlink_to_env_special_but_config_to_env_common_uses_persisted(pathlib.Path(mock_test_dir.path))
+
+
+def test_boot_env_with_env_mismatching_persisted_env_fails(fs: FakeFilesystem):
+
+    assert_test_func_name_embeds_str(test_boot_env_with_env_selection.test_boot_env_with_env_mismatching_persisted_env_fails.__name__)
+
+    mock_test_dir = fs.create_dir("/mock_test_dir")
+
+    with fat_mock_wrapper(fs):
+        test_boot_env_with_env_selection.test_boot_env_with_env_mismatching_persisted_env_fails(pathlib.Path(mock_test_dir.path))
+
+
+def test_boot_env_without_env_selection_uses_global_conf_dir(fs: FakeFilesystem):
+
+    assert_test_func_name_embeds_str(test_boot_env_with_env_selection.test_boot_env_without_env_selection_uses_global_conf_dir.__name__)
+
+    mock_test_dir = fs.create_dir("/mock_test_dir")
+
+    with fat_mock_wrapper(fs):
+        test_boot_env_with_env_selection.test_boot_env_without_env_selection_uses_global_conf_dir(pathlib.Path(mock_test_dir.path))

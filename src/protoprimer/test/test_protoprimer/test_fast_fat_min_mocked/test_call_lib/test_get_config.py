@@ -174,7 +174,8 @@ def test_get_config_with_leap_derived(proto_kernel_abs_path):
         _EnvState.state_version_constraints_file_basename_inited.name,
     }
 
-    assert conf_data[_EnvState.state_selected_env_dir_rel_path_inited.name] == "dst/default_env"
+    # The default env is not a selection (`FT_03_31_63_70.environment_selection.md`):
+    assert conf_data[_EnvState.state_selected_env_dir_rel_path_inited.name] is None
 
     # FT_84_11_73_28.supported_python_versions.md:
     assert conf_data[_EnvState.state_required_python_version_inited.name] == "3.15.2"

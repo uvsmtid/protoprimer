@@ -1,6 +1,5 @@
 import argparse
 import os
-from logging import WARNING
 from unittest.mock import patch
 
 from local_test.base_test_class import BasePyfakefsTestClass
@@ -10,18 +9,23 @@ from local_test.mock_verifier import (
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
+    _BaseNode_state_selected_env_dir_rel_path,
     _Factory_state_args_parsed,
-    _Node_state_client_conf_file_data_loaded,
+    _Factory_state_selected_env_dir_rel_path_inited,
+    _Node_state_selected_env_dir_rel_path_inited_is_app,
+    _Node_state_selected_env_dir_rel_path_inited_not_is_app,
     _Node_state_ref_root_dir_abs_path_inited,
-    ConfField,
     _ContextBuilder,
     _EnvState,
-    _StateStride,
 )
 
 
 # noinspection PyPep8Naming
 class ThisTestClass(BasePyfakefsTestClass):
+    """
+    The default env is not a part of the selection (see `FT_03_31_63_70.environment_selection.md`):
+    the state is only set by an explicit arg (and is `None` otherwise).
+    """
 
     def setUp(self):
         self.setUpPyfakefs()
@@ -35,174 +39,90 @@ class ThisTestClass(BasePyfakefsTestClass):
         self.mock_ref_root = "/mock_ref_root"
         self.fs.create_dir(self.mock_ref_root)
 
+    def _given_arg(
+        self,
+        mock_state_args_parsed,
+        mock_state_ref_root_dir_abs_path_inited,
+        arg_value,
+    ) -> None:
+        assert_parent_factories_mocked(
+            self.env_ctx,
+            _EnvState.state_selected_env_dir_rel_path_inited.name,
+        )
+        mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = self.mock_ref_root
+        mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(**{primer_kernel._ParsedArg.name_selected_env_dir.value: arg_value})
+
     # noinspection PyMethodMayBeStatic
     def test_relationship(self):
         assert_test_module_name_embeds_str(_EnvState.state_selected_env_dir_rel_path_inited.name)
 
     @patch(f"{primer_kernel.__name__}.{_Node_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_args_parsed.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{_Node_state_client_conf_file_data_loaded.__name__}.create_state_node")
     def test_success_when_arg_is_present_and_rel_to_cwd(
         self,
-        mock_state_client_conf_file_data_loaded,
         mock_state_args_parsed,
         mock_state_ref_root_dir_abs_path_inited,
     ):
         # given:
-        assert_parent_factories_mocked(
-            self.env_ctx,
-            _EnvState.state_selected_env_dir_rel_path_inited.name,
-        )
-        mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = self.mock_ref_root
-
-        # This should be ignored:
-        client_conf_file_data = {
-            ConfField.field_default_env_dir_rel_path.value: "my_env_dir_from_conf",
-        }
-        self.fs.create_dir(os.path.join(self.mock_ref_root, "my_env_dir_from_conf"))
-        mock_state_client_conf_file_data_loaded.return_value.eval_own_state.return_value = client_conf_file_data
-
-        # This should be used:
         arg_value = "my_env_dir_from_arg"
         # Create it inside ref_root, and CWD will be ref_root
         os.chdir(self.mock_ref_root)
         self.fs.create_dir(arg_value)
-        mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(**{primer_kernel._ParsedArg.name_selected_env_dir.value: arg_value})
+        self._given_arg(mock_state_args_parsed, mock_state_ref_root_dir_abs_path_inited, arg_value)
 
         # when:
-        state_selected_env_dir_rel_path_inited = self.env_ctx.eval_state(_EnvState.state_selected_env_dir_rel_path_inited.name)
+        result = self.env_ctx.eval_state(_EnvState.state_selected_env_dir_rel_path_inited.name)
 
         # then:
-        self.assertEqual(state_selected_env_dir_rel_path_inited, arg_value)
+        self.assertEqual(result, arg_value)
 
     @patch(f"{primer_kernel.__name__}.{_Node_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_args_parsed.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{_Node_state_client_conf_file_data_loaded.__name__}.create_state_node")
     def test_success_when_arg_is_present_and_rel_to_ref_root(
         self,
-        mock_state_client_conf_file_data_loaded,
         mock_state_args_parsed,
         mock_state_ref_root_dir_abs_path_inited,
     ):
         # given:
-        assert_parent_factories_mocked(
-            self.env_ctx,
-            _EnvState.state_selected_env_dir_rel_path_inited.name,
-        )
-        mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = self.mock_ref_root
         os.chdir("/")  # change cwd to something else
-
-        # This should be ignored:
-        client_conf_file_data = {
-            ConfField.field_default_env_dir_rel_path.value: "my_env_dir_from_conf",
-        }
-        self.fs.create_dir(os.path.join(self.mock_ref_root, "my_env_dir_from_conf"))
-        mock_state_client_conf_file_data_loaded.return_value.eval_own_state.return_value = client_conf_file_data
-
-        # This should be used:
         arg_value = "my_env_dir_from_arg"
         self.fs.create_dir(os.path.join(self.mock_ref_root, arg_value))
-        mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(**{primer_kernel._ParsedArg.name_selected_env_dir.value: arg_value})
+        self._given_arg(mock_state_args_parsed, mock_state_ref_root_dir_abs_path_inited, arg_value)
 
         # when:
-        state_selected_env_dir_rel_path_inited = self.env_ctx.eval_state(_EnvState.state_selected_env_dir_rel_path_inited.name)
+        result = self.env_ctx.eval_state(_EnvState.state_selected_env_dir_rel_path_inited.name)
 
         # then:
-        self.assertEqual(state_selected_env_dir_rel_path_inited, arg_value)
+        self.assertEqual(result, arg_value)
 
     @patch(f"{primer_kernel.__name__}.{_Node_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_args_parsed.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{_Node_state_client_conf_file_data_loaded.__name__}.create_state_node")
-    def test_success_when_default_field_is_present(
+    def test_none_when_arg_is_absent(
         self,
-        mock_state_client_conf_file_data_loaded,
         mock_state_args_parsed,
         mock_state_ref_root_dir_abs_path_inited,
     ):
         # given:
-        assert_parent_factories_mocked(
-            self.env_ctx,
-            _EnvState.state_selected_env_dir_rel_path_inited.name,
-        )
-        mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = self.mock_ref_root
         os.chdir(self.mock_ref_root)
-
-        mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(**{primer_kernel._ParsedArg.name_selected_env_dir.value: None})
-
-        client_conf_file_data = {
-            ConfField.field_default_env_dir_rel_path.value: "my_env_dir",
-        }
-        self.fs.create_dir("my_env_dir")
-        mock_state_client_conf_file_data_loaded.return_value.eval_own_state.return_value = client_conf_file_data
+        self._given_arg(mock_state_args_parsed, mock_state_ref_root_dir_abs_path_inited, None)
 
         # when:
-        state_selected_env_dir_rel_path_inited = self.env_ctx.eval_state(_EnvState.state_selected_env_dir_rel_path_inited.name)
+        result = self.env_ctx.eval_state(_EnvState.state_selected_env_dir_rel_path_inited.name)
 
-        # then:
-        self.assertEqual(state_selected_env_dir_rel_path_inited, "my_env_dir")
-
-    @patch(f"{primer_kernel.__name__}._EnvContext.get_stride")
-    @patch(f"{primer_kernel.__name__}.{_Node_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{_Factory_state_args_parsed.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{_Node_state_client_conf_file_data_loaded.__name__}.create_state_node")
-    def test_failure_when_default_field_is_missing(
-        self,
-        mock_state_client_conf_file_data_loaded,
-        mock_state_args_parsed,
-        mock_state_ref_root_dir_abs_path_inited,
-        mock_get_stride,
-    ):
-        # given:
-
-        assert_parent_factories_mocked(
-            self.env_ctx,
-            _EnvState.state_selected_env_dir_rel_path_inited.name,
-        )
-        mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = self.mock_ref_root
-        os.chdir(self.mock_ref_root)
-
-        mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(**{primer_kernel._ParsedArg.name_selected_env_dir.value: None})
-
-        client_conf_file_data = {}
-        mock_state_client_conf_file_data_loaded.return_value.eval_own_state.return_value = client_conf_file_data
-        mock_get_stride.return_value = _StateStride.stride_py_arbitrary
-
-        # when:
-
-        with self.assertLogs(primer_kernel._logger, level=WARNING) as log_dst:
-            self.env_ctx.eval_state(_EnvState.state_selected_env_dir_rel_path_inited.name)
-
-        # then:
-
-        self.assertIn(
-            f"Field `{ConfField.field_default_env_dir_rel_path.value}` is [{None}]",
-            log_dst.output[0],
-        )
+        # then: the default env (if any) is not a selection
+        self.assertIsNone(result)
 
     @patch(f"{primer_kernel.__name__}.{_Node_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_args_parsed.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{_Node_state_client_conf_file_data_loaded.__name__}.create_state_node")
     def test_failure_when_path_is_not_a_dir(
         self,
-        mock_state_client_conf_file_data_loaded,
         mock_state_args_parsed,
         mock_state_ref_root_dir_abs_path_inited,
     ):
         # given:
-        assert_parent_factories_mocked(
-            self.env_ctx,
-            _EnvState.state_selected_env_dir_rel_path_inited.name,
-        )
-        mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = self.mock_ref_root
         os.chdir(self.mock_ref_root)
-
-        mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(**{primer_kernel._ParsedArg.name_selected_env_dir.value: None})
-
-        client_conf_file_data = {
-            ConfField.field_default_env_dir_rel_path.value: "not_a_dir",
-        }
         self.fs.create_file("not_a_dir")
-        mock_state_client_conf_file_data_loaded.return_value.eval_own_state.return_value = client_conf_file_data
+        self._given_arg(mock_state_args_parsed, mock_state_ref_root_dir_abs_path_inited, "not_a_dir")
 
         # when:
         with self.assertRaises(AssertionError) as ctx:
@@ -213,57 +133,16 @@ class ThisTestClass(BasePyfakefsTestClass):
 
     @patch(f"{primer_kernel.__name__}.{_Node_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_args_parsed.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{_Node_state_client_conf_file_data_loaded.__name__}.create_state_node")
-    def test_failure_when_default_path_from_conf_is_absolute(
+    def test_failure_when_path_is_outside_ref_root(
         self,
-        mock_state_client_conf_file_data_loaded,
         mock_state_args_parsed,
         mock_state_ref_root_dir_abs_path_inited,
     ):
         # given:
-        assert_parent_factories_mocked(
-            self.env_ctx,
-            _EnvState.state_selected_env_dir_rel_path_inited.name,
-        )
-        mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = self.mock_ref_root
         os.chdir(self.mock_ref_root)
-
-        mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(**{primer_kernel._ParsedArg.name_selected_env_dir.value: None})
-
-        client_conf_file_data = {
-            ConfField.field_default_env_dir_rel_path.value: "/abs/path",
-        }
-        mock_state_client_conf_file_data_loaded.return_value.eval_own_state.return_value = client_conf_file_data
-
-        # when:
-        with self.assertRaises(AssertionError) as ctx:
-            self.env_ctx.eval_state(_EnvState.state_selected_env_dir_rel_path_inited.name)
-
-        # then:
-        self.assertIn("must be a relative path", str(ctx.exception))
-
-    @patch(f"{primer_kernel.__name__}.{_Node_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{_Factory_state_args_parsed.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{_Node_state_client_conf_file_data_loaded.__name__}.create_state_node")
-    def test_failure_when_path_from_conf_is_outside_ref_root(
-        self,
-        mock_state_client_conf_file_data_loaded,
-        mock_state_args_parsed,
-        mock_state_ref_root_dir_abs_path_inited,
-    ):
-        # given:
-        assert_parent_factories_mocked(
-            self.env_ctx,
-            _EnvState.state_selected_env_dir_rel_path_inited.name,
-        )
-        mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = self.mock_ref_root
-        os.chdir(self.mock_ref_root)
-
-        mock_state_client_conf_file_data_loaded.return_value.eval_own_state.return_value = {}  # Should be ignored
-
         arg_value = "/abs/path/outside/ref_root"
         self.fs.create_dir(arg_value)
-        mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(**{primer_kernel._ParsedArg.name_selected_env_dir.value: arg_value})
+        self._given_arg(mock_state_args_parsed, mock_state_ref_root_dir_abs_path_inited, arg_value)
 
         # when:
         with self.assertRaises(AssertionError) as ctx:
@@ -274,27 +153,17 @@ class ThisTestClass(BasePyfakefsTestClass):
 
     @patch(f"{primer_kernel.__name__}.{_Node_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_args_parsed.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{_Node_state_client_conf_file_data_loaded.__name__}.create_state_node")
-    def test_success_when_path_from_conf_is_inside_ref_root(
+    def test_success_when_abs_path_is_inside_ref_root(
         self,
-        mock_state_client_conf_file_data_loaded,
         mock_state_args_parsed,
         mock_state_ref_root_dir_abs_path_inited,
     ):
         # given:
-        assert_parent_factories_mocked(
-            self.env_ctx,
-            _EnvState.state_selected_env_dir_rel_path_inited.name,
-        )
-        mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = self.mock_ref_root
         os.chdir(self.mock_ref_root)
-
-        mock_state_client_conf_file_data_loaded.return_value.eval_own_state.return_value = {}  # Should be ignored
-
         arg_value_rel = "my_env"
         arg_value_abs = os.path.join(self.mock_ref_root, arg_value_rel)
         self.fs.create_dir(arg_value_abs)
-        mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(**{primer_kernel._ParsedArg.name_selected_env_dir.value: arg_value_abs})
+        self._given_arg(mock_state_args_parsed, mock_state_ref_root_dir_abs_path_inited, arg_value_abs)
 
         # when:
         result = self.env_ctx.eval_state(_EnvState.state_selected_env_dir_rel_path_inited.name)
@@ -304,27 +173,14 @@ class ThisTestClass(BasePyfakefsTestClass):
 
     @patch(f"{primer_kernel.__name__}.{_Node_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_args_parsed.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{_Node_state_client_conf_file_data_loaded.__name__}.create_state_node")
     def test_failure_when_path_does_not_exist(
         self,
-        mock_state_client_conf_file_data_loaded,
         mock_state_args_parsed,
         mock_state_ref_root_dir_abs_path_inited,
     ):
         # given:
-        assert_parent_factories_mocked(
-            self.env_ctx,
-            _EnvState.state_selected_env_dir_rel_path_inited.name,
-        )
-        mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = self.mock_ref_root
         os.chdir(self.mock_ref_root)
-
-        mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(**{primer_kernel._ParsedArg.name_selected_env_dir.value: None})
-
-        client_conf_file_data = {
-            ConfField.field_default_env_dir_rel_path.value: "missing_dir",
-        }
-        mock_state_client_conf_file_data_loaded.return_value.eval_own_state.return_value = client_conf_file_data
+        self._given_arg(mock_state_args_parsed, mock_state_ref_root_dir_abs_path_inited, "missing_dir")
 
         # when:
         with self.assertRaises(AssertionError) as ctx:
@@ -335,29 +191,16 @@ class ThisTestClass(BasePyfakefsTestClass):
 
     @patch(f"{primer_kernel.__name__}.{_Node_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_args_parsed.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{_Node_state_client_conf_file_data_loaded.__name__}.create_state_node")
     def test_success_when_path_leads_to_a_dir(
         self,
-        mock_state_client_conf_file_data_loaded,
         mock_state_args_parsed,
         mock_state_ref_root_dir_abs_path_inited,
     ):
         # given:
-        assert_parent_factories_mocked(
-            self.env_ctx,
-            _EnvState.state_selected_env_dir_rel_path_inited.name,
-        )
-        mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = self.mock_ref_root
         os.chdir(self.mock_ref_root)
-
-        mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(**{primer_kernel._ParsedArg.name_selected_env_dir.value: None})
-
         self.fs.create_dir("valid_dir")
         self.fs.create_symlink("symlink_to_dir", "valid_dir")
-        client_conf_file_data = {
-            ConfField.field_default_env_dir_rel_path.value: "symlink_to_dir",
-        }
-        mock_state_client_conf_file_data_loaded.return_value.eval_own_state.return_value = client_conf_file_data
+        self._given_arg(mock_state_args_parsed, mock_state_ref_root_dir_abs_path_inited, "symlink_to_dir")
 
         # when:
         result = self.env_ctx.eval_state(_EnvState.state_selected_env_dir_rel_path_inited.name)
@@ -367,26 +210,16 @@ class ThisTestClass(BasePyfakefsTestClass):
 
     @patch(f"{primer_kernel.__name__}.{_Node_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_args_parsed.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{_Node_state_client_conf_file_data_loaded.__name__}.create_state_node")
-    def test_failure_when_path_from_arg_is_not_a_dir(
+    def test_failure_when_abs_path_is_not_a_dir(
         self,
-        mock_state_client_conf_file_data_loaded,
         mock_state_args_parsed,
         mock_state_ref_root_dir_abs_path_inited,
     ):
         # given:
-        assert_parent_factories_mocked(
-            self.env_ctx,
-            _EnvState.state_selected_env_dir_rel_path_inited.name,
-        )
-        mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = self.mock_ref_root
         os.chdir(self.mock_ref_root)
-
-        mock_state_client_conf_file_data_loaded.return_value.eval_own_state.return_value = {}  # Should be ignored
-
         arg_value = "/abs/path/not_a_dir"
         self.fs.create_file(arg_value)
-        mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(**{primer_kernel._ParsedArg.name_selected_env_dir.value: arg_value})
+        self._given_arg(mock_state_args_parsed, mock_state_ref_root_dir_abs_path_inited, arg_value)
 
         # when:
         with self.assertRaises(AssertionError) as ctx:
@@ -400,40 +233,48 @@ class ThisTestClass(BasePyfakefsTestClass):
 
     @patch(f"{primer_kernel.__name__}.{_Node_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_args_parsed.__name__}.create_state_node")
-    @patch(f"{primer_kernel.__name__}.{_Node_state_client_conf_file_data_loaded.__name__}.create_state_node")
     def test_success_when_arg_is_present_and_sub_dir_to_ref_root_but_rel_to_curr_dir(
         self,
-        mock_state_client_conf_file_data_loaded,
         mock_state_args_parsed,
         mock_state_ref_root_dir_abs_path_inited,
     ):
         # given:
-        assert_parent_factories_mocked(
-            self.env_ctx,
-            _EnvState.state_selected_env_dir_rel_path_inited.name,
-        )
-        mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = self.mock_ref_root
-
-        # This should be ignored:
-        client_conf_file_data = {
-            ConfField.field_default_env_dir_rel_path.value: "my_env_dir_from_conf",
-        }
-        self.fs.create_dir(os.path.join(self.mock_ref_root, "my_env_dir_from_conf"))
-        mock_state_client_conf_file_data_loaded.return_value.eval_own_state.return_value = client_conf_file_data
-
-        # This should be used:
         arg_value = "my_env_dir_from_arg"
-
-        # Create a different CWD
         mock_cwd = os.path.join(self.mock_ref_root, "subdir")
         self.fs.create_dir(mock_cwd)
         os.chdir(mock_cwd)
-
         self.fs.create_dir(arg_value)
-        mock_state_args_parsed.return_value.eval_own_state.return_value = argparse.Namespace(**{primer_kernel._ParsedArg.name_selected_env_dir.value: arg_value})
+        self._given_arg(mock_state_args_parsed, mock_state_ref_root_dir_abs_path_inited, arg_value)
 
         # when:
         result = self.env_ctx.eval_state(_EnvState.state_selected_env_dir_rel_path_inited.name)
 
         # then:
         self.assertEqual(result, os.path.join("subdir", arg_value))
+
+    # noinspection PyMethodMayBeStatic
+    def test_factory_selects_node_by_is_app(self):
+        for is_app, entry_func, expected_node_class in [
+            (True, primer_kernel._EntryFunc.func_boot_env, _Node_state_selected_env_dir_rel_path_inited_is_app),
+            (False, primer_kernel._EntryFunc.func_call_lib, _Node_state_selected_env_dir_rel_path_inited_not_is_app),
+            (False, primer_kernel._EntryFunc.func_start_app, _Node_state_selected_env_dir_rel_path_inited_not_is_app),
+        ]:
+            with self.subTest(is_app=is_app, entry_func=entry_func):
+                env_ctx = _ContextBuilder().entry_func(entry_func).is_app(is_app).build_context()
+                state_node = _Factory_state_selected_env_dir_rel_path_inited(env_ctx).create_state_node()
+                self.assertIs(type(state_node), expected_node_class)
+
+    def test_none_when_not_is_app(self):
+        # given: no CLI args are processed outside of `_is_app` (`FT_77_15_06_50.dynamic_DAG.md`)
+        env_ctx = _ContextBuilder().entry_func(primer_kernel._EntryFunc.func_call_lib).is_app(False).build_context()
+
+        # when:
+        result = env_ctx.eval_state(_EnvState.state_selected_env_dir_rel_path_inited.name)
+
+        # then:
+        self.assertIsNone(result)
+
+    # noinspection PyMethodMayBeStatic
+    def test_base_node_hook_is_not_implemented(self):
+        with self.assertRaises(NotImplementedError):
+            _BaseNode_state_selected_env_dir_rel_path._select_env_conf_dir_any_path(None)

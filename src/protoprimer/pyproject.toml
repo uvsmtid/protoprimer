@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "protoprimer"
-version = "0.14.2"
+version = "0.15.0.dev0"
 
 authors = [
     { name = "uvsmtid", email = "uvsmtid@gmail.com" },
@@ -119,7 +119,7 @@ Documentation = "https://protoprimer.readthedocs.io"
 
 [tool.local_contract_compatibility]
 baseline_commit_names = [
-    "protoprimer-v0.14.0.final",
+    "protoprimer-v0.14.2.final",
 ]
 
 [tool.setuptools.packages.find]
