@@ -1065,6 +1065,30 @@ class _ShellType(enum.Enum):
     shell_sh = "sh"
 
 
+class _TargetPlatform(enum.Enum):
+    """
+    Platforms targeted by the CI grid: TODO_96_67_95_15.cross_platform_test_grid.md
+    """
+
+    platform_linux = "linux"
+
+    platform_darwin = "darwin"
+
+    platform_windows = "windows"
+
+
+def _get_target_platform() -> _TargetPlatform:
+    # Values of `sys.platform`: "linux", "darwin", "win32" (not "windows"):
+    if sys.platform.startswith("linux"):
+        return _TargetPlatform.platform_linux
+    elif sys.platform == "darwin":
+        return _TargetPlatform.platform_darwin
+    elif sys.platform == "win32":
+        return _TargetPlatform.platform_windows
+    else:
+        raise ValueError(f"unsupported `sys.platform` value [{sys.platform}]")
+
+
 def _remove_protoprimer_env_vars(env_vars: typing.MutableMapping[str, str]) -> None:
     """
     FT_66_02_54_56.context_isolation.md
@@ -1347,7 +1371,7 @@ class _ConfConstGeneral:
     input_based = None
 
     # TODO: TODO_50_98_96_87.support_windows.md:
-    is_os_windows = os.name == "nt"
+    is_os_windows = _get_target_platform() == _TargetPlatform.platform_windows
 
     name_windows_executable_ext = ".exe"
     name_windows_script_ext = ".bat"
