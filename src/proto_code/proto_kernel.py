@@ -1085,7 +1085,7 @@ class _TargetPlatform(enum.Enum):
 
     def is_posix(self) -> bool:
         return self._posix
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
 def _get_target_platform() -> _TargetPlatform:
     # Values of `sys.platform`: "linux", "darwin", "freebsd14" (or similar), "win32" (not "windows"):
@@ -1107,7 +1107,7 @@ def _remove_protoprimer_env_vars(env_vars: typing.MutableMapping[str, str]) -> N
     """
     for env_var in EnvVar:
         env_vars.pop(env_var.value, None)
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
 class _ShellDriverBase:
 
@@ -1125,10 +1125,10 @@ class _ShellDriverBase:
         self.shell_env_vars: dict[str, str] = shell_env_vars
         self.cache_dir_abs_path: str = cache_dir_abs_path
         self.activate_venv: bool = activate_venv
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     def get_type(self) -> _ShellType:
         raise NotImplementedError()
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     def get_init_file_basename(self):
         raise NotImplementedError()
 
@@ -1147,13 +1147,13 @@ class _ShellDriverBase:
             venv_abs_path,
             _ConfConstGeneral.file_rel_path_venv_activate,
         )
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     def get_source_builtin(self) -> str:
         # POSIX `sh` has no `source` builtin: it uses `.` to source a file.
         # Both `bash` and `zsh` support the POSIX `.` builtin as well,
         # but they also provide the (non-POSIX) `source` builtin.
         return "source"
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     def write_init_file(
         self,
         venv_abs_path: str,
