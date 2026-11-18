@@ -1070,11 +1070,19 @@ class _TargetPlatform(enum.Enum):
     Platforms targeted by the CI grid: TODO_96_67_95_15.cross_platform_test_grid.md
     """
 
-    platform_linux = "linux"
+    # (name, is_posix):
+    platform_linux = ("linux", True)
 
-    platform_darwin = "darwin"
+    platform_darwin = ("darwin", True)
 
-    platform_windows = "windows"
+    platform_windows = ("windows", False)
+
+    def __init__(self, platform_name: str, posix: bool):
+        self.platform_name = platform_name
+        self._posix = posix
+
+    def is_posix(self) -> bool:
+        return self._posix
 
 
 def _get_target_platform() -> _TargetPlatform:

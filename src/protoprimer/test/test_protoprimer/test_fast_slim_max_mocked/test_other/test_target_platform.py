@@ -30,3 +30,15 @@ def test_get_target_platform_unsupported():
         # when/then:
         with pytest.raises(ValueError):
             _get_target_platform()
+
+
+@pytest.mark.parametrize(
+    "target_platform, expected_is_posix",
+    [
+        (_TargetPlatform.platform_linux, True),
+        (_TargetPlatform.platform_darwin, True),
+        (_TargetPlatform.platform_windows, False),
+    ],
+)
+def test_is_posix(target_platform, expected_is_posix):
+    assert target_platform.is_posix() == expected_is_posix
