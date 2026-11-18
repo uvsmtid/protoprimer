@@ -1075,6 +1075,8 @@ class _TargetPlatform(enum.Enum):
 
     platform_darwin = ("darwin", True)
 
+    platform_freebsd = ("freebsd", True)
+
     platform_windows = ("windows", False)
 
     def __init__(self, platform_name: str, posix: bool):
@@ -1086,11 +1088,13 @@ class _TargetPlatform(enum.Enum):
 
 
 def _get_target_platform() -> _TargetPlatform:
-    # Values of `sys.platform`: "linux", "darwin", "win32" (not "windows"):
+    # Values of `sys.platform`: "linux", "darwin", "freebsd14" (or similar), "win32" (not "windows"):
     if sys.platform.startswith("linux"):
         return _TargetPlatform.platform_linux
     elif sys.platform == "darwin":
         return _TargetPlatform.platform_darwin
+    elif sys.platform.startswith("freebsd"):
+        return _TargetPlatform.platform_freebsd
     elif sys.platform == "win32":
         return _TargetPlatform.platform_windows
     else:

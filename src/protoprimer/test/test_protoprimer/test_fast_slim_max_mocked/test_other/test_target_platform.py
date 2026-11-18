@@ -12,6 +12,7 @@ from protoprimer.primer_kernel import (
     [
         ("linux", _TargetPlatform.platform_linux),
         ("darwin", _TargetPlatform.platform_darwin),
+        ("freebsd14", _TargetPlatform.platform_freebsd),
         ("win32", _TargetPlatform.platform_windows),
     ],
 )
@@ -26,7 +27,7 @@ def test_get_target_platform(sys_platform, expected_platform):
 
 def test_get_target_platform_unsupported():
     # given:
-    with patch("sys.platform", "freebsd14"):
+    with patch("sys.platform", "openbsd7"):
         # when/then:
         with pytest.raises(ValueError):
             _get_target_platform()
@@ -37,6 +38,7 @@ def test_get_target_platform_unsupported():
     [
         (_TargetPlatform.platform_linux, True),
         (_TargetPlatform.platform_darwin, True),
+        (_TargetPlatform.platform_freebsd, True),
         (_TargetPlatform.platform_windows, False),
     ],
 )
