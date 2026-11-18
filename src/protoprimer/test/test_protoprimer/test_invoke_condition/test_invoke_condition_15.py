@@ -20,7 +20,7 @@ def test_existing_venv_with_other_python_version_is_silently_reused(tmp_path):
         assert boot_result.exit_code == 0, str(boot_result)
 
         # Require another `python` version (the `venv` was created with 3.15.2):
-        container.run("sed -i s/3.15.2/3.14.0/ dst/test_python_max/proto_kernel.json")
+        container.run("sed -i s/3.15.2/3.14.0/ dst/test_python_max_linux/proto_kernel.json")
         result = container.run(boot_max_script)
         venv_version = container.run("./venv/bin/python --version")
 

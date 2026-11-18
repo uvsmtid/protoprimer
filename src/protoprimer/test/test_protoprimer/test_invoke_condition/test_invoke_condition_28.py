@@ -20,7 +20,7 @@ def test_leaked_py_exec_makes_new_run_skip_switching_to_venv(tmp_path):
 
     with ContainerSession(image_python_3_15, tmp_path) as container:
         # The last stride leaked from a parent process - nothing is switched, client code runs in a wrong `python`:
-        result = container.run("./prime --env dst/test_python_max", env={EnvVar.var_PROTOPRIMER_PY_EXEC.value: _StateStride.stride_src_updated.name})
+        result = container.run("./prime --env dst/test_python_max_linux", env={EnvVar.var_PROTOPRIMER_PY_EXEC.value: _StateStride.stride_src_updated.name})
 
     # TODO: FT_64_09_03_66.invoke_condition.md: remove the state vars before hand-over to client code and reject stale ones at start:
     assert result.exit_code != 0, str(result)

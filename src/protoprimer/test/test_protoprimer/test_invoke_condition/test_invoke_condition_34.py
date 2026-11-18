@@ -16,7 +16,7 @@ def test_entry_script_invoked_via_symlink_resolves_proto_kernel_relative_to_link
 
     with ContainerSession(image_python_3_15, tmp_path) as container:
         container.run("ln -s /work/prime /tmp/prime_link")
-        result = container.run("/tmp/prime_link --env dst/test_python_max")
+        result = container.run("/tmp/prime_link --env dst/test_python_max_linux")
 
     # TBD: decide which location is intended (the link or the target):
     assert result.exit_code != 0, str(result)

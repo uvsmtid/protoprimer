@@ -34,7 +34,7 @@ image_python_3_15 = "python:3.15.2-slim"
 image_debian = "debian:bookworm-slim"
 
 # Boot this repo into `/work/venv` with the `required_python_version` 3.15.2:
-boot_max_script = "./prime --env dst/test_python_max"
+boot_max_script = "./prime --env dst/test_python_max_linux"
 
 
 class InvokeCondition(enum.Enum):

@@ -19,7 +19,7 @@ def test_python_without_venv_module_fails_with_raw_subprocess_error(tmp_path):
         setup_result = container.run("apt-get update && apt-get install -y --no-install-recommends python3")
         assert setup_result.exit_code == 0, str(setup_result)
 
-        result = container.run("./prime --env dst/test_python_max")
+        result = container.run("./prime --env dst/test_python_max_linux")
 
     # TODO: FT_64_09_03_66.invoke_condition.md: detect the missing module up front and hint which package to install:
     assert result.exit_code != 0, str(result)

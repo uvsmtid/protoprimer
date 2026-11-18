@@ -19,7 +19,7 @@ def test_boot_with_another_env_than_lconf_symlink_fails(tmp_path):
         boot_result = container.run(boot_max_script)
         assert boot_result.exit_code == 0, str(boot_result)
 
-        result = container.run("./prime --env dst/test_python_med")
+        result = container.run("./prime --env dst/test_python_med_linux")
 
     assert result.exit_code != 0, str(result)
-    assert "target [dst/test_python_max] is not the same as the provided target [dst/test_python_med]" in result.stderr, str(result)
+    assert "target [dst/test_python_max_linux] is not the same as the provided target [dst/test_python_med_linux]" in result.stderr, str(result)

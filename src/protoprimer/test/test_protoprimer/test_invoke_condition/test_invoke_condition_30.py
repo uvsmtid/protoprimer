@@ -19,7 +19,7 @@ def test_relative_proto_kernel_path_is_rejected(tmp_path):
 
     with ContainerSession(image_python_3_15, tmp_path) as container:
         result = container.run(
-            "python src/proto_code/proto_kernel.py --env dst/test_python_max",
+            "python src/proto_code/proto_kernel.py --env dst/test_python_max_linux",
             env={EnvVar.var_PROTOPRIMER_PROTO_KERNEL.value: "relative/proto_kernel.py"},
         )
 

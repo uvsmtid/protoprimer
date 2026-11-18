@@ -16,7 +16,7 @@ def test_no_python_found_for_required_version_fails_with_raw_type_error(tmp_path
 
     with ContainerSession(image_python_3_15, tmp_path) as container:
         # No `python*` in `PATH`: neither the selector nor the basename search can find any:
-        result = container.run("PATH=/nonexistent /usr/local/bin/python3 ./prime --env dst/test_python_max")
+        result = container.run("PATH=/nonexistent /usr/local/bin/python3 ./prime --env dst/test_python_max_linux")
 
     # TODO: FT_64_09_03_66.invoke_condition.md: fail right after the search with a message (required version, basenames tried, `PATH`) and hints:
     assert result.exit_code != 0, str(result)

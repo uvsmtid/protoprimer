@@ -53,11 +53,11 @@ jobs:
                     path: |
                         ~/.cache/uv
                         ~/.cache/pip
-                    key: deps-${{ runner.os }}-${{ hashFiles('dst/test_python_min/version_constraints.txt') }}
+                    key: deps-${{ runner.os }}-${{ hashFiles('dst/test_python_min_linux/version_constraints.txt') }}
 
             -   run: |
-                    ${{ github.workspace }}/prime -vvv --env dst/test_python_min
-                    ${{ github.workspace }}/cmd/prime_env -vvv --env dst/test_python_min
+                    ${{ github.workspace }}/prime -vvv --env dst/test_python_min_linux
+                    ${{ github.workspace }}/cmd/prime_env -vvv --env dst/test_python_min_linux
 
             -   name: ensure git has no local changes and untracked files
                 run: |

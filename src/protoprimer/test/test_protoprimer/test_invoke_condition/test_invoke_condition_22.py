@@ -16,7 +16,7 @@ def test_fake_protoprimer_in_pythonpath_is_not_imported_by_boot(tmp_path):
 
     with ContainerSession(image_python_3_15, tmp_path) as container:
         container.run("mkdir -p /tmp/fake/protoprimer && echo 'raise RuntimeError(\"fake\")' > /tmp/fake/protoprimer/__init__.py")
-        result = container.run("./prime --env dst/test_python_max", env={"PYTHONPATH": "/tmp/fake"})
+        result = container.run("./prime --env dst/test_python_max_linux", env={"PYTHONPATH": "/tmp/fake"})
         venv_module = container.run('./venv/bin/python -c "import protoprimer; print(protoprimer.__file__)"')
 
     assert result.exit_code == 0, str(result)
