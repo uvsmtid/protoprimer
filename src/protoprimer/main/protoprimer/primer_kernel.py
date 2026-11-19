@@ -442,7 +442,7 @@ class _PathName(enum.Enum):
 
     path_required_python = "required_python"
 
-    # TODO: TODO_41_10_50_01.implement_env_selector.md: What is the FT (feature_topic)?
+    # FT_72_45_12_06.python_executable.md
     path_python_selector = "python_selector"
 
     path_selected_python = "selected_python"
@@ -517,7 +517,7 @@ class _SelectorFunc(enum.Enum):
     Lists selector functions (called from standalone `python` scripts).
     """
 
-    # TODO: TODO_41_10_50_01.implement_env_selector.md: What is the FT (feature_topic)?
+    # FT_72_45_12_06.python_executable.md
     # A function of this signature:
     # def select_python_file_abs_path(required_version: tuple[int, int, int]) -> str | None:
     select_python_file_abs_path = "select_python_file_abs_path"
@@ -559,7 +559,7 @@ class ConfField(enum.Enum):
     # state_required_python_version_inited:
     field_required_python_version = f"{_PathName.path_required_python.value}_{_ValueName.value_version.value}"
 
-    # TODO: TODO_41_10_50_01.implement_env_selector.md: What is the FT (feature_topic)?
+    # FT_72_45_12_06.python_executable.md
     # state_python_selector_file_abs_path_inited:
     field_python_selector_file_rel_path = f"{_PathName.path_python_selector.value}_{_FilesystemObject.fs_object_file.value}_{_PathType.path_rel.value}"
 
@@ -5450,7 +5450,7 @@ class _EnvState(enum.Enum):
 
     state_required_python_version_inited = _Node_state_required_python_version_inited
 
-    # TODO: TODO_41_10_50_01.implement_env_selector.md: What is the FT (feature_topic)?
+    # FT_72_45_12_06.python_executable.md
     state_python_selector_file_abs_path_inited = _Node_state_python_selector_file_abs_path_inited
 
     state_selected_python_file_abs_path_inited = _Node_state_selected_python_file_abs_path_inited
@@ -6538,7 +6538,7 @@ def _select_python_file_abs_path(
     Run the `python` selector script specified in `ConfField.field_python_selector_file_rel_path`.
     """
 
-    # TODO: TODO_41_10_50_01.implement_env_selector.md: What is the FT (feature_topic)?
+    # FT_72_45_12_06.python_executable.md
     # TODO: There is `ConfField.field_python_selector_file_rel_path` - why is there hardcoded `python_selector_module`?
     # TODO: Implement local repo example with `python_selector_module`:
     # TODO: use constants:
