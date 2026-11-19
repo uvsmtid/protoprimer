@@ -51,16 +51,16 @@ jobs:
             # TODO: TODO_50_98_96_87.support_windows.md: Milestone 1 minimal patch:
             # invoke via `python` explicitly to sidestep the chmod/shebang sub-section for now.
             -   run: |
-                    python ${{ github.workspace }}/prime -vvv --env dst/test_python_med
-                    python ${{ github.workspace }}/cmd/prime_env -vvv --env dst/test_python_med
+                    python ${{ github.workspace }}/prime -vvv --env dst/test_python_med_linux
+                    python ${{ github.workspace }}/cmd/prime_env -vvv --env dst/test_python_med_linux
 
             -   name: ensure git has no local changes and untracked files
                 # TODO: TODO_50_98_96_87.support_windows.md: `version_constraints.txt` legitimately differs on Windows (platform-specific extras), excluded here rather than "fixed" in the kernel.
                 # PowerShell (the default shell for `run:` steps on `windows-latest`):
                 run: |
-                    git diff -- . ':(exclude)dst/test_python_med/version_constraints.txt'
-                    git status --porcelain -- . ':(exclude)dst/test_python_med/version_constraints.txt'
-                    $gitChanges = git status --porcelain -- . ':(exclude)dst/test_python_med/version_constraints.txt'
+                    git diff -- . ':(exclude)dst/test_python_med_linux/version_constraints.txt'
+                    git status --porcelain -- . ':(exclude)dst/test_python_med_linux/version_constraints.txt'
+                    $gitChanges = git status --porcelain -- . ':(exclude)dst/test_python_med_linux/version_constraints.txt'
                     if ($gitChanges) {
                         Write-Error "git has local changes:`n$gitChanges"
                         exit 1
