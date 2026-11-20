@@ -1,0 +1,2 @@
+# Files written by `pip freeze` must keep LF on every platform:
+dst/**/version_constraints.txt text eol=lf
