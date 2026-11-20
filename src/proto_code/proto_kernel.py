@@ -1065,13 +1065,49 @@ class _ShellType(enum.Enum):
     shell_sh = "sh"
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+class _TargetPlatform(enum.Enum):
+    """
+    Platforms targeted by the CI grid: TODO_96_67_95_15.cross_platform_test_grid.md
+    """
+
+    # (name, is_posix):
+    platform_linux = ("linux", True)
+
+    platform_darwin = ("darwin", True)
+
+    platform_freebsd = ("freebsd", True)
+
+    platform_windows = ("windows", False)
+
+    def __init__(self, platform_name: str, posix: bool):
+        self.platform_name = platform_name
+        self._posix = posix
+
+    def is_posix(self) -> bool:
+        return self._posix
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
+def _get_target_platform() -> _TargetPlatform:
+    # Values of `sys.platform`: "linux", "darwin", "freebsd14" (or similar), "win32" (not "windows"):
+    if sys.platform.startswith("linux"):
+        return _TargetPlatform.platform_linux
+    elif sys.platform == "darwin":
+        return _TargetPlatform.platform_darwin
+    elif sys.platform.startswith("freebsd"):
+        return _TargetPlatform.platform_freebsd
+    elif sys.platform == "win32":
+        return _TargetPlatform.platform_windows
+    else:
+        raise ValueError(f"unsupported `sys.platform` value [{sys.platform}]")
+
+
 def _remove_protoprimer_env_vars(env_vars: typing.MutableMapping[str, str]) -> None:
     """
     FT_66_02_54_56.context_isolation.md
     """
     for env_var in EnvVar:
         env_vars.pop(env_var.value, None)
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
 class _ShellDriverBase:
 
@@ -1089,10 +1125,10 @@ class _ShellDriverBase:
         self.shell_env_vars: dict[str, str] = shell_env_vars
         self.cache_dir_abs_path: str = cache_dir_abs_path
         self.activate_venv: bool = activate_venv
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     def get_type(self) -> _ShellType:
         raise NotImplementedError()
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     def get_init_file_basename(self):
         raise NotImplementedError()
 
@@ -1111,13 +1147,13 @@ class _ShellDriverBase:
             venv_abs_path,
             _ConfConstGeneral.file_rel_path_venv_activate,
         )
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     def get_source_builtin(self) -> str:
         # POSIX `sh` has no `source` builtin: it uses `.` to source a file.
         # Both `bash` and `zsh` support the POSIX `.` builtin as well,
         # but they also provide the (non-POSIX) `source` builtin.
         return "source"
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     def write_init_file(
         self,
         venv_abs_path: str,
@@ -1347,7 +1383,7 @@ class _ConfConstGeneral:
     input_based = None
 
     # TODO: TODO_50_98_96_87.support_windows.md:
-    is_os_windows = os.name == "nt"
+    is_os_windows = _get_target_platform() == _TargetPlatform.platform_windows
 
     name_windows_executable_ext = ".exe"
     name_windows_script_ext = ".bat"
