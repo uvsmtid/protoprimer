@@ -967,6 +967,14 @@ class Builder_RootNode_client(AbstractConfLeapNodeBuilder):
             **kwargs,
         )
 
+        self._create_used_dict_field(
+            dict_node=dict_node,
+            field_name=ConfField.field_env_selector_file_rel_path.value,
+            node_class=Node_field_env_selector_file_rel_path,
+            conf_leap=conf_leap,
+            **kwargs,
+        )
+
         self._create_common_fields(
             dict_node=dict_node,
             conf_leap=conf_leap,
@@ -1033,6 +1041,24 @@ class Node_field_default_env_dir_rel_path(AbstractValueNode[str]):
             f"{_ConfConstGeneral.relative_path_field_note}\n"
             f"The path is ignored when the `{ConfField.field_local_conf_symlink_rel_path.value}` symlink already exists.\n"
             f"Arg `{_SyntaxArg.arg_env}` overrides this `{ConfField.field_default_env_dir_rel_path.value}` field.\n"
+            #
+        )
+
+
+# noinspection PyPep8Naming
+class Node_field_env_selector_file_rel_path(AbstractValueNode[str]):
+
+    def __init__(
+        self,
+        **kwargs,
+    ):
+        super().__init__(
+            **kwargs,
+        )
+        self.note_text = (
+            f"Field `{ConfField.field_env_selector_file_rel_path.value}` specifies rel path to the env selector (see `FT_03_31_63_70.environment_selection.md`).\n"
+            f"{_ConfConstGeneral.relative_path_field_note}\n"
+            f"Arg `{_SyntaxArg.arg_env}` overrides the env selected by it.\n"
             #
         )
 

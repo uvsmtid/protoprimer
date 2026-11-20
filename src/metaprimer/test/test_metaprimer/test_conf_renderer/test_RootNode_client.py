@@ -24,6 +24,7 @@ def test_render_client_config_data_with_unused_fields():
     config_data = {
         ConfField.field_local_conf_symlink_rel_path.value: "lconf",
         ConfField.field_default_env_dir_rel_path.value: "dst/default_env",
+        ConfField.field_env_selector_file_rel_path.value: "path/to/test_env_selector.py",
         ConfField.field_required_python_version.value: test_python_version,
         ConfField.field_python_selector_file_rel_path.value: "path/to/test_python_selector.py",
         ConfField.field_local_venv_dir_rel_path.value: "venv",
@@ -59,6 +60,11 @@ leap_client = (
         {_TermColor.config_comment.value}# The path is ignored when the `local_conf_symlink_rel_path` symlink already exists.{_TermColor.reset_style.value}
         {_TermColor.config_comment.value}# Arg `--env` overrides this `default_env_dir_rel_path` field.{_TermColor.reset_style.value}
         "default_env_dir_rel_path": "dst/default_env",
+        \n\
+        {_TermColor.config_comment.value}# Field `env_selector_file_rel_path` specifies rel path to the env selector (see `FT_03_31_63_70.environment_selection.md`).{_TermColor.reset_style.value}
+        {_TermColor.config_comment.value}# The path is relative to the `ref_root` dir specified in the `ref_root_dir_rel_path` field.{_TermColor.reset_style.value}
+        {_TermColor.config_comment.value}# Arg `--env` overrides the env selected by it.{_TermColor.reset_style.value}
+        "env_selector_file_rel_path": "path/to/test_env_selector.py",
         \n\
         {_TermColor.config_comment.value}# Field `required_python_version` selects `python` version.{_TermColor.reset_style.value}
         {_TermColor.config_comment.value}# The value specifies the version of `python` interpreter which is used to create `venv` (e.g. "{_ConfConstEnv.latest_known_python_version}").{_TermColor.reset_style.value}
@@ -144,6 +150,11 @@ leap_client = (
         {_TermColor.config_missing.value}# The path is ignored when the `local_conf_symlink_rel_path` symlink already exists.{_TermColor.reset_style.value}
         {_TermColor.config_missing.value}# Arg `--env` overrides this `default_env_dir_rel_path` field.{_TermColor.reset_style.value}
         {_TermColor.config_missing.value}# "default_env_dir_rel_path": None,{_TermColor.reset_style.value}
+        \n\
+        {_TermColor.config_missing.value}# Field `env_selector_file_rel_path` specifies rel path to the env selector (see `FT_03_31_63_70.environment_selection.md`).{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# The path is relative to the `ref_root` dir specified in the `ref_root_dir_rel_path` field.{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# Arg `--env` overrides the env selected by it.{_TermColor.reset_style.value}
+        {_TermColor.config_missing.value}# "env_selector_file_rel_path": None,{_TermColor.reset_style.value}
         \n\
         {_TermColor.config_missing.value}# Field `required_python_version` selects `python` version.{_TermColor.reset_style.value}
         {_TermColor.config_missing.value}# The value specifies the version of `python` interpreter which is used to create `venv` (e.g. "{_ConfConstEnv.latest_known_python_version}").{_TermColor.reset_style.value}

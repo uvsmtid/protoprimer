@@ -48,8 +48,12 @@ jobs:
                     key: deps-${{ runner.os }}-${{ hashFiles('dst/test_python_max_linux/version_constraints.txt') }}
 
             -   run: |
-                    ${{ github.workspace }}/prime -vvv --env dst/test_python_max_linux
-                    ${{ github.workspace }}/cmd/prime_env -vvv --env dst/test_python_max_linux
+                    ${{ github.workspace }}/prime -vvv
+                    ${{ github.workspace }}/cmd/prime_env -vvv
+
+            -   name: ensure the env selector picked the env for this job
+                run: |
+                    test "$(readlink ${{ github.workspace }}/lconf)" = "dst/test_python_max_linux"
 
             # FT_64_09_03_66.invoke_condition.md:
             # These tests are skipped by default (not run by `CI=true` runs of `test_py_*` jobs):

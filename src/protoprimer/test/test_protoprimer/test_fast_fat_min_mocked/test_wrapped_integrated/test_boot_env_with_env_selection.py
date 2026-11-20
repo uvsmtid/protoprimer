@@ -82,3 +82,58 @@ def test_boot_env_without_env_selection_uses_global_conf_dir(fs: FakeFilesystem)
 
     with fat_mock_wrapper(fs):
         test_boot_env_with_env_selection.test_boot_env_without_env_selection_uses_global_conf_dir(pathlib.Path(mock_test_dir.path))
+
+
+@since_version("0.15.0")
+def test_boot_env_with_env_selector_overrides_default_env(fs: FakeFilesystem):
+
+    assert_test_func_name_embeds_str(test_boot_env_with_env_selection.test_boot_env_with_env_selector_overrides_default_env.__name__)
+
+    mock_test_dir = fs.create_dir("/mock_test_dir")
+
+    with fat_mock_wrapper(fs):
+        test_boot_env_with_env_selection.test_boot_env_with_env_selector_overrides_default_env(pathlib.Path(mock_test_dir.path))
+
+
+@since_version("0.15.0")
+def test_boot_env_with_env_arg_overrides_env_selector(fs: FakeFilesystem):
+
+    assert_test_func_name_embeds_str(test_boot_env_with_env_selection.test_boot_env_with_env_arg_overrides_env_selector.__name__)
+
+    mock_test_dir = fs.create_dir("/mock_test_dir")
+
+    with fat_mock_wrapper(fs):
+        test_boot_env_with_env_selection.test_boot_env_with_env_arg_overrides_env_selector(pathlib.Path(mock_test_dir.path))
+
+
+@since_version("0.15.0")
+def test_boot_env_with_env_selector_returning_none_uses_default_env(fs: FakeFilesystem):
+
+    assert_test_func_name_embeds_str(test_boot_env_with_env_selection.test_boot_env_with_env_selector_returning_none_uses_default_env.__name__)
+
+    mock_test_dir = fs.create_dir("/mock_test_dir")
+
+    with fat_mock_wrapper(fs):
+        test_boot_env_with_env_selection.test_boot_env_with_env_selector_returning_none_uses_default_env(pathlib.Path(mock_test_dir.path))
+
+
+@since_version("0.15.0")
+def test_boot_env_with_env_selector_matching_persisted_env_is_repeatable(fs: FakeFilesystem):
+
+    assert_test_func_name_embeds_str(test_boot_env_with_env_selection.test_boot_env_with_env_selector_matching_persisted_env_is_repeatable.__name__)
+
+    mock_test_dir = fs.create_dir("/mock_test_dir")
+
+    with fat_mock_wrapper(fs):
+        test_boot_env_with_env_selection.test_boot_env_with_env_selector_matching_persisted_env_is_repeatable(pathlib.Path(mock_test_dir.path))
+
+
+@since_version("0.15.0")
+def test_boot_env_with_env_selector_mismatching_persisted_env_fails(fs: FakeFilesystem):
+
+    assert_test_func_name_embeds_str(test_boot_env_with_env_selection.test_boot_env_with_env_selector_mismatching_persisted_env_fails.__name__)
+
+    mock_test_dir = fs.create_dir("/mock_test_dir")
+
+    with fat_mock_wrapper(fs):
+        test_boot_env_with_env_selection.test_boot_env_with_env_selector_mismatching_persisted_env_fails(pathlib.Path(mock_test_dir.path))

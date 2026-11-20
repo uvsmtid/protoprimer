@@ -89,6 +89,16 @@ class FieldName(enum.Enum):
         ],
     )
 
+    field_env_selector_file_rel_path = FieldMeta(
+        conf_field=ConfField.field_env_selector_file_rel_path,
+        name_category=NameCategory.category_path_field,
+        name_components=[
+            _PathName.path_env_selector.value,
+            _FilesystemObject.fs_object_file.value,
+            _PathType.path_rel.value,
+        ],
+    )
+
     field_required_python_version = FieldMeta(
         conf_field=ConfField.field_required_python_version,
         name_category=NameCategory.category_value_field,

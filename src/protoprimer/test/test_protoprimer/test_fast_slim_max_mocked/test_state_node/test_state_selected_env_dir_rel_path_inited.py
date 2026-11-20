@@ -1,5 +1,6 @@
 import argparse
 import os
+import types
 from unittest.mock import patch
 
 from local_test.base_test_class import BasePyfakefsTestClass
@@ -14,6 +15,7 @@ from protoprimer.primer_kernel import (
     _Factory_state_selected_env_dir_rel_path_inited,
     _Node_state_selected_env_dir_rel_path_inited_is_app,
     _Node_state_selected_env_dir_rel_path_inited_not_is_app,
+    _Node_state_client_conf_file_data_loaded,
     _Node_state_ref_root_dir_abs_path_inited,
     _ContextBuilder,
     _EnvState,
@@ -38,6 +40,11 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
         self.mock_ref_root = "/mock_ref_root"
         self.fs.create_dir(self.mock_ref_root)
+        # By default, there is no env selector configured:
+        patcher = patch(f"{primer_kernel.__name__}.{_Node_state_client_conf_file_data_loaded.__name__}.create_state_node")
+        self.mock_state_client_conf_file_data_loaded = patcher.start()
+        self.addCleanup(patcher.stop)
+        self.mock_state_client_conf_file_data_loaded.return_value.eval_own_state.return_value = {}
 
     def _given_arg(
         self,
@@ -251,6 +258,104 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # then:
         self.assertEqual(result, os.path.join("subdir", arg_value))
+
+    @patch(f"{primer_kernel.__name__}.{_Node_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Factory_state_args_parsed.__name__}.create_state_node")
+    def _given_selector(
+        self,
+        arg_value,
+        selector_code,
+        mock_state_args_parsed,
+        mock_state_ref_root_dir_abs_path_inited,
+    ) -> str:
+        """
+        Configure the selector file with the `selector_code` (and evaluate the state).
+        """
+        os.chdir(self.mock_ref_root)
+        self._given_arg(mock_state_args_parsed, mock_state_ref_root_dir_abs_path_inited, arg_value)
+        # Real `import` cannot read the fake file system - only its existence matters here:
+        self.fs.create_file(os.path.join(self.mock_ref_root, "env_selector.py"))
+        selector_module = types.ModuleType("mock_env_selector_module")
+        patcher = patch(f"{primer_kernel.__name__}._import_proto_module", return_value=selector_module)
+        patcher.start()
+        self.addCleanup(patcher.stop)
+        exec(selector_code, selector_module.__dict__)
+        self.mock_state_client_conf_file_data_loaded.return_value.eval_own_state.return_value = {
+            primer_kernel.ConfField.field_env_selector_file_rel_path.value: "env_selector.py",
+        }
+        return self.env_ctx.eval_state(_EnvState.state_selected_env_dir_rel_path_inited.name)
+
+    def test_selector_is_used_when_arg_is_absent(self):
+        # given:
+        self.fs.create_dir(os.path.join(self.mock_ref_root, "selected_env"))
+
+        # when:
+        result = self._given_selector(None, "def select_env_dir_rel_path():\n    return 'selected_env'\n")
+
+        # then:
+        self.assertEqual(result, "selected_env")
+
+    def test_arg_overrides_selector(self):
+        # given:
+        self.fs.create_dir(os.path.join(self.mock_ref_root, "arg_env"))
+
+        # when: the selector would fail if called:
+        result = self._given_selector("arg_env", "def select_env_dir_rel_path():\n    raise RuntimeError('must not be called')\n")
+
+        # then:
+        self.assertEqual(result, "arg_env")
+
+    def test_none_when_selector_returns_none(self):
+        # when:
+        result = self._given_selector(None, "def select_env_dir_rel_path():\n    return None\n")
+
+        # then:
+        self.assertIsNone(result)
+
+    def test_failure_when_selector_returns_missing_dir(self):
+        # when:
+        with self.assertRaises(AssertionError) as ctx:
+            self._given_selector(None, "def select_env_dir_rel_path():\n    return 'missing_dir'\n")
+
+        # then:
+        self.assertIn("is relative to neither", str(ctx.exception))
+
+    def test_failure_when_selector_returns_not_str(self):
+        # when:
+        with self.assertRaises(AssertionError) as ctx:
+            self._given_selector(None, "def select_env_dir_rel_path():\n    return 5\n")
+
+        # then:
+        self.assertIn("must return `str` or `None`", str(ctx.exception))
+
+    def test_failure_when_selector_has_no_function(self):
+        # when:
+        with self.assertRaises(AssertionError) as ctx:
+            self._given_selector(None, "x = 1\n")
+
+        # then:
+        self.assertIn("does not define `select_env_dir_rel_path`", str(ctx.exception))
+
+    @patch(f"{primer_kernel.__name__}.{_Node_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
+    @patch(f"{primer_kernel.__name__}.{_Factory_state_args_parsed.__name__}.create_state_node")
+    def test_failure_when_selector_file_is_missing(
+        self,
+        mock_state_args_parsed,
+        mock_state_ref_root_dir_abs_path_inited,
+    ):
+        # given:
+        os.chdir(self.mock_ref_root)
+        self._given_arg(mock_state_args_parsed, mock_state_ref_root_dir_abs_path_inited, None)
+        self.mock_state_client_conf_file_data_loaded.return_value.eval_own_state.return_value = {
+            primer_kernel.ConfField.field_env_selector_file_rel_path.value: "missing_selector.py",
+        }
+
+        # when:
+        with self.assertRaises(AssertionError) as ctx:
+            self.env_ctx.eval_state(_EnvState.state_selected_env_dir_rel_path_inited.name)
+
+        # then:
+        self.assertIn("which does not exist", str(ctx.exception))
 
     # noinspection PyMethodMayBeStatic
     def test_factory_selects_node_by_is_app(self):
