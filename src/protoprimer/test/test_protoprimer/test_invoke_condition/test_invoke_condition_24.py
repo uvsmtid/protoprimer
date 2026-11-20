@@ -16,7 +16,7 @@ def test_module_in_pythonpath_shadows_stdlib_in_the_first_process(tmp_path):
 
     with ContainerSession(image_python_3_15, tmp_path) as container:
         container.run("mkdir /tmp/shadow && echo 'raise RuntimeError(\"shadow\")' > /tmp/shadow/argparse.py")
-        result = container.run("./prime --env dst/test_python_max", env={"PYTHONPATH": "/tmp/shadow"})
+        result = container.run("./prime --env dst/test_python_max_linux", env={"PYTHONPATH": "/tmp/shadow"})
 
     # TODO: FT_64_09_03_66.invoke_condition.md: the first process must be isolated (`-I`) from `PYTHONPATH`:
     assert result.exit_code != 0, str(result)

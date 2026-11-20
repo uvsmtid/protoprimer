@@ -22,8 +22,8 @@ def select_python_file_abs_path(required_version):
     raise RuntimeError("selector boom")
 """,
         )
-        container.run("sed -i 's#src/proto_code/python_selector_py3.15.py#src/proto_code/bad_selector.py#' dst/test_python_max/proto_kernel.json")
-        result = container.run("./prime --env dst/test_python_max")
+        container.run("sed -i 's#src/proto_code/python_selector_py3.15.py#src/proto_code/bad_selector.py#' dst/test_python_max_linux/proto_kernel.json")
+        result = container.run("./prime --env dst/test_python_max_linux")
 
     # TODO: FT_64_09_03_66.invoke_condition.md: report the selector path and the cause, then fall back or fail (decision needed):
     assert result.exit_code != 0, str(result)

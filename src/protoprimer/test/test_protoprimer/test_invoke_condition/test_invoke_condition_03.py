@@ -19,7 +19,7 @@ def test_python_newer_than_required_switches_to_required_python(tmp_path):
 
     with ContainerSession(image_python_3_15, tmp_path) as container:
         # The `required_python_version` of this env is 3.11.14:
-        result = container.run("./prime -v --env dst/test_python_med")
+        result = container.run("./prime -v --env dst/test_python_med_linux")
         venv_version = container.run("./venv/bin/python --version")
 
     assert result.exit_code == 0, str(result)

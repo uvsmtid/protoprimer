@@ -20,7 +20,7 @@ def test_basename_search_picks_python_with_wrong_version_and_fails_late_with_pip
 
     with ContainerSession(image_python_3_12, tmp_path) as container:
         # Required is 3.15.2, but only `python3` (3.12) is found by the basename search:
-        result = container.run("./prime --env dst/test_python_max", env={EnvVar.var_PROTOPRIMER_VENV_DRIVER.value: VenvDriverType.venv_pip.name})
+        result = container.run("./prime --env dst/test_python_max_linux", env={EnvVar.var_PROTOPRIMER_VENV_DRIVER.value: VenvDriverType.venv_pip.name})
 
     # TODO: FT_64_09_03_66.invoke_condition.md: prefer a candidate matching the version and fail early when there is none:
     assert result.exit_code != 0, str(result)

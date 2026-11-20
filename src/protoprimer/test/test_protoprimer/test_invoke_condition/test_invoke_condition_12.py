@@ -26,7 +26,7 @@ def select_python_file_abs_path(required_version):
     return "/work/venv/bin/python"
 """,
         )
-        container.run("sed -i 's#src/proto_code/python_selector_py3.15.py#src/proto_code/venv_selector.py#' dst/test_python_max/proto_kernel.json")
+        container.run("sed -i 's#src/proto_code/python_selector_py3.15.py#src/proto_code/venv_selector.py#' dst/test_python_max_linux/proto_kernel.json")
         result = container.run(boot_max_script)
 
     assert result.exit_code != 0, str(result)

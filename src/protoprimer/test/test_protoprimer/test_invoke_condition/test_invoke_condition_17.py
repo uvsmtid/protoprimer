@@ -16,7 +16,7 @@ def test_empty_venv_dir_is_reused_and_fails_on_missing_pyvenv_cfg(tmp_path):
 
     with ContainerSession(image_python_3_15, tmp_path) as container:
         container.run("mkdir venv")
-        result = container.run("./prime --env dst/test_python_max")
+        result = container.run("./prime --env dst/test_python_max_linux")
 
     # TODO: FT_64_09_03_66.invoke_condition.md: detect an incomplete `venv` and re-create it (or hint `reset`):
     assert result.exit_code != 0, str(result)

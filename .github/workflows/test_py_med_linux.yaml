@@ -17,7 +17,7 @@ concurrency:
     group: ${{ github.workflow }}-${{ github.ref == 'refs/heads/main' && github.sha || github.ref }}
     cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 jobs:
-    test_py_med:
+    test_py_med_linux:
         # Same-repo PR-s are already covered by `push` (avoid running twice):
         if: >-
             github.event_name != 'pull_request'
@@ -53,11 +53,11 @@ jobs:
                     path: |
                         ~/.cache/uv
                         ~/.cache/pip
-                    key: deps-${{ runner.os }}-${{ hashFiles('dst/test_python_med/version_constraints.txt') }}
+                    key: deps-${{ runner.os }}-${{ hashFiles('dst/test_python_med_linux/version_constraints.txt') }}
 
             -   run: |
-                    ${{ github.workspace }}/prime -vvv --env dst/test_python_med
-                    ${{ github.workspace }}/cmd/prime_env -vvv --env dst/test_python_med
+                    ${{ github.workspace }}/prime -vvv --env dst/test_python_med_linux
+                    ${{ github.workspace }}/cmd/prime_env -vvv --env dst/test_python_med_linux
 
             -   name: ensure git has no local changes and untracked files
                 run: |

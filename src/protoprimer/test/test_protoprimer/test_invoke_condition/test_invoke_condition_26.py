@@ -20,7 +20,7 @@ def test_pip_user_var_breaks_pip_driver_install(tmp_path):
 
     with ContainerSession(image_python_3_15, tmp_path) as container:
         result = container.run(
-            "./prime --env dst/test_python_max",
+            "./prime --env dst/test_python_max_linux",
             env={
                 EnvVar.var_PROTOPRIMER_VENV_DRIVER.value: VenvDriverType.venv_pip.name,
                 "PIP_USER": "1",
