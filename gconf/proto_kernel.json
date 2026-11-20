@@ -1,6 +1,7 @@
 {
     "local_conf_symlink_rel_path": "lconf",
     "default_env_dir_rel_path": "dst/default_env",
+    "env_selector_file_rel_path": "src/proto_code/env_selector.py",
 
     "__comment__": "See: FT_84_11_73_28.supported_python_versions.md",
     "required_python_version": "3.15.2",

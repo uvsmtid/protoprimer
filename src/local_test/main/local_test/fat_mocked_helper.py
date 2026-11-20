@@ -4,6 +4,7 @@ import os
 import pathlib
 import subprocess
 import sys
+import types
 from contextlib import (
     contextmanager,
     ExitStack,
@@ -108,8 +109,20 @@ def fat_mock_wrapper(
                 contents="# whatever",
             )
 
+    def _mock_import_proto_module(
+        proto_module_name: str,
+        proto_module_abs_path: str,
+    ):
+        # `pyfakefs` loads module code from the real file system: read the source from the fake one instead.
+        proto_module = types.ModuleType(proto_module_name)
+        with open(proto_module_abs_path) as proto_module_file:
+            proto_module_source = proto_module_file.read()
+        exec(compile(proto_module_source, proto_module_abs_path, "exec"), proto_module.__dict__)
+        return proto_module
+
     with ExitStack() as exit_stack:
         exit_stack.enter_context(patch("shutil.which", side_effect=mock_shutil_which_python))
+        exit_stack.enter_context(patch(f"{primer_kernel.__name__}._import_proto_module", side_effect=_mock_import_proto_module))
         exit_stack.enter_context(patch("sys.exit", side_effect=_mock_exit))
         exit_stack.enter_context(patch("os.execv", side_effect=_mock_execv))
         exit_stack.enter_context(patch("os.execve", side_effect=_mock_execve))

@@ -194,6 +194,30 @@ def select_python_file_abs_path(required_version: tuple[int, int, int]) -> str |
     )
 
 
+def create_test_env_selector(
+    ref_root_abs_path: pathlib.Path,
+    env_selector_rel_path: pathlib.Path,
+    env_dir_rel_path: Union[str, None],
+) -> None:
+    """
+    Creates a test env selector script which always selects `env_dir_rel_path` (`None` selects nothing).
+
+    See: FT_03_31_63_70.environment_selection.md
+    """
+    env_selector_abs_path = ref_root_abs_path / env_selector_rel_path
+    env_selector_abs_path.parent.mkdir(parents=True, exist_ok=True)
+    _write_text_file(
+        str(env_selector_abs_path),
+        f"""\
+from __future__ import annotations
+
+
+def select_env_dir_rel_path() -> str | None:
+    return {env_dir_rel_path!r}
+""",
+    )
+
+
 def create_conf_primer_file(
     ref_root_abs_path: pathlib.Path,
     proto_kernel_dir_abs_path: pathlib.Path,
@@ -236,6 +260,7 @@ def create_conf_client_file(
     conf_client_dir_abs_path: pathlib.Path,
     conf_env_dir_abs_path: Union[pathlib.Path, None],
     project_dir_abs_path: pathlib.Path,
+    env_selector_rel_path: Union[pathlib.Path, None] = None,
 ) -> None:
     """
     Pass `None` as `conf_env_dir_abs_path` to configure no default env (see `FT_03_31_63_70.environment_selection.md`).
@@ -263,6 +288,9 @@ def create_conf_client_file(
                 ref_root_abs_path,
             )
         )
+
+    if env_selector_rel_path is not None:
+        client_conf_data[ConfField.field_env_selector_file_rel_path.value] = str(env_selector_rel_path)
 
     conf_client_dir_abs_path.mkdir(parents=True, exist_ok=True)
 
@@ -500,3 +528,32 @@ def create_two_envs_shape(tmp_path: Path) -> TwoEnvsShape:
         default_venv_abs_path=ref_root_abs_path / default_venv_rel_path,
         special_venv_abs_path=ref_root_abs_path / special_venv_rel_path,
     )
+
+
+def create_two_envs_shape_with_env_selector(
+    tmp_path: Path,
+    selected_env_dir_rel_path: Union[str, None],
+) -> TwoEnvsShape:
+    """
+    The `TwoEnvsShape` where the client config also has the env selector
+    which always returns `selected_env_dir_rel_path` (see `FT_03_31_63_70.environment_selection.md`).
+    """
+
+    two_envs_shape = create_two_envs_shape(tmp_path)
+    ref_root_abs_path = two_envs_shape.ref_root_abs_path
+
+    env_selector_rel_path = pathlib.Path("env_selector.py")
+    create_test_env_selector(
+        ref_root_abs_path,
+        env_selector_rel_path,
+        selected_env_dir_rel_path,
+    )
+    create_conf_client_file(
+        ref_root_abs_path,
+        ref_root_abs_path / _ConfConstPrimer.default_client_conf_dir_rel_path,
+        two_envs_shape.default_env_dir_abs_path,
+        ref_root_abs_path / test_pyproject_src_dir_rel_path,
+        env_selector_rel_path=env_selector_rel_path,
+    )
+
+    return two_envs_shape

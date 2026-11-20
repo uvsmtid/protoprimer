@@ -51,14 +51,22 @@ jobs:
             # TODO: TODO_50_98_96_87.support_windows.md: Milestone 1 minimal patch:
             # invoke via `python` explicitly to sidestep the chmod/shebang sub-section for now.
             -   run: |
-                    python ${{ github.workspace }}/prime -vvv --env dst/test_python_med_windows
-                    python ${{ github.workspace }}/cmd/prime_env -vvv --env dst/test_python_med_windows
+                    python ${{ github.workspace }}/prime -vvv
+                    python ${{ github.workspace }}/cmd/prime_env -vvv
+
+            -   name: ensure the env selector picked the env for this job
+                # PowerShell (the default shell for `run:` steps on `windows-latest`):
+                run: |
+                    $envDir = (Get-Item "${{ github.workspace }}/lconf").Target
+                    Write-Output "lconf target: $envDir"
+                    if ($envDir -notmatch "test_python_med_windows$") {
+                        Write-Error "unexpected lconf target: $envDir"
+                        exit 1
+                    }
 
             -   name: ensure git has no local changes and untracked files
                 # PowerShell (the default shell for `run:` steps on `windows-latest`):
                 run: |
-                    git diff
-                    git status --porcelain
                     $gitChanges = git status --porcelain
                     if ($gitChanges) {
                         Write-Error "git has local changes:`n$gitChanges"

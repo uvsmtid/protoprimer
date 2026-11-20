@@ -18,3 +18,17 @@ def test_overwrites_persisted_env(fs: FakeFilesystem):
 
     with fat_mock_wrapper(fs):
         test_op_reset.test_op_reset_overwrites_persisted_env(pathlib.Path(mock_test_dir.path))
+
+
+def test_with_env_selector_overwrites_persisted_env(fs: FakeFilesystem):
+    mock_test_dir = fs.create_dir("/mock_test_dir")
+
+    with fat_mock_wrapper(fs):
+        test_op_reset.test_op_reset_with_env_selector_overwrites_persisted_env(pathlib.Path(mock_test_dir.path))
+
+
+def test_with_env_arg_overrides_env_selector(fs: FakeFilesystem):
+    mock_test_dir = fs.create_dir("/mock_test_dir")
+
+    with fat_mock_wrapper(fs):
+        test_op_reset.test_op_reset_with_env_arg_overrides_env_selector(pathlib.Path(mock_test_dir.path))

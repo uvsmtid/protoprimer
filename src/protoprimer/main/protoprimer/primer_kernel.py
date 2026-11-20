@@ -440,6 +440,9 @@ class _PathName(enum.Enum):
 
     path_selected_env = f"selected_env"
 
+    # FT_03_31_63_70.environment_selection.md
+    path_env_selector = "env_selector"
+
     path_required_python = "required_python"
 
     # FT_72_45_12_06.python_executable.md
@@ -522,6 +525,11 @@ class _SelectorFunc(enum.Enum):
     # def select_python_file_abs_path(required_version: tuple[int, int, int]) -> str | None:
     select_python_file_abs_path = "select_python_file_abs_path"
 
+    # FT_03_31_63_70.environment_selection.md
+    # A function of this signature:
+    # def select_env_dir_rel_path() -> str | None:
+    select_env_dir_rel_path = "select_env_dir_rel_path"
+
 
 class ConfField(enum.Enum):
     """
@@ -547,6 +555,10 @@ class ConfField(enum.Enum):
     # FT_92_51_35_07.local_env_link.md: default symlink target:
     # state_selected_env_dir_rel_path_inited:
     field_default_env_dir_rel_path = f"{_PathName.path_default_env.value}_{_FilesystemObject.fs_object_dir.value}_{_PathType.path_rel.value}"
+
+    # FT_03_31_63_70.environment_selection.md: automatic selection of the env (unless `--env` is given):
+    # state_selected_env_dir_rel_path_inited:
+    field_env_selector_file_rel_path = f"{_PathName.path_env_selector.value}_{_FilesystemObject.fs_object_file.value}_{_PathType.path_rel.value}"
 
     ####################################################################################################################
     # `_ConfLeap.leap_env`-specific
@@ -3356,6 +3368,7 @@ class _Node_state_selected_env_dir_rel_path_inited_is_app(_BaseNode_state_select
         lambda: [
             _EnvState.state_args_parsed.name,
             _EnvState.state_ref_root_dir_abs_path_inited.name,
+            _EnvState.state_client_conf_file_data_loaded.name,
         ]
     )
     _state_name = staticmethod(lambda: _EnvState.state_selected_env_dir_rel_path_inited.name)
@@ -3367,7 +3380,21 @@ class _Node_state_selected_env_dir_rel_path_inited_is_app(_BaseNode_state_select
             _ParsedArg.name_selected_env_dir.value,
             None,
         )
-        return env_conf_dir_any_path
+        if env_conf_dir_any_path is not None:
+            return env_conf_dir_any_path
+
+        # No `--env` arg: delegate to the env selector (if configured):
+        state_client_conf_file_data_loaded: dict = self.eval_parent_state(_EnvState.state_client_conf_file_data_loaded.name)
+        env_selector_file_rel_path: str | None = state_client_conf_file_data_loaded.get(ConfField.field_env_selector_file_rel_path.value, None)
+        if env_selector_file_rel_path is None:
+            return None
+        state_ref_root_dir_abs_path_inited: str = self.eval_parent_state(_EnvState.state_ref_root_dir_abs_path_inited.name)
+        return _select_env_dir_rel_path(
+            os.path.join(
+                state_ref_root_dir_abs_path_inited,
+                env_selector_file_rel_path,
+            )
+        )
 
 
 # noinspection PyPep8Naming
@@ -6604,6 +6631,43 @@ def _select_python_file_abs_path(
             selected_python_abs_path = None
 
     return selected_python_abs_path
+
+
+def _select_env_dir_rel_path(
+    env_selector_file_abs_path: str,
+) -> str | None:
+    """
+    Run the env selector script specified in `ConfField.field_env_selector_file_rel_path`.
+
+    FT_03_31_63_70.environment_selection.md
+    """
+
+    if not os.path.isfile(env_selector_file_abs_path):
+        raise AssertionError(f"Field `{ConfField.field_env_selector_file_rel_path.value}` points to the file [{env_selector_file_abs_path}] which does not exist.")
+
+    # TODO: use constants:
+    proto_module_name: str = "env_selector_module"
+    env_selector_module = _import_proto_module(
+        proto_module_name,
+        env_selector_file_abs_path,
+    )
+
+    external_select_env_dir_rel_path = getattr(
+        env_selector_module,
+        _SelectorFunc.select_env_dir_rel_path.value,
+        None,
+    )
+    if external_select_env_dir_rel_path is None:
+        raise AssertionError(f"File [{env_selector_file_abs_path}] does not define `{_SelectorFunc.select_env_dir_rel_path.value}` function.")
+
+    _logger.debug(f"running `{_SelectorFunc.select_env_dir_rel_path.value}` from `{proto_module_name}`")
+    selected_env_dir_rel_path: str | None = external_select_env_dir_rel_path()
+    _logger.debug(f"returned `selected_env_dir_rel_path` value [{selected_env_dir_rel_path}]")
+
+    if selected_env_dir_rel_path is not None and not isinstance(selected_env_dir_rel_path, str):
+        raise AssertionError(f"`{_SelectorFunc.select_env_dir_rel_path.value}` from [{env_selector_file_abs_path}] must return `str` or `None`, not [{selected_env_dir_rel_path!r}].")
+
+    return selected_env_dir_rel_path
 
 
 def _search_python_file_abs_path_by_basename(required_version: tuple[int, int, int]) -> str | None:

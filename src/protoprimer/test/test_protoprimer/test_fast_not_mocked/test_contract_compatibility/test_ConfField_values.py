@@ -16,6 +16,7 @@ frozen_conf_field_values = [
     "global_conf_dir_rel_path",
     "local_conf_symlink_rel_path",
     "default_env_dir_rel_path",
+    "env_selector_file_rel_path",
     "required_python_version",
     "python_selector_file_rel_path",
     "local_venv_dir_rel_path",

@@ -44,7 +44,7 @@ def custom_main():
             [
                 # TODO: FT_48_62_07_98.config_format.md:
                 #       After moving to `*.py` config files, add comment to ref back to this script why this config exists:
-                f"./prime -vvv --env dst/test_python_{parsed_args.python}",
+                f"./prime -vvv --env dst/test_python_{parsed_args.python}_linux",
                 "./venv/bin/pytest",
             ]
         )

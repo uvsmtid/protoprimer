@@ -62,6 +62,7 @@ class ConfClient(CommonConf):
 
     local_conf_symlink_rel_path: Optional[str] = None
     default_env_dir_rel_path: Optional[str] = None
+    env_selector_file_rel_path: Optional[str] = None
 
 
 class ConfEnv(CommonConf):

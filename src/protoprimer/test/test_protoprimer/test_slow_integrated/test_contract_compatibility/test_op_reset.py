@@ -11,6 +11,7 @@ from local_test.integrated_helper import (
     create_conf_primer_file,
     create_plain_proto_kernel,
     create_two_envs_shape,
+    create_two_envs_shape_with_env_selector,
     create_test_pyproject_toml,
     switch_to_ref_root_abs_path,
     test_pyproject_src_dir_rel_path,
@@ -163,3 +164,76 @@ def test_op_reset_overwrites_persisted_env(tmp_path: pathlib.Path):
     assert os.readlink(env_link_abs_path) == two_envs_shape.special_env_dir_abs_path.name
     assert two_envs_shape.special_venv_abs_path.exists()
     assert not two_envs_shape.default_venv_abs_path.exists()
+
+
+def test_op_reset_with_env_selector_overwrites_persisted_env(tmp_path: pathlib.Path):
+    """
+    FT_03_31_63_70.environment_selection.md: `_ExecOperation.op_reset` + persisted env + selector mismatch = overwrite.
+    """
+
+    # `proto_kernel.py` older than this does not have the behavior (see `old_proto_on_new_venv`):
+    skip_if_proto_kernel_older_than("0.15.0")
+
+    # given:
+    # the default env is persisted, but the selector selects the special env:
+
+    two_envs_shape = create_two_envs_shape_with_env_selector(tmp_path, "special_env")
+    env_link_abs_path = two_envs_shape.ref_root_abs_path / _ConfConstClient.default_dir_rel_path_leap_env_link_name
+    os.symlink(
+        two_envs_shape.default_env_dir_abs_path.name,
+        env_link_abs_path,
+    )
+
+    # when:
+    # reset without `--env`:
+
+    run_primer_main(
+        [
+            str(two_envs_shape.proto_kernel_abs_path),
+            _ExecOperation.op_reset.value,
+            _SyntaxArg.arg_v,
+            _SyntaxArg.arg_v,
+        ]
+    )
+
+    # then:
+    # the persisted env is overwritten by the selected one and bootstrapped:
+
+    assert os.readlink(env_link_abs_path) == two_envs_shape.special_env_dir_abs_path.name
+    assert two_envs_shape.special_venv_abs_path.exists()
+    assert not two_envs_shape.default_venv_abs_path.exists()
+
+
+def test_op_reset_with_env_arg_overrides_env_selector(tmp_path: pathlib.Path):
+    """
+    FT_03_31_63_70.environment_selection.md: the value provided by the selector is override-able via `--env` arg.
+    """
+
+    # `proto_kernel.py` older than this does not have the behavior (see `old_proto_on_new_venv`):
+    skip_if_proto_kernel_older_than("0.15.0")
+
+    # given:
+    # nothing is persisted, the selector selects the special env:
+
+    two_envs_shape = create_two_envs_shape_with_env_selector(tmp_path, "special_env")
+    env_link_abs_path = two_envs_shape.ref_root_abs_path / _ConfConstClient.default_dir_rel_path_leap_env_link_name
+
+    # when:
+    # reset with the default env via `--env`:
+
+    run_primer_main(
+        [
+            str(two_envs_shape.proto_kernel_abs_path),
+            _ExecOperation.op_reset.value,
+            _SyntaxArg.arg_env,
+            two_envs_shape.default_env_dir_abs_path.name,
+            _SyntaxArg.arg_v,
+            _SyntaxArg.arg_v,
+        ]
+    )
+
+    # then:
+
+    assert os.readlink(env_link_abs_path) == two_envs_shape.default_env_dir_abs_path.name
+    assert two_envs_shape.default_venv_abs_path.exists()
+    assert not two_envs_shape.special_venv_abs_path.exists()
