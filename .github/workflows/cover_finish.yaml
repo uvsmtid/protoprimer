@@ -1,6 +1,6 @@
 run-name: "${{ github.workflow }}: ${{ github.event.workflow_run.name }}: ${{ github.event.workflow_run.head_branch }}"
 # TODO: TODO_29_67_72_68.combine_coverage_across_jobs.md: close the parallel `coveralls.io` build (`build-number` = commit).
-# Every `test_py_*` workflow uploads its coverage as parallel (see `.github/actions/test_env_*`);
+# Every test workflow (`test_py_*`, `test_contract_compatibility`) uploads its coverage as parallel (see `.github/actions/test_env_*`);
 # this workflow runs after each of them and closes the build only when all of them are completed for the commit.
 on:
     workflow_run:
@@ -12,6 +12,7 @@ on:
         -   .github/workflows/test_py_max_darwin.yaml
         -   .github/workflows/test_py_med_windows.yaml
         -   .github/workflows/test_py_max_windows.yaml
+        -   .github/workflows/test_contract_compatibility.yaml
         types:
         -   completed
 permissions:
@@ -37,6 +38,7 @@ jobs:
                         test_py_max_darwin
                         test_py_med_windows
                         test_py_max_windows
+                        test_contract_compatibility
                 run: |
                     runs=$(gh api "repos/${{ github.repository }}/actions/runs?head_sha=${SHA}&event=push&per_page=100")
                     ready=true
