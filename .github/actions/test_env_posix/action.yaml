@@ -1,0 +1,69 @@
+name: "test_env_posix"
+description: "Bootstrap the env of `dst/test_python_{level}_{platform}` and run `pytest` (shared by `test_py_*_linux` and `test_py_*_darwin` workflows)"
+# Composite steps run inside the calling job: `GITHUB_JOB` (used by the env selector) is the caller's job id.
+# The repo must be checked out before using this action (`uses: ./.github/actions/test_env_posix`).
+inputs:
+    python-version:
+        description: "FT_84_11_73_28.supported_python_versions.md: `python` version to install"
+        required: true
+    level:
+        description: "One of `min`, `med`, `max` (the env dir suffix)"
+        required: true
+    platform:
+        description: "Platform (the env dir suffix)"
+        required: true
+runs:
+    using: "composite"
+    steps:
+        -   run: "echo runner.os: ${{ runner.os }}"
+            shell: bash
+        -   run: "echo github.repository: ${{ github.repository }}"
+            shell: bash
+        -   run: "echo github.ref: ${{ github.ref }}"
+            shell: bash
+
+        -   name: "python-version: ${{ inputs.python-version }}"
+            uses: actions/setup-python@v5
+            with:
+                python-version: ${{ inputs.python-version }}
+
+        # FT_84_11_73_28.supported_python_versions.md:
+        -   run: "which python${{ inputs.python-version }}"
+            shell: bash
+        -   run: "python --version"
+            shell: bash
+
+        -   uses: actions/cache@v4
+            with:
+                path: |
+                    ~/.cache/uv
+                    ~/.cache/pip
+                    ~/Library/Caches/pip
+                key: deps-${{ runner.os }}-${{ hashFiles(format('dst/test_python_{0}_{1}/version_constraints.txt', inputs.level, inputs.platform)) }}
+
+        -   run: |
+                ${{ github.workspace }}/prime -vvv
+                ${{ github.workspace }}/cmd/prime_env -vvv
+            shell: bash
+
+        -   name: ensure the env selector picked the env for this job
+            run: |
+                test "$(readlink ${{ github.workspace }}/lconf)" = "dst/test_python_${{ inputs.level }}_${{ inputs.platform }}"
+            shell: bash
+
+        -   name: ensure git has no local changes and untracked files
+            run: |
+                git diff || true
+                git status --porcelain || true
+                test -z "$(git status --porcelain)"
+            shell: bash
+
+        -   run: |
+                ${{ github.workspace }}/venv/bin/python --version
+                ${{ github.workspace }}/venv/bin/python -m pytest
+            shell: bash
+            env:
+                GITHUB_TOKEN: ${{ github.token }}
+
+        -   run: "echo job.status: ${{ job.status }}"
+            shell: bash

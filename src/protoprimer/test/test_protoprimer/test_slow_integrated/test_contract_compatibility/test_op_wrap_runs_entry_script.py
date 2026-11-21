@@ -14,6 +14,7 @@ from local_doc import (
     cmd_boot_env_example,
     cmd_start_app_example,
 )
+from local_test.case_condition import requires_posix
 from local_test.fat_mocked_helper import run_primer_main
 from local_test.integrated_helper import create_max_leaps_shape
 from local_test.name_assertion import (
@@ -52,6 +53,7 @@ def wrap(
     assert os.stat(entry_script_abs_path).st_mode & stat.S_IXUSR
 
 
+@requires_posix
 def test_wrap_boot_env_runs(tmp_path: pathlib.Path):
 
     assert_test_func_name_embeds_str(_EntryFunc.func_boot_env.value)
@@ -89,6 +91,7 @@ def test_wrap_boot_env_runs(tmp_path: pathlib.Path):
     assert sub_proc.returncode == 0
 
 
+@requires_posix
 def test_wrap_start_app_runs(tmp_path: pathlib.Path):
 
     assert_test_func_name_embeds_str(_EntryFunc.func_start_app.value)

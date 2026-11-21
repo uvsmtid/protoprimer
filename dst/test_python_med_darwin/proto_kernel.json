@@ -1,0 +1,5 @@
+{
+    "__comment__": "See: FT_84_11_73_28.supported_python_versions.md",
+    "required_python_version": "3.11.14",
+    "python_selector_file_rel_path": "src/proto_code/python_selector_py3.11.py"
+}

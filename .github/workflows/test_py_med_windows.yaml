@@ -1,5 +1,4 @@
 run-name: "${{ github.workflow }}: ${{ github.actor }}: ${{ github.event_name }}: ${{ github.ref_name }}: ${{ github.ref_type }}"
-# TODO: TODO_50_98_96_87.support_windows.md: Milestone 1 - experimental only (see `continue-on-error` below).
 on:
     push:
         branches:
@@ -22,10 +21,6 @@ jobs:
             github.event.pull_request.head.repo.full_name != github.repository
         runs-on: windows-latest
 
-        # This job is a first experiment, not yet a decided/required check:
-        # TODO: TODO_50_98_96_87.support_windows.md: Milestone 1 ("first working CI job for Windows").
-        continue-on-error: true
-
         strategy:
             # When one of the jobs fails, this prevents canceling another job (for another Python version):
             fail-fast: false
@@ -34,44 +29,10 @@ jobs:
                 python-version:
                 -   "3.11"
         steps:
-            -   run: "echo runner.os: ${{ runner.os }}"
-            -   run: "echo github.repository: ${{ github.repository }}"
-            -   run: "echo github.ref: ${{ github.ref }}"
-
-            -   name: "matrix.python-version: ${{ matrix.python-version }}"
-                uses: actions/setup-python@v5
-                with:
-                    python-version: ${{ matrix.python-version }}
-
-            # FT_84_11_73_28.supported_python_versions.md:
-            -   run: "python --version"
-
             -   uses: actions/checkout@v4
 
-            # TODO: TODO_50_98_96_87.support_windows.md: Milestone 1 minimal patch:
-            # invoke via `python` explicitly to sidestep the chmod/shebang sub-section for now.
-            -   run: |
-                    python ${{ github.workspace }}/prime -vvv
-                    python ${{ github.workspace }}/cmd/prime_env -vvv
-
-            -   name: ensure the env selector picked the env for this job
-                # PowerShell (the default shell for `run:` steps on `windows-latest`):
-                run: |
-                    $envDir = (Get-Item "${{ github.workspace }}/lconf").Target
-                    Write-Output "lconf target: $envDir"
-                    if ($envDir -notmatch "test_python_med_windows$") {
-                        Write-Error "unexpected lconf target: $envDir"
-                        exit 1
-                    }
-
-            -   name: ensure git has no local changes and untracked files
-                # PowerShell (the default shell for `run:` steps on `windows-latest`):
-                run: |
-                    $gitChanges = git status --porcelain
-                    if ($gitChanges) {
-                        Write-Error "git has local changes:`n$gitChanges"
-                        exit 1
-                    }
-
-            # TODO: TODO_50_98_96_87.support_windows.md: `pytest` is intentionally not run here yet - see Milestone 1 in the doc for why.
-            -   run: "echo job.status: ${{ job.status }}"
+            -   uses: ./.github/actions/test_env_windows
+                with:
+                    python-version: ${{ matrix.python-version }}
+                    level: med
+                    platform: windows

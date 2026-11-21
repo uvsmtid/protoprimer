@@ -7,6 +7,7 @@ import subprocess
 from pathlib import Path
 
 from local_repo.sub_proc_util import get_command_output
+from local_test.case_condition import requires_posix
 from local_test.fat_mocked_helper import run_primer_main
 from local_test.integrated_helper import (
     create_conf_client_file,
@@ -75,6 +76,7 @@ def test_shell_requires_boot_first(tmp_path: Path):
     assert _ExecOperation.op_boot.value in sub_proc.stderr
 
 
+@requires_posix
 def test_shell_command_execution(tmp_path: Path):
 
     assert_test_func_name_embeds_str(_ExecOperation.op_shell.value)
@@ -110,6 +112,7 @@ def test_shell_command_execution(tmp_path: Path):
     assert output_file.exists()
 
 
+@requires_posix
 def test_shell_does_not_reinstall_dependencies(tmp_path: Path):
     """
     `_ExecOperation.op_shell` is a fast path (like `_ExecOperation.op_start`):
@@ -190,6 +193,7 @@ def test_shell_does_not_reinstall_dependencies(tmp_path: Path):
     assert package_version_install == package_version_after_shell
 
 
+@requires_posix
 def test_shell_interactive(tmp_path: Path):
     """
     `shell` with no command must start an interactive shell
@@ -224,6 +228,7 @@ def test_shell_interactive(tmp_path: Path):
     assert sub_proc.returncode == 42
 
 
+@requires_posix
 def test_shell_sh_interactive_applies_init_file(tmp_path: Path):
     """
     `_ExecOperation.op_shell` with POSIX `sh`
@@ -271,6 +276,7 @@ def test_shell_sh_interactive_applies_init_file(tmp_path: Path):
     assert sub_proc.returncode == 42
 
 
+@requires_posix
 def test_shell_sh_command_execution_applies_init_file(tmp_path: Path):
     """
     `_ExecOperation.op_shell` with POSIX `sh` and a command line
@@ -319,6 +325,7 @@ def test_shell_sh_command_execution_applies_init_file(tmp_path: Path):
     assert output_file.exists()
 
 
+@requires_posix
 def test_shell_does_not_create_env_link(tmp_path: Path):
     """
     FT_03_31_63_70.environment_selection.md: only `_ExecOperation.op_boot` and `_ExecOperation.op_reset` persist the env.

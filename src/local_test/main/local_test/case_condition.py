@@ -12,6 +12,7 @@ import pytest
 from local_test.mock_environ import mock_and_restore_environ
 from protoprimer.primer_kernel import (
     EnvVar,
+    _get_target_platform,
     _str_to_bool,
 )
 
@@ -105,6 +106,19 @@ def is_min_python():
 requires_max_python = pytest.mark.skipif(
     is_min_python(),
     reason="The test is disabled for min python version (see FT_84_11_73_28.supported_python_versions.md).",
+)
+
+
+# TODO_96_67_95_15.cross_platform_test_grid.md:
+# Tests which verify behavior of the platform they run on (they are skipped on any other platform):
+requires_posix = pytest.mark.skipif(
+    not _get_target_platform().is_posix(),
+    reason="The test is only enabled on POSIX platforms (see `_TargetPlatform`).",
+)
+
+requires_windows = pytest.mark.skipif(
+    _get_target_platform().is_posix(),
+    reason="The test is only enabled on the Windows platform (see `_TargetPlatform`).",
 )
 
 

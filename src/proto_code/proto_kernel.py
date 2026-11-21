@@ -1311,6 +1311,13 @@ class _ShellDriverSh(_ShellDriverBase):
         self.shell_env_vars["ENV"] = self.get_init_file_abs_path()
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+def _ensure_shell_supported(venv_abs_path: str) -> None:
+    # TODO: TODO_50_98_96_87.support_windows.md: only POSIX shell drivers exist (no native Windows shell driver):
+    target_platform = _get_target_platform()
+    if not target_platform.is_posix():
+        raise NotImplementedError(f"Shell is only supported on POSIX platforms, but the platform is [{target_platform.platform_name}]: activate `venv` [{venv_abs_path}] manually via [{_ShellDriverBase.get_venv_activate_script_abs_path(venv_abs_path)}].")
+
+
 def _get_shell_driver(
     cache_dir_abs_path: str,
     activate_venv: bool = True,
@@ -5310,8 +5317,12 @@ class _Node_state_command_executed(_AbstractCachingStateNode[int]):
 
         state_local_cache_dir_abs_path_inited: str = self.eval_parent_state(_EnvState.state_local_cache_dir_abs_path_inited.name)
 
-        shell_driver: _ShellDriverBase = _get_shell_driver(state_local_cache_dir_abs_path_inited)
+        # Without a command, `run_shell` is a no-op (this state is evaluated on every bootstrap):
+        if command_line is not None:
+            _ensure_shell_supported(state_local_venv_dir_abs_path_inited)
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+        shell_driver: _ShellDriverBase = _get_shell_driver(state_local_cache_dir_abs_path_inited)
+
         return shell_driver.run_shell(
             False,
             command_line,
@@ -5369,6 +5380,8 @@ class _Node_state_shell_executed(_AbstractCachingStateNode[int]):
 
         state_local_cache_dir_abs_path_inited: str = self.eval_parent_state(_EnvState.state_local_cache_dir_abs_path_inited.name)
 
+        _ensure_shell_supported(state_local_venv_dir_abs_path_inited)
+
         shell_driver: _ShellDriverBase = _get_shell_driver(state_local_cache_dir_abs_path_inited)
 
         return shell_driver.run_shell(
@@ -5377,11 +5390,11 @@ class _Node_state_shell_executed(_AbstractCachingStateNode[int]):
             state_local_venv_dir_abs_path_inited,
         )
 
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 # noinspection PyPep8Naming
 @_trivial_factory
 class _Node_state_start_executed(_AbstractCachingStateNode[int]):
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     _parent_states = staticmethod(
         lambda: [
             _EnvState.state_args_parsed.name,
@@ -5399,7 +5412,7 @@ class _Node_state_start_executed(_AbstractCachingStateNode[int]):
 
         state_args_parsed: argparse.Namespace = self.eval_parent_state(_EnvState.state_args_parsed.name)
         main_func: str = getattr(state_args_parsed, _ParsedArg.name_main_func.value)
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
         (
             module_name,
             func_name,
@@ -5407,7 +5420,7 @@ class _Node_state_start_executed(_AbstractCachingStateNode[int]):
             main_func,
             allow_default_proto_main=False,
         )
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
         state_proto_kernel_file_abs_path_inited: str = self.eval_parent_state(_EnvState.state_proto_kernel_file_abs_path_inited.name)
 
         # Provide consistent environment for `selected_main`:
@@ -5421,7 +5434,7 @@ class _Node_state_start_executed(_AbstractCachingStateNode[int]):
         sys.argv = [sys.argv[0]] + target_args
 
         selected_main()
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
         return 0
 
 
@@ -5431,7 +5444,7 @@ class _Node_state_start_executed(_AbstractCachingStateNode[int]):
 class _EnvState(enum.Enum):
     """
     Environment states to be reached during the bootstrap process.
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     NOTE: Only `str` names of the enum items are supposed to be used (any value is ignored).
     The value of `_AbstractCachingStateNode` assigned is the default implementation for the state,
     and the only reason it is assigned is purely for the quick navigation across the source code in the IDE.
@@ -5442,7 +5455,7 @@ class _EnvState(enum.Enum):
           Currently, this enum class maps "state name" -> "impl class" directly.
           In the future, it may change to "state name" -> "impl factory" instead.
     """
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     state_input_py_exec_var_loaded = _Node_state_input_py_exec_var_loaded
 
     state_is_app_defined = _Node_state_is_app_defined
@@ -5452,7 +5465,7 @@ class _EnvState(enum.Enum):
     state_input_stderr_log_level_var_loaded = _Node_state_input_stderr_log_level_var_loaded
 
     state_default_stderr_log_handler_configured = _Node_state_default_stderr_log_handler_configured
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     state_args_parsed = _Factory_state_args_parsed
 
     state_input_stderr_log_level_eval_finalized = _Factory_state_input_stderr_log_level_eval_finalized
@@ -5464,7 +5477,7 @@ class _EnvState(enum.Enum):
     state_print_conf_finalized = _Factory_state_print_conf_finalized
 
     state_prepare_venv_finalized = _Factory_state_prepare_venv_finalized
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     state_input_final_state_eval_finalized = _Factory_state_input_final_state_eval_finalized
 
     state_func_boot_env_executed = _Node_state_func_boot_env_executed
@@ -5475,7 +5488,7 @@ class _EnvState(enum.Enum):
 
     # Special case: triggers everything:
     state_everything_executed = _Factory_state_everything_executed
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     state_input_start_id_var_loaded = _Node_state_input_start_id_var_loaded
 
     state_input_proto_kernel_file_abs_path_var_loaded = _Node_state_input_proto_kernel_file_abs_path_var_loaded
@@ -5487,7 +5500,7 @@ class _EnvState(enum.Enum):
 
     # UC_71_59_90_97.generated_entry_script.md
     state_wrap_executed = _Node_state_wrap_executed
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     state_primer_conf_file_abs_path_inited = _Node_state_primer_conf_file_abs_path_inited
 
     # `_ConfLeap.leap_primer`:
@@ -5496,7 +5509,7 @@ class _EnvState(enum.Enum):
     state_ref_root_dir_abs_path_inited = _Node_state_ref_root_dir_abs_path_inited
 
     state_global_conf_dir_abs_path_inited = _Node_state_global_conf_dir_abs_path_inited
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     state_global_conf_file_abs_path_inited = _Node_state_global_conf_file_abs_path_inited
 
     # `_ConfLeap.leap_client`:
@@ -5510,14 +5523,14 @@ class _EnvState(enum.Enum):
 
     # `_ConfLeap.leap_env`:
     state_env_conf_file_data_loaded = _Node_state_env_conf_file_data_loaded
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     state_required_python_version_inited = _Node_state_required_python_version_inited
 
     # FT_72_45_12_06.python_executable.md
     state_python_selector_file_abs_path_inited = _Node_state_python_selector_file_abs_path_inited
 
     state_selected_python_file_abs_path_inited = _Node_state_selected_python_file_abs_path_inited
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     # TODO: TODO_20_07_74_69.configure_dirs_at_client_level.md:
     # TODO: log, tmp, venv, ... dirs should better be configured at client level:
     state_local_venv_dir_abs_path_inited = _Node_state_local_venv_dir_abs_path_inited
@@ -5533,13 +5546,13 @@ class _EnvState(enum.Enum):
     # TODO: TODO_20_07_74_69.configure_dirs_at_client_level.md:
     # TODO: log, tmp, venv, ... dirs should better be configured at client level:
     state_local_tmp_dir_abs_path_inited = _Node_state_local_tmp_dir_abs_path_inited
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     # TODO: TODO_20_07_74_69.configure_dirs_at_client_level.md:
     # TODO: log, tmp, venv, ... dirs should better be configured at client level:
     state_local_cache_dir_abs_path_inited = _Node_state_local_cache_dir_abs_path_inited
 
     state_venv_driver_inited = _Node_state_venv_driver_inited
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     state_version_constraints_file_basename_inited = _Node_state_version_constraints_file_basename_inited
 
     state_project_descriptors_inited = _Node_state_project_descriptors_inited
@@ -5555,12 +5568,12 @@ class _EnvState(enum.Enum):
 
     # TODO: TODO_73_71_31_84.exec_operation_check_or_info.md:
     # TODO: Add a (replaceable) env_check step to execute before switching to `_StateStride.stride_py_required`.
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     # restart: `_StateStride.stride_py_arbitrary` -> `_StateStride.stride_py_required`:
     state_stride_py_required_reached = _Factory_state_stride_py_required_reached
 
     state_reset_triggered = _Factory_state_reset_triggered
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     state_venv_driver_prepared = _Factory_state_venv_driver_prepared
 
     # restart: `_StateStride.stride_py_required` -> `_StateStride.stride_py_venv`:
@@ -5578,10 +5591,10 @@ class _EnvState(enum.Enum):
     # TODO: TODO_49_40_51_46.rename_state_names_to_final.md:
     # TODO: rename according to the final name:
     state_proto_kernel_updated = _Factory_state_proto_kernel_updated
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     # restart: `_StateStride.stride_deps_updated` -> `_StateStride.stride_src_updated`:
     state_stride_src_updated_reached = _Node_state_stride_src_updated_reached
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     state_input_command_line = _Factory_state_input_command_line
 
     state_command_executed = _Node_state_command_executed
@@ -5600,11 +5613,11 @@ class _TargetState(enum.Enum):
 
     # A special state that triggers execution of everything else:
     target_everything_executed = _EnvState.state_everything_executed
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     # FT_85_17_35_21.call_lib.md
     # FT_00_22_19_59.derived_config.md
     target_derived_config_loaded = _EnvState.state_derived_conf_data_loaded
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     # # FT_05_08_64_67.start_app.md
     target_venv_activated = _EnvState.state_stride_py_venv_reached
 
@@ -5621,7 +5634,7 @@ class _StateGraph:
     def __init__(self):
         self.state_nodes: dict[str, _StateNode] = {}
         self.state_factories: dict[str, _NodeFactory] = {}
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     def register_factory(
         self,
         state_name: str,
@@ -6694,7 +6707,7 @@ def _search_python_file_abs_path_by_basename(required_version: tuple[int, int, i
     for python_basename in python_basenames:
         _logger.debug(f"trying `python_basename` [{python_basename}]")
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
-        # TODO: TODO_50_98_96_87.support_windows.md: this will not work on Windows:
+        # On Windows, versioned basenames do not exist (falls back to `python`): TODO_50_98_96_87.support_windows.md
         # noinspection PyDeprecation
         python_abs_path = shutil.which(python_basename)
 

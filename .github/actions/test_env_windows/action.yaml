@@ -1,0 +1,77 @@
+name: "test_env_windows"
+description: "Bootstrap the env of `dst/test_python_{level}_windows` (with dependency cache) and run selected portable tests (shared by `test_py_*_windows` workflows)"
+# Unlike `test_env_posix`, steps are `pwsh` (PowerShell) and Windows-specific.
+# Composite steps run inside the calling job: `GITHUB_JOB` (used by the env selector) is the caller's job id.
+# The repo must be checked out before using this action (`uses: ./.github/actions/test_env_windows`).
+inputs:
+    python-version:
+        description: "FT_84_11_73_28.supported_python_versions.md: `python` version to install"
+        required: true
+    level:
+        description: "One of `med`, `max` (the env dir suffix)"
+        required: true
+    platform:
+        description: "Platform (the env dir suffix)"
+        required: true
+runs:
+    using: "composite"
+    steps:
+        -   run: "echo runner.os: ${{ runner.os }}"
+            shell: pwsh
+        -   run: "echo github.repository: ${{ github.repository }}"
+            shell: pwsh
+        -   run: "echo github.ref: ${{ github.ref }}"
+            shell: pwsh
+
+        -   name: "python-version: ${{ inputs.python-version }}"
+            uses: actions/setup-python@v5
+            with:
+                python-version: ${{ inputs.python-version }}
+
+        # FT_84_11_73_28.supported_python_versions.md:
+        -   run: "python --version"
+            shell: pwsh
+
+        -   uses: actions/cache@v4
+            with:
+                path: |
+                    ~\AppData\Local\uv\cache
+                    ~\AppData\Local\pip\Cache
+                key: deps-${{ runner.os }}-${{ hashFiles(format('dst/test_python_{0}_{1}/version_constraints.txt', inputs.level, inputs.platform)) }}
+
+        # TODO: TODO_50_98_96_87.support_windows.md: "Entry script" (Option A):
+        # entry scripts are started via `python` explicitly on Windows (no shebang, no executable bit).
+        -   run: |
+                python ${{ github.workspace }}/prime -vvv
+                python ${{ github.workspace }}/cmd/prime_env -vvv
+            shell: pwsh
+
+        -   name: ensure the env selector picked the env for this job
+            run: |
+                $envDir = (Get-Item "${{ github.workspace }}/lconf").Target
+                Write-Output "lconf target: $envDir"
+                if ($envDir -notmatch "test_python_${{ inputs.level }}_${{ inputs.platform }}$") {
+                    Write-Error "unexpected lconf target: $envDir"
+                    exit 1
+                }
+            shell: pwsh
+
+        -   name: ensure git has no local changes and untracked files
+            run: |
+                $gitChanges = git status --porcelain
+                if ($gitChanges) {
+                    Write-Error "git has local changes:`n$gitChanges"
+                    exit 1
+                }
+            shell: pwsh
+
+        # TODO: TODO_50_98_96_87.support_windows.md: "Test suite hardcodes POSIX path separators ...":
+        # only the platform-portable tests (`portable_tests.txt`) run here (eventually, the whole `pytest` should pass).
+        -   name: run selected portable tests
+            run: |
+                $portableTests = Get-Content "${{ github.action_path }}/portable_tests.txt" | Where-Object { $_.Trim() -and -not $_.StartsWith("#") }
+                & "${{ github.workspace }}/venv/Scripts/python.exe" -m pytest $portableTests
+            shell: pwsh
+
+        -   run: "echo job.status: ${{ job.status }}"
+            shell: pwsh

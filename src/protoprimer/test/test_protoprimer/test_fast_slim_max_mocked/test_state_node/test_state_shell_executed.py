@@ -3,6 +3,7 @@ from unittest.mock import patch
 
 import pytest
 
+from local_test.case_condition import requires_posix
 from local_test.mock_verifier import (
     assert_parent_factories_mocked,
 )
@@ -28,6 +29,7 @@ def test_relationship():
     assert_test_module_name_embeds_str(_EnvState.state_shell_executed.name)
 
 
+@requires_posix
 @patch(f"{primer_kernel.__name__}.{_EnvContext.__name__}.{_EnvContext.get_stride.__name__}")
 @patch(f"{primer_kernel.__name__}.os.execve")
 @patch(f"{primer_kernel.__name__}.{_Node_state_stride_src_updated_reached.__name__}.create_state_node")
@@ -83,6 +85,7 @@ def test_shell_executed_in_bash(
     )
 
 
+@requires_posix
 @patch(f"{primer_kernel.__name__}.{_EnvContext.__name__}.{_EnvContext.get_stride.__name__}")
 @patch(f"{primer_kernel.__name__}.os.execve")
 @patch(f"{primer_kernel.__name__}.{_Node_state_stride_src_updated_reached.__name__}.create_state_node")
@@ -138,6 +141,7 @@ def test_shell_executed_in_zsh(
     )
 
 
+@requires_posix
 @patch(f"{primer_kernel.__name__}.{_EnvContext.__name__}.{_EnvContext.get_stride.__name__}")
 @patch(f"{primer_kernel.__name__}.os.execve")
 @patch(f"{primer_kernel.__name__}.{_Node_state_stride_src_updated_reached.__name__}.create_state_node")
@@ -193,6 +197,7 @@ def test_shell_executed_in_sh(
     )
 
 
+@requires_posix
 @patch(f"{primer_kernel.__name__}.{_EnvContext.__name__}.{_EnvContext.get_stride.__name__}")
 @patch(f"{primer_kernel.__name__}.os.execve")
 @patch(f"{primer_kernel.__name__}.{_Node_state_stride_src_updated_reached.__name__}.create_state_node")
