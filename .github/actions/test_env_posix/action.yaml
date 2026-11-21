@@ -60,10 +60,24 @@ runs:
 
         -   run: |
                 ${{ github.workspace }}/venv/bin/python --version
-                ${{ github.workspace }}/venv/bin/python -m pytest
+                ${{ github.workspace }}/venv/bin/python -m coverage erase --rcfile=${{ github.workspace }}/gconf/coveragerc.ini
+                ${{ github.workspace }}/venv/bin/python -m coverage run --rcfile=${{ github.workspace }}/gconf/coveragerc.ini --module pytest
+                ${{ github.workspace }}/venv/bin/python -m coverage combine --rcfile=${{ github.workspace }}/gconf/coveragerc.ini
+                ${{ github.workspace }}/venv/bin/python -m coverage lcov --rcfile=${{ github.workspace }}/gconf/coveragerc.ini -o ${{ github.workspace }}/coverage.lcov
             shell: bash
             env:
                 GITHUB_TOKEN: ${{ github.token }}
+
+        # TODO: TODO_29_67_72_68.combine_coverage_across_jobs.md: `build-number` (commit) is shared by all workflows.
+        -   name: upload coverage (parallel)
+            if: github.event_name == 'push'
+            uses: coverallsapp/github-action@v2
+            with:
+                file: coverage.lcov
+                format: lcov
+                parallel: true
+                flag-name: ${{ github.job }}
+                build-number: ${{ github.sha }}
 
         -   run: "echo job.status: ${{ job.status }}"
             shell: bash

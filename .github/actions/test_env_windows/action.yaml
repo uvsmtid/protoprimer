@@ -70,8 +70,25 @@ runs:
         -   name: run selected portable tests
             run: |
                 $portableTests = Get-Content "${{ github.action_path }}/portable_tests.txt" | Where-Object { $_.Trim() -and -not $_.StartsWith("#") }
-                & "${{ github.workspace }}/venv/Scripts/python.exe" -m pytest $portableTests
+                $rcfile = "${{ github.workspace }}/gconf/coveragerc.ini"
+                $python = "${{ github.workspace }}/venv/Scripts/python.exe"
+                & $python -m coverage erase --rcfile=$rcfile
+                & $python -m coverage run --rcfile=$rcfile --module pytest $portableTests
+                if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+                & $python -m coverage combine --rcfile=$rcfile
+                & $python -m coverage lcov --rcfile=$rcfile -o "${{ github.workspace }}/coverage.lcov"
             shell: pwsh
+
+        # TODO: TODO_29_67_72_68.combine_coverage_across_jobs.md: `build-number` (commit) is shared by all workflows.
+        -   name: upload coverage (parallel)
+            if: github.event_name == 'push'
+            uses: coverallsapp/github-action@v2
+            with:
+                file: coverage.lcov
+                format: lcov
+                parallel: true
+                flag-name: ${{ github.job }}
+                build-number: ${{ github.sha }}
 
         -   run: "echo job.status: ${{ job.status }}"
             shell: pwsh
