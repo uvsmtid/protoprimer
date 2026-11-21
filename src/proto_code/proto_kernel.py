@@ -1079,7 +1079,7 @@ class _ShellType(enum.Enum):
 
 class _TargetPlatform(enum.Enum):
     """
-    Platforms targeted by the CI grid: TODO_96_67_95_15.cross_platform_test_grid.md
+    Platforms targeted by the CI grid: TODO_50_98_96_87.support_windows.md
     """
 
     # (name, is_posix):
@@ -1330,8 +1330,6 @@ def _get_shell_driver(
     shell_driver_type: type[_ShellDriverBase]
 
     if shell_abs_path is None:
-        # TODO: TODO_50_98_96_87.support_windows.md:
-        # TODO: How will it work on Windows without POSIX shell?
         shell_abs_path = "/bin/sh"
         _logger.warning(f"env var `{var_shell}` is not set - assuming [{shell_abs_path}] as default")
         shell_driver_type = _ShellDriverSh
@@ -3492,6 +3490,17 @@ def _create_symlink_to_dir(
     )
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+def _remove_symlink_to_dir(
+    symlink_abs_path: str,
+) -> None:
+    if _ConfConstGeneral.is_os_windows:
+        # TODO: TODO_50_98_96_87.support_windows.md:
+        #       A dir symlink is removed like a dir on Windows (`os.remove` may fail on it):
+        os.rmdir(symlink_abs_path)
+    else:
+        os.remove(symlink_abs_path)
+
+
 # noinspection PyPep8Naming
 @_conditional_factory
 class _BaseNode_state_local_conf_dir_abs_path_inited(_AbstractCachingStateNode[str]):
@@ -3502,7 +3511,7 @@ class _BaseNode_state_local_conf_dir_abs_path_inited(_AbstractCachingStateNode[s
 
     FT_03_31_63_70.environment_selection.md
     """
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     _parent_states = staticmethod(
         lambda: [
             _EnvState.state_ref_root_dir_abs_path_inited.name,
@@ -3512,7 +3521,7 @@ class _BaseNode_state_local_conf_dir_abs_path_inited(_AbstractCachingStateNode[s
         ]
     )
     _state_name = staticmethod(lambda: _EnvState.state_local_conf_dir_abs_path_inited.name)
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     def _eval_state_once(self) -> _ValueType:
 
         state_ref_root_dir_abs_path_inited: str = self.eval_parent_state(_EnvState.state_ref_root_dir_abs_path_inited.name)
@@ -3523,7 +3532,7 @@ class _BaseNode_state_local_conf_dir_abs_path_inited(_AbstractCachingStateNode[s
             state_ref_root_dir_abs_path_inited,
             state_client_conf_file_data_loaded,
         )
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
         if state_selected_env_dir_rel_path_inited is not None:
             return self._eval_env_dir_abs_path(
                 state_ref_root_dir_abs_path_inited,
@@ -3535,7 +3544,7 @@ class _BaseNode_state_local_conf_dir_abs_path_inited(_AbstractCachingStateNode[s
         if symlink_abs_path is not None and os.path.lexists(symlink_abs_path):
             _validate_symlink_to_dir(symlink_abs_path)
             return _resolve_symlink_dir_abs_path(symlink_abs_path)
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
         # Nothing is persisted - fall back to the default:
         field_default_env_dir_rel_path: str | None = state_client_conf_file_data_loaded.get(ConfField.field_default_env_dir_rel_path.value, None)
         if field_default_env_dir_rel_path is None:
@@ -3552,7 +3561,7 @@ class _BaseNode_state_local_conf_dir_abs_path_inited(_AbstractCachingStateNode[s
             ),
             symlink_abs_path,
         )
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     def _eval_env_dir_abs_path(
         self,
         ref_root_dir_abs_path: str,
@@ -3560,7 +3569,7 @@ class _BaseNode_state_local_conf_dir_abs_path_inited(_AbstractCachingStateNode[s
         symlink_abs_path: str | None,
     ) -> str:
         raise NotImplementedError()
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     @staticmethod
     def _compose_selected_env_dir_abs_path(
         ref_root_dir_abs_path: str,
@@ -3573,7 +3582,7 @@ class _BaseNode_state_local_conf_dir_abs_path_inited(_AbstractCachingStateNode[s
             )
         )
 
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 # noinspection PyPep8Naming
 @_conditional_factory
 class _Node_state_local_conf_dir_abs_path_inited_read(_BaseNode_state_local_conf_dir_abs_path_inited):
@@ -3581,7 +3590,7 @@ class _Node_state_local_conf_dir_abs_path_inited_read(_BaseNode_state_local_conf
     Used by all `_ExecOperation`-s which only read the persisted env (never create the symlink):
     a mismatch between the persisted and the selected env is a failure.
     """
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     _creates_symlink_if_missing: bool = False
 
     def _eval_env_dir_abs_path(
@@ -3655,8 +3664,7 @@ class _Node_state_local_conf_dir_abs_path_inited_reset(_BaseNode_state_local_con
                 conf_dir_path = os.path.normpath(os.readlink(symlink_abs_path))
                 if conf_dir_path != expected_conf_dir_path:
                     _logger.info(f"overwriting symlink [{symlink_abs_path}] target [{conf_dir_path}] with [{expected_conf_dir_path}]")
-                    # TODO: TODO_50_98_96_87.support_windows.md: removing a dir symlink may need `os.rmdir` on Windows:
-                    os.remove(symlink_abs_path)
+                    _remove_symlink_to_dir(symlink_abs_path)
                     _create_symlink_to_dir(symlink_abs_path, expected_conf_dir_path)
             elif os.path.lexists(symlink_abs_path):
                 # Never delete a real file/dir:
