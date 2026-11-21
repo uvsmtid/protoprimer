@@ -10,6 +10,9 @@ import pytest
 
 from local_test.integrated_helper import test_python_version
 from local_test.name_assertion import assert_test_module_name_embeds_str
+from local_test.venv_path_helper import (
+    compose_venv_python_abs_path,
+)
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     ConfField,
@@ -52,7 +55,7 @@ def test_create_venv_when_constraints_file_does_not_exist(mock_check_call, mock_
 
     # then:
 
-    venv_python_abs_path = os.path.join(venv_dir_abs_path, "bin", "python")
+    venv_python_abs_path = compose_venv_python_abs_path(venv_dir_abs_path)
 
     mock_check_output.assert_any_call(
         [
@@ -118,7 +121,7 @@ def test_create_venv_when_constraints_file_exists(mock_check_call, mock_check_ou
 
     # then:
 
-    venv_python_abs_path = os.path.join(venv_dir_abs_path, "bin", "python")
+    venv_python_abs_path = compose_venv_python_abs_path(venv_dir_abs_path)
 
     mock_check_output.assert_any_call(
         [
@@ -248,7 +251,7 @@ def test_create_venv_upgrades_all_seeded_packages(mock_check_call, mock_check_ou
 
     # then:
 
-    venv_python_abs_path = os.path.join(venv_dir_abs_path, "bin", "python")
+    venv_python_abs_path = compose_venv_python_abs_path(venv_dir_abs_path)
 
     mock_check_call.assert_any_call(
         [
@@ -269,7 +272,7 @@ def test_install_dependencies(mock_subprocess_check_call):
     # given:
 
     ref_root_dir_abs_path = "/tmp"
-    selected_python_file_abs_path = "/tmp/test_venv/bin/python"
+    selected_python_file_abs_path = compose_venv_python_abs_path("/tmp/test_venv")
     install_driver = _VenvDriverPip(
         required_python_version=test_python_version,
         selected_python_file_abs_path=selected_python_file_abs_path,
@@ -323,7 +326,7 @@ def test_pin_versions(mock_subprocess_check_call):
 
     # given:
 
-    venv_python_file_abs_path = "/tmp/test_venv/bin/python"
+    venv_python_file_abs_path = compose_venv_python_abs_path("/tmp/test_venv")
     install_driver = _VenvDriverPip(
         required_python_version=test_python_version,
         selected_python_file_abs_path=venv_python_file_abs_path,
