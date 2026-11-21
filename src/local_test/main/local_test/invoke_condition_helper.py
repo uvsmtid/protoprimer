@@ -24,6 +24,29 @@ from local_test.case_condition import (
 # Label to find (and clean up) leftover containers:
 container_label = "protoprimer-test-invoke-condition"
 
+# TODO: TODO_29_67_72_68.combine_coverage_across_jobs.md: set to a dir to collect coverage of the code run in containers (opt-in):
+coverage_dir_env_var = "PROTOPRIMER_COVERAGE_DIR"
+coverage_container_dir = "/covdata"
+coverage_boot_dir_name = "_boot"
+
+# Starts `coverage` in every `python` process in the container (when `coverage` is importable there); never fails or prints:
+coverage_boot_script = """
+try:
+    import warnings
+    import coverage
+    from coverage.exceptions import CoverageWarning
+    warnings.simplefilter("ignore", CoverageWarning)
+    coverage.Coverage(
+        config_file="/work/gconf/coveragerc.ini",
+        source=["/work/src/metaprimer/main", "/work/src/protoprimer/main"],
+        data_file="/covdata/.coverage.invoke_condition",
+        messages=False,
+        auto_data=True,
+    ).start()
+except Exception:
+    pass
+"""
+
 # Pinned public images (nothing is baked into them, nothing special is maintained):
 # FT_84_11_73_28.supported_python_versions.md
 image_python_3_6 = "python:3.6.15-slim"
@@ -212,9 +235,17 @@ class ContainerSession:
         self.image: str = image
         self.tmp_dir_path: pathlib.Path = tmp_dir_path
         self.name: str = f"protoprimer-test-{uuid.uuid4().hex[:12]}"
+        coverage_dir = os.environ.get(coverage_dir_env_var)
+        self.coverage_dir_path: pathlib.Path | None = pathlib.Path(coverage_dir).resolve() if coverage_dir else None
 
     def __enter__(self) -> ContainerSession:
         tree_dir_path = export_clean_tree(self.tmp_dir_path / "tree")
+        coverage_mount_args: list[str] = []
+        if self.coverage_dir_path is not None:
+            boot_dir_path = self.coverage_dir_path / coverage_boot_dir_name
+            boot_dir_path.mkdir(parents=True, exist_ok=True)
+            (boot_dir_path / "sitecustomize.py").write_text(coverage_boot_script)
+            coverage_mount_args = ["-v", f"{self.coverage_dir_path}:{coverage_container_dir}:z"]
         subprocess.run(
             [
                 self.engine,
@@ -228,6 +259,9 @@ class ContainerSession:
                 # `z`: relabel for SELinux hosts:
                 "-v",
                 f"{tree_dir_path}:{self.src_dir}:ro,z",
+            ]
+            + coverage_mount_args
+            + [
                 self.image,
                 "sleep",
                 "infinity",
@@ -239,6 +273,9 @@ class ContainerSession:
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
+        if self.coverage_dir_path is not None:
+            # Data files are written by `root` in the container: make them usable (and removable) by the host user:
+            self.run(f"chmod -R a+rwX {coverage_container_dir}", work_dir="/")
         subprocess.run(
             [self.engine, "rm", "-f", self.name],
             stdout=subprocess.DEVNULL,
@@ -261,7 +298,12 @@ class ContainerSession:
             "-w",
             work_dir if work_dir is not None else self.work_dir,
         ]
-        for env_name, env_value in (env or {}).items():
+        env = dict(env or {})
+        if self.coverage_dir_path is not None:
+            # Keep the scenario's own `PYTHONPATH` (if any), the boot dir goes last:
+            boot_dir = f"{coverage_container_dir}/{coverage_boot_dir_name}"
+            env["PYTHONPATH"] = f"{env['PYTHONPATH']}:{boot_dir}" if env.get("PYTHONPATH") else boot_dir
+        for env_name, env_value in env.items():
             command.extend(["-e", f"{env_name}={env_value}"])
         command.extend([self.name, "bash", "-c", script])
         completed = subprocess.run(

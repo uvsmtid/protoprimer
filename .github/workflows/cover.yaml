@@ -64,13 +64,4 @@ jobs:
                 run: |
                     ${{ github.workspace }}/venv/bin/coverage report        --rcfile=${{ github.workspace }}/gconf/coveragerc.ini
 
-            -   name: convert coverage
-                run: |
-                    ${{ github.workspace }}/venv/bin/coverage xml           --rcfile=${{ github.workspace }}/gconf/coveragerc.ini
-
-            -   name: coveralls.io
-                env:
-                    COVERALLS_REPO_TOKEN: "${{ secrets.COVERALLS_REPO_TOKEN }}"
-                uses: coverallsapp/github-action@v2
-
             -   run: "echo job.status: ${{ job.status }}"

@@ -1079,7 +1079,7 @@ class _ShellType(enum.Enum):
 
 class _TargetPlatform(enum.Enum):
     """
-    Platforms targeted by the CI grid: TODO_96_67_95_15.cross_platform_test_grid.md
+    Platforms targeted by the CI grid: TODO_50_98_96_87.support_windows.md
     """
 
     # (name, is_posix):
