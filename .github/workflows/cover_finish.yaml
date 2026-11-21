@@ -1,35 +1,29 @@
-run-name: "${{ github.workflow }}: ${{ github.event.workflow_run.name }}: ${{ github.event.workflow_run.head_branch }}"
+run-name: "${{ github.workflow }}: ${{ github.actor }}: ${{ github.event_name }}: ${{ github.ref_name }}: ${{ github.ref_type }}"
 # TODO: TODO_29_67_72_68.combine_coverage_across_jobs.md: close the parallel `coveralls.io` build (`build-number` = commit).
-# Every test workflow (`test_py_*`, `test_contract_compatibility`) uploads its coverage as parallel (see `.github/actions/test_env_*`);
-# this workflow runs after each of them and closes the build only when all of them are completed for the commit.
+# Every test workflow (`test_py_*`, `test_contract_compatibility`) uploads its coverage as parallel
+# (see `.github/actions/test_env_*`); this workflow waits until all of them are completed for the commit and closes the build.
+# It is a plain `push` workflow (not `workflow_run`: that one only fires from the default branch) - so it works on any branch.
 on:
-    workflow_run:
-        workflows:
-        -   .github/workflows/test_py_min_linux.yaml
-        -   .github/workflows/test_py_med_linux.yaml
-        -   .github/workflows/test_py_max_linux.yaml
-        -   .github/workflows/test_py_med_darwin.yaml
-        -   .github/workflows/test_py_max_darwin.yaml
-        -   .github/workflows/test_py_med_windows.yaml
-        -   .github/workflows/test_py_max_windows.yaml
-        -   .github/workflows/test_contract_compatibility.yaml
-        types:
-        -   completed
+    push:
+        branches:
+        -   "*"
 permissions:
     actions: read
     contents: read
+# Cancel superseded runs per branch (never on `main`: every commit keeps its run):
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref == 'refs/heads/main' && github.sha || github.ref }}
+    cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 jobs:
     finish_coverage:
-        # Only `push` runs upload coverage:
-        if: github.event.workflow_run.event == 'push'
         runs-on: ubuntu-latest
+        timeout-minutes: 45
         steps:
-            -   name: check all test workflows are completed for the commit
-                id: check
+            -   name: wait for all test workflows to complete for the commit
                 env:
                     GH_TOKEN: ${{ github.token }}
-                    SHA: ${{ github.event.workflow_run.head_sha }}
-                    # Same list as `on.workflow_run.workflows` above:
+                    SHA: ${{ github.sha }}
+                    # Every workflow which uploads coverage as parallel:
                     EXPECTED: >-
                         test_py_min_linux
                         test_py_med_linux
@@ -40,25 +34,31 @@ jobs:
                         test_py_max_windows
                         test_contract_compatibility
                 run: |
-                    runs=$(gh api "repos/${{ github.repository }}/actions/runs?head_sha=${SHA}&event=push&per_page=100")
-                    ready=true
-                    for name in ${EXPECTED}; do
-                        # all runs of this workflow for the commit (re-runs included) must be completed, and at least one must exist:
-                        total=$(echo "${runs}" | jq "[.workflow_runs[] | select(.path == \".github/workflows/${name}.yaml\")] | length")
-                        open=$(echo "${runs}" | jq "[.workflow_runs[] | select(.path == \".github/workflows/${name}.yaml\") | select(.status != \"completed\")] | length")
-                        echo "${name}: total=${total} not_completed=${open}"
-                        if [ "${total}" -lt 1 ] || [ "${open}" -ne 0 ]; then
-                            ready=false
+                    deadline=$(( $(date +%s) + 40 * 60 ))
+                    while true; do
+                        runs=$(gh api "repos/${{ github.repository }}/actions/runs?head_sha=${SHA}&event=push&per_page=100")
+                        ready=true
+                        for name in ${EXPECTED}; do
+                            # at least one run must exist (they may not be created yet) and all must be completed (re-runs included):
+                            total=$(echo "${runs}" | jq "[.workflow_runs[] | select(.path == \".github/workflows/${name}.yaml\")] | length")
+                            open=$(echo "${runs}" | jq "[.workflow_runs[] | select(.path == \".github/workflows/${name}.yaml\") | select(.status != \"completed\")] | length")
+                            echo "${name}: total=${total} not_completed=${open}"
+                            if [ "${total}" -lt 1 ] || [ "${open}" -ne 0 ]; then
+                                ready=false
+                            fi
+                        done
+                        if [ "${ready}" = "true" ]; then
+                            break
                         fi
+                        if [ "$(date +%s)" -ge "${deadline}" ]; then
+                            echo "timed out waiting for the test workflows" >&2
+                            exit 1
+                        fi
+                        sleep 30
                     done
-                    echo "ready=${ready}"
-                    echo "ready=${ready}" >> "${GITHUB_OUTPUT}"
 
             -   name: finish coveralls.io parallel build
-                if: steps.check.outputs.ready == 'true'
                 uses: coverallsapp/github-action@v2
                 with:
                     parallel-finished: true
-                    build-number: ${{ github.event.workflow_run.head_sha }}
-                    git-commit: ${{ github.event.workflow_run.head_sha }}
-                    git-branch: ${{ github.event.workflow_run.head_branch }}
+                    build-number: ${{ github.sha }}
