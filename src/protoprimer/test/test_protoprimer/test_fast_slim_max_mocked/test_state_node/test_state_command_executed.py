@@ -3,12 +3,14 @@ from unittest.mock import patch
 
 import pytest
 
+from local_test.case_condition import requires_posix
 from local_test.mock_verifier import (
     assert_parent_factories_mocked,
 )
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
+    _TargetPlatform,
     _Factory_state_input_command_line,
     _Node_state_local_cache_dir_abs_path_inited,
     _Node_state_local_venv_dir_abs_path_inited,
@@ -28,6 +30,7 @@ def test_relationship():
     assert_test_module_name_embeds_str(_EnvState.state_command_executed.name)
 
 
+@requires_posix
 @patch(f"{primer_kernel.__name__}.{_EnvContext.__name__}.{_EnvContext.get_stride.__name__}")
 @patch(f"{primer_kernel.__name__}.os.execve")
 @patch(f"{primer_kernel.__name__}.{_Node_state_stride_src_updated_reached.__name__}.create_state_node")
@@ -83,6 +86,7 @@ def test_command_executed_in_bash(
     )
 
 
+@requires_posix
 @patch(f"{primer_kernel.__name__}.{_EnvContext.__name__}.{_EnvContext.get_stride.__name__}")
 @patch(f"{primer_kernel.__name__}.os.execve")
 @patch(f"{primer_kernel.__name__}.{_Node_state_stride_src_updated_reached.__name__}.create_state_node")
@@ -138,6 +142,7 @@ def test_command_executed_in_zsh(
     )
 
 
+@requires_posix
 @patch(f"{primer_kernel.__name__}.{_EnvContext.__name__}.{_EnvContext.get_stride.__name__}")
 @patch(f"{primer_kernel.__name__}.os.execve")
 @patch(f"{primer_kernel.__name__}.{_Node_state_stride_src_updated_reached.__name__}.create_state_node")
@@ -177,6 +182,7 @@ def test_command_not_executed_when_no_command_line_provided(
     mock_os_execve.assert_not_called()
 
 
+@requires_posix
 @patch(f"{primer_kernel.__name__}.{_EnvContext.__name__}.{_EnvContext.get_stride.__name__}")
 @patch(f"{primer_kernel.__name__}.os.execve")
 @patch(f"{primer_kernel.__name__}.{_Node_state_stride_src_updated_reached.__name__}.create_state_node")
@@ -232,6 +238,7 @@ def test_command_executed_empty(
     )
 
 
+@requires_posix
 @patch(f"{primer_kernel.__name__}.{_EnvContext.__name__}.{_EnvContext.get_stride.__name__}")
 @patch(f"{primer_kernel.__name__}.os.execve")
 @patch(f"{primer_kernel.__name__}.{_Node_state_stride_src_updated_reached.__name__}.create_state_node")
@@ -285,3 +292,57 @@ def test_command_executed_with_whitespace(
             "SHELL": "/bin/bash",
         },
     )
+
+
+@patch(f"{primer_kernel.__name__}._get_target_platform", return_value=_TargetPlatform.platform_windows)
+@patch(f"{primer_kernel.__name__}.{_EnvContext.__name__}.{_EnvContext.get_stride.__name__}")
+@patch(f"{primer_kernel.__name__}.os.execve")
+@patch(f"{primer_kernel.__name__}.{_Node_state_stride_src_updated_reached.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Node_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Node_state_local_cache_dir_abs_path_inited.__name__}.create_state_node")
+@patch(f"{primer_kernel.__name__}.{_Factory_state_input_command_line.__name__}.create_state_node")
+@patch.dict(
+    os.environ,
+    {},
+    clear=True,
+)
+@pytest.mark.parametrize(
+    "command_line, expect_failure",
+    [
+        # Evaluated on every bootstrap (even on Windows): nothing to run without a command:
+        (None, False),
+        ("echo hello", True),
+    ],
+)
+def test_command_executed_on_windows(
+    mock_state_input_command_line,
+    mock_state_local_cache_dir_abs_path_inited,
+    mock_state_local_venv_dir_abs_path_inited,
+    mock_state_stride_src_updated_reached,
+    mock_os_execve,
+    mock_get_stride,
+    mock_get_target_platform,
+    command_line,
+    expect_failure,
+    env_ctx,
+    fs,
+):
+    # given:
+    fs.create_dir("/fake")
+    assert_parent_factories_mocked(
+        env_ctx,
+        _EnvState.state_command_executed.name,
+    )
+    mock_state_input_command_line.return_value.eval_own_state.return_value = command_line
+    mock_get_stride.return_value = _StateStride.stride_src_updated
+    mock_state_stride_src_updated_reached.return_value.eval_own_state.return_value = _StateStride.stride_src_updated
+    mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = "/fake/venv"
+    mock_state_local_cache_dir_abs_path_inited.return_value.eval_own_state.return_value = "/fake/cache"
+
+    # when/then:
+    if expect_failure:
+        with pytest.raises(NotImplementedError):
+            env_ctx.eval_state(_EnvState.state_command_executed.name)
+    else:
+        assert env_ctx.eval_state(_EnvState.state_command_executed.name) == 0
+    mock_os_execve.assert_not_called()

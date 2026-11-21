@@ -1311,6 +1311,13 @@ class _ShellDriverSh(_ShellDriverBase):
         self.shell_env_vars["ENV"] = self.get_init_file_abs_path()
 
 
+def _ensure_shell_supported(venv_abs_path: str) -> None:
+    # TODO: TODO_50_98_96_87.support_windows.md: only POSIX shell drivers exist (no native Windows shell driver):
+    target_platform = _get_target_platform()
+    if not target_platform.is_posix():
+        raise NotImplementedError(f"Shell is only supported on POSIX platforms, but the platform is [{target_platform.platform_name}]: activate `venv` [{venv_abs_path}] manually via [{_ShellDriverBase.get_venv_activate_script_abs_path(venv_abs_path)}].")
+
+
 def _get_shell_driver(
     cache_dir_abs_path: str,
     activate_venv: bool = True,
@@ -5310,6 +5317,10 @@ class _Node_state_command_executed(_AbstractCachingStateNode[int]):
 
         state_local_cache_dir_abs_path_inited: str = self.eval_parent_state(_EnvState.state_local_cache_dir_abs_path_inited.name)
 
+        # Without a command, `run_shell` is a no-op (this state is evaluated on every bootstrap):
+        if command_line is not None:
+            _ensure_shell_supported(state_local_venv_dir_abs_path_inited)
+
         shell_driver: _ShellDriverBase = _get_shell_driver(state_local_cache_dir_abs_path_inited)
 
         return shell_driver.run_shell(
@@ -5368,6 +5379,8 @@ class _Node_state_shell_executed(_AbstractCachingStateNode[int]):
         state_local_venv_dir_abs_path_inited: str = self.eval_parent_state(_EnvState.state_local_venv_dir_abs_path_inited.name)
 
         state_local_cache_dir_abs_path_inited: str = self.eval_parent_state(_EnvState.state_local_cache_dir_abs_path_inited.name)
+
+        _ensure_shell_supported(state_local_venv_dir_abs_path_inited)
 
         shell_driver: _ShellDriverBase = _get_shell_driver(state_local_cache_dir_abs_path_inited)
 
@@ -6694,7 +6707,7 @@ def _search_python_file_abs_path_by_basename(required_version: tuple[int, int, i
     for python_basename in python_basenames:
         _logger.debug(f"trying `python_basename` [{python_basename}]")
 
-        # TODO: TODO_50_98_96_87.support_windows.md: this will not work on Windows:
+        # On Windows, versioned basenames do not exist (falls back to `python`): TODO_50_98_96_87.support_windows.md
         # noinspection PyDeprecation
         python_abs_path = shutil.which(python_basename)
 

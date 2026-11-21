@@ -22,6 +22,7 @@ tested_python_levels = {
 
 tested_platforms = {
     "linux": "linux",
+    "darwin": "darwin",
     "win32": "windows",
 }
 

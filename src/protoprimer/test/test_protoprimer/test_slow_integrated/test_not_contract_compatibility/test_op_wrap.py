@@ -2,6 +2,7 @@ import os
 import pathlib
 import stat
 
+from local_test.case_condition import requires_posix
 from local_test.fat_mocked_helper import run_primer_main
 from local_test.integrated_helper import (
     create_plain_proto_kernel,
@@ -68,6 +69,7 @@ def _wrap_and_assert(
     assert entry_script_abs_path.read_text() == expected_content
 
 
+@requires_posix
 def test_wrap_boot_env(tmp_path: pathlib.Path):
 
     assert_test_func_name_embeds_str(_EntryFunc.func_boot_env.value)
@@ -75,6 +77,7 @@ def test_wrap_boot_env(tmp_path: pathlib.Path):
     _wrap_and_assert(tmp_path, _EntryFunc.func_boot_env)
 
 
+@requires_posix
 def test_wrap_start_app(tmp_path: pathlib.Path):
 
     assert_test_func_name_embeds_str(_EntryFunc.func_start_app.value)
@@ -82,6 +85,7 @@ def test_wrap_start_app(tmp_path: pathlib.Path):
     _wrap_and_assert(tmp_path, _EntryFunc.func_start_app)
 
 
+@requires_posix
 def test_wrap_boot_env_without_main_func(tmp_path: pathlib.Path):
 
     assert_test_func_name_embeds_str(_EntryFunc.func_boot_env.value)

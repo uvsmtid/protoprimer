@@ -70,14 +70,25 @@ def test_none_when_not_matching_github_job(monkeypatch, github_job):
         ((3, 11, 2), "linux", "dst/test_python_med_linux"),
         ((3, 15, 0), "linux", "dst/test_python_max_linux"),
         ((3, 11, 2), "win32", "dst/test_python_med_windows"),
+        ((3, 11, 2), "darwin", "dst/test_python_med_darwin"),
+        ((3, 15, 0), "win32", "dst/test_python_max_windows"),
+        ((3, 15, 0), "darwin", "dst/test_python_max_darwin"),
         # untested `python` version or platform:
         ((3, 9, 1), "linux", None),
-        ((3, 11, 2), "darwin", None),
+        ((3, 11, 2), "freebsd14", None),
     ],
 )
 def test_selects_env_dir_by_host(tmp_path, version_info, platform, expected_env_dir):
     # All env dirs exist:
-    for env_dir_rel_path in ["min_linux", "med_linux", "max_linux", "med_windows"]:
+    for env_dir_rel_path in [
+        "min_linux",
+        "med_linux",
+        "max_linux",
+        "med_windows",
+        "med_darwin",
+        "max_windows",
+        "max_darwin",
+    ]:
         (tmp_path / "dst" / f"test_python_{env_dir_rel_path}").mkdir(parents=True)
 
     assert _load_module().select_env_dir_rel_path_by_host(version_info, platform, str(tmp_path)) == expected_env_dir
@@ -88,7 +99,7 @@ def test_selects_env_dir_by_host(tmp_path, version_info, platform, expected_env_
     [
         # a tested cell without the env dir:
         ((3, 7, 17), "win32"),
-        ((3, 15, 0), "win32"),
+        ((3, 7, 17), "darwin"),
         ((3, 11, 2), "linux"),
     ],
 )

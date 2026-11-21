@@ -33,46 +33,10 @@ jobs:
                 python-version:
                     -   "3.7"
         steps:
-            -   run: "echo runner.os: ${{ runner.os }}"
-            -   run: "echo github.repository: ${{ github.repository }}"
-            -   run: "echo github.ref: ${{ github.ref }}"
-
-            -   name: "matrix.python-version: ${{ matrix.python-version }}"
-                uses: actions/setup-python@v5
-                with:
-                    python-version: ${{ matrix.python-version }}
-
-            # FT_84_11_73_28.supported_python_versions.md:
-            -   run: "which python3.7"
-            -   run: "python --version"
-
             -   uses: actions/checkout@v4
 
-            -   uses: actions/cache@v4
+            -   uses: ./.github/actions/test_env_posix
                 with:
-                    path: |
-                        ~/.cache/uv
-                        ~/.cache/pip
-                    key: deps-${{ runner.os }}-${{ hashFiles('dst/test_python_min_linux/version_constraints.txt') }}
-
-            -   run: |
-                    ${{ github.workspace }}/prime -vvv
-                    ${{ github.workspace }}/cmd/prime_env -vvv
-
-            -   name: ensure the env selector picked the env for this job
-                run: |
-                    test "$(readlink ${{ github.workspace }}/lconf)" = "dst/test_python_min_linux"
-
-            -   name: ensure git has no local changes and untracked files
-                run: |
-                    git diff || true
-                    git status --porcelain || true
-                    test -z "$(git status --porcelain)"
-
-            -   run: |
-                    ${{ github.workspace }}/venv/bin/python --version
-                    ${{ github.workspace }}/venv/bin/python -m pytest
-                env:
-                    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-            -   run: "echo job.status: ${{ job.status }}"
+                    python-version: ${{ matrix.python-version }}
+                    level: min
+                    platform: linux
