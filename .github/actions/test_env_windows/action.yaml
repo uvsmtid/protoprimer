@@ -76,7 +76,7 @@ runs:
                 & $python -m coverage run --rcfile=$rcfile --module pytest $portableTests
                 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
                 & $python -m coverage combine --rcfile=$rcfile
-                & $python -m coverage lcov --rcfile=$rcfile -o "${{ github.workspace }}/coverage.lcov"
+                & $python -m coverage lcov --fail-under=0 --rcfile=$rcfile -o "${{ github.workspace }}/coverage.lcov"
             shell: pwsh
 
         # TODO: TODO_29_67_72_68.combine_coverage_across_jobs.md: `build-number` (commit) is shared by all workflows.

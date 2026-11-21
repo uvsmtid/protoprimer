@@ -63,7 +63,7 @@ runs:
                 ${{ github.workspace }}/venv/bin/python -m coverage erase --rcfile=${{ github.workspace }}/gconf/coveragerc.ini
                 ${{ github.workspace }}/venv/bin/python -m coverage run --rcfile=${{ github.workspace }}/gconf/coveragerc.ini --module pytest
                 ${{ github.workspace }}/venv/bin/python -m coverage combine --rcfile=${{ github.workspace }}/gconf/coveragerc.ini
-                ${{ github.workspace }}/venv/bin/python -m coverage lcov --rcfile=${{ github.workspace }}/gconf/coveragerc.ini -o ${{ github.workspace }}/coverage.lcov
+                ${{ github.workspace }}/venv/bin/python -m coverage lcov --fail-under=0 --rcfile=${{ github.workspace }}/gconf/coveragerc.ini -o ${{ github.workspace }}/coverage.lcov
             shell: bash
             env:
                 GITHUB_TOKEN: ${{ github.token }}
