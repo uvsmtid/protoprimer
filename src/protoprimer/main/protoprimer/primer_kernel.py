@@ -1330,8 +1330,6 @@ def _get_shell_driver(
     shell_driver_type: type[_ShellDriverBase]
 
     if shell_abs_path is None:
-        # TODO: TODO_50_98_96_87.support_windows.md:
-        # TODO: How will it work on Windows without POSIX shell?
         shell_abs_path = "/bin/sh"
         _logger.warning(f"env var `{var_shell}` is not set - assuming [{shell_abs_path}] as default")
         shell_driver_type = _ShellDriverSh
