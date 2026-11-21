@@ -11,11 +11,21 @@ from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     _Factory_state_input_exec_operation_loaded,
     _Node_state_input_start_id_var_loaded,
+    _ConfConstGeneral,
     _ConfConstInput,
     _ContextBuilder,
     _EntryFunc,
     _EnvState,
     _StateStride,
+)
+
+
+# `venv` bin dir and the separator are platform-specific (`Scripts` and `;` on Windows):
+path_with_venv_bin = os.pathsep.join(
+    [
+        os.path.join("/path/to/venv", _ConfConstGeneral.file_rel_path_venv_bin),
+        "/usr/bin",
+    ]
 )
 
 
@@ -40,7 +50,7 @@ def test_relationship():
     f"{os.__name__}.environ",
     {
         _ConfConstInput.ext_env_var_VIRTUAL_ENV: "/path/to/venv",
-        _ConfConstInput.ext_env_var_PATH: "/path/to/venv/bin:/usr/bin",
+        _ConfConstInput.ext_env_var_PATH: path_with_venv_bin,
     },
     clear=True,
 )
@@ -101,7 +111,7 @@ def test_py_exec_stride_py_unknown_in_venv(
     f"{os.__name__}.environ",
     {
         # NOTE: Even if `venv` is part of the `PATH`, it is not detectable:
-        _ConfConstInput.ext_env_var_PATH: "/path/to/venv/bin:/usr/bin",
+        _ConfConstInput.ext_env_var_PATH: path_with_venv_bin,
     },
     clear=True,
 )
@@ -152,6 +162,6 @@ def test_py_exec_stride_py_unknown_not_in_venv(
         start_id="mock_start_id",
         proto_kernel_abs_file_path=None,
         required_environ={
-            _ConfConstInput.ext_env_var_PATH: "/path/to/venv/bin:/usr/bin",
+            _ConfConstInput.ext_env_var_PATH: path_with_venv_bin,
         },
     )
