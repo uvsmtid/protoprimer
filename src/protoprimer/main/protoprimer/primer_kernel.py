@@ -3490,6 +3490,17 @@ def _create_symlink_to_dir(
     )
 
 
+def _remove_symlink_to_dir(
+    symlink_abs_path: str,
+) -> None:
+    if _ConfConstGeneral.is_os_windows:
+        # TODO: TODO_50_98_96_87.support_windows.md:
+        #       A dir symlink is removed like a dir on Windows (`os.remove` may fail on it):
+        os.rmdir(symlink_abs_path)
+    else:
+        os.remove(symlink_abs_path)
+
+
 # noinspection PyPep8Naming
 @_conditional_factory
 class _BaseNode_state_local_conf_dir_abs_path_inited(_AbstractCachingStateNode[str]):
@@ -3653,8 +3664,7 @@ class _Node_state_local_conf_dir_abs_path_inited_reset(_BaseNode_state_local_con
                 conf_dir_path = os.path.normpath(os.readlink(symlink_abs_path))
                 if conf_dir_path != expected_conf_dir_path:
                     _logger.info(f"overwriting symlink [{symlink_abs_path}] target [{conf_dir_path}] with [{expected_conf_dir_path}]")
-                    # TODO: TODO_50_98_96_87.support_windows.md: removing a dir symlink may need `os.rmdir` on Windows:
-                    os.remove(symlink_abs_path)
+                    _remove_symlink_to_dir(symlink_abs_path)
                     _create_symlink_to_dir(symlink_abs_path, expected_conf_dir_path)
             elif os.path.lexists(symlink_abs_path):
                 # Never delete a real file/dir:
