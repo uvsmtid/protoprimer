@@ -28,14 +28,32 @@ jobs:
                 env:
                     GH_TOKEN: ${{ github.token }}
                     SHA: ${{ github.event.workflow_run.head_sha }}
+                    # Same list as `on.workflow_run.workflows` above:
+                    EXPECTED: >-
+                        test_py_min_linux
+                        test_py_med_linux
+                        test_py_max_linux
+                        test_py_med_darwin
+                        test_py_max_darwin
+                        test_py_med_windows
+                        test_py_max_windows
                 run: |
-                    pending=$(gh api "repos/${{ github.repository }}/actions/runs?head_sha=${SHA}&event=push&per_page=100" \
-                        --jq '[.workflow_runs[] | select(.path | test("test_py_.*\\.yaml$")) | select(.status != "completed")] | length')
-                    echo "pending test workflows: ${pending}"
-                    echo "pending=${pending}" >> "${GITHUB_OUTPUT}"
+                    runs=$(gh api "repos/${{ github.repository }}/actions/runs?head_sha=${SHA}&event=push&per_page=100")
+                    ready=true
+                    for name in ${EXPECTED}; do
+                        # all runs of this workflow for the commit (re-runs included) must be completed, and at least one must exist:
+                        total=$(echo "${runs}" | jq "[.workflow_runs[] | select(.path == \".github/workflows/${name}.yaml\")] | length")
+                        open=$(echo "${runs}" | jq "[.workflow_runs[] | select(.path == \".github/workflows/${name}.yaml\") | select(.status != \"completed\")] | length")
+                        echo "${name}: total=${total} not_completed=${open}"
+                        if [ "${total}" -lt 1 ] || [ "${open}" -ne 0 ]; then
+                            ready=false
+                        fi
+                    done
+                    echo "ready=${ready}"
+                    echo "ready=${ready}" >> "${GITHUB_OUTPUT}"
 
             -   name: finish coveralls.io parallel build
-                if: steps.check.outputs.pending == '0'
+                if: steps.check.outputs.ready == 'true'
                 uses: coverallsapp/github-action@v2
                 with:
                     parallel-finished: true
