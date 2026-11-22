@@ -7,6 +7,7 @@ FT_64_09_03_66.invoke_condition.md
 from __future__ import annotations
 
 import enum
+import json
 import os
 import pathlib
 import shlex
@@ -25,14 +26,25 @@ from protoprimer.primer_kernel import _ConfDst
 # Label to find (and clean up) leftover containers:
 container_label = "protoprimer-test-invoke-condition"
 
+# Dirs in a container (`ContainerSession.src_dir` and `ContainerSession.work_dir` are set to these):
+container_src_dir = "/src"
+container_work_dir = "/work"
+
 # TODO: TODO_29_67_72_68.combine_coverage_across_jobs.md: set to a dir to collect coverage of the code run in containers (opt-in):
 coverage_dir_env_var = "PROTOPRIMER_COVERAGE_DIR"
 coverage_container_dir = "/covdata"
 coverage_boot_dir_name = "_boot"
 
+# The code which is measured (relative to the repo copy in `container_work_dir`):
+coverage_source_dir_rel_paths = [
+    "src/metaprimer/main",
+    "src/protoprimer/main",
+]
+
 # Starts `coverage` in every `python` process in the container (when `coverage` is importable there); never fails or prints.
 # It is installed into the stdlib dirs of `python`-s (shared by their `venv`-s): `PYTHONPATH` is ignored by isolated `-I` mode.
 # `uv` downloads (and `venv` is based on) its own `python` during the scenario: a watcher in the container copies the hook there.
+# Paths are absolute: processes in a container start in different current dirs, but relative paths of the config are resolved against it.
 coverage_boot_script = f"""
 try:
     import warnings
@@ -40,9 +52,9 @@ try:
     from coverage.exceptions import CoverageWarning
     warnings.simplefilter("ignore", CoverageWarning)
     coverage.Coverage(
-        config_file="/work/{_ConfDst.dst_global.value}/coveragerc.ini",
-        source=["/work/src/metaprimer/main", "/work/src/protoprimer/main"],
-        data_file="/covdata/.coverage.invoke_condition",
+        config_file="{container_work_dir}/{_ConfDst.dst_global.value}/coveragerc.ini",
+        source={json.dumps([f"{container_work_dir}/{rel_path}" for rel_path in coverage_source_dir_rel_paths])},
+        data_file="{coverage_container_dir}/.coverage.invoke_condition",
         messages=False,
         auto_data=True,
     ).start()
@@ -224,8 +236,8 @@ class ContainerSession:
     The clean tree of the repo is read-only at `/src` and copied to `/work` (the working dir of steps).
     """
 
-    src_dir = "/src"
-    work_dir = "/work"
+    src_dir = container_src_dir
+    work_dir = container_work_dir
 
     def __init__(
         self,
