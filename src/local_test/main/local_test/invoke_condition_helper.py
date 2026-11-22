@@ -21,7 +21,11 @@ from local_test.case_condition import (
     any_to_bool,
     invoke_condition_env_var,
 )
-from protoprimer.primer_kernel import _ConfDst
+from local_test.coverage_conf import (
+    coverage_dir_env_var,
+    get_rcfile_abs_path,
+    read_source_dir_rel_paths,
+)
 
 # Label to find (and clean up) leftover containers:
 container_label = "protoprimer-test-invoke-condition"
@@ -30,30 +34,32 @@ container_label = "protoprimer-test-invoke-condition"
 container_src_dir = "/src"
 container_work_dir = "/work"
 
-# TODO: TODO_29_67_72_68.combine_coverage_across_jobs.md: set to a dir to collect coverage of the code run in containers (opt-in):
-coverage_dir_env_var = "PROTOPRIMER_COVERAGE_DIR"
+# TODO: TODO_29_67_72_68.combine_coverage_across_jobs.md: `coverage_dir_env_var` set to a dir collects coverage of the code run in containers (opt-in):
 coverage_container_dir = "/covdata"
 coverage_boot_dir_name = "_boot"
 
-# The code which is measured (relative to the repo copy in `container_work_dir`):
-coverage_source_dir_rel_paths = [
-    "src/metaprimer/main",
-    "src/protoprimer/main",
-]
 
-# Starts `coverage` in every `python` process in the container (when `coverage` is importable there); never fails or prints.
-# It is installed into the stdlib dirs of `python`-s (shared by their `venv`-s): `PYTHONPATH` is ignored by isolated `-I` mode.
-# `uv` downloads (and `venv` is based on) its own `python` during the scenario: a watcher in the container copies the hook there.
-# Paths are absolute: processes in a container start in different current dirs, but relative paths of the config are resolved against it.
-coverage_boot_script = f"""
+def get_coverage_boot_script() -> str:
+    """
+    The script starts `coverage` in every `python` process in the container (when `coverage` is importable there); never fails or prints.
+
+    It is installed into the stdlib dirs of `python`-s (shared by their `venv`-s): `PYTHONPATH` is ignored by isolated `-I` mode.
+    `uv` downloads (and `venv` is based on) its own `python` during the scenario: a watcher in the container copies the hook there.
+
+    Paths are absolute: processes in a container start in different current dirs, but relative paths of the config are resolved against it.
+    """
+
+    container_rcfile_path = get_rcfile_abs_path(pathlib.PurePosixPath(container_work_dir))
+    container_source_dir_paths = [f"{container_work_dir}/{source_dir_rel_path}" for source_dir_rel_path in read_source_dir_rel_paths(get_repo_root_abs_path())]
+    return f"""
 try:
     import warnings
     import coverage
     from coverage.exceptions import CoverageWarning
     warnings.simplefilter("ignore", CoverageWarning)
     coverage.Coverage(
-        config_file="{container_work_dir}/{_ConfDst.dst_global.value}/coveragerc.ini",
-        source={json.dumps([f"{container_work_dir}/{rel_path}" for rel_path in coverage_source_dir_rel_paths])},
+        config_file="{container_rcfile_path}",
+        source={json.dumps(container_source_dir_paths)},
         data_file="{coverage_container_dir}/.coverage.invoke_condition",
         messages=False,
         auto_data=True,
@@ -61,6 +67,7 @@ try:
 except Exception:
     pass
 """
+
 
 # Pinned public images (nothing is baked into them, nothing special is maintained):
 # FT_84_11_73_28.supported_python_versions.md
@@ -259,7 +266,7 @@ class ContainerSession:
         if self.coverage_dir_path is not None:
             boot_dir_path = self.coverage_dir_path / coverage_boot_dir_name
             boot_dir_path.mkdir(parents=True, exist_ok=True)
-            (boot_dir_path / "sitecustomize.py").write_text(coverage_boot_script)
+            (boot_dir_path / "sitecustomize.py").write_text(get_coverage_boot_script())
             coverage_mount_args = ["-v", f"{self.coverage_dir_path}:{coverage_container_dir}:z"]
         subprocess.run(
             [

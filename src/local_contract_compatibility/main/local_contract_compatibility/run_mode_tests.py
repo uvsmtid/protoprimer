@@ -6,7 +6,11 @@ import subprocess
 import sys
 
 from local_contract_compatibility.mode_id import ModeId
-from protoprimer.primer_kernel import _ConfDst
+from local_test.coverage_conf import (
+    coverage_dir_env_var,
+    get_rcfile_abs_path,
+    read_source_dir_rel_paths,
+)
 
 
 def get_handoff_test_dir_rel_path(
@@ -16,16 +20,6 @@ def get_handoff_test_dir_rel_path(
     return pathlib.Path("src") / package_name / "test" / f"test_{package_name}" / "test_slow_integrated" / f"test_{mode_id.value}"
 
 
-# TODO: TODO_29_67_72_68.combine_coverage_across_jobs.md: set to a dir to collect coverage of the current code (opt-in).
-coverage_dir_env_var = "PROTOPRIMER_COVERAGE_DIR"
-
-# The code which is measured (the same as `source` in `coveragerc.ini`, but absolute: `cwd` is not the repo for old tests):
-coverage_source_dir_rel_paths = [
-    "src/metaprimer/main",
-    "src/protoprimer/main",
-]
-
-
 def get_coverage_command_args(
     repo_dir_abs_path: pathlib.Path,
 ) -> list[str]:
@@ -33,8 +27,9 @@ def get_coverage_command_args(
         "-m",
         "coverage",
         "run",
-        f"--rcfile={repo_dir_abs_path / _ConfDst.dst_global.value / 'coveragerc.ini'}",
-        "--source=" + ",".join(str(repo_dir_abs_path / source_dir_rel_path) for source_dir_rel_path in coverage_source_dir_rel_paths),
+        f"--rcfile={get_rcfile_abs_path(repo_dir_abs_path)}",
+        # `cwd` is not the repo root for old tests: the measured code is anchored at the repo root:
+        "--source=" + ",".join(str(repo_dir_abs_path / source_dir_rel_path) for source_dir_rel_path in read_source_dir_rel_paths(repo_dir_abs_path)),
     ]
 
 

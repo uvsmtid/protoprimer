@@ -11,6 +11,7 @@ from local_test.invoke_condition_helper import (
     ContainerSession,
     InvokeCondition,
     boot_max_script,
+    container_work_dir,
     image_python_3_15,
 )
 
@@ -22,7 +23,7 @@ def test_moved_repo_with_venv_fails_without_hint(tmp_path):
         boot_result = container.run(boot_max_script)
         assert boot_result.exit_code == 0, str(boot_result)
 
-        move_result = container.run("mv /work /moved", work_dir="/")
+        move_result = container.run(f"mv {container_work_dir} /moved", work_dir="/")
         assert move_result.exit_code == 0, str(move_result)
         result = container.run("./cmd/echo_app hi", work_dir="/moved")
 

@@ -6,7 +6,8 @@ import subprocess
 import sys
 
 from local_contract_compatibility.mode_id import ModeId
-from local_contract_compatibility.run_mode_tests import coverage_dir_env_var, run_pytest_for_mode
+from local_contract_compatibility.run_mode_tests import run_pytest_for_mode
+from local_test.coverage_conf import coverage_dir_env_var
 
 # Old `local_*` packages which are installed from the baseline worktree (all must be present there):
 old_local_package_names = [
