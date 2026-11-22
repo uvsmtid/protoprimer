@@ -7,9 +7,11 @@ from local_repo import cmd_wait_for_workflow_runs
 from local_repo.cmd_wait_for_workflow_runs import (
     custom_main,
     find_not_ready,
+    find_uploading_workflow_names,
     get_workflow_file_rel_path,
     wait_for_workflow_runs,
 )
+from local_test.invoke_condition_helper import get_repo_root_abs_path
 from local_test.name_assertion import (
     assert_test_module_name_embeds_another_module_name,
 )
@@ -90,3 +92,70 @@ def test_custom_main_exit_code(is_ready, expected_exit_code):
 
     assert exit_info.value.code == expected_exit_code
     mock_wait.assert_called_once_with("owner/name", "sha", ["a", "b"], 40 * 60, 30)
+
+
+def write_file(path, text):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(text)
+
+
+def test_find_uploading_workflow_names(tmp_path):
+
+    # given:
+
+    workflows_dir = tmp_path / ".github" / "workflows"
+    actions_dir = tmp_path / ".github" / "actions"
+    write_file(actions_dir / "with_upload" / "action.yaml", "steps:\n    -   uses: x/y@v1\n        with:\n            parallel: true\n")
+    write_file(actions_dir / "no_upload" / "action.yaml", "steps:\n    -   run: echo\n")
+    write_file(workflows_dir / "direct.yaml", "steps:\n    -   uses: x/y@v1\n        with:\n            parallel: true\n")
+    write_file(workflows_dir / "via_action.yaml", "steps:\n    -   uses: ./.github/actions/with_upload\n        with:\n            level: min\n")
+    write_file(workflows_dir / "via_other_action.yaml", "steps:\n    -   uses: ./.github/actions/no_upload\n")
+    write_file(workflows_dir / "commented.yaml", "steps:\n    # parallel: true\n    -   run: echo\n")
+    write_file(workflows_dir / "closing.yaml", "steps:\n    -   uses: x/y@v1\n        with:\n            parallel-finished: true\n")
+    write_file(workflows_dir / "other.yaml", "steps:\n    -   run: echo\n")
+
+    # then:
+
+    assert find_uploading_workflow_names(tmp_path) == ["direct", "via_action"]
+
+
+def test_find_uploading_workflow_names_of_this_repo():
+
+    # when:
+
+    workflow_names = find_uploading_workflow_names(get_repo_root_abs_path())
+
+    # then: the closing workflow does not wait for itself, and all test workflows are found
+
+    assert "cover_finish" not in workflow_names
+    assert "test_contract_compatibility" in workflow_names
+    assert "test_invoke_condition" in workflow_names
+    assert "test_py_min_linux" in workflow_names
+
+
+def test_custom_main_discovers_workflows_without_names(tmp_path):
+
+    # given:
+
+    write_file(tmp_path / ".github" / "workflows" / "found.yaml", "steps:\n    -   uses: x/y@v1\n        with:\n            parallel: true\n")
+
+    with patch.object(sys, "argv", ["wait_for_workflow_runs", "--repo", "owner/name", "--commit_sha", "sha", "--repo_dir", str(tmp_path)]), patch.object(cmd_wait_for_workflow_runs, "wait_for_workflow_runs", return_value=True) as mock_wait:
+
+        # when:
+
+        with pytest.raises(SystemExit) as exit_info:
+            custom_main()
+
+    # then:
+
+    assert exit_info.value.code == 0
+    mock_wait.assert_called_once_with("owner/name", "sha", ["found"], 40 * 60, 30)
+
+
+def test_custom_main_fails_loudly_when_nothing_to_wait_for(tmp_path):
+
+    (tmp_path / ".github" / "workflows").mkdir(parents=True)
+
+    with patch.object(sys, "argv", ["wait_for_workflow_runs", "--repo", "owner/name", "--commit_sha", "sha", "--repo_dir", str(tmp_path)]):
+        with pytest.raises(AssertionError):
+            custom_main()

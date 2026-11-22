@@ -1,8 +1,9 @@
 run-name: "${{ github.workflow }}: ${{ github.actor }}: ${{ github.event_name }}: ${{ github.ref_name }}: ${{ github.ref_type }}"
 # FT_47_61_24_68.combined_coverage.md:
 # close the parallel `coveralls.io` build (`build-number` = commit).
-# Every test workflow (`test_py_*`, `test_contract_compatibility`, `test_invoke_condition`) uploads its coverage as parallel
-# (see `.github/actions/test_env_*`); this workflow waits until all of them are completed for the commit and closes the build.
+# Every workflow with `parallel: true` upload (directly or via `.github/actions/test_env_*`) is waited for:
+# the list is found by `cmd/wait_for_workflow_runs`, so a new uploading workflow is picked up automatically.
+# This workflow closes the build only when all of them are completed for the commit.
 # It is a plain `push` workflow (not `workflow_run`: that one only fires from the default branch) - so it works on any branch.
 on:
     push:
@@ -40,19 +41,9 @@ jobs:
             -   name: wait for all test workflows to complete for the commit
                 env:
                     GH_TOKEN: ${{ github.token }}
-                # Every workflow which uploads coverage as parallel
-                # (`--repo` and `--commit_sha` are taken from `GITHUB_REPOSITORY` and `GITHUB_SHA`):
-                run: |
-                    ${{ github.workspace }}/cmd/wait_for_workflow_runs \
-                        test_py_min_linux \
-                        test_py_med_linux \
-                        test_py_max_linux \
-                        test_py_med_darwin \
-                        test_py_max_darwin \
-                        test_py_med_windows \
-                        test_py_max_windows \
-                        test_contract_compatibility \
-                        test_invoke_condition
+                # Waits for every workflow which uploads coverage as parallel parts (found in `.github/`);
+                # `--repo` and `--commit_sha` are taken from `GITHUB_REPOSITORY` and `GITHUB_SHA`:
+                run: "${{ github.workspace }}/cmd/wait_for_workflow_runs"
 
             -   name: finish coveralls.io parallel build
                 uses: coverallsapp/github-action@v2

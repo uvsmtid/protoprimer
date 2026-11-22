@@ -4,6 +4,8 @@ import argparse
 import json
 import logging
 import os
+import pathlib
+import re
 import subprocess
 import sys
 import time
@@ -15,6 +17,40 @@ def get_workflow_file_rel_path(
     workflow_name: str,
 ) -> str:
     return f".github/workflows/{workflow_name}.yaml"
+
+
+# A step which uploads a coverage part to `coveralls.io` (not `parallel-finished: true` of the closing step):
+parallel_upload_pattern = re.compile(r"^\s*parallel:\s*true\s*$")
+
+# A workflow may upload via a local action: `uses: ./.github/actions/<name>`:
+local_action_pattern = re.compile(r"^\s*(?:-\s*)?uses:\s*\./\.github/actions/([\w.-]+)\s*$")
+
+
+def has_parallel_upload(
+    yaml_text: str,
+    action_names_with_upload: set[str],
+) -> bool:
+    for line in yaml_text.splitlines():
+        if line.strip().startswith("#"):
+            continue
+        if parallel_upload_pattern.match(line):
+            return True
+        local_action_match = local_action_pattern.match(line)
+        if local_action_match and local_action_match.group(1) in action_names_with_upload:
+            return True
+    return False
+
+
+def find_uploading_workflow_names(
+    repo_dir_path: pathlib.Path,
+) -> list[str]:
+    """
+    Workflows (`.github/workflows/<name>.yaml`) which upload coverage as parallel parts, directly or via a local action.
+    """
+
+    actions_dir_path = repo_dir_path / ".github" / "actions"
+    action_names_with_upload = {action_file_path.parent.name for action_file_path in actions_dir_path.glob("*/action.yaml") if has_parallel_upload(action_file_path.read_text(encoding="utf-8"), set())}
+    return sorted(workflow_file_path.stem for workflow_file_path in (repo_dir_path / ".github" / "workflows").glob("*.yaml") if has_parallel_upload(workflow_file_path.read_text(encoding="utf-8"), action_names_with_upload))
 
 
 def get_workflow_runs(
@@ -91,10 +127,15 @@ def custom_main():
 
     parsed_args = init_arg_parser().parse_args()
 
+    workflow_names = parsed_args.workflow_names or find_uploading_workflow_names(pathlib.Path(parsed_args.repo_dir))
+    if not workflow_names:
+        raise AssertionError(f"no workflows with parallel coverage upload found in [{parsed_args.repo_dir}]")
+    logger.info(f"workflows to wait for: {workflow_names}")
+
     is_ready = wait_for_workflow_runs(
         parsed_args.repo,
         parsed_args.commit_sha,
-        parsed_args.workflow_names,
+        workflow_names,
         parsed_args.timeout_minutes * 60,
         parsed_args.poll_seconds,
     )
@@ -128,9 +169,14 @@ def init_arg_parser():
         default=30,
     )
     arg_parser.add_argument(
+        "--repo_dir",
+        default=".",
+        help="Repo root to find the workflows in (used when no `workflow_names` are given).",
+    )
+    arg_parser.add_argument(
         "workflow_names",
-        nargs="+",
-        help="Workflow file names without the `.yaml` extension.",
+        nargs="*",
+        help="Workflow file names without the `.yaml` extension (default: all which upload coverage as parallel parts).",
     )
     return arg_parser
 
