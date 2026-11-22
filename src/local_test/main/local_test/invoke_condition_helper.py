@@ -20,6 +20,7 @@ from local_test.case_condition import (
     any_to_bool,
     invoke_condition_env_var,
 )
+from protoprimer.primer_kernel import _ConfDst
 
 # Label to find (and clean up) leftover containers:
 container_label = "protoprimer-test-invoke-condition"
@@ -32,14 +33,14 @@ coverage_boot_dir_name = "_boot"
 # Starts `coverage` in every `python` process in the container (when `coverage` is importable there); never fails or prints.
 # It is installed into the stdlib dirs of `python`-s (shared by their `venv`-s): `PYTHONPATH` is ignored by isolated `-I` mode.
 # `uv` downloads (and `venv` is based on) its own `python` during the scenario: a watcher in the container copies the hook there.
-coverage_boot_script = """
+coverage_boot_script = f"""
 try:
     import warnings
     import coverage
     from coverage.exceptions import CoverageWarning
     warnings.simplefilter("ignore", CoverageWarning)
     coverage.Coverage(
-        config_file="/work/gconf/coveragerc.ini",
+        config_file="/work/{_ConfDst.dst_global.value}/coveragerc.ini",
         source=["/work/src/metaprimer/main", "/work/src/protoprimer/main"],
         data_file="/covdata/.coverage.invoke_condition",
         messages=False,

@@ -6,9 +6,11 @@ import os
 import subprocess
 import sys
 
+from protoprimer.primer_kernel import _ConfDst
+
 logger = logging.getLogger()
 
-rcfile_rel_path = os.path.join(".", "gconf", "coveragerc.ini")
+rcfile_rel_path = os.path.join(".", _ConfDst.dst_global.value, "coveragerc.ini")
 
 # Default tests (when neither `--all_tests` nor `--tests_file` nor `test_paths` is given):
 default_test_dir_rel_paths = [
