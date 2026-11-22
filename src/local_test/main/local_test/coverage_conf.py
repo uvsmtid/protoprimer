@@ -7,7 +7,9 @@ FT_47_61_24_68.combined_coverage.md
 from __future__ import annotations
 
 import configparser
+import json
 import pathlib
+from typing import Optional
 
 from protoprimer.primer_kernel import _ConfDst
 
@@ -39,3 +41,61 @@ def read_source_dir_rel_paths(
     config_parser = configparser.ConfigParser(interpolation=None)
     config_parser.read(str(rcfile_abs_path))
     return [line.strip().rstrip("/") for line in config_parser.get("run", "source").splitlines() if line.strip()]
+
+
+def get_coverage_hook_script(
+    config_file: str,
+    source_dir_paths: list[str],
+    data_file: Optional[str] = None,
+) -> str:
+    """
+    The text of `sitecustomize.py` which starts `coverage` in every `python` process (it never fails or prints).
+
+    It must be installed where isolated `-I` mode finds it (the stdlib dir): `PYTHONPATH` is ignored there.
+    The hook runs under any `python` (even min): `coverage` is imported when it is available there.
+
+    Paths are absolute: the current dir differs per process, but relative paths of the config are resolved against it.
+    `data_file` is `COVERAGE_FILE` env var when not set (the data of every process adds its own suffix: `parallel`).
+
+    `os.exec*` replaces the process without running exit handlers: the data is saved right before it
+    (otherwise, the data of every process which is followed by another one in a chain would be lost).
+    """
+
+    data_file_line = f"        data_file={json.dumps(data_file)},\n" if data_file else ""
+    return f"""
+try:
+    import os
+    import warnings
+    import coverage
+    from coverage.exceptions import CoverageWarning
+    warnings.simplefilter("ignore", CoverageWarning)
+    _cov = coverage.Coverage(
+        config_file={json.dumps(config_file)},
+        source={json.dumps(source_dir_paths)},
+{data_file_line}        messages=False,
+        auto_data=True,
+    )
+    _cov.start()
+
+    def _save_before_exec(name):
+        original = getattr(os, name)
+
+        def wrapper(*args, **kwargs):
+            try:
+                _cov.stop()
+                _cov.save()
+            except Exception:
+                pass
+            try:
+                return original(*args, **kwargs)
+            except BaseException:
+                _cov.start()
+                raise
+
+        setattr(os, name, wrapper)
+
+    for _name in ("execv", "execve"):
+        _save_before_exec(_name)
+except Exception:
+    pass
+"""

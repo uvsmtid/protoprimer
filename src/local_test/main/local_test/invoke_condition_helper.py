@@ -23,6 +23,7 @@ from local_test.case_condition import (
 )
 from local_test.coverage_conf import (
     coverage_dir_env_var,
+    get_coverage_hook_script,
     get_rcfile_abs_path,
     read_source_dir_rel_paths,
 )
@@ -45,32 +46,15 @@ def get_coverage_boot_script() -> str:
     """
     FT_47_61_24_68.combined_coverage.md
 
-    The script starts `coverage` in every `python` process in the container (when `coverage` is importable there); never fails or prints.
-
-    It is installed into the stdlib dirs of `python`-s (shared by their `venv`-s): `PYTHONPATH` is ignored by isolated `-I` mode.
+    The script (see `get_coverage_hook_script`) is installed into the stdlib dirs of `python`-s (shared by their `venv`-s): `PYTHONPATH` is ignored by isolated `-I` mode.
     `uv` downloads (and `venv` is based on) its own `python` during the scenario: a watcher in the container copies the hook there.
-
-    Paths are absolute: processes in a container start in different current dirs, but relative paths of the config are resolved against it.
     """
 
-    container_rcfile_path = get_rcfile_abs_path(pathlib.PurePosixPath(container_work_dir))
-    container_source_dir_paths = [f"{container_work_dir}/{source_dir_rel_path}" for source_dir_rel_path in read_source_dir_rel_paths(get_repo_root_abs_path())]
-    return f"""
-try:
-    import warnings
-    import coverage
-    from coverage.exceptions import CoverageWarning
-    warnings.simplefilter("ignore", CoverageWarning)
-    coverage.Coverage(
-        config_file="{container_rcfile_path}",
-        source={json.dumps(container_source_dir_paths)},
-        data_file="{coverage_container_dir}/.coverage.invoke_condition",
-        messages=False,
-        auto_data=True,
-    ).start()
-except Exception:
-    pass
-"""
+    return get_coverage_hook_script(
+        config_file=str(get_rcfile_abs_path(pathlib.PurePosixPath(container_work_dir))),
+        source_dir_paths=[f"{container_work_dir}/{source_dir_rel_path}" for source_dir_rel_path in read_source_dir_rel_paths(get_repo_root_abs_path())],
+        data_file=f"{coverage_container_dir}/.coverage.invoke_condition",
+    )
 
 
 # Pinned public images (nothing is baked into them, nothing special is maintained):
