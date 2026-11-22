@@ -62,6 +62,7 @@ def test_get_uv_python_dir_path_windows(monkeypatch):
 
 def test_find_uv_stdlib_dir_paths_windows_layout(tmp_path, monkeypatch):
 
+    monkeypatch.setattr(os, "name", "nt")
     monkeypatch.setenv("UV_PYTHON_INSTALL_DIR", str(tmp_path))
     stdlib_dir = tmp_path / "cpython-3.15.2-windows-x86_64-none" / "Lib"
     stdlib_dir.mkdir(parents=True)

@@ -44,8 +44,12 @@ def get_uv_python_dir_path() -> str:
 
 def find_uv_stdlib_dir_paths() -> list:
     uv_python_dir_path = get_uv_python_dir_path()
-    # Posix: `<uv python dir>/<python build>/lib/python3.X`; Windows: `<uv python dir>/<python build>/Lib`:
-    return glob.glob(os.path.join(uv_python_dir_path, "*", "lib", "python3.*")) + glob.glob(os.path.join(uv_python_dir_path, "*", "Lib"))
+    # By OS (file systems may be case-insensitive: `lib` and `Lib` would match the same dir):
+    if os.name == "nt":
+        # `<uv python dir>/<python build>/Lib`:
+        return glob.glob(os.path.join(uv_python_dir_path, "*", "Lib"))
+    # `<uv python dir>/<python build>/lib/python3.X`:
+    return glob.glob(os.path.join(uv_python_dir_path, "*", "lib", "python3.*"))
 
 
 def main() -> None:
