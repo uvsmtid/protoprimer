@@ -63,9 +63,8 @@ def test_run_coverage_puts_rcfile_before_args_of_the_run_program(mock_run):
                 call("run", "--module", "pytest", *default_test_dir_rel_paths),
                 call("combine"),
                 call("report"),
-                call("xml"),
             ],
-            id="default_dirs_report_and_xml",
+            id="default_dirs_report",
         ),
         pytest.param(
             ["--all_tests", "--lcov_file", "out.lcov"],
@@ -84,7 +83,6 @@ def test_run_coverage_puts_rcfile_before_args_of_the_run_program(mock_run):
                 call("run", "--module", "pytest"),
                 call("combine"),
                 call("report"),
-                call("xml"),
             ],
             id="all_tests_wins_over_paths",
         ),

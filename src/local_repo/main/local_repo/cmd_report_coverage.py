@@ -72,10 +72,7 @@ def custom_main():
         # Partial runs (some jobs run a subset of tests) must not fail on `fail_under` (the combined coverage is checked elsewhere):
         sys.exit(run_coverage("lcov", "--fail-under=0", "-o", parsed_args.lcov_file))
 
-    exit_code = run_coverage("report")
-    if exit_code != 0:
-        sys.exit(exit_code)
-    sys.exit(run_coverage("xml"))
+    sys.exit(run_coverage("report"))
 
 
 def init_arg_parser():
@@ -95,7 +92,7 @@ def init_arg_parser():
     )
     arg_parser.add_argument(
         "--lcov_file",
-        help="Write `lcov` report to this file (instead of `report` and `xml`) - the format for parallel upload to `coveralls.io`.",
+        help="Write `lcov` report to this file (instead of `report`) - the format for parallel upload to `coveralls.io`.",
     )
     arg_parser.add_argument(
         "test_paths",
