@@ -41,7 +41,6 @@ def run_coverage(
 def custom_main():
     """
     See also:
-    .github/workflows/cover.yaml
     .github/actions/test_env_posix/action.yaml
     .github/actions/test_env_windows/action.yaml
     """
