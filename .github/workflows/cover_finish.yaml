@@ -17,46 +17,41 @@ concurrency:
 jobs:
     finish_coverage:
         runs-on: ubuntu-latest
-        timeout-minutes: 45
+        timeout-minutes: 50
         steps:
+            # The wait logic is a `python` entry script: prime the repo first (the same as other jobs do):
+            -   uses: actions/setup-python@v5
+                with:
+                    # FT_84_11_73_28.supported_python_versions.md:
+                    python-version: 3.15
+
+            -   uses: actions/checkout@v4
+
+            -   uses: actions/cache@v4
+                with:
+                    path: |
+                        ~/.cache/uv
+                        ~/.cache/pip
+                    key: deps-${{ runner.os }}-${{ hashFiles('dst/default_env/version_constraints.txt') }}
+
+            -   run: "${{ github.workspace }}/prime"
+
             -   name: wait for all test workflows to complete for the commit
                 env:
                     GH_TOKEN: ${{ github.token }}
-                    SHA: ${{ github.sha }}
-                    # Every workflow which uploads coverage as parallel:
-                    EXPECTED: >-
-                        test_py_min_linux
-                        test_py_med_linux
-                        test_py_max_linux
-                        test_py_med_darwin
-                        test_py_max_darwin
-                        test_py_med_windows
-                        test_py_max_windows
-                        test_contract_compatibility
-                        test_invoke_condition
+                # Every workflow which uploads coverage as parallel
+                # (`--repo` and `--commit_sha` are taken from `GITHUB_REPOSITORY` and `GITHUB_SHA`):
                 run: |
-                    deadline=$(( $(date +%s) + 40 * 60 ))
-                    while true; do
-                        runs=$(gh api "repos/${{ github.repository }}/actions/runs?head_sha=${SHA}&event=push&per_page=100")
-                        ready=true
-                        for name in ${EXPECTED}; do
-                            # at least one run must exist (they may not be created yet) and all must be completed (re-runs included):
-                            total=$(echo "${runs}" | jq "[.workflow_runs[] | select(.path == \".github/workflows/${name}.yaml\")] | length")
-                            open=$(echo "${runs}" | jq "[.workflow_runs[] | select(.path == \".github/workflows/${name}.yaml\") | select(.status != \"completed\")] | length")
-                            echo "${name}: total=${total} not_completed=${open}"
-                            if [ "${total}" -lt 1 ] || [ "${open}" -ne 0 ]; then
-                                ready=false
-                            fi
-                        done
-                        if [ "${ready}" = "true" ]; then
-                            break
-                        fi
-                        if [ "$(date +%s)" -ge "${deadline}" ]; then
-                            echo "timed out waiting for the test workflows" >&2
-                            exit 1
-                        fi
-                        sleep 30
-                    done
+                    ${{ github.workspace }}/cmd/wait_for_workflow_runs \
+                        test_py_min_linux \
+                        test_py_med_linux \
+                        test_py_max_linux \
+                        test_py_med_darwin \
+                        test_py_max_darwin \
+                        test_py_med_windows \
+                        test_py_max_windows \
+                        test_contract_compatibility \
+                        test_invoke_condition
 
             -   name: finish coveralls.io parallel build
                 uses: coverallsapp/github-action@v2
