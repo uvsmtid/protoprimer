@@ -8,6 +8,7 @@ from local_test.invoke_condition_helper import (
     ContainerSession,
     InvokeCondition,
     boot_max_script,
+    container_work_dir,
     image_python_3_15,
 )
 
@@ -21,9 +22,9 @@ def test_selector_returning_python_from_dedicated_venv_is_rejected(tmp_path):
 
         container.write_file(
             "src/proto_code/venv_selector.py",
-            """
+            f"""
 def select_python_file_abs_path(required_version):
-    return "/work/venv/bin/python"
+    return "{container_work_dir}/venv/bin/python"
 """,
         )
         container.run("sed -i 's#src/proto_code/python_selector_py3.15.py#src/proto_code/venv_selector.py#' dst/test_python_max_linux/proto_kernel.json")

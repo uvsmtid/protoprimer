@@ -7,6 +7,7 @@ FT_64_09_03_66.invoke_condition.md
 from __future__ import annotations
 
 import enum
+import json
 import os
 import pathlib
 import shlex
@@ -20,9 +21,41 @@ from local_test.case_condition import (
     any_to_bool,
     invoke_condition_env_var,
 )
+from local_test.coverage_conf import (
+    coverage_dir_env_var,
+    get_coverage_hook_script,
+    get_rcfile_abs_path,
+    read_source_dir_rel_paths,
+)
 
 # Label to find (and clean up) leftover containers:
 container_label = "protoprimer-test-invoke-condition"
+
+# Dirs in a container (`ContainerSession.src_dir` and `ContainerSession.work_dir` are set to these):
+container_src_dir = "/src"
+container_work_dir = "/work"
+
+# FT_47_61_24_68.combined_coverage.md:
+# `coverage_dir_env_var` set to a dir collects coverage of the code run in containers (opt-in):
+coverage_container_dir = "/covdata"
+coverage_boot_dir_name = "_boot"
+coverage_installer_basename = "container_hook_installer.py"
+
+
+def get_coverage_boot_script() -> str:
+    """
+    FT_47_61_24_68.combined_coverage.md
+
+    The script (see `get_coverage_hook_script`) is installed into the stdlib dirs of `python`-s (shared by their `venv`-s): `PYTHONPATH` is ignored by isolated `-I` mode.
+    `uv` downloads (and `venv` is based on) its own `python` during the scenario: a watcher in the container copies the hook there.
+    """
+
+    return get_coverage_hook_script(
+        config_file=str(get_rcfile_abs_path(pathlib.PurePosixPath(container_work_dir))),
+        source_dir_paths=[f"{container_work_dir}/{source_dir_rel_path}" for source_dir_rel_path in read_source_dir_rel_paths(get_repo_root_abs_path())],
+        data_file=f"{coverage_container_dir}/.coverage.invoke_condition",
+    )
+
 
 # Pinned public images (nothing is baked into them, nothing special is maintained):
 # FT_84_11_73_28.supported_python_versions.md
@@ -198,8 +231,8 @@ class ContainerSession:
     The clean tree of the repo is read-only at `/src` and copied to `/work` (the working dir of steps).
     """
 
-    src_dir = "/src"
-    work_dir = "/work"
+    src_dir = container_src_dir
+    work_dir = container_work_dir
 
     def __init__(
         self,
@@ -212,9 +245,18 @@ class ContainerSession:
         self.image: str = image
         self.tmp_dir_path: pathlib.Path = tmp_dir_path
         self.name: str = f"protoprimer-test-{uuid.uuid4().hex[:12]}"
+        coverage_dir = os.environ.get(coverage_dir_env_var)
+        self.coverage_dir_path: pathlib.Path | None = pathlib.Path(coverage_dir).resolve() if coverage_dir else None
 
     def __enter__(self) -> ContainerSession:
         tree_dir_path = export_clean_tree(self.tmp_dir_path / "tree")
+        coverage_mount_args: list[str] = []
+        if self.coverage_dir_path is not None:
+            boot_dir_path = self.coverage_dir_path / coverage_boot_dir_name
+            boot_dir_path.mkdir(parents=True, exist_ok=True)
+            (boot_dir_path / "sitecustomize.py").write_text(get_coverage_boot_script())
+            shutil.copy(pathlib.Path(__file__).with_name(coverage_installer_basename), boot_dir_path / coverage_installer_basename)
+            coverage_mount_args = ["-v", f"{self.coverage_dir_path}:{coverage_container_dir}:z"]
         subprocess.run(
             [
                 self.engine,
@@ -228,6 +270,9 @@ class ContainerSession:
                 # `z`: relabel for SELinux hosts:
                 "-v",
                 f"{tree_dir_path}:{self.src_dir}:ro,z",
+            ]
+            + coverage_mount_args
+            + [
                 self.image,
                 "sleep",
                 "infinity",
@@ -236,9 +281,19 @@ class ContainerSession:
         )
         copy_result = self.run(f"cp -a {self.src_dir} {self.work_dir}", work_dir="/")
         assert copy_result.exit_code == 0, str(copy_result)
+        if self.coverage_dir_path is not None:
+            # No `python3` in the image (e.g. `debian`) is fine (the commands just fail): there is nothing to measure there:
+            boot_dir = f"{coverage_container_dir}/{coverage_boot_dir_name}"
+            installer_args = ["python3", f"{boot_dir}/{coverage_installer_basename}", f"{boot_dir}/sitecustomize.py"]
+            subprocess.run([self.engine, "exec", self.name] + installer_args + ["once"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            # Keeps running until the container is removed:
+            subprocess.run([self.engine, "exec", "-d", self.name] + installer_args + ["watch"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
+        if self.coverage_dir_path is not None:
+            # Data files are written by `root` in the container: make them usable (and removable) by the host user:
+            self.run(f"chmod -R a+rwX {coverage_container_dir}", work_dir="/")
         subprocess.run(
             [self.engine, "rm", "-f", self.name],
             stdout=subprocess.DEVNULL,

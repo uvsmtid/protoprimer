@@ -69,9 +69,20 @@ runs:
         # only the platform-portable tests (`portable_tests.txt`) run here (eventually, the whole `pytest` should pass).
         -   name: run selected portable tests
             run: |
-                $portableTests = Get-Content "${{ github.action_path }}/portable_tests.txt" | Where-Object { $_.Trim() -and -not $_.StartsWith("#") }
-                & "${{ github.workspace }}/venv/Scripts/python.exe" -m pytest $portableTests
+                python ${{ github.workspace }}/cmd/report_coverage --subprocesses --tests_file "${{ github.action_path }}/portable_tests.txt" --lcov_file "${{ github.workspace }}/coverage.lcov"
             shell: pwsh
+
+        # FT_47_61_24_68.combined_coverage.md:
+        # `build-number` (commit) is shared by all workflows.
+        -   name: upload coverage (parallel)
+            if: github.event_name == 'push'
+            uses: coverallsapp/github-action@v2
+            with:
+                file: coverage.lcov
+                format: lcov
+                parallel: true
+                flag-name: ${{ github.job }}
+                build-number: ${{ github.sha }}
 
         -   run: "echo job.status: ${{ job.status }}"
             shell: pwsh

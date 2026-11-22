@@ -1,11 +1,16 @@
 from __future__ import annotations
 
+import contextlib
 import os
 import pathlib
 import subprocess
 import sys
 
 from local_contract_compatibility.mode_id import ModeId
+from local_test.coverage_conf import (
+    coverage_dir_env_var,
+    installed_coverage_hook,
+)
 
 
 def get_handoff_test_dir_rel_path(
@@ -23,6 +28,7 @@ def run_pytest_for_mode(
     commit_name: str,
     commit_id: str | None,
     pytest_args: list[str],
+    repo_dir_abs_path: pathlib.Path | None = None,
 ) -> int:
     """
     Runs `pytest` for `mode_id` and reports the failure message (the same for all modes).
@@ -33,11 +39,22 @@ def run_pytest_for_mode(
     # `CI` is required, otherwise `test_slow_integrated` tests are skipped:
     sub_env = dict(os.environ)
     sub_env["CI"] = "true"
-    exit_code = subprocess.run(
-        [str(python_abs_path), "-m", "pytest", "-p", "no:cacheprovider"] + [str(test_dir_rel_path) for test_dir_rel_path in test_dir_rel_paths] + pytest_args,
-        cwd=str(cwd_abs_path),
-        env=sub_env,
-    ).returncode
+
+    # FT_47_61_24_68.combined_coverage.md:
+    # opt-in: measure the current code (`repo_dir_abs_path`) in every process while the old tests run against it:
+    coverage_dir = os.environ.get(coverage_dir_env_var)
+    with contextlib.ExitStack() as exit_stack:
+        if coverage_dir and repo_dir_abs_path is not None:
+            # `parallel = true`: each process adds its own suffix to this base name:
+            sub_env["COVERAGE_FILE"] = str(pathlib.Path(coverage_dir).resolve() / f".coverage.{mode_id.value}")
+            # The hook measures every process (including `pytest`): the tests run plain (not under `coverage run`):
+            exit_stack.enter_context(installed_coverage_hook(repo_dir_abs_path, [str(python_abs_path)]))
+
+        exit_code = subprocess.run(
+            [str(python_abs_path), "-m", "pytest", "-p", "no:cacheprovider"] + [str(test_dir_rel_path) for test_dir_rel_path in test_dir_rel_paths] + pytest_args,
+            cwd=str(cwd_abs_path),
+            env=sub_env,
+        ).returncode
 
     if exit_code != 0:
         commit_id_suffix = f" ({commit_id})" if commit_id else ""
@@ -71,4 +88,5 @@ def run_handoff_mode_tests(
         commit_name,
         None,
         ["--commit_name", commit_name] + pytest_args,
+        repo_dir_abs_path=repo_dir_abs_path,
     )

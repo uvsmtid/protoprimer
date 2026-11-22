@@ -8,6 +8,7 @@ from local_test.invoke_condition_helper import (
     ContainerSession,
     InvokeCondition,
     boot_max_script,
+    container_work_dir,
     image_python_3_15,
 )
 
@@ -26,4 +27,4 @@ def test_dangling_venv_python_fails_with_raw_file_not_found(tmp_path):
     # TODO: FT_64_09_03_66.invoke_condition.md: fail with a message about the broken `venv` (and `reset` hint) instead of the raw error:
     assert result.exit_code != 0, str(result)
     assert "FileNotFoundError" in result.stderr, str(result)
-    assert "/work/venv/bin/python" in result.stderr, str(result)
+    assert f"{container_work_dir}/venv/bin/python" in result.stderr, str(result)

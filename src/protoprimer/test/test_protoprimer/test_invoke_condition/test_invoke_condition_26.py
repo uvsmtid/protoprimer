@@ -11,6 +11,7 @@ from protoprimer.primer_kernel import (
 from local_test.invoke_condition_helper import (
     ContainerSession,
     InvokeCondition,
+    container_work_dir,
     image_python_3_15,
 )
 
@@ -30,4 +31,4 @@ def test_pip_user_var_breaks_pip_driver_install(tmp_path):
     # TODO: FT_64_09_03_66.invoke_condition.md: drop the vars redirecting installs (with a warning) before calling `pip`/`uv`:
     assert result.exit_code != 0, str(result)
     assert "command failed with `exit_code`" in result.stderr, str(result)
-    assert "/work/venv/bin/python -m pip install" in result.stderr, str(result)
+    assert f"{container_work_dir}/venv/bin/python -m pip install" in result.stderr, str(result)

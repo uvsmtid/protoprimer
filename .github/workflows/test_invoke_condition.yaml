@@ -25,6 +25,11 @@ jobs:
             github.event.pull_request.head.repo.full_name != github.repository
         runs-on: ubuntu-latest
 
+        env:
+            # FT_47_61_24_68.combined_coverage.md:
+            # containers write coverage of the current code here:
+            PROTOPRIMER_COVERAGE_DIR: ${{ github.workspace }}/tmp/coverage_data
+
         steps:
             -   run: "echo runner.os: ${{ runner.os }}"
             -   run: "echo github.repository: ${{ github.repository }}"
@@ -61,5 +66,22 @@ jobs:
                     ${{ github.workspace }}/venv/bin/python -m pytest src/protoprimer/test/test_protoprimer/test_invoke_condition
                 env:
                     TEST_PROTOPRIMER_INVOKE_CONDITION: "true"
+
+            -   name: generate coverage (combine containers)
+                # Even if some scenario failed: the data of the others is still valid:
+                if: always() && github.event_name == 'push'
+                run: |
+                    ${{ github.workspace }}/venv/bin/python -m coverage combine --rcfile=${{ github.workspace }}/gconf/coveragerc.ini --data-file=${{ env.PROTOPRIMER_COVERAGE_DIR }}/.coverage ${{ env.PROTOPRIMER_COVERAGE_DIR }}
+                    ${{ github.workspace }}/venv/bin/python -m coverage lcov --fail-under=0 --rcfile=${{ github.workspace }}/gconf/coveragerc.ini --data-file=${{ env.PROTOPRIMER_COVERAGE_DIR }}/.coverage -o ${{ github.workspace }}/coverage.lcov
+
+            -   name: upload coverage (parallel)
+                if: always() && github.event_name == 'push'
+                uses: coverallsapp/github-action@v2
+                with:
+                    file: coverage.lcov
+                    format: lcov
+                    parallel: true
+                    flag-name: ${{ github.job }}
+                    build-number: ${{ github.sha }}
 
             -   run: "echo job.status: ${{ job.status }}"

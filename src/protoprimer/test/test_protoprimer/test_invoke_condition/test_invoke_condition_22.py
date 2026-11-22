@@ -7,6 +7,7 @@ FT_64_09_03_66.invoke_condition.md
 from local_test.invoke_condition_helper import (
     ContainerSession,
     InvokeCondition,
+    container_work_dir,
     image_python_3_15,
 )
 
@@ -20,4 +21,4 @@ def test_fake_protoprimer_in_pythonpath_is_not_imported_by_boot(tmp_path):
         venv_module = container.run('./venv/bin/python -c "import protoprimer; print(protoprimer.__file__)"')
 
     assert result.exit_code == 0, str(result)
-    assert venv_module.stdout.strip().startswith("/work/"), str(venv_module)
+    assert venv_module.stdout.strip().startswith(f"{container_work_dir}/"), str(venv_module)

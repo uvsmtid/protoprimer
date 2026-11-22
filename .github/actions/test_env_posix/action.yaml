@@ -58,12 +58,25 @@ runs:
                 test -z "$(git status --porcelain)"
             shell: bash
 
+        # `pytest` under `coverage` (`lcov` for the parallel upload below):
         -   run: |
                 ${{ github.workspace }}/venv/bin/python --version
-                ${{ github.workspace }}/venv/bin/python -m pytest
+                ${{ github.workspace }}/cmd/report_coverage --all_tests --subprocesses --lcov_file ${{ github.workspace }}/coverage.lcov
             shell: bash
             env:
                 GITHUB_TOKEN: ${{ github.token }}
+
+        # FT_47_61_24_68.combined_coverage.md:
+        # `build-number` (commit) is shared by all workflows.
+        -   name: upload coverage (parallel)
+            if: github.event_name == 'push'
+            uses: coverallsapp/github-action@v2
+            with:
+                file: coverage.lcov
+                format: lcov
+                parallel: true
+                flag-name: ${{ github.job }}
+                build-number: ${{ github.sha }}
 
         -   run: "echo job.status: ${{ job.status }}"
             shell: bash

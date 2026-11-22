@@ -11,6 +11,7 @@ from protoprimer.primer_kernel import (
 from local_test.invoke_condition_helper import (
     ContainerSession,
     InvokeCondition,
+    container_work_dir,
     image_python_3_15,
 )
 
@@ -25,4 +26,4 @@ def test_py_exec_not_verified_against_actual_python(tmp_path):
     # TODO: FT_64_09_03_66.invoke_condition.md: verify the announced stride against `sys.executable` and fail early with a clear message:
     assert result.exit_code != 0, str(result)
     assert "command failed with `exit_code`" in result.stderr, str(result)
-    assert "--python /work/venv/bin/python" in result.stderr, str(result)
+    assert f"--python {container_work_dir}/venv/bin/python" in result.stderr, str(result)

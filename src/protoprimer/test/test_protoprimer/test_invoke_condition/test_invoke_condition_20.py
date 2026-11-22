@@ -8,6 +8,7 @@ from local_test.invoke_condition_helper import (
     ContainerSession,
     InvokeCondition,
     boot_max_script,
+    container_work_dir,
     image_python_3_15,
 )
 
@@ -24,6 +25,6 @@ def test_system_wide_protoprimer_is_neither_used_nor_accepted_as_proto_kernel(tm
         from_site_packages = container.run("python -m protoprimer.primer_kernel --env dst/test_python_max_linux")
 
     assert boot_result.exit_code == 0, str(boot_result)
-    assert venv_module.stdout.strip().startswith("/work/"), str(venv_module)
+    assert venv_module.stdout.strip().startswith(f"{container_work_dir}/"), str(venv_module)
     assert from_site_packages.exit_code != 0, str(from_site_packages)
     assert "cannot be from site packages" in from_site_packages.stderr, str(from_site_packages)

@@ -1,11 +1,13 @@
 from __future__ import annotations
 
+import os
 import pathlib
 import subprocess
 import sys
 
 from local_contract_compatibility.mode_id import ModeId
 from local_contract_compatibility.run_mode_tests import run_pytest_for_mode
+from local_test.coverage_conf import coverage_dir_env_var
 
 # Old `local_*` packages which are installed from the baseline worktree (all must be present there):
 old_local_package_names = [
@@ -95,6 +97,9 @@ def ensure_venv(
         raise AssertionError(f"worktree [{worktree_abs_path}] has no [{', '.join(missing_package_names)}]: the baseline is not established")
     install_args = [str(worktree_abs_path / "src" / old_package_name) for old_package_name in old_local_package_names]
     install_args += ["-e", f"{repo_dir_abs_path / 'src' / package_name}[test]"]
+    # FT_47_61_24_68.combined_coverage.md: `coverage` is needed to measure the current code:
+    if os.environ.get(coverage_dir_env_var):
+        install_args += ["coverage"]
     subprocess.run([str(venv_python_abs_path), "-m", "pip", "install", "-q"] + install_args, check=True)
     return venv_python_abs_path
 
@@ -136,4 +141,5 @@ def run_old_tests_on_new_changes(
         commit_name,
         commit_id,
         pytest_args,
+        repo_dir_abs_path=repo_dir_abs_path,
     )

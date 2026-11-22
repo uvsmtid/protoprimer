@@ -1,0 +1,52 @@
+run-name: "${{ github.workflow }}: ${{ github.actor }}: ${{ github.event_name }}: ${{ github.ref_name }}: ${{ github.ref_type }}"
+# FT_47_61_24_68.combined_coverage.md:
+# close the parallel `coveralls.io` build (`build-number` = commit).
+# Every workflow with `parallel: true` upload (directly or via `.github/actions/test_env_*`) is waited for:
+# the list is found by `cmd/wait_for_workflow_runs`, so a new uploading workflow is picked up automatically.
+# This workflow closes the build only when all of them are completed for the commit.
+# It is a plain `push` workflow (not `workflow_run`: that one only fires from the default branch) - so it works on any branch.
+on:
+    push:
+        branches:
+        -   "*"
+permissions:
+    actions: read
+    contents: read
+# Cancel superseded runs per branch (never on `main`: every commit keeps its run):
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref == 'refs/heads/main' && github.sha || github.ref }}
+    cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+jobs:
+    finish_coverage:
+        runs-on: ubuntu-latest
+        timeout-minutes: 50
+        steps:
+            # The wait logic is a `python` entry script: prime the repo first (the same as other jobs do):
+            -   uses: actions/setup-python@v5
+                with:
+                    # FT_84_11_73_28.supported_python_versions.md:
+                    python-version: 3.15
+
+            -   uses: actions/checkout@v4
+
+            -   uses: actions/cache@v4
+                with:
+                    path: |
+                        ~/.cache/uv
+                        ~/.cache/pip
+                    key: deps-${{ runner.os }}-${{ hashFiles('dst/default_env/version_constraints.txt') }}
+
+            -   run: "${{ github.workspace }}/prime"
+
+            -   name: wait for all test workflows to complete for the commit
+                env:
+                    GH_TOKEN: ${{ github.token }}
+                # Waits for every workflow which uploads coverage as parallel parts (found in `.github/`);
+                # `--repo` and `--commit_sha` are taken from `GITHUB_REPOSITORY` and `GITHUB_SHA`:
+                run: "${{ github.workspace }}/cmd/wait_for_workflow_runs"
+
+            -   name: finish coveralls.io parallel build
+                uses: coverallsapp/github-action@v2
+                with:
+                    parallel-finished: true
+                    build-number: ${{ github.sha }}

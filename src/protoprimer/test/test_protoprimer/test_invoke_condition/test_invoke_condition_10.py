@@ -8,6 +8,7 @@ from local_test.invoke_condition_helper import (
     ContainerSession,
     InvokeCondition,
     boot_max_script,
+    container_work_dir,
     image_python_3_15,
 )
 
@@ -21,5 +22,5 @@ def test_other_activated_venv_is_escaped_and_left_untouched(tmp_path):
         other_packages = container.run("/tmp/other/bin/python -m pip list --format=freeze")
 
     assert result.exit_code == 0, str(result)
-    assert venv_prefix.stdout.strip() == "/work/venv", str(venv_prefix)
+    assert venv_prefix.stdout.strip() == f"{container_work_dir}/venv", str(venv_prefix)
     assert "protoprimer" not in other_packages.stdout, str(other_packages)
