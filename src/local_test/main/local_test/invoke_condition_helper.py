@@ -29,7 +29,9 @@ coverage_dir_env_var = "PROTOPRIMER_COVERAGE_DIR"
 coverage_container_dir = "/covdata"
 coverage_boot_dir_name = "_boot"
 
-# Starts `coverage` in every `python` process in the container (when `coverage` is importable there); never fails or prints:
+# Starts `coverage` in every `python` process in the container (when `coverage` is importable there); never fails or prints.
+# It is installed into the stdlib dirs of `python`-s (shared by their `venv`-s): `PYTHONPATH` is ignored by isolated `-I` mode.
+# `uv` downloads (and `venv` is based on) its own `python` during the scenario: a watcher in the container copies the hook there.
 coverage_boot_script = """
 try:
     import warnings
@@ -270,6 +272,25 @@ class ContainerSession:
         )
         copy_result = self.run(f"cp -a {self.src_dir} {self.work_dir}", work_dir="/")
         assert copy_result.exit_code == 0, str(copy_result)
+        if self.coverage_dir_path is not None:
+            # No `python` in the image (e.g. `debian`) is fine: there is nothing to measure:
+            self.run(
+                f"py=$(command -v python3 || command -v python) && " f"cp {coverage_container_dir}/{coverage_boot_dir_name}/sitecustomize.py " f'"$($py -c \'import sysconfig; print(sysconfig.get_paths()["stdlib"])\')/sitecustomize.py" || true',
+                work_dir="/",
+            )
+            # Keeps running until the container is removed:
+            subprocess.run(
+                [
+                    self.engine,
+                    "exec",
+                    "-d",
+                    self.name,
+                    "bash",
+                    "-c",
+                    "while true; do " "for d in /root/.local/share/uv/python/*/lib/python3.*/; do " f'[ -f "$d/sitecustomize.py" ] || cp {coverage_container_dir}/{coverage_boot_dir_name}/sitecustomize.py "$d/sitecustomize.py" 2>/dev/null; ' "done; sleep 0.1; done",
+                ],
+                check=True,
+            )
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
@@ -298,12 +319,7 @@ class ContainerSession:
             "-w",
             work_dir if work_dir is not None else self.work_dir,
         ]
-        env = dict(env or {})
-        if self.coverage_dir_path is not None:
-            # Keep the scenario's own `PYTHONPATH` (if any), the boot dir goes last:
-            boot_dir = f"{coverage_container_dir}/{coverage_boot_dir_name}"
-            env["PYTHONPATH"] = f"{env['PYTHONPATH']}:{boot_dir}" if env.get("PYTHONPATH") else boot_dir
-        for env_name, env_value in env.items():
+        for env_name, env_value in (env or {}).items():
             command.extend(["-e", f"{env_name}={env_value}"])
         command.extend([self.name, "bash", "-c", script])
         completed = subprocess.run(
