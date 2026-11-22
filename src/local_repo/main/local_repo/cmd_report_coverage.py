@@ -1,10 +1,14 @@
 from __future__ import annotations
 
 import argparse
+import contextlib
+import glob
 import logging
 import os
+import pathlib
 import subprocess
 import sys
+import sysconfig
 
 from protoprimer.primer_kernel import _ConfDst
 
@@ -38,6 +42,70 @@ def run_coverage(
     ).returncode
 
 
+@contextlib.contextmanager
+def installed_coverage_hook(
+    repo_dir_abs_path: pathlib.Path,
+):
+    """
+    Installs the coverage hook as `sitecustomize.py` into the stdlib dir of the current `python` (shared by `venv`-s):
+    it starts `coverage` in every `python` process (the tests start many) - `PYTHONPATH` is ignored by isolated `-I` mode.
+
+    Yields `True` if installed (it is removed on exit), `False` otherwise (never overwrites an existing `sitecustomize.py`).
+    """
+
+    # Not imported at the top: `local_repo` does not depend on `local_test` otherwise:
+    from local_test.coverage_conf import (
+        get_coverage_hook_script,
+        get_rcfile_abs_path,
+        read_source_dir_rel_paths,
+    )
+
+    stdlib_dir_path = pathlib.Path(sysconfig.get_paths()["stdlib"])
+    hook_file_path = stdlib_dir_path / "sitecustomize.py"
+    if hook_file_path.exists():
+        logger.warning(f"[{hook_file_path}] already exists: subprocesses are not measured")
+        yield False
+        return
+
+    try:
+        hook_file_path.write_text(
+            get_coverage_hook_script(
+                config_file=str(get_rcfile_abs_path(repo_dir_abs_path)),
+                source_dir_paths=[str(repo_dir_abs_path / source_dir_rel_path) for source_dir_rel_path in read_source_dir_rel_paths(repo_dir_abs_path)],
+            )
+        )
+    except OSError as os_error:
+        logger.warning(f"cannot write [{hook_file_path}] ({os_error}): subprocesses are not measured")
+        yield False
+        return
+
+    try:
+        yield True
+    finally:
+        hook_file_path.unlink()
+        for pyc_file_path in glob.glob(str(stdlib_dir_path / "__pycache__" / "sitecustomize.*.pyc")):
+            os.remove(pyc_file_path)
+
+
+def run_pytest_with_subprocess_coverage(
+    test_paths: list[str],
+) -> int:
+    """
+    Runs plain `pytest` (not `coverage run`): the hook measures every `python` process including this one.
+
+    Falls back to `coverage run` (the process of `pytest` only) if the hook cannot be installed.
+    """
+
+    repo_dir_abs_path = pathlib.Path.cwd()
+    with installed_coverage_hook(repo_dir_abs_path) as is_installed:
+        if not is_installed:
+            return run_coverage("run", "--module", "pytest", *test_paths)
+        sub_env = dict(os.environ)
+        # Absolute: subprocesses start in other current dirs (`parallel = true` adds a suffix per process):
+        sub_env["COVERAGE_FILE"] = str(repo_dir_abs_path / ".coverage")
+        return subprocess.run([sys.executable, "-m", "pytest", *test_paths], env=sub_env).returncode
+
+
 def custom_main():
     """
     See also:
@@ -61,7 +129,10 @@ def custom_main():
     if exit_code != 0:
         sys.exit(exit_code)
 
-    exit_code = run_coverage("run", "--module", "pytest", *test_paths)
+    if parsed_args.subprocesses:
+        exit_code = run_pytest_with_subprocess_coverage(test_paths)
+    else:
+        exit_code = run_coverage("run", "--module", "pytest", *test_paths)
     if exit_code != 0:
         # Do not report coverage of failed tests:
         sys.exit(exit_code)
@@ -95,6 +166,11 @@ def init_arg_parser():
     arg_parser.add_argument(
         "--lcov_file",
         help="Write `lcov` report to this file (instead of `report`) - the format for parallel upload to `coveralls.io`.",
+    )
+    arg_parser.add_argument(
+        "--subprocesses",
+        action="store_true",
+        help="Also measure `python` subprocesses of tests (a hook is installed into the stdlib of the current `python` while `pytest` runs).",
     )
     arg_parser.add_argument(
         "test_paths",
