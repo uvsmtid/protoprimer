@@ -1,15 +1,13 @@
 from __future__ import annotations
 
 import argparse
-import contextlib
-import glob
 import logging
 import os
 import pathlib
 import subprocess
 import sys
-import sysconfig
 
+from local_test.coverage_conf import installed_coverage_hook
 from protoprimer.primer_kernel import _ConfDst
 
 logger = logging.getLogger()
@@ -40,51 +38,6 @@ def run_coverage(
     return subprocess.run(
         [sys.executable, "-m", "coverage", sub_command, f"--rcfile={rcfile_rel_path}", *sub_command_args],
     ).returncode
-
-
-@contextlib.contextmanager
-def installed_coverage_hook(
-    repo_dir_abs_path: pathlib.Path,
-):
-    """
-    Installs the coverage hook as `sitecustomize.py` into the stdlib dir of the current `python` (shared by `venv`-s):
-    it starts `coverage` in every `python` process (the tests start many) - `PYTHONPATH` is ignored by isolated `-I` mode.
-
-    Yields `True` if installed (it is removed on exit), `False` otherwise (never overwrites an existing `sitecustomize.py`).
-    """
-
-    # Not imported at the top: `local_repo` does not depend on `local_test` otherwise:
-    from local_test.coverage_conf import (
-        get_coverage_hook_script,
-        get_rcfile_abs_path,
-        read_source_dir_rel_paths,
-    )
-
-    stdlib_dir_path = pathlib.Path(sysconfig.get_paths()["stdlib"])
-    hook_file_path = stdlib_dir_path / "sitecustomize.py"
-    if hook_file_path.exists():
-        logger.warning(f"[{hook_file_path}] already exists: subprocesses are not measured")
-        yield False
-        return
-
-    try:
-        hook_file_path.write_text(
-            get_coverage_hook_script(
-                config_file=str(get_rcfile_abs_path(repo_dir_abs_path)),
-                source_dir_paths=[str(repo_dir_abs_path / source_dir_rel_path) for source_dir_rel_path in read_source_dir_rel_paths(repo_dir_abs_path)],
-            )
-        )
-    except OSError as os_error:
-        logger.warning(f"cannot write [{hook_file_path}] ({os_error}): subprocesses are not measured")
-        yield False
-        return
-
-    try:
-        yield True
-    finally:
-        hook_file_path.unlink()
-        for pyc_file_path in glob.glob(str(stdlib_dir_path / "__pycache__" / "sitecustomize.*.pyc")):
-            os.remove(pyc_file_path)
 
 
 def run_pytest_with_subprocess_coverage(

@@ -1,4 +1,6 @@
+import contextlib
 import os
+import pathlib
 import subprocess
 import sys
 
@@ -7,6 +9,7 @@ import pytest
 
 from local_test import coverage_conf
 from local_test.coverage_conf import (
+    installed_coverage_hook,
     get_coverage_hook_script,
     get_rcfile_abs_path,
     read_source_dir_rel_paths,
@@ -148,3 +151,103 @@ def test_hook_ignores_code_outside_of_source(tmp_path, monkeypatch):
     # then:
 
     assert executed_file_names(data_file) == []
+
+
+@pytest.fixture
+def stdlib_dir(tmp_path, monkeypatch):
+    stdlib_dir_path = tmp_path / "stdlib"
+    (stdlib_dir_path / "__pycache__").mkdir(parents=True)
+    monkeypatch.setattr(coverage_conf.sysconfig, "get_paths", lambda: {"stdlib": str(stdlib_dir_path)})
+    monkeypatch.setattr(coverage_conf, "find_uv_stdlib_dir_paths", lambda: [])
+    return stdlib_dir_path
+
+
+def test_installed_coverage_hook_installs_and_removes(stdlib_dir):
+
+    hook_file = stdlib_dir / "sitecustomize.py"
+    pyc_file = stdlib_dir / "__pycache__" / "sitecustomize.cpython-315.pyc"
+    pyc_file.write_text("")
+
+    with installed_coverage_hook(get_repo_root_abs_path()) as is_installed:
+        assert is_installed is True
+        assert "coverage.Coverage(" in hook_file.read_text()
+
+    assert not hook_file.exists()
+    assert not pyc_file.exists()
+
+
+def test_installed_coverage_hook_removes_on_failure(stdlib_dir):
+
+    with pytest.raises(RuntimeError):
+        with installed_coverage_hook(get_repo_root_abs_path()):
+            raise RuntimeError("tests failed")
+
+    assert not (stdlib_dir / "sitecustomize.py").exists()
+
+
+def test_installed_coverage_hook_does_not_overwrite_existing(stdlib_dir):
+
+    hook_file = stdlib_dir / "sitecustomize.py"
+    hook_file.write_text("existing")
+
+    with installed_coverage_hook(get_repo_root_abs_path()) as is_installed:
+        assert is_installed is False
+
+    assert hook_file.read_text() == "existing"
+
+
+def test_installed_coverage_hook_skips_unwritable_dir(tmp_path, monkeypatch):
+
+    monkeypatch.setattr(coverage_conf.sysconfig, "get_paths", lambda: {"stdlib": str(tmp_path / "missing_dir")})
+    monkeypatch.setattr(coverage_conf, "find_uv_stdlib_dir_paths", lambda: [])
+
+    with installed_coverage_hook(get_repo_root_abs_path()) as is_installed:
+        assert is_installed is False
+
+
+def test_installed_coverage_hook_installs_into_stdlib_of_other_python(stdlib_dir, tmp_path):
+
+    # given: another `python` (here a copy of the interface: the script prints its own stdlib dir)
+
+    other_stdlib_dir = tmp_path / "other_stdlib"
+    other_stdlib_dir.mkdir()
+    other_python = tmp_path / "other_python"
+    other_python.write_text(f"#!{sys.executable}\nprint({str(other_stdlib_dir)!r})\n")
+    other_python.chmod(0o755)
+
+    # when:
+
+    with installed_coverage_hook(get_repo_root_abs_path(), [str(other_python)]) as is_installed:
+
+        # then:
+
+        assert is_installed is True
+        assert (other_stdlib_dir / "sitecustomize.py").exists()
+        assert not (stdlib_dir / "sitecustomize.py").exists()
+
+    assert not (other_stdlib_dir / "sitecustomize.py").exists()
+
+
+def test_installed_coverage_hook_installs_into_python_which_appears_later(stdlib_dir, tmp_path, monkeypatch):
+
+    # given: `uv` python dir which does not exist yet
+
+    uv_stdlib_dir = tmp_path / "uv_stdlib"
+    monkeypatch.setattr(coverage_conf, "find_uv_stdlib_dir_paths", lambda: [str(uv_stdlib_dir)] if uv_stdlib_dir.is_dir() else [])
+
+    with installed_coverage_hook(get_repo_root_abs_path()):
+
+        # when: it appears (downloaded) while the context is active
+
+        uv_stdlib_dir.mkdir()
+        hook_file = uv_stdlib_dir / "sitecustomize.py"
+        for _ in range(100):
+            if hook_file.exists():
+                break
+            coverage_conf.threading.Event().wait(0.05)
+
+        # then:
+
+        assert hook_file.exists()
+
+    assert not hook_file.exists()

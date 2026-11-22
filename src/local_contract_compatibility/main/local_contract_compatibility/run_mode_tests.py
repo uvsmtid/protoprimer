@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import contextlib
 import os
 import pathlib
 import subprocess
@@ -8,8 +9,7 @@ import sys
 from local_contract_compatibility.mode_id import ModeId
 from local_test.coverage_conf import (
     coverage_dir_env_var,
-    get_rcfile_abs_path,
-    read_source_dir_rel_paths,
+    installed_coverage_hook,
 )
 
 
@@ -18,21 +18,6 @@ def get_handoff_test_dir_rel_path(
     mode_id: ModeId,
 ) -> pathlib.Path:
     return pathlib.Path("src") / package_name / "test" / f"test_{package_name}" / "test_slow_integrated" / f"test_{mode_id.value}"
-
-
-# FT_47_61_24_68.combined_coverage.md:
-# opt-in coverage of the current code while the old tests run.
-def get_coverage_command_args(
-    repo_dir_abs_path: pathlib.Path,
-) -> list[str]:
-    return [
-        "-m",
-        "coverage",
-        "run",
-        f"--rcfile={get_rcfile_abs_path(repo_dir_abs_path)}",
-        # `cwd` is not the repo root for old tests: the measured code is anchored at the repo root:
-        "--source=" + ",".join(str(repo_dir_abs_path / source_dir_rel_path) for source_dir_rel_path in read_source_dir_rel_paths(repo_dir_abs_path)),
-    ]
 
 
 def run_pytest_for_mode(
@@ -55,20 +40,21 @@ def run_pytest_for_mode(
     sub_env = dict(os.environ)
     sub_env["CI"] = "true"
 
-    # Opt-in: measure the current code (`repo_dir_abs_path`) while the old tests run against it:
+    # FT_47_61_24_68.combined_coverage.md:
+    # opt-in: measure the current code (`repo_dir_abs_path`) in every process while the old tests run against it:
     coverage_dir = os.environ.get(coverage_dir_env_var)
-    if coverage_dir and repo_dir_abs_path is not None:
-        # `parallel = true`: each process adds its own suffix to this base name:
-        sub_env["COVERAGE_FILE"] = str(pathlib.Path(coverage_dir).resolve() / f".coverage.{mode_id.value}")
-        runner_args = get_coverage_command_args(repo_dir_abs_path) + ["--module", "pytest"]
-    else:
-        runner_args = ["-m", "pytest"]
+    with contextlib.ExitStack() as exit_stack:
+        if coverage_dir and repo_dir_abs_path is not None:
+            # `parallel = true`: each process adds its own suffix to this base name:
+            sub_env["COVERAGE_FILE"] = str(pathlib.Path(coverage_dir).resolve() / f".coverage.{mode_id.value}")
+            # The hook measures every process (including `pytest`): the tests run plain (not under `coverage run`):
+            exit_stack.enter_context(installed_coverage_hook(repo_dir_abs_path, [str(python_abs_path)]))
 
-    exit_code = subprocess.run(
-        [str(python_abs_path)] + runner_args + ["-p", "no:cacheprovider"] + [str(test_dir_rel_path) for test_dir_rel_path in test_dir_rel_paths] + pytest_args,
-        cwd=str(cwd_abs_path),
-        env=sub_env,
-    ).returncode
+        exit_code = subprocess.run(
+            [str(python_abs_path), "-m", "pytest", "-p", "no:cacheprovider"] + [str(test_dir_rel_path) for test_dir_rel_path in test_dir_rel_paths] + pytest_args,
+            cwd=str(cwd_abs_path),
+            env=sub_env,
+        ).returncode
 
     if exit_code != 0:
         commit_id_suffix = f" ({commit_id})" if commit_id else ""

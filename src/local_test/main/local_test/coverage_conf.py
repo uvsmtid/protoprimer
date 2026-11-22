@@ -7,11 +7,22 @@ FT_47_61_24_68.combined_coverage.md
 from __future__ import annotations
 
 import configparser
+import contextlib
+import glob
 import json
+import logging
+import os
 import pathlib
-from typing import Optional
+import subprocess
+import sys
+import sysconfig
+import threading
+from typing import Iterator, Optional, Sequence
 
+from local_test.container_hook_installer import find_uv_stdlib_dir_paths
 from protoprimer.primer_kernel import _ConfDst
+
+logger = logging.getLogger()
 
 # Set to a dir to collect coverage of the code run in other processes or places (opt-in):
 coverage_dir_env_var = "PROTOPRIMER_COVERAGE_DIR"
@@ -99,3 +110,103 @@ try:
 except Exception:
     pass
 """
+
+
+def get_stdlib_dir_path(
+    python_abs_path: str,
+) -> pathlib.Path:
+    # A `venv` shares the stdlib dir of its base `python`:
+    if os.path.abspath(python_abs_path) == os.path.abspath(sys.executable):
+        return pathlib.Path(sysconfig.get_paths()["stdlib"])
+    return pathlib.Path(
+        subprocess.run(
+            [python_abs_path, "-c", "import sysconfig; print(sysconfig.get_paths()['stdlib'])"],
+            check=True,
+            capture_output=True,
+            text=True,
+        ).stdout.strip()
+    )
+
+
+def _install_hook_file(
+    hook_text: str,
+    stdlib_dir_path: pathlib.Path,
+) -> bool:
+    """
+    Never overwrites an existing `sitecustomize.py`.
+    """
+
+    hook_file_path = stdlib_dir_path / "sitecustomize.py"
+    if hook_file_path.exists():
+        logger.warning(f"[{hook_file_path}] already exists: subprocesses of its `python` are not measured")
+        return False
+    try:
+        hook_file_path.write_text(hook_text)
+    except OSError as os_error:
+        logger.warning(f"cannot write [{hook_file_path}] ({os_error}): subprocesses of its `python` are not measured")
+        return False
+    return True
+
+
+def _remove_hook_file(
+    stdlib_dir_path: pathlib.Path,
+) -> None:
+    with contextlib.suppress(FileNotFoundError):
+        (stdlib_dir_path / "sitecustomize.py").unlink()
+    for pyc_file_path in glob.glob(str(stdlib_dir_path / "__pycache__" / "sitecustomize.*.pyc")):
+        os.remove(pyc_file_path)
+
+
+@contextlib.contextmanager
+def installed_coverage_hook(
+    repo_dir_abs_path: pathlib.Path,
+    python_abs_paths: Optional[Sequence[str]] = None,
+) -> Iterator[bool]:
+    """
+    Installs the coverage hook as `sitecustomize.py` into the stdlib dirs of `python_abs_paths`
+    (the current `python` by default) and removes it on exit:
+    it starts `coverage` in every `python` process - `PYTHONPATH` is ignored by isolated `-I` mode.
+
+    `python`-s which `uv` downloads while the context is active also get the hook (see `container_hook_installer`).
+
+    Yields `True` if installed into at least one of `python_abs_paths`.
+    """
+
+    hook_text = get_coverage_hook_script(
+        config_file=str(get_rcfile_abs_path(repo_dir_abs_path)),
+        source_dir_paths=[str(repo_dir_abs_path / source_dir_rel_path) for source_dir_rel_path in read_source_dir_rel_paths(repo_dir_abs_path)],
+    )
+
+    installed_dir_paths: list[pathlib.Path] = []
+    stdlib_dir_paths = {get_stdlib_dir_path(python_abs_path) for python_abs_path in (python_abs_paths or [sys.executable])}
+    for stdlib_dir_path in stdlib_dir_paths:
+        if _install_hook_file(hook_text, stdlib_dir_path):
+            installed_dir_paths.append(stdlib_dir_path)
+
+    # Only the dirs installed by this watcher (the dirs of `python_abs_paths` are handled above):
+    stop_event = threading.Event()
+    watched_dir_paths: list[pathlib.Path] = []
+
+    def watch_uv_pythons() -> None:
+        while not stop_event.is_set():
+            for uv_stdlib_dir in find_uv_stdlib_dir_paths():
+                uv_stdlib_dir_path = pathlib.Path(uv_stdlib_dir)
+                if uv_stdlib_dir_path in stdlib_dir_paths or uv_stdlib_dir_path in watched_dir_paths or (uv_stdlib_dir_path / "sitecustomize.py").exists():
+                    continue
+                try:
+                    (uv_stdlib_dir_path / "sitecustomize.py").write_text(hook_text)
+                    watched_dir_paths.append(uv_stdlib_dir_path)
+                except OSError:
+                    # The dir may be being created: try again on the next iteration:
+                    pass
+            stop_event.wait(0.1)
+
+    watcher_thread = threading.Thread(target=watch_uv_pythons, daemon=True)
+    watcher_thread.start()
+    try:
+        yield bool(installed_dir_paths)
+    finally:
+        stop_event.set()
+        watcher_thread.join()
+        for installed_dir_path in installed_dir_paths + watched_dir_paths:
+            _remove_hook_file(installed_dir_path)
