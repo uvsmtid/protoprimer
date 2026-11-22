@@ -37,6 +37,7 @@ container_work_dir = "/work"
 # TODO: TODO_29_67_72_68.combine_coverage_across_jobs.md: `coverage_dir_env_var` set to a dir collects coverage of the code run in containers (opt-in):
 coverage_container_dir = "/covdata"
 coverage_boot_dir_name = "_boot"
+coverage_installer_basename = "container_hook_installer.py"
 
 
 def get_coverage_boot_script() -> str:
@@ -267,6 +268,7 @@ class ContainerSession:
             boot_dir_path = self.coverage_dir_path / coverage_boot_dir_name
             boot_dir_path.mkdir(parents=True, exist_ok=True)
             (boot_dir_path / "sitecustomize.py").write_text(get_coverage_boot_script())
+            shutil.copy(pathlib.Path(__file__).with_name(coverage_installer_basename), boot_dir_path / coverage_installer_basename)
             coverage_mount_args = ["-v", f"{self.coverage_dir_path}:{coverage_container_dir}:z"]
         subprocess.run(
             [
@@ -293,24 +295,12 @@ class ContainerSession:
         copy_result = self.run(f"cp -a {self.src_dir} {self.work_dir}", work_dir="/")
         assert copy_result.exit_code == 0, str(copy_result)
         if self.coverage_dir_path is not None:
-            # No `python` in the image (e.g. `debian`) is fine: there is nothing to measure:
-            self.run(
-                f"py=$(command -v python3 || command -v python) && " f"cp {coverage_container_dir}/{coverage_boot_dir_name}/sitecustomize.py " f'"$($py -c \'import sysconfig; print(sysconfig.get_paths()["stdlib"])\')/sitecustomize.py" || true',
-                work_dir="/",
-            )
+            # No `python3` in the image (e.g. `debian`) is fine (the commands just fail): there is nothing to measure there:
+            boot_dir = f"{coverage_container_dir}/{coverage_boot_dir_name}"
+            installer_args = ["python3", f"{boot_dir}/{coverage_installer_basename}", f"{boot_dir}/sitecustomize.py"]
+            subprocess.run([self.engine, "exec", self.name] + installer_args + ["once"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             # Keeps running until the container is removed:
-            subprocess.run(
-                [
-                    self.engine,
-                    "exec",
-                    "-d",
-                    self.name,
-                    "bash",
-                    "-c",
-                    "while true; do " "for d in /root/.local/share/uv/python/*/lib/python3.*/; do " f'[ -f "$d/sitecustomize.py" ] || cp {coverage_container_dir}/{coverage_boot_dir_name}/sitecustomize.py "$d/sitecustomize.py" 2>/dev/null; ' "done; sleep 0.1; done",
-                ],
-                check=True,
-            )
+            subprocess.run([self.engine, "exec", "-d", self.name] + installer_args + ["watch"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
