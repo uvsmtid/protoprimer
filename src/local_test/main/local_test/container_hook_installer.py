@@ -31,18 +31,21 @@ def install_hook(
 
 def get_uv_python_dir_path() -> str:
     """
-    Where `uv` keeps the `python`-s it downloads (see `uv` docs: `UV_PYTHON_INSTALL_DIR`, `XDG_DATA_HOME`).
+    Where `uv` keeps the `python`-s it downloads (see `uv` docs: `UV_PYTHON_INSTALL_DIR`, `XDG_DATA_HOME`, `APPDATA`).
     """
 
     if os.environ.get("UV_PYTHON_INSTALL_DIR"):
         return os.environ["UV_PYTHON_INSTALL_DIR"]
+    if os.name == "nt":
+        return os.path.join(os.environ.get("APPDATA") or os.path.expanduser("~\\AppData\\Roaming"), "uv", "data", "python")
     data_dir_path = os.environ.get("XDG_DATA_HOME") or os.path.expanduser("~/.local/share")
     return os.path.join(data_dir_path, "uv", "python")
 
 
 def find_uv_stdlib_dir_paths() -> list:
-    # `<uv python dir>/<python build>/lib/python3.X`:
-    return glob.glob(os.path.join(get_uv_python_dir_path(), "*", "lib", "python3.*"))
+    uv_python_dir_path = get_uv_python_dir_path()
+    # Posix: `<uv python dir>/<python build>/lib/python3.X`; Windows: `<uv python dir>/<python build>/Lib`:
+    return glob.glob(os.path.join(uv_python_dir_path, "*", "lib", "python3.*")) + glob.glob(os.path.join(uv_python_dir_path, "*", "Lib"))
 
 
 def main() -> None:
