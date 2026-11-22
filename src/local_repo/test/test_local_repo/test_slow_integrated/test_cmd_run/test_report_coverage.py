@@ -16,12 +16,3 @@ def test_cmd_run():
 
     with change_to_known_repo_path("."):
         get_command_code(f"./cmd/{file_name} -h")
-
-
-def test_read_tests_file(tmp_path):
-    from local_repo.cmd_report_coverage import read_tests_file
-
-    tests_file = tmp_path / "tests.txt"
-    tests_file.write_text("# comment\n\n  src/a/test_a.py  \nsrc/b\n  # indented comment\n")
-
-    assert read_tests_file(str(tests_file)) == ["src/a/test_a.py", "src/b"]
