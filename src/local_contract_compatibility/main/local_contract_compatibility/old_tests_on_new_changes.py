@@ -97,6 +97,7 @@ def ensure_venv(
         raise AssertionError(f"worktree [{worktree_abs_path}] has no [{', '.join(missing_package_names)}]: the baseline is not established")
     install_args = [str(worktree_abs_path / "src" / old_package_name) for old_package_name in old_local_package_names]
     install_args += ["-e", f"{repo_dir_abs_path / 'src' / package_name}[test]"]
+    # FT_47_61_24_68.combined_coverage.md: `coverage` is needed to measure the current code:
     if os.environ.get(coverage_dir_env_var):
         install_args += ["coverage"]
     subprocess.run([str(venv_python_abs_path), "-m", "pip", "install", "-q"] + install_args, check=True)

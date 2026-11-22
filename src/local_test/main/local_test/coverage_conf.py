@@ -1,7 +1,7 @@
 """
 Shared coverage settings: the single source of truth is `coveragerc.ini` in the global conf dir of the repo.
 
-TODO: TODO_29_67_72_68.combine_coverage_across_jobs.md
+FT_47_61_24_68.combined_coverage.md
 """
 
 from __future__ import annotations

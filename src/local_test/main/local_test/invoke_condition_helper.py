@@ -34,7 +34,8 @@ container_label = "protoprimer-test-invoke-condition"
 container_src_dir = "/src"
 container_work_dir = "/work"
 
-# TODO: TODO_29_67_72_68.combine_coverage_across_jobs.md: `coverage_dir_env_var` set to a dir collects coverage of the code run in containers (opt-in):
+# FT_47_61_24_68.combined_coverage.md:
+# `coverage_dir_env_var` set to a dir collects coverage of the code run in containers (opt-in):
 coverage_container_dir = "/covdata"
 coverage_boot_dir_name = "_boot"
 coverage_installer_basename = "container_hook_installer.py"
@@ -42,6 +43,8 @@ coverage_installer_basename = "container_hook_installer.py"
 
 def get_coverage_boot_script() -> str:
     """
+    FT_47_61_24_68.combined_coverage.md
+
     The script starts `coverage` in every `python` process in the container (when `coverage` is importable there); never fails or prints.
 
     It is installed into the stdlib dirs of `python`-s (shared by their `venv`-s): `PYTHONPATH` is ignored by isolated `-I` mode.

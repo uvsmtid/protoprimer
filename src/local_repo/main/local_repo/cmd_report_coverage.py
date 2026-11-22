@@ -41,6 +41,7 @@ def run_coverage(
 def custom_main():
     """
     See also:
+    FT_47_61_24_68.combined_coverage.md
     .github/actions/test_env_posix/action.yaml
     .github/actions/test_env_windows/action.yaml
     """

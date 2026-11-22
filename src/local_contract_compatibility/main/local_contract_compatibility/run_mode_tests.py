@@ -20,6 +20,8 @@ def get_handoff_test_dir_rel_path(
     return pathlib.Path("src") / package_name / "test" / f"test_{package_name}" / "test_slow_integrated" / f"test_{mode_id.value}"
 
 
+# FT_47_61_24_68.combined_coverage.md:
+# opt-in coverage of the current code while the old tests run.
 def get_coverage_command_args(
     repo_dir_abs_path: pathlib.Path,
 ) -> list[str]:

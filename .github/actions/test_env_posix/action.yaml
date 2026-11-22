@@ -66,7 +66,8 @@ runs:
             env:
                 GITHUB_TOKEN: ${{ github.token }}
 
-        # TODO: TODO_29_67_72_68.combine_coverage_across_jobs.md: `build-number` (commit) is shared by all workflows.
+        # FT_47_61_24_68.combined_coverage.md:
+        # `build-number` (commit) is shared by all workflows.
         -   name: upload coverage (parallel)
             if: github.event_name == 'push'
             uses: coverallsapp/github-action@v2
