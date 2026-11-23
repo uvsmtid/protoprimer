@@ -203,7 +203,7 @@ def count_doc_links(doc_file_paths: list[Path]) -> dict[str, int]:
     """
     link_count_by_basename: dict[str, int] = {}
     for doc_file_path in doc_file_paths:
-        for line in doc_file_path.read_text().splitlines():
+        for line in doc_file_path.read_text(encoding="utf-8").splitlines():
             line_match = _link_def_re.match(line.strip())
             if not line_match:
                 continue
@@ -223,7 +223,7 @@ def parse_frontmatter(doc_file_path: Path) -> dict[str, str]:
     Returns:
         A dict of front matter fields, or an empty dict if there is no front matter.
     """
-    file_lines = doc_file_path.read_text().splitlines()
+    file_lines = doc_file_path.read_text(encoding="utf-8").splitlines()
     if not file_lines or file_lines[0].strip() != "---":
         return {}
     header_end = next(

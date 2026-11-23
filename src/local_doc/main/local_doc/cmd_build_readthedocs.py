@@ -34,7 +34,7 @@ def find_broken_reference_links(source_dir):
     for markdown_file_path in sorted(source_dir.rglob("*.md")):
         if reference_link_excluded_dir_names & set(markdown_file_path.relative_to(source_dir).parts):
             continue
-        markdown_text = markdown_file_path.read_text()
+        markdown_text = markdown_file_path.read_text(encoding="utf-8")
         code_free_text = code_fence_regex.sub("", markdown_text)
         defined_labels = set(reference_link_definition_regex.findall(code_free_text))
         used_labels = set(reference_link_usage_regex.findall(code_free_text))

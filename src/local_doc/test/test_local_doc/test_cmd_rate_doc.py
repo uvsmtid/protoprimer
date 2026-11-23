@@ -1,11 +1,20 @@
 from __future__ import annotations
 
+import os
 from pathlib import Path
 from unittest.mock import patch
 
 from local_doc import cmd_rate_doc
 
 _ref_root_abs_path = "/fake_repo"
+
+
+def _rel_path(posix_rel_path: str) -> str:
+    """
+    The output has native separators (`doc\\feature_topic` on Windows).
+    """
+    return os.path.join(*posix_rel_path.split("/"))
+
 
 _ft_dir = f"{_ref_root_abs_path}/doc/feature_topic"
 _uc_dir = f"{_ref_root_abs_path}/doc/use_case"
@@ -80,9 +89,9 @@ def test_rate_doc_last_verified(mock_configure_script, fs, capsys) -> None:
     # then:
     output_lines = capsys.readouterr().out.strip().splitlines()
     assert output_lines == [
-        f"{cmd_rate_doc.epoch_start_date} doc/feature_topic/FT_22_22_22_22.bbb.md",
-        "2023-01-01 doc/use_case/UC_33_33_33_33.ccc.md",
-        "2024-03-01 doc/feature_topic/FT_11_11_11_11.aaa.md",
+        f"{cmd_rate_doc.epoch_start_date} " + _rel_path("doc/feature_topic/FT_22_22_22_22.bbb.md"),
+        "2023-01-01 " + _rel_path("doc/use_case/UC_33_33_33_33.ccc.md"),
+        "2024-03-01 " + _rel_path("doc/feature_topic/FT_11_11_11_11.aaa.md"),
     ]
 
 
@@ -109,9 +118,9 @@ def test_rate_doc_last_updated(mock_configure_script, mock_get_last_updated_date
     # then:
     output_lines = capsys.readouterr().out.strip().splitlines()
     assert output_lines == [
-        "2020-05-05 doc/feature_topic/FT_22_22_22_22.bbb.md",
-        "2023-07-07 doc/use_case/UC_33_33_33_33.ccc.md",
-        "2026-01-01 doc/feature_topic/FT_11_11_11_11.aaa.md",
+        "2020-05-05 " + _rel_path("doc/feature_topic/FT_22_22_22_22.bbb.md"),
+        "2023-07-07 " + _rel_path("doc/use_case/UC_33_33_33_33.ccc.md"),
+        "2026-01-01 " + _rel_path("doc/feature_topic/FT_11_11_11_11.aaa.md"),
     ]
 
 
@@ -133,9 +142,9 @@ def test_rate_doc_most_linked(mock_configure_script, fs, capsys) -> None:
     # Most-linked is on top by default:
     output_lines = capsys.readouterr().out.strip().splitlines()
     assert output_lines == [
-        "2 doc/use_case/UC_33_33_33_33.ccc.md",
-        "1 doc/feature_topic/FT_22_22_22_22.bbb.md",
-        "0 doc/feature_topic/FT_11_11_11_11.aaa.md",
+        "2 " + _rel_path("doc/use_case/UC_33_33_33_33.ccc.md"),
+        "1 " + _rel_path("doc/feature_topic/FT_22_22_22_22.bbb.md"),
+        "0 " + _rel_path("doc/feature_topic/FT_11_11_11_11.aaa.md"),
     ]
 
 
@@ -154,9 +163,9 @@ def test_rate_doc_most_linked_reverse_sort(mock_configure_script, fs, capsys) ->
     # then:
     output_lines = capsys.readouterr().out.strip().splitlines()
     assert output_lines == [
-        "0 doc/feature_topic/FT_11_11_11_11.aaa.md",
-        "1 doc/feature_topic/FT_22_22_22_22.bbb.md",
-        "2 doc/use_case/UC_33_33_33_33.ccc.md",
+        "0 " + _rel_path("doc/feature_topic/FT_11_11_11_11.aaa.md"),
+        "1 " + _rel_path("doc/feature_topic/FT_22_22_22_22.bbb.md"),
+        "2 " + _rel_path("doc/use_case/UC_33_33_33_33.ccc.md"),
     ]
 
 

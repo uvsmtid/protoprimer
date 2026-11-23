@@ -3,6 +3,10 @@ from local_repo.sub_proc_util import (
 )
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from local_test.repo_tree import change_to_known_repo_path
+from local_test.case_condition import requires_posix
+
+# Run the repo scripts directly (no shebang on Windows): see `TODO_50_98_96_87.support_windows.md`:
+pytestmark = requires_posix
 
 file_name = "check_context_isolation"
 

@@ -6,6 +6,7 @@ from local_test.mock_verifier import (
     assert_parent_factories_mocked,
 )
 from local_test.name_assertion import assert_test_module_name_embeds_str
+from local_test.path_helper import abs_path
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     _Node_state_input_proto_kernel_file_abs_path_var_loaded,
@@ -76,7 +77,7 @@ def test_stride_py_venv(
         _EnvState.state_proto_kernel_file_abs_path_inited.name,
     )
 
-    proto_kernel_abs_file_path = "/path/to/proto_kernel.py"
+    proto_kernel_abs_file_path = abs_path("/path/to/proto_kernel.py")
 
     mock_state_input_proto_kernel_file_abs_path_var_loaded.return_value.eval_own_state.return_value = proto_kernel_abs_file_path
     mock_get_stride.return_value = _StateStride.stride_py_venv

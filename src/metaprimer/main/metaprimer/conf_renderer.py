@@ -94,7 +94,7 @@ class RenderConfigVisitor(AbstractConfigVisitor):
     ) -> str:
         s: str = ""
         if not self.is_quiet:
-            s += " " * config_node.node_indent + os.linesep
+            s += " " * config_node.node_indent + "\n"
         s += self._render_node_annotation(config_node)
 
         rendered_value: str = self._render_node_value(config_node)
@@ -122,7 +122,7 @@ class RenderConfigVisitor(AbstractConfigVisitor):
             s += (
                 " " * config_node.node_indent
                 + f"{config_node.note_color.value}# {annotation_line}{_TermColor.reset_style.value}"
-                + os.linesep
+                + "\n"
                 #
             )
         return s
@@ -159,7 +159,7 @@ class RenderConfigVisitor(AbstractConfigVisitor):
                 + f"{_TermColor.reset_style.value}"
                 #
             )
-        return os.linesep.join(deactivated_lines)
+        return "\n".join(deactivated_lines)
 
     def visit_dict(
         self,
@@ -171,14 +171,14 @@ class RenderConfigVisitor(AbstractConfigVisitor):
             " " * dict_node.node_indent
             + self._render_node_name(dict_node)
             + "{"
-            + os.linesep
+            + "\n"
             #
         )
         for child_name, child_node in dict_node.child_nodes.items():
             rendered_child = self.render_node(child_node)
             s += rendered_child
             if rendered_child or not self.is_quiet:
-                s += os.linesep
+                s += "\n"
         s += " " * dict_node.node_indent + "},"
         self.rendered_value = s
 
@@ -192,14 +192,14 @@ class RenderConfigVisitor(AbstractConfigVisitor):
             " " * list_node.node_indent
             + self._render_node_name(list_node)
             + "["
-            + os.linesep
+            + "\n"
             #
         )
         for child_node in list_node.child_nodes:
             rendered_child = self.render_node(child_node)
             s += rendered_child
             if rendered_child or not self.is_quiet:
-                s += os.linesep
+                s += "\n"
         s += " " * list_node.node_indent + "],"
         self.rendered_value = s
 
@@ -236,8 +236,8 @@ class RenderConfigVisitor(AbstractConfigVisitor):
         # Remove the last char (which is supposed to be `,`):
         rendered_child: str = self.render_node(root_node.child_node)[:-1]
         s: str = ""
-        s += " " * root_node.node_indent + f"{root_node.node_name} = (" + os.linesep
-        s += rendered_child + os.linesep
+        s += " " * root_node.node_indent + f"{root_node.node_name} = (" + "\n"
+        s += rendered_child + "\n"
         s += " " * root_node.node_indent + ")"
         self.rendered_value = s
 

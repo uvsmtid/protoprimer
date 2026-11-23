@@ -199,8 +199,8 @@ def test_generate_preview_image_file_runs_commands_in_order(
     called_args_list = [call_args[0] for call_args, _ in mock_run.call_args_list]
     assert all(called_args[0] == "magick" for called_args in called_args_list)
     # The first command rasterizes the logo from `ref_root`, the last one writes the preview into `ref_root`:
-    assert str(tmp_path / cmd_generate_preview_image.logo_svg_rel_path) in called_args_list[0]
-    assert called_args_list[3][-1] == f"PNG24:{tmp_path / cmd_generate_preview_image.preview_png_rel_path}"
+    assert os.path.join(str(tmp_path), cmd_generate_preview_image.logo_svg_rel_path) in called_args_list[0]
+    assert called_args_list[3][-1] == f"PNG24:{os.path.join(str(tmp_path), cmd_generate_preview_image.preview_png_rel_path)}"
     assert all(call_kwargs == {"check": True} for _, call_kwargs in mock_run.call_args_list)
 
 

@@ -187,7 +187,8 @@ def run_primer_main(
         _run_primer_main_in_mock_env(cli_args)
     else:
         subprocess.run(
-            args=cli_args,
+            # No shebang on Windows: run the script via `python` (see `TODO_50_98_96_87.support_windows.md`):
+            args=[sys.executable, *cli_args] if _ConfConstGeneral.is_os_windows else cli_args,
             check=True,
         )
 

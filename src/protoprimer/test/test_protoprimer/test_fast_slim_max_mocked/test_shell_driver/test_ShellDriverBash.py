@@ -1,8 +1,12 @@
+from local_test.case_condition import requires_posix
 from local_test.name_assertion import assert_test_module_name_embeds_str
 from protoprimer.primer_kernel import (
     _ShellDriverBash,
     _ShellType,
 )
+
+# Shell is POSIX-only (see `_ensure_shell_supported`):
+pytestmark = requires_posix
 
 
 def test_relationship():

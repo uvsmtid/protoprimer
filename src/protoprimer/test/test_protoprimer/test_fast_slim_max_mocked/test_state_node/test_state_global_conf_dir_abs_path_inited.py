@@ -6,6 +6,7 @@ from local_test.mock_verifier import (
     assert_parent_factories_mocked,
 )
 from local_test.name_assertion import assert_test_module_name_embeds_str
+from local_test.path_helper import abs_path
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     _Node_state_primer_conf_file_data_loaded,
@@ -38,14 +39,14 @@ class ThisTestClass(BasePyfakefsTestClass):
             self.env_ctx,
             _EnvState.state_global_conf_dir_abs_path_inited.name,
         )
-        mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = "/mock_ref_root"
+        mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = abs_path("/mock_ref_root")
         mock_state_primer_conf_file_data_loaded.return_value.eval_own_state.return_value = {}
 
         # when:
         result = self.env_ctx.eval_state(_EnvState.state_global_conf_dir_abs_path_inited.name)
 
         # then: no separate global config dir (min leaps shape)
-        self.assertEqual(result, "/mock_ref_root")
+        self.assertEqual(result, abs_path("/mock_ref_root"))
 
     @patch(f"{primer_kernel.__name__}.{_Node_state_primer_conf_file_data_loaded.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Node_state_ref_root_dir_abs_path_inited.__name__}.create_state_node")
@@ -59,11 +60,11 @@ class ThisTestClass(BasePyfakefsTestClass):
             self.env_ctx,
             _EnvState.state_global_conf_dir_abs_path_inited.name,
         )
-        mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = "/mock_ref_root"
+        mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = abs_path("/mock_ref_root")
         mock_state_primer_conf_file_data_loaded.return_value.eval_own_state.return_value = {ConfField.field_global_conf_dir_rel_path.value: "gconf"}
 
         # when:
         result = self.env_ctx.eval_state(_EnvState.state_global_conf_dir_abs_path_inited.name)
 
         # then:
-        self.assertEqual(result, "/mock_ref_root/gconf")
+        self.assertEqual(result, abs_path("/mock_ref_root/gconf"))

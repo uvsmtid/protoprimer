@@ -9,7 +9,7 @@ _inline_link_re = re.compile(r"\[([^\]]+)\]\[([^\]]+)\]")
 
 
 def parse_frontmatter(file_path: Path) -> dict[str, str]:
-    file_lines = file_path.read_text().splitlines()
+    file_lines = file_path.read_text(encoding="utf-8").splitlines()
     if not file_lines or file_lines[0].strip() != "---":
         return {}
     header_end = next(
@@ -27,7 +27,7 @@ def parse_frontmatter(file_path: Path) -> dict[str, str]:
 
 
 def assert_has_yaml_header(file_path: Path) -> None:
-    file_lines = file_path.read_text().splitlines()
+    file_lines = file_path.read_text(encoding="utf-8").splitlines()
     header_end = next(
         (line_idx for line_idx in range(1, len(file_lines)) if file_lines[line_idx].strip() == "---"),
         None,
@@ -51,7 +51,7 @@ def assert_status_valid(file_path: Path, status_key: str, valid_statuses: set[st
 
 def assert_h1_title_matches_filename(file_path: Path) -> None:
     expected_h1 = f"# {file_path.stem}"
-    file_lines = file_path.read_text().splitlines()
+    file_lines = file_path.read_text(encoding="utf-8").splitlines()
     assert any(line.strip() == expected_h1 for line in file_lines)
 
 
@@ -64,7 +64,7 @@ def assert_title_slug_matches_filename(file_path: Path, title_key: str) -> None:
 
 def assert_doc_id_link_labels_match_basename(file_path: Path) -> None:
     mismatches: list[tuple[str, str]] = []
-    for line in file_path.read_text().splitlines():
+    for line in file_path.read_text(encoding="utf-8").splitlines():
         line_match = _link_def_re.match(line.strip())
         if not line_match:
             continue
@@ -80,7 +80,7 @@ def assert_doc_id_link_labels_match_basename(file_path: Path) -> None:
 
 def assert_doc_id_link_captions_are_slug(file_path: Path) -> None:
     violations: list[tuple[str, str, str]] = []
-    for line in file_path.read_text().splitlines():
+    for line in file_path.read_text(encoding="utf-8").splitlines():
         stripped_line = line.strip()
         if _link_def_re.match(stripped_line):
             continue
@@ -122,7 +122,7 @@ _meta_description_re = re.compile(r"^\s*:description:\s*(.*\S)\s*$", re.MULTILIN
 
 
 def parse_meta_description(file_path: Path) -> str:
-    description_match = _meta_description_re.search(file_path.read_text())
+    description_match = _meta_description_re.search(file_path.read_text(encoding="utf-8"))
     return description_match.group(1) if description_match else ""
 
 

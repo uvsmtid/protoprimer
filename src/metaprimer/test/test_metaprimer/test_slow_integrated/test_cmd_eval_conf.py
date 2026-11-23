@@ -26,6 +26,10 @@ from protoprimer.primer_kernel import (
     _import_proto_module,
     _generate_entry_script_content,
 )
+from local_test.case_condition import requires_posix
+
+# Run the repo scripts directly (no shebang on Windows): see `TODO_50_98_96_87.support_windows.md`:
+pytestmark = requires_posix
 
 
 def test_eval_conf_returns_derived_config(tmp_path: pathlib.Path):

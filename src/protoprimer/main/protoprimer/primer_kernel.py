@@ -1330,8 +1330,6 @@ def _get_shell_driver(
     shell_driver_type: type[_ShellDriverBase]
 
     if shell_abs_path is None:
-        # TODO: TODO_50_98_96_87.support_windows.md:
-        # TODO: How will it work on Windows without POSIX shell?
         shell_abs_path = "/bin/sh"
         _logger.warning(f"env var `{var_shell}` is not set - assuming [{shell_abs_path}] as default")
         shell_driver_type = _ShellDriverSh
@@ -3492,6 +3490,17 @@ def _create_symlink_to_dir(
     )
 
 
+def _remove_symlink_to_dir(
+    symlink_abs_path: str,
+) -> None:
+    if _ConfConstGeneral.is_os_windows:
+        # TODO: TODO_50_98_96_87.support_windows.md:
+        #       A dir symlink is removed like a dir on Windows (`os.remove` may fail on it):
+        os.rmdir(symlink_abs_path)
+    else:
+        os.remove(symlink_abs_path)
+
+
 # noinspection PyPep8Naming
 @_conditional_factory
 class _BaseNode_state_local_conf_dir_abs_path_inited(_AbstractCachingStateNode[str]):
@@ -3655,8 +3664,7 @@ class _Node_state_local_conf_dir_abs_path_inited_reset(_BaseNode_state_local_con
                 conf_dir_path = os.path.normpath(os.readlink(symlink_abs_path))
                 if conf_dir_path != expected_conf_dir_path:
                     _logger.info(f"overwriting symlink [{symlink_abs_path}] target [{conf_dir_path}] with [{expected_conf_dir_path}]")
-                    # TODO: TODO_50_98_96_87.support_windows.md: removing a dir symlink may need `os.rmdir` on Windows:
-                    os.remove(symlink_abs_path)
+                    _remove_symlink_to_dir(symlink_abs_path)
                     _create_symlink_to_dir(symlink_abs_path, expected_conf_dir_path)
             elif os.path.lexists(symlink_abs_path):
                 # Never delete a real file/dir:
@@ -6383,7 +6391,7 @@ def _write_json_file(
     file_path: str,
     file_data: dict,
 ) -> None:
-    with open(file_path, "w", encoding="utf-8") as file_obj:
+    with open(file_path, "w", encoding="utf-8", newline="\n") as file_obj:
         json.dump(
             file_data,
             file_obj,
@@ -6401,7 +6409,7 @@ def _write_text_file(
     file_path: str,
     file_data: str,
 ) -> None:
-    with open(file_path, "w", encoding="utf-8") as file_obj:
+    with open(file_path, "w", encoding="utf-8", newline="\n") as file_obj:
         file_obj.write(file_data)
 
 
@@ -6862,10 +6870,11 @@ def _generate_entry_script_content(
         )
         env_vars_lines = textwrap.indent(env_vars_lines, "    ")
 
+    # The script is versioned and shared across platforms: `/` also works on Windows (and `\` would be an escape in a string literal):
     proto_kernel_rel_path = os.path.relpath(
         proto_kernel_abs_path,
         os.path.dirname(entry_script_abs_path),
-    )
+    ).replace(os.sep, "/")
 
     # FT_56_85_65_41.generated_boilerplate.md:
     # Built as a list of lines to survive stamped boilerplate lines.

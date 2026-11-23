@@ -2,7 +2,10 @@ import os
 from unittest.mock import patch
 
 from local_test.name_assertion import assert_test_module_name_embeds_str
-from protoprimer.primer_kernel import _get_path_to_base_python
+from protoprimer.primer_kernel import (
+    _ConfConstGeneral,
+    _get_path_to_base_python,
+)
 
 
 def test_relationship():
@@ -22,7 +25,7 @@ def test_get_path_to_base_python():
 
     expected_path = os.path.join(
         "/mock/base/prefix",
-        "bin",
-        "python",
+        _ConfConstGeneral.file_rel_path_base_python_bin,
+        _ConfConstGeneral.name_python_executable,
     )
     assert actual_path == expected_path

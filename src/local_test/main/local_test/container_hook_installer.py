@@ -29,6 +29,10 @@ def install_hook(
         shutil.copy(hook_file_path, hook_dst_path)
 
 
+def is_windows() -> bool:
+    return os.name == "nt"
+
+
 def get_uv_python_dir_path() -> str:
     """
     Where `uv` keeps the `python`-s it downloads (see `uv` docs: `UV_PYTHON_INSTALL_DIR`, `XDG_DATA_HOME`, `APPDATA`).
@@ -36,7 +40,7 @@ def get_uv_python_dir_path() -> str:
 
     if os.environ.get("UV_PYTHON_INSTALL_DIR"):
         return os.environ["UV_PYTHON_INSTALL_DIR"]
-    if os.name == "nt":
+    if is_windows():
         return os.path.join(os.environ.get("APPDATA") or os.path.expanduser("~\\AppData\\Roaming"), "uv", "data", "python")
     data_dir_path = os.environ.get("XDG_DATA_HOME") or os.path.expanduser("~/.local/share")
     return os.path.join(data_dir_path, "uv", "python")
@@ -45,7 +49,7 @@ def get_uv_python_dir_path() -> str:
 def find_uv_stdlib_dir_paths() -> list:
     uv_python_dir_path = get_uv_python_dir_path()
     # By OS (file systems may be case-insensitive: `lib` and `Lib` would match the same dir):
-    if os.name == "nt":
+    if is_windows():
         # `<uv python dir>/<python build>/Lib`:
         return glob.glob(os.path.join(uv_python_dir_path, "*", "Lib"))
     # `<uv python dir>/<python build>/lib/python3.X`:

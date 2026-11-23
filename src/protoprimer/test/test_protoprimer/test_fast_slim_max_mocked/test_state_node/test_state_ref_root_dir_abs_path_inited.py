@@ -6,6 +6,7 @@ import pytest
 
 from local_test.mock_verifier import assert_parent_factories_mocked
 from local_test.name_assertion import assert_test_module_name_embeds_str
+from local_test.path_helper import abs_path
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     _Node_state_primer_conf_file_data_loaded,
@@ -25,7 +26,7 @@ def env_ctx():
 
 @pytest.fixture
 def mock_proto_kernel_dir(fs):
-    path = "/path/to/proto/code"
+    path = abs_path("/path/to/proto/code")
     fs.create_dir(path)
     return os.path.join(path, "proto_kernel.py")
 

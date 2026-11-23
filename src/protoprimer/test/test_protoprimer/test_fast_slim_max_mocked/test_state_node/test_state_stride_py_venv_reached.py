@@ -102,6 +102,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(f"{primer_kernel.__name__}._is_same_file", return_value=True)
     @patch(f"{primer_kernel.__name__}.{_Node_state_version_constraints_file_basename_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_local_conf_dir_abs_path_inited.__name__}.create_state_node")
+    @patch.object(_ConfConstGeneral, "is_os_windows", False)
     def test_success_on_path_to_curr_python_is_outside_of_path_to_venv_when_venv_is_created(
         self,
         mock_state_local_conf_dir_abs_path_inited,
@@ -386,6 +387,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(f"{primer_kernel.__name__}._is_same_file", return_value=True)
     @patch(f"{primer_kernel.__name__}.{_Node_state_version_constraints_file_basename_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_local_conf_dir_abs_path_inited.__name__}.create_state_node")
+    @patch.object(_ConfConstGeneral, "is_os_windows", False)
     def test_success_when_path_to_python_matches_path_to_curr_python_and_execv_is_called_for_venv_python(
         self,
         mock_state_local_conf_dir_abs_path_inited,
@@ -475,6 +477,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(f"{primer_kernel.__name__}._is_same_file", return_value=True)
     @patch(f"{primer_kernel.__name__}.{_Node_state_version_constraints_file_basename_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_local_conf_dir_abs_path_inited.__name__}.create_state_node")
+    @patch.object(_ConfConstGeneral, "is_os_windows", False)
     def test_success_when_path_to_python_is_not_inside_existing_venv(
         self,
         mock_state_local_conf_dir_abs_path_inited,
@@ -562,6 +565,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(f"{primer_kernel.__name__}._is_same_file", return_value=True)
     @patch(f"{primer_kernel.__name__}.{_Node_state_version_constraints_file_basename_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_local_conf_dir_abs_path_inited.__name__}.create_state_node")
+    @patch.object(_ConfConstGeneral, "is_os_windows", False)
     def test_success_on_arbitrary_py_exec_outside_venv(
         self,
         mock_state_local_conf_dir_abs_path_inited,
@@ -710,6 +714,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(f"{primer_kernel.__name__}._is_same_file", return_value=True)
     @patch(f"{primer_kernel.__name__}.{_Node_state_version_constraints_file_basename_inited.__name__}.create_state_node")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_local_conf_dir_abs_path_inited.__name__}.create_state_node")
+    @patch.object(_ConfConstGeneral, "is_os_windows", False)
     def test_success_when_reusing_existing_venv(
         self,
         mock_state_local_conf_dir_abs_path_inited,

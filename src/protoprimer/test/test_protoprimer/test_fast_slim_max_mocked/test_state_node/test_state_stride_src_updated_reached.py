@@ -5,6 +5,8 @@ from local_test.mock_verifier import (
     assert_parent_factories_mocked,
 )
 from local_test.name_assertion import assert_test_module_name_embeds_str
+from local_test.path_helper import abs_path
+from local_test.venv_path_helper import compose_venv_python_abs_path
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     _Node_state_input_start_id_var_loaded,
@@ -66,8 +68,8 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         self.env_ctx._state_stride = _StateStride.stride_py_unknown
 
-        mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = "/path/to/venv"
-        self.fs.create_file("/path/to/venv/bin/python")
+        mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = abs_path("/path/to/venv")
+        self.fs.create_file(compose_venv_python_abs_path(abs_path(abs_path("/path/to/venv"))))
 
         # when:
 
@@ -76,9 +78,9 @@ class ThisTestClass(BasePyfakefsTestClass):
         # then:
 
         mock_switch_python.assert_called_once_with(
-            curr_python_path="/path/to/venv/bin/python",
+            curr_python_path=compose_venv_python_abs_path(abs_path(abs_path("/path/to/venv"))),
             next_py_exec=_StateStride.stride_src_updated,
-            next_python_path="/path/to/venv/bin/python",
+            next_python_path=compose_venv_python_abs_path(abs_path(abs_path("/path/to/venv"))),
             start_id="mock_start_id",
             proto_kernel_abs_file_path=mock_state_proto_kernel_file_abs_path_inited.return_value.eval_own_state.return_value,
         )
@@ -115,7 +117,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         self.env_ctx._state_stride = _StateStride.stride_src_updated
 
-        mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = "/path/to/venv"
+        mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = abs_path("/path/to/venv")
 
         # when:
 

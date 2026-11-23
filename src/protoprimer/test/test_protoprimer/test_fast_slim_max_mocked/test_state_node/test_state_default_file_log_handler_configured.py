@@ -6,6 +6,7 @@ from local_test.base_test_class import BasePyfakefsTestClass
 from local_test.fat_mocked_helper import clean_up_pyfakefs_file_log_handlers
 from local_test.mock_verifier import assert_parent_factories_mocked
 from local_test.name_assertion import assert_test_module_name_embeds_str
+from local_test.path_helper import abs_path
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     _Node_state_input_start_id_var_loaded,
@@ -24,7 +25,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     def setUp(self):
         self.setUpPyfakefs()
         self.env_ctx = _EnvContext()
-        self.mock_log_dir = "/mock_log_dir"
+        self.mock_log_dir = abs_path("/mock_log_dir")
         self.mock_start_id = "mock_start_id"
 
     def tearDown(self):

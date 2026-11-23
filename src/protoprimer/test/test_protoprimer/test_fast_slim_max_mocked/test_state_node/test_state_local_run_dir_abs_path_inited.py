@@ -5,6 +5,7 @@ import pytest
 
 from local_test.mock_verifier import assert_parent_factories_mocked
 from local_test.name_assertion import assert_test_module_name_embeds_str
+from local_test.path_helper import abs_path
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     _Node_state_client_conf_file_data_loaded,
@@ -40,7 +41,7 @@ def test_default_when_field_absent(
         env_ctx,
         _EnvState.state_local_run_dir_abs_path_inited.name,
     )
-    ref_root_abs_path = os.path.normpath("/ref_root")
+    ref_root_abs_path = abs_path("/ref_root")
     mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = ref_root_abs_path
     mock_state_client_conf_file_data_loaded.return_value.eval_own_state.return_value = {}
     mock_state_env_conf_file_data_loaded.return_value.eval_own_state.return_value = {}
@@ -66,7 +67,7 @@ def test_client_conf_overrides_default(
         env_ctx,
         _EnvState.state_local_run_dir_abs_path_inited.name,
     )
-    ref_root_abs_path = os.path.normpath("/ref_root")
+    ref_root_abs_path = abs_path("/ref_root")
     mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = ref_root_abs_path
     mock_state_client_conf_file_data_loaded.return_value.eval_own_state.return_value = {
         ConfField.field_local_run_dir_rel_path.value: "client_run",
@@ -94,7 +95,7 @@ def test_env_conf_overrides_client_conf(
         env_ctx,
         _EnvState.state_local_run_dir_abs_path_inited.name,
     )
-    ref_root_abs_path = os.path.normpath("/ref_root")
+    ref_root_abs_path = abs_path("/ref_root")
     mock_state_ref_root_dir_abs_path_inited.return_value.eval_own_state.return_value = ref_root_abs_path
     mock_state_client_conf_file_data_loaded.return_value.eval_own_state.return_value = {
         ConfField.field_local_run_dir_rel_path.value: "client_run",

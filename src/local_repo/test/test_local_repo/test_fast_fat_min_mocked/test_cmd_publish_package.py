@@ -103,7 +103,7 @@ def test_pyproject_toml_name_matches_distrib_package(distrib_package):
     pyproject_path = os.path.join("src", package_dir, "pyproject.toml")
     with change_to_known_repo_path("."):
         assert os.path.isfile(pyproject_path), f"Missing: {pyproject_path}"
-        with open(pyproject_path, "r") as f:
+        with open(pyproject_path, "r", encoding="utf-8") as f:
             content = f.read()
 
     # when:

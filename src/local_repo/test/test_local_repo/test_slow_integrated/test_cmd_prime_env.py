@@ -25,6 +25,10 @@ from protoprimer.primer_kernel import (
     _EntryFunc,
     _generate_entry_script_content,
 )
+from local_test.case_condition import requires_posix
+
+# Run the repo scripts directly (no shebang on Windows): see `TODO_50_98_96_87.support_windows.md`:
+pytestmark = requires_posix
 
 
 @pytest.mark.skipif(git_is_not_available(), reason="git command is not available")
