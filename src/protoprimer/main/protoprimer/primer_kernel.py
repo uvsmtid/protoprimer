@@ -34,6 +34,7 @@ import os
 import pathlib
 import shlex
 import shutil
+import signal
 import stat
 import subprocess
 import sys
@@ -1076,6 +1077,8 @@ class _ShellType(enum.Enum):
 
     shell_sh = "sh"
 
+    shell_cmd = "cmd"
+
 
 class _TargetPlatform(enum.Enum):
     """
@@ -1210,6 +1213,15 @@ fi
 
         self.configure_interactive_shell(command_line is not None)
 
+        self.compose_shell_args(command_line, venv_abs_path)
+
+        return self.launch_shell()
+
+    def compose_shell_args(
+        self,
+        command_line: str | None,
+        venv_abs_path: str,
+    ) -> None:
         self.shell_args.extend(
             [
                 # Always start interactive `shell` (even if it exits immediately in case of `-c`)
@@ -1226,6 +1238,7 @@ fi
                 ]
             )
 
+    def launch_shell(self) -> int:
         os.execve(
             self.shell_abs_path,
             self.shell_args,
@@ -1311,17 +1324,88 @@ class _ShellDriverSh(_ShellDriverBase):
         self.shell_env_vars["ENV"] = self.get_init_file_abs_path()
 
 
-def _ensure_shell_supported(venv_abs_path: str) -> None:
-    # TODO: TODO_50_98_96_87.support_windows.md: only POSIX shell drivers exist (no native Windows shell driver):
-    target_platform = _get_target_platform()
-    if not target_platform.is_posix():
-        raise NotImplementedError(f"Shell is only supported on POSIX platforms, but the platform is [{target_platform.platform_name}]: activate `venv` [{venv_abs_path}] manually via [{_ShellDriverBase.get_venv_activate_script_abs_path(venv_abs_path)}].")
+class _ShellDriverCmd(_ShellDriverBase):
+    """
+    Drives `cmd.exe` on Windows (there is no `exec()` there: `cmd.exe` runs as a child process).
+
+    There is no init file: user settings are whatever `cmd.exe` loads by default (`AutoRun` registry value;
+    `/D` is not passed), and `venv` is activated via `Scripts\\activate.bat` right after that.
+
+    See TODO_50_98_96_87.support_windows.md
+    """
+
+    def get_type(self) -> _ShellType:
+        return _ShellType.shell_cmd
+
+    def get_init_file_basename(self):
+        raise NotImplementedError("`cmd.exe` has no init file")
+
+    def write_init_file(
+        self,
+        venv_abs_path: str,
+    ):
+        pass
+
+    def configure_interactive_shell(
+        self,
+        has_command: bool,
+    ) -> None:
+        pass
+
+    def compose_shell_args(
+        self,
+        command_line: str | None,
+        venv_abs_path: str,
+    ) -> None:
+        """
+        Replaces `shell_args` with a single command-line string (`subprocess` passes a `str` to Windows as is,
+        while `cmd.exe` does not parse quotes the way `subprocess.list2cmdline` produces them).
+        With `/S`, `cmd.exe` strips exactly the first and the last quote of the string following `/C` or `/K`.
+        """
+        activate_call = f'call "{self.get_venv_activate_script_abs_path(venv_abs_path)}"'
+        cmd_exe = f'"{self.shell_abs_path}"'
+        if command_line is None:
+            if self.activate_venv:
+                # interactive shell:
+                composed = f'{cmd_exe} /S /K "{activate_call}"'
+            else:
+                composed = cmd_exe
+        else:
+            # `/C` runs the command and exits (as `-c` does for POSIX drivers):
+            if self.activate_venv:
+                composed = f'{cmd_exe} /S /C "{activate_call} && {command_line}"'
+            else:
+                composed = f'{cmd_exe} /S /C "{command_line}"'
+        self.shell_args = [composed]
+
+    def launch_shell(self) -> int:
+        # Both parent and child get `Ctrl+C`: the parent must survive until the child decides what to do with it.
+        previous_handler = signal.signal(signal.SIGINT, signal.SIG_IGN)
+        try:
+            completed_process = subprocess.run(
+                self.shell_args[0],
+                env=self.shell_env_vars,
+            )
+        finally:
+            signal.signal(signal.SIGINT, previous_handler)
+        return completed_process.returncode
 
 
 def _get_shell_driver(
     cache_dir_abs_path: str,
     activate_venv: bool = True,
 ) -> _ShellDriverBase:
+
+    if not _get_target_platform().is_posix():
+        # Always `cmd.exe` on Windows (ignore `SHELL` set by Git Bash etc.):
+        shell_env_vars = os.environ.copy()
+        _remove_protoprimer_env_vars(shell_env_vars)
+        return _ShellDriverCmd(
+            shell_abs_path=os.environ.get("COMSPEC", "cmd.exe"),
+            shell_env_vars=shell_env_vars,
+            cache_dir_abs_path=cache_dir_abs_path,
+            activate_venv=activate_venv,
+        )
 
     # TODO: TODO_68_40_26_10.define_env_vars_in_known_env_var_enum.md:
     # TODO: Define in KnownEnvVar enum:
@@ -1330,8 +1414,6 @@ def _get_shell_driver(
     shell_driver_type: type[_ShellDriverBase]
 
     if shell_abs_path is None:
-        # TODO: TODO_50_98_96_87.support_windows.md:
-        # TODO: How will it work on Windows without POSIX shell?
         shell_abs_path = "/bin/sh"
         _logger.warning(f"env var `{var_shell}` is not set - assuming [{shell_abs_path}] as default")
         shell_driver_type = _ShellDriverSh
@@ -3492,6 +3574,17 @@ def _create_symlink_to_dir(
     )
 
 
+def _remove_symlink_to_dir(
+    symlink_abs_path: str,
+) -> None:
+    if _ConfConstGeneral.is_os_windows:
+        # TODO: TODO_50_98_96_87.support_windows.md:
+        #       A dir symlink is removed like a dir on Windows (`os.remove` may fail on it):
+        os.rmdir(symlink_abs_path)
+    else:
+        os.remove(symlink_abs_path)
+
+
 # noinspection PyPep8Naming
 @_conditional_factory
 class _BaseNode_state_local_conf_dir_abs_path_inited(_AbstractCachingStateNode[str]):
@@ -3655,8 +3748,7 @@ class _Node_state_local_conf_dir_abs_path_inited_reset(_BaseNode_state_local_con
                 conf_dir_path = os.path.normpath(os.readlink(symlink_abs_path))
                 if conf_dir_path != expected_conf_dir_path:
                     _logger.info(f"overwriting symlink [{symlink_abs_path}] target [{conf_dir_path}] with [{expected_conf_dir_path}]")
-                    # TODO: TODO_50_98_96_87.support_windows.md: removing a dir symlink may need `os.rmdir` on Windows:
-                    os.remove(symlink_abs_path)
+                    _remove_symlink_to_dir(symlink_abs_path)
                     _create_symlink_to_dir(symlink_abs_path, expected_conf_dir_path)
             elif os.path.lexists(symlink_abs_path):
                 # Never delete a real file/dir:
@@ -5317,10 +5409,6 @@ class _Node_state_command_executed(_AbstractCachingStateNode[int]):
 
         state_local_cache_dir_abs_path_inited: str = self.eval_parent_state(_EnvState.state_local_cache_dir_abs_path_inited.name)
 
-        # Without a command, `run_shell` is a no-op (this state is evaluated on every bootstrap):
-        if command_line is not None:
-            _ensure_shell_supported(state_local_venv_dir_abs_path_inited)
-
         shell_driver: _ShellDriverBase = _get_shell_driver(state_local_cache_dir_abs_path_inited)
 
         return shell_driver.run_shell(
@@ -5379,8 +5467,6 @@ class _Node_state_shell_executed(_AbstractCachingStateNode[int]):
         state_local_venv_dir_abs_path_inited: str = self.eval_parent_state(_EnvState.state_local_venv_dir_abs_path_inited.name)
 
         state_local_cache_dir_abs_path_inited: str = self.eval_parent_state(_EnvState.state_local_cache_dir_abs_path_inited.name)
-
-        _ensure_shell_supported(state_local_venv_dir_abs_path_inited)
 
         shell_driver: _ShellDriverBase = _get_shell_driver(state_local_cache_dir_abs_path_inited)
 
@@ -6383,7 +6469,7 @@ def _write_json_file(
     file_path: str,
     file_data: dict,
 ) -> None:
-    with open(file_path, "w", encoding="utf-8") as file_obj:
+    with open(file_path, "w", encoding="utf-8", newline="\n") as file_obj:
         json.dump(
             file_data,
             file_obj,
@@ -6401,7 +6487,7 @@ def _write_text_file(
     file_path: str,
     file_data: str,
 ) -> None:
-    with open(file_path, "w", encoding="utf-8") as file_obj:
+    with open(file_path, "w", encoding="utf-8", newline="\n") as file_obj:
         file_obj.write(file_data)
 
 
@@ -6862,10 +6948,11 @@ def _generate_entry_script_content(
         )
         env_vars_lines = textwrap.indent(env_vars_lines, "    ")
 
+    # The script is versioned and shared across platforms: `/` also works on Windows (and `\` would be an escape in a string literal):
     proto_kernel_rel_path = os.path.relpath(
         proto_kernel_abs_path,
         os.path.dirname(entry_script_abs_path),
-    )
+    ).replace(os.sep, "/")
 
     # FT_56_85_65_41.generated_boilerplate.md:
     # Built as a list of lines to survive stamped boilerplate lines.

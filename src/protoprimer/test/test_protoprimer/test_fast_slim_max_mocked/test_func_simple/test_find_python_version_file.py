@@ -2,6 +2,7 @@ import os
 import pytest
 
 from local_test.name_assertion import assert_test_module_name_embeds_str
+from local_test.path_helper import abs_path
 from protoprimer.primer_kernel import (
     _find_python_version_file,
     _ConfConstGeneral,
@@ -22,7 +23,7 @@ def test_finds_version_file_in_current_dir(fs):
     # given:
 
     # A fake filesystem with the version file in the current directory.
-    current_dir = "/project/src"
+    current_dir = abs_path("/project/src")
 
     fs.create_dir(current_dir)
 
@@ -47,7 +48,7 @@ def test_finds_version_file_in_parent_dir(fs):
     # given:
 
     # A fake filesystem with the version file in a parent directory:
-    parent_dir = "/project"
+    parent_dir = abs_path("/project")
 
     child_dir = os.path.join(parent_dir, "src", "app")
     fs.create_dir(child_dir)
@@ -72,10 +73,10 @@ def test_finds_version_file_at_root(fs):
     # given:
 
     # The version file is in the root directory:
-    deep_dir = "/a/b/c/d/e"
+    deep_dir = abs_path("/a/b/c/d/e")
     fs.create_dir(deep_dir)
 
-    version_file_path = os.path.join("/", _ConfConstGeneral.python_version_file_basename)
+    version_file_path = os.path.join(abs_path("/"), _ConfConstGeneral.python_version_file_basename)
     fs.create_file(version_file_path, contents="3.7.0")
 
     # when:
@@ -95,7 +96,7 @@ def test_returns_none_when_no_file_exists(fs):
     # given:
 
     # A fake filesystem without any `.python-version` file:
-    some_dir = "/project/no-version-file"
+    some_dir = abs_path("/project/no-version-file")
     fs.create_dir(some_dir)
 
     # when:
@@ -113,7 +114,7 @@ def test_finds_closest_version_file(fs):
     # given:
 
     # Two version files, one in the current directory and one in a parent:
-    parent_dir = "/project"
+    parent_dir = abs_path("/project")
 
     current_dir = os.path.join(parent_dir, "src")
     fs.create_dir(current_dir)

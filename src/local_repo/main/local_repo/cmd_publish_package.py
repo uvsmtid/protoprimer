@@ -248,7 +248,7 @@ def _publish_package(
         ref_root_abs_path,
         f"src/{package_dir_basename}/pyproject.toml",
     )
-    with open(version_file_path, "r") as f:
+    with open(version_file_path, "r", encoding="utf-8") as f:
         match = re.search(r"^version\s*=\s*['\"]([^'\"]*)['\"]", f.read(), re.M)
         if match:
             distrib_version = str(match.group(1))
@@ -384,8 +384,8 @@ def _publish_package(
     if not dry_run:
         # Change the version to non-release-able to force the user to change it later:
         # Equivalent of: sed --in-place
-        with open(version_file_path, "r") as f:
+        with open(version_file_path, "r", encoding="utf-8") as f:
             content = f.read()
         new_content = content.replace(distrib_version, f"TODO_INCREASE_VERSION.{distrib_version}")
-        with open(version_file_path, "w") as f:
+        with open(version_file_path, "w", encoding="utf-8", newline="\n") as f:
             f.write(new_content)

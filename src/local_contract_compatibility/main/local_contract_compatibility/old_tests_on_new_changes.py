@@ -8,6 +8,7 @@ import sys
 from local_contract_compatibility.mode_id import ModeId
 from local_contract_compatibility.run_mode_tests import run_pytest_for_mode
 from local_test.coverage_conf import coverage_dir_env_var
+from local_test.venv_path_helper import compose_venv_python_abs_path
 
 # Old `local_*` packages which are installed from the baseline worktree (all must be present there):
 old_local_package_names = [
@@ -60,7 +61,8 @@ def ensure_worktree(
     if worktree_abs_path.exists():
         return
     subprocess.run(
-        ["git", "worktree", "add", "--detach", str(worktree_abs_path), commit_id],
+        # Windows limits the path length (the worktree is nested deep in the cache dir):
+        ["git", "-c", "core.longpaths=true", "worktree", "add", "--detach", str(worktree_abs_path), commit_id],
         cwd=str(repo_dir_abs_path),
         check=True,
     )
@@ -87,7 +89,7 @@ def ensure_venv(
     Creates `venv` with the old `local_*` packages (from the worktree) and the current `protoprimer` (editable).
     """
 
-    venv_python_abs_path = venv_abs_path / "bin" / "python"
+    venv_python_abs_path = pathlib.Path(compose_venv_python_abs_path(str(venv_abs_path)))
     if venv_python_abs_path.exists():
         return venv_python_abs_path
 

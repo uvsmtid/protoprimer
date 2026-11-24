@@ -7,6 +7,7 @@ from local_test.mock_verifier import (
     assert_parent_factories_mocked,
 )
 from local_test.name_assertion import assert_test_module_name_embeds_str
+from local_test.path_helper import abs_path
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     _Factory_state_proto_kernel_file_abs_path_inited,
@@ -60,7 +61,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             _EnvState.state_proto_kernel_updated.name,
         )
 
-        mock_client_dir = "/mock_client_dir"
+        mock_client_dir = abs_path("/mock_client_dir")
         self.fs.create_dir(mock_client_dir)
         os.chdir(mock_client_dir)
 
@@ -123,7 +124,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         )
         mock_get_stride.return_value = _StateStride.stride_deps_updated
 
-        fake_path = "/fake/path"
+        fake_path = abs_path("/fake/path")
         self.fs.create_file(fake_path)
         mock_state_proto_kernel_file_abs_path_inited.return_value.eval_own_state.return_value = fake_path
         mock_state_input_exec_operation_loaded.return_value.eval_own_state.return_value = _ExecOperation.op_boot

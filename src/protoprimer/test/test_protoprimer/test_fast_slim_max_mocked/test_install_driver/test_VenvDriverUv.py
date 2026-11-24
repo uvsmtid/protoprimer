@@ -1,3 +1,4 @@
+import os
 import subprocess
 from unittest.mock import (
     ANY,
@@ -9,6 +10,10 @@ from unittest.mock import (
 import pytest
 
 from local_test.name_assertion import assert_test_module_name_embeds_str
+from local_test.venv_path_helper import (
+    compose_uv_exec_abs_path,
+    compose_venv_python_abs_path,
+)
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     ConfField,
@@ -48,14 +53,14 @@ def test_create_venv_when_constraints_file_does_not_exist(mock_subprocess_check_
     expected_calls = [
         call(
             [
-                "/tmp/cache/venv/uv.venv/bin/uv",
+                compose_uv_exec_abs_path("/tmp/cache"),
                 "python",
                 "dir",
             ]
         ),
         call(
             [
-                "/tmp/cache/venv/uv.venv/bin/uv",
+                compose_uv_exec_abs_path("/tmp/cache"),
                 "python",
                 "install",
                 "3.10",
@@ -63,7 +68,7 @@ def test_create_venv_when_constraints_file_does_not_exist(mock_subprocess_check_
         ),
         call(
             [
-                "/tmp/cache/venv/uv.venv/bin/uv",
+                compose_uv_exec_abs_path("/tmp/cache"),
                 "venv",
                 "--seed",
                 "--python",
@@ -104,14 +109,14 @@ def test_create_venv_when_constraints_file_exists(mock_subprocess_check_call, mo
     expected_calls = [
         call(
             [
-                "/tmp/cache/venv/uv.venv/bin/uv",
+                compose_uv_exec_abs_path("/tmp/cache"),
                 "python",
                 "dir",
             ]
         ),
         call(
             [
-                "/tmp/cache/venv/uv.venv/bin/uv",
+                compose_uv_exec_abs_path("/tmp/cache"),
                 "python",
                 "install",
                 "3.10",
@@ -119,7 +124,7 @@ def test_create_venv_when_constraints_file_exists(mock_subprocess_check_call, mo
         ),
         call(
             [
-                "/tmp/cache/venv/uv.venv/bin/uv",
+                compose_uv_exec_abs_path("/tmp/cache"),
                 "venv",
                 "--seed",
                 "--python",
@@ -129,11 +134,11 @@ def test_create_venv_when_constraints_file_exists(mock_subprocess_check_call, mo
         ),
         call(
             [
-                "/tmp/cache/venv/uv.venv/bin/uv",
+                compose_uv_exec_abs_path("/tmp/cache"),
                 "pip",
                 "install",
                 "--python",
-                "/tmp/test_venv/bin/python",
+                compose_venv_python_abs_path("/tmp/test_venv"),
                 "--constraint",
                 constraints_file_abs_path,
                 "pip",
@@ -146,7 +151,7 @@ def test_create_venv_when_constraints_file_exists(mock_subprocess_check_call, mo
     assert mock_subprocess_check_call.call_count == 4
     mock_subprocess_check_output.assert_called_once_with(
         [
-            "/tmp/test_venv/bin/python",
+            compose_venv_python_abs_path("/tmp/test_venv"),
             "-m",
             "pip",
             "list",
@@ -165,7 +170,7 @@ def test_install_dependencies(mock_subprocess_check_call, mock_exists, mock_isfi
 
     mock_exists.return_value = True
     mock_isfile.return_value = True
-    selected_python_file_abs_path = "/tmp/test_venv/bin/python"
+    selected_python_file_abs_path = compose_venv_python_abs_path("/tmp/test_venv")
     install_driver = _VenvDriverUv(
         required_python_version="3.10",
         selected_python_file_abs_path=selected_python_file_abs_path,
@@ -200,25 +205,25 @@ def test_install_dependencies(mock_subprocess_check_call, mock_exists, mock_isfi
     expected_calls = [
         call(
             [
-                "/tmp/cache/venv/uv.venv/bin/uv",
+                compose_uv_exec_abs_path("/tmp/cache"),
                 "python",
                 "dir",
             ]
         ),
         call(
             [
-                "/tmp/cache/venv/uv.venv/bin/uv",
+                compose_uv_exec_abs_path("/tmp/cache"),
                 "pip",
                 "install",
                 "--python",
-                "/target/venv/bin/python",
+                compose_venv_python_abs_path("/target/venv"),
                 "--constraint",
                 constraints_file_abs_path,
                 "--test-option",
                 "--editable",
-                "/tmp/project1[extra1]",
+                os.path.join("/tmp", "project1") + "[extra1]",
                 "--editable",
-                "/tmp/project2",
+                os.path.join("/tmp", "project2"),
             ],
             env=ANY,
         ),
@@ -236,7 +241,7 @@ def test_pin_versions(mock_subprocess_check_call, mock_exists, mock_isfile):
 
     mock_exists.return_value = True
     mock_isfile.return_value = True
-    selected_python_file_abs_path = "/tmp/test_venv/bin/python"
+    selected_python_file_abs_path = compose_venv_python_abs_path("/tmp/test_venv")
     install_driver = _VenvDriverUv(
         required_python_version="3.10",
         selected_python_file_abs_path=selected_python_file_abs_path,
@@ -258,19 +263,19 @@ def test_pin_versions(mock_subprocess_check_call, mock_exists, mock_isfile):
     expected_calls = [
         call(
             [
-                "/tmp/cache/venv/uv.venv/bin/uv",
+                compose_uv_exec_abs_path("/tmp/cache"),
                 "python",
                 "dir",
             ]
         ),
         call(
             [
-                "/tmp/cache/venv/uv.venv/bin/uv",
+                compose_uv_exec_abs_path("/tmp/cache"),
                 "pip",
                 "freeze",
                 "--exclude-editable",
                 "--python",
-                "/mock/venv/bin/python",
+                compose_venv_python_abs_path("/mock/venv"),
             ],
             stdout=mock_file(),
         ),

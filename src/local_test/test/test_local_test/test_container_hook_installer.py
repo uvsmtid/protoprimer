@@ -40,12 +40,13 @@ def test_install_hook_copies_once(tmp_path):
 
 def test_get_uv_python_dir_path_priority(monkeypatch):
 
+    monkeypatch.setattr(container_hook_installer, "is_windows", lambda: False)
     monkeypatch.delenv("UV_PYTHON_INSTALL_DIR", raising=False)
     monkeypatch.delenv("XDG_DATA_HOME", raising=False)
-    assert get_uv_python_dir_path().endswith("/.local/share/uv/python")
+    assert os.path.normpath(get_uv_python_dir_path()).endswith(os.path.join(".local", "share", "uv", "python"))
 
     monkeypatch.setenv("XDG_DATA_HOME", "/xdg")
-    assert get_uv_python_dir_path() == "/xdg/uv/python"
+    assert get_uv_python_dir_path() == os.path.join("/xdg", "uv", "python")
 
     monkeypatch.setenv("UV_PYTHON_INSTALL_DIR", "/uv_dir")
     assert get_uv_python_dir_path() == "/uv_dir"
@@ -54,7 +55,7 @@ def test_get_uv_python_dir_path_priority(monkeypatch):
 def test_get_uv_python_dir_path_windows(monkeypatch):
 
     monkeypatch.delenv("UV_PYTHON_INSTALL_DIR", raising=False)
-    monkeypatch.setattr(os, "name", "nt")
+    monkeypatch.setattr(container_hook_installer, "is_windows", lambda: True)
     monkeypatch.setenv("APPDATA", "appdata_dir")
 
     assert get_uv_python_dir_path() == os.path.join("appdata_dir", "uv", "data", "python")
@@ -62,7 +63,7 @@ def test_get_uv_python_dir_path_windows(monkeypatch):
 
 def test_find_uv_stdlib_dir_paths_windows_layout(tmp_path, monkeypatch):
 
-    monkeypatch.setattr(os, "name", "nt")
+    monkeypatch.setattr(container_hook_installer, "is_windows", lambda: True)
     monkeypatch.setenv("UV_PYTHON_INSTALL_DIR", str(tmp_path))
     stdlib_dir = tmp_path / "cpython-3.15.2-windows-x86_64-none" / "Lib"
     stdlib_dir.mkdir(parents=True)
@@ -74,6 +75,7 @@ def test_find_uv_stdlib_dir_paths(tmp_path, monkeypatch):
 
     # given:
 
+    monkeypatch.setattr(container_hook_installer, "is_windows", lambda: False)
     monkeypatch.setenv("UV_PYTHON_INSTALL_DIR", str(tmp_path))
     stdlib_dir = tmp_path / "cpython-3.15.2-linux-x86_64-gnu" / "lib" / "python3.15"
     stdlib_dir.mkdir(parents=True)

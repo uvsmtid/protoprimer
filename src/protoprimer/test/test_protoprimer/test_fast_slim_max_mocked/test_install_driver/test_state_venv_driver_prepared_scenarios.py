@@ -10,6 +10,7 @@ from local_test.case_condition import is_min_python
 from local_test.integrated_helper import test_python_version
 from local_test.mock_subprocess import mock_get_python_version_by_current
 from local_test.name_assertion import assert_test_module_name_embeds_str
+from local_test.venv_path_helper import compose_uv_exec_abs_path
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     _Node_state_required_python_version_inited,
@@ -85,7 +86,7 @@ class TestEnvContext(BasePyfakefsTestClass):
         mock_state_required_python_version_inited,
     ):
         # given:
-        self.fs.create_file("/tmp/venv/uv.venv/bin/uv", contents="foo")
+        self.fs.create_file(compose_uv_exec_abs_path("/tmp"), contents="foo")
         # when:
         env_ctx = (
             _ContextBuilder()
@@ -153,7 +154,7 @@ class TestEnvContext(BasePyfakefsTestClass):
         mock_state_required_python_version_inited,
     ):
         # given:
-        self.fs.create_file("/tmp/venv/uv.venv/bin/uv", contents="foo")
+        self.fs.create_file(compose_uv_exec_abs_path("/tmp"), contents="foo")
         # when:
         env_ctx = (
             _ContextBuilder()

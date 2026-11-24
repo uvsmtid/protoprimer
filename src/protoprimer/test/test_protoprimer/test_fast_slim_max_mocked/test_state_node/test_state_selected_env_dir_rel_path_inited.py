@@ -8,6 +8,7 @@ from local_test.mock_verifier import (
     assert_parent_factories_mocked,
 )
 from local_test.name_assertion import assert_test_module_name_embeds_str
+from local_test.path_helper import abs_path
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     _BaseNode_state_selected_env_dir_rel_path,
@@ -38,7 +39,7 @@ class ThisTestClass(BasePyfakefsTestClass):
             .is_app(True)
             .build_context()
         )
-        self.mock_ref_root = "/mock_ref_root"
+        self.mock_ref_root = abs_path("/mock_ref_root")
         self.fs.create_dir(self.mock_ref_root)
         # By default, there is no env selector configured:
         patcher = patch(f"{primer_kernel.__name__}.{_Node_state_client_conf_file_data_loaded.__name__}.create_state_node")
@@ -91,7 +92,7 @@ class ThisTestClass(BasePyfakefsTestClass):
         mock_state_ref_root_dir_abs_path_inited,
     ):
         # given:
-        os.chdir("/")  # change cwd to something else
+        os.chdir(abs_path("/"))  # change cwd to something else
         arg_value = "my_env_dir_from_arg"
         self.fs.create_dir(os.path.join(self.mock_ref_root, arg_value))
         self._given_arg(mock_state_args_parsed, mock_state_ref_root_dir_abs_path_inited, arg_value)
@@ -147,7 +148,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     ):
         # given:
         os.chdir(self.mock_ref_root)
-        arg_value = "/abs/path/outside/ref_root"
+        arg_value = abs_path("/abs/path/outside/ref_root")
         self.fs.create_dir(arg_value)
         self._given_arg(mock_state_args_parsed, mock_state_ref_root_dir_abs_path_inited, arg_value)
 
@@ -224,7 +225,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     ):
         # given:
         os.chdir(self.mock_ref_root)
-        arg_value = "/abs/path/not_a_dir"
+        arg_value = abs_path("/abs/path/not_a_dir")
         self.fs.create_file(arg_value)
         self._given_arg(mock_state_args_parsed, mock_state_ref_root_dir_abs_path_inited, arg_value)
 

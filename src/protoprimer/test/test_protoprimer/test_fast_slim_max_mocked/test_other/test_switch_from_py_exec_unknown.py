@@ -9,6 +9,7 @@ from local_test.mock_subprocess import (
     mock_get_python_version_by_current,
 )
 from local_test.name_assertion import assert_test_func_name_embeds_str
+from local_test.path_helper import abs_path
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     _proto_main,
@@ -43,6 +44,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(f"{primer_kernel.__name__}._get_default_start_id", return_value="mock_start_id")
     @patch(f"{primer_kernel.__name__}.{_Node_state_proto_kernel_file_abs_path_inited_not_func_call_lib.__name__}.eval_own_state")
     @patch(f"{primer_kernel.__name__}.os.execve")
+    @patch.object(_ConfConstGeneral, "is_os_windows", False)
     def test_boot_switches_from_py_exec_stride_py_unknown(
         self,
         mock_execve,
@@ -56,7 +58,7 @@ class ThisTestClass(BasePyfakefsTestClass):
 
         # given:
 
-        mock_client_dir = "/mock_client_dir"
+        mock_client_dir = abs_path("/mock_client_dir")
         self.fs.create_dir(mock_client_dir)
         os.chdir(mock_client_dir)
 

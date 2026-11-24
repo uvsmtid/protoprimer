@@ -93,6 +93,7 @@ class ThisTestClass(BasePyfakefsTestClass):
     @patch(f"{primer_kernel.__name__}.os.execve")
     @patch(f"{primer_kernel.__name__}.subprocess.check_call")
     @patch(f"{primer_kernel.__name__}.{_Factory_state_prepare_venv_finalized.__name__}.create_state_node")
+    @patch.object(_ConfConstGeneral, "is_os_windows", False)
     def test_success_on_arbitrary_py_exec_outside_venv(
         self,
         mock_state_prepare_venv_finalized,

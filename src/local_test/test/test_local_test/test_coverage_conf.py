@@ -14,6 +14,7 @@ from local_test.coverage_conf import (
     get_rcfile_abs_path,
     read_source_dir_rel_paths,
 )
+from local_test.case_condition import requires_posix
 from local_test.invoke_condition_helper import get_repo_root_abs_path
 from local_test.name_assertion import assert_test_module_name_embeds_another_module_name
 
@@ -110,6 +111,7 @@ def test_hook_measures_a_process(tmp_path, monkeypatch):
     assert executed_file_names(data_file) == ["mod_a.py"]
 
 
+@requires_posix
 def test_hook_saves_data_before_exec(tmp_path, monkeypatch):
 
     # given: the first process is replaced by the second one (`exec` runs no exit handlers)
@@ -205,6 +207,7 @@ def test_installed_coverage_hook_skips_unwritable_dir(tmp_path, monkeypatch):
         assert is_installed is False
 
 
+@requires_posix
 def test_installed_coverage_hook_installs_into_stdlib_of_other_python(stdlib_dir, tmp_path):
 
     # given: another `python` (here a copy of the interface: the script prints its own stdlib dir)

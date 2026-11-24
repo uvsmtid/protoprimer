@@ -1,3 +1,4 @@
+import os
 import io
 import json
 import urllib.error
@@ -7,6 +8,7 @@ from unittest.mock import (
 )
 
 import pytest
+from local_test.path_helper import abs_path
 from local_doc import cmd_submit_to_index
 
 _base_url = "https://example.com/latest/"
@@ -181,10 +183,10 @@ def test_resolve_credentials_file_relative_to_ref_root() -> None:
     )
 
     # then:
-    assert effective_file == "/fake_repo/gconf/some_key.json"
+    assert effective_file == os.path.join("/fake_repo", credentials_file)
 
 
-@patch.dict("os.environ", {"GOOGLE_APPLICATION_CREDENTIALS": "/abs/from_env.json"})
+@patch.dict("os.environ", {"GOOGLE_APPLICATION_CREDENTIALS": abs_path("/abs/from_env.json")})
 def test_resolve_credentials_file_env_var_overrides_arg() -> None:
     # when:
     effective_file = cmd_submit_to_index._resolve_credentials_file(
@@ -193,7 +195,7 @@ def test_resolve_credentials_file_env_var_overrides_arg() -> None:
     )
 
     # then:
-    assert effective_file == "/abs/from_env.json"
+    assert effective_file == abs_path("/abs/from_env.json")
 
 
 # --- IndexNow code path ---

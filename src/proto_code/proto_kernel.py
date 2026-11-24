@@ -34,6 +34,7 @@ import os
 import pathlib
 import shlex
 import shutil
+import signal
 import stat
 import subprocess
 import sys
@@ -1076,6 +1077,8 @@ class _ShellType(enum.Enum):
 
     shell_sh = "sh"
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+    shell_cmd = "cmd"
+
 
 class _TargetPlatform(enum.Enum):
     """
@@ -1094,10 +1097,10 @@ class _TargetPlatform(enum.Enum):
     def __init__(self, platform_name: str, posix: bool):
         self.platform_name = platform_name
         self._posix = posix
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     def is_posix(self) -> bool:
         return self._posix
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
 
 def _get_target_platform() -> _TargetPlatform:
     # Values of `sys.platform`: "linux", "darwin", "freebsd14" (or similar), "win32" (not "windows"):
@@ -1210,6 +1213,15 @@ fi
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
         self.configure_interactive_shell(command_line is not None)
 
+        self.compose_shell_args(command_line, venv_abs_path)
+
+        return self.launch_shell()
+
+    def compose_shell_args(
+        self,
+        command_line: str | None,
+        venv_abs_path: str,
+    ) -> None:
         self.shell_args.extend(
             [
                 # Always start interactive `shell` (even if it exits immediately in case of `-c`)
@@ -1225,13 +1237,14 @@ fi
                     command_line,
                 ]
             )
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+    def launch_shell(self) -> int:
         os.execve(
             self.shell_abs_path,
             self.shell_args,
             self.shell_env_vars,
         )
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
         # When `os.execve` is mocked:
         # noinspection PyUnreachableCode
         return 0
@@ -1311,11 +1324,71 @@ class _ShellDriverSh(_ShellDriverBase):
         self.shell_env_vars["ENV"] = self.get_init_file_abs_path()
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
-def _ensure_shell_supported(venv_abs_path: str) -> None:
-    # TODO: TODO_50_98_96_87.support_windows.md: only POSIX shell drivers exist (no native Windows shell driver):
-    target_platform = _get_target_platform()
-    if not target_platform.is_posix():
-        raise NotImplementedError(f"Shell is only supported on POSIX platforms, but the platform is [{target_platform.platform_name}]: activate `venv` [{venv_abs_path}] manually via [{_ShellDriverBase.get_venv_activate_script_abs_path(venv_abs_path)}].")
+class _ShellDriverCmd(_ShellDriverBase):
+    """
+    Drives `cmd.exe` on Windows (there is no `exec()` there: `cmd.exe` runs as a child process).
+
+    There is no init file: user settings are whatever `cmd.exe` loads by default (`AutoRun` registry value;
+    `/D` is not passed), and `venv` is activated via `Scripts\\activate.bat` right after that.
+
+    See TODO_50_98_96_87.support_windows.md
+    """
+
+    def get_type(self) -> _ShellType:
+        return _ShellType.shell_cmd
+
+    def get_init_file_basename(self):
+        raise NotImplementedError("`cmd.exe` has no init file")
+
+    def write_init_file(
+        self,
+        venv_abs_path: str,
+    ):
+        pass
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+    def configure_interactive_shell(
+        self,
+        has_command: bool,
+    ) -> None:
+        pass
+
+    def compose_shell_args(
+        self,
+        command_line: str | None,
+        venv_abs_path: str,
+    ) -> None:
+        """
+        Replaces `shell_args` with a single command-line string (`subprocess` passes a `str` to Windows as is,
+        while `cmd.exe` does not parse quotes the way `subprocess.list2cmdline` produces them).
+        With `/S`, `cmd.exe` strips exactly the first and the last quote of the string following `/C` or `/K`.
+        """
+        activate_call = f'call "{self.get_venv_activate_script_abs_path(venv_abs_path)}"'
+        cmd_exe = f'"{self.shell_abs_path}"'
+        if command_line is None:
+            if self.activate_venv:
+                # interactive shell:
+                composed = f'{cmd_exe} /S /K "{activate_call}"'
+            else:
+                composed = cmd_exe
+        else:
+            # `/C` runs the command and exits (as `-c` does for POSIX drivers):
+            if self.activate_venv:
+                composed = f'{cmd_exe} /S /C "{activate_call} && {command_line}"'
+            else:
+                composed = f'{cmd_exe} /S /C "{command_line}"'
+        self.shell_args = [composed]
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+    def launch_shell(self) -> int:
+        # Both parent and child get `Ctrl+C`: the parent must survive until the child decides what to do with it.
+        previous_handler = signal.signal(signal.SIGINT, signal.SIG_IGN)
+        try:
+            completed_process = subprocess.run(
+                self.shell_args[0],
+                env=self.shell_env_vars,
+            )
+        finally:
+            signal.signal(signal.SIGINT, previous_handler)
+        return completed_process.returncode
 
 
 def _get_shell_driver(
@@ -1323,6 +1396,17 @@ def _get_shell_driver(
     activate_venv: bool = True,
 ) -> _ShellDriverBase:
 
+    if not _get_target_platform().is_posix():
+        # Always `cmd.exe` on Windows (ignore `SHELL` set by Git Bash etc.):
+        shell_env_vars = os.environ.copy()
+        _remove_protoprimer_env_vars(shell_env_vars)
+        return _ShellDriverCmd(
+            shell_abs_path=os.environ.get("COMSPEC", "cmd.exe"),
+            shell_env_vars=shell_env_vars,
+            cache_dir_abs_path=cache_dir_abs_path,
+            activate_venv=activate_venv,
+        )
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     # TODO: TODO_68_40_26_10.define_env_vars_in_known_env_var_enum.md:
     # TODO: Define in KnownEnvVar enum:
     var_shell = "SHELL"
@@ -1330,8 +1414,6 @@ def _get_shell_driver(
     shell_driver_type: type[_ShellDriverBase]
 
     if shell_abs_path is None:
-        # TODO: TODO_50_98_96_87.support_windows.md:
-        # TODO: How will it work on Windows without POSIX shell?
         shell_abs_path = "/bin/sh"
         _logger.warning(f"env var `{var_shell}` is not set - assuming [{shell_abs_path}] as default")
         shell_driver_type = _ShellDriverSh
@@ -1343,7 +1425,7 @@ def _get_shell_driver(
         shell_driver_type = _ShellDriverSh
     else:
         raise ValueError(f"env var `{var_shell}` has unknown value [{shell_abs_path}]")
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     shell_env_vars = os.environ.copy()
     _remove_protoprimer_env_vars(shell_env_vars)
     return shell_driver_type(
@@ -1352,7 +1434,7 @@ def _get_shell_driver(
         cache_dir_abs_path=cache_dir_abs_path,
         activate_venv=activate_venv,
     )
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
 ########################################################################################################################
 
@@ -1366,14 +1448,14 @@ class _ConfConstGeneral:
 
     # Concept name of the FT_90_65_67_62.proto_code.md:
     name_proto_code = "proto_code"
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     # The main module of the `protoprimer` package (this file):
     name_primer_kernel_module = "primer_kernel"
 
     # The default name of for the client own copy of `name_primer_kernel_module` module.
     # It is a different name from `name_primer_kernel_module` to avoid name clash.
     default_proto_kernel_module = "proto_kernel"
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     # File name of the FT_87_17_49_36.proto_kernel.md:
     default_proto_kernel_basename = f"{default_proto_kernel_module}.py"
 
@@ -1388,13 +1470,13 @@ class _ConfConstGeneral:
     name_uv_package = "uv"
 
     curr_dir_rel_path = "."
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     module_func_separator = ":"
 
     # FT_21_75_54_18.instant_scenario.md:
     # If `--main_func` is this (empty), run `_proto_main`.
     default_proto_main = ""
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     # TODO: TODO_16_35_39_74.simplify_input_based_default.md:
     # TODO: use lambdas to generate based on input (instead of None):
     # This is a value declared for completeness,
@@ -1412,14 +1494,14 @@ class _ConfConstGeneral:
     name_python_executable = f"python{name_windows_executable_ext}" if is_os_windows else "python"
     name_activate_script = f"activate{name_windows_script_ext}" if is_os_windows else "activate"
     name_uv_executable = f"uv{name_windows_executable_ext}" if is_os_windows else "uv"
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     file_rel_path_venv_bin = os.path.join(name_venv_bin_dir)
 
     file_rel_path_venv_python = os.path.join(
         file_rel_path_venv_bin,
         name_python_executable,
     )
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     file_rel_path_venv_activate = os.path.join(
         file_rel_path_venv_bin,
         name_activate_script,
@@ -1433,7 +1515,7 @@ class _ConfConstGeneral:
     # TODO: TODO_50_98_96_87.support_windows.md:
     #       Unlike a `venv`, a plain Windows `python` install has no `Scripts` dir for the interpreter itself:
     file_rel_path_base_python_bin = "" if is_os_windows else file_rel_path_venv_bin
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     log_section_delimiter = "=" * 5
 
     min_lines_between_generated_boilerplate = 20
@@ -1452,14 +1534,14 @@ class _ConfConstGeneral:
 ################################################################################
 """
     )
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     # FT_56_85_65_41.generated_boilerplate.md
     func_get_proto_kernel_generated_boilerplate_multiple_body = lambda module_obj: (
         f"""
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 """
     )
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     # FT_56_85_65_41.generated_boilerplate.md
     # UC_71_59_90_97.generated_entry_script.md
     entry_script_boilerplate_begin_marker = "# <<< BEGIN: FT_56_85_65_41.generated_boilerplate"
@@ -1476,12 +1558,12 @@ class _ConfConstInput:
     """
     Constants for FT_89_41_35_82.conf_leap.md / leap_input
     """
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     file_abs_path_script = _ConfConstGeneral.input_based
     dir_abs_path_current = _ConfConstGeneral.input_based
 
     default_proto_conf_dir_rel_path: str = f"{_ConfConstGeneral.name_proto_code}"
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     conf_file_ext = "json"
 
     # Next FT_89_41_35_82.conf_leap.md: `_ConfLeap.leap_primer`:
@@ -1500,10 +1582,10 @@ class _ConfConstPrimer:
     """
     Constants for FT_89_41_35_82.conf_leap.md / leap_primer
     """
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     # TODO: TODO_32_41_01_30.review_default_client_conf_file_rel_path.md: the kernel no longer uses it as the default (it is `ref_root`).
     default_client_conf_dir_rel_path: str = f"{_ConfDst.dst_global.value}"
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     # Next FT_89_41_35_82.conf_leap.md: `_ConfLeap.leap_client`:
     default_file_basename_leap_client: str = _ConfConstInput.default_file_basename_conf_primer
 
@@ -1521,11 +1603,11 @@ class _ConfConstClient:
     """
 
     common_env_name = "common_env"
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     # FT_03_31_63_70.environment_selection.md
     # TODO: Is this used? If link_name is not specified, the env conf dir becomes ref root dir:
     default_dir_rel_path_leap_env_link_name: str = os.path.join(_ConfDst.dst_local.value)
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     # FT_59_95_81_63.tree_shape.md / max leaps shape
     default_default_env_dir_rel_path: str = os.path.join(
         # TODO: TODO_79_50_81_23.use_constant_for_dst_dir_name.md:
@@ -1543,13 +1625,13 @@ class _ConfConstClient:
     )
 
     default_pyproject_toml_basename = "pyproject.toml"
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
 class _ConfConstEnv:
     """
     Constants for FT_89_41_35_82.conf_leap.md / leap_env
     """
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     default_dir_rel_path_venv = str(_TopDir.dir_venv.value)
 
     default_dir_rel_path_log = str(_TopDir.dir_log.value)
@@ -1565,7 +1647,7 @@ class _ConfConstEnv:
     default_venv_driver = VenvDriverType.venv_uv.name
 
     default_version_constraints_file_basename = "constraints.txt"
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     default_project_descriptors = [
         {
             ConfField.field_build_root_dir_rel_path.value: ".",
@@ -1573,7 +1655,7 @@ class _ConfConstEnv:
             ConfField.field_install_group.value: None,
         },
     ]
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     default_install_specs = []
 
     # FT_84_11_73_28.supported_python_versions.md:
@@ -1593,13 +1675,13 @@ class _CustomArgumentParser(argparse.ArgumentParser):
         for action in self._actions:
             if isinstance(action, argparse._HelpAction):
                 action.help = "Show this help message and exit."
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     def error(
         self,
         message,
     ):
         raise ValueError(message)
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
 
 def _parse_main_func(
     main_func: str,
@@ -3492,6 +3574,17 @@ def _create_symlink_to_dir(
     )
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
+def _remove_symlink_to_dir(
+    symlink_abs_path: str,
+) -> None:
+    if _ConfConstGeneral.is_os_windows:
+        # TODO: TODO_50_98_96_87.support_windows.md:
+        #       A dir symlink is removed like a dir on Windows (`os.remove` may fail on it):
+        os.rmdir(symlink_abs_path)
+    else:
+        os.remove(symlink_abs_path)
+
+
 # noinspection PyPep8Naming
 @_conditional_factory
 class _BaseNode_state_local_conf_dir_abs_path_inited(_AbstractCachingStateNode[str]):
@@ -3502,7 +3595,7 @@ class _BaseNode_state_local_conf_dir_abs_path_inited(_AbstractCachingStateNode[s
 
     FT_03_31_63_70.environment_selection.md
     """
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     _parent_states = staticmethod(
         lambda: [
             _EnvState.state_ref_root_dir_abs_path_inited.name,
@@ -3512,7 +3605,7 @@ class _BaseNode_state_local_conf_dir_abs_path_inited(_AbstractCachingStateNode[s
         ]
     )
     _state_name = staticmethod(lambda: _EnvState.state_local_conf_dir_abs_path_inited.name)
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     def _eval_state_once(self) -> _ValueType:
 
         state_ref_root_dir_abs_path_inited: str = self.eval_parent_state(_EnvState.state_ref_root_dir_abs_path_inited.name)
@@ -3523,7 +3616,7 @@ class _BaseNode_state_local_conf_dir_abs_path_inited(_AbstractCachingStateNode[s
             state_ref_root_dir_abs_path_inited,
             state_client_conf_file_data_loaded,
         )
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
         if state_selected_env_dir_rel_path_inited is not None:
             return self._eval_env_dir_abs_path(
                 state_ref_root_dir_abs_path_inited,
@@ -3535,7 +3628,7 @@ class _BaseNode_state_local_conf_dir_abs_path_inited(_AbstractCachingStateNode[s
         if symlink_abs_path is not None and os.path.lexists(symlink_abs_path):
             _validate_symlink_to_dir(symlink_abs_path)
             return _resolve_symlink_dir_abs_path(symlink_abs_path)
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
         # Nothing is persisted - fall back to the default:
         field_default_env_dir_rel_path: str | None = state_client_conf_file_data_loaded.get(ConfField.field_default_env_dir_rel_path.value, None)
         if field_default_env_dir_rel_path is None:
@@ -3552,7 +3645,7 @@ class _BaseNode_state_local_conf_dir_abs_path_inited(_AbstractCachingStateNode[s
             ),
             symlink_abs_path,
         )
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     def _eval_env_dir_abs_path(
         self,
         ref_root_dir_abs_path: str,
@@ -3560,7 +3653,7 @@ class _BaseNode_state_local_conf_dir_abs_path_inited(_AbstractCachingStateNode[s
         symlink_abs_path: str | None,
     ) -> str:
         raise NotImplementedError()
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     @staticmethod
     def _compose_selected_env_dir_abs_path(
         ref_root_dir_abs_path: str,
@@ -3573,7 +3666,7 @@ class _BaseNode_state_local_conf_dir_abs_path_inited(_AbstractCachingStateNode[s
             )
         )
 
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 # noinspection PyPep8Naming
 @_conditional_factory
 class _Node_state_local_conf_dir_abs_path_inited_read(_BaseNode_state_local_conf_dir_abs_path_inited):
@@ -3581,7 +3674,7 @@ class _Node_state_local_conf_dir_abs_path_inited_read(_BaseNode_state_local_conf
     Used by all `_ExecOperation`-s which only read the persisted env (never create the symlink):
     a mismatch between the persisted and the selected env is a failure.
     """
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     _creates_symlink_if_missing: bool = False
 
     def _eval_env_dir_abs_path(
@@ -3655,8 +3748,7 @@ class _Node_state_local_conf_dir_abs_path_inited_reset(_BaseNode_state_local_con
                 conf_dir_path = os.path.normpath(os.readlink(symlink_abs_path))
                 if conf_dir_path != expected_conf_dir_path:
                     _logger.info(f"overwriting symlink [{symlink_abs_path}] target [{conf_dir_path}] with [{expected_conf_dir_path}]")
-                    # TODO: TODO_50_98_96_87.support_windows.md: removing a dir symlink may need `os.rmdir` on Windows:
-                    os.remove(symlink_abs_path)
+                    _remove_symlink_to_dir(symlink_abs_path)
                     _create_symlink_to_dir(symlink_abs_path, expected_conf_dir_path)
             elif os.path.lexists(symlink_abs_path):
                 # Never delete a real file/dir:
@@ -5317,12 +5409,8 @@ class _Node_state_command_executed(_AbstractCachingStateNode[int]):
 
         state_local_cache_dir_abs_path_inited: str = self.eval_parent_state(_EnvState.state_local_cache_dir_abs_path_inited.name)
 
-        # Without a command, `run_shell` is a no-op (this state is evaluated on every bootstrap):
-        if command_line is not None:
-            _ensure_shell_supported(state_local_venv_dir_abs_path_inited)
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
         shell_driver: _ShellDriverBase = _get_shell_driver(state_local_cache_dir_abs_path_inited)
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
         return shell_driver.run_shell(
             False,
             command_line,
@@ -5380,8 +5468,6 @@ class _Node_state_shell_executed(_AbstractCachingStateNode[int]):
 
         state_local_cache_dir_abs_path_inited: str = self.eval_parent_state(_EnvState.state_local_cache_dir_abs_path_inited.name)
 
-        _ensure_shell_supported(state_local_venv_dir_abs_path_inited)
-
         shell_driver: _ShellDriverBase = _get_shell_driver(state_local_cache_dir_abs_path_inited)
 
         return shell_driver.run_shell(
@@ -5390,11 +5476,11 @@ class _Node_state_shell_executed(_AbstractCachingStateNode[int]):
             state_local_venv_dir_abs_path_inited,
         )
 
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
 # noinspection PyPep8Naming
 @_trivial_factory
 class _Node_state_start_executed(_AbstractCachingStateNode[int]):
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     _parent_states = staticmethod(
         lambda: [
             _EnvState.state_args_parsed.name,
@@ -5412,7 +5498,7 @@ class _Node_state_start_executed(_AbstractCachingStateNode[int]):
 
         state_args_parsed: argparse.Namespace = self.eval_parent_state(_EnvState.state_args_parsed.name)
         main_func: str = getattr(state_args_parsed, _ParsedArg.name_main_func.value)
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
         (
             module_name,
             func_name,
@@ -5420,7 +5506,7 @@ class _Node_state_start_executed(_AbstractCachingStateNode[int]):
             main_func,
             allow_default_proto_main=False,
         )
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
         state_proto_kernel_file_abs_path_inited: str = self.eval_parent_state(_EnvState.state_proto_kernel_file_abs_path_inited.name)
 
         # Provide consistent environment for `selected_main`:
@@ -5434,7 +5520,7 @@ class _Node_state_start_executed(_AbstractCachingStateNode[int]):
         sys.argv = [sys.argv[0]] + target_args
 
         selected_main()
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
         return 0
 
 
@@ -5444,7 +5530,7 @@ class _Node_state_start_executed(_AbstractCachingStateNode[int]):
 class _EnvState(enum.Enum):
     """
     Environment states to be reached during the bootstrap process.
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     NOTE: Only `str` names of the enum items are supposed to be used (any value is ignored).
     The value of `_AbstractCachingStateNode` assigned is the default implementation for the state,
     and the only reason it is assigned is purely for the quick navigation across the source code in the IDE.
@@ -5455,7 +5541,7 @@ class _EnvState(enum.Enum):
           Currently, this enum class maps "state name" -> "impl class" directly.
           In the future, it may change to "state name" -> "impl factory" instead.
     """
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     state_input_py_exec_var_loaded = _Node_state_input_py_exec_var_loaded
 
     state_is_app_defined = _Node_state_is_app_defined
@@ -5465,7 +5551,7 @@ class _EnvState(enum.Enum):
     state_input_stderr_log_level_var_loaded = _Node_state_input_stderr_log_level_var_loaded
 
     state_default_stderr_log_handler_configured = _Node_state_default_stderr_log_handler_configured
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     state_args_parsed = _Factory_state_args_parsed
 
     state_input_stderr_log_level_eval_finalized = _Factory_state_input_stderr_log_level_eval_finalized
@@ -5477,7 +5563,7 @@ class _EnvState(enum.Enum):
     state_print_conf_finalized = _Factory_state_print_conf_finalized
 
     state_prepare_venv_finalized = _Factory_state_prepare_venv_finalized
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     state_input_final_state_eval_finalized = _Factory_state_input_final_state_eval_finalized
 
     state_func_boot_env_executed = _Node_state_func_boot_env_executed
@@ -5488,7 +5574,7 @@ class _EnvState(enum.Enum):
 
     # Special case: triggers everything:
     state_everything_executed = _Factory_state_everything_executed
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     state_input_start_id_var_loaded = _Node_state_input_start_id_var_loaded
 
     state_input_proto_kernel_file_abs_path_var_loaded = _Node_state_input_proto_kernel_file_abs_path_var_loaded
@@ -5500,7 +5586,7 @@ class _EnvState(enum.Enum):
 
     # UC_71_59_90_97.generated_entry_script.md
     state_wrap_executed = _Node_state_wrap_executed
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     state_primer_conf_file_abs_path_inited = _Node_state_primer_conf_file_abs_path_inited
 
     # `_ConfLeap.leap_primer`:
@@ -5509,7 +5595,7 @@ class _EnvState(enum.Enum):
     state_ref_root_dir_abs_path_inited = _Node_state_ref_root_dir_abs_path_inited
 
     state_global_conf_dir_abs_path_inited = _Node_state_global_conf_dir_abs_path_inited
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     state_global_conf_file_abs_path_inited = _Node_state_global_conf_file_abs_path_inited
 
     # `_ConfLeap.leap_client`:
@@ -5523,14 +5609,14 @@ class _EnvState(enum.Enum):
 
     # `_ConfLeap.leap_env`:
     state_env_conf_file_data_loaded = _Node_state_env_conf_file_data_loaded
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     state_required_python_version_inited = _Node_state_required_python_version_inited
 
     # FT_72_45_12_06.python_executable.md
     state_python_selector_file_abs_path_inited = _Node_state_python_selector_file_abs_path_inited
 
     state_selected_python_file_abs_path_inited = _Node_state_selected_python_file_abs_path_inited
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     # TODO: TODO_20_07_74_69.configure_dirs_at_client_level.md:
     # TODO: log, tmp, venv, ... dirs should better be configured at client level:
     state_local_venv_dir_abs_path_inited = _Node_state_local_venv_dir_abs_path_inited
@@ -5546,13 +5632,13 @@ class _EnvState(enum.Enum):
     # TODO: TODO_20_07_74_69.configure_dirs_at_client_level.md:
     # TODO: log, tmp, venv, ... dirs should better be configured at client level:
     state_local_tmp_dir_abs_path_inited = _Node_state_local_tmp_dir_abs_path_inited
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     # TODO: TODO_20_07_74_69.configure_dirs_at_client_level.md:
     # TODO: log, tmp, venv, ... dirs should better be configured at client level:
     state_local_cache_dir_abs_path_inited = _Node_state_local_cache_dir_abs_path_inited
 
     state_venv_driver_inited = _Node_state_venv_driver_inited
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     state_version_constraints_file_basename_inited = _Node_state_version_constraints_file_basename_inited
 
     state_project_descriptors_inited = _Node_state_project_descriptors_inited
@@ -5568,12 +5654,12 @@ class _EnvState(enum.Enum):
 
     # TODO: TODO_73_71_31_84.exec_operation_check_or_info.md:
     # TODO: Add a (replaceable) env_check step to execute before switching to `_StateStride.stride_py_required`.
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     # restart: `_StateStride.stride_py_arbitrary` -> `_StateStride.stride_py_required`:
     state_stride_py_required_reached = _Factory_state_stride_py_required_reached
 
     state_reset_triggered = _Factory_state_reset_triggered
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     state_venv_driver_prepared = _Factory_state_venv_driver_prepared
 
     # restart: `_StateStride.stride_py_required` -> `_StateStride.stride_py_venv`:
@@ -5591,10 +5677,10 @@ class _EnvState(enum.Enum):
     # TODO: TODO_49_40_51_46.rename_state_names_to_final.md:
     # TODO: rename according to the final name:
     state_proto_kernel_updated = _Factory_state_proto_kernel_updated
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     # restart: `_StateStride.stride_deps_updated` -> `_StateStride.stride_src_updated`:
     state_stride_src_updated_reached = _Node_state_stride_src_updated_reached
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     state_input_command_line = _Factory_state_input_command_line
 
     state_command_executed = _Node_state_command_executed
@@ -5613,11 +5699,11 @@ class _TargetState(enum.Enum):
 
     # A special state that triggers execution of everything else:
     target_everything_executed = _EnvState.state_everything_executed
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     # FT_85_17_35_21.call_lib.md
     # FT_00_22_19_59.derived_config.md
     target_derived_config_loaded = _EnvState.state_derived_conf_data_loaded
-
+########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
     # # FT_05_08_64_67.start_app.md
     target_venv_activated = _EnvState.state_stride_py_venv_reached
 
@@ -5634,7 +5720,7 @@ class _StateGraph:
     def __init__(self):
         self.state_nodes: dict[str, _StateNode] = {}
         self.state_factories: dict[str, _NodeFactory] = {}
-########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
+
     def register_factory(
         self,
         state_name: str,
@@ -6383,7 +6469,7 @@ def _write_json_file(
     file_path: str,
     file_data: dict,
 ) -> None:
-    with open(file_path, "w", encoding="utf-8") as file_obj:
+    with open(file_path, "w", encoding="utf-8", newline="\n") as file_obj:
         json.dump(
             file_data,
             file_obj,
@@ -6401,7 +6487,7 @@ def _write_text_file(
     file_path: str,
     file_data: str,
 ) -> None:
-    with open(file_path, "w", encoding="utf-8") as file_obj:
+    with open(file_path, "w", encoding="utf-8", newline="\n") as file_obj:
         file_obj.write(file_data)
 ########### !!!!! GENERATED CONTENT - ANY CHANGES WILL BE LOST !!!!! ###########
 
@@ -6862,10 +6948,11 @@ def _generate_entry_script_content(
         )
         env_vars_lines = textwrap.indent(env_vars_lines, "    ")
 
+    # The script is versioned and shared across platforms: `/` also works on Windows (and `\` would be an escape in a string literal):
     proto_kernel_rel_path = os.path.relpath(
         proto_kernel_abs_path,
         os.path.dirname(entry_script_abs_path),
-    )
+    ).replace(os.sep, "/")
 
     # FT_56_85_65_41.generated_boilerplate.md:
     # Built as a list of lines to survive stamped boilerplate lines.

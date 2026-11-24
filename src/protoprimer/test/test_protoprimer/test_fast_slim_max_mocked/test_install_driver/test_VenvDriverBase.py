@@ -1,3 +1,4 @@
+import os
 import subprocess
 from typing import List
 from unittest.mock import (
@@ -83,7 +84,7 @@ def test_venv_driver_base_install_dependencies(mock_check_call, mock_get_cmd_bas
             "constraints_path",
             "--test-option",
             "--editable",
-            "/ref/proj1[extra1]",
+            os.path.join("/ref", "proj1") + "[extra1]",
         ],
         env=ANY,
     )
@@ -141,7 +142,7 @@ def test_venv_driver_base_install_dependencies_no_extras(mock_check_call, mock_g
             "--constraint",
             "constraints_path",
             "--editable",
-            "/ref/proj1",
+            os.path.join("/ref", "proj1"),
         ],
         env=ANY,
     )

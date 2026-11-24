@@ -1,3 +1,4 @@
+import os
 from unittest.mock import (
     patch,
 )
@@ -8,6 +9,7 @@ from local_test.mock_verifier import (
     assert_parent_factories_mocked,
 )
 from local_test.name_assertion import assert_test_module_name_embeds_str
+from local_test.path_helper import abs_path
 from protoprimer import primer_kernel
 from protoprimer.primer_kernel import (
     _Node_state_input_start_id_var_loaded,
@@ -86,9 +88,9 @@ def test_reset_true(
     mock_state_stride_py_required_reached.return_value.eval_own_state.return_value = py_exec
     env_ctx._state_stride = py_exec
 
-    mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = "/path/to/venv"
-    mock_state_local_tmp_dir_abs_path_inited.return_value.eval_own_state.return_value = "/path/to/tmp"
-    mock_state_local_conf_dir_abs_path_inited.return_value.eval_own_state.return_value = "/path/to/conf"
+    mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = abs_path("/path/to/venv")
+    mock_state_local_tmp_dir_abs_path_inited.return_value.eval_own_state.return_value = abs_path("/path/to/tmp")
+    mock_state_local_conf_dir_abs_path_inited.return_value.eval_own_state.return_value = abs_path("/path/to/conf")
     mock_state_version_constraints_file_basename_inited.return_value.eval_own_state.return_value = _ConfConstEnv.default_version_constraints_file_basename
     mock_os_path_exists.return_value = True
 
@@ -97,8 +99,8 @@ def test_reset_true(
 
     # then:
     assert state_value is True
-    mock_shutil_move.assert_called_once_with("/path/to/venv", "/path/to/tmp/venv.before.mock_start_id")
-    mock_os_remove.assert_called_once_with(f"/path/to/conf/{_ConfConstEnv.default_version_constraints_file_basename}")
+    mock_shutil_move.assert_called_once_with(abs_path("/path/to/venv"), os.path.join(abs_path("/path/to/tmp"), "venv.before.mock_start_id"))
+    mock_os_remove.assert_called_once_with(os.path.join(abs_path("/path/to/conf"), _ConfConstEnv.default_version_constraints_file_basename))
 
 
 @patch("os.path.exists")

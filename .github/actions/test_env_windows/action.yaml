@@ -60,6 +60,8 @@ runs:
             run: |
                 $gitChanges = git status --porcelain
                 if ($gitChanges) {
+                    git diff --stat
+                    git diff | Select-Object -First 60
                     Write-Error "git has local changes:`n$gitChanges"
                     exit 1
                 }
@@ -83,6 +85,18 @@ runs:
                 parallel: true
                 flag-name: ${{ github.job }}
                 build-number: ${{ github.sha }}
+
+        # TODO: TODO_50_98_96_87.support_windows.md: TEMPORARY probe (remove once the failing list is recorded there):
+        # the plain `pytest` (non-blocking) to list which test files still fail on `windows`.
+        -   name: probe full pytest (non-blocking)
+            continue-on-error: true
+            run: |
+                & "${{ github.workspace }}/venv/Scripts/python.exe" -m pytest -p no:cacheprovider --tb=line -q -rfE 2>&1 | Tee-Object -FilePath "$env:RUNNER_TEMP\full_pytest.log"
+                $failed = Select-String -Path "$env:RUNNER_TEMP\full_pytest.log" -Pattern '^(FAILED|ERROR) ([^: ]+)' | ForEach-Object { $_.Matches[0].Groups[2].Value } | Sort-Object -Unique
+                $summary = "### full pytest probe: ${{ inputs.level }} ${{ inputs.platform }}: $($failed.Count) failing files`n" + ($failed -join "`n")
+                Write-Output $summary
+                Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value $summary
+            shell: pwsh
 
         -   run: "echo job.status: ${{ job.status }}"
             shell: pwsh
