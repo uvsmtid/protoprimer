@@ -296,20 +296,22 @@ def test_command_executed_with_whitespace(
 
 @patch(f"{primer_kernel.__name__}._get_target_platform", return_value=_TargetPlatform.platform_windows)
 @patch(f"{primer_kernel.__name__}.{_EnvContext.__name__}.{_EnvContext.get_stride.__name__}")
-@patch(f"{primer_kernel.__name__}.os.execve")
+@patch(f"{primer_kernel.__name__}.subprocess.run")
 @patch(f"{primer_kernel.__name__}.{_Node_state_stride_src_updated_reached.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{_Node_state_local_venv_dir_abs_path_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{_Node_state_local_cache_dir_abs_path_inited.__name__}.create_state_node")
 @patch(f"{primer_kernel.__name__}.{_Factory_state_input_command_line.__name__}.create_state_node")
 @patch.dict(
     os.environ,
-    {},
+    {
+        "COMSPEC": "C:\\Windows\\cmd.exe",
+    },
     clear=True,
 )
 @pytest.mark.parametrize(
-    "command_line, expect_failure",
+    "command_line, expect_run",
     [
-        # Evaluated on every bootstrap (even on Windows): nothing to run without a command:
+        # Evaluated on every bootstrap: nothing to run without a command:
         (None, False),
         ("echo hello", True),
     ],
@@ -319,11 +321,11 @@ def test_command_executed_on_windows(
     mock_state_local_cache_dir_abs_path_inited,
     mock_state_local_venv_dir_abs_path_inited,
     mock_state_stride_src_updated_reached,
-    mock_os_execve,
+    mock_subprocess_run,
     mock_get_stride,
     mock_get_target_platform,
     command_line,
-    expect_failure,
+    expect_run,
     env_ctx,
     fs,
 ):
@@ -338,11 +340,16 @@ def test_command_executed_on_windows(
     mock_state_stride_src_updated_reached.return_value.eval_own_state.return_value = _StateStride.stride_src_updated
     mock_state_local_venv_dir_abs_path_inited.return_value.eval_own_state.return_value = "/fake/venv"
     mock_state_local_cache_dir_abs_path_inited.return_value.eval_own_state.return_value = "/fake/cache"
+    mock_subprocess_run.return_value.returncode = 5
 
-    # when/then:
-    if expect_failure:
-        with pytest.raises(NotImplementedError):
-            env_ctx.eval_state(_EnvState.state_command_executed.name)
+    # when:
+    state_value = env_ctx.eval_state(_EnvState.state_command_executed.name)
+
+    # then: `cmd.exe` runs as a child process (no `exec()` on Windows):
+    if expect_run:
+        assert state_value == 5
+        mock_subprocess_run.assert_called_once()
+        assert mock_subprocess_run.call_args.args[0].startswith('"C:\\Windows\\cmd.exe" /S /C ')
     else:
-        assert env_ctx.eval_state(_EnvState.state_command_executed.name) == 0
-    mock_os_execve.assert_not_called()
+        assert state_value == 0
+        mock_subprocess_run.assert_not_called()
