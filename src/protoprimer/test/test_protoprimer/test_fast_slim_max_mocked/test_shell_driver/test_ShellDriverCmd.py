@@ -105,3 +105,62 @@ def test_real_cmd_runs_command_with_spaces_in_path(tmp_path):
     # then:
     assert exit_code == 3
     assert out.read_text().strip() == "yes"
+
+
+def test_sigint_is_ignored_while_child_runs_and_restored_on_failure():
+    # given:
+    driver = make_driver()
+    previous = signal.getsignal(signal.SIGINT)
+    seen = []
+
+    def fake_run(*args, **kwargs):
+        seen.append(signal.getsignal(signal.SIGINT))
+        raise RuntimeError("boom")
+
+    # when:
+    with patch("subprocess.run", side_effect=fake_run):
+        try:
+            driver.run_shell(False, "echo hi", VENV)
+        except RuntimeError:
+            pass
+
+    # then: the parent ignores `Ctrl+C` while the child runs (both get it), and the handler is restored:
+    assert seen == [signal.SIG_IGN]
+    assert signal.getsignal(signal.SIGINT) == previous
+
+
+@requires_windows
+def test_real_cmd_loads_autorun_before_activation(tmp_path):
+    import winreg
+
+    # given: `AutoRun` and `activate.bat` both append to the same file:
+    out = tmp_path / "order.txt"
+    venv = tmp_path / "venv"
+    scripts = venv / primer_kernel._ConfConstGeneral.name_venv_bin_dir
+    scripts.mkdir(parents=True)
+    (scripts / "activate.bat").write_text(f'@echo activate>> "{out}"\r\n')
+    key_path = r"Software\Microsoft\Command Processor"
+    driver = _ShellDriverCmd(
+        shell_abs_path=os.environ["COMSPEC"],
+        shell_env_vars=os.environ.copy(),
+        cache_dir_abs_path=str(tmp_path / "cache"),
+    )
+
+    # when: (`HKCU` value is restored whatever happens)
+    with winreg.CreateKey(winreg.HKEY_CURRENT_USER, key_path) as key:
+        try:
+            previous_value, previous_type = winreg.QueryValueEx(key, "AutoRun")
+        except FileNotFoundError:
+            previous_value, previous_type = None, None
+        try:
+            winreg.SetValueEx(key, "AutoRun", 0, winreg.REG_SZ, f'@echo autorun>> "{out}"')
+            exit_code = driver.run_shell(False, f'echo command>> "{out}"', str(venv))
+        finally:
+            if previous_value is None:
+                winreg.DeleteValue(key, "AutoRun")
+            else:
+                winreg.SetValueEx(key, "AutoRun", 0, previous_type, previous_value)
+
+    # then:
+    assert exit_code == 0
+    assert out.read_text().split() == ["autorun", "activate", "command"]
